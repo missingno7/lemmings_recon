@@ -1,0 +1,338 @@
+{
+  "schema": 1,
+  "provenance": "Pre-existing local assets; historical source not independently established.",
+  "audited_exe_manifest": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\generated\\vmless_boot\\manifest.json",
+  "audited_exe_manifest_sha256": "9a803909d0d3e2134c99f651cb68446e238791b2bbb058e8ab86f444bc85645e",
+  "files": [
+    {
+      "path": "assets/adlib.dat",
+      "size": 12988,
+      "sha256": "43eceee3e88fde48c679c635ee208d2af9ade1ed789dc291d647e7d314ffdcfe",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\adlib.dat"
+    },
+    {
+      "path": "assets/cgagr0.dat",
+      "size": 20901,
+      "sha256": "d0d1d08b117dbaa5a61bb7488b141d5d901ea084b8d4c859697139e4dc3be6d5",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgagr0.dat"
+    },
+    {
+      "path": "assets/cgagr1.dat",
+      "size": 25696,
+      "sha256": "1ad9cb595dfcf66ba6473776ccff6612f3ec6b4d9e6f534323caa0265b09f44f",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgagr1.dat"
+    },
+    {
+      "path": "assets/cgagr2.dat",
+      "size": 15113,
+      "sha256": "58268e1479fb8b3d2fbf2b6bf8a7c9a77a9614e5f190324db17d7d6ef1e37180",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgagr2.dat"
+    },
+    {
+      "path": "assets/cgagr3.dat",
+      "size": 15427,
+      "sha256": "a702f30bd44761b37d6498524e452044ed17cdc4a86a807981dde7bc688019ea",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgagr3.dat"
+    },
+    {
+      "path": "assets/cgagr4.dat",
+      "size": 20851,
+      "sha256": "ab2de1785c6afd8d46533cb28ac56afaa6ffe0f14e2962e22880719a31910c02",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgagr4.dat"
+    },
+    {
+      "path": "assets/cgamain.dat",
+      "size": 22111,
+      "sha256": "1e4b08f606546938b1eede4a0587943a07c3777c8c95bf50a7a9c31623995094",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgamain.dat"
+    },
+    {
+      "path": "assets/cgaspec0.dat",
+      "size": 17992,
+      "sha256": "aa2ad89a0c3edb7d8f110447815e917031b5921b8035a64d74ddc7fce79dc72f",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgaspec0.dat"
+    },
+    {
+      "path": "assets/cgaspec1.dat",
+      "size": 11442,
+      "sha256": "11a2d0d2b797bb63ce142d9e3600c89ad542aac35398020e34eca8a60b0bbcad",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgaspec1.dat"
+    },
+    {
+      "path": "assets/cgaspec2.dat",
+      "size": 13129,
+      "sha256": "667ca13f1ddee9dbb9a33e33154d02d1c950a5687bd6f49513c1712fb270fbb2",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgaspec2.dat"
+    },
+    {
+      "path": "assets/cgaspec3.dat",
+      "size": 23838,
+      "sha256": "589875f7de9b5a41c1033f06fe82c9b628663c31ad9a4f31298b5d15110f09a1",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\cgaspec3.dat"
+    },
+    {
+      "path": "assets/crue.inf",
+      "size": 505,
+      "sha256": "c02f0f3eaa65da6a9c6f84c224e8ee08f62207ce1edc457de03be8c9f2bded33",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\crue.inf"
+    },
+    {
+      "path": "assets/ground0o.dat",
+      "size": 1056,
+      "sha256": "86ecce12dea563b97d07339028780a0a50fc2cc75a67f682bf4d9aff8cf4b24a",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\ground0o.dat"
+    },
+    {
+      "path": "assets/ground1o.dat",
+      "size": 1056,
+      "sha256": "baf7a2ea30b07d2dc7968a5fb590987b3775840c57e6268437d3dce969b64d65",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\ground1o.dat"
+    },
+    {
+      "path": "assets/ground2o.dat",
+      "size": 1056,
+      "sha256": "52e62aeefd6cd548690c02af6474936c5e16112e115ca7808c3748e500a9412d",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\ground2o.dat"
+    },
+    {
+      "path": "assets/ground3o.dat",
+      "size": 1056,
+      "sha256": "f4df8579a30cb55dae4a06f606e0453cb0931219efadf3e9465d681a43a2722c",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\ground3o.dat"
+    },
+    {
+      "path": "assets/ground4o.dat",
+      "size": 1056,
+      "sha256": "9669ee978e5adf5f8d5bfeb80ccc5d6c20e75e32f55e2a5c1c738f64af8faa91",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\ground4o.dat"
+    },
+    {
+      "path": "assets/lem1.doc",
+      "size": 403,
+      "sha256": "66068ab8290ee4c65ef2aeb554f0c5a3da90edcae40817ed3c8fd58b12b4a0c7",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lem1.doc"
+    },
+    {
+      "path": "assets/lem2.doc",
+      "size": 384,
+      "sha256": "3722478bbed7c05f0ff7e7d7811ba98ce356a3568d626e666ace426ec09f83b5",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lem2.doc"
+    },
+    {
+      "path": "assets/lem3.doc",
+      "size": 530,
+      "sha256": "0f27deb33cb9ed35851c18bac0c4b792fe71e20e0bbf8f58f020996a7ab00190",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lem3.doc"
+    },
+    {
+      "path": "assets/lem4.doc",
+      "size": 688,
+      "sha256": "c7ee193f65b8fdc19ff54ab1c9fe3b9de05c772dfa377c60bc8f0cdd15c720b0",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lem4.doc"
+    },
+    {
+      "path": "assets/lemming.cod",
+      "size": 1905,
+      "sha256": "78fcfd3417408d8f34fb3ef5f6649c0c4a1d43b8909c9fae5b8bd9953350bf95",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lemming.cod"
+    },
+    {
+      "path": "assets/lemming.doc",
+      "size": 7491,
+      "sha256": "45903cec8157e0b8b3fd44b7d44b7c68458877c68b0e0c6504f89a1bf594200d",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lemming.doc"
+    },
+    {
+      "path": "assets/lemmings.cod",
+      "size": 2726,
+      "sha256": "97476560b6598c84b5e997d77e83feff9eb05fb35473ff57021e231958a8a5b5",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lemmings.cod"
+    },
+    {
+      "path": "assets/lemmthg!.doc",
+      "size": 442,
+      "sha256": "ddbef1d7b2fc44520a0baf0848e56da01a2b716b998d683529a654928934fcdf",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lemmthg!.doc"
+    },
+    {
+      "path": "assets/lempass.txt",
+      "size": 1805,
+      "sha256": "73498828269cd6ff74866077530c4368a372ca59c089d44a9b767ab0e9543833",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\lempass.txt"
+    },
+    {
+      "path": "assets/level000.dat",
+      "size": 3722,
+      "sha256": "2b9d4502ae1837faa3a6ff7a8b11eb75cbb6a555aa0e5c9f266f0e33a4cf444f",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level000.dat"
+    },
+    {
+      "path": "assets/level001.dat",
+      "size": 4519,
+      "sha256": "52c60bf66d31514ba7f05970901cbde98e10e4020b8cc5d99c5bdf0eca43a2a9",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level001.dat"
+    },
+    {
+      "path": "assets/level002.dat",
+      "size": 4819,
+      "sha256": "3216e70e91b5a1f8fc34d92e90167762df018f56dbd253b02e655e2beb1e0854",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level002.dat"
+    },
+    {
+      "path": "assets/level003.dat",
+      "size": 6827,
+      "sha256": "6a4984e3ef13e8450c65dffe67baf9b7dee22f2f97af42072c60c8965d7ba94c",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level003.dat"
+    },
+    {
+      "path": "assets/level004.dat",
+      "size": 3889,
+      "sha256": "c4c103ef26a275918586eed9e9fc63ba1f91125fe7bd70c0c1f97614367f50df",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level004.dat"
+    },
+    {
+      "path": "assets/level005.dat",
+      "size": 7255,
+      "sha256": "ba7ae3d24331e1a0d87b46d1332b4cf74a09c9e584ad12ea672ee555da1a52cc",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level005.dat"
+    },
+    {
+      "path": "assets/level006.dat",
+      "size": 7149,
+      "sha256": "34052d7c5ea66748c5a81fe69060bbf081d3be3232dce05945b51bf2cb4f0472",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level006.dat"
+    },
+    {
+      "path": "assets/level007.dat",
+      "size": 5253,
+      "sha256": "f827359ac4a66e5e945d74f322982e8419d7c55f2e47044674fe10fd423a9cde",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level007.dat"
+    },
+    {
+      "path": "assets/level008.dat",
+      "size": 7037,
+      "sha256": "b014f73c65aa57c7a014c896ac4f7dd58291946526db5ebb059ebbd3ea80d174",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level008.dat"
+    },
+    {
+      "path": "assets/level009.dat",
+      "size": 4932,
+      "sha256": "0cb73f259510c25c29f21103ac1d04c0643756b6ea81b91b47d0c46259fe1a83",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\level009.dat"
+    },
+    {
+      "path": "assets/main.dat",
+      "size": 56472,
+      "sha256": "2aec688c334e60322998811a8b6f9d5c13f8090b46ca6c2a6cb1c8db3b733545",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\main.dat"
+    },
+    {
+      "path": "assets/oddtable.dat",
+      "size": 4480,
+      "sha256": "e6d425592fe2cda43ec1169995cd8deeb0bdb74eb464728f4c05eb1ddefae8d0",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\oddtable.dat"
+    },
+    {
+      "path": "assets/README.md",
+      "size": 701,
+      "sha256": "c5cc074dd9c34726aaac7416d8021416a11ebc54ca387ad5ca7c2daf8b744980",
+      "matching_legacy_path": null
+    },
+    {
+      "path": "assets/readme.txt",
+      "size": 608,
+      "sha256": "87b05cc173532cc799b3be4308d3d25bf1a2a4bb59b5beeaaceebf6b52c6767f",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\readme.txt"
+    },
+    {
+      "path": "assets/Recalbox Ready.txt",
+      "size": 1450,
+      "sha256": "c3c99a7e745cad0d5020dda8e13f46cef82611c692d58ec313a01b311989468d",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\Recalbox Ready.txt"
+    },
+    {
+      "path": "assets/russell.dat",
+      "size": 256,
+      "sha256": "c377211da892a3d45298e692771798f5ccda9c2236ba02467b5c8fed4ac99627",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\russell.dat"
+    },
+    {
+      "path": "assets/russell.var",
+      "size": 256,
+      "sha256": "ce88e3e0a49d7edc0d9bc5a8fee4fdcaef7cfa7f34f72767bf189bc543694e11",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\russell.var"
+    },
+    {
+      "path": "assets/tandysnd.dat",
+      "size": 12399,
+      "sha256": "d044398aced30dae67cf8663d57f946faf28a29c357f9ea3857a28eea7cc10c1",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\tandysnd.dat"
+    },
+    {
+      "path": "assets/tgamain.dat",
+      "size": 14733,
+      "sha256": "5a7776a66b858d5936f314a2105aa7ab83ad9e17a946c458f94d467548216896",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\tgamain.dat"
+    },
+    {
+      "path": "assets/vgagr0.dat",
+      "size": 24464,
+      "sha256": "9bd5ae2e0aed013bd369a469ac14afeb1beb22524fc820920d6e38766ea48680",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgagr0.dat"
+    },
+    {
+      "path": "assets/vgagr1.dat",
+      "size": 32966,
+      "sha256": "bf49fc528b68d00c5738b6e7cd9244812bc74b0fc03ea9f862009a11009149e5",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgagr1.dat"
+    },
+    {
+      "path": "assets/vgagr2.dat",
+      "size": 22290,
+      "sha256": "f8305e71295c5909ee7692e4391aae65443298faef4d96e5fe17b24afa0eadcc",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgagr2.dat"
+    },
+    {
+      "path": "assets/vgagr3.dat",
+      "size": 22775,
+      "sha256": "19d3e2ba0db60bf855d8ce83459f53d83a2048763124932f533eb1c42f7809d9",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgagr3.dat"
+    },
+    {
+      "path": "assets/vgagr4.dat",
+      "size": 28692,
+      "sha256": "40a99d3d9540609da9d6a74c07a832786818aed361326e37c01a909a1615921d",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgagr4.dat"
+    },
+    {
+      "path": "assets/vgalemmi.exe",
+      "size": 32749,
+      "sha256": "5e176d21570eb474f68b12920450f5b4ccc25a10c3dd2a47e126b0b143ee0b8d",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgalemmi.exe"
+    },
+    {
+      "path": "assets/vgaspec0.dat",
+      "size": 28655,
+      "sha256": "a647110ca059fd18917e8a289668167a3a77975ca1096d7f7fdd9557fee95ce0",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgaspec0.dat"
+    },
+    {
+      "path": "assets/vgaspec1.dat",
+      "size": 18567,
+      "sha256": "b0a8ce1a8888feda8720c7df1222911ae9241f3acbfd42adda243bd5ba5a2306",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgaspec1.dat"
+    },
+    {
+      "path": "assets/vgaspec2.dat",
+      "size": 23284,
+      "sha256": "602fde697bb49df8d86fd800643cc3439a4f136223af0bf1ee46e2bff5e0e3cd",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgaspec2.dat"
+    },
+    {
+      "path": "assets/vgaspec3.dat",
+      "size": 34827,
+      "sha256": "918f21db3a16741f1a58b06bcef2b4ff63dc16f0e8746d0393dc023ea57cb2d4",
+      "matching_legacy_path": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\assets\\vgaspec3.dat"
+    }
+  ]
+}

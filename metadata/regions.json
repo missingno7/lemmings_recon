@@ -1,0 +1,1173 @@
+{
+  "regions": [
+    {
+      "start": 0,
+      "end": 386,
+      "classification": "instruction"
+    },
+    {
+      "start": 386,
+      "end": 387,
+      "classification": "unresolved"
+    },
+    {
+      "start": 387,
+      "end": 1654,
+      "classification": "instruction"
+    },
+    {
+      "start": 1654,
+      "end": 3686,
+      "classification": "unresolved"
+    },
+    {
+      "start": 3686,
+      "end": 3752,
+      "classification": "instruction"
+    },
+    {
+      "start": 3752,
+      "end": 3753,
+      "classification": "unresolved"
+    },
+    {
+      "start": 3753,
+      "end": 3777,
+      "classification": "instruction"
+    },
+    {
+      "start": 3777,
+      "end": 3778,
+      "classification": "unresolved"
+    },
+    {
+      "start": 3778,
+      "end": 3951,
+      "classification": "instruction"
+    },
+    {
+      "start": 3951,
+      "end": 4000,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4000,
+      "end": 4413,
+      "classification": "instruction"
+    },
+    {
+      "start": 4413,
+      "end": 4414,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4414,
+      "end": 4499,
+      "classification": "instruction"
+    },
+    {
+      "start": 4499,
+      "end": 4500,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4500,
+      "end": 4688,
+      "classification": "instruction"
+    },
+    {
+      "start": 4688,
+      "end": 4755,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4755,
+      "end": 4826,
+      "classification": "instruction"
+    },
+    {
+      "start": 4826,
+      "end": 4827,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4827,
+      "end": 4841,
+      "classification": "instruction"
+    },
+    {
+      "start": 4841,
+      "end": 4842,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4842,
+      "end": 4890,
+      "classification": "instruction"
+    },
+    {
+      "start": 4890,
+      "end": 4906,
+      "classification": "unresolved"
+    },
+    {
+      "start": 4906,
+      "end": 5136,
+      "classification": "instruction"
+    },
+    {
+      "start": 5136,
+      "end": 5218,
+      "classification": "unresolved"
+    },
+    {
+      "start": 5218,
+      "end": 5264,
+      "classification": "instruction"
+    },
+    {
+      "start": 5264,
+      "end": 5280,
+      "classification": "unresolved"
+    },
+    {
+      "start": 5280,
+      "end": 5313,
+      "classification": "instruction"
+    },
+    {
+      "start": 5313,
+      "end": 5314,
+      "classification": "unresolved"
+    },
+    {
+      "start": 5314,
+      "end": 5424,
+      "classification": "instruction"
+    },
+    {
+      "start": 5424,
+      "end": 5456,
+      "classification": "unresolved"
+    },
+    {
+      "start": 5456,
+      "end": 5522,
+      "classification": "instruction"
+    },
+    {
+      "start": 5522,
+      "end": 5549,
+      "classification": "unresolved"
+    },
+    {
+      "start": 5549,
+      "end": 5782,
+      "classification": "instruction"
+    },
+    {
+      "start": 5782,
+      "end": 5801,
+      "classification": "unresolved"
+    },
+    {
+      "start": 5801,
+      "end": 6327,
+      "classification": "instruction"
+    },
+    {
+      "start": 6327,
+      "end": 6392,
+      "classification": "unresolved"
+    },
+    {
+      "start": 6392,
+      "end": 6408,
+      "classification": "instruction"
+    },
+    {
+      "start": 6408,
+      "end": 6422,
+      "classification": "unresolved"
+    },
+    {
+      "start": 6422,
+      "end": 6463,
+      "classification": "instruction"
+    },
+    {
+      "start": 6463,
+      "end": 6464,
+      "classification": "unresolved"
+    },
+    {
+      "start": 6464,
+      "end": 6469,
+      "classification": "instruction"
+    },
+    {
+      "start": 6469,
+      "end": 6470,
+      "classification": "unresolved"
+    },
+    {
+      "start": 6470,
+      "end": 6703,
+      "classification": "instruction"
+    },
+    {
+      "start": 6703,
+      "end": 6704,
+      "classification": "unresolved"
+    },
+    {
+      "start": 6704,
+      "end": 7063,
+      "classification": "instruction"
+    },
+    {
+      "start": 7063,
+      "end": 7064,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7064,
+      "end": 7194,
+      "classification": "instruction"
+    },
+    {
+      "start": 7194,
+      "end": 7195,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7195,
+      "end": 7223,
+      "classification": "instruction"
+    },
+    {
+      "start": 7223,
+      "end": 7224,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7224,
+      "end": 7238,
+      "classification": "instruction"
+    },
+    {
+      "start": 7238,
+      "end": 7239,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7239,
+      "end": 7259,
+      "classification": "instruction"
+    },
+    {
+      "start": 7259,
+      "end": 7260,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7260,
+      "end": 7548,
+      "classification": "instruction"
+    },
+    {
+      "start": 7548,
+      "end": 7549,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7549,
+      "end": 7895,
+      "classification": "instruction"
+    },
+    {
+      "start": 7895,
+      "end": 7961,
+      "classification": "unresolved"
+    },
+    {
+      "start": 7961,
+      "end": 9090,
+      "classification": "instruction"
+    },
+    {
+      "start": 9090,
+      "end": 9091,
+      "classification": "unresolved"
+    },
+    {
+      "start": 9091,
+      "end": 9889,
+      "classification": "instruction"
+    },
+    {
+      "start": 9889,
+      "end": 9890,
+      "classification": "unresolved"
+    },
+    {
+      "start": 9890,
+      "end": 9974,
+      "classification": "instruction"
+    },
+    {
+      "start": 9974,
+      "end": 9975,
+      "classification": "unresolved"
+    },
+    {
+      "start": 9975,
+      "end": 9983,
+      "classification": "instruction"
+    },
+    {
+      "start": 9983,
+      "end": 9984,
+      "classification": "unresolved"
+    },
+    {
+      "start": 9984,
+      "end": 10082,
+      "classification": "instruction"
+    },
+    {
+      "start": 10082,
+      "end": 10083,
+      "classification": "unresolved"
+    },
+    {
+      "start": 10083,
+      "end": 10941,
+      "classification": "instruction"
+    },
+    {
+      "start": 10941,
+      "end": 10942,
+      "classification": "unresolved"
+    },
+    {
+      "start": 10942,
+      "end": 10971,
+      "classification": "instruction"
+    },
+    {
+      "start": 10971,
+      "end": 10972,
+      "classification": "unresolved"
+    },
+    {
+      "start": 10972,
+      "end": 10987,
+      "classification": "instruction"
+    },
+    {
+      "start": 10987,
+      "end": 10988,
+      "classification": "unresolved"
+    },
+    {
+      "start": 10988,
+      "end": 11088,
+      "classification": "instruction"
+    },
+    {
+      "start": 11088,
+      "end": 11089,
+      "classification": "unresolved"
+    },
+    {
+      "start": 11089,
+      "end": 12640,
+      "classification": "instruction"
+    },
+    {
+      "start": 12640,
+      "end": 12641,
+      "classification": "unresolved"
+    },
+    {
+      "start": 12641,
+      "end": 12697,
+      "classification": "instruction"
+    },
+    {
+      "start": 12697,
+      "end": 12698,
+      "classification": "unresolved"
+    },
+    {
+      "start": 12698,
+      "end": 12732,
+      "classification": "instruction"
+    },
+    {
+      "start": 12732,
+      "end": 12733,
+      "classification": "unresolved"
+    },
+    {
+      "start": 12733,
+      "end": 13694,
+      "classification": "instruction"
+    },
+    {
+      "start": 13694,
+      "end": 13720,
+      "classification": "unresolved"
+    },
+    {
+      "start": 13720,
+      "end": 13729,
+      "classification": "instruction"
+    },
+    {
+      "start": 13729,
+      "end": 13730,
+      "classification": "unresolved"
+    },
+    {
+      "start": 13730,
+      "end": 13739,
+      "classification": "instruction"
+    },
+    {
+      "start": 13739,
+      "end": 13740,
+      "classification": "unresolved"
+    },
+    {
+      "start": 13740,
+      "end": 13935,
+      "classification": "instruction"
+    },
+    {
+      "start": 13935,
+      "end": 13936,
+      "classification": "unresolved"
+    },
+    {
+      "start": 13936,
+      "end": 14158,
+      "classification": "instruction"
+    },
+    {
+      "start": 14158,
+      "end": 14159,
+      "classification": "unresolved"
+    },
+    {
+      "start": 14159,
+      "end": 14686,
+      "classification": "instruction"
+    },
+    {
+      "start": 14686,
+      "end": 14687,
+      "classification": "unresolved"
+    },
+    {
+      "start": 14687,
+      "end": 15112,
+      "classification": "instruction"
+    },
+    {
+      "start": 15112,
+      "end": 15113,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15113,
+      "end": 15654,
+      "classification": "instruction"
+    },
+    {
+      "start": 15654,
+      "end": 15655,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15655,
+      "end": 15684,
+      "classification": "instruction"
+    },
+    {
+      "start": 15684,
+      "end": 15685,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15685,
+      "end": 15691,
+      "classification": "instruction"
+    },
+    {
+      "start": 15691,
+      "end": 15692,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15692,
+      "end": 15703,
+      "classification": "instruction"
+    },
+    {
+      "start": 15703,
+      "end": 15704,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15704,
+      "end": 15718,
+      "classification": "instruction"
+    },
+    {
+      "start": 15718,
+      "end": 15719,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15719,
+      "end": 15728,
+      "classification": "instruction"
+    },
+    {
+      "start": 15728,
+      "end": 15729,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15729,
+      "end": 15735,
+      "classification": "instruction"
+    },
+    {
+      "start": 15735,
+      "end": 15736,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15736,
+      "end": 15847,
+      "classification": "instruction"
+    },
+    {
+      "start": 15847,
+      "end": 15848,
+      "classification": "unresolved"
+    },
+    {
+      "start": 15848,
+      "end": 16099,
+      "classification": "instruction"
+    },
+    {
+      "start": 16099,
+      "end": 16100,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16100,
+      "end": 16109,
+      "classification": "instruction"
+    },
+    {
+      "start": 16109,
+      "end": 16110,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16110,
+      "end": 16148,
+      "classification": "instruction"
+    },
+    {
+      "start": 16148,
+      "end": 16149,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16149,
+      "end": 16273,
+      "classification": "instruction"
+    },
+    {
+      "start": 16273,
+      "end": 16274,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16274,
+      "end": 16526,
+      "classification": "instruction"
+    },
+    {
+      "start": 16526,
+      "end": 16527,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16527,
+      "end": 16533,
+      "classification": "instruction"
+    },
+    {
+      "start": 16533,
+      "end": 16534,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16534,
+      "end": 16563,
+      "classification": "instruction"
+    },
+    {
+      "start": 16563,
+      "end": 16564,
+      "classification": "unresolved"
+    },
+    {
+      "start": 16564,
+      "end": 17301,
+      "classification": "instruction"
+    },
+    {
+      "start": 17301,
+      "end": 17302,
+      "classification": "unresolved"
+    },
+    {
+      "start": 17302,
+      "end": 17304,
+      "classification": "instruction"
+    },
+    {
+      "start": 17304,
+      "end": 17305,
+      "classification": "unresolved"
+    },
+    {
+      "start": 17305,
+      "end": 17571,
+      "classification": "instruction"
+    },
+    {
+      "start": 17571,
+      "end": 17572,
+      "classification": "unresolved"
+    },
+    {
+      "start": 17572,
+      "end": 17578,
+      "classification": "instruction"
+    },
+    {
+      "start": 17578,
+      "end": 17579,
+      "classification": "unresolved"
+    },
+    {
+      "start": 17579,
+      "end": 17641,
+      "classification": "instruction"
+    },
+    {
+      "start": 17641,
+      "end": 17644,
+      "classification": "unresolved"
+    },
+    {
+      "start": 17644,
+      "end": 18074,
+      "classification": "instruction"
+    },
+    {
+      "start": 18074,
+      "end": 18075,
+      "classification": "unresolved"
+    },
+    {
+      "start": 18075,
+      "end": 18216,
+      "classification": "instruction"
+    },
+    {
+      "start": 18216,
+      "end": 18217,
+      "classification": "unresolved"
+    },
+    {
+      "start": 18217,
+      "end": 18495,
+      "classification": "instruction"
+    },
+    {
+      "start": 18495,
+      "end": 18496,
+      "classification": "unresolved"
+    },
+    {
+      "start": 18496,
+      "end": 18551,
+      "classification": "instruction"
+    },
+    {
+      "start": 18551,
+      "end": 18572,
+      "classification": "unresolved"
+    },
+    {
+      "start": 18572,
+      "end": 18608,
+      "classification": "instruction"
+    },
+    {
+      "start": 18608,
+      "end": 18621,
+      "classification": "unresolved"
+    },
+    {
+      "start": 18621,
+      "end": 18773,
+      "classification": "instruction"
+    },
+    {
+      "start": 18773,
+      "end": 18791,
+      "classification": "unresolved"
+    },
+    {
+      "start": 18791,
+      "end": 19557,
+      "classification": "instruction"
+    },
+    {
+      "start": 19557,
+      "end": 19558,
+      "classification": "unresolved"
+    },
+    {
+      "start": 19558,
+      "end": 19959,
+      "classification": "instruction"
+    },
+    {
+      "start": 19959,
+      "end": 19960,
+      "classification": "unresolved"
+    },
+    {
+      "start": 19960,
+      "end": 20199,
+      "classification": "instruction"
+    },
+    {
+      "start": 20199,
+      "end": 20207,
+      "classification": "unresolved"
+    },
+    {
+      "start": 20207,
+      "end": 20362,
+      "classification": "instruction"
+    },
+    {
+      "start": 20362,
+      "end": 20374,
+      "classification": "unresolved"
+    },
+    {
+      "start": 20374,
+      "end": 20508,
+      "classification": "instruction"
+    },
+    {
+      "start": 20508,
+      "end": 20520,
+      "classification": "unresolved"
+    },
+    {
+      "start": 20520,
+      "end": 21204,
+      "classification": "instruction"
+    },
+    {
+      "start": 21204,
+      "end": 21236,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21236,
+      "end": 21277,
+      "classification": "instruction"
+    },
+    {
+      "start": 21277,
+      "end": 21278,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21278,
+      "end": 21478,
+      "classification": "instruction"
+    },
+    {
+      "start": 21478,
+      "end": 21479,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21479,
+      "end": 21499,
+      "classification": "instruction"
+    },
+    {
+      "start": 21499,
+      "end": 21500,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21500,
+      "end": 21527,
+      "classification": "instruction"
+    },
+    {
+      "start": 21527,
+      "end": 21528,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21528,
+      "end": 21540,
+      "classification": "instruction"
+    },
+    {
+      "start": 21540,
+      "end": 21541,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21541,
+      "end": 21609,
+      "classification": "instruction"
+    },
+    {
+      "start": 21609,
+      "end": 21610,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21610,
+      "end": 21767,
+      "classification": "instruction"
+    },
+    {
+      "start": 21767,
+      "end": 21811,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21811,
+      "end": 21942,
+      "classification": "instruction"
+    },
+    {
+      "start": 21942,
+      "end": 21943,
+      "classification": "unresolved"
+    },
+    {
+      "start": 21943,
+      "end": 23832,
+      "classification": "instruction"
+    },
+    {
+      "start": 23832,
+      "end": 23910,
+      "classification": "unresolved"
+    },
+    {
+      "start": 23910,
+      "end": 29130,
+      "classification": "instruction"
+    },
+    {
+      "start": 29130,
+      "end": 29208,
+      "classification": "unresolved"
+    },
+    {
+      "start": 29208,
+      "end": 30565,
+      "classification": "instruction"
+    },
+    {
+      "start": 30565,
+      "end": 30566,
+      "classification": "unresolved"
+    },
+    {
+      "start": 30566,
+      "end": 30575,
+      "classification": "instruction"
+    },
+    {
+      "start": 30575,
+      "end": 30576,
+      "classification": "unresolved"
+    },
+    {
+      "start": 30576,
+      "end": 30610,
+      "classification": "instruction"
+    },
+    {
+      "start": 30610,
+      "end": 30611,
+      "classification": "unresolved"
+    },
+    {
+      "start": 30611,
+      "end": 30617,
+      "classification": "instruction"
+    },
+    {
+      "start": 30617,
+      "end": 30618,
+      "classification": "unresolved"
+    },
+    {
+      "start": 30618,
+      "end": 30624,
+      "classification": "instruction"
+    },
+    {
+      "start": 30624,
+      "end": 30625,
+      "classification": "unresolved"
+    },
+    {
+      "start": 30625,
+      "end": 33058,
+      "classification": "instruction"
+    },
+    {
+      "start": 33058,
+      "end": 33059,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33059,
+      "end": 33346,
+      "classification": "instruction"
+    },
+    {
+      "start": 33346,
+      "end": 33347,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33347,
+      "end": 33352,
+      "classification": "instruction"
+    },
+    {
+      "start": 33352,
+      "end": 33353,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33353,
+      "end": 33358,
+      "classification": "instruction"
+    },
+    {
+      "start": 33358,
+      "end": 33359,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33359,
+      "end": 33719,
+      "classification": "instruction"
+    },
+    {
+      "start": 33719,
+      "end": 33720,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33720,
+      "end": 33727,
+      "classification": "static_data"
+    },
+    {
+      "start": 33727,
+      "end": 34824,
+      "classification": "unresolved"
+    },
+    {
+      "start": 34824,
+      "end": 34986,
+      "classification": "instruction"
+    },
+    {
+      "start": 34986,
+      "end": 34987,
+      "classification": "unresolved"
+    },
+    {
+      "start": 34987,
+      "end": 35549,
+      "classification": "instruction"
+    },
+    {
+      "start": 35549,
+      "end": 35550,
+      "classification": "unresolved"
+    },
+    {
+      "start": 35550,
+      "end": 36084,
+      "classification": "instruction"
+    },
+    {
+      "start": 36084,
+      "end": 36085,
+      "classification": "unresolved"
+    },
+    {
+      "start": 36085,
+      "end": 36749,
+      "classification": "instruction"
+    },
+    {
+      "start": 36749,
+      "end": 36750,
+      "classification": "unresolved"
+    },
+    {
+      "start": 36750,
+      "end": 37689,
+      "classification": "instruction"
+    },
+    {
+      "start": 37689,
+      "end": 37690,
+      "classification": "unresolved"
+    },
+    {
+      "start": 37690,
+      "end": 38087,
+      "classification": "instruction"
+    },
+    {
+      "start": 38087,
+      "end": 38088,
+      "classification": "unresolved"
+    },
+    {
+      "start": 38088,
+      "end": 38151,
+      "classification": "instruction"
+    },
+    {
+      "start": 38151,
+      "end": 38152,
+      "classification": "unresolved"
+    },
+    {
+      "start": 38152,
+      "end": 38489,
+      "classification": "instruction"
+    },
+    {
+      "start": 38489,
+      "end": 38490,
+      "classification": "unresolved"
+    },
+    {
+      "start": 38490,
+      "end": 39156,
+      "classification": "instruction"
+    },
+    {
+      "start": 39156,
+      "end": 39157,
+      "classification": "unresolved"
+    },
+    {
+      "start": 39157,
+      "end": 39218,
+      "classification": "instruction"
+    },
+    {
+      "start": 39218,
+      "end": 39219,
+      "classification": "unresolved"
+    },
+    {
+      "start": 39219,
+      "end": 39318,
+      "classification": "instruction"
+    },
+    {
+      "start": 39318,
+      "end": 39319,
+      "classification": "unresolved"
+    },
+    {
+      "start": 39319,
+      "end": 39567,
+      "classification": "instruction"
+    },
+    {
+      "start": 39567,
+      "end": 39568,
+      "classification": "unresolved"
+    },
+    {
+      "start": 39568,
+      "end": 47778,
+      "classification": "static_data"
+    },
+    {
+      "start": 47778,
+      "end": 47779,
+      "classification": "unresolved"
+    },
+    {
+      "start": 47779,
+      "end": 47791,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 47791,
+      "end": 49200,
+      "classification": "unresolved"
+    },
+    {
+      "start": 49200,
+      "end": 49202,
+      "classification": "pointer_data"
+    },
+    {
+      "start": 49202,
+      "end": 82906,
+      "classification": "unresolved"
+    }
+  ],
+  "overlays": [
+    {
+      "start": 6287,
+      "end": 6297,
+      "class": "code_used_as_data",
+      "overlay": true,
+      "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
+    }
+  ]
+}

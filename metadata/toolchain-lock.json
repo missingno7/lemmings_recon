@@ -1,0 +1,21 @@
+{
+  "python_packages": {
+    "capstone": "5.0.6",
+    "unicorn": "2.1.4"
+  },
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "executables": [
+    {
+      "path": "C:\\msys64\\usr\\bin\\nasm.exe",
+      "sha256": "52b00344d54c5e79ec8b501351246acd3efe285e73ae712ad6f976ced53f49a6"
+    },
+    {
+      "path": "C:\\msys64\\usr\\bin\\ndisasm.exe",
+      "sha256": "5789e415cc0a62b2211dd11c2bbd87225ce300ac45afb8e899f6dc8557bdcbbb"
+    },
+    {
+      "path": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+      "sha256": "c5005ba5380351c10743e9ca53ef9632164c54be3bd6b93324795114e4589a7d"
+    }
+  ]
+}

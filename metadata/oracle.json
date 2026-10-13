@@ -1,0 +1,361 @@
+{
+  "schema": 1,
+  "packed_sha256": "5e176d21570eb474f68b12920450f5b4ccc25a10c3dd2a47e126b0b143ee0b8d",
+  "packed_size": 32749,
+  "packed_mz": {
+    "magic": 23117,
+    "last_page": 493,
+    "pages": 64,
+    "relocations": 0,
+    "header_paragraphs": 5,
+    "min_extra": 4340,
+    "max_extra": 65535,
+    "ss": 2047,
+    "sp": 1024,
+    "checksum": 0,
+    "ip": 256,
+    "cs": 65520,
+    "relocation_offset": 80,
+    "overlay": 0
+  },
+  "pklite_version": "1.03",
+  "extra": true,
+  "large": true,
+  "stream_offset": 752,
+  "relocation_stream_offset": 32611,
+  "footer_offset": 32741,
+  "consumed_bytes": 32749,
+  "trailing_bytes": 0,
+  "image_size": 82906,
+  "image_sha256": "b0c4ef403e4bd28fa7913cb51a8c87e4dbbba8c4f1c36ea1594ba4424d64ee4e",
+  "entry": {
+    "cs": 0,
+    "ip": 0
+  },
+  "stack": {
+    "ss": 5182,
+    "sp": 19188
+  },
+  "relocations": [
+    {
+      "segment": 0,
+      "offset": 1,
+      "linear": 1
+    },
+    {
+      "segment": 0,
+      "offset": 3955,
+      "linear": 3955
+    },
+    {
+      "segment": 0,
+      "offset": 5715,
+      "linear": 5715
+    },
+    {
+      "segment": 0,
+      "offset": 5849,
+      "linear": 5849
+    },
+    {
+      "segment": 0,
+      "offset": 6098,
+      "linear": 6098
+    },
+    {
+      "segment": 0,
+      "offset": 6395,
+      "linear": 6395
+    },
+    {
+      "segment": 0,
+      "offset": 6475,
+      "linear": 6475
+    },
+    {
+      "segment": 0,
+      "offset": 7291,
+      "linear": 7291
+    },
+    {
+      "segment": 0,
+      "offset": 7436,
+      "linear": 7436
+    },
+    {
+      "segment": 0,
+      "offset": 7478,
+      "linear": 7478
+    },
+    {
+      "segment": 0,
+      "offset": 7860,
+      "linear": 7860
+    },
+    {
+      "segment": 0,
+      "offset": 13987,
+      "linear": 13987
+    },
+    {
+      "segment": 0,
+      "offset": 14784,
+      "linear": 14784
+    },
+    {
+      "segment": 0,
+      "offset": 16695,
+      "linear": 16695
+    },
+    {
+      "segment": 0,
+      "offset": 19476,
+      "linear": 19476
+    },
+    {
+      "segment": 0,
+      "offset": 19536,
+      "linear": 19536
+    },
+    {
+      "segment": 0,
+      "offset": 19902,
+      "linear": 19902
+    },
+    {
+      "segment": 0,
+      "offset": 20097,
+      "linear": 20097
+    },
+    {
+      "segment": 0,
+      "offset": 20127,
+      "linear": 20127
+    },
+    {
+      "segment": 0,
+      "offset": 20196,
+      "linear": 20196
+    },
+    {
+      "segment": 0,
+      "offset": 20237,
+      "linear": 20237
+    },
+    {
+      "segment": 0,
+      "offset": 20264,
+      "linear": 20264
+    },
+    {
+      "segment": 0,
+      "offset": 20354,
+      "linear": 20354
+    },
+    {
+      "segment": 0,
+      "offset": 20462,
+      "linear": 20462
+    },
+    {
+      "segment": 0,
+      "offset": 22660,
+      "linear": 22660
+    },
+    {
+      "segment": 0,
+      "offset": 22888,
+      "linear": 22888
+    },
+    {
+      "segment": 0,
+      "offset": 31740,
+      "linear": 31740
+    },
+    {
+      "segment": 0,
+      "offset": 31928,
+      "linear": 31928
+    },
+    {
+      "segment": 0,
+      "offset": 31999,
+      "linear": 31999
+    },
+    {
+      "segment": 0,
+      "offset": 32371,
+      "linear": 32371
+    },
+    {
+      "segment": 0,
+      "offset": 32403,
+      "linear": 32403
+    },
+    {
+      "segment": 0,
+      "offset": 32424,
+      "linear": 32424
+    },
+    {
+      "segment": 0,
+      "offset": 33321,
+      "linear": 33321
+    },
+    {
+      "segment": 0,
+      "offset": 35096,
+      "linear": 35096
+    },
+    {
+      "segment": 0,
+      "offset": 35660,
+      "linear": 35660
+    },
+    {
+      "segment": 0,
+      "offset": 36208,
+      "linear": 36208
+    },
+    {
+      "segment": 0,
+      "offset": 36865,
+      "linear": 36865
+    },
+    {
+      "segment": 0,
+      "offset": 37030,
+      "linear": 37030
+    },
+    {
+      "segment": 0,
+      "offset": 37237,
+      "linear": 37237
+    },
+    {
+      "segment": 0,
+      "offset": 37966,
+      "linear": 37966
+    },
+    {
+      "segment": 0,
+      "offset": 38000,
+      "linear": 38000
+    },
+    {
+      "segment": 0,
+      "offset": 38060,
+      "linear": 38060
+    },
+    {
+      "segment": 0,
+      "offset": 38090,
+      "linear": 38090
+    },
+    {
+      "segment": 0,
+      "offset": 38124,
+      "linear": 38124
+    },
+    {
+      "segment": 0,
+      "offset": 38154,
+      "linear": 38154
+    },
+    {
+      "segment": 0,
+      "offset": 38185,
+      "linear": 38185
+    },
+    {
+      "segment": 0,
+      "offset": 38308,
+      "linear": 38308
+    },
+    {
+      "segment": 0,
+      "offset": 38340,
+      "linear": 38340
+    },
+    {
+      "segment": 0,
+      "offset": 38386,
+      "linear": 38386
+    },
+    {
+      "segment": 0,
+      "offset": 38416,
+      "linear": 38416
+    },
+    {
+      "segment": 0,
+      "offset": 38462,
+      "linear": 38462
+    },
+    {
+      "segment": 0,
+      "offset": 38492,
+      "linear": 38492
+    },
+    {
+      "segment": 0,
+      "offset": 38535,
+      "linear": 38535
+    },
+    {
+      "segment": 0,
+      "offset": 38683,
+      "linear": 38683
+    },
+    {
+      "segment": 0,
+      "offset": 38798,
+      "linear": 38798
+    },
+    {
+      "segment": 0,
+      "offset": 38906,
+      "linear": 38906
+    },
+    {
+      "segment": 0,
+      "offset": 39056,
+      "linear": 39056
+    },
+    {
+      "segment": 0,
+      "offset": 39087,
+      "linear": 39087
+    },
+    {
+      "segment": 0,
+      "offset": 39130,
+      "linear": 39130
+    },
+    {
+      "segment": 0,
+      "offset": 39159,
+      "linear": 39159
+    },
+    {
+      "segment": 0,
+      "offset": 39192,
+      "linear": 39192
+    },
+    {
+      "segment": 0,
+      "offset": 39221,
+      "linear": 39221
+    },
+    {
+      "segment": 0,
+      "offset": 39251,
+      "linear": 39251
+    }
+  ],
+  "tokens": {
+    "literals": 19413,
+    "matches": 5538,
+    "segment_markers": 1
+  }
+}

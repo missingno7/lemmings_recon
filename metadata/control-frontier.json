@@ -1,0 +1,61 @@
+[
+  {
+    "address": "1407",
+    "kind": "near_indirect_call",
+    "known_targets": [
+      "1410",
+      "1462",
+      "1490",
+      "14A0"
+    ],
+    "evidence": "Four static records at DS:2013, three-byte stride; 13F8 sets count4",
+    "closure": "all writes/aliases pending"
+  },
+  {
+    "address": "1899",
+    "kind": "far_interrupt_chain",
+    "evidence": "DS:1FBE saved via DOS get-vector INT08 at005D..0066",
+    "closure": "external vector contract pending"
+  },
+  {
+    "address": "42A5",
+    "kind": "near_indirect_call",
+    "known_targets": [
+      "4252",
+      "4334",
+      "4359"
+    ],
+    "evidence": "DS:25A0 static4252 and direct stores4A68/4A80",
+    "closure": "alias/store census pending"
+  },
+  {
+    "address": "4C6C",
+    "kind": "far_interrupt_chain",
+    "evidence": "DS:1FBE saved via DOS get-vector INT08",
+    "closure": "external vector contract pending"
+  },
+  {
+    "address": "4CC9",
+    "kind": "near_indirect_call",
+    "known_targets": [
+      "503B"
+    ],
+    "evidence": "4C88 LEA BP,503B before password input loop",
+    "closure": "other incoming paths pending"
+  },
+  {
+    "address": "4D18",
+    "kind": "near_indirect_jump",
+    "known_targets": [
+      "503B"
+    ],
+    "evidence": "BP callback preserved in input loop",
+    "closure": "stack flow and other incoming paths pending"
+  },
+  {
+    "address": "715B",
+    "kind": "near_indirect_call",
+    "evidence": "AX restored from stack; earlier push [DI+14] at70F0",
+    "closure": "record callback inventory pending"
+  }
+]

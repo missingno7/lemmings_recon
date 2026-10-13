@@ -1,0 +1,2239 @@
+{
+  "note": "Signature-matched entry leads, not proof of complete routine boundaries.",
+  "accepted": [
+    {
+      "segment": 4112,
+      "offset": 0,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0000.py",
+      "source_sha256": "58fe1b82b902c1f7b0776703716d9473b9f355911e5d9a004343a8cbe180f5fe",
+      "signature": "bab9198eda06e83a83",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 216,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_00d8.py",
+      "source_sha256": "0662e19263fa7b188d03551fb73898b587cb6cd3e2f6a1debabd5effa87c0349",
+      "signature": "e8f61dc6",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 798,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_031e.py",
+      "source_sha256": "66e8316f309c00b02c4ca0d1abfe1ca7a855e15a612c78c07e0faae37d3bf2ce",
+      "signature": "a04e00a801741d",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 961,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_03c1.py",
+      "source_sha256": "5bfe492445b268e2fe424dfb713e8e1f91208080460b78e2d3d6f6fb58cdcde3",
+      "signature": "0c0450bb040690b91000ba0800e87a4f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 983,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_03d7.py",
+      "source_sha256": "9bbbd4b9d3bc5197501ecea031999226c1bf0bcd87a4edd83473d4d68ffc49cb",
+      "signature": "50b91000ba0800e8484f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 999,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_03e7.py",
+      "source_sha256": "e79b3c55212238a882acd287462bf7ac178fca4dd1a4af91fa58930618a669ca",
+      "signature": "c70600001802c70602004300c6061a00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 1273,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_04f9.py",
+      "source_sha256": "d5996e59a2c32b14971022bd321889c0800187369cf3bca30b4235e1a2f51f81",
+      "signature": "b840008ec0268b1663008916da1f80c2",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 1358,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_054e.py",
+      "source_sha256": "4a303efedf58f5e2ccdb99517d00500c7f441b7930df0741d2a13be237678256",
+      "signature": "803e1020ff7503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 1548,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_060c.py",
+      "source_sha256": "3c3d7b698e3b08504a3d1891fd444c62cc77f326bbba372fbd0f2b2abd7c5787",
+      "signature": "b40fcd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 1579,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_062b.py",
+      "source_sha256": "b43ef2769d84db59ac116faac905c8ccd19866ea06970c43efecf34b9da13b68",
+      "signature": "a0de1f3cf87503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 1598,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_063e.py",
+      "source_sha256": "14c5699870c6affd00575eb592f4d099d8d3af3d09bf96183637c05782f626b8",
+      "signature": "32d21e065156575533f68edeff3483c6",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 1625,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0659.py",
+      "source_sha256": "29a2b2df3770ddd060b7bb3f20b7aebfcd4f8500578944d1986c0359ba119c42",
+      "signature": "8f060c0081060c005a070e5e89360e00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 3778,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0ec2.py",
+      "source_sha256": "3b690e64d3ae23cb93344d9ce3c58d71970a6750df18f067bbac834ec1477a2b",
+      "signature": "8d168a25b43cb90200cd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 3848,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0f08.py",
+      "source_sha256": "d9f54613fe401c2a87013c6b3a33d80ee3ef76d1b5604c746b368fe0c7749e81",
+      "signature": "803e731fff7455",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4000,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0fa0.py",
+      "source_sha256": "ca334ae41d374459e5b7f8a5565788a562beddaa40dc6e5a59984762d7a52089",
+      "signature": "1eb425a0c61f8b16c21f8e1ec41fcd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4018,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0fb2.py",
+      "source_sha256": "858f4d92b2dea3ca9d85f1ffc424f3c62c6e83ec51dce835234766efb5640a69",
+      "signature": "fab88d00cd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4088,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_0ff8.py",
+      "source_sha256": "d7d26649d464ced4d282f3484d968719dcd892239760df8bff83140efbaaf0fe",
+      "signature": "a0e11f32e4cd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4103,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1007.py",
+      "source_sha256": "ceb2a282a8d3fbb7f1f2050c32000030dfe2413dd9c690f040c2763fadc3c038",
+      "signature": "b448bb7155cd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4206,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_106e.py",
+      "source_sha256": "a92d067e0c1b4a125c67266d58fecc423d141ec5620ac60df50e5201cb5f9733",
+      "signature": "b80300cd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4500,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1194.py",
+      "source_sha256": "700a8f474ccd48c8326241352b6e074ecacfed203dab95e40dc5664c10b5d704",
+      "signature": "c7052020c7042d3e8bfe5753b40fcd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4632,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1218.py",
+      "source_sha256": "f769d95b0a318116f6627f8bac1fec96c92a81260d61a2e4f324ceef2500156a",
+      "signature": "8a174322d27408",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4648,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1228.py",
+      "source_sha256": "91033661061ecd7bd2a988ae5106c7360f5127cc28ae62ee39657b8314c6c9c2",
+      "signature": "50b104d2ece80f00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4671,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_123f.py",
+      "source_sha256": "08ef8a9ebc05501f739f4d98b1d21a13ea7588171f640ea5b3df8ad48373ceff",
+      "signature": "80e40f8adc32ff81c34f228a17881446",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 4755,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1293.py",
+      "source_sha256": "6a31c78c42f3ffc1386fb836ebe3ce8267641170cc068e47f28b7050e6a7b102",
+      "signature": "8e06f61fbe8000268a0c32ede30f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5032,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_13a8.py",
+      "source_sha256": "86839a20ce6f8765b8d303fb1fc7ac4fe6dd9dba2e60576cb87f41459292088d",
+      "signature": "33db268a04464923c97503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5084,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_13dc.py",
+      "source_sha256": "6e90d752ca80ccfeb0c6630c18359ff057b4816f20c51ab1ce77135fe183f2ed",
+      "signature": "8d3e0620c7050000c745020000c60619",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5218,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1462.py",
+      "source_sha256": "78d5f14b8c8fc27c8879a79fc511924457867843ae57d6da5f0122009633dc48",
+      "signature": "b310b412cd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5280,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_14a0.py",
+      "source_sha256": "4103bd49dfdbd2f76266380b9b81a55e4521f7b62aea2c72ec514a5af934896d",
+      "signature": "bab403e83a00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5344,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_14e0.py",
+      "source_sha256": "c44b8e7415e2085bca0f408957516fe88539643e835373b9644b5c81dfa5cd2a",
+      "signature": "b00fee42ec8ae0b066eeb90001e2fe",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5411,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1523.py",
+      "source_sha256": "a3a14f8a9b583ee1fff175c288b40ebffb393ce47b9f8622e8a4713f1f51422d",
+      "signature": "8d1d803f007403",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5456,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1550.py",
+      "source_sha256": "db0bc4536d7a3626ef3fc17cad5f08199ca4c359cb1e0a42b2f6365782fb118b",
+      "signature": "8b16da1f80c206eca80874fb",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5474,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1562.py",
+      "source_sha256": "cb66a745911015016d6388b0661e70d1b7047efd0c13512463c5be6f3fcb9213",
+      "signature": "fa1e06b80935cd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5506,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1582.py",
+      "source_sha256": "1689b445f6112fba6209506ac82fd8f972deef93143ff5c2eceb50c194ae8873",
+      "signature": "1eb809258b16ba1f8e1ebc1fcd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5549,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_15ad.py",
+      "source_sha256": "eddb3e913adb813476cd7864cb0f751d6c2f6eb45dc58527b5a29d1196f3d4c5",
+      "signature": "803e0e20ff7507",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5634,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1602.py",
+      "source_sha256": "f6387d90872fe89f8a660163845ab9143f6b659b4962764af8d6dfc39471471a",
+      "signature": "b9ffff8b16da1f80c206eca80874fb",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5700,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1644.py",
+      "source_sha256": "ccc77ddb0f9ca60f23c145d30abc912c6d9767c3894db4cb56e2ec133082f13c",
+      "signature": "fa1eb808250e1fbac717cd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5801,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_16a9.py",
+      "source_sha256": "3932d27c8adfeb0e7b2a2096908cc784b7a764704c9d83847ff7b1378d0b3d42",
+      "signature": "1efab036e64332c0e640e64033c0c41e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 5844,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_16d4.py",
+      "source_sha256": "474a75ec9b13ba424ae9d64e6ae701c943e5e78fc185ab39fc5844bc22ab189e",
+      "signature": "1e505351b8b9198ed8a00a2022c07405",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6068,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_17b4.py",
+      "source_sha256": "8aba196aefbaeb6d817dc43514ed59d32c66df3ed872fc042bc410d5a126c092",
+      "signature": "50fae80500",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6078,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_17be.py",
+      "source_sha256": "4714110d13ede4eafdef22c3c737c32432e8cc76bfbdcbe9c999b11f1b00d2ad",
+      "signature": "33c9e464a802e0fa",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6087,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_17c7.py",
+      "source_sha256": "809dadac0c662f4fa10d5ebb95becb7eee6334c1e4ff7fab81bd42726ab7eafb",
+      "signature": "501e065152535556579cb8b9198ed880",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6206,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_183e.py",
+      "source_sha256": "13aa725bb01ff8f682a63a8473de1eb21b4101e0cd3b9fdf8ba1e8e9606b7a8b",
+      "signature": "32d2e84929",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6222,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_184e.py",
+      "source_sha256": "ac5b123b3bd6ccb469fd6014cb3f019ab9d9d35c6f3843416f8ad408c0a57324",
+      "signature": "803e1020ff740c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6241,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1861.py",
+      "source_sha256": "0874cde27e355246b5b0e381291b569e25fc833c08dd311cb56c161b7d8d2842",
+      "signature": "803e1020ff750c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6248,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1868.py",
+      "source_sha256": "206d01782c71eaee4c977a9e695b8cf7f14d9cd41af5eac6d6c1f3c465e0517b",
+      "signature": "f606a725037405",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6255,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_186f.py",
+      "source_sha256": "aa9db624eb5607f479043457d506489f93f5b5a930b1519c669b0849ad952fa3",
+      "signature": "b80000cd61",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6270,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_187e.py",
+      "source_sha256": "910c7d9f44d08a7aa8407042694ca32ae88058fcbd19043f3d5be96a5817d8cd",
+      "signature": "e8fe3ffa",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6286,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_188e.py",
+      "source_sha256": "aedb9ba39cf24200895fc464e1dde985d989dbdfbb7b5250c9ce57169e65e199",
+      "signature": "e82100eb",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6291,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1893.py",
+      "source_sha256": "95931386ff80d27adb3696e62643418d0e0492f284e33eef0cbdd692db4971cc",
+      "signature": "b89d189c0e50ff2ebe1f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6301,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_189d.py",
+      "source_sha256": "3082a4f8181da54f2987a187c7f28a0fb7f5cb1330daec05517ed9276254c56e",
+      "signature": "fbc606cf1ffffe06cd1f9d5f5e5d5b5a",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6322,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_18b2.py",
+      "source_sha256": "020e33fc40537eddb7edc3ea1af529ccd75390ca36fb447f2d28aa1e5efd6cfe",
+      "signature": "b020e620c3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6422,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1916.py",
+      "source_sha256": "515384c19602917e523f046934a9b3362c74919691cb95ae983703a2b2c0661f",
+      "signature": "1e0650065189162825b8003dcd21",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6525,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_197d.py",
+      "source_sha256": "236ae42e1e8d5aac7cd7201304a946741c02058e41478c602e4f8b3b80ba5f61",
+      "signature": "8a1e6b1f32ff8d36ee548a08fec932ed",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6779,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1a7b.py",
+      "source_sha256": "a785f70d57e4004844dfcdfd13a8c4f68aab10c4a83700eece5ac6cf3cdaf70b",
+      "signature": "1eb918008d3e231fbe10001e078e1ef4",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 6978,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1b42.py",
+      "source_sha256": "eb32d2d8a5dffebd27e159b9b3e3238f0d90238a8f21d292c48450ec18e55abb",
+      "signature": "ac3c807431",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7033,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1b79.py",
+      "source_sha256": "dfbf89899c053df765a5194a7dcee786c75a4bf4d6910f512e80032452ebc84f",
+      "signature": "51e85c01",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7081,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1ba9.py",
+      "source_sha256": "25f7c16b064b1c2c1676d2d5c8b9cd6ebedc2bc2a169c9a0f223cf41c05e30e3",
+      "signature": "1ee80200",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7085,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1bad.py",
+      "source_sha256": "b366583dab1111e899cde271a789e306f028b2a1c2692b33cf8c857b47bb599c",
+      "signature": "1fc353fd",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7087,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1baf.py",
+      "source_sha256": "d32e4b87eeb6f60709125ce9ab8b6f325135a39b809ad77f287125762e9f5e58",
+      "signature": "53fd538befb90a008bd6e87201",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7159,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1bf7.py",
+      "source_sha256": "898f6dd6203d516cb3065801f77a58c0590881a6aaeea469e26a0734dfb44210",
+      "signature": "b101e8a700",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7169,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c01.py",
+      "source_sha256": "990a9878321a96ff36b170d45b45a52e85170744acd7fe1a9b7747878d1b9088",
+      "signature": "b102e89d00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7179,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c0b.py",
+      "source_sha256": "ba041710e3420770b925d2139979d0b810b7b7ca0b0a0098de418525b193cd46",
+      "signature": "8bd883c3028ac880c109e86f00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7195,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c1b.py",
+      "source_sha256": "7093af9ec3550a24fd750ae2574c29fb82bd7b35e30d8dedd32fffc60ae5453c",
+      "signature": "3d03007518",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7200,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c20.py",
+      "source_sha256": "c57c36dbd7e82e366c0cf296f887621dc9d21f85ca0f2e5cf6b94e88fd2b7415",
+      "signature": "b108e87e00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7221,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c35.py",
+      "source_sha256": "bf1f53bc6cbeb8f4fbbb8e8e226c6ee8f3e8af9a728bb806cdc9097d1f0e98dd",
+      "signature": "eb3890b1",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7224,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c38.py",
+      "source_sha256": "47ca30530cde689392b2c8a3fcae343fd7cd4894e2bfcbe804a54764a8b6f952",
+      "signature": "b108e86600",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7239,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c47.py",
+      "source_sha256": "5642430fca3cf3778558d8b2b145d445128316056628fb5f85e79822b6c54c34",
+      "signature": "b101e85700",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7249,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c51.py",
+      "source_sha256": "091aaad61e3deb1cc2bb5869351fb0d01633c93efc81e8b0a61e5e90015bef53",
+      "signature": "bb0100b108e82e00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7257,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c59.py",
+      "source_sha256": "2dce29370f89ae9b656012e2b2539b20e22f1e6ba0ab3040857cef2c581e3b98",
+      "signature": "eb1490b1",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7260,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c5c.py",
+      "source_sha256": "b1437408ab63a53ab8730f939f40e5064885678cccd5d598688979b9149e795c",
+      "signature": "b103e84200",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7279,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c6f.py",
+      "source_sha256": "9396a414883e67c404b95e4def2c591ba044c6f5d72ac6c5973a4a6957c2189a",
+      "signature": "3bfd7602",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7283,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c73.py",
+      "source_sha256": "f579cf0ee3a9a8ddfec8349373853bc1dc4ffa7e62f3bd7229db8c64ef27697d",
+      "signature": "eb8222f6",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7285,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c75.py",
+      "source_sha256": "ceded589ce3675e5bb6780aa2302b73a004af94d606337879af8cbae90046e05",
+      "signature": "22f65bfcc3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7298,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c82.py",
+      "source_sha256": "ec5d7306d3039be6843f86e2fa62b39249aba8d89720b7e0982eebce4c8bb761",
+      "signature": "4f268805c3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7303,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c87.py",
+      "source_sha256": "163d060fa85cd61ceb08483f6792a189ee7bd52f9b6870f3e7a3a4c06a168019",
+      "signature": "e8190043",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7306,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c8a.py",
+      "source_sha256": "24ad70d44ba591e2a5c0175a0517885232c7d3ea2dd26e374383e05e5fe2b47c",
+      "signature": "43561e51061f8bcb4f8bf703f0468a1c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7327,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1c9f.py",
+      "source_sha256": "d1b0b97d516e16438977a7d6dea6169930b7b468cea1ba09f17112ae37678d87",
+      "signature": "591f5ec3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7331,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1ca3.py",
+      "source_sha256": "a46583bd03578eb1714213d3e4d6203feb25ef13f088d992f7d77b5150509bd9",
+      "signature": "33c0fecd7507",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7353,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1cb9.py",
+      "source_sha256": "68498110e9fd7e5b129f05ff743c9e1b61bfb8f772d2a01e7c57c043466c490e",
+      "signature": "1e5206575156803e931fff7507",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7385,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1cd9.py",
+      "source_sha256": "0dc34159c99dde89260cff13ef4d201081f387c8526771be40079953449863a4",
+      "signature": "1e5206575156803e931fff7508",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7470,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1d2e.py",
+      "source_sha256": "6326646f08b7e142ceab1289efe8a2db654005940e1c0dd4104bc5dae3598c09",
+      "signature": "57561e535152fcb8b9198ed8803e931f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7708,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1e1c.py",
+      "source_sha256": "4f81b95fc026ea432943a69aa4f1a7634c95bbadc4b4da765dec7edca0084ea7",
+      "signature": "520650511e078bf2b908008d3e961fac",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7780,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1e64.py",
+      "source_sha256": "f1c4ac8818919ad6d0a89d0f8952bf3dfba0f7c47b9c7b95304f885f1634f6e5",
+      "signature": "1e8a0e921f22c9743a",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7889,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1ed1.py",
+      "source_sha256": "84bce4f68cb125acc8cf2cd6a1e0420839cd4d2a4ce118e49a75588be56bec10",
+      "signature": "32c0a2931fc3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 7961,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_1f19.py",
+      "source_sha256": "2ff7602ceb64a5b10cc03c624d46fc040ab1e698776b27df47c2a18c0ecba7e5",
+      "signature": "803e2b00ff7503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 10299,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_283b.py",
+      "source_sha256": "361b8495db49b9af8fe26a8d2e6c60b910bbaa74b5aa9df3b70d555047f6d38b",
+      "signature": "8b048b5c022d040083eb0683eb10d1e8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 11780,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_2e04.py",
+      "source_sha256": "b6ed455acefcbbf3d3b496a1338cd9ba7d5a7d5a2cfb98d07bf5ad8f69f81d7d",
+      "signature": "b001fe4c207555",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 11968,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_2ec0.py",
+      "source_sha256": "187950484a8da44f8c06d6aa7158812bc759258babca023b3d7cd03fa500fdbe",
+      "signature": "8b048b5c0281fbb0007d6f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 12454,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_30a6.py",
+      "source_sha256": "f483b700fb79d54fb65be6f40acf4cb9c9b2d8e7b000ae474e63abd5b7195dd7",
+      "signature": "803e2b00ff7503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 12624,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3150.py",
+      "source_sha256": "71c0e61db6d9b2af446cf0f9d1dc94a5c5c22e59935a0b314f095ae54b1f17b8",
+      "signature": "803e2b00ff7466",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 13876,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3634.py",
+      "source_sha256": "4e4537504b57edae498c9b34d3dfc9ad3850903f99b176a0dc1bd2be4e348adf",
+      "signature": "bf88008a0e430022c9744e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 13944,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3678.py",
+      "source_sha256": "ec47484c2f67068842a71597610953004abc3e8cb93b1c29e12ccd82e01fbf65",
+      "signature": "c6065000005f5983c72de2c1",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 13966,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_368e.py",
+      "source_sha256": "f0665ede23104906635bb73f0aca8d915533f562b09eb2bec47fb9ea481b3724",
+      "signature": "bf404ab98088e86117",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 13997,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_36ad.py",
+      "source_sha256": "845127c2f68b503e525114fa3f18757cc832701ac6fe6985ad68a959c254a10c",
+      "signature": "bf40ccb94003e94217",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14006,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_36b6.py",
+      "source_sha256": "5af05b3f2a12f24d5834aeba07e624c6a2d3e073d49a03e78787db28d077b7e6",
+      "signature": "e8d5ffbf",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14218,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_378a.py",
+      "source_sha256": "492ce0bc23ce5bfd90a154c275e1309c15e4d5d99babf368a6c7a7bb82082103",
+      "signature": "1e078d1eeb0f8d364b1b8d3ecb17b920",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14274,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_37c2.py",
+      "source_sha256": "b0f01f6b2be9676f3c55a956645dd30bfb6dda95ddbafc9d48bd2e50b89c9b89",
+      "signature": "8d3eeb0fb9100033ed8a65048a4505ba",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14393,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3839.py",
+      "source_sha256": "70d56fc51539d946052d232fb9bd3bcb0660a56cee1ef80c1ee756f78715d1a2",
+      "signature": "8d3e2b17b920008a258a45018a75028a",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14495,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_389f.py",
+      "source_sha256": "eaabe337db835a419baeecae0812fb56885123260bf7aa695c9ad886c7296b0d",
+      "signature": "8d36eb0f8d1e980eb9200033ed8a6404",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14660,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3944.py",
+      "source_sha256": "bd932b904c148218f32900ba294242c36df3d0072e7ca3cea51afb26fdd3ea77",
+      "signature": "803e2b00ff7403",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14671,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_394f.py",
+      "source_sha256": "584c29a9207e48843508d3c67eaaf82b7bf4e67b851991ba54940b08ff9d6fd8",
+      "signature": "e83cfda0",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 14798,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_39ce.py",
+      "source_sha256": "094cdc7c7b0ad039d38dda37f2797435eebcb04842a0254f7e9361959d4af45f",
+      "signature": "e81e3cc6",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 15048,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3ac8.py",
+      "source_sha256": "0dfd2933afa1c8304ca152938c7317f94afdca6d7281857e6852c23607daac1e",
+      "signature": "e8a43ee8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 15582,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3cde.py",
+      "source_sha256": "02780225cc301e4f25de68b9e364eebbdc7eb12807b70745f6acb1544fa78bf8",
+      "signature": "8a0e430022c97503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 15983,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_3e6f.py",
+      "source_sha256": "482f06e3396f343ac694a69c081d49f8b966de6028c66fe36d60696ddd96d3ae",
+      "signature": "a0d01f3c3b7503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 16517,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4085.py",
+      "source_sha256": "400178a41a53eb5941e6c1678d8c8397c17423188a6e23658632a002c77a2ae5",
+      "signature": "a0d01f3c2c7503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 16655,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_410f.py",
+      "source_sha256": "a4b7a3edc099eb3aeec8c1969fa3f8c7cb25debfe32e75a194f4098c3ddeb1d9",
+      "signature": "1e0733c0bfa80eb96800f3ab8b3e0000",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 16763,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_417b.py",
+      "source_sha256": "57b9a3ea948275c57d6c3ee776dfac07a7131f21fc0901f4d93e287218fd30c4",
+      "signature": "ac22c0740b",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 16780,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_418c.py",
+      "source_sha256": "7cf37b5bdf3f334a4d96e676880a4a0cc5f25a6d07a22882684088d0bdbd71b9",
+      "signature": "803ea625007503",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 17204,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4334.py",
+      "source_sha256": "f7c23d99e056db7e061bedb9dadc1f0a49305b16e20e3d0c3228af7d9bedc5f5",
+      "signature": "c60651000380faff7403",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 17241,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4359.py",
+      "source_sha256": "c954d97039aabb2dbdb913dd1935cc89ba3563310bcd7c3f7884b7902ac87815",
+      "signature": "c60651000c80faff7407",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 17286,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4386.py",
+      "source_sha256": "4b981e5dc8d68810f2c90a793cd61e9ae2e8aa3fe7302a025214a220afa516ab",
+      "signature": "fa33db33c933f633ffba0102eeeb01",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 17358,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_43ce.py",
+      "source_sha256": "eb002870d405dd71dbd82cbb97611f3ed9ca508600f4d338b729b521d469ea50",
+      "signature": "a0d01f22c07404",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 17394,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_43f2.py",
+      "source_sha256": "6f5cad7bee74294c8f79b46957e60b9d64b718240bec39fc2282615067f9f559",
+      "signature": "e8f207e8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 17766,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4566.py",
+      "source_sha256": "08bcc4efc234a4d1264910aee99238ab5e772f651586489d1e4752dfd1681852",
+      "signature": "a06e1fd0e08ae0d0e002e0d0e002e0d0",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 18082,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_46a2.py",
+      "source_sha256": "c4a796cc32ea92ee3db9d9e40337f62cc744fde041498018741ba6ce65a839ee",
+      "signature": "e81400b0",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 18105,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_46b9.py",
+      "source_sha256": "a7f63ccebf7906d47e8f84279ba59e51f257252e56a3652daefc78e35021af10",
+      "signature": "8b16da1f80c206eca80874fb",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 18479,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_482f.py",
+      "source_sha256": "df433e487784e0f81453585971db061d95cb163b8b4ac58b76698df4454d6337",
+      "signature": "803e102000742f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 18572,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_488c.py",
+      "source_sha256": "7c375233fb6b0ab50e18f2f9668cbb20a6a9d053308965ca4bed2eb9807b7139",
+      "signature": "51b11ea06b1ffec032e4f6f18ae8f6e1",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 18621,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_48bd.py",
+      "source_sha256": "0fced5f325720d5b891ec37e3cd06f8db75b82c7af7694b19b7ceb1452c04d00",
+      "signature": "a040008d365d4ce89502",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 18678,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_48f6.py",
+      "source_sha256": "6e56d7b4d0d43207907563dedf9f699478b67de6320be031d770bfa93b4def09",
+      "signature": "a0400032e48a16410032f6bb10003d64",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19141,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4ac5.py",
+      "source_sha256": "bdbc8ef0782350a24b2069a4452d57a5db292be59087266fb54ee1223308d1c5",
+      "signature": "803ede1ffd754f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19228,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4b1c.py",
+      "source_sha256": "e69d3109d5ea3dca813b93636a0b88868ed71ef47a9632b8e882a304d02c6aff",
+      "signature": "e8c800e8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19292,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4b5c.py",
+      "source_sha256": "9b4ffe6c260be32cf0055f1c281ab7142571017fe6fa4bb12c872189d6d39c1f",
+      "signature": "c6440320e80500",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19304,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4b68.py",
+      "source_sha256": "bc6c349402ffd5b690ed2c14453da596df3fb23b4a46e383f5fb647abbb4b751",
+      "signature": "c60420c6440120c644022032e432dbfe",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19390,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4bbe.py",
+      "source_sha256": "82d6d880a346d2bf7038a2dd6df20457542fa04b8a0cba0736c3d17a8ec907fc",
+      "signature": "32dbebcf",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19394,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4bc2.py",
+      "source_sha256": "c78ce1a97212acb5852ba9da64f9f56ad6d78b09e791b757e4199e45e48213f1",
+      "signature": "32e4fec42c6473fa",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19431,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4be7.py",
+      "source_sha256": "7e81cec63e2d68b7ad78f4cc793f8777e2c9bb02c2e4efc6c77fd9984771db13",
+      "signature": "2ec606be83ff90fab89000cd10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19445,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4bf5.py",
+      "source_sha256": "4b1c07adb1f24304bd81d541bc857d492c5f12adf03d1e02d49e4bf0d99ae149",
+      "signature": "c706761f0000c706781f606dc7067a1f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19463,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c07.py",
+      "source_sha256": "a5a0ea58c15dc88447f0d91d115c1c6fc9a8570a8c21153e5ee8b19a8a840b2d",
+      "signature": "b88002bb5e018b16761f9a08881010",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19479,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c17.py",
+      "source_sha256": "89026432aab020df1b9be60ec0404a664a0a1e1f3f838e9aa712c580d53d383b",
+      "signature": "bfe015b98057e9d801",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19488,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c20.py",
+      "source_sha256": "87cab43f786fc95f927f40e6870cb57e7ea2331345307a106b9e142825ab9d7d",
+      "signature": "8b1e761fe80f00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19506,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c32.py",
+      "source_sha256": "b95234ae6ce483d4dfa9fbc7a38a4aae60842f6e74e010e517efa75103985d0f",
+      "signature": "8b1e781ffa8b16da1f8ae7b00cef8ae3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19510,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c36.py",
+      "source_sha256": "c2f2ab930d3cfbdd61eecc1c1630d661d44a2ce24c8abe4319f45a60af9aec6d",
+      "signature": "fa8b16da1f8ae7b00cef8ae3fec0effb",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19527,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c47.py",
+      "source_sha256": "75d3716b6be1589e6787fba7d3b304ab4805de452392ac9860d4c554096354b2",
+      "signature": "505351525657551eb8b9198ed8a0e31f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19582,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4c7e.py",
+      "source_sha256": "284831c357bcdfdc4b4a1ff60c355078d47cc38b717aaeacfa892fd125033043",
+      "signature": "8d36f24db90a00bb415a8d2e3b508bfe",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19738,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4d1a.py",
+      "source_sha256": "9f7ccee172b0591a8eaed47023419da4837abaa83fd464b24d73949d4eed0de9",
+      "signature": "8d36780f33dbb95300f600807506",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19789,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4d4d.py",
+      "source_sha256": "02ee499bdb80ca17631f4f9c759b88992393a4a9e0ed6ebc4f24253fc81ef3ae",
+      "signature": "ac22c07425",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19832,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4d78.py",
+      "source_sha256": "623d97e8cfd2fdbef7b73e278d664ce0ea3ed461a5f56be3cd9140c004ff2b51",
+      "signature": "3c207445",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19906,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4dc2.py",
+      "source_sha256": "e9099d21db3785dfcd4c482f5377dbb813c9989e29706edee08a2d7135176a64",
+      "signature": "bac403b8020f36a30800efbace03b805",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19951,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4def.py",
+      "source_sha256": "1d18789155c8eefdf3a617b37601105030de79214cfe4efa189f123f7dfa81d0",
+      "signature": "bf0000b9606deb01",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 19960,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4df8.py",
+      "source_sha256": "fdb679feef73f6fb65d04a9474d344bc79257ab0c311cefd789034a97dab6ec7",
+      "signature": "bac403b8020f36a30800efbace0333c0",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20023,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4e37.py",
+      "source_sha256": "69bf7917347c402752b971d63aaa3030fb865befd6bbc16685b598c415b2a894",
+      "signature": "a0721f3c027508",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20130,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4ea2.py",
+      "source_sha256": "a94812c564dfad0935f1bd0ec95ab28e8ff23b48ebc1958403e0298d3b556962",
+      "signature": "a06f1f3c047508",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20207,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4eef.py",
+      "source_sha256": "4e58164e13a8f866e7723fda62859c7b2640d8a7a9c7fbe6ebb5230b6ae5b2f9",
+      "signature": "a1ee1fa3e41f33c0bb1400bd420fb15e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20267,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4f2b.py",
+      "source_sha256": "4e92a4e07e9f170bf6d8c44e5ba05af3ee884554b5a678c431db2d26223c6466",
+      "signature": "a1ee1fa3e41fbb7800b84400b904008d",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20298,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4f4a.py",
+      "source_sha256": "4356828cb049195b93ebe4b2efa1103f74a36c4e105a339ea4eb349cddd21393",
+      "signature": "512e8b3583c702bd430f50532d080083",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20334,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4f6e.py",
+      "source_sha256": "cd06d16fee3820963f3aceb2901af2f65179b8fe0d5363f2ca6ec73a5353ae31",
+      "signature": "5053555657b93d04ba78008bfe81c7b9",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20374,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4f96.py",
+      "source_sha256": "58dc89c84ce206d239136b1e62bb48f2ca5f3a78f80bae65b040e96c8da2253e",
+      "signature": "a1ee1f050008a3e41f8d366049b90a00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20472,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_4ff8.py",
+      "source_sha256": "1c2e0455da701dc9348b67128b3a288c0c53497b98bce549c7d9825f6c261508",
+      "signature": "8d366049b90a00bb28008b44023d0080",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20503,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5017.py",
+      "source_sha256": "d12de75e8e2f3bb7c739a34f2d19e7dfbb8957b539dcc1d5283a465d32821d96",
+      "signature": "33dbe95a2e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20505,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5019.py",
+      "source_sha256": "7282fc8a0923cf6cd8c93223597d19142f0378a11e97d13b8b2705ca01eea086",
+      "signature": "e95a2e32",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20520,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5028.py",
+      "source_sha256": "8ced7678583bbc503271bf8180cab0d56d4cccf7b194b9af379d8b3a8fd010c3",
+      "signature": "fa1e33c08ed8c7062000474c8c0e2200",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20539,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_503b.py",
+      "source_sha256": "a5ba16d5e1bbd41b19f6f7af469fd998bdef91a1ad5f32e650d1e8c339edf7e2",
+      "signature": "8d36ef4de90bfd",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20546,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5042.py",
+      "source_sha256": "fadc6c757bafe699a35ca5ace0fb48e8de82ba0401e825b8ce32e8fd6da6474d",
+      "signature": "8a166b1f8a361d498a0e40008d361349",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 20898,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_51a2.py",
+      "source_sha256": "bd8a936905ecc1bc33da626da06fcd4c7429e53f7cad9512225d71c870b9d778",
+      "signature": "8d36f24d813c42497521",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21236,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_52f4.py",
+      "source_sha256": "b7dbd5877a595a1fca4b3c319daa1a5f82a20ca6cb499866c999d4c6e59f4039",
+      "signature": "833e7c1f04740e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21278,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_531e.py",
+      "source_sha256": "655a7e433ad995311d20a0002d61040d71239f30bf2c18b15adea7fef3b58b72",
+      "signature": "32c0b91000bb0001e98e02",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21289,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5329.py",
+      "source_sha256": "3994830437047347afba56bd422b8d696c1c81b30b4dc386415e5681126ea124",
+      "signature": "52bb0001e83902",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21323,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_534b.py",
+      "source_sha256": "307f70015af4f3f46f36644ab21c9603083eca4341ab78ac1c894c5bb09a1e2d",
+      "signature": "5352b300e81702",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21356,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_536c.py",
+      "source_sha256": "b316b9d360e403c1de590b2ba74de25177ed6b6e740457bdf9c6829f47fcaf4b",
+      "signature": "32c0b91000bb0002e94002",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21367,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5377.py",
+      "source_sha256": "07a3ef02a38a6f37ba986e41641b47ce4431d42c59341900b5902b628d98c407",
+      "signature": "833e7c1f047423",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21450,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_53ca.py",
+      "source_sha256": "d4cf17a74b2d1bfed7261161fe23a1d5d564caf16aa425c519e0691e3044a272",
+      "signature": "b9080832e403c0833e7c1f04740f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21494,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_53f6.py",
+      "source_sha256": "18a0da0662366fec6eefb9730b283149aa15a71d1e447e4312bb6c809d2f6735",
+      "signature": "b90800eb06",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21500,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_53fc.py",
+      "source_sha256": "367b7651fd0d312df5e9e6198bcedc24e34670a1ef307793074939e7a5ba1c2f",
+      "signature": "b002b9100032e403c0833e7c1f04740c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21502,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_53fe.py",
+      "source_sha256": "11df356ed57208116a00842b14fd345926db149a6b53022b9d78e6c73a64e15a",
+      "signature": "b9100032e403c0833e7c1f04740c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21541,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5425.py",
+      "source_sha256": "5ff72e59f4dbb3dc78ac5b4d043843cd2b17a39b24a1cc672f50a6d5e11d7426",
+      "signature": "fa8add32ed8b16da1f80c206ec52b2c0",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21575,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5447.py",
+      "source_sha256": "007a644e7d8179dc89ab86845779ede42c91cb1dcd3a5c8c76a6992e7a2b0acd",
+      "signature": "833e7c1f047408",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21619,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5473.py",
+      "source_sha256": "bd1e7bbbe0b6cd4343425a166f8bc02941c2f9cb3b4ceaac5a75a26a103a6a30",
+      "signature": "833e7c1f04740b",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21644,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_548c.py",
+      "source_sha256": "b9e0f3b43f80d37de70e73bc498803f988e93edefdce9b4b70f938d35a4c4e04",
+      "signature": "fa803e0c20ff740d",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21700,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_54c4.py",
+      "source_sha256": "821fe3165ca87b26e41e9342087ce7b8bda9f82d03689a98d630cb1337971bd8",
+      "signature": "57fa803e0c20ff740d",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21821,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_553d.py",
+      "source_sha256": "7d985df9465d12ca6bb19e8f67b8403f46ac83ee94e494a52857558c4fb4926b",
+      "signature": "a17c1f3d04007406",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 21865,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5569.py",
+      "source_sha256": "6cfd79417957ab1cc6bb809c8df2001d133d7324c56beea39e29cf4f2536db41",
+      "signature": "833e7c1f047423",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22078,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_563e.py",
+      "source_sha256": "c50fab4a6f2a2040b4b7031df7eca031a75d8860a8ec8d10c0aabce9e2ed4990",
+      "signature": "33ed32ed518a148a0d8ad98ac2e81e00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22124,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_566c.py",
+      "source_sha256": "c066dbd140062b58f6eccaec36187da8de98611ad2bc4709f7ebaae56ddd5f69",
+      "signature": "d0e8d0ebd0e8d0eb240980e309e81f00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22149,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5685.py",
+      "source_sha256": "5733d1a96b508617af7a3c87ca16a99f4475984c722e0cb31d0f3dafc9a0ecd9",
+      "signature": "d0e8d0eb240980e309e80a00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22166,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5696.py",
+      "source_sha256": "6950c454391f9142cfd11b1e4d545fd8077488c4897e670a361fdb7ddecdfca1",
+      "signature": "240980e3098ae0d0e8d0e8d0e8d0e480",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22171,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_569b.py",
+      "source_sha256": "bfc31b60d195c99cdc9fa4880a78c81dab6a9aca47afc24a96557d798c787747",
+      "signature": "8ae0d0e8d0e8d0e8d0e480e40224010a",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22242,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_56e2.py",
+      "source_sha256": "48ab2785ce21a2445d77a5ba6160e6ee6884341f1295c5eae75a5b09775ebd9f",
+      "signature": "32db32ed8a048a25e81f00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22284,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_570c.py",
+      "source_sha256": "6a11d0bc5409c3ea79b48e6c914c67e13c42894d5b1ae8ae58f086f5f00b5e2a",
+      "signature": "3ac4740e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22310,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5726.py",
+      "source_sha256": "a097a276ac7d01e37f69c65a1f3419f283136fd211a20e34eddbb913ec3d12e4",
+      "signature": "8b1d035d047904",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22481,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_57d1.py",
+      "source_sha256": "32bd3600b75b30a9be14b853f1beb5f8ed49e37f64770cdb701bb04e656f6779",
+      "signature": "50ba00a08ec2bace03b8010036a30c00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22567,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5827.py",
+      "source_sha256": "dda43a2c261fe65f42651a91e10a696c8fafca4041e99be531045ce1a13d717a",
+      "signature": "e835198b",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22655,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_587f.py",
+      "source_sha256": "adb8098090b0c38146cdc655ef55119b63913fd1b156cba6606e43003cbdab24",
+      "signature": "fa518cc1b84e248ec0bac40326a10800",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22738,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_58d2.py",
+      "source_sha256": "2025324ac9955772ba678df5130ef283eb36914aaa52925e4baeddfde061d6ed",
+      "signature": "1eba2b258e06e41f33ff33f68cc1e896",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22864,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5950.py",
+      "source_sha256": "eb754f9b5660020e2364cab13fd55cd1aca7fe135e726bfc54815d74feaa36b3",
+      "signature": "1f1ea1ee1f05210f8ec08ed833ff33f6",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22909,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_597d.py",
+      "source_sha256": "da7570f5cfb6dbd2e29d8166addf81b4df8bd04e50ddd9e860890b72b8fa2918",
+      "signature": "1e8e06e41f8e1ee41f33ff33f6e81cc2",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 22971,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_59bb.py",
+      "source_sha256": "bf50b9a204dece181a0f210fd0613bdcc388433db8af157781edc03e08bc1dad",
+      "signature": "1e8e06e61f8e1ee41f33f633ffb91200",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23233,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5ac1.py",
+      "source_sha256": "cbcecc5c7862ce93ab04fb245c1dd101452e163cd755f265e91c5ba462d27ffb",
+      "signature": "1e8e06e81f8e1ee41f33f633ffb90800",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23313,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5b11.py",
+      "source_sha256": "76648cca740993b2f29e4f78e8b1590d6c6001c60305edbfdea070338a9ae36e",
+      "signature": "32c951568bef8aee518aea8a248a4401",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23472,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5bb0.py",
+      "source_sha256": "164c18c1e5c3c4be772da18d4d486120d2671398bd2362b2644b973a5395b66e",
+      "signature": "568bef8aee518aca32edf3a559fecd75",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23558,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5c06.py",
+      "source_sha256": "66971ab1571d08c4b750c117bc0cafbecbc18594eb35436ad79fce0a698f9ac3",
+      "signature": "32c9515657b50351b5208a248a44018b",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23745,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5cc1.py",
+      "source_sha256": "ea9bbf7adb1d04c7c5764fd70d19542f7b6e4275a205948729f59a1b7794d7ad",
+      "signature": "bebc528e06ea1f33ffb91000b303e80b",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23773,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5cdd.py",
+      "source_sha256": "676d788c89f453c4bebb5d99655946d622b8fc2fe31396f4c6f7ac54aa7844c3",
+      "signature": "32f6525356535151ad32d222f6740c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23910,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5d66.py",
+      "source_sha256": "19aeb1e28c631b2e36a8b73cf12a5f02bc07d340ab9b44cfbf2d0fdda8c8634f",
+      "signature": "32f6525356535151ac32e422f6740a",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 23956,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5d94.py",
+      "source_sha256": "412b143db97a98bcac14c4efca6ac4f71e847a1743e20c7033d6bec8df1e484e",
+      "signature": "bac403b8020f36a30800efbace03b805",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24006,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5dc6.py",
+      "source_sha256": "58a6b960c8dc33663faadd3390b08c15a7c594e5ae970f62d2aefa1dcc797a41",
+      "signature": "b800a08ec08b7c0283ef107902",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24056,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5df8.py",
+      "source_sha256": "0ba1dd91ab3c6aab9cfb1ae53413ad076e7acc95fa7d052c6ee88896a1e4b22d",
+      "signature": "bace0333c036a30a00efb8010f36a30c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24250,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5eba.py",
+      "source_sha256": "fe36cd5966582f475bcc32a78fc856e5d3e571606168cb7f48aafcfbe02d3814",
+      "signature": "bace0333c036a30a00efb8010f36a30c",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24335,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5f0f.py",
+      "source_sha256": "2dc98f816e17ecb0d8289b7c6d3d2b17aae267cb18524574d88901ff8d5a06b7",
+      "signature": "fabac403b8020836a30800efbace03b8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24492,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_5fac.py",
+      "source_sha256": "1cc6b10cf1309928710a713165563a0252db9d8c14b2f10a5bfabd556f9a9481",
+      "signature": "d1e0d1e0d1e0d1e08bd0d1e0d1e0d1e0",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24683,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_606b.py",
+      "source_sha256": "c0d6a23b3b95f0c91221f7045ed652c85db393430a330e6fd24695a4a5f90472",
+      "signature": "d1e0d1e0d1e08bd8d1e0d1e0d1e003d8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24897,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6141.py",
+      "source_sha256": "9eac2b74d9f006a872e4ec780686297c9e0b5b97b09e8a58299bda1cc1b8378f",
+      "signature": "5351b800a08ec08bfb83ef1052b8d000",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 24944,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6170.py",
+      "source_sha256": "7cd9a943ba6e2f4331ed04e1f0aac6b84e7a21b5de62249622608f85f1780842",
+      "signature": "1ebac403b8020f36a30800efbace0333",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 25817,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_64d9.py",
+      "source_sha256": "aa06ebe781f3113a496d2ec1b5f36e2ba4d5ebeaf2436293f233846100a9a368",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 26072,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_65d8.py",
+      "source_sha256": "ec199ab92ba74d64f4014cc76894a4383c3823be327a8a67f48356ffc2944071",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 26327,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_66d7.py",
+      "source_sha256": "7097f769f24019b5dcc8f97acc22f6ff61be3befb66c1d72ce8ad2ceb091d3c0",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 26647,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6817.py",
+      "source_sha256": "f41f64b74468681740fa536ec48f8f0541f1b6c3c55794daf1d94ae428d51385",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 26967,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6957.py",
+      "source_sha256": "f1f8b976f0ffd03964ca7494a3de6bec9355f1b56be186f98c422b54cd34ffd1",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27050,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_69aa.py",
+      "source_sha256": "ecd5dfeef29e197a5c916f4634a817b95a595efa9a706c3870922ff8cb6262e8",
+      "signature": "d1eed0d8d1edd0dcfecd75f4",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27062,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_69b6.py",
+      "source_sha256": "16af429432651682b320d7795f6166107a5d214eee1a6dc4bced222397abd596",
+      "signature": "53518bdd8bce8be8b0088ae736a30e00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27133,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_69fd.py",
+      "source_sha256": "c9b57a5d4be88f2054e3109615ff8f794f11d0904cf07f85b7e5489aa9797ad7",
+      "signature": "5f57b8010036a30c00efb8031036a302",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27185,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a31.py",
+      "source_sha256": "ec49bc12e061b80468e005d407c68bd4b0955b542099d9ea45972c6c8007e8be",
+      "signature": "d1ebd0d8fecd75f8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27193,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a39.py",
+      "source_sha256": "14076689d9d17f985ce3e2423a3f5d7f657ae0940d0aa54d30d08db7dc5f8656",
+      "signature": "8ae8fa268a058ac7aa268a058ac3aa26",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27221,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a55.py",
+      "source_sha256": "9c21b982e51f0feef17e70572ce5ad9dd41cd3c2d7da8e93a4f5ddcb719b8647",
+      "signature": "5fbac403b8020436a30800efbd0e00ad",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27249,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a71.py",
+      "source_sha256": "463af08a9da3f2a6ae210acb073a2fbb8bfde4c74c10b66ea2750283254ba955",
+      "signature": "d1ebd0d8fecd75f8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27257,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a79.py",
+      "source_sha256": "cc27b901dce62a42025594a16b43b7d2e1dae558e72d3f1e5b36b37aabd61dea",
+      "signature": "8ae8fa268a058ac7aa268a058ac3aa26",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27285,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a95.py",
+      "source_sha256": "872463ce5081a8dd3139bdae7986c7930ec8f43ef95ee1e0391cf5febc308739",
+      "signature": "1fc31e8e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27287,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6a97.py",
+      "source_sha256": "55fda6cf0633e7c88a0f803665cf53995900727608f222940140d7c430fb36cd",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27611,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6bdb.py",
+      "source_sha256": "b24974a070ce1aaebbf4620d7a267b8b12465453190010b59395265873ec4deb",
+      "signature": "1ebac403b8020fef36a30800bace0333",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27770,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6c7a.py",
+      "source_sha256": "b4d307dd42268f64a9d36f1537e46510400f94e155791861f498b2c18484ac97",
+      "signature": "eb998bfd",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27772,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6c7c.py",
+      "source_sha256": "f9eea37233e04dd35e09f6726d437b5aaa6153f5832c1eb69a109214f893afcd",
+      "signature": "8bfdb8010036a30c00efb8031036a302",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27847,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6cc7.py",
+      "source_sha256": "185206de418a5e64df1a7fcbafdca74b01b5dc43d5b54e415b83a11de33e52f3",
+      "signature": "8bfdb2c4b8020436a30800efb9200051",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27898,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6cfa.py",
+      "source_sha256": "7e77f1eda23a54f468963ff0856800f2879d4b7ad975d6dc7c47741eacc348be",
+      "signature": "1fc31e8e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 27900,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6cfc.py",
+      "source_sha256": "231fe81920f3caa0f2640724463d946510b843f2399c5e00d1f59eb3c37b1d5e",
+      "signature": "1e8ed987cabac403b8020f36a30800ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 28291,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6e83.py",
+      "source_sha256": "4787f49fe023fc9e6e1349b1a02f6e18eff8f63a36cd3fab8e966ad8bcdfa18e",
+      "signature": "8a44282c01b3a0f6e38d1e882703d8ba",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 28539,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6f7b.py",
+      "source_sha256": "efbddc29cd233ee3686d273ebaf20c758afa3cc0ebf5cd0e761f9c917a6db278",
+      "signature": "fa1ebac403b8020f36a30800efbace03",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 28642,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_6fe2.py",
+      "source_sha256": "aabe5dea6da32ef7a2dbe337b88fbd6f2388cdbc41bd426c276c0481169a2194",
+      "signature": "8b45023db0007c03",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 28783,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_706f.py",
+      "source_sha256": "b785f1f320ca828d674872f00b80baf63f4281d09ae1da09455d35b6e981175b",
+      "signature": "578b1d035d047904",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 29021,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_715d.py",
+      "source_sha256": "75aaaaff28de83748064639024e6b29d797a04c1e0129447c971468822f46d69",
+      "signature": "5fc38cdd",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 29023,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_715f.py",
+      "source_sha256": "42eb2d0f5c3c940bbd62a82a051c0686bb84a460396dad3563b2612bd9937fb3",
+      "signature": "8cddfabac403b8020fefbace03b80501",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 29208,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7218.py",
+      "source_sha256": "92a3e72a249a3a6b494da68f88a43f7de86a35e711ecf064bbf19caf30ad96f2",
+      "signature": "fabac403b8020fefbace0333c0efb801",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30191,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_75ef.py",
+      "source_sha256": "e02f58fafd8208506c78175f4b58a9891848e18afc70994432bb910741323bd9",
+      "signature": "8b3e761f81c7421ee80800",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30210,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7602.py",
+      "source_sha256": "c8a44c1ea48868bade0ca4b7f0754f6e7dfedba37677a92dde0d10247e6fefae",
+      "signature": "1ebac403b8020f36a30800efbace03b8",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30250,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_762a.py",
+      "source_sha256": "b82cfc695dc80290b79b01f4612c0ec3853a5e6959a81853b5060c09b7b23bb5",
+      "signature": "1e5032e403c08bf881c72c21033e761f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30472,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7708.py",
+      "source_sha256": "deab3465c2e5ef9c23fa2e828b3c09fbe580d63a997d1f57acb899d9fed47b14",
+      "signature": "1e508ac432e48bf881c7401e033e761f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30733,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_780d.py",
+      "source_sha256": "97a444882d655160dfd9a86d0ea48d552726e91b59afe1c5a901e4d25710ed45",
+      "signature": "32e403c08bf881c70021033e761f83c7",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30878,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_789e.py",
+      "source_sha256": "b1ec9079de0a8db77f3852adedc9073bb0ad9be51b76369ea2b4026065ce66f9",
+      "signature": "3c0a7d11",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 30976,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7900.py",
+      "source_sha256": "e19a95bea6354a4ccc6836468ef0f44c8d4f6e20aae94d031106aa7d3bcd45c5",
+      "signature": "8cdd8b3e761f81c7722183c702be20d3",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31087,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_796f.py",
+      "source_sha256": "50cb44c511efd044b2421040e2ead852d4c003858c5594f3afd84e6cb9e9eb55",
+      "signature": "1e8d3ec183b90a0033c00e07f3ab8b36",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31269,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7a25.py",
+      "source_sha256": "80895d026fab991e11af998a668c6d01e13d95ae2e1cb9fe3b0c9d5cd0714fc3",
+      "signature": "5156b280b90800e80a00",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31289,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7a39.py",
+      "source_sha256": "be617c44a2e6be4a9bbfd12af4ba77a11059027ee57f86da5e8a1ed94482b4e2",
+      "signature": "51268a24268a4401b9100032f6d1e873",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31322,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7a5a.py",
+      "source_sha256": "086097dafae785ef73ae3d4f57058173608974b5f69dcca6de669b8e349de3eb",
+      "signature": "8b3e0000d1efd1efd1efd1efd1efd1ef",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31672,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7bb8.py",
+      "source_sha256": "7b4aec435074e534a3bec2f43e3e7bb863616874b8dfdbb51c67f54eaf11cead",
+      "signature": "8d36cb178d3eeb0fb920008a258a4501",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31847,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7c67.py",
+      "source_sha256": "0e8db9827984daaedc15500f82eaf35dda70275e3582537e825ef19daf7c994f",
+      "signature": "568bd0b107d3ea81e2c00083ca0ff7c2",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31932,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7cbc.py",
+      "source_sha256": "46f7d328d89bc636fa5d48d3c99f393cacfd53eec0f24ab70e2b86accf8a4fdc",
+      "signature": "8d06ce49a31d00a31f00c70621000400",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 31974,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7ce6.py",
+      "source_sha256": "a3bd7c66ac0a25c1edec6fa2d14a537edd41a90ff07b00129b5085ee1240e046",
+      "signature": "a1f01fa3e41f33edb83000bb4e01ba30",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 32013,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7d0d.py",
+      "source_sha256": "221ac4fd1c872f5d3b9b4fef9305dc8cef9a62eeedd699ceefd29c024649cab3",
+      "signature": "e8d6ffa1",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 32141,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7d8d.py",
+      "source_sha256": "23debd598a85eb41e6adc18a4fefaf8c2f20e2e36ac148beabf0ca600a65af4a",
+      "signature": "1ebe104c32e403c08bf8a1ee1f050010",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 32183,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7db7.py",
+      "source_sha256": "ec613d3392b5664b3879cfbe8614b1de8bfb307abb3ffa5807032679ea0d7b6e",
+      "signature": "1e3c207471",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 32357,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7e65.py",
+      "source_sha256": "c991cacee721e79d2177b704a22b723a2ef200921fb3e11314ed3b36e05eda58",
+      "signature": "33edba3000b91004bb4e019a22881010",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 32434,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_7eb2.py",
+      "source_sha256": "393db806949670e3dde80adb85e1014ec6ac3638f7ebe6ad351af4710275914d",
+      "signature": "1e8b3e761f033e7a1f81c74f06be224f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33021,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_80fd.py",
+      "source_sha256": "ac37cc70d30ac5a93ebc866fc85e92d798f86bdc5b1ce284a1a9bb90b644c580",
+      "signature": "bac403b8020f36a30800efbace03b805",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33228,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_81cc.py",
+      "source_sha256": "300304f2d9ecb63f78192ea71fbd4c87999e3d186fc099cc2d27213cade27a1d",
+      "signature": "c706761f0000c706781f2025c7067a1f",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33336,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_8238.py",
+      "source_sha256": "3e2f21110d794a6621ba2b99c45cb38ae2a682b5c7c6b0620d63ce97097026e7",
+      "signature": "a1f01fa3e41f33dbeb10",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33347,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_8243.py",
+      "source_sha256": "6eceee364a7017f074c1f370456f8aa3cddafe2709783f55ba08d168cc1032c2",
+      "signature": "bb2800eb0a",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33353,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_8249.py",
+      "source_sha256": "4ad4f001f636ceed39f50fc980305bc99905b0eb2f87e0f863dcbdc784307d48",
+      "signature": "bb5000eb04",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33359,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_824f.py",
+      "source_sha256": "29113044f8815e197c81f8df37ebea713c0242396505d2ba2b146ca567eeb462",
+      "signature": "bb7800bf40b8be00808e06f01fb96009",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 33603,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_8343.py",
+      "source_sha256": "54e64bee61508c8d7f7fbbfea112a58e8644ad004c5789868a12eb8ab7ab8735",
+      "signature": "1e0e1fbb8f18b90a0032c02ea2b9832e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 34824,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_8808.py",
+      "source_sha256": "65ef43580b000158f0bd6aaeb682b98c6c42a9ee1f4eddffd4f0b3a65347d895",
+      "signature": "a3f266891ef0668916761fd1e8d1e8d1",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 34850,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_8822.py",
+      "source_sha256": "f5db581c88315e3849e1a0d819222992726acf890ecec54bc46c3b66d934b8e2",
+      "signature": "5052518bc2d1e8d1e8d1e8a3fa6632ed",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 39051,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_988b.py",
+      "source_sha256": "090097f4d74bf1649d4ad50d6ebdc97de7ff0375ab87ff87c1227be82c8f9296",
+      "signature": "e2fafb1e",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 39271,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_9967.py",
+      "source_sha256": "40688746e16f8d94ce087faab9eddc9fe2d1b5db19888b9f710d1a4fd840774c",
+      "signature": "55882e49a932edf7c504007440",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    },
+    {
+      "segment": 4112,
+      "offset": 39445,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_1010_9a15.py",
+      "source_sha256": "b4b086b4cc12fe0c0606a45eb373fae7f5d77c2225b1407a673849800b02874d",
+      "signature": "565755505351522d10007902",
+      "comparison": "Full signature equals independently verified image relocated to 1010h; no masks"
+    }
+  ],
+  "rejected": [],
+  "external": [
+    {
+      "segment": 10513,
+      "offset": 0,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0000.py",
+      "source_sha256": "d46b4c3ce2ece8d6a65bca868c39fc6fc659d76e2d7ee12e7730cf2d5dc321a2",
+      "signature": "22e47503"
+    },
+    {
+      "segment": 10513,
+      "offset": 375,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0177.py",
+      "source_sha256": "abb56f2fa5facabfbb568feb4f536ceac347835634e4ca4095c99fbc533ad97a",
+      "signature": "807d100090741f"
+    },
+    {
+      "segment": 10513,
+      "offset": 448,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_01c0.py",
+      "source_sha256": "6957ef9a4f0e955a736e9d09dbf69b3bd85033a1e1de3852f22b3898b0772438",
+      "signature": "8b450890e89203"
+    },
+    {
+      "segment": 10513,
+      "offset": 825,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0339.py",
+      "source_sha256": "6312633cbe63e14cd7998b0d6d66cf63d15f79dcf61f0bb35bbe521a187cdbfe",
+      "signature": "8a4513900ac07468"
+    },
+    {
+      "segment": 10513,
+      "offset": 841,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0349.py",
+      "source_sha256": "1a14aa0e49a73cb7ab2e4e94236fd7bf6e5be274ada6e445acc656f5dfe97aee",
+      "signature": "53568a05909002451290040432e48bf0"
+    },
+    {
+      "segment": 10513,
+      "offset": 938,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_03aa.py",
+      "source_sha256": "2cb3fac1bdc3c9bef7b9ce3851c8af16092b58211f9849c25c2b80e58d3fc31d",
+      "signature": "bfac058b0e6c0b8b450890e8a101"
+    },
+    {
+      "segment": 10513,
+      "offset": 970,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_03ca.py",
+      "source_sha256": "bce06d20f3089d9bcf4997eb055fd41c736afe9ded40fd6ce5d3acc55cf9340a",
+      "signature": "803f82741a"
+    },
+    {
+      "segment": 10513,
+      "offset": 1045,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0415.py",
+      "source_sha256": "cc734715401fde9d60f2d4e649afdfaa07a471922cfc2f0e663977c21bdbf658",
+      "signature": "8b5d0a908b0f4343e3db"
+    },
+    {
+      "segment": 10513,
+      "offset": 1055,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_041f.py",
+      "source_sha256": "6c83a4c05c5def2667f879c8d2b20d63db167b01fcfb1c21a4851cd15fb210e1",
+      "signature": "81c16e0b895d0a90894d0c908bd9e96e"
+    },
+    {
+      "segment": 10513,
+      "offset": 1072,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0430.py",
+      "source_sha256": "7fa314a9592a061096b5c6df1798419554b2c11d0d035eeb56e10e2ad6e7c7f8",
+      "signature": "8a074388451290e964fd"
+    },
+    {
+      "segment": 10513,
+      "offset": 1082,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_043a.py",
+      "source_sha256": "bf76e3ac4bb240a2434fcc1f4d6af9ada62b696de09994d670d7c5bc19425279",
+      "signature": "8b450890e81801"
+    },
+    {
+      "segment": 10513,
+      "offset": 1095,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0447.py",
+      "source_sha256": "370225a4b4c283c9284ec9ca3e189d7dff68a9660bd0ef7a1de29ac756a8e727",
+      "signature": "c645130190e94ffd"
+    },
+    {
+      "segment": 10513,
+      "offset": 1103,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_044f.py",
+      "source_sha256": "992b9caf68d08bde971fdfe714209d998854d4c0a28a48ded1fdedc534775767",
+      "signature": "c64513ff90e947fd"
+    },
+    {
+      "segment": 10513,
+      "offset": 1111,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0457.py",
+      "source_sha256": "8319de2d6a28acb620066169d1348550243176ac1521b80ae568a0f9e1290171",
+      "signature": "803eee00007506"
+    },
+    {
+      "segment": 10513,
+      "offset": 1308,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_051c.py",
+      "source_sha256": "7b75ece4e1fbf4e8d0958405d2bb0ecd20f45328eac324e62afeabf11de3626c",
+      "signature": "8a1ef0000adb7418"
+    },
+    {
+      "segment": 10513,
+      "offset": 1369,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_2911_0559.py",
+      "source_sha256": "73155ad9a7c0172e49dd56613c2760d228d81e2ce5ad6631885cd969240721cd",
+      "signature": "528b16a308eeecececececececececec"
+    },
+    {
+      "segment": 61440,
+      "offset": 65363,
+      "source": "D:\\Games\\DOS\\dos_recosystem\\legacy\\lemmings_port\\lemmings\\lifted\\functions\\lifted_f000_ff53.py",
+      "source_sha256": "254fc35d81e50a9d1c4370309e0db18ac54983356ec958e51ffe81610c9e0af1",
+      "signature": "cf000000"
+    }
+  ]
+}

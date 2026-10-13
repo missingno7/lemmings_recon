@@ -1,0 +1,51 @@
+{
+  "code_limit": 39568,
+  "code_limit_evidence": "Entry 0000 loads DS with relocated 09A9h; code/data boundary is provisional, not a no-code assertion for the rest of the image.",
+  "entries": [
+    {
+      "offset": 0,
+      "evidence": "PKLITE footer entry CS:IP=0000:0000"
+    },
+    {
+      "offset": 6392,
+      "evidence": "0000:008A installs INT 24h through DOS AH=25h"
+    },
+    {
+      "offset": 33635,
+      "evidence": "Manually decoded coherent checksum continuation 8363..83B6 with shared state 83B9..83BC; no static caller yet found; reachability UNRESOLVED"
+    }
+  ],
+  "regions": [
+    {
+      "start": 6287,
+      "end": 6297,
+      "class": "code_used_as_data",
+      "overlay": true,
+      "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
+    },
+    {
+      "start": 33720,
+      "end": 33727,
+      "class": "static_data",
+      "evidence": "Entry stores 83B8/83BD/83BE; 8343 and 8363 read/write 83B9..83BC"
+    },
+    {
+      "start": 39568,
+      "end": 47778,
+      "class": "static_data",
+      "evidence": "Startup0029..0031 explicitly initializes DS:0000..2011 with REP STOSB; stored image retained exactly; executable overlap not excluded by this initial classification"
+    },
+    {
+      "start": 47779,
+      "end": 47791,
+      "class": "lookup_table",
+      "evidence": "13F8..140B iterates four records: enable byte then near code word via LODSB/LODSW/CALL AX"
+    },
+    {
+      "start": 49200,
+      "end": 49202,
+      "class": "pointer_data",
+      "evidence": "42A1 loads indirect callback from DS:25A0; static4252; stores4334/4359 at4A68/4A80"
+    }
+  ]
+}
