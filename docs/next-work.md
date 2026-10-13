@@ -49,7 +49,10 @@
     connect those cores directly, verified in 24 integrated cases; see dat-load.md.
     Port higher section-selection/seek/close callers and startup resource ownership next,
     using the tested 1916 raw-resource reader where applicable; see resource-raw.md.
-    investigate UNKNOWN allocation code at
+    The 1B42 RLE helper is also native, with 303 cases covering its incoming DF,
+    overlaps and rollover AL bug; see resource-rle.md. Connect higher metadata/
+    resource-dependent transformations only after their offset/ownership contracts
+    are recovered. Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
     Do not substitute the static extractor's stricter checks. No SDL3
     integration or gameplay milestone is needed to progress these investigations.

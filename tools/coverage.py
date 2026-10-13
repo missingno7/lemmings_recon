@@ -82,7 +82,13 @@ def report():
             raise ValueError('Stale raw resource differential report for '+path+'; run tools/difftest.py')
     if raw['image_sha256']!=sha(image):raise ValueError('Raw resource differential oracle changed')
     executed.update(raw['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw)
+    rle=read_json(BUILD/'resource-rle-differential.json')
+    for path,digest in rle['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale resource RLE differential report for '+path+'; run tools/difftest.py')
+    if rle['image_sha256']!=sha(image):raise ValueError('Resource RLE differential oracle changed')
+    executed.update(rle['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -155,9 +161,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum,
-thirteen DAT and raw-resource main routines are TESTED within docs/checksum.md,
+thirteen DAT, raw-resource and RLE main routines are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
-docs/dat-load.md and docs/resource-raw.md's domains; remaining
+docs/dat-load.md, docs/resource-raw.md and docs/resource-rle.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -292,6 +298,13 @@ distinct fatal frames/message offsets. Its 49 C-covered bytes exclude two UNKNOW
 skipped bytes; the shared 1949 error-print path remains untranslated. Actual DOS
 behavior across segment ends and higher resource ownership remain open.
 See resource-raw.md.
+
+The resource RLE routine at 1B42 has a C11 core: {rle['case_count']} cases cover all
+29 instruction sites and 14 branch edges, with three compiled mutations detected.
+Full memory/register/defined-flag checks preserve all 256 control-byte meanings,
+DF, live input/output overlap, cursor/segment wrap and repeat-byte corruption
+when the original segment update replaces AL. These are constructed terminated
+streams; higher graphics/resource ownership remains untranslated. See resource-rle.md.
 '''
     return m,text
 

@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 16 |
-| Translated C code bytes | 1021 |
-| Differential cases | 992 |
-| Mutation checks detected | 24 |
-| Original instruction coverage | 501 / 15,392 decoded (3.255%) |
+| Translated C routines | 17 |
+| Translated C code bytes | 1076 |
+| Differential cases | 1295 |
+| Mutation checks detected | 27 |
+| Original instruction coverage | 530 / 15,392 decoded (3.443%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -36,9 +36,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum,
-thirteen DAT and raw-resource main routines are TESTED within docs/checksum.md,
+thirteen DAT, raw-resource and RLE main routines are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
-docs/dat-load.md and docs/resource-raw.md's domains; remaining
+docs/dat-load.md, docs/resource-raw.md and docs/resource-rle.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -64,10 +64,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 561 / 17,291
-(3.244%) of this still-incomplete decoded inventory. There are
-19 tested C routines occupying 1186 original code bytes across images,
-with 1327 differential cases and 27 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 590 / 17,291
+(3.412%) of this still-incomplete decoded inventory. There are
+20 tested C routines occupying 1241 original code bytes across images,
+with 1630 differential cases and 30 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -173,3 +173,10 @@ distinct fatal frames/message offsets. Its 49 C-covered bytes exclude two UNKNOW
 skipped bytes; the shared 1949 error-print path remains untranslated. Actual DOS
 behavior across segment ends and higher resource ownership remain open.
 See resource-raw.md.
+
+The resource RLE routine at 1B42 has a C11 core: 303 cases cover all
+29 instruction sites and 14 branch edges, with three compiled mutations detected.
+Full memory/register/defined-flag checks preserve all 256 control-byte meanings,
+DF, live input/output overlap, cursor/segment wrap and repeat-byte corruption
+when the original segment update replaces AL. These are constructed terminated
+streams; higher graphics/resource ownership remains untranslated. See resource-rle.md.

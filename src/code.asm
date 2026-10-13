@@ -2463,7 +2463,7 @@ sub_1A7B:
     mov si,0x38 ; @01AC5
     mov es,[0x1ff0] ; @01AC8
     mov ds,[0x1ff4] ; @01ACC
-    call sub_1B42 ; @01AD0
+    call DecodeResourceRle ; @01AD0
     pop ds ; @01AD3
     push si ; @01AD4
     call sub_8238 ; @01AD5
@@ -2472,7 +2472,7 @@ sub_1A7B:
     mov di,0x8000 ; @01ADA
     mov es,[0x1ff0] ; @01ADD
     mov ds,[0x1ff4] ; @01AE1
-    call sub_1B42 ; @01AE5
+    call DecodeResourceRle ; @01AE5
     pop ds ; @01AE8
     push si ; @01AE9
     call sub_8243 ; @01AEA
@@ -2481,7 +2481,7 @@ sub_1A7B:
     mov di,0x8000 ; @01AEF
     mov es,[0x1ff0] ; @01AF2
     mov ds,[0x1ff4] ; @01AF6
-    call sub_1B42 ; @01AFA
+    call DecodeResourceRle ; @01AFA
     pop ds ; @01AFD
     push si ; @01AFE
     call sub_8249 ; @01AFF
@@ -2490,7 +2490,7 @@ sub_1A7B:
     mov di,0x8000 ; @01B04
     mov es,[0x1ff0] ; @01B07
     mov ds,[0x1ff4] ; @01B0B
-    call sub_1B42 ; @01B0F
+    call DecodeResourceRle ; @01B0F
     pop ds ; @01B12
     push si ; @01B13
     call sub_824F ; @01B14
@@ -2513,7 +2513,7 @@ sub_1A7B:
     mov ah,0x3e ; @01B3D
     int 0x21 ; @01B3F
     ret ; @01B41
-sub_1B42:
+DecodeResourceRle:
     lodsb ; @01B42
     cmp al,0x80 ; @01B43
     jz loc_1B78 ; @01B45
@@ -2532,7 +2532,7 @@ loc_1B52:
     mov es,ax ; @01B5C
 loc_1B5E:
     loop loc_1B52 ; @01B5E
-    jmp short sub_1B42 ; @01B60
+    jmp short DecodeResourceRle ; @01B60
 loc_1B62:
     inc al ; @01B62
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @01B64
@@ -2546,7 +2546,7 @@ loc_1B68:
     mov es,ax ; @01B72
 loc_1B74:
     loop loc_1B68 ; @01B74
-    jmp short sub_1B42 ; @01B76
+    jmp short DecodeResourceRle ; @01B76
 loc_1B78:
     ret ; @01B78
 LoadDatResource:

@@ -7801,9 +7801,11 @@
     "address": 6978,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1B42",
-    "aliases": [],
+    "size": 55,
+    "symbol_name": "DecodeResourceRle",
+    "aliases": [
+      "sub_1B42"
+    ],
     "callers": [
       6864,
       6885,
@@ -7853,12 +7855,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1A5A VGASPEC filename/destination and1A7B RLE source identify16 real streams across4 pinned assets; statically parsed14400-byte outputs and bounded original/C comparisons"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 55
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 55,
+    "c_implementation": "c/resource_rle.c",
+    "verification_evidence": "tests/resource_rle.py:303 original-vs-C cases,29 sites,14 branch edges,three compiled mutants; DF, live overlap, cursor/segment wrap, rollover AL corruption; docs/resource-rle.md"
   },
   {
     "address": 7033,

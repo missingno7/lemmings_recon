@@ -70,7 +70,7 @@
 #define CS_DatFileErrorTransfer 0x1949u
 #define CS_sub_197D 0x197Du
 #define CS_sub_1A7B 0x1A7Bu
-#define CS_sub_1B42 0x1B42u
+#define CS_DecodeResourceRle 0x1B42u
 #define CS_LoadDatResource 0x1B79u
 #define CS_DatAfterResourceCheck 0x1B7Du
 #define CS_DatAfterResourceOpen 0x1B8Au
