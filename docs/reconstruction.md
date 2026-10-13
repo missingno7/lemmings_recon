@@ -42,6 +42,12 @@ is decoded independently. This corrects the earlier assumption that ordinary sta
 fallthrough was valid after 066C; reported decoded instructions are still a partial
 inventory, not proof that every opcode executes unmodified.
 
+The state-specific stream and transformed INT1 handler now have maintained ASM
+views and a separate protection symbol ledger/CFG. They add 401 instruction sites
+to the decoded inventory while preserving all original stored bytes. The verifier
+checks every derived TF-on point through bounded original-handler execution; see
+protection.md. Sector-buffer uses remain overlays on unresolved initial bytes.
+
 Sound drivers have independent source, symbol and region inventories under
 src/sound and metadata/adlib-*/tandysnd-*. Main-image metrics exclude them; the
 completeness report also gives totals across all three byte-exact images.

@@ -1,9 +1,10 @@
 # Precise next frontier
 
-1. Recover the protected stream reached via INT3 at 066C. The explicit handler 0DB3
-   negates 0DFF..0E39 for INT1 and transforms future instruction words. Establish
-   static transformation rules and separate state-specific CFGs; do not resume a
-   sequential decode at 066D. Bounded handler verification is permitted; no game boot.
+1. Complete the protected disk-check contracts after the recovered state-specific
+   stream. The 372 stream and 29 INT1 instruction sites have exact maintained views,
+   checked against original handlers at all 325 TF-on points. Review incoming state,
+   scratch/stack aliases, BIOS/DOS effects and skipped 084D/087E regions; see
+   protection.md. Keep canonical 066D bytes in their stored representation.
 2. Resolve indirect transfer 1407: four 3-byte records at DS:2013 (enable byte,
    near function pointer). Verify initial table and all writes before closing it.
 3. Resolve 42A5: AX comes from DS:25A0. Recover every assignment and valid target.

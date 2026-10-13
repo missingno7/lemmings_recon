@@ -15,6 +15,10 @@ assets: AdLib (22,125 bytes) and Tandy (21,702 bytes), independently checked aga
 the original DAT decoder. Total reconstructed image bytes: 126,733. Driver
 translation and command-dispatch closure remain open; see [sound drivers](docs/sound-drivers.md).
 
+State-specific protection ASM now recovers the disk-check stream and INT1 handler:
+401 additional instruction sites, checked against bounded original-handler execution.
+See [protection](docs/protection.md) for representation boundaries and open contracts.
+
 ## Reproduce
 
 Supply the original files privately in assets; metadata/inputs.json pins their hashes.
@@ -27,6 +31,7 @@ the lock deliberately rather than bypassing it.
 .venv\Scripts\python.exe tools\unpack.py
 .venv\Scripts\python.exe tools\verify.py
 .venv\Scripts\python.exe tools\sound.py
+.venv\Scripts\python.exe tools\protection.py
 .venv\Scripts\python.exe -m unittest discover -s tests -p 'test_*.py'
 .venv\Scripts\python.exe tools\difftest.py
 .venv\Scripts\python.exe tools\coverage.py

@@ -1,0 +1,1384 @@
+[
+  {
+    "address": 1645,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "ProtectedDiskEntry",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "066C INT3 decrypts saved return 066D"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [],
+    "callees": [
+      1649,
+      1822,
+      1926,
+      2168,
+      2238,
+      2263,
+      2323,
+      2378
+    ],
+    "data_references": [
+      {
+        "instruction": 1707,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1713,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1720,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1729,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1739,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1754,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1763,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1768,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 32,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1773,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1786,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1789,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 250,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1794,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 252,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1810,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2422,
+        "state": "tf_off",
+        "segment": "default",
+        "displacement": 18,
+        "base": "si",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 250
+  },
+  {
+    "address": 1649,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_0671",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1646
+    ],
+    "callees": [
+      1822,
+      1926,
+      2168,
+      2238,
+      2263,
+      2323,
+      2378
+    ],
+    "data_references": [
+      {
+        "instruction": 1707,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1713,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1720,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1729,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1739,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1754,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1763,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1768,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 32,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1773,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1786,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1789,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 250,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1794,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 252,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1810,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2422,
+        "state": "tf_off",
+        "segment": "default",
+        "displacement": 18,
+        "base": "si",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 246
+  },
+  {
+    "address": 1822,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_071E",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1702
+    ],
+    "callees": [
+      1975,
+      2238
+    ],
+    "data_references": [
+      {
+        "instruction": 1825,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1834,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1845,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1850,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1856,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1865,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1874,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1877,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1886,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1894,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1900,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1922,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 104
+  },
+  {
+    "address": 1926,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_0786",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1685
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 1926,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 4,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1929,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 6,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1932,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1935,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1938,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 12,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1941,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 32,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1952,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1955,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 1132,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1964,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1971,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 1,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 49
+  },
+  {
+    "address": 1975,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_07B7",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1829,
+      1838,
+      1860,
+      1869,
+      1881
+    ],
+    "callees": [
+      2119,
+      2238,
+      2251,
+      2263,
+      2300
+    ],
+    "data_references": [
+      {
+        "instruction": 1993,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2005,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2014,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2020,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2023,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 56,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2029,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 1,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2032,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 57,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2041,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 60,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2056,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2075,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2078,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2090,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 3,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2093,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 1,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 144
+  },
+  {
+    "address": 2119,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_0847",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1985
+    ],
+    "callees": [
+      3486
+    ],
+    "data_references": [
+      {
+        "instruction": 2119,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 14,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2138,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 14,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2141,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2144,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 2,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2147,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2157,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 14,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 44
+  },
+  {
+    "address": 2168,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_0878",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1751
+    ],
+    "callees": [
+      2226
+    ],
+    "data_references": [
+      {
+        "instruction": 2168,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 14,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2185,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2188,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 8,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2201,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 6,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2206,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2212,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 4,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 53
+  },
+  {
+    "address": 2226,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_08B2",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      2215
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 2226,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 14,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 28
+  },
+  {
+    "address": 2238,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_08BE",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1699,
+      1853,
+      2107
+    ],
+    "callees": [
+      3486
+    ],
+    "data_references": [
+      {
+        "instruction": 2240,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 13
+  },
+  {
+    "address": 2251,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_08CB",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      2382,
+      1982
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 2252,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 10,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2259,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 12
+  },
+  {
+    "address": 2263,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_08D7",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1735,
+      1745,
+      1760,
+      1781,
+      2048,
+      2068
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 2269,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 37
+  },
+  {
+    "address": 2300,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_08FC",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      2101
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 2304,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 23
+  },
+  {
+    "address": 2323,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_0913",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1696
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 2323,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2329,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 32,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2334,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 30,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2337,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 120,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2341,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 15,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2344,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 122,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2348,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 17,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2351,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 15,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2359,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2362,
+        "state": "tf_on",
+        "segment": "ss",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2370,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 15,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2373,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 55
+  },
+  {
+    "address": 2378,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_094A",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      1807
+    ],
+    "callees": [
+      2251
+    ],
+    "data_references": [
+      {
+        "instruction": 2385,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 0,
+        "base": "bp",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2391,
+        "state": "tf_on",
+        "segment": "default",
+        "displacement": 15,
+        "base": "bp",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 2400,
+        "state": "tf_on",
+        "segment": "ss",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 2404,
+        "state": "tf_on",
+        "segment": "es",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 37
+  },
+  {
+    "address": 3486,
+    "segment": 0,
+    "state": "tf_on",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "protected_sub_0D9E",
+    "aliases": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct call in derived state-specific original stream"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "callers": [
+      2245,
+      2150
+    ],
+    "callees": [],
+    "data_references": [],
+    "reachable_instruction_bytes": 5
+  },
+  {
+    "address": 3583,
+    "segment": 0,
+    "state": "int1_plaintext",
+    "kind": "entry",
+    "size": 59,
+    "symbol_name": "ProtectionInt1Handler",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 3591,
+        "segment": "default",
+        "displacement": 0,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3595,
+        "segment": "default",
+        "displacement": -2,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3602,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3604,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3612,
+        "segment": "ss",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3616,
+        "segment": "default",
+        "displacement": -2,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3623,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3630,
+        "segment": "default",
+        "displacement": 0,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3634,
+        "segment": "default",
+        "displacement": 2,
+        "base": null,
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0DB3 installs this address as INT1 after negating 59 bytes"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 59
+  },
+  {
+    "address": 3612,
+    "segment": 0,
+    "state": "int1_plaintext",
+    "kind": "entry",
+    "size": 30,
+    "symbol_name": "ProtectionDecodeNextWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 3612,
+        "segment": "ss",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3616,
+        "segment": "default",
+        "displacement": -2,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3623,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3630,
+        "segment": "default",
+        "displacement": 0,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3634,
+        "segment": "default",
+        "displacement": 2,
+        "base": null,
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared tail entered by INT3 with TF set and by active INT1"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 30
+  }
+]

@@ -3805,6 +3805,22 @@
     "reachable_instruction_bytes": 20
   },
   {
+    "address": 1645,
+    "segment": 0,
+    "kind": "encoded_code",
+    "size": 1,
+    "symbol_name": "ProtectionEncodedDiskEntry",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "INT3 at066C decrypts first word of protected stream; metadata/protection-cfg.json owns state-specific instructions"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 3507,
     "segment": 0,
     "kind": "entry",
@@ -4021,6 +4037,22 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 66
+  },
+  {
+    "address": 3583,
+    "segment": 0,
+    "kind": "encoded_code",
+    "size": 59,
+    "symbol_name": "ProtectionEncodedInt1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Handler0DB3 installs INT1 at0DFF and negates59 bytes; src/protection/int1.asm is independently verified plaintext"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 3778,

@@ -133,7 +133,11 @@ def generate():
                    end!=code_limit and classification[end]==classification[pos]):
                 end+=1
             cls=classification[pos]
-            lines.append('; UNKNOWN: unresolved bytes' if cls=='unresolved' else '; DATA: '+cls)
+            if cls=='unresolved':note='; UNKNOWN: unresolved bytes'
+            elif cls in ('state_specific_code','runtime_modified_code'):
+                note='; CODE: stored '+cls+'; execution views in src/protection'
+            else:note='; DATA: '+cls
+            lines.append(note)
             lines.append('    db '+','.join(f'0x{b:02x}' for b in image[pos:end])+f' ; @{pos:05X}')
             mapping.append(dict(start=pos,end=end,file=file,line=len(lines),kind=cls))
             pos=end

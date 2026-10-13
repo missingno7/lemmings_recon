@@ -1,0 +1,19 @@
+{
+  "canonical_sha256": "b0c4ef403e4bd28fa7913cb51a8c87e4dbbba8c4f1c36ea1594ba4424d64ee4e",
+  "stream_start": 1645,
+  "stream_end": 3686,
+  "stream_view_sha256": "1993c8ea1335ba39309fa63a39b63b514bc1f1cd0a7a16d48b361d90a94e2018",
+  "int1_start": 3583,
+  "int1_end": 3642,
+  "int1_plaintext_sha256": "963ecd620521e7a96b03939f5891875a95947d8bcc1a118e54a42b798ed9375e",
+  "stream_metrics": {
+    "instructions": 372,
+    "instruction_bytes": 854,
+    "tf_on_instructions": 325,
+    "tf_off_instructions": 47,
+    "entry_candidates": 15,
+    "resolved_edges": 438,
+    "unresolved_transfers": 0
+  },
+  "int1_instruction_count": 29
+}

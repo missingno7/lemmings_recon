@@ -47,6 +47,8 @@ def verify(check_stub=True):
             check(load,poison)
     from sound import verify_drivers
     sound_metrics=verify_drivers()
+    from protection import verify as verify_protection
+    protection_metrics=verify_protection()
     if check_stub:
         import importlib.util
         spec=importlib.util.spec_from_file_location('sound_unpack',ROOT/'tests/sound_unpack.py')
@@ -54,10 +56,17 @@ def verify(check_stub=True):
         spec.loader.exec_module(suite)
         results=[suite.check(n,s,p) for n in ('adlib','tandysnd') for s,p in ((0x3000,0xa5),(0x4000,0x5a))]
         write_json(BUILD/'sound-unpack-tests.json',results)
+        spec=importlib.util.spec_from_file_location('protection_tests',ROOT/'tests/protection.py')
+        suite=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(suite)
+        checks=suite.check()
+        protection_metrics['handler_test_cases']=checks['case_count']
+        protection_metrics['handler_instruction_sites']=len(checks['instruction_addresses'])
     metrics=dict(analysis['metrics'],reconstructed_asm_bytes=len(actual),byte_exact_asm_bytes=len(actual),
                  encoding_exceptions=len(read_json(ROOT/'metadata/encoding-exceptions.json')),
                  canonical_sha256=sha(image))
     metrics['sound']=sound_metrics
+    metrics['protection']=protection_metrics
     metrics['bounded_extractor_checks']=bool(check_stub)
     inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
         ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
@@ -65,7 +74,9 @@ def verify(check_stub=True):
          'metadata/legacy-seeds.json','tools/unpack.py','tools/explore.py',
          'tools/build.py','tools/check_unpack.py','tools/verify.py',
          'tools/resources.py','tools/sound.py','tests/sound_unpack.py',
-         'metadata/sound-oracle.json','metadata/sound-hints.json')]
+         'metadata/sound-oracle.json','metadata/sound-hints.json',
+         'tools/protection.py','tests/protection.py','metadata/protection-symbols.json',
+         'metadata/protection-views.json','metadata/protection-cfg.json','metadata/protection-encodings.json')]
     inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
     write_json(BUILD/'verification.json',metrics)

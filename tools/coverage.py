@@ -46,8 +46,11 @@ def report():
     m['unresolved_indirect_transfers']=sum(r['kind']=='indirect_or_far_transfer' for r in analysis['unresolved'])
     m['runtime_control_frontiers']=sum(r['kind'].startswith('runtime_modified') for r in analysis['unresolved'])
     m['sound']=verified['sound']
+    m['protection']=verified['protection']
+    state_insns=m['protection']['stream_metrics']['instructions']+m['protection']['int1_instruction_count']
+    m['state_specific_decoded_instructions']=state_insns
     combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
-    combined_insns=m['instructions']+sum(s['instructions'] for s in m['sound'].values())
+    combined_insns=m['instructions']+state_insns+sum(s['instructions'] for s in m['sound'].values())
     m['all_images_byte_exact_asm_bytes']=combined_bytes
     m['all_images_decoded_instructions']=combined_insns
     write_json(BUILD/'coverage.json',m)
@@ -75,9 +78,10 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Resolved static CFG edges, including fallthrough | {m['resolved_edges']:,} |
 | Unresolved direct targets / indirect transfers | {m['unresolved_direct_targets']} / {m['unresolved_indirect_transfers']} |
 | Runtime-modified control-flow frontiers | {m['runtime_control_frontiers']} |
+| Additional state-specific main instruction sites | {state_insns} |
 
-The decoded instruction denominator is incomplete: unknown runs and external sound
-driver code may add executable bytes. Entry candidates include historical leads,
+The decoded instruction denominator is incomplete: unknown runs in the main and
+sound-driver images may add executable bytes. Entry candidates include historical leads,
 shared tails and manually investigated code; they are not proven disjoint functions.
 The complete region partition labels uncertainty rather than claiming classification.
 There are {verified['encoding_exceptions']:,} main-image decoded instructions expressed as explicit encoding exceptions.
@@ -113,8 +117,14 @@ All 16 legacy AdLib signatures at segment 2911 match the static extraction. The
 seventeenth external lead is F000:FF53 firmware/environment code, not a driver entry.
 Both sound dispatch tables lack sufficient bounds checks; their out-of-table paths
 remain unresolved. Driver code/data closure and behavioral translation are open.
-Main INT3 protection modifies the instruction stream; its static return path is
-quarantined, and the negated 59-byte INT1 region is classified runtime-modified code.
+Main INT3 protection has independently checked state-specific views: 372 stream
+instructions (325 TF-on, 47 TF-off) and 29 transformed INT1 instructions. The
+original handlers pass 19 constructed-frame cases and checks at every one of the
+325 derived TF-on instruction points, comparing full memory, registers and defined
+flags. These checks execute only 61 handler instruction sites; the disk-check body
+has not been executed. The two raw-image control frontiers remain represented in
+the separate protection CFG. Platform contracts, memory aliases and skipped code
+still need review; see protection.md. No protected routine has been translated to C.
 No public executable or proprietary asset is tracked. See executable.md for local
 provenance, control-frontier.json for addresses, and next-work.md for proof obligations.
 '''

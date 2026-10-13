@@ -17,8 +17,38 @@
     },
     {
       "start": 1645,
-      "end": 3507,
+      "end": 2125,
+      "classification": "state_specific_code"
+    },
+    {
+      "start": 2125,
+      "end": 2130,
       "classification": "unresolved"
+    },
+    {
+      "start": 2130,
+      "end": 2174,
+      "classification": "state_specific_code"
+    },
+    {
+      "start": 2174,
+      "end": 2179,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2179,
+      "end": 2444,
+      "classification": "state_specific_code"
+    },
+    {
+      "start": 2444,
+      "end": 3486,
+      "classification": "unresolved"
+    },
+    {
+      "start": 3486,
+      "end": 3507,
+      "classification": "state_specific_code"
     },
     {
       "start": 3507,
@@ -33,7 +63,7 @@
     {
       "start": 3642,
       "end": 3686,
-      "classification": "unresolved"
+      "classification": "state_specific_code"
     },
     {
       "start": 3686,
@@ -1183,6 +1213,20 @@
       "class": "code_used_as_data",
       "overlay": true,
       "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
+    },
+    {
+      "start": 2444,
+      "end": 2956,
+      "class": "runtime_sector_buffer",
+      "overlay": true,
+      "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
+    },
+    {
+      "start": 2972,
+      "end": 3484,
+      "class": "runtime_sector_buffer",
+      "overlay": true,
+      "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     }
   ]
 }

@@ -7,7 +7,7 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Metric | Value |
 |---|---:|
 | Canonical image bytes | 82,906 |
-| Classified image bytes | 43,903 |
+| Classified image bytes | 44,757 |
 | Decoded instruction bytes | 35,613 |
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
@@ -17,14 +17,15 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Differential cases | 12 |
 | Mutation checks detected | 3 |
 | Original instruction coverage | 44 / 15,335 decoded (0.287%) |
-| Unresolved image bytes / runs | 39,003 / 117 |
-| Unresolved runs inside provisional code frame | 114 (3,889 bytes) |
+| Unresolved image bytes / runs | 38,149 / 118 |
+| Unresolved runs inside provisional code frame | 115 (3,035 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,886 |
 | Unresolved direct targets / indirect transfers | 1 / 7 |
 | Runtime-modified control-flow frontiers | 2 |
+| Additional state-specific main instruction sites | 401 |
 
-The decoded instruction denominator is incomplete: unknown runs and external sound
-driver code may add executable bytes. Entry candidates include historical leads,
+The decoded instruction denominator is incomplete: unknown runs in the main and
+sound-driver images may add executable bytes. Entry candidates include historical leads,
 shared tails and manually investigated code; they are not proven disjoint functions.
 The complete region partition labels uncertainty rather than claiming classification.
 There are 1,558 main-image decoded instructions expressed as explicit encoding exceptions.
@@ -49,9 +50,9 @@ External driver images now reconstruct exactly, with separate static accounting:
 | adlib | 22,125 | 1,438 | 655 | 17 | 1 | 0 |
 | tandysnd | 21,702 | 1,890 | 754 | 40 | 1 | 0 |
 
-Across all three images, 126,733 ASM bytes are exact and 16,744
-instructions have been decoded. C differential coverage remains 44 / 16,744
-(0.263%) of this still-incomplete decoded inventory. Four bounded
+Across all three images, 126,733 ASM bytes are exact and 17,145
+instructions have been decoded. C differential coverage remains 44 / 17,145
+(0.257%) of this still-incomplete decoded inventory. Four bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -59,7 +60,13 @@ All 16 legacy AdLib signatures at segment 2911 match the static extraction. The
 seventeenth external lead is F000:FF53 firmware/environment code, not a driver entry.
 Both sound dispatch tables lack sufficient bounds checks; their out-of-table paths
 remain unresolved. Driver code/data closure and behavioral translation are open.
-Main INT3 protection modifies the instruction stream; its static return path is
-quarantined, and the negated 59-byte INT1 region is classified runtime-modified code.
+Main INT3 protection has independently checked state-specific views: 372 stream
+instructions (325 TF-on, 47 TF-off) and 29 transformed INT1 instructions. The
+original handlers pass 19 constructed-frame cases and checks at every one of the
+325 derived TF-on instruction points, comparing full memory, registers and defined
+flags. These checks execute only 61 handler instruction sites; the disk-check body
+has not been executed. The two raw-image control frontiers remain represented in
+the separate protection CFG. Platform contracts, memory aliases and skipped code
+still need review; see protection.md. No protected routine has been translated to C.
 No public executable or proprietary asset is tracked. See executable.md for local
 provenance, control-frontier.json for addresses, and next-work.md for proof obligations.

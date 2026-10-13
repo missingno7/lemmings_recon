@@ -3,13 +3,15 @@
     "address": "066C",
     "kind": "runtime_modified_continuation",
     "evidence": "Installed INT3 handler0DB3 changes saved flags and upcoming code",
-    "closure": "derive protected instruction stream and INT1 transitions"
+    "closure": "state CFG recovered; incoming domain, aliases and platform contracts pending",
+    "state_specific_target": "TF-on 066D in metadata/protection-cfg.json"
   },
   {
     "address": "0E1C",
     "kind": "runtime_modified_target",
     "evidence": "Within0DFF..0E39 negated by handler0DD3; raw decode blocked",
-    "closure": "separate raw and transformed-state CFG"
+    "closure": "shared transformed tail independently verified; maintain state-specific representation",
+    "state_specific_target": "ProtectionDecodeNextWord in plaintext src/protection/int1.asm"
   },
   {
     "address": "1407",

@@ -1,0 +1,7993 @@
+{
+  "instructions": [
+    {
+      "address": 1645,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "50",
+      "stored_bytes": "90",
+      "mnemonic": "push",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 1646,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e80000",
+      "stored_bytes": "8ede00",
+      "mnemonic": "call",
+      "operands": "0x671",
+      "data_references": []
+    },
+    {
+      "address": 1649,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "58",
+      "stored_bytes": "1b",
+      "mnemonic": "pop",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 1650,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "051b03",
+      "stored_bytes": "fad203",
+      "mnemonic": "add",
+      "operands": "ax, 0x31b",
+      "data_references": []
+    },
+    {
+      "address": 1653,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "90",
+      "stored_bytes": "cb",
+      "mnemonic": "nop",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1654,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "50",
+      "stored_bytes": "a8",
+      "mnemonic": "push",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 1655,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "b104",
+      "stored_bytes": "d9aa",
+      "mnemonic": "mov",
+      "operands": "cl, 4",
+      "data_references": []
+    },
+    {
+      "address": 1657,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "d3e8",
+      "stored_bytes": "9f42",
+      "mnemonic": "shr",
+      "operands": "ax, cl",
+      "data_references": []
+    },
+    {
+      "address": 1659,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "03f0",
+      "stored_bytes": "c28a",
+      "mnemonic": "add",
+      "operands": "si, ax",
+      "data_references": []
+    },
+    {
+      "address": 1661,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "5f",
+      "stored_bytes": "25",
+      "mnemonic": "pop",
+      "operands": "di",
+      "data_references": []
+    },
+    {
+      "address": 1662,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "83e70f",
+      "stored_bytes": "68530f",
+      "mnemonic": "and",
+      "operands": "di, 0xf",
+      "data_references": []
+    },
+    {
+      "address": 1665,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bc6",
+      "stored_bytes": "d227",
+      "mnemonic": "mov",
+      "operands": "ax, si",
+      "data_references": []
+    },
+    {
+      "address": 1667,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "25ff0f",
+      "stored_bytes": "7e4f0f",
+      "mnemonic": "and",
+      "operands": "ax, 0xfff",
+      "data_references": []
+    },
+    {
+      "address": 1670,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "3ddf0f",
+      "stored_bytes": "5c3e0f",
+      "mnemonic": "cmp",
+      "operands": "ax, 0xfdf",
+      "data_references": []
+    },
+    {
+      "address": 1673,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7604",
+      "stored_bytes": "f5e5",
+      "mnemonic": "jbe",
+      "operands": "0x68f",
+      "data_references": []
+    },
+    {
+      "address": 1675,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "81c71002",
+      "stored_bytes": "95f31002",
+      "mnemonic": "add",
+      "operands": "di, 0x210",
+      "data_references": []
+    },
+    {
+      "address": 1679,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "58",
+      "stored_bytes": "87",
+      "mnemonic": "pop",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 1680,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "83ec22",
+      "stored_bytes": "791d22",
+      "mnemonic": "sub",
+      "operands": "sp, 0x22",
+      "data_references": []
+    },
+    {
+      "address": 1683,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bec",
+      "stored_bytes": "4e57",
+      "mnemonic": "mov",
+      "operands": "bp, sp",
+      "data_references": []
+    },
+    {
+      "address": 1685,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8ee00",
+      "stored_bytes": "8bbf00",
+      "mnemonic": "call",
+      "operands": "0x786",
+      "data_references": []
+    },
+    {
+      "address": 1688,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "80fa02",
+      "stored_bytes": "010402",
+      "mnemonic": "cmp",
+      "operands": "dl, 2",
+      "data_references": []
+    },
+    {
+      "address": 1691,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "733a",
+      "stored_bytes": "84c1",
+      "mnemonic": "jae",
+      "operands": "0x6d7",
+      "data_references": []
+    },
+    {
+      "address": 1693,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "bb020c",
+      "stored_bytes": "4d7e0c",
+      "mnemonic": "mov",
+      "operands": "bx, 0xc02",
+      "data_references": []
+    },
+    {
+      "address": 1696,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e87002",
+      "stored_bytes": "eb9702",
+      "mnemonic": "call",
+      "operands": "0x913",
+      "data_references": []
+    },
+    {
+      "address": 1699,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e81802",
+      "stored_bytes": "39e202",
+      "mnemonic": "call",
+      "operands": "0x8be",
+      "data_references": []
+    },
+    {
+      "address": 1702,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e87500",
+      "stored_bytes": "d38f00",
+      "mnemonic": "call",
+      "operands": "0x71e",
+      "data_references": []
+    },
+    {
+      "address": 1705,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7316",
+      "stored_bytes": "92e8",
+      "mnemonic": "jae",
+      "operands": "0x6c1",
+      "data_references": []
+    },
+    {
+      "address": 1707,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e020c",
+      "stored_bytes": "5a50020c",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 2], 0xc",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1711,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7458",
+      "stored_bytes": "8fbf",
+      "mnemonic": "je",
+      "operands": "0x709",
+      "data_references": []
+    },
+    {
+      "address": 1713,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a4603",
+      "stored_bytes": "6ac603",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr [bp + 3]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1716,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "2403",
+      "stored_bytes": "57fb",
+      "mnemonic": "and",
+      "operands": "al, 3",
+      "data_references": []
+    },
+    {
+      "address": 1718,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "fec0",
+      "stored_bytes": "aec9",
+      "mnemonic": "inc",
+      "operands": "al",
+      "data_references": []
+    },
+    {
+      "address": 1720,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "884603",
+      "stored_bytes": "2a2a03",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 3], al",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1723,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "3c04",
+      "stored_bytes": "97fd",
+      "mnemonic": "cmp",
+      "operands": "al, 4",
+      "data_references": []
+    },
+    {
+      "address": 1725,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "75e7",
+      "stored_bytes": "a5e3",
+      "mnemonic": "jne",
+      "operands": "0x6a6",
+      "data_references": []
+    },
+    {
+      "address": 1727,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7448",
+      "stored_bytes": "c070",
+      "mnemonic": "je",
+      "operands": "0x709",
+      "data_references": []
+    },
+    {
+      "address": 1729,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "bb680a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1732,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b88700",
+      "stored_bytes": "976c00",
+      "mnemonic": "mov",
+      "operands": "ax, 0x87",
+      "data_references": []
+    },
+    {
+      "address": 1735,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e80d02",
+      "stored_bytes": "cff202",
+      "mnemonic": "call",
+      "operands": "0x8d7",
+      "data_references": []
+    },
+    {
+      "address": 1738,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "93",
+      "stored_bytes": "88",
+      "mnemonic": "xchg",
+      "operands": "bx, ax",
+      "data_references": []
+    },
+    {
+      "address": 1739,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "3e990a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1742,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b84e00",
+      "stored_bytes": "75a400",
+      "mnemonic": "mov",
+      "operands": "ax, 0x4e",
+      "data_references": []
+    },
+    {
+      "address": 1745,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e80302",
+      "stored_bytes": "5ffd02",
+      "mnemonic": "call",
+      "operands": "0x8d7",
+      "data_references": []
+    },
+    {
+      "address": 1748,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f8",
+      "stored_bytes": "fd",
+      "mnemonic": "clc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1749,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7337",
+      "stored_bytes": "8932",
+      "mnemonic": "jae",
+      "operands": "0x70e",
+      "data_references": []
+    },
+    {
+      "address": 1751,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e89e01",
+      "stored_bytes": "050401",
+      "mnemonic": "call",
+      "operands": "0x878",
+      "data_references": []
+    },
+    {
+      "address": 1754,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "338b0a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1757,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b8fe00",
+      "stored_bytes": "511400",
+      "mnemonic": "mov",
+      "operands": "ax, 0xfe",
+      "data_references": []
+    },
+    {
+      "address": 1760,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8f401",
+      "stored_bytes": "3f0b01",
+      "mnemonic": "call",
+      "operands": "0x8d7",
+      "data_references": []
+    },
+    {
+      "address": 1763,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "263b04",
+      "stored_bytes": "cfc604",
+      "mnemonic": "cmp",
+      "operands": "ax, word ptr es:[si]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 0,
+          "base": "si",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1766,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7521",
+      "stored_bytes": "06d7",
+      "mnemonic": "jne",
+      "operands": "0x709",
+      "data_references": []
+    },
+    {
+      "address": 1768,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "c74620e0ff",
+      "stored_bytes": "351720e0ff",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0x20], 0xffe0",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 32,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1773,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4761e",
+      "stored_bytes": "fa761e",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0x1e]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 30,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1776,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "33f6",
+      "stored_bytes": "2035",
+      "mnemonic": "xor",
+      "operands": "si, si",
+      "data_references": []
+    },
+    {
+      "address": 1778,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b80002",
+      "stored_bytes": "079502",
+      "mnemonic": "mov",
+      "operands": "ax, 0x200",
+      "data_references": []
+    },
+    {
+      "address": 1781,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8df01",
+      "stored_bytes": "3d2501",
+      "mnemonic": "call",
+      "operands": "0x8d7",
+      "data_references": []
+    },
+    {
+      "address": 1784,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bd8",
+      "stored_bytes": "3e25",
+      "mnemonic": "mov",
+      "operands": "bx, ax",
+      "data_references": []
+    },
+    {
+      "address": 1786,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "47c30a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1789,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "263384fa00",
+      "stored_bytes": "5fd984fa00",
+      "mnemonic": "xor",
+      "operands": "ax, word ptr es:[si + 0xfa]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 250,
+          "base": "si",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1794,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "26339cfc00",
+      "stored_bytes": "2dcd9cfc00",
+      "mnemonic": "xor",
+      "operands": "bx, word ptr es:[si + 0xfc]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 252,
+          "base": "si",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1799,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7305",
+      "stored_bytes": "74fb",
+      "mnemonic": "jae",
+      "operands": "0x70e",
+      "data_references": []
+    },
+    {
+      "address": 1801,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "33c0",
+      "stored_bytes": "25c9",
+      "mnemonic": "xor",
+      "operands": "ax, ax",
+      "data_references": []
+    },
+    {
+      "address": 1803,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "33db",
+      "stored_bytes": "87b6",
+      "mnemonic": "xor",
+      "operands": "bx, bx",
+      "data_references": []
+    },
+    {
+      "address": 1805,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f9",
+      "stored_bytes": "09",
+      "mnemonic": "stc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1806,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "9c",
+      "stored_bytes": "0f",
+      "mnemonic": "pushf",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1807,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e83802",
+      "stored_bytes": "05d902",
+      "mnemonic": "call",
+      "operands": "0x94a",
+      "data_references": []
+    },
+    {
+      "address": 1810,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a5600",
+      "stored_bytes": "c7ac00",
+      "mnemonic": "mov",
+      "operands": "dl, byte ptr [bp]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1813,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "83c522",
+      "stored_bytes": "243b22",
+      "mnemonic": "add",
+      "operands": "bp, 0x22",
+      "data_references": []
+    },
+    {
+      "address": 1816,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "9d",
+      "stored_bytes": "14",
+      "mnemonic": "popf",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1817,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8be5",
+      "stored_bytes": "3032",
+      "mnemonic": "mov",
+      "operands": "sp, bp",
+      "data_references": []
+    },
+    {
+      "address": 1819,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e95102",
+      "stored_bytes": "76ca02",
+      "mnemonic": "jmp",
+      "operands": "0x96f",
+      "data_references": []
+    },
+    {
+      "address": 1822,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90300",
+      "stored_bytes": "d2f900",
+      "mnemonic": "mov",
+      "operands": "cx, 3",
+      "data_references": []
+    },
+    {
+      "address": 1825,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c6460201",
+      "stored_bytes": "cbb80201",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 2], 1",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1829,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e88f00",
+      "stored_bytes": "137200",
+      "mnemonic": "call",
+      "operands": "0x7b7",
+      "data_references": []
+    },
+    {
+      "address": 1832,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7209",
+      "stored_bytes": "69f6",
+      "mnemonic": "jb",
+      "operands": "0x733",
+      "data_references": []
+    },
+    {
+      "address": 1834,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c646020c",
+      "stored_bytes": "ea55020c",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 2], 0xc",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1838,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e88600",
+      "stored_bytes": "136100",
+      "mnemonic": "call",
+      "operands": "0x7b7",
+      "data_references": []
+    },
+    {
+      "address": 1841,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "731f",
+      "stored_bytes": "4ee0",
+      "mnemonic": "jae",
+      "operands": "0x752",
+      "data_references": []
+    },
+    {
+      "address": 1843,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "b001",
+      "stored_bytes": "d23e",
+      "mnemonic": "mov",
+      "operands": "al, 1",
+      "data_references": []
+    },
+    {
+      "address": 1845,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "2a4600",
+      "stored_bytes": "71c400",
+      "mnemonic": "sub",
+      "operands": "al, byte ptr [bp]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1848,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7244",
+      "stored_bytes": "05ba",
+      "mnemonic": "jb",
+      "operands": "0x77e",
+      "data_references": []
+    },
+    {
+      "address": 1850,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "884600",
+      "stored_bytes": "7ccd00",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp], al",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1853,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e87e01",
+      "stored_bytes": "8d8001",
+      "mnemonic": "call",
+      "operands": "0x8be",
+      "data_references": []
+    },
+    {
+      "address": 1856,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c6460201",
+      "stored_bytes": "39ba0201",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 2], 1",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1860,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e87000",
+      "stored_bytes": "138d00",
+      "mnemonic": "call",
+      "operands": "0x7b7",
+      "data_references": []
+    },
+    {
+      "address": 1863,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7235",
+      "stored_bytes": "97cb",
+      "mnemonic": "jb",
+      "operands": "0x77e",
+      "data_references": []
+    },
+    {
+      "address": 1865,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c646020c",
+      "stored_bytes": "162e020c",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 2], 0xc",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1869,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e86700",
+      "stored_bytes": "138000",
+      "mnemonic": "call",
+      "operands": "0x7b7",
+      "data_references": []
+    },
+    {
+      "address": 1872,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "722c",
+      "stored_bytes": "8dd2",
+      "mnemonic": "jb",
+      "operands": "0x77e",
+      "data_references": []
+    },
+    {
+      "address": 1874,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "89461e",
+      "stored_bytes": "6d1c1e",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0x1e], ax",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 30,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1877,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c646020b",
+      "stored_bytes": "0185020b",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 2], 0xb",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1881,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e85b00",
+      "stored_bytes": "13b200",
+      "mnemonic": "call",
+      "operands": "0x7b7",
+      "data_references": []
+    },
+    {
+      "address": 1884,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7220",
+      "stored_bytes": "e9de",
+      "mnemonic": "jb",
+      "operands": "0x77e",
+      "data_references": []
+    },
+    {
+      "address": 1886,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "03461e",
+      "stored_bytes": "2f041e",
+      "mnemonic": "add",
+      "operands": "ax, word ptr [bp + 0x1e]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 30,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1889,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "3d5400",
+      "stored_bytes": "ca9700",
+      "mnemonic": "cmp",
+      "operands": "ax, 0x54",
+      "data_references": []
+    },
+    {
+      "address": 1892,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "731c",
+      "stored_bytes": "a2e2",
+      "mnemonic": "jae",
+      "operands": "0x782",
+      "data_references": []
+    },
+    {
+      "address": 1894,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0302",
+      "stored_bytes": "3a440302",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 3], 2",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1898,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "740d",
+      "stored_bytes": "8df6",
+      "mnemonic": "je",
+      "operands": "0x779",
+      "data_references": []
+    },
+    {
+      "address": 1900,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0303",
+      "stored_bytes": "646c0303",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 3], 3",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1904,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7407",
+      "stored_bytes": "8dfe",
+      "mnemonic": "je",
+      "operands": "0x779",
+      "data_references": []
+    },
+    {
+      "address": 1906,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "bf0c00",
+      "stored_bytes": "5b0e00",
+      "mnemonic": "mov",
+      "operands": "di, 0xc",
+      "data_references": []
+    },
+    {
+      "address": 1909,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "3bf8",
+      "stored_bytes": "d807",
+      "mnemonic": "cmp",
+      "operands": "di, ax",
+      "data_references": []
+    },
+    {
+      "address": 1911,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7309",
+      "stored_bytes": "3cf9",
+      "mnemonic": "jae",
+      "operands": "0x782",
+      "data_references": []
+    },
+    {
+      "address": 1913,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "49",
+      "stored_bytes": "cf",
+      "mnemonic": "dec",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 1914,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7402",
+      "stored_bytes": "7862",
+      "mnemonic": "je",
+      "operands": "0x77e",
+      "data_references": []
+    },
+    {
+      "address": 1916,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "eba3",
+      "stored_bytes": "e498",
+      "mnemonic": "jmp",
+      "operands": "0x721",
+      "data_references": []
+    },
+    {
+      "address": 1918,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b8ffff",
+      "stored_bytes": "8e31ff",
+      "mnemonic": "mov",
+      "operands": "ax, 0xffff",
+      "data_references": []
+    },
+    {
+      "address": 1921,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f9",
+      "stored_bytes": "65",
+      "mnemonic": "stc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1922,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "89461e",
+      "stored_bytes": "88721e",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0x1e], ax",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 30,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1925,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "d8",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1926,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "894604",
+      "stored_bytes": "4b0904",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 4], ax",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 4,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1929,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "895e06",
+      "stored_bytes": "64a906",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 6], bx",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 6,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1932,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "885600",
+      "stored_bytes": "25a400",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp], dl",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1935,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "897e0a",
+      "stored_bytes": "3e800a",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0xa], di",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1938,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "89760c",
+      "stored_bytes": "769c0c",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0xc], si",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 12,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1941,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "c746200000",
+      "stored_bytes": "00a0200000",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0x20], 0",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 32,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1946,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "81f99992",
+      "stored_bytes": "7e069992",
+      "mnemonic": "cmp",
+      "operands": "cx, 0x9299",
+      "data_references": []
+    },
+    {
+      "address": 1950,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7408",
+      "stored_bytes": "b8d2",
+      "mnemonic": "je",
+      "operands": "0x7a8",
+      "data_references": []
+    },
+    {
+      "address": 1952,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c45e1e",
+      "stored_bytes": "4a041e",
+      "mnemonic": "les",
+      "operands": "bx, ptr [bp + 0x1e]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 30,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 1955,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "268a366c04",
+      "stored_bytes": "d149366c04",
+      "mnemonic": "mov",
+      "operands": "dh, byte ptr es:[0x46c]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 1132,
+          "base": null,
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1960,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "52",
+      "stored_bytes": "75",
+      "mnemonic": "push",
+      "operands": "dx",
+      "data_references": []
+    },
+    {
+      "address": 1961,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "80e604",
+      "stored_bytes": "77f304",
+      "mnemonic": "and",
+      "operands": "dh, 4",
+      "data_references": []
+    },
+    {
+      "address": 1964,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "887603",
+      "stored_bytes": "918003",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 3], dh",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1967,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "5a",
+      "stored_bytes": "a5",
+      "mnemonic": "pop",
+      "operands": "dx",
+      "data_references": []
+    },
+    {
+      "address": 1968,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "80e601",
+      "stored_bytes": "785301",
+      "mnemonic": "and",
+      "operands": "dh, 1",
+      "data_references": []
+    },
+    {
+      "address": 1971,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "887601",
+      "stored_bytes": "d18b01",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 1], dh",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 1,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1974,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "2a",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 1975,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "ac",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 1976,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90300",
+      "stored_bytes": "13a400",
+      "mnemonic": "mov",
+      "operands": "cx, 3",
+      "data_references": []
+    },
+    {
+      "address": 1979,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b83412",
+      "stored_bytes": "0fca12",
+      "mnemonic": "mov",
+      "operands": "ax, 0x1234",
+      "data_references": []
+    },
+    {
+      "address": 1982,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e80a01",
+      "stored_bytes": "83d001",
+      "mnemonic": "call",
+      "operands": "0x8cb",
+      "data_references": []
+    },
+    {
+      "address": 1985,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e88300",
+      "stored_bytes": "b77f00",
+      "mnemonic": "call",
+      "operands": "0x847",
+      "data_references": []
+    },
+    {
+      "address": 1988,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "80fc80",
+      "stored_bytes": "810380",
+      "mnemonic": "cmp",
+      "operands": "ah, 0x80",
+      "data_references": []
+    },
+    {
+      "address": 1991,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "747b",
+      "stored_bytes": "8c84",
+      "mnemonic": "je",
+      "operands": "0x844",
+      "data_references": []
+    },
+    {
+      "address": 1993,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0201",
+      "stored_bytes": "66880201",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 2], 1",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 1997,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7506",
+      "stored_bytes": "8efb",
+      "mnemonic": "jne",
+      "operands": "0x7d5",
+      "data_references": []
+    },
+    {
+      "address": 1999,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "0ae4",
+      "stored_bytes": "e8ec",
+      "mnemonic": "or",
+      "operands": "ah, ah",
+      "data_references": []
+    },
+    {
+      "address": 2001,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7472",
+      "stored_bytes": "5a54",
+      "mnemonic": "je",
+      "operands": "0x845",
+      "data_references": []
+    },
+    {
+      "address": 2003,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7566",
+      "stored_bytes": "3e31",
+      "mnemonic": "jne",
+      "operands": "0x83b",
+      "data_references": []
+    },
+    {
+      "address": 2005,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "47eb0a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2008,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "bf97d5",
+      "stored_bytes": "967dd5",
+      "mnemonic": "mov",
+      "operands": "di, 0xd597",
+      "data_references": []
+    },
+    {
+      "address": 2011,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b82000",
+      "stored_bytes": "bc7500",
+      "mnemonic": "mov",
+      "operands": "ax, 0x20",
+      "data_references": []
+    },
+    {
+      "address": 2014,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e020c",
+      "stored_bytes": "9581020c",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 2], 0xc",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2018,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7430",
+      "stored_bytes": "8fd7",
+      "mnemonic": "je",
+      "operands": "0x814",
+      "data_references": []
+    },
+    {
+      "address": 2020,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a4603",
+      "stored_bytes": "6a1603",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr [bp + 3]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2023,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "26304438",
+      "stored_bytes": "f5c94438",
+      "mnemonic": "xor",
+      "operands": "byte ptr es:[si + 0x38], al",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 56,
+          "base": "si",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2027,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "754e",
+      "stored_bytes": "02c1",
+      "mnemonic": "jne",
+      "operands": "0x83b",
+      "data_references": []
+    },
+    {
+      "address": 2029,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a4601",
+      "stored_bytes": "703b01",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr [bp + 1]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 1,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2032,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "26304439",
+      "stored_bytes": "afcd4439",
+      "mnemonic": "xor",
+      "operands": "byte ptr es:[si + 0x39], al",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 57,
+          "base": "si",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2036,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7545",
+      "stored_bytes": "02c8",
+      "mnemonic": "jne",
+      "operands": "0x83b",
+      "data_references": []
+    },
+    {
+      "address": 2038,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b8bc33",
+      "stored_bytes": "42d333",
+      "mnemonic": "mov",
+      "operands": "ax, 0x33bc",
+      "data_references": []
+    },
+    {
+      "address": 2041,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "2689443c",
+      "stored_bytes": "7f11443c",
+      "mnemonic": "mov",
+      "operands": "word ptr es:[si + 0x3c], ax",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 60,
+          "base": "si",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2045,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b84600",
+      "stored_bytes": "cfc100",
+      "mnemonic": "mov",
+      "operands": "ax, 0x46",
+      "data_references": []
+    },
+    {
+      "address": 2048,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8d400",
+      "stored_bytes": "952a00",
+      "mnemonic": "call",
+      "operands": "0x8d7",
+      "data_references": []
+    },
+    {
+      "address": 2051,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "3d626e",
+      "stored_bytes": "969d6e",
+      "mnemonic": "cmp",
+      "operands": "ax, 0x6e62",
+      "data_references": []
+    },
+    {
+      "address": 2054,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7533",
+      "stored_bytes": "b011",
+      "mnemonic": "jne",
+      "operands": "0x83b",
+      "data_references": []
+    },
+    {
+      "address": 2056,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "5baa0a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2059,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "83c64e",
+      "stored_bytes": "282c4e",
+      "mnemonic": "add",
+      "operands": "si, 0x4e",
+      "data_references": []
+    },
+    {
+      "address": 2062,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "bf60bf",
+      "stored_bytes": "1803bf",
+      "mnemonic": "mov",
+      "operands": "di, 0xbf60",
+      "data_references": []
+    },
+    {
+      "address": 2065,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b83900",
+      "stored_bytes": "40b800",
+      "mnemonic": "mov",
+      "operands": "ax, 0x39",
+      "data_references": []
+    },
+    {
+      "address": 2068,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8c000",
+      "stored_bytes": "673e00",
+      "mnemonic": "call",
+      "operands": "0x8d7",
+      "data_references": []
+    },
+    {
+      "address": 2071,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "3bc7",
+      "stored_bytes": "b838",
+      "mnemonic": "cmp",
+      "operands": "ax, di",
+      "data_references": []
+    },
+    {
+      "address": 2073,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7520",
+      "stored_bytes": "faae",
+      "mnemonic": "jne",
+      "operands": "0x83b",
+      "data_references": []
+    },
+    {
+      "address": 2075,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760a",
+      "stored_bytes": "ced40a",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2078,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e020c",
+      "stored_bytes": "d794020c",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 2], 0xc",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2082,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7403",
+      "stored_bytes": "8fe4",
+      "mnemonic": "je",
+      "operands": "0x827",
+      "data_references": []
+    },
+    {
+      "address": 2084,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "83c666",
+      "stored_bytes": "63f066",
+      "mnemonic": "add",
+      "operands": "si, 0x66",
+      "data_references": []
+    },
+    {
+      "address": 2087,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b82800",
+      "stored_bytes": "a71a00",
+      "mnemonic": "mov",
+      "operands": "ax, 0x28",
+      "data_references": []
+    },
+    {
+      "address": 2090,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "2a4603",
+      "stored_bytes": "e1b903",
+      "mnemonic": "sub",
+      "operands": "al, byte ptr [bp + 3]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 3,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2093,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "024601",
+      "stored_bytes": "8fbe01",
+      "mnemonic": "add",
+      "operands": "al, byte ptr [bp + 1]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 1,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2096,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "03f0",
+      "stored_bytes": "800c",
+      "mnemonic": "add",
+      "operands": "si, ax",
+      "data_references": []
+    },
+    {
+      "address": 2098,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b80600",
+      "stored_bytes": "47e000",
+      "mnemonic": "mov",
+      "operands": "ax, 6",
+      "data_references": []
+    },
+    {
+      "address": 2101,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8c400",
+      "stored_bytes": "d73a00",
+      "mnemonic": "call",
+      "operands": "0x8fc",
+      "data_references": []
+    },
+    {
+      "address": 2104,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f8",
+      "stored_bytes": "73",
+      "mnemonic": "clc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2105,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "730a",
+      "stored_bytes": "8c13",
+      "mnemonic": "jae",
+      "operands": "0x845",
+      "data_references": []
+    },
+    {
+      "address": 2107,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e88000",
+      "stored_bytes": "0f5800",
+      "mnemonic": "call",
+      "operands": "0x8be",
+      "data_references": []
+    },
+    {
+      "address": 2110,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "49",
+      "stored_bytes": "06",
+      "mnemonic": "dec",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2111,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7403",
+      "stored_bytes": "8bf0",
+      "mnemonic": "je",
+      "operands": "0x844",
+      "data_references": []
+    },
+    {
+      "address": 2113,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e977ff",
+      "stored_bytes": "0169ff",
+      "mnemonic": "jmp",
+      "operands": "0x7bb",
+      "data_references": []
+    },
+    {
+      "address": 2116,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f9",
+      "stored_bytes": "d5",
+      "mnemonic": "stc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2117,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "59",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2118,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "96",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2119,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c6460e02",
+      "stored_bytes": "8a950e02",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 0xe], 2",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 14,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2123,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "eb05",
+      "stored_bytes": "08fe",
+      "mnemonic": "jmp",
+      "operands": "0x852",
+      "data_references": []
+    },
+    {
+      "address": 2130,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "b2",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2131,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90300",
+      "stored_bytes": "419800",
+      "mnemonic": "mov",
+      "operands": "cx, 3",
+      "data_references": []
+    },
+    {
+      "address": 2134,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "9e",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2135,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "55",
+      "stored_bytes": "ab",
+      "mnemonic": "push",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2136,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "b001",
+      "stored_bytes": "72a9",
+      "mnemonic": "mov",
+      "operands": "al, 1",
+      "data_references": []
+    },
+    {
+      "address": 2138,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a660e",
+      "stored_bytes": "90cb0e",
+      "mnemonic": "mov",
+      "operands": "ah, byte ptr [bp + 0xe]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 14,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2141,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c45e0a",
+      "stored_bytes": "adbc0a",
+      "mnemonic": "les",
+      "operands": "bx, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2144,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8b4e02",
+      "stored_bytes": "0ca402",
+      "mnemonic": "mov",
+      "operands": "cx, word ptr [bp + 2]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 2,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2147,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8b5600",
+      "stored_bytes": "3cac00",
+      "mnemonic": "mov",
+      "operands": "dx, word ptr [bp]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2150,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e83505",
+      "stored_bytes": "4fcb05",
+      "mnemonic": "call",
+      "operands": "0xd9e",
+      "data_references": []
+    },
+    {
+      "address": 2153,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "5d",
+      "stored_bytes": "34",
+      "mnemonic": "pop",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2154,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "ac",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2155,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7309",
+      "stored_bytes": "e5ae",
+      "mnemonic": "jae",
+      "operands": "0x876",
+      "data_references": []
+    },
+    {
+      "address": 2157,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0e02",
+      "stored_bytes": "b4dc0e02",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 0xe], 2",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 14,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2161,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f9",
+      "stored_bytes": "1a",
+      "mnemonic": "stc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2162,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7402",
+      "stored_bytes": "8fc9",
+      "mnemonic": "je",
+      "operands": "0x876",
+      "data_references": []
+    },
+    {
+      "address": 2164,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "e2e0",
+      "stored_bytes": "028c",
+      "mnemonic": "loop",
+      "operands": "0x856",
+      "data_references": []
+    },
+    {
+      "address": 2166,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "a3",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2167,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "25",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2168,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "c6460e25",
+      "stored_bytes": "7ff20e25",
+      "mnemonic": "mov",
+      "operands": "byte ptr [bp + 0xe], 0x25",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 14,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2172,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "eb05",
+      "stored_bytes": "08b0",
+      "mnemonic": "jmp",
+      "operands": "0x883",
+      "data_references": []
+    },
+    {
+      "address": 2179,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "b2",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2180,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90300",
+      "stored_bytes": "0b9800",
+      "mnemonic": "mov",
+      "operands": "cx, 3",
+      "data_references": []
+    },
+    {
+      "address": 2183,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "9e",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2184,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "55",
+      "stored_bytes": "ab",
+      "mnemonic": "push",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2185,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a4600",
+      "stored_bytes": "48ee00",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr [bp]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2188,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "c746080100",
+      "stored_bytes": "e4b8080100",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 8], 1",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 8,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2193,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bdd",
+      "stored_bytes": "7622",
+      "mnemonic": "mov",
+      "operands": "bx, bp",
+      "data_references": []
+    },
+    {
+      "address": 2195,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "83c304",
+      "stored_bytes": "907804",
+      "mnemonic": "add",
+      "operands": "bx, 4",
+      "data_references": []
+    },
+    {
+      "address": 2198,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b9ffff",
+      "stored_bytes": "b608ff",
+      "mnemonic": "mov",
+      "operands": "cx, 0xffff",
+      "data_references": []
+    },
+    {
+      "address": 2201,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "394e06",
+      "stored_bytes": "d74f06",
+      "mnemonic": "cmp",
+      "operands": "word ptr [bp + 6], cx",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 6,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2204,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7509",
+      "stored_bytes": "14fa",
+      "mnemonic": "jne",
+      "operands": "0x8a7",
+      "data_references": []
+    },
+    {
+      "address": 2206,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c55e0a",
+      "stored_bytes": "13550a",
+      "mnemonic": "lds",
+      "operands": "bx, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2209,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90100",
+      "stored_bytes": "ecea00",
+      "mnemonic": "mov",
+      "operands": "cx, 1",
+      "data_references": []
+    },
+    {
+      "address": 2212,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8b5604",
+      "stored_bytes": "a0a804",
+      "mnemonic": "mov",
+      "operands": "dx, word ptr [bp + 4]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 4,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2215,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e80800",
+      "stored_bytes": "47fe00",
+      "mnemonic": "call",
+      "operands": "0x8b2",
+      "data_references": []
+    },
+    {
+      "address": 2218,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "5d",
+      "stored_bytes": "5e",
+      "mnemonic": "pop",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2219,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "a6",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2220,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7302",
+      "stored_bytes": "31b1",
+      "mnemonic": "jae",
+      "operands": "0x8b0",
+      "data_references": []
+    },
+    {
+      "address": 2222,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "e2d7",
+      "stored_bytes": "7e4a",
+      "mnemonic": "loop",
+      "operands": "0x887",
+      "data_references": []
+    },
+    {
+      "address": 2224,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "5a",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2225,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "a8",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2226,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0e26",
+      "stored_bytes": "cad10e26",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp + 0xe], 0x26",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 14,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2230,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7403",
+      "stored_bytes": "97b0",
+      "mnemonic": "je",
+      "operands": "0x8bb",
+      "data_references": []
+    },
+    {
+      "address": 2232,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e9e804",
+      "stored_bytes": "397604",
+      "mnemonic": "jmp",
+      "operands": "0xda3",
+      "data_references": []
+    },
+    {
+      "address": 2235,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e9ed04",
+      "stored_bytes": "fa1a04",
+      "mnemonic": "jmp",
+      "operands": "0xdab",
+      "data_references": []
+    },
+    {
+      "address": 2238,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "9a",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2239,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "55",
+      "stored_bytes": "a3",
+      "mnemonic": "push",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2240,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "8a4600",
+      "stored_bytes": "40fe00",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr [bp]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2243,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "32e4",
+      "stored_bytes": "311a",
+      "mnemonic": "xor",
+      "operands": "ah, ah",
+      "data_references": []
+    },
+    {
+      "address": 2245,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e8d604",
+      "stored_bytes": "751d04",
+      "mnemonic": "call",
+      "operands": "0xd9e",
+      "data_references": []
+    },
+    {
+      "address": 2248,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "5d",
+      "stored_bytes": "98",
+      "mnemonic": "pop",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2249,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "af",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2250,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "0d",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2251,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "f0",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2252,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c47e0a",
+      "stored_bytes": "20610a",
+      "mnemonic": "les",
+      "operands": "di, ptr [bp + 0xa]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 10,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2255,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90001",
+      "stored_bytes": "84eb01",
+      "mnemonic": "mov",
+      "operands": "cx, 0x100",
+      "data_references": []
+    },
+    {
+      "address": 2258,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "fc",
+      "stored_bytes": "d5",
+      "mnemonic": "cld",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2259,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "f3ab",
+      "stored_bytes": "0ffe",
+      "mnemonic": "rep stosw",
+      "operands": "word ptr es:[di], ax",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 0,
+          "base": "di",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2261,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "b9",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2262,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "c1",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2263,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "53",
+      "stored_bytes": "df",
+      "mnemonic": "push",
+      "operands": "bx",
+      "data_references": []
+    },
+    {
+      "address": 2264,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "2d",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2265,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "92",
+      "stored_bytes": "d3",
+      "mnemonic": "xchg",
+      "operands": "dx, ax",
+      "data_references": []
+    },
+    {
+      "address": 2266,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b8dc0e",
+      "stored_bytes": "1c850e",
+      "mnemonic": "mov",
+      "operands": "ax, 0xedc",
+      "data_references": []
+    },
+    {
+      "address": 2269,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "268a3c",
+      "stored_bytes": "d3683c",
+      "mnemonic": "mov",
+      "operands": "bh, byte ptr es:[si]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 0,
+          "base": "si",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2272,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "46",
+      "stored_bytes": "69",
+      "mnemonic": "inc",
+      "operands": "si",
+      "data_references": []
+    },
+    {
+      "address": 2273,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "32db",
+      "stored_bytes": "b5f6",
+      "mnemonic": "xor",
+      "operands": "bl, bl",
+      "data_references": []
+    },
+    {
+      "address": 2275,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "33c3",
+      "stored_bytes": "a7d1",
+      "mnemonic": "xor",
+      "operands": "ax, bx",
+      "data_references": []
+    },
+    {
+      "address": 2277,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90800",
+      "stored_bytes": "095400",
+      "mnemonic": "mov",
+      "operands": "cx, 8",
+      "data_references": []
+    },
+    {
+      "address": 2280,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bd8",
+      "stored_bytes": "dc27",
+      "mnemonic": "mov",
+      "operands": "bx, ax",
+      "data_references": []
+    },
+    {
+      "address": 2282,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "d1d3",
+      "stored_bytes": "9663",
+      "mnemonic": "rcl",
+      "operands": "bx, 1",
+      "data_references": []
+    },
+    {
+      "address": 2284,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7304",
+      "stored_bytes": "a03c",
+      "mnemonic": "jae",
+      "operands": "0x8f2",
+      "data_references": []
+    },
+    {
+      "address": 2286,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "351008",
+      "stored_bytes": "8a9608",
+      "mnemonic": "xor",
+      "operands": "ax, 0x810",
+      "data_references": []
+    },
+    {
+      "address": 2289,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "f9",
+      "stored_bytes": "2a",
+      "mnemonic": "stc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2290,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "d1d0",
+      "stored_bytes": "3e7b",
+      "mnemonic": "rcl",
+      "operands": "ax, 1",
+      "data_references": []
+    },
+    {
+      "address": 2292,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "e2f2",
+      "stored_bytes": "61fb",
+      "mnemonic": "loop",
+      "operands": "0x8e8",
+      "data_references": []
+    },
+    {
+      "address": 2294,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "4a",
+      "stored_bytes": "76",
+      "mnemonic": "dec",
+      "operands": "dx",
+      "data_references": []
+    },
+    {
+      "address": 2295,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "75e4",
+      "stored_bytes": "7cf6",
+      "mnemonic": "jne",
+      "operands": "0x8dd",
+      "data_references": []
+    },
+    {
+      "address": 2297,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "5f",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2298,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "5b",
+      "stored_bytes": "48",
+      "mnemonic": "pop",
+      "operands": "bx",
+      "data_references": []
+    },
+    {
+      "address": 2299,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "82",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2300,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "3f",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2301,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "92",
+      "stored_bytes": "69",
+      "mnemonic": "xchg",
+      "operands": "dx, ax",
+      "data_references": []
+    },
+    {
+      "address": 2302,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "33c0",
+      "stored_bytes": "b2ed",
+      "mnemonic": "xor",
+      "operands": "ax, ax",
+      "data_references": []
+    },
+    {
+      "address": 2304,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "268a1c",
+      "stored_bytes": "bcae1c",
+      "mnemonic": "mov",
+      "operands": "bl, byte ptr es:[si]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 0,
+          "base": "si",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2307,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "46",
+      "stored_bytes": "e5",
+      "mnemonic": "inc",
+      "operands": "si",
+      "data_references": []
+    },
+    {
+      "address": 2308,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90800",
+      "stored_bytes": "7f3d00",
+      "mnemonic": "mov",
+      "operands": "cx, 8",
+      "data_references": []
+    },
+    {
+      "address": 2311,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "d0d3",
+      "stored_bytes": "552c",
+      "mnemonic": "rcl",
+      "operands": "bl, 1",
+      "data_references": []
+    },
+    {
+      "address": 2313,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7301",
+      "stored_bytes": "26a6",
+      "mnemonic": "jae",
+      "operands": "0x90c",
+      "data_references": []
+    },
+    {
+      "address": 2315,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "40",
+      "stored_bytes": "f2",
+      "mnemonic": "inc",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 2316,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "e2f9",
+      "stored_bytes": "50e3",
+      "mnemonic": "loop",
+      "operands": "0x907",
+      "data_references": []
+    },
+    {
+      "address": 2318,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "4a",
+      "stored_bytes": "14",
+      "mnemonic": "dec",
+      "operands": "dx",
+      "data_references": []
+    },
+    {
+      "address": 2319,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "75ef",
+      "stored_bytes": "4c39",
+      "mnemonic": "jne",
+      "operands": "0x900",
+      "data_references": []
+    },
+    {
+      "address": 2321,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "3e",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2322,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "4e",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2323,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0002",
+      "stored_bytes": "031d0002",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp], 2",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2327,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7330",
+      "stored_bytes": "8ccb",
+      "mnemonic": "jae",
+      "operands": "0x949",
+      "data_references": []
+    },
+    {
+      "address": 2329,
+      "state": "tf_on",
+      "size": 5,
+      "bytes": "c746200000",
+      "stored_bytes": "212e200000",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0x20], 0",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 32,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2334,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4761e",
+      "stored_bytes": "3b891e",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0x1e]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 30,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2337,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "26a17800",
+      "stored_bytes": "cb637800",
+      "mnemonic": "mov",
+      "operands": "ax, word ptr es:[0x78]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 120,
+          "base": null,
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2341,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "89460f",
+      "stored_bytes": "86b90f",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0xf], ax",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 15,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2344,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "26a17a00",
+      "stored_bytes": "ab417a00",
+      "mnemonic": "mov",
+      "operands": "ax, word ptr es:[0x7a]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 122,
+          "base": null,
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2348,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "894611",
+      "stored_bytes": "82b911",
+      "mnemonic": "mov",
+      "operands": "word ptr [bp + 0x11], ax",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 17,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2351,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760f",
+      "stored_bytes": "49aa0f",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xf]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 15,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2354,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bfd",
+      "stored_bytes": "201d",
+      "mnemonic": "mov",
+      "operands": "di, bp",
+      "data_references": []
+    },
+    {
+      "address": 2356,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90b00",
+      "stored_bytes": "06ce00",
+      "mnemonic": "mov",
+      "operands": "cx, 0xb",
+      "data_references": []
+    },
+    {
+      "address": 2359,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "268a04",
+      "stored_bytes": "457404",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr es:[si]",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 0,
+          "base": "si",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2362,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "36884513",
+      "stored_bytes": "217f4513",
+      "mnemonic": "mov",
+      "operands": "byte ptr ss:[di + 0x13], al",
+      "data_references": [
+        {
+          "segment": "ss",
+          "displacement": 19,
+          "base": "di",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2366,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "46",
+      "stored_bytes": "33",
+      "mnemonic": "inc",
+      "operands": "si",
+      "data_references": []
+    },
+    {
+      "address": 2367,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "47",
+      "stored_bytes": "9e",
+      "mnemonic": "inc",
+      "operands": "di",
+      "data_references": []
+    },
+    {
+      "address": 2368,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "e2f5",
+      "stored_bytes": "7a36",
+      "mnemonic": "loop",
+      "operands": "0x937",
+      "data_references": []
+    },
+    {
+      "address": 2370,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760f",
+      "stored_bytes": "cfe50f",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xf]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 15,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2373,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "26895c03",
+      "stored_bytes": "13695c03",
+      "mnemonic": "mov",
+      "operands": "word ptr es:[si + 3], bx",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 3,
+          "base": "si",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2377,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "84",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2378,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "9c",
+      "stored_bytes": "64",
+      "mnemonic": "pushf",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2379,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "50",
+      "stored_bytes": "a7",
+      "mnemonic": "push",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 2380,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "33c0",
+      "stored_bytes": "0571",
+      "mnemonic": "xor",
+      "operands": "ax, ax",
+      "data_references": []
+    },
+    {
+      "address": 2382,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "e87aff",
+      "stored_bytes": "1d67ff",
+      "mnemonic": "call",
+      "operands": "0x8cb",
+      "data_references": []
+    },
+    {
+      "address": 2385,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "807e0002",
+      "stored_bytes": "b07f0002",
+      "mnemonic": "cmp",
+      "operands": "byte ptr [bp], 2",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 0,
+          "base": "bp",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2389,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "7315",
+      "stored_bytes": "8cee",
+      "mnemonic": "jae",
+      "operands": "0x96c",
+      "data_references": []
+    },
+    {
+      "address": 2391,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "c4760f",
+      "stored_bytes": "22540f",
+      "mnemonic": "les",
+      "operands": "si, ptr [bp + 0xf]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 15,
+          "base": "bp",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2394,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "8bfd",
+      "stored_bytes": "dc1c",
+      "mnemonic": "mov",
+      "operands": "di, bp",
+      "data_references": []
+    },
+    {
+      "address": 2396,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "16",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2397,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "b90b00",
+      "stored_bytes": "7ed800",
+      "mnemonic": "mov",
+      "operands": "cx, 0xb",
+      "data_references": []
+    },
+    {
+      "address": 2400,
+      "state": "tf_on",
+      "size": 4,
+      "bytes": "368a4513",
+      "stored_bytes": "79744513",
+      "mnemonic": "mov",
+      "operands": "al, byte ptr ss:[di + 0x13]",
+      "data_references": [
+        {
+          "segment": "ss",
+          "displacement": 19,
+          "base": "di",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2404,
+      "state": "tf_on",
+      "size": 3,
+      "bytes": "268804",
+      "stored_bytes": "535104",
+      "mnemonic": "mov",
+      "operands": "byte ptr es:[si], al",
+      "data_references": [
+        {
+          "segment": "es",
+          "displacement": 0,
+          "base": "si",
+          "index": null,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "address": 2407,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "46",
+      "stored_bytes": "1b",
+      "mnemonic": "inc",
+      "operands": "si",
+      "data_references": []
+    },
+    {
+      "address": 2408,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "47",
+      "stored_bytes": "b0",
+      "mnemonic": "inc",
+      "operands": "di",
+      "data_references": []
+    },
+    {
+      "address": 2409,
+      "state": "tf_on",
+      "size": 2,
+      "bytes": "e2f5",
+      "stored_bytes": "2a6a",
+      "mnemonic": "loop",
+      "operands": "0x960",
+      "data_references": []
+    },
+    {
+      "address": 2411,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "f2",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2412,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "58",
+      "stored_bytes": "72",
+      "mnemonic": "pop",
+      "operands": "ax",
+      "data_references": []
+    },
+    {
+      "address": 2413,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "9d",
+      "stored_bytes": "86",
+      "mnemonic": "popf",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2414,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "d9",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2415,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "3e",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2416,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "9c",
+      "stored_bytes": "9c",
+      "mnemonic": "pushf",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2417,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "59",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2418,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "33f6",
+      "stored_bytes": "33f6",
+      "mnemonic": "xor",
+      "operands": "si, si",
+      "data_references": []
+    },
+    {
+      "address": 2420,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "8ede",
+      "stored_bytes": "8ede",
+      "mnemonic": "mov",
+      "operands": "ds, si",
+      "data_references": []
+    },
+    {
+      "address": 2422,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "8f4412",
+      "stored_bytes": "8f4412",
+      "mnemonic": "pop",
+      "operands": "word ptr [si + 0x12]",
+      "data_references": [
+        {
+          "segment": "default",
+          "displacement": 18,
+          "base": "si",
+          "index": null,
+          "size": 2
+        }
+      ]
+    },
+    {
+      "address": 2425,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "83ee02",
+      "stored_bytes": "83ee02",
+      "mnemonic": "sub",
+      "operands": "si, 2",
+      "data_references": []
+    },
+    {
+      "address": 2428,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "83feec",
+      "stored_bytes": "83feec",
+      "mnemonic": "cmp",
+      "operands": "si, -0x14",
+      "data_references": []
+    },
+    {
+      "address": 2431,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "75f5",
+      "stored_bytes": "75f5",
+      "mnemonic": "jne",
+      "operands": "0x976",
+      "data_references": []
+    },
+    {
+      "address": 2433,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "51",
+      "stored_bytes": "51",
+      "mnemonic": "push",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2434,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "9d",
+      "stored_bytes": "9d",
+      "mnemonic": "popf",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 2435,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "5d",
+      "stored_bytes": "5d",
+      "mnemonic": "pop",
+      "operands": "bp",
+      "data_references": []
+    },
+    {
+      "address": 2436,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "5f",
+      "stored_bytes": "5f",
+      "mnemonic": "pop",
+      "operands": "di",
+      "data_references": []
+    },
+    {
+      "address": 2437,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "5e",
+      "stored_bytes": "5e",
+      "mnemonic": "pop",
+      "operands": "si",
+      "data_references": []
+    },
+    {
+      "address": 2438,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "59",
+      "stored_bytes": "59",
+      "mnemonic": "pop",
+      "operands": "cx",
+      "data_references": []
+    },
+    {
+      "address": 2439,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "07",
+      "stored_bytes": "07",
+      "mnemonic": "pop",
+      "operands": "es",
+      "data_references": []
+    },
+    {
+      "address": 2440,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "1f",
+      "stored_bytes": "1f",
+      "mnemonic": "pop",
+      "operands": "ds",
+      "data_references": []
+    },
+    {
+      "address": 2441,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "e9ae04",
+      "stored_bytes": "e9ae04",
+      "mnemonic": "jmp",
+      "operands": "0xe3a",
+      "data_references": []
+    },
+    {
+      "address": 3486,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "12",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3487,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "cd13",
+      "stored_bytes": "cd13",
+      "mnemonic": "int",
+      "operands": "0x13",
+      "data_references": []
+    },
+    {
+      "address": 3489,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "cc",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3490,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "1b",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3491,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "ab",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3492,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "cd25",
+      "stored_bytes": "cd25",
+      "mnemonic": "int",
+      "operands": "0x25",
+      "data_references": []
+    },
+    {
+      "address": 3494,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "83c402",
+      "stored_bytes": "83c402",
+      "mnemonic": "add",
+      "operands": "sp, 2",
+      "data_references": []
+    },
+    {
+      "address": 3497,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "cc",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3498,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "39",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3499,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "ab",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3500,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "cd26",
+      "stored_bytes": "cd26",
+      "mnemonic": "int",
+      "operands": "0x26",
+      "data_references": []
+    },
+    {
+      "address": 3502,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "83c402",
+      "stored_bytes": "83c402",
+      "mnemonic": "add",
+      "operands": "sp, 2",
+      "data_references": []
+    },
+    {
+      "address": 3505,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "cc",
+      "stored_bytes": "cc",
+      "mnemonic": "int3",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3506,
+      "state": "tf_on",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "39",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3642,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7301",
+      "stored_bytes": "7301",
+      "mnemonic": "jae",
+      "operands": "0xe3d",
+      "data_references": []
+    },
+    {
+      "address": 3644,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "c3",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3645,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "3d1c58",
+      "stored_bytes": "3d1c58",
+      "mnemonic": "cmp",
+      "operands": "ax, 0x581c",
+      "data_references": []
+    },
+    {
+      "address": 3648,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7508",
+      "stored_bytes": "7508",
+      "mnemonic": "jne",
+      "operands": "0xe4a",
+      "data_references": []
+    },
+    {
+      "address": 3650,
+      "state": "tf_off",
+      "size": 4,
+      "bytes": "81fbf2a9",
+      "stored_bytes": "81fbf2a9",
+      "mnemonic": "cmp",
+      "operands": "bx, 0xa9f2",
+      "data_references": []
+    },
+    {
+      "address": 3654,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7502",
+      "stored_bytes": "7502",
+      "mnemonic": "jne",
+      "operands": "0xe4a",
+      "data_references": []
+    },
+    {
+      "address": 3656,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "f8",
+      "stored_bytes": "f8",
+      "mnemonic": "clc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3657,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "c3",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3658,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "3d50d9",
+      "stored_bytes": "3d50d9",
+      "mnemonic": "cmp",
+      "operands": "ax, 0xd950",
+      "data_references": []
+    },
+    {
+      "address": 3661,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7508",
+      "stored_bytes": "7508",
+      "mnemonic": "jne",
+      "operands": "0xe57",
+      "data_references": []
+    },
+    {
+      "address": 3663,
+      "state": "tf_off",
+      "size": 4,
+      "bytes": "81fb0a27",
+      "stored_bytes": "81fb0a27",
+      "mnemonic": "cmp",
+      "operands": "bx, 0x270a",
+      "data_references": []
+    },
+    {
+      "address": 3667,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7502",
+      "stored_bytes": "7502",
+      "mnemonic": "jne",
+      "operands": "0xe57",
+      "data_references": []
+    },
+    {
+      "address": 3669,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "f8",
+      "stored_bytes": "f8",
+      "mnemonic": "clc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3670,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "c3",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3671,
+      "state": "tf_off",
+      "size": 3,
+      "bytes": "3df89c",
+      "stored_bytes": "3df89c",
+      "mnemonic": "cmp",
+      "operands": "ax, 0x9cf8",
+      "data_references": []
+    },
+    {
+      "address": 3674,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7508",
+      "stored_bytes": "7508",
+      "mnemonic": "jne",
+      "operands": "0xe64",
+      "data_references": []
+    },
+    {
+      "address": 3676,
+      "state": "tf_off",
+      "size": 4,
+      "bytes": "81fb8c1a",
+      "stored_bytes": "81fb8c1a",
+      "mnemonic": "cmp",
+      "operands": "bx, 0x1a8c",
+      "data_references": []
+    },
+    {
+      "address": 3680,
+      "state": "tf_off",
+      "size": 2,
+      "bytes": "7502",
+      "stored_bytes": "7502",
+      "mnemonic": "jne",
+      "operands": "0xe64",
+      "data_references": []
+    },
+    {
+      "address": 3682,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "f8",
+      "stored_bytes": "f8",
+      "mnemonic": "clc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3683,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "c3",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3684,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "f9",
+      "stored_bytes": "f9",
+      "mnemonic": "stc",
+      "operands": "",
+      "data_references": []
+    },
+    {
+      "address": 3685,
+      "state": "tf_off",
+      "size": 1,
+      "bytes": "c3",
+      "stored_bytes": "c3",
+      "mnemonic": "ret",
+      "operands": "",
+      "data_references": []
+    }
+  ],
+  "edges": [
+    {
+      "source": 1645,
+      "state": "tf_on",
+      "target": 1646,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1646,
+      "state": "tf_on",
+      "target": 1649,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1646,
+      "state": "tf_on",
+      "target": 1649,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1649,
+      "state": "tf_on",
+      "target": 1650,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1650,
+      "state": "tf_on",
+      "target": 1653,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1653,
+      "state": "tf_on",
+      "target": 1654,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1654,
+      "state": "tf_on",
+      "target": 1655,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1655,
+      "state": "tf_on",
+      "target": 1657,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1657,
+      "state": "tf_on",
+      "target": 1659,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1659,
+      "state": "tf_on",
+      "target": 1661,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1661,
+      "state": "tf_on",
+      "target": 1662,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1662,
+      "state": "tf_on",
+      "target": 1665,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1665,
+      "state": "tf_on",
+      "target": 1667,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1667,
+      "state": "tf_on",
+      "target": 1670,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1670,
+      "state": "tf_on",
+      "target": 1673,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1673,
+      "state": "tf_on",
+      "target": 1679,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1673,
+      "state": "tf_on",
+      "target": 1675,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1675,
+      "state": "tf_on",
+      "target": 1679,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1679,
+      "state": "tf_on",
+      "target": 1680,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1680,
+      "state": "tf_on",
+      "target": 1683,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1683,
+      "state": "tf_on",
+      "target": 1685,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1685,
+      "state": "tf_on",
+      "target": 1926,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1685,
+      "state": "tf_on",
+      "target": 1688,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1688,
+      "state": "tf_on",
+      "target": 1691,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1691,
+      "state": "tf_on",
+      "target": 1751,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1691,
+      "state": "tf_on",
+      "target": 1693,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1693,
+      "state": "tf_on",
+      "target": 1696,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1696,
+      "state": "tf_on",
+      "target": 2323,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1696,
+      "state": "tf_on",
+      "target": 1699,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1699,
+      "state": "tf_on",
+      "target": 2238,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1699,
+      "state": "tf_on",
+      "target": 1702,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1702,
+      "state": "tf_on",
+      "target": 1822,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1702,
+      "state": "tf_on",
+      "target": 1705,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1705,
+      "state": "tf_on",
+      "target": 1729,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1705,
+      "state": "tf_on",
+      "target": 1707,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1707,
+      "state": "tf_on",
+      "target": 1711,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1711,
+      "state": "tf_on",
+      "target": 1801,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1711,
+      "state": "tf_on",
+      "target": 1713,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1713,
+      "state": "tf_on",
+      "target": 1716,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1716,
+      "state": "tf_on",
+      "target": 1718,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1718,
+      "state": "tf_on",
+      "target": 1720,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1720,
+      "state": "tf_on",
+      "target": 1723,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1723,
+      "state": "tf_on",
+      "target": 1725,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1725,
+      "state": "tf_on",
+      "target": 1702,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1725,
+      "state": "tf_on",
+      "target": 1727,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1727,
+      "state": "tf_on",
+      "target": 1801,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1727,
+      "state": "tf_on",
+      "target": 1729,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1729,
+      "state": "tf_on",
+      "target": 1732,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1732,
+      "state": "tf_on",
+      "target": 1735,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1735,
+      "state": "tf_on",
+      "target": 2263,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1735,
+      "state": "tf_on",
+      "target": 1738,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1738,
+      "state": "tf_on",
+      "target": 1739,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1739,
+      "state": "tf_on",
+      "target": 1742,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1742,
+      "state": "tf_on",
+      "target": 1745,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1745,
+      "state": "tf_on",
+      "target": 2263,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1745,
+      "state": "tf_on",
+      "target": 1748,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1748,
+      "state": "tf_on",
+      "target": 1749,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1749,
+      "state": "tf_on",
+      "target": 1806,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1749,
+      "state": "tf_on",
+      "target": 1751,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1751,
+      "state": "tf_on",
+      "target": 2168,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1751,
+      "state": "tf_on",
+      "target": 1754,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1754,
+      "state": "tf_on",
+      "target": 1757,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1757,
+      "state": "tf_on",
+      "target": 1760,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1760,
+      "state": "tf_on",
+      "target": 2263,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1760,
+      "state": "tf_on",
+      "target": 1763,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1763,
+      "state": "tf_on",
+      "target": 1766,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1766,
+      "state": "tf_on",
+      "target": 1801,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1766,
+      "state": "tf_on",
+      "target": 1768,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1768,
+      "state": "tf_on",
+      "target": 1773,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1773,
+      "state": "tf_on",
+      "target": 1776,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1776,
+      "state": "tf_on",
+      "target": 1778,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1778,
+      "state": "tf_on",
+      "target": 1781,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1781,
+      "state": "tf_on",
+      "target": 2263,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1781,
+      "state": "tf_on",
+      "target": 1784,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1784,
+      "state": "tf_on",
+      "target": 1786,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1786,
+      "state": "tf_on",
+      "target": 1789,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1789,
+      "state": "tf_on",
+      "target": 1794,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1794,
+      "state": "tf_on",
+      "target": 1799,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1799,
+      "state": "tf_on",
+      "target": 1806,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1799,
+      "state": "tf_on",
+      "target": 1801,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1801,
+      "state": "tf_on",
+      "target": 1803,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1803,
+      "state": "tf_on",
+      "target": 1805,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1805,
+      "state": "tf_on",
+      "target": 1806,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1806,
+      "state": "tf_on",
+      "target": 1807,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1807,
+      "state": "tf_on",
+      "target": 2378,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1807,
+      "state": "tf_on",
+      "target": 1810,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1810,
+      "state": "tf_on",
+      "target": 1813,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1813,
+      "state": "tf_on",
+      "target": 1816,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1816,
+      "state": "tf_on",
+      "target": 1817,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1817,
+      "state": "tf_on",
+      "target": 1819,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1819,
+      "state": "tf_on",
+      "target": 2415,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2415,
+      "state": "tf_on",
+      "target": 2416,
+      "target_state": "tf_off",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 2416,
+      "state": "tf_off",
+      "target": 2417,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2417,
+      "state": "tf_off",
+      "target": 2418,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2418,
+      "state": "tf_off",
+      "target": 2420,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2420,
+      "state": "tf_off",
+      "target": 2422,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2422,
+      "state": "tf_off",
+      "target": 2425,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2425,
+      "state": "tf_off",
+      "target": 2428,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2428,
+      "state": "tf_off",
+      "target": 2431,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2431,
+      "state": "tf_off",
+      "target": 2422,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2431,
+      "state": "tf_off",
+      "target": 2433,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2433,
+      "state": "tf_off",
+      "target": 2434,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2434,
+      "state": "tf_off",
+      "target": 2435,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2435,
+      "state": "tf_off",
+      "target": 2436,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2436,
+      "state": "tf_off",
+      "target": 2437,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2437,
+      "state": "tf_off",
+      "target": 2438,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2438,
+      "state": "tf_off",
+      "target": 2439,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2439,
+      "state": "tf_off",
+      "target": 2440,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2440,
+      "state": "tf_off",
+      "target": 2441,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2441,
+      "state": "tf_off",
+      "target": 3642,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3642,
+      "state": "tf_off",
+      "target": 3645,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3642,
+      "state": "tf_off",
+      "target": 3644,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3645,
+      "state": "tf_off",
+      "target": 3648,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3648,
+      "state": "tf_off",
+      "target": 3658,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3648,
+      "state": "tf_off",
+      "target": 3650,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3650,
+      "state": "tf_off",
+      "target": 3654,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3654,
+      "state": "tf_off",
+      "target": 3658,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3654,
+      "state": "tf_off",
+      "target": 3656,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3656,
+      "state": "tf_off",
+      "target": 3657,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3658,
+      "state": "tf_off",
+      "target": 3661,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3661,
+      "state": "tf_off",
+      "target": 3671,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3661,
+      "state": "tf_off",
+      "target": 3663,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3663,
+      "state": "tf_off",
+      "target": 3667,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3667,
+      "state": "tf_off",
+      "target": 3671,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3667,
+      "state": "tf_off",
+      "target": 3669,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3669,
+      "state": "tf_off",
+      "target": 3670,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3671,
+      "state": "tf_off",
+      "target": 3674,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3674,
+      "state": "tf_off",
+      "target": 3684,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3674,
+      "state": "tf_off",
+      "target": 3676,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3676,
+      "state": "tf_off",
+      "target": 3680,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3680,
+      "state": "tf_off",
+      "target": 3684,
+      "target_state": "tf_off",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3680,
+      "state": "tf_off",
+      "target": 3682,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3682,
+      "state": "tf_off",
+      "target": 3683,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3684,
+      "state": "tf_off",
+      "target": 3685,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2378,
+      "state": "tf_on",
+      "target": 2379,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2379,
+      "state": "tf_on",
+      "target": 2380,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2380,
+      "state": "tf_on",
+      "target": 2382,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2382,
+      "state": "tf_on",
+      "target": 2251,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2382,
+      "state": "tf_on",
+      "target": 2385,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2385,
+      "state": "tf_on",
+      "target": 2389,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2389,
+      "state": "tf_on",
+      "target": 2412,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2389,
+      "state": "tf_on",
+      "target": 2391,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2391,
+      "state": "tf_on",
+      "target": 2394,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2394,
+      "state": "tf_on",
+      "target": 2396,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2396,
+      "state": "tf_on",
+      "target": 2397,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2397,
+      "state": "tf_on",
+      "target": 2400,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2400,
+      "state": "tf_on",
+      "target": 2404,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2404,
+      "state": "tf_on",
+      "target": 2407,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2407,
+      "state": "tf_on",
+      "target": 2408,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2408,
+      "state": "tf_on",
+      "target": 2409,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2409,
+      "state": "tf_on",
+      "target": 2400,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2409,
+      "state": "tf_on",
+      "target": 2411,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2411,
+      "state": "tf_on",
+      "target": 2412,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2412,
+      "state": "tf_on",
+      "target": 2413,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2413,
+      "state": "tf_on",
+      "target": 2414,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2251,
+      "state": "tf_on",
+      "target": 2252,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2252,
+      "state": "tf_on",
+      "target": 2255,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2255,
+      "state": "tf_on",
+      "target": 2258,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2258,
+      "state": "tf_on",
+      "target": 2259,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2259,
+      "state": "tf_on",
+      "target": 2261,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2261,
+      "state": "tf_on",
+      "target": 2262,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2263,
+      "state": "tf_on",
+      "target": 2264,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2264,
+      "state": "tf_on",
+      "target": 2265,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2265,
+      "state": "tf_on",
+      "target": 2266,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2266,
+      "state": "tf_on",
+      "target": 2269,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2269,
+      "state": "tf_on",
+      "target": 2272,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2272,
+      "state": "tf_on",
+      "target": 2273,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2273,
+      "state": "tf_on",
+      "target": 2275,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2275,
+      "state": "tf_on",
+      "target": 2277,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2277,
+      "state": "tf_on",
+      "target": 2280,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2280,
+      "state": "tf_on",
+      "target": 2282,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2282,
+      "state": "tf_on",
+      "target": 2284,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2284,
+      "state": "tf_on",
+      "target": 2290,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2284,
+      "state": "tf_on",
+      "target": 2286,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2286,
+      "state": "tf_on",
+      "target": 2289,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2289,
+      "state": "tf_on",
+      "target": 2290,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2290,
+      "state": "tf_on",
+      "target": 2292,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2292,
+      "state": "tf_on",
+      "target": 2280,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2292,
+      "state": "tf_on",
+      "target": 2294,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2294,
+      "state": "tf_on",
+      "target": 2295,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2295,
+      "state": "tf_on",
+      "target": 2269,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2295,
+      "state": "tf_on",
+      "target": 2297,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2297,
+      "state": "tf_on",
+      "target": 2298,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2298,
+      "state": "tf_on",
+      "target": 2299,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2168,
+      "state": "tf_on",
+      "target": 2172,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2172,
+      "state": "tf_on",
+      "target": 2179,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2179,
+      "state": "tf_on",
+      "target": 2180,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2180,
+      "state": "tf_on",
+      "target": 2183,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2183,
+      "state": "tf_on",
+      "target": 2184,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2184,
+      "state": "tf_on",
+      "target": 2185,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2185,
+      "state": "tf_on",
+      "target": 2188,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2188,
+      "state": "tf_on",
+      "target": 2193,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2193,
+      "state": "tf_on",
+      "target": 2195,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2195,
+      "state": "tf_on",
+      "target": 2198,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2198,
+      "state": "tf_on",
+      "target": 2201,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2201,
+      "state": "tf_on",
+      "target": 2204,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2204,
+      "state": "tf_on",
+      "target": 2215,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2204,
+      "state": "tf_on",
+      "target": 2206,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2206,
+      "state": "tf_on",
+      "target": 2209,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2209,
+      "state": "tf_on",
+      "target": 2212,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2212,
+      "state": "tf_on",
+      "target": 2215,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2215,
+      "state": "tf_on",
+      "target": 2226,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2215,
+      "state": "tf_on",
+      "target": 2218,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2218,
+      "state": "tf_on",
+      "target": 2219,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2219,
+      "state": "tf_on",
+      "target": 2220,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2220,
+      "state": "tf_on",
+      "target": 2224,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2220,
+      "state": "tf_on",
+      "target": 2222,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2222,
+      "state": "tf_on",
+      "target": 2183,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2222,
+      "state": "tf_on",
+      "target": 2224,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2224,
+      "state": "tf_on",
+      "target": 2225,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2226,
+      "state": "tf_on",
+      "target": 2230,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2230,
+      "state": "tf_on",
+      "target": 2235,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2230,
+      "state": "tf_on",
+      "target": 2232,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2232,
+      "state": "tf_on",
+      "target": 3491,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3491,
+      "state": "tf_on",
+      "target": 3492,
+      "target_state": "tf_off",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 3492,
+      "state": "tf_off",
+      "target": null,
+      "target_state": "tf_off",
+      "kind": "platform_interrupt",
+      "vector": 37,
+      "return_contract": "Original interrupt returns with TF clear; result registers/flags remain a platform contract"
+    },
+    {
+      "source": 3492,
+      "state": "tf_off",
+      "target": 3494,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3494,
+      "state": "tf_off",
+      "target": 3497,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3497,
+      "state": "tf_off",
+      "target": 3498,
+      "target_state": "tf_on",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 2235,
+      "state": "tf_on",
+      "target": 3499,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 3499,
+      "state": "tf_on",
+      "target": 3500,
+      "target_state": "tf_off",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 3500,
+      "state": "tf_off",
+      "target": null,
+      "target_state": "tf_off",
+      "kind": "platform_interrupt",
+      "vector": 38,
+      "return_contract": "Original interrupt returns with TF clear; result registers/flags remain a platform contract"
+    },
+    {
+      "source": 3500,
+      "state": "tf_off",
+      "target": 3502,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3502,
+      "state": "tf_off",
+      "target": 3505,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3505,
+      "state": "tf_off",
+      "target": 3506,
+      "target_state": "tf_on",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 1822,
+      "state": "tf_on",
+      "target": 1825,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1825,
+      "state": "tf_on",
+      "target": 1829,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1829,
+      "state": "tf_on",
+      "target": 1975,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1829,
+      "state": "tf_on",
+      "target": 1832,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1832,
+      "state": "tf_on",
+      "target": 1843,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1832,
+      "state": "tf_on",
+      "target": 1834,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1834,
+      "state": "tf_on",
+      "target": 1838,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1838,
+      "state": "tf_on",
+      "target": 1975,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1838,
+      "state": "tf_on",
+      "target": 1841,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1841,
+      "state": "tf_on",
+      "target": 1874,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1841,
+      "state": "tf_on",
+      "target": 1843,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1843,
+      "state": "tf_on",
+      "target": 1845,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1845,
+      "state": "tf_on",
+      "target": 1848,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1848,
+      "state": "tf_on",
+      "target": 1918,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1848,
+      "state": "tf_on",
+      "target": 1850,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1850,
+      "state": "tf_on",
+      "target": 1853,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1853,
+      "state": "tf_on",
+      "target": 2238,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1853,
+      "state": "tf_on",
+      "target": 1856,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1856,
+      "state": "tf_on",
+      "target": 1860,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1860,
+      "state": "tf_on",
+      "target": 1975,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1860,
+      "state": "tf_on",
+      "target": 1863,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1863,
+      "state": "tf_on",
+      "target": 1918,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1863,
+      "state": "tf_on",
+      "target": 1865,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1865,
+      "state": "tf_on",
+      "target": 1869,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1869,
+      "state": "tf_on",
+      "target": 1975,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1869,
+      "state": "tf_on",
+      "target": 1872,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1872,
+      "state": "tf_on",
+      "target": 1918,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1872,
+      "state": "tf_on",
+      "target": 1874,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1874,
+      "state": "tf_on",
+      "target": 1877,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1877,
+      "state": "tf_on",
+      "target": 1881,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1881,
+      "state": "tf_on",
+      "target": 1975,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1881,
+      "state": "tf_on",
+      "target": 1884,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1884,
+      "state": "tf_on",
+      "target": 1918,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1884,
+      "state": "tf_on",
+      "target": 1886,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1886,
+      "state": "tf_on",
+      "target": 1889,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1889,
+      "state": "tf_on",
+      "target": 1892,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1892,
+      "state": "tf_on",
+      "target": 1922,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1892,
+      "state": "tf_on",
+      "target": 1894,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1894,
+      "state": "tf_on",
+      "target": 1898,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1898,
+      "state": "tf_on",
+      "target": 1913,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1898,
+      "state": "tf_on",
+      "target": 1900,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1900,
+      "state": "tf_on",
+      "target": 1904,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1904,
+      "state": "tf_on",
+      "target": 1913,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1904,
+      "state": "tf_on",
+      "target": 1906,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1906,
+      "state": "tf_on",
+      "target": 1909,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1909,
+      "state": "tf_on",
+      "target": 1911,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1911,
+      "state": "tf_on",
+      "target": 1922,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1911,
+      "state": "tf_on",
+      "target": 1913,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1913,
+      "state": "tf_on",
+      "target": 1914,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1914,
+      "state": "tf_on",
+      "target": 1918,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1914,
+      "state": "tf_on",
+      "target": 1916,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1916,
+      "state": "tf_on",
+      "target": 1825,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1918,
+      "state": "tf_on",
+      "target": 1921,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1921,
+      "state": "tf_on",
+      "target": 1922,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1922,
+      "state": "tf_on",
+      "target": 1925,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1975,
+      "state": "tf_on",
+      "target": 1976,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1976,
+      "state": "tf_on",
+      "target": 1979,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1979,
+      "state": "tf_on",
+      "target": 1982,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1982,
+      "state": "tf_on",
+      "target": 2251,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1982,
+      "state": "tf_on",
+      "target": 1985,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1985,
+      "state": "tf_on",
+      "target": 2119,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 1985,
+      "state": "tf_on",
+      "target": 1988,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1988,
+      "state": "tf_on",
+      "target": 1991,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1991,
+      "state": "tf_on",
+      "target": 2116,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1991,
+      "state": "tf_on",
+      "target": 1993,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1993,
+      "state": "tf_on",
+      "target": 1997,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1997,
+      "state": "tf_on",
+      "target": 2005,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1997,
+      "state": "tf_on",
+      "target": 1999,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1999,
+      "state": "tf_on",
+      "target": 2001,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2001,
+      "state": "tf_on",
+      "target": 2117,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2001,
+      "state": "tf_on",
+      "target": 2003,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2003,
+      "state": "tf_on",
+      "target": 2107,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2003,
+      "state": "tf_on",
+      "target": 2005,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2005,
+      "state": "tf_on",
+      "target": 2008,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2008,
+      "state": "tf_on",
+      "target": 2011,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2011,
+      "state": "tf_on",
+      "target": 2014,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2014,
+      "state": "tf_on",
+      "target": 2018,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2018,
+      "state": "tf_on",
+      "target": 2068,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2018,
+      "state": "tf_on",
+      "target": 2020,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2020,
+      "state": "tf_on",
+      "target": 2023,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2023,
+      "state": "tf_on",
+      "target": 2027,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2027,
+      "state": "tf_on",
+      "target": 2107,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2027,
+      "state": "tf_on",
+      "target": 2029,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2029,
+      "state": "tf_on",
+      "target": 2032,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2032,
+      "state": "tf_on",
+      "target": 2036,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2036,
+      "state": "tf_on",
+      "target": 2107,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2036,
+      "state": "tf_on",
+      "target": 2038,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2038,
+      "state": "tf_on",
+      "target": 2041,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2041,
+      "state": "tf_on",
+      "target": 2045,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2045,
+      "state": "tf_on",
+      "target": 2048,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2048,
+      "state": "tf_on",
+      "target": 2263,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2048,
+      "state": "tf_on",
+      "target": 2051,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2051,
+      "state": "tf_on",
+      "target": 2054,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2054,
+      "state": "tf_on",
+      "target": 2107,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2054,
+      "state": "tf_on",
+      "target": 2056,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2056,
+      "state": "tf_on",
+      "target": 2059,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2059,
+      "state": "tf_on",
+      "target": 2062,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2062,
+      "state": "tf_on",
+      "target": 2065,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2065,
+      "state": "tf_on",
+      "target": 2068,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2068,
+      "state": "tf_on",
+      "target": 2263,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2068,
+      "state": "tf_on",
+      "target": 2071,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2071,
+      "state": "tf_on",
+      "target": 2073,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2073,
+      "state": "tf_on",
+      "target": 2107,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2073,
+      "state": "tf_on",
+      "target": 2075,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2075,
+      "state": "tf_on",
+      "target": 2078,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2078,
+      "state": "tf_on",
+      "target": 2082,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2082,
+      "state": "tf_on",
+      "target": 2087,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2082,
+      "state": "tf_on",
+      "target": 2084,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2084,
+      "state": "tf_on",
+      "target": 2087,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2087,
+      "state": "tf_on",
+      "target": 2090,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2090,
+      "state": "tf_on",
+      "target": 2093,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2093,
+      "state": "tf_on",
+      "target": 2096,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2096,
+      "state": "tf_on",
+      "target": 2098,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2098,
+      "state": "tf_on",
+      "target": 2101,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2101,
+      "state": "tf_on",
+      "target": 2300,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2101,
+      "state": "tf_on",
+      "target": 2104,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2104,
+      "state": "tf_on",
+      "target": 2105,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2105,
+      "state": "tf_on",
+      "target": 2117,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2105,
+      "state": "tf_on",
+      "target": 2107,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2107,
+      "state": "tf_on",
+      "target": 2238,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2107,
+      "state": "tf_on",
+      "target": 2110,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2110,
+      "state": "tf_on",
+      "target": 2111,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2111,
+      "state": "tf_on",
+      "target": 2116,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2111,
+      "state": "tf_on",
+      "target": 2113,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2113,
+      "state": "tf_on",
+      "target": 1979,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2116,
+      "state": "tf_on",
+      "target": 2117,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2117,
+      "state": "tf_on",
+      "target": 2118,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2238,
+      "state": "tf_on",
+      "target": 2239,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2239,
+      "state": "tf_on",
+      "target": 2240,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2240,
+      "state": "tf_on",
+      "target": 2243,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2243,
+      "state": "tf_on",
+      "target": 2245,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2245,
+      "state": "tf_on",
+      "target": 3486,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2245,
+      "state": "tf_on",
+      "target": 2248,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2248,
+      "state": "tf_on",
+      "target": 2249,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2249,
+      "state": "tf_on",
+      "target": 2250,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3486,
+      "state": "tf_on",
+      "target": 3487,
+      "target_state": "tf_off",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 3487,
+      "state": "tf_off",
+      "target": null,
+      "target_state": "tf_off",
+      "kind": "platform_interrupt",
+      "vector": 19,
+      "return_contract": "Original interrupt returns with TF clear; result registers/flags remain a platform contract"
+    },
+    {
+      "source": 3487,
+      "state": "tf_off",
+      "target": 3489,
+      "target_state": "tf_off",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 3489,
+      "state": "tf_off",
+      "target": 3490,
+      "target_state": "tf_on",
+      "kind": "protection_toggle",
+      "resolved": true
+    },
+    {
+      "source": 2300,
+      "state": "tf_on",
+      "target": 2301,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2301,
+      "state": "tf_on",
+      "target": 2302,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2302,
+      "state": "tf_on",
+      "target": 2304,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2304,
+      "state": "tf_on",
+      "target": 2307,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2307,
+      "state": "tf_on",
+      "target": 2308,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2308,
+      "state": "tf_on",
+      "target": 2311,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2311,
+      "state": "tf_on",
+      "target": 2313,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2313,
+      "state": "tf_on",
+      "target": 2316,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2313,
+      "state": "tf_on",
+      "target": 2315,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2315,
+      "state": "tf_on",
+      "target": 2316,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2316,
+      "state": "tf_on",
+      "target": 2311,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2316,
+      "state": "tf_on",
+      "target": 2318,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2318,
+      "state": "tf_on",
+      "target": 2319,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2319,
+      "state": "tf_on",
+      "target": 2304,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2319,
+      "state": "tf_on",
+      "target": 2321,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2321,
+      "state": "tf_on",
+      "target": 2322,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2119,
+      "state": "tf_on",
+      "target": 2123,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2123,
+      "state": "tf_on",
+      "target": 2130,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2130,
+      "state": "tf_on",
+      "target": 2131,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2131,
+      "state": "tf_on",
+      "target": 2134,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2134,
+      "state": "tf_on",
+      "target": 2135,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2135,
+      "state": "tf_on",
+      "target": 2136,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2136,
+      "state": "tf_on",
+      "target": 2138,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2138,
+      "state": "tf_on",
+      "target": 2141,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2141,
+      "state": "tf_on",
+      "target": 2144,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2144,
+      "state": "tf_on",
+      "target": 2147,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2147,
+      "state": "tf_on",
+      "target": 2150,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2150,
+      "state": "tf_on",
+      "target": 3486,
+      "target_state": "tf_on",
+      "kind": "call",
+      "resolved": true
+    },
+    {
+      "source": 2150,
+      "state": "tf_on",
+      "target": 2153,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2153,
+      "state": "tf_on",
+      "target": 2154,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2154,
+      "state": "tf_on",
+      "target": 2155,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2155,
+      "state": "tf_on",
+      "target": 2166,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2155,
+      "state": "tf_on",
+      "target": 2157,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2157,
+      "state": "tf_on",
+      "target": 2161,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2161,
+      "state": "tf_on",
+      "target": 2162,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2162,
+      "state": "tf_on",
+      "target": 2166,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2162,
+      "state": "tf_on",
+      "target": 2164,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2164,
+      "state": "tf_on",
+      "target": 2134,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2164,
+      "state": "tf_on",
+      "target": 2166,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2166,
+      "state": "tf_on",
+      "target": 2167,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2323,
+      "state": "tf_on",
+      "target": 2327,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2327,
+      "state": "tf_on",
+      "target": 2377,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2327,
+      "state": "tf_on",
+      "target": 2329,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2329,
+      "state": "tf_on",
+      "target": 2334,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2334,
+      "state": "tf_on",
+      "target": 2337,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2337,
+      "state": "tf_on",
+      "target": 2341,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2341,
+      "state": "tf_on",
+      "target": 2344,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2344,
+      "state": "tf_on",
+      "target": 2348,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2348,
+      "state": "tf_on",
+      "target": 2351,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2351,
+      "state": "tf_on",
+      "target": 2354,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2354,
+      "state": "tf_on",
+      "target": 2356,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2356,
+      "state": "tf_on",
+      "target": 2359,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2359,
+      "state": "tf_on",
+      "target": 2362,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2362,
+      "state": "tf_on",
+      "target": 2366,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2366,
+      "state": "tf_on",
+      "target": 2367,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2367,
+      "state": "tf_on",
+      "target": 2368,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2368,
+      "state": "tf_on",
+      "target": 2359,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 2368,
+      "state": "tf_on",
+      "target": 2370,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2370,
+      "state": "tf_on",
+      "target": 2373,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 2373,
+      "state": "tf_on",
+      "target": 2377,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1926,
+      "state": "tf_on",
+      "target": 1929,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1929,
+      "state": "tf_on",
+      "target": 1932,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1932,
+      "state": "tf_on",
+      "target": 1935,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1935,
+      "state": "tf_on",
+      "target": 1938,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1938,
+      "state": "tf_on",
+      "target": 1941,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1941,
+      "state": "tf_on",
+      "target": 1946,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1946,
+      "state": "tf_on",
+      "target": 1950,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1950,
+      "state": "tf_on",
+      "target": 1960,
+      "target_state": "tf_on",
+      "kind": "branch",
+      "resolved": true
+    },
+    {
+      "source": 1950,
+      "state": "tf_on",
+      "target": 1952,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1952,
+      "state": "tf_on",
+      "target": 1955,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1955,
+      "state": "tf_on",
+      "target": 1960,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1960,
+      "state": "tf_on",
+      "target": 1961,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1961,
+      "state": "tf_on",
+      "target": 1964,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1964,
+      "state": "tf_on",
+      "target": 1967,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1967,
+      "state": "tf_on",
+      "target": 1968,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1968,
+      "state": "tf_on",
+      "target": 1971,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    },
+    {
+      "source": 1971,
+      "state": "tf_on",
+      "target": 1974,
+      "target_state": "tf_on",
+      "kind": "fallthrough",
+      "resolved": true
+    }
+  ],
+  "unresolved": [],
+  "entries": [
+    {
+      "address": 1645,
+      "state": "tf_on"
+    },
+    {
+      "address": 1649,
+      "state": "tf_on"
+    },
+    {
+      "address": 1822,
+      "state": "tf_on"
+    },
+    {
+      "address": 1926,
+      "state": "tf_on"
+    },
+    {
+      "address": 1975,
+      "state": "tf_on"
+    },
+    {
+      "address": 2119,
+      "state": "tf_on"
+    },
+    {
+      "address": 2168,
+      "state": "tf_on"
+    },
+    {
+      "address": 2226,
+      "state": "tf_on"
+    },
+    {
+      "address": 2238,
+      "state": "tf_on"
+    },
+    {
+      "address": 2251,
+      "state": "tf_on"
+    },
+    {
+      "address": 2263,
+      "state": "tf_on"
+    },
+    {
+      "address": 2300,
+      "state": "tf_on"
+    },
+    {
+      "address": 2323,
+      "state": "tf_on"
+    },
+    {
+      "address": 2378,
+      "state": "tf_on"
+    },
+    {
+      "address": 3486,
+      "state": "tf_on"
+    }
+  ],
+  "metrics": {
+    "instructions": 372,
+    "instruction_bytes": 854,
+    "tf_on_instructions": 325,
+    "tf_off_instructions": 47,
+    "entry_candidates": 15,
+    "resolved_edges": 438,
+    "unresolved_transfers": 0
+  }
+}

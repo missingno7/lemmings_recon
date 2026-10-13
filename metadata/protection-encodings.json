@@ -1,0 +1,152 @@
+[
+  {
+    "address": 1659,
+    "bytes": "03f0",
+    "instruction": "add si,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1665,
+    "bytes": "8bc6",
+    "instruction": "mov ax,si",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1683,
+    "bytes": "8bec",
+    "instruction": "mov bp,sp",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1776,
+    "bytes": "33f6",
+    "instruction": "xor si,si",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1784,
+    "bytes": "8bd8",
+    "instruction": "mov bx,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1801,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1803,
+    "bytes": "33db",
+    "instruction": "xor bx,bx",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1817,
+    "bytes": "8be5",
+    "instruction": "mov sp,bp",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1909,
+    "bytes": "3bf8",
+    "instruction": "cmp di,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 1999,
+    "bytes": "0ae4",
+    "instruction": "or ah,ah",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2071,
+    "bytes": "3bc7",
+    "instruction": "cmp ax,di",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2096,
+    "bytes": "03f0",
+    "instruction": "add si,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2193,
+    "bytes": "8bdd",
+    "instruction": "mov bx,bp",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2243,
+    "bytes": "32e4",
+    "instruction": "xor ah,ah",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2273,
+    "bytes": "32db",
+    "instruction": "xor bl,bl",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2275,
+    "bytes": "33c3",
+    "instruction": "xor ax,bx",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2280,
+    "bytes": "8bd8",
+    "instruction": "mov bx,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2302,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2354,
+    "bytes": "8bfd",
+    "instruction": "mov di,bp",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2380,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2394,
+    "bytes": "8bfd",
+    "instruction": "mov di,bp",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 2418,
+    "bytes": "33f6",
+    "instruction": "xor si,si",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 3587,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 3610,
+    "bytes": "8bf4",
+    "instruction": "mov si,sp",
+    "reason": "NASM selects different opcode/operand width"
+  },
+  {
+    "address": 3626,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "NASM selects different opcode/operand width"
+  }
+]

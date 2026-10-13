@@ -70,6 +70,7 @@ are masked and no initialized game snapshot is involved.
   Their separate code/data and CFG frontier is in sound-drivers.md.
 - Main 066C invokes INT3 installed at 0DB3 via 0659+075A. The handler negates 59 bytes
   at 0DFF..0E39, installs that address as INT1, changes saved TF/IF, and modifies
-  forthcoming instruction words. Static fallthrough after 066C and raw decoding
-  of the transformed INT1 region are blocked. Both representations must be
-  investigated separately; the canonical acceptance image remains unchanged.
+  forthcoming instruction words. Separate state-specific ASM and CFG now recover
+  372 stream and 29 INT1 instruction sites, independently checked using original
+  handlers. Raw decoding remains blocked at these transitions; see protection.md.
+  The canonical acceptance image remains unchanged.

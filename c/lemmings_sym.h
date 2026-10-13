@@ -13,8 +13,10 @@
 #define CS_sub_062B 0x062Bu
 #define CS_sub_063E 0x063Eu
 #define CS_sub_0659 0x0659u
+#define CS_ProtectionEncodedDiskEntry 0x066Du
 #define CS_ProtectionInt3Handler 0x0DB3u
 #define CS_sub_0DBD 0x0DBDu
+#define CS_ProtectionEncodedInt1 0x0DFFu
 #define CS_sub_0EC2 0x0EC2u
 #define CS_sub_0F08 0x0F08u
 #define CS_sub_0FA0 0x0FA0u

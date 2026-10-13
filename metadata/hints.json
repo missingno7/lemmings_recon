@@ -56,6 +56,50 @@
       "end": 3642,
       "class": "runtime_modified_code",
       "evidence": "0DBA CALL-next pushes0DBD;0DC1 adds0042 =>0DFF;0DD0..0DD8 negates003B bytes before using this INT1 handler"
+    },
+    {
+      "start": 1645,
+      "end": 2125,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2130,
+      "end": 2174,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2179,
+      "end": 2444,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 3486,
+      "end": 3507,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 3642,
+      "end": 3686,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2444,
+      "end": 2956,
+      "class": "runtime_sector_buffer",
+      "overlay": true,
+      "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
+    },
+    {
+      "start": 2972,
+      "end": 3484,
+      "class": "runtime_sector_buffer",
+      "overlay": true,
+      "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     }
   ],
   "runtime_frontiers": [
@@ -69,6 +113,31 @@
       "start": 3583,
       "end": 3642,
       "evidence": "0DBA CALL-next pushes0DBD;0DC1 adds0042 =>0DFF;0DD0..0DD8 negates003B bytes before using this INT1 handler"
+    },
+    {
+      "start": 1645,
+      "end": 2125,
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2130,
+      "end": 2174,
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2179,
+      "end": 2444,
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 3486,
+      "end": 3507,
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 3642,
+      "end": 3686,
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
     }
   ]
 }
