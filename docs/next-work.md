@@ -35,6 +35,8 @@
 8. Refine ownership modules after dependencies are understood. Replace explicit
    encoding exceptions with reliable NASM encoding syntax where available.
 9. Continue bounded C clusters after their static boundaries and contracts are
-    reliable. Resource decoding/loading is a
-    candidate after its original entry and memory contracts are recovered. No SDL3
+    reliable. Three resource decoder leaf routines at 1C82/1C8A/1CA3 now have
+    tested C cores; see dat.md. Recover the full 1BAF decoder and 1D2E cached/DOS
+    read provider contracts next, including malformed sizes, errors and aliases.
+    Do not substitute the static extractor's stricter checks. No SDL3
     integration or gameplay milestone is needed to progress these investigations.

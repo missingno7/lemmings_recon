@@ -1,4 +1,4 @@
-"""Run the bounded checksum C-versus-Unicorn differential suite."""
+"""Run the bounded native C-versus-original instruction suites."""
 from pathlib import Path
 import subprocess
 import sys
@@ -9,4 +9,6 @@ if __name__ == "__main__":
     subprocess.run([sys.executable, str(ROOT / "tests" / "checksum.py")],
                    cwd=ROOT, check=True)
     subprocess.run([sys.executable, str(ROOT / "tests" / "pcspeaker.py")],
+                   cwd=ROOT, check=True)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "dat.py")],
                    cwd=ROOT, check=True)

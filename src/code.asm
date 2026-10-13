@@ -2650,7 +2650,7 @@ loc_1C28:
     push ax ; @01C28
     mov cl,0x8 ; @01C29
     call ReadReverseBits ; @01C2B
-    call sub_1C82 ; @01C2E
+    call WriteReverseLiteral ; @01C2E
     pop ax ; @01C31
     dec ax ; @01C32
     jnz loc_1C28 ; @01C33
@@ -2688,7 +2688,7 @@ loc_1C62:
     push ax ; @01C62
     mov cl,0x8 ; @01C63
     call ReadReverseBits ; @01C65
-    call sub_1C82 ; @01C68
+    call WriteReverseLiteral ; @01C68
     pop ax ; @01C6B
     dec ax ; @01C6C
     jnz loc_1C62 ; @01C6D
@@ -2706,13 +2706,13 @@ loc_1C7A:
     mov ax,0x9a9 ; @01C7A
     mov ds,ax ; @01C7D
     jmp loc_04D0 ; @01C7F
-sub_1C82:
+WriteReverseLiteral:
     dec di ; @01C82
     mov [es:di],al ; @01C83
     ret ; @01C86
 sub_1C87:
     call ReadReverseBits ; @01C87
-sub_1C8A:
+CopyReverseMatch:
     inc bx ; @01C8A
     push si ; @01C8B
     push ds ; @01C8C

@@ -27,9 +27,11 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Five original routines now have verified C11 cores: the two checksums and three
-PC-speaker helpers, totaling 281 original code bytes. The sound helper suite compares
-registers, full memory, flags and port traces; see [PC-speaker C](docs/pcspeaker.md).
+Eight original routines now have verified C11 cores: two checksums, three DAT
+reverse-stream leaves and three PC-speaker helpers, totaling 333 original code bytes.
+The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
+The sound suite compares registers, full memory, flags and port traces;
+see [PC-speaker C](docs/pcspeaker.md).
 
 ## Reproduce
 

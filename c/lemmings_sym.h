@@ -87,9 +87,9 @@
 #define CS_sub_1C6F 0x1C6Fu
 #define CS_sub_1C73 0x1C73u
 #define CS_sub_1C75 0x1C75u
-#define CS_sub_1C82 0x1C82u
+#define CS_WriteReverseLiteral 0x1C82u
 #define CS_sub_1C87 0x1C87u
-#define CS_sub_1C8A 0x1C8Au
+#define CS_CopyReverseMatch 0x1C8Au
 #define CS_sub_1C9F 0x1C9Fu
 #define CS_ReadReverseBits 0x1CA3u
 #define CS_sub_1CB9 0x1CB9u

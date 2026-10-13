@@ -16,7 +16,7 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("checksum","pcspeaker"):
+    if cluster not in ("checksum","pcspeaker","dat"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 2 |
-| Translated C code bytes | 116 |
-| Differential cases | 14 |
-| Mutation checks detected | 3 |
-| Original instruction coverage | 44 / 15,392 decoded (0.286%) |
+| Translated C routines | 5 |
+| Translated C code bytes | 168 |
+| Differential cases | 484 |
+| Mutation checks detected | 6 |
+| Original instruction coverage | 77 / 15,392 decoded (0.500%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -34,16 +34,24 @@ There are 1,567 main-image decoded instructions expressed as explicit encoding e
 Gate A passes for the main EXE: deterministic static unpack, full byte comparison,
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
-transfer, external-driver and semantic closure. Gates C/D have the checksum and
-PC-speaker helper clusters. Both main checksum routines are TESTED within
-docs/checksum.md's domain; all other main
-entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
+transfer, external-driver and semantic closure. Gates C/D have the checksum,
+DAT leaf and PC-speaker helper clusters. The two checksum and three DAT main
+routines are TESTED within docs/checksum.md and docs/dat.md's domains; remaining
+main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
 The checksum tests execute 44/44 cluster instruction addresses and all 10 static
 branch edges. They compare registers, defined flags and the entire 1 MiB memory,
 including push/pop residue, across poisoned fixtures. AF is excluded only on the
 phase-wrap path, where the last XOR makes it architecturally undefined.
+
+The DAT leaf suite covers 33/33 instructions and all six local branch edges in
+470 cases. It compares full memory, registers and defined flags, including zero
+bit counts (256 iterations), zero incremented match counts (65,536 iterations),
+live overlapping copies and overwritten saved registers. Three compiled mutants
+are detected. The section decoder and file/cache provider remain UNTRANSLATED;
+the strict static extractor's validation rules are not substituted for original
+runtime behavior. See dat.md.
 
 Loaded sound-component images reconstruct exactly, with separate static accounting:
 
@@ -54,10 +62,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 104 / 17,291
-(0.601%) of this still-incomplete decoded inventory. There are
-5 tested C routines occupying 281 original code bytes across images,
-with 349 differential cases and 6 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 137 / 17,291
+(0.792%) of this still-incomplete decoded inventory. There are
+8 tested C routines occupying 333 original code bytes across images,
+with 819 differential cases and 9 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 

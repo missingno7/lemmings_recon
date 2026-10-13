@@ -8308,9 +8308,11 @@
     "address": 7298,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1C82",
-    "aliases": [],
+    "size": 5,
+    "symbol_name": "WriteReverseLiteral",
+    "aliases": [
+      "sub_1C82"
+    ],
     "callers": [
       7214,
       7272
@@ -8326,12 +8328,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Original closed DAT leaf interval; reverse cursor, wrapping counters, live memory and final flags preserved"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 5
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 5,
+    "c_implementation": "c/dat.c",
+    "verification_evidence": "tests/dat.py: 470 bounded original-vs-C cases; 33 instruction sites, 6 branch edges, three compiled mutants; domain in docs/dat.md"
   },
   {
     "address": 7303,
@@ -8377,9 +8382,11 @@
     "address": 7306,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1C8A",
-    "aliases": [],
+    "size": 25,
+    "symbol_name": "CopyReverseMatch",
+    "aliases": [
+      "sub_1C8A"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -8400,12 +8407,15 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Original closed DAT leaf interval; reverse cursor, wrapping counters, live memory and final flags preserved"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 25
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 25,
+    "c_implementation": "c/dat.c",
+    "verification_evidence": "tests/dat.py: 470 bounded original-vs-C cases; 33 instruction sites, 6 branch edges, three compiled mutants; domain in docs/dat.md"
   },
   {
     "address": 7327,
@@ -8428,7 +8438,7 @@
     "address": 7331,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 22,
     "symbol_name": "ReadReverseBits",
     "aliases": [
       "sub_1CA3"
@@ -8457,10 +8467,13 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "1CA3..1CB8 consumes CL reverse-stream bits from DL, assembles AX using carry, XORs refilled bytes into DH"
+      "1CA3..1CB8 consumes CL reverse-stream bits from DL, assembles AX using carry, XORs refilled bytes into DH",
+      "Original closed DAT leaf interval; reverse cursor, wrapping counters, live memory and final flags preserved"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 22
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 22,
+    "c_implementation": "c/dat.c",
+    "verification_evidence": "tests/dat.py: 470 bounded original-vs-C cases; 33 instruction sites, 6 branch edges, three compiled mutants; domain in docs/dat.md"
   },
   {
     "address": 7353,
