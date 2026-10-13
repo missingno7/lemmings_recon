@@ -16,14 +16,17 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("checksum","pcspeaker","dat","dat_io"):
+    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
+    sources=[ROOT/"c"/(cluster+".c")]
+    if cluster=="dat_section":sources += [ROOT/"c/dat.c",ROOT/"c/dat_io.c"]
+    defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
     subprocess.run([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
-        "-shared", "-DMUTATION=" + str(mutation),
-        "-I", str(ROOT / "c"), str(ROOT / "c" / (cluster+".c")),
+        "-shared", *defines,
+        "-I", str(ROOT / "c"), *map(str,sources),
         "-o", str(out),
     ], check=True)
     return out

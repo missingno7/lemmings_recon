@@ -24,7 +24,8 @@ Final flags come from INC SI, with carry retained from ADD SI,AX. The original
 PUSH SI/DS/CX/ES, POP DS and later POP CX/DS/SI are represented by writes and reads
 of live stack memory in the adapter. Output can overwrite these saved registers;
 they are not restored from host temporaries. The 1C87 CALL ReadReverseBits entry
-falls into this helper but its call instruction remains untranslated.
+falls into this helper and is now translated in the integrated section decoder;
+see dat-section.md for its shared-tail and return-word contracts.
 
 WriteReverseLiteral decrements DI and writes AL to ES:DI. It preserves carry and
 supplies the other arithmetic flags from DEC DI, including signed overflow at
@@ -52,9 +53,8 @@ each detected. This proves these leaf contracts within the stated domain.
 
 ## Remaining resource path
 
-The full section decoder at 1BAF and its cached/DOS-read provider at 1D2E remain
-untranslated. Recover their incoming registers, header reads, low-word size behavior,
-error transfers, provider effects and memory aliases before connecting these cores
-into a native loader. tools/resources.py is a strict static extraction utility;
+The section decoder at 1BAF and its cached/DOS-read provider at 1D2E now have
+verified C cores; see dat-section.md and dat-io.md. File/cache lookup, allocation,
+resource callers and fatal-error ownership remain untranslated. tools/resources.py is a strict static extraction utility;
 its validation and host file behavior do not define the original game's runtime
 semantics. Asset files remain private and unchanged. No gameplay execution was used.

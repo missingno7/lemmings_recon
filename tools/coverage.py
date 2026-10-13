@@ -52,8 +52,14 @@ def report():
             raise ValueError('Stale DAT read differential report for '+path+'; run tools/difftest.py')
     if io['image_sha256']!=sha(image):raise ValueError('DAT read differential oracle changed')
     executed.update(io['executed_instruction_addresses'])
-    m['differential_cases']=d['case_count']+dat['case_count']+io['case_count']
-    m['mutations_detected']=d['mutation_count']+dat['mutation_count']+io['mutation_count']
+    section=read_json(BUILD/'dat-section-differential.json')
+    for path,digest in section['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale DAT section differential report for '+path+'; run tools/difftest.py')
+    if section['image_sha256']!=sha(image):raise ValueError('DAT section differential oracle changed')
+    executed.update(section['executed_instruction_addresses'])
+    m['differential_cases']=d['case_count']+dat['case_count']+io['case_count']+section['case_count']
+    m['mutations_detected']=d['mutation_count']+dat['mutation_count']+io['mutation_count']+section['mutation_count']
     m['original_instructions_executed']=len(executed)
     m['unresolved_main_code_candidate_bytes']=sum(r['end']-r['start'] for r in analysis['regions'] if r['classification']=='unresolved' and r['start']<0x9a90)
     m['unresolved_main_code_candidate_runs']=sum(r['classification']=='unresolved' and r['start']<0x9a90 for r in analysis['regions'])
@@ -123,8 +129,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT leaf/read and PC-speaker helper clusters. The two checksum and four DAT main
-routines are TESTED within docs/checksum.md, docs/dat.md and docs/dat-io.md's domains; remaining
+DAT decoder/read/leaf and PC-speaker helper clusters. The two checksum and six DAT main
+routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
+docs/dat-section.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -137,7 +144,7 @@ The DAT leaf suite covers 33/33 instructions and all six local branch edges in
 470 cases. It compares full memory, registers and defined flags, including zero
 bit counts (256 iterations), zero incremented match counts (65,536 iterations),
 live overlapping copies and overwritten saved registers. Three compiled mutants
-are detected. The section decoder, cache lookup and allocation remain UNTRANSLATED;
+are detected. Cache lookup and allocation remain UNTRANSLATED;
 the strict static extractor's validation rules are not substituted for original
 runtime behavior. See dat.md.
 
@@ -211,6 +218,18 @@ three compiled mutations detected. Its narrow DOS file-size/read services have
 declared register-preservation contracts. The skipped UNKNOWN byte at 1D7C is
 excluded from translated-byte accounting. Full DOS/FCB platform behavior and the
 other resource-loading routines remain open.
+
+The DAT section decoder and its read-distance/shared-copy entry now call C cores
+directly. {section['case_count']} integrated differential cases execute all 235 decoder,
+leaf and read-wrapper sites and all 32 local decoder/leaf branch edges. They
+compare full memory, registers, defined flags and service traces, including real
+sound sections and malformed constructed headers. Three compiled section mutations
+are detected. Only AF after final AND DH,DH is excluded; read-error flags are fully
+compared. The fatal jump to 04D0 is an explicit exit with its original saved frame,
+not a translated cleanup routine. Four skipped UNKNOWN bytes are excluded from
+translated-byte accounting. Direct helper calls retain original return-word residue;
+overwriting those active return words is outside the current verification domain.
+See dat-section.md for unsigned termination, ignored high size words and aliases.
 '''
     return m,text
 

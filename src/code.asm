@@ -498,6 +498,7 @@ loc_04BA:
     mov [0x2000],dx ; @004CB
     ret ; @004CF
 loc_04D0:
+DatFatalTransfer:
     call RestoreTimerState ; @004D0
     call sub_1582 ; @004D3
     call sub_0FA0 ; @004D6
@@ -2591,6 +2592,7 @@ DecodeDatSection:
     mov cx,0xa ; @01BB4
     db 0x8b,0xd6 ; ENCODED: mov dx,si (NASM chooses a different encoding) ; @01BB7
     call ReadDatBytes ; @01BB9
+DatAfterHeaderRead:
     jnc loc_1BC1 ; @01BBC
     jmp loc_1C7A ; @01BBE
 loc_1BC1:
@@ -2612,6 +2614,7 @@ loc_1BC1:
     db 0x03,0xf1 ; ENCODED: add si,cx (NASM chooses a different encoding) ; @01BE4
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01BE6
     call ReadDatBytes ; @01BE8
+DatAfterPayloadRead:
     jnc loc_1BF0 ; @01BEB
     jmp loc_1C7A ; @01BED
 loc_1BF0:
@@ -2623,11 +2626,13 @@ loc_1BF0:
 sub_1BF7:
     mov cl,0x1 ; @01BF7
     call ReadReverseBits ; @01BF9
+DatAfterTokenBit:
     cmp ax,0x1 ; @01BFC
     jnz sub_1C47 ; @01BFF
 sub_1C01:
     mov cl,0x2 ; @01C01
     call ReadReverseBits ; @01C03
+DatAfterKindBits:
     cmp ax,0x2 ; @01C06
     jnc sub_1C1B ; @01C09
 sub_1C0B:
@@ -2635,7 +2640,8 @@ sub_1C0B:
     add bx,byte +0x2 ; @01C0D
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @01C10
     add cl,0x9 ; @01C12
-    call sub_1C87 ; @01C15
+    call ReadAndCopyReverseMatch ; @01C15
+DatAfterShortMatch:
     jmp short sub_1C6F ; @01C18
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01C1A
@@ -2645,12 +2651,15 @@ sub_1C1B:
 sub_1C20:
     mov cl,0x8 ; @01C20
     call ReadReverseBits ; @01C22
+DatAfterLongLiteralLength:
     add ax,0x9 ; @01C25
 loc_1C28:
     push ax ; @01C28
     mov cl,0x8 ; @01C29
     call ReadReverseBits ; @01C2B
+DatAfterLongLiteralByte:
     call WriteReverseLiteral ; @01C2E
+DatAfterLongLiteralWrite:
     pop ax ; @01C31
     dec ax ; @01C32
     jnz loc_1C28 ; @01C33
@@ -2661,21 +2670,24 @@ sub_1C35:
 sub_1C38:
     mov cl,0x8 ; @01C38
     call ReadReverseBits ; @01C3A
+DatAfterMatchLength:
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01C3D
     mov cl,0xc ; @01C3F
-    call sub_1C87 ; @01C41
+    call ReadAndCopyReverseMatch ; @01C41
+DatAfterVariableMatch:
     jmp short sub_1C6F ; @01C44
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01C46
 sub_1C47:
     mov cl,0x1 ; @01C47
     call ReadReverseBits ; @01C49
+DatAfterSecondTokenBit:
     cmp ax,0x1 ; @01C4C
     jnz sub_1C5C ; @01C4F
 sub_1C51:
     mov bx,0x1 ; @01C51
     mov cl,0x8 ; @01C54
-    call sub_1C87 ; @01C56
+    call ReadAndCopyReverseMatch ; @01C56
 sub_1C59:
     jmp short sub_1C6F ; @01C59
 ; UNKNOWN: unresolved bytes
@@ -2683,12 +2695,15 @@ sub_1C59:
 sub_1C5C:
     mov cl,0x3 ; @01C5C
     call ReadReverseBits ; @01C5E
+DatAfterShortLiteralLength:
     inc ax ; @01C61
 loc_1C62:
     push ax ; @01C62
     mov cl,0x8 ; @01C63
     call ReadReverseBits ; @01C65
+DatAfterShortLiteralByte:
     call WriteReverseLiteral ; @01C68
+DatAfterShortLiteralWrite:
     pop ax ; @01C6B
     dec ax ; @01C6C
     jnz loc_1C62 ; @01C6D
@@ -2703,6 +2718,7 @@ sub_1C75:
     cld ; @01C78
     ret ; @01C79
 loc_1C7A:
+DatReadFailure:
     mov ax,0x9a9 ; @01C7A
     mov ds,ax ; @01C7D
     jmp loc_04D0 ; @01C7F
@@ -2710,7 +2726,7 @@ WriteReverseLiteral:
     dec di ; @01C82
     mov [es:di],al ; @01C83
     ret ; @01C86
-sub_1C87:
+ReadAndCopyReverseMatch:
     call ReadReverseBits ; @01C87
 CopyReverseMatch:
     inc bx ; @01C8A

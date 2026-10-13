@@ -100,7 +100,7 @@ on cache copies, discard error AX during cache fill, or restore SI/DI from host
 temporaries are each detected. The C routine is TESTED only in this stated domain;
 the contract-only suite remains separately accounted.
 
-Next connect DecodeDatSection to these services and cores. Full DOS/FCB platform
-implementation, cache lookup/allocation, decoder error exits and wider incoming
-aliases remain open. The strict static extractor's bounds and checksum exceptions
+DecodeDatSection now calls these services and cores directly; see dat-section.md.
+Full DOS/FCB platform implementation, cache lookup/allocation, the fatal cleanup
+continuation and wider incoming aliases remain open. The strict static extractor's bounds and checksum exceptions
 must not replace the original wrapper's unchecked behavior.

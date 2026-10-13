@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 6 |
-| Translated C code bytes | 405 |
-| Differential cases | 529 |
-| Mutation checks detected | 9 |
-| Original instruction coverage | 183 / 15,392 decoded (1.189%) |
+| Translated C routines | 8 |
+| Translated C code bytes | 615 |
+| Differential cases | 577 |
+| Mutation checks detected | 12 |
+| Original instruction coverage | 279 / 15,392 decoded (1.813%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -35,8 +35,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT leaf/read and PC-speaker helper clusters. The two checksum and four DAT main
-routines are TESTED within docs/checksum.md, docs/dat.md and docs/dat-io.md's domains; remaining
+DAT decoder/read/leaf and PC-speaker helper clusters. The two checksum and six DAT main
+routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
+docs/dat-section.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -49,7 +50,7 @@ The DAT leaf suite covers 33/33 instructions and all six local branch edges in
 470 cases. It compares full memory, registers and defined flags, including zero
 bit counts (256 iterations), zero incremented match counts (65,536 iterations),
 live overlapping copies and overwritten saved registers. Three compiled mutants
-are detected. The section decoder, cache lookup and allocation remain UNTRANSLATED;
+are detected. Cache lookup and allocation remain UNTRANSLATED;
 the strict static extractor's validation rules are not substituted for original
 runtime behavior. See dat.md.
 
@@ -62,10 +63,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 243 / 17,291
-(1.405%) of this still-incomplete decoded inventory. There are
-9 tested C routines occupying 570 original code bytes across images,
-with 864 differential cases and 12 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 339 / 17,291
+(1.961%) of this still-incomplete decoded inventory. There are
+11 tested C routines occupying 780 original code bytes across images,
+with 912 differential cases and 15 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -123,3 +124,15 @@ three compiled mutations detected. Its narrow DOS file-size/read services have
 declared register-preservation contracts. The skipped UNKNOWN byte at 1D7C is
 excluded from translated-byte accounting. Full DOS/FCB platform behavior and the
 other resource-loading routines remain open.
+
+The DAT section decoder and its read-distance/shared-copy entry now call C cores
+directly. 48 integrated differential cases execute all 235 decoder,
+leaf and read-wrapper sites and all 32 local decoder/leaf branch edges. They
+compare full memory, registers, defined flags and service traces, including real
+sound sections and malformed constructed headers. Three compiled section mutations
+are detected. Only AF after final AND DH,DH is excluded; read-error flags are fully
+compared. The fatal jump to 04D0 is an explicit exit with its original saved frame,
+not a translated cleanup routine. Four skipped UNKNOWN bytes are excluded from
+translated-byte accounting. Direct helper calls retain original return-word residue;
+overwriting those active return words is outside the current verification domain.
+See dat-section.md for unsigned termination, ignored high size words and aliases.

@@ -27,9 +27,9 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Nine original routines now have verified C11 cores: two checksums, three DAT
-reverse-stream leaves, the DAT read/cache wrapper and three PC-speaker helpers,
-totaling 570 original code bytes.
+Eleven original routines now have verified C11 cores: two checksums, three DAT
+reverse-stream leaves, the DAT read/cache wrapper, section decoder and shared-match
+entry, plus three PC-speaker helpers, totaling 780 original code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
 see [PC-speaker C](docs/pcspeaker.md).
@@ -38,6 +38,12 @@ The complete DAT read wrapper now has bounded contracts for direct DOS reads,
 cache creation and cache hits: 45 cases cover 106 original instruction sites,
 including ignored cache-fill errors, saved-frame aliases and provider DF effects.
 The complete wrapper now has a verified C11 core; see [DAT read contracts](docs/dat-io.md).
+
+The integrated section decoder directly calls these native cores. Forty-eight
+cases include the original sound sections through direct reads and both cache
+paths, all token forms, malformed headers and both fatal read exits;
+see [DAT section C](docs/dat-section.md). File lookup, resource callers and fatal
+cleanup still require translation.
 
 ## Reproduce
 

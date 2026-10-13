@@ -3334,6 +3334,22 @@
     "reachable_instruction_bytes": 233
   },
   {
+    "address": 1232,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatFatalTransfer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 1273,
     "segment": 0,
     "kind": "entry",
@@ -7907,7 +7923,7 @@
     "address": 7087,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 211,
     "symbol_name": "DecodeDatSection",
     "aliases": [
       "sub_1BAF"
@@ -8011,8 +8027,64 @@
     "evidence": [
       "1BAF..1C79 loads DAT section header and runs reverse LZ/bit decoding; independently verified on both sound assets"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 248
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 248,
+    "c_implementation": "c/dat_section.c",
+    "c_code_ranges": [
+      [
+        7087,
+        7194
+      ],
+      [
+        7195,
+        7223
+      ],
+      [
+        7224,
+        7238
+      ],
+      [
+        7239,
+        7259
+      ],
+      [
+        7260,
+        7298
+      ]
+    ],
+    "verification_evidence": "tests/dat_section.py: 48 original-vs-C integrated cases, every decoder/leaf/read instruction, all 32 local branch edges; constructed DOS services; fatal 04D0 continuation is an explicit boundary; domain in docs/dat-section.md"
+  },
+  {
+    "address": 7100,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterHeaderRead",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7147,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterPayloadRead",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 7159,
@@ -8036,6 +8108,22 @@
     "reachable_instruction_bytes": 127
   },
   {
+    "address": 7164,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterTokenBit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7169,
     "segment": 0,
     "kind": "entry",
@@ -8057,6 +8145,22 @@
     "reachable_instruction_bytes": 127
   },
   {
+    "address": 7174,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterKindBits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7179,
     "segment": 0,
     "kind": "entry",
@@ -8076,6 +8180,22 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 127
+  },
+  {
+    "address": 7192,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterShortMatch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 7195,
@@ -8120,6 +8240,54 @@
     "reachable_instruction_bytes": 127
   },
   {
+    "address": 7205,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterLongLiteralLength",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7214,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterLongLiteralByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7217,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterLongLiteralWrite",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7221,
     "segment": 0,
     "kind": "entry",
@@ -8162,6 +8330,38 @@
     "reachable_instruction_bytes": 127
   },
   {
+    "address": 7229,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterMatchLength",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7236,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterVariableMatch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7239,
     "segment": 0,
     "kind": "entry",
@@ -8181,6 +8381,22 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 127
+  },
+  {
+    "address": 7244,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterSecondTokenBit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 7249,
@@ -8246,6 +8462,54 @@
     "reachable_instruction_bytes": 127
   },
   {
+    "address": 7265,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterShortLiteralLength",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7272,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterShortLiteralByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7275,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterShortLiteralWrite",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7279,
     "segment": 0,
     "kind": "entry",
@@ -8305,6 +8569,22 @@
     "reachable_instruction_bytes": 5
   },
   {
+    "address": 7290,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatReadFailure",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7298,
     "segment": 0,
     "kind": "entry",
@@ -8342,9 +8622,11 @@
     "address": 7303,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1C87",
-    "aliases": [],
+    "size": 28,
+    "symbol_name": "ReadAndCopyReverseMatch",
+    "aliases": [
+      "sub_1C87"
+    ],
     "callers": [
       7189,
       7233,
@@ -8375,8 +8657,10 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 28
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 28,
+    "c_implementation": "c/dat_section.c",
+    "verification_evidence": "tests/dat_section.py: original 1C87 CALL ReadReverseBits then shared CopyReverseMatch tail; covered through all three decoder callers; intact return words; existing copy core independently verified"
   },
   {
     "address": 7306,
