@@ -57,7 +57,8 @@ The section decoder at 1BAF and its cached/DOS-read provider at 1D2E now have
 verified C cores; see dat-section.md and dat-io.md. Filename preparation, cache
 selection and startup disabling are also native; see dat-cache.md. File wrappers
 have tested cores with an explicit unported retry seam; see dat-files.md.
-Allocation, resource callers and fatal-error ownership remain untranslated.
+The 1B79 resource caller and 1BA9 shared tail connect these cores; see dat-load.md.
+Allocation, higher resource callers and fatal-error ownership remain untranslated.
 tools/resources.py is a strict static extraction utility;
 its validation and host file behavior do not define the original game's runtime
 semantics. Asset files remain private and unchanged. No gameplay execution was used.

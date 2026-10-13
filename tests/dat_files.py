@@ -27,7 +27,7 @@ CALL_FIELDS=('value','handle','count','filename_offset','source_cursor','output_
 MAPPING=dict(zip(CALL_FIELDS,('ax','bx','cx','dx','si','di','bp','ds','es','ss','sp','flags')))
 class Call(ctypes.Structure):_fields_=[(n,ctypes.c_uint16) for n in CALL_FIELDS]
 class ServiceResult(ctypes.Structure):_fields_=[(n,ctypes.c_uint16) for n in ('value','count','flags')]
-class RetryResult(ctypes.Structure):_fields_=[(n,ctypes.c_uint16) for n in ('handle','base_cursor','flags')]
+class RetryResult(ctypes.Structure):_fields_=[(n,ctypes.c_uint16) for n in ('value','handle','base_cursor','flags')]
 FILE=ctypes.CFUNCTYPE(None,ctypes.c_void_p,MEM,*([ctypes.c_uint16]*3),ctypes.POINTER(ServiceResult))
 RETRY_FN=ctypes.CFUNCTYPE(None,ctypes.c_void_p,MEM,ctypes.POINTER(Call),ctypes.POINTER(RetryResult))
 class Services(ctypes.Structure):_fields_=[('context',ctypes.c_void_p),('open',FILE),('attributes',FILE),('retry',RETRY_FN)]
@@ -97,6 +97,7 @@ def compare(lib,case):
     def retry(ctx,memory,call,out):
         try:
             view={reg:getattr(call.contents,n) for n,reg in MAPPING.items()}
+            out.contents.value=0x1111
             out.contents.handle,out.contents.base_cursor,out.contents.flags=c_retry(view)
         except Exception as e:errors.append(e)
     services=Services(None,opened,attributes,retry)

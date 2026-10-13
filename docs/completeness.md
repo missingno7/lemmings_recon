@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 13 |
-| Translated C code bytes | 919 |
-| Differential cases | 922 |
-| Mutation checks detected | 18 |
-| Original instruction coverage | 444 / 15,392 decoded (2.885%) |
+| Translated C routines | 15 |
+| Translated C code bytes | 972 |
+| Differential cases | 946 |
+| Mutation checks detected | 21 |
+| Original instruction coverage | 474 / 15,392 decoded (3.080%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -35,9 +35,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and eleven DAT main
+DAT resource/decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and thirteen DAT main
 routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
-docs/dat-section.md, docs/dat-cache.md and docs/dat-files.md's domains; remaining
+docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md and docs/dat-load.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -63,10 +63,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 504 / 17,291
-(2.915%) of this still-incomplete decoded inventory. There are
-16 tested C routines occupying 1084 original code bytes across images,
-with 1257 differential cases and 21 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 534 / 17,291
+(3.088%) of this still-incomplete decoded inventory. There are
+18 tested C routines occupying 1137 original code bytes across images,
+with 1281 differential cases and 24 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -152,3 +152,14 @@ the original game retry callee at 4B1C are declared verification boundaries;
 the retry callee's rendering/input body is not translated or counted as executed.
 The 1949 fatal transfer preserves the original outer save frame and message offset.
 See dat-files.md for clobbers, aliases and remaining caller/platform ownership.
+
+The resource-loader caller and its shared segment-preserving decoder tail now
+call native file and decoder cores directly. 24 integrated cases
+cover all 30 caller instruction sites and eight caller branch edges, with three
+compiled mutations detected. Full memory/register/defined-flag and service/callee
+traces preserve ignored open carry, live saved-DS corruption and both fatal frames.
+Two cases start at the constructed post-check continuation to test caller branches
+without asserting that a normal CheckDatFile return can produce carry. The UNKNOWN
+1B97 byte is excluded; overlapping shared-tail bytes/sites are counted once.
+DOS and 4B1C retry bodies remain declared seams; fatal cleanup and higher resource
+ownership are still open. See dat-load.md.

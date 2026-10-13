@@ -70,7 +70,13 @@ def report():
             raise ValueError('Stale DAT file differential report for '+path+'; run tools/difftest.py')
     if files['image_sha256']!=sha(image):raise ValueError('DAT file differential oracle changed')
     executed.update(files['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files)
+    resource=read_json(BUILD/'dat-load-differential.json')
+    for path,digest in resource['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale DAT resource differential report for '+path+'; run tools/difftest.py')
+    if resource['image_sha256']!=sha(image):raise ValueError('DAT resource differential oracle changed')
+    executed.update(resource['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -142,9 +148,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and eleven DAT main
+DAT resource/decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and thirteen DAT main
 routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
-docs/dat-section.md, docs/dat-cache.md and docs/dat-files.md's domains; remaining
+docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md and docs/dat-load.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -259,6 +265,17 @@ the original game retry callee at 4B1C are declared verification boundaries;
 the retry callee's rendering/input body is not translated or counted as executed.
 The 1949 fatal transfer preserves the original outer save frame and message offset.
 See dat-files.md for clobbers, aliases and remaining caller/platform ownership.
+
+The resource-loader caller and its shared segment-preserving decoder tail now
+call native file and decoder cores directly. {resource['case_count']} integrated cases
+cover all 30 caller instruction sites and eight caller branch edges, with three
+compiled mutations detected. Full memory/register/defined-flag and service/callee
+traces preserve ignored open carry, live saved-DS corruption and both fatal frames.
+Two cases start at the constructed post-check continuation to test caller branches
+without asserting that a normal CheckDatFile return can produce carry. The UNKNOWN
+1B97 byte is excluded; overlapping shared-tail bytes/sites are counted once.
+DOS and 4B1C retry bodies remain declared seams; fatal cleanup and higher resource
+ownership are still open. See dat-load.md.
 '''
     return m,text
 

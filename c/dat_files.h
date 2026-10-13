@@ -11,7 +11,7 @@ typedef struct LmnDatFileResult {
     uint16_t segment,extra_segment,stack_offset,flags,fatal;
 } LmnDatFileResult;
 typedef struct LmnDatFileServiceResult {uint16_t value,count,flags;} LmnDatFileServiceResult;
-typedef struct LmnDatRetryResult {uint16_t handle,base_cursor,flags;} LmnDatRetryResult;
+typedef struct LmnDatRetryResult {uint16_t value,handle,base_cursor,flags;} LmnDatRetryResult;
 typedef struct LmnDatFileServices {
     void *context;
     /* DOS services preserve registers other than AX and (for AH43) CX. */

@@ -108,7 +108,7 @@ LmnDatFileResult lmn_dat_check_file_core(uint8_t *mem,uint16_t retry_data_segmen
         } else {
             LmnDatRetryResult retried;
             push(mem,&s,CS_DatAfterFileRetry);services->retry_ui(services->context,mem,&s,&retried);
-            s.handle=retried.handle;s.base_cursor=retried.base_cursor;s.flags=retried.flags;
+            s.value=retried.value;s.handle=retried.handle;s.base_cursor=retried.base_cursor;s.flags=retried.flags;
             (void)pop(mem,&s);restore_retry(mem,&s);
         }
     }

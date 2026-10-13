@@ -574,7 +574,7 @@ loc_0565:
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @00585
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @00587
     lea dx,[0x2573] ; @00589
-    call sub_1B79 ; @0058D
+    call LoadDatResource ; @0058D
     pop ds ; @00590
     mov byte [0x25a7],0x1 ; @00591
     mov byte [0x1f71],0x1 ; @00596
@@ -599,7 +599,7 @@ loc_05B4:
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @005C2
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @005C4
     lea dx,[0x257d] ; @005C6
-    call sub_1B79 ; @005CA
+    call LoadDatResource ; @005CA
     pop ds ; @005CD
     mov byte [0x2010],0xff ; @005CE
     mov byte [0x25a7],0x3 ; @005D3
@@ -2334,13 +2334,13 @@ sub_197D:
     push cx ; @019AE
     mov cx,es ; @019AF
     db 0x8b,0xf7 ; ENCODED: mov si,di (NASM chooses a different encoding) ; @019B1
-    call sub_1B79 ; @019B3
+    call LoadDatResource ; @019B3
     pop cx ; @019B6
     jcxz loc_19C4 ; @019B7
 loc_19B9:
     push cx ; @019B9
     lea di,[0xfcb] ; @019BA
-    call sub_1BA9 ; @019BE
+    call DecodeDatPreservingSegment ; @019BE
     pop cx ; @019C1
     loop loc_19B9 ; @019C2
 loc_19C4:
@@ -2398,14 +2398,14 @@ loc_1A30:
     mov di,0x10 ; @01A39
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01A3C
     mov cx,es ; @01A3E
-    call sub_1B79 ; @01A40
+    call LoadDatResource ; @01A40
     pop ds ; @01A43
     push ds ; @01A44
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @01A45
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01A47
     mov es,[0x1ff0] ; @01A49
     mov ds,[0x1ff0] ; @01A4D
-    call sub_1BA9 ; @01A51
+    call DecodeDatPreservingSegment ; @01A51
     pop ds ; @01A54
     mov ah,0x3e ; @01A55
     int 0x21 ; @01A57
@@ -2420,7 +2420,7 @@ loc_1A5A:
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01A6B
     mov di,0x10 ; @01A6D
     mov cx,es ; @01A70
-    call sub_1B79 ; @01A72
+    call LoadDatResource ; @01A72
     pop ds ; @01A75
     mov ah,0x3e ; @01A76
     int 0x21 ; @01A78
@@ -2501,14 +2501,14 @@ sub_1A7B:
     mov di,0x10 ; @01B21
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01B24
     mov cx,es ; @01B26
-    call sub_1B79 ; @01B28
+    call LoadDatResource ; @01B28
     pop ds ; @01B2B
     push ds ; @01B2C
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @01B2D
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01B2F
     mov es,[0x1ff0] ; @01B31
     mov ds,[0x1ff0] ; @01B35
-    call sub_1BA9 ; @01B39
+    call DecodeDatPreservingSegment ; @01B39
     pop ds ; @01B3C
     mov ah,0x3e ; @01B3D
     int 0x21 ; @01B3F
@@ -2549,19 +2549,21 @@ loc_1B74:
     jmp short sub_1B42 ; @01B76
 loc_1B78:
     ret ; @01B78
-sub_1B79:
+LoadDatResource:
     push cx ; @01B79
     call CheckDatFile ; @01B7A
+DatAfterResourceCheck:
     pop cx ; @01B7D
     jc loc_1B98 ; @01B7E
     cmp byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @01B80
     jnz loc_1B98 ; @01B85
     call OpenDatFile ; @01B87
+DatAfterResourceOpen:
     cmp byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @01B8A
     jnz loc_1B98 ; @01B8F
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01B91
     mov ds,cx ; @01B93
-    jmp short sub_1BA9 ; @01B95
+    jmp short DecodeDatPreservingSegment ; @01B95
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01B97
 loc_1B98:
@@ -2572,14 +2574,15 @@ loc_1B98:
     push di ; @01B9C
     push si ; @01B9D
     call sub_4B1C ; @01B9E
+DatAfterResourceRetry:
     pop si ; @01BA1
     pop di ; @01BA2
     pop ds ; @01BA3
     pop es ; @01BA4
     pop cx ; @01BA5
     pop dx ; @01BA6
-    jmp short sub_1B79 ; @01BA7
-sub_1BA9:
+    jmp short LoadDatResource ; @01BA7
+DecodeDatPreservingSegment:
     push ds ; @01BA9
     call DecodeDatSection ; @01BAA
 sub_1BAD:
@@ -9346,7 +9349,7 @@ LoadMainResourceSections:
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @058DA
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @058DC
     mov cx,es ; @058DE
-    call sub_1B79 ; @058E0
+    call LoadDatResource ; @058E0
     pop ds ; @058E3
     push bx ; @058E4
     call sub_59BB ; @058E5
@@ -9357,7 +9360,7 @@ LoadMainResourceSections:
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @058EF
     mov es,[0x1fe4] ; @058F1
     mov ds,[0x1fe4] ; @058F5
-    call sub_1BA9 ; @058F9
+    call DecodeDatPreservingSegment ; @058F9
     pop ds ; @058FC
     push bx ; @058FD
     call sub_5AC1 ; @058FE
@@ -9367,7 +9370,7 @@ LoadMainResourceSections:
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05905
     mov es,[0x1fe4] ; @05907
     mov ds,[0x1fe4] ; @0590B
-    call sub_1BA9 ; @0590F
+    call DecodeDatPreservingSegment ; @0590F
     pop ds ; @05912
     push bx ; @05913
     push ds ; @05914
@@ -9393,7 +9396,7 @@ LoadMainResourceSections:
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05943
     mov es,[0x1fee] ; @05945
     mov ds,[0x1fee] ; @05949
-    call sub_1BA9 ; @0594D
+    call DecodeDatPreservingSegment ; @0594D
 sub_5950:
     pop ds ; @05950
     push ds ; @05951
@@ -9403,7 +9406,7 @@ sub_5950:
     mov ds,ax ; @0595A
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @0595C
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @0595E
-    call sub_1BA9 ; @05960
+    call DecodeDatPreservingSegment ; @05960
     pop ds ; @05963
     push bx ; @05964
     pop bx ; @05965
@@ -9413,7 +9416,7 @@ sub_5950:
     mov ds,ax ; @0596C
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @0596E
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05970
-    call sub_1BA9 ; @05972
+    call DecodeDatPreservingSegment ; @05972
     pop ds ; @05975
     cmp byte [0x200e],0xff ; @05976
     jnz loc_59BA ; @0597B
@@ -9423,7 +9426,7 @@ sub_597D:
     mov ds,[0x1fe4] ; @05982
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05986
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05988
-    call sub_1BA9 ; @0598A
+    call DecodeDatPreservingSegment ; @0598A
     pop ds ; @0598D
     push ds ; @0598E
     mov di,0xf91f ; @0598F

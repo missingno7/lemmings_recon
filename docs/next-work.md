@@ -45,7 +45,9 @@
     and startup disabling at 1E1C/1E64/1ED1 now have tested C cores; see dat-cache.md.
     File open/attribute wrappers at 1CB9/1CD9 now call native cache cores and have
     40 bounded differential cases; see dat-files.md for the explicit 4B1C game
-    retry seam and 1949 fatal transfer. Port resource callers starting at 1B79 next,
+    retry seam and 1949 fatal transfer. The 1B79 caller and 1BA9 shared tail now
+    connect those cores directly, verified in 24 integrated cases; see dat-load.md.
+    Port higher section-selection/seek/close callers and startup resource ownership next,
     investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
     Do not substitute the static extractor's stricter checks. No SDL3

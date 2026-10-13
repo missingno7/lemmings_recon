@@ -7846,9 +7846,11 @@
     "address": 7033,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1B79",
-    "aliases": [],
+    "size": 54,
+    "symbol_name": "LoadDatResource",
+    "aliases": [
+      "sub_1B79"
+    ],
     "callers": [
       6952,
       6579,
@@ -7882,20 +7884,82 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 53
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 53,
+    "c_implementation": "c/dat_load.c",
+    "verification_evidence": "tests/dat_load.py: 24 integrated original-vs-C cases, all 30 caller sites/eight edges, three compiled mutants; constructed post-check edge states, live DS alias, declared DOS/retry seams, both fatal exits; docs/dat-load.md",
+    "c_code_ranges": [
+      [
+        7033,
+        7063
+      ],
+      [
+        7064,
+        7087
+      ]
+    ]
+  },
+  {
+    "address": 7037,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterResourceCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original resource loader near-call continuation; c/dat_load.c retains return-word residue"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7050,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterResourceOpen",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original resource loader near-call continuation; c/dat_load.c retains return-word residue"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7073,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterResourceRetry",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original resource loader near-call continuation; c/dat_load.c retains return-word residue"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 7081,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1BA9",
-    "aliases": [],
+    "size": 6,
+    "symbol_name": "DecodeDatPreservingSegment",
+    "aliases": [
+      "sub_1BA9"
+    ],
     "callers": [
       6969,
       6590,
@@ -7911,12 +7975,14 @@
       7087
     ],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 6
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 6,
+    "c_implementation": "c/dat_load.c",
+    "verification_evidence": "tests/dat_load.py: 24 integrated original-vs-C cases, all 30 caller sites/eight edges, three compiled mutants; constructed post-check edge states, live DS alias, declared DOS/retry seams, both fatal exits; docs/dat-load.md"
   },
   {
     "address": 7085,

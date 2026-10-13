@@ -67,6 +67,7 @@ it undefined. All defined exit flags are compared. Existing cache helper suites
 independently establish their other branches and undefined-AF contracts. The tests
 use declared DOS/callee effects, not actual DOS or a booted game.
 
-Next port resource-section callers beginning at 1B79, recover retry-screen and
+The 1B79 caller now connects these cores directly; see dat-load.md. Next port higher
+section-selection/seek/close ownership, recover retry-screen and
 fatal print/cleanup ownership, and investigate UNKNOWN cache allocation at 1ED7.
 Real file services, timing, alias closure and complete game integration remain open.

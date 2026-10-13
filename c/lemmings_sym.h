@@ -71,8 +71,11 @@
 #define CS_sub_197D 0x197Du
 #define CS_sub_1A7B 0x1A7Bu
 #define CS_sub_1B42 0x1B42u
-#define CS_sub_1B79 0x1B79u
-#define CS_sub_1BA9 0x1BA9u
+#define CS_LoadDatResource 0x1B79u
+#define CS_DatAfterResourceCheck 0x1B7Du
+#define CS_DatAfterResourceOpen 0x1B8Au
+#define CS_DatAfterResourceRetry 0x1BA1u
+#define CS_DecodeDatPreservingSegment 0x1BA9u
 #define CS_sub_1BAD 0x1BADu
 #define CS_DecodeDatSection 0x1BAFu
 #define CS_DatAfterHeaderRead 0x1BBCu
