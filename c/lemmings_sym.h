@@ -292,10 +292,10 @@
 #define CS_sub_7EB2 0x7EB2u
 #define CS_sub_80FD 0x80FDu
 #define CS_sub_81CC 0x81CCu
-#define CS_sub_8238 0x8238u
-#define CS_sub_8243 0x8243u
-#define CS_sub_8249 0x8249u
-#define CS_sub_824F 0x824Fu
+#define CS_BlitSpecialResourceStrip0 0x8238u
+#define CS_BlitSpecialResourceStrip1 0x8243u
+#define CS_BlitSpecialResourceStrip2 0x8249u
+#define CS_BlitSpecialResourceStrip3 0x824Fu
 #define CS_InitializeCodeChecksum 0x8343u
 #define CS_AdvanceCodeChecksum 0x8363u
 #define CS_ChecksumLimit 0x83B7u
@@ -324,10 +324,19 @@
 #define SEG09A9_DatCacheFcb 0x1F95u
 #define SEG09A9_SavedTimerVector 0x1FBEu
 #define SEG09A9_DatCriticalErrorFlag 0x1FDFu
+#define SEG09A9_GraphicsResourceSegment 0x1FE4u
+#define SEG09A9_LevelGraphicsSegment 0x1FF0u
 #define SEG09A9_DisplayProbeRecords 0x2013u
 #define SEG09A9_DatFileErrorMessage 0x2194u
 #define SEG09A9_ResourceReadErrorMessage 0x21A5u
 #define SEG09A9_ResourceCloseErrorMessage 0x21B6u
 #define SEG09A9_LastResourceFilenameOffset 0x2528u
 #define SEG09A9_InputPollCallback 0x25A0u
+#define SEG143E_RuntimeStackFrame 0x0000u
+#define SEG143E_VgaGraphicsModeMirror 0x0000u
+#define SEG143E_VgaDataRotateMirror 0x0002u
+#define SEG143E_VgaMapMaskMirror 0x0008u
+#define SEG143E_VgaSetResetMirror 0x000Au
+#define SEG143E_VgaEnableSetResetMirror 0x000Cu
+#define SEG143E_VgaBitMaskMirror 0x000Eu
 #endif

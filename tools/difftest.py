@@ -26,3 +26,5 @@ if __name__ == "__main__":
                    cwd=ROOT, check=True, timeout=120)
     subprocess.run([sys.executable, str(ROOT / "tests" / "resource_rle.py")],
                    cwd=ROOT, check=True, timeout=120)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "special_blit.py")],
+                   cwd=ROOT, check=True, timeout=120)

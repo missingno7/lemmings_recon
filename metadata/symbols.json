@@ -44454,9 +44454,11 @@
     "address": 33336,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_8238",
-    "aliases": [],
+    "size": 267,
+    "symbol_name": "BlitSpecialResourceStrip0",
+    "aliases": [
+      "sub_8238"
+    ],
     "callers": [
       6869
     ],
@@ -44703,20 +44705,35 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1A7B caller selects four 40-row strips; original shared tail builds OR plane and emits VGA plane-mask passes"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 251
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 251,
+    "c_implementation": "c/special_blit.c",
+    "c_code_ranges": [
+      [
+        33336,
+        33346
+      ],
+      [
+        33362,
+        33603
+      ]
+    ],
+    "verification_evidence": "tests/special_blit.py:28 bounded original-vs-C cases,122 sites,22 branch edges,three compiled mutants; RAM/stack/DF aliases and VGA mode0 fixture; docs/special-blit.md"
   },
   {
     "address": 33347,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_8243",
-    "aliases": [],
+    "size": 256,
+    "symbol_name": "BlitSpecialResourceStrip1",
+    "aliases": [
+      "sub_8243"
+    ],
     "callers": [
       6890
     ],
@@ -44947,20 +44964,35 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1A7B caller selects four 40-row strips; original shared tail builds OR plane and emits VGA plane-mask passes"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 246
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 246,
+    "c_implementation": "c/special_blit.c",
+    "c_code_ranges": [
+      [
+        33347,
+        33352
+      ],
+      [
+        33362,
+        33603
+      ]
+    ],
+    "verification_evidence": "tests/special_blit.py:28 bounded original-vs-C cases,122 sites,22 branch edges,three compiled mutants; RAM/stack/DF aliases and VGA mode0 fixture; docs/special-blit.md"
   },
   {
     "address": 33353,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_8249",
-    "aliases": [],
+    "size": 250,
+    "symbol_name": "BlitSpecialResourceStrip2",
+    "aliases": [
+      "sub_8249"
+    ],
     "callers": [
       6911
     ],
@@ -45191,20 +45223,35 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1A7B caller selects four 40-row strips; original shared tail builds OR plane and emits VGA plane-mask passes"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 246
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 246,
+    "c_implementation": "c/special_blit.c",
+    "c_code_ranges": [
+      [
+        33353,
+        33358
+      ],
+      [
+        33362,
+        33603
+      ]
+    ],
+    "verification_evidence": "tests/special_blit.py:28 bounded original-vs-C cases,122 sites,22 branch edges,three compiled mutants; RAM/stack/DF aliases and VGA mode0 fixture; docs/special-blit.md"
   },
   {
     "address": 33359,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_824F",
-    "aliases": [],
+    "size": 244,
+    "symbol_name": "BlitSpecialResourceStrip3",
+    "aliases": [
+      "sub_824F"
+    ],
     "callers": [
       6932
     ],
@@ -45435,12 +45482,25 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1A7B caller selects four 40-row strips; original shared tail builds OR plane and emits VGA plane-mask passes"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 244
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 244,
+    "c_implementation": "c/special_blit.c",
+    "c_code_ranges": [
+      [
+        33359,
+        33362
+      ],
+      [
+        33362,
+        33603
+      ]
+    ],
+    "verification_evidence": "tests/special_blit.py:28 bounded original-vs-C cases,122 sites,22 branch edges,three compiled mutants; RAM/stack/DF aliases and VGA mode0 fixture; docs/special-blit.md"
   },
   {
     "address": 33603,
@@ -50773,6 +50833,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8164,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GraphicsResourceSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "58D2 main graphics source;8238 publishes level graphics segment here"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8176,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelGraphicsSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A30/1A7B graphics resource destination and8238 raster working segment"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8211,
     "segment": 2473,
     "kind": "record_table",
@@ -50865,6 +50957,118 @@
     "confidence": "PROVEN",
     "evidence": [
       "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 0,
+    "segment": 5182,
+    "kind": "runtime_segment",
+    "size": null,
+    "symbol_name": "RuntimeStackFrame",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Canonical unpack footer SS=143E; starts beyond stored image"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 0,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaGraphicsModeMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original SS:0000 mirror of indexed VGA word OUT at 82AD; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 2,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaDataRotateMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original SS:0002 mirror of indexed VGA word OUT at 82B5; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaMapMaskMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original SS:0008 mirror of indexed VGA word OUT at 8293; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaSetResetMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original SS:000A mirror of indexed VGA word OUT at 829D; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaEnableSetResetMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original SS:000C mirror of indexed VGA word OUT at 82A5; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaBitMaskMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original SS:000E mirror of indexed VGA word OUT at 82BD; verified live alias behavior in special strip tests"
     ],
     "verification_status": "UNRESOLVED"
   }

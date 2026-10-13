@@ -2466,7 +2466,7 @@ sub_1A7B:
     call DecodeResourceRle ; @01AD0
     pop ds ; @01AD3
     push si ; @01AD4
-    call sub_8238 ; @01AD5
+    call BlitSpecialResourceStrip0 ; @01AD5
     pop si ; @01AD8
     push ds ; @01AD9
     mov di,0x8000 ; @01ADA
@@ -2475,7 +2475,7 @@ sub_1A7B:
     call DecodeResourceRle ; @01AE5
     pop ds ; @01AE8
     push si ; @01AE9
-    call sub_8243 ; @01AEA
+    call BlitSpecialResourceStrip1 ; @01AEA
     pop si ; @01AED
     push ds ; @01AEE
     mov di,0x8000 ; @01AEF
@@ -2484,7 +2484,7 @@ sub_1A7B:
     call DecodeResourceRle ; @01AFA
     pop ds ; @01AFD
     push si ; @01AFE
-    call sub_8249 ; @01AFF
+    call BlitSpecialResourceStrip2 ; @01AFF
     pop si ; @01B02
     push ds ; @01B03
     mov di,0x8000 ; @01B04
@@ -2493,7 +2493,7 @@ sub_1A7B:
     call DecodeResourceRle ; @01B0F
     pop ds ; @01B12
     push si ; @01B13
-    call sub_824F ; @01B14
+    call BlitSpecialResourceStrip3 ; @01B14
     pop si ; @01B17
     push ds ; @01B18
     lea dx,[0x2534] ; @01B19
@@ -14654,29 +14654,29 @@ sub_81CC:
     mov word [0x8],0xd2c0 ; @0822B
     mov word [0xa],0xd2f0 ; @08231
     ret ; @08237
-sub_8238:
-    mov ax,[0x1ff0] ; @08238
-    mov [0x1fe4],ax ; @0823B
+BlitSpecialResourceStrip0:
+    mov ax,[LevelGraphicsSegment-GameDataImage] ; @08238
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @0823B
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @0823E
     jmp short loc_8252 ; @08240
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @08242
-sub_8243:
+BlitSpecialResourceStrip1:
     mov bx,0x28 ; @08243
     jmp short loc_8252 ; @08246
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @08248
-sub_8249:
+BlitSpecialResourceStrip2:
     mov bx,0x50 ; @08249
     jmp short loc_8252 ; @0824C
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0824E
-sub_824F:
+BlitSpecialResourceStrip3:
     mov bx,0x78 ; @0824F
 loc_8252:
     mov di,0xb840 ; @08252
     mov si,0x8000 ; @08255
-    mov es,[0x1ff0] ; @08258
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @08258
     mov cx,0x960 ; @0825C
 loc_825F:
     mov ax,[es:si] ; @0825F
@@ -14692,28 +14692,28 @@ loc_825F:
     add di,byte +0x28 ; @0827D
     mov si,0x8000 ; @08280
     push ds ; @08283
-    mov ds,[0x1ff0] ; @08284
+    mov ds,[LevelGraphicsSegment-GameDataImage] ; @08284
     mov ax,0xa000 ; @08288
     mov es,ax ; @0828B
     mov dx,0x3c4 ; @0828D
     mov ax,0xf02 ; @08290
-    mov [ss:0x8],ax ; @08293
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @08293
     out dx,ax ; @08297
     mov dx,0x3ce ; @08298
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0829B
-    mov [ss:0xa],ax ; @0829D
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @0829D
     out dx,ax ; @082A1
     mov ax,0xe01 ; @082A2
-    mov [ss:0xc],ax ; @082A5
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @082A5
     out dx,ax ; @082A9
     mov ax,0x5 ; @082AA
-    mov [ss:0x0],ax ; @082AD
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @082AD
     out dx,ax ; @082B1
     mov ax,0x3 ; @082B2
-    mov [ss:0x2],ax ; @082B5
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @082B5
     out dx,ax ; @082B9
     mov ax,0xff08 ; @082BA
-    mov [ss:0xe],ax ; @082BD
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @082BD
     out dx,ax ; @082C1
     mov cx,0x2878 ; @082C2
     push di ; @082C5
@@ -14736,11 +14736,11 @@ loc_82DC:
     pop cx ; @082DC
     pop di ; @082DD
     mov ax,0x1 ; @082DE
-    mov [ss:0xc],ax ; @082E1
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @082E1
     out dx,ax ; @082E5
     mov dl,0xc4 ; @082E6
     mov ax,0x202 ; @082E8
-    mov [ss:0x8],ax ; @082EB
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @082EB
     out dx,ax ; @082EF
     push di ; @082F0
     push cx ; @082F1
@@ -14760,7 +14760,7 @@ loc_82F6:
     pop cx ; @08305
     pop di ; @08306
     mov ax,0x402 ; @08307
-    mov [ss:0x8],ax ; @0830A
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @0830A
     out dx,ax ; @0830E
     push di ; @0830F
     push cx ; @08310
@@ -14780,7 +14780,7 @@ loc_8315:
     pop cx ; @08324
     pop di ; @08325
     mov ax,0x802 ; @08326
-    mov [ss:0x8],ax ; @08329
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @08329
     out dx,ax ; @0832D
 loc_832E:
     push cx ; @0832E
