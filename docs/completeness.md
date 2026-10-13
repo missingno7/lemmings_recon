@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 21 |
-| Translated C code bytes | 1340 |
-| Differential cases | 1323 |
-| Mutation checks detected | 30 |
-| Original instruction coverage | 652 / 15,392 decoded (4.236%) |
+| Translated C routines | 22 |
+| Translated C code bytes | 1539 |
+| Differential cases | 1343 |
+| Mutation checks detected | 33 |
+| Original instruction coverage | 739 / 15,392 decoded (4.801%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -36,9 +36,11 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
-The two checksum, thirteen DAT, raw-resource, RLE and four special VGA strip main routines are TESTED within docs/checksum.md,
+The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
+special graphics setup main routines are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
-docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md and docs/special-blit.md's domains; remaining
+docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md
+and docs/special-setup.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -64,10 +66,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 712 / 17,291
-(4.118%) of this still-incomplete decoded inventory. There are
-24 tested C routines occupying 1505 original code bytes across images,
-with 1658 differential cases and 33 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 799 / 17,291
+(4.621%) of this still-incomplete decoded inventory. There are
+25 tested C routines occupying 1704 original code bytes across images,
+with 1678 differential cases and 36 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -179,7 +181,7 @@ The resource RLE routine at 1B42 has a C11 core: 303 cases cover all
 Full memory/register/defined-flag checks preserve all 256 control-byte meanings,
 DF, live input/output overlap, cursor/segment wrap and repeat-byte corruption
 when the original segment update replaces AL. These are constructed terminated
-streams; higher graphics/resource ownership remains untranslated. See resource-rle.md.
+streams; complete graphics/resource ownership remains open. See resource-rle.md.
 
 The four special-resource strip entries at 8238/8243/8249/824F share a C11 core.
 28 cases cover all 122 original instruction sites and 22 branch edges,
@@ -190,4 +192,17 @@ aliases. Sixteen cases use the pinned VGASPEC streams; an independent expected
 plane check also verifies untouched video memory in the forward cases. The three
 skipped UNKNOWN bytes remain excluded; shared bytes and sites are counted once.
 This is a bounded device fixture, not a native VGA backend or IRQ scheduler.
-Higher graphics setup, platform ownership and SDL3 remain open. See special-blit.md.
+Upstream graphics setup, platform ownership and SDL3 remain open. See special-blit.md.
+
+The special graphics setup caller at 1A7B now connects metadata copies, four
+RLE/strip calls and two normal graphics DAT sections through direct native cores.
+20 integrated cases execute all 87 caller sites and 621 dependency/caller
+sites. Full RAM/register/defined-flag/device/service-trace comparisons include
+four paired VGASPEC/VGAGR inputs, both DF values in declared fixtures, cache paths,
+stack wrap, saved-DS corruption, retry and four decoder fatal exits. Independent
+expected metadata and four-strip plane contents also pass in the forward cases.
+Three compiled mutations are detected. The unchecked final close result remains
+unchecked; original fatal frames stay live. This adds 199 C-covered caller bytes;
+dependency bytes/sites are counted once. DOS, retry UI, VGA backend and IRQ delivery
+remain declared seams. Upstream selection/allocation and full native startup are
+still open. See special-setup.md.

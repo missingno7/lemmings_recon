@@ -54,9 +54,13 @@
     VGA strip entries at 8238/8243/8249/824F now share a tested native core:
     28 cases cover all 122 sites and 22 branch edges, including plane contents,
     port/MMIO order, IF/DF and live stack/heap-pointer aliases; see special-blit.md.
-    Recover the higher 1A7B metadata/RLE/strip and normal VGAGR setup contracts next,
-    connecting tested dependencies directly. Native VGA ownership and asynchronous
-    IRQ behavior remain open. Investigate UNKNOWN allocation code at
+    The higher 1A7B metadata/RLE/strip and two-section normal VGAGR caller now
+    connects these native cores in 20 cases, covering all 87 caller sites and
+    621 integrated sites; see special-setup.md for live restores and unchecked close.
+    Recover upstream 197D resource selection/load and 36B6/394F level setup next,
+    with explicit object/palette ownership and preserved segment aliases.
+    Native VGA ownership and asynchronous IRQ behavior remain open.
+    Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
     Do not substitute the static extractor's stricter checks. No SDL3
     integration or gameplay milestone is needed to progress these investigations.

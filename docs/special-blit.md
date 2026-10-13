@@ -5,7 +5,8 @@ The original entries `8238`, `8243`, `8249`, `824F` now share the native
 `BlitSpecialResourceStrip0..3`. Their union is 264 original code bytes and
 122 instruction sites, including the shared `8252..8342` tail. The skipped bytes
 at `8242`, `8248`, `824E` remain UNKNOWN and are excluded from C accounting.
-The higher `1A7B` resource/setup caller is still untranslated.
+The higher `1A7B` resource/setup caller now connects these native cores;
+see [connected setup](special-setup.md) for its bounded domain.
 
 ## Memory and geometry
 

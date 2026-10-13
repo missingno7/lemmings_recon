@@ -2425,14 +2425,14 @@ loc_1A5A:
     mov ah,0x3e ; @01A76
     int 0x21 ; @01A78
     ret ; @01A7A
-sub_1A7B:
+SetupSpecialGraphicsResource:
     push ds ; @01A7B
     mov cx,0x18 ; @01A7C
-    lea di,[0x1f23] ; @01A7F
+    lea di,[SpecialMetadata24-GameDataImage] ; @01A7F
     mov si,0x10 ; @01A83
     push ds ; @01A86
     pop es ; @01A87
-    mov ds,[0x1ff4] ; @01A88
+    mov ds,[GraphicsResourceInputSegment-GameDataImage] ; @01A88
     push di ; @01A8C
     rep movsb ; @01A8D
     pop di ; @01A8F
@@ -2442,16 +2442,16 @@ sub_1A7B:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01A94
     stosb ; @01A96
     mov cx,0x18 ; @01A97
-    lea di,[0x1f3b] ; @01A9A
+    lea di,[SpecialMetadataDuplicateBase-GameDataImage] ; @01A9A
     add di,byte +0x18 ; @01A9E
     mov si,0x10 ; @01AA1
     rep movsb ; @01AA4
     mov cx,0x8 ; @01AA6
-    lea di,[0x1f13] ; @01AA9
+    lea di,[SpecialMetadata8Base-GameDataImage] ; @01AA9
     add di,byte +0x8 ; @01AAD
     rep movsb ; @01AB0
     mov cx,0x8 ; @01AB2
-    lea di,[0x1f0b] ; @01AB5
+    lea di,[SpecialMetadataRemap8-GameDataImage] ; @01AB5
     push di ; @01AB9
     rep movsb ; @01ABA
     pop di ; @01ABC
@@ -2461,54 +2461,64 @@ sub_1A7B:
     push ds ; @01AC1
     mov di,0x8000 ; @01AC2
     mov si,0x38 ; @01AC5
-    mov es,[0x1ff0] ; @01AC8
-    mov ds,[0x1ff4] ; @01ACC
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @01AC8
+    mov ds,[GraphicsResourceInputSegment-GameDataImage] ; @01ACC
     call DecodeResourceRle ; @01AD0
+SpecialAfterRle0:
     pop ds ; @01AD3
     push si ; @01AD4
     call BlitSpecialResourceStrip0 ; @01AD5
+SpecialAfterStrip0:
     pop si ; @01AD8
     push ds ; @01AD9
     mov di,0x8000 ; @01ADA
-    mov es,[0x1ff0] ; @01ADD
-    mov ds,[0x1ff4] ; @01AE1
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @01ADD
+    mov ds,[GraphicsResourceInputSegment-GameDataImage] ; @01AE1
     call DecodeResourceRle ; @01AE5
+SpecialAfterRle1:
     pop ds ; @01AE8
     push si ; @01AE9
     call BlitSpecialResourceStrip1 ; @01AEA
+SpecialAfterStrip1:
     pop si ; @01AED
     push ds ; @01AEE
     mov di,0x8000 ; @01AEF
-    mov es,[0x1ff0] ; @01AF2
-    mov ds,[0x1ff4] ; @01AF6
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @01AF2
+    mov ds,[GraphicsResourceInputSegment-GameDataImage] ; @01AF6
     call DecodeResourceRle ; @01AFA
+SpecialAfterRle2:
     pop ds ; @01AFD
     push si ; @01AFE
     call BlitSpecialResourceStrip2 ; @01AFF
+SpecialAfterStrip2:
     pop si ; @01B02
     push ds ; @01B03
     mov di,0x8000 ; @01B04
-    mov es,[0x1ff0] ; @01B07
-    mov ds,[0x1ff4] ; @01B0B
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @01B07
+    mov ds,[GraphicsResourceInputSegment-GameDataImage] ; @01B0B
     call DecodeResourceRle ; @01B0F
+SpecialAfterRle3:
     pop ds ; @01B12
     push si ; @01B13
     call BlitSpecialResourceStrip3 ; @01B14
+SpecialAfterStrip3:
     pop si ; @01B17
     push ds ; @01B18
-    lea dx,[0x2534] ; @01B19
-    mov es,[0x1ff0] ; @01B1D
+    lea dx,[GraphicsDatFilename-GameDataImage] ; @01B19
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @01B1D
     mov di,0x10 ; @01B21
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01B24
     mov cx,es ; @01B26
     call LoadDatResource ; @01B28
+SpecialAfterDatLoad:
     pop ds ; @01B2B
     push ds ; @01B2C
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @01B2D
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01B2F
-    mov es,[0x1ff0] ; @01B31
-    mov ds,[0x1ff0] ; @01B35
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @01B31
+    mov ds,[LevelGraphicsSegment-GameDataImage] ; @01B35
     call DecodeDatPreservingSegment ; @01B39
+SpecialAfterDatDecode:
     pop ds ; @01B3C
     mov ah,0x3e ; @01B3D
     int 0x21 ; @01B3F
@@ -5449,7 +5459,7 @@ sub_36B6:
     mov al,[0xfe8] ; @03742
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @03745
     jz loc_374F ; @03747
-    call sub_1A7B ; @03749
+    call SetupSpecialGraphicsResource ; @03749
     jmp short loc_376A ; @0374C
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0374E
@@ -5702,7 +5712,7 @@ sub_394F:
     mov al,[0xfe8] ; @03952
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @03955
     jz loc_395F ; @03957
-    call sub_1A7B ; @03959
+    call SetupSpecialGraphicsResource ; @03959
     jmp short loc_397A ; @0395C
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0395E

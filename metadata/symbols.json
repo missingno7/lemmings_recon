@@ -7540,9 +7540,11 @@
     "address": 6779,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1A7B",
-    "aliases": [],
+    "size": 199,
+    "symbol_name": "SetupSpecialGraphicsResource",
+    "aliases": [
+      "sub_1A7B"
+    ],
     "callers": [
       14153,
       14681
@@ -7790,12 +7792,175 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Original1A7B..1B41 metadata copies, four RLE/strip pairs and normal graphics two-section reload; independently expected metadata/planes verified"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 199
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 199,
+    "c_implementation": "c/special_setup.c",
+    "verification_evidence": "tests/special_setup.py:20 original-vs-C cases,87 caller/621 integrated instruction sites,three compiled mutants; native metadata/RLE/strip/two-DAT pipeline; docs/special-setup.md"
+  },
+  {
+    "address": 6867,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterRle0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6872,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterStrip0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6888,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterRle1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6893,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterStrip1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6909,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterRle2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6914,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterStrip2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6930,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterRle3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6935,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterStrip3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6955,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterDatLoad",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6972,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SpecialAfterDatDecode",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation inside1A7B setup caller"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 6978,
@@ -50593,6 +50758,70 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 7947,
+    "segment": 2473,
+    "kind": "data",
+    "size": 8,
+    "symbol_name": "SpecialMetadataRemap8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1ABA copies resource-prefix bytes20..27; first byte then becomes06"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7955,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "SpecialMetadata8Base",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1AA9 LEA base; 1AAD adds8 for resource-prefix bytes18..1F"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7971,
+    "segment": 2473,
+    "kind": "data",
+    "size": 24,
+    "symbol_name": "SpecialMetadata24",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A8D copies24 resource-prefix bytes here; first3 replaced by1F,1F,00"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7995,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "SpecialMetadataDuplicateBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A9A LEA base; 1A9E adds18 for second24-byte metadata copy"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8053,
     "segment": 2473,
     "kind": "data",
@@ -50865,6 +51094,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8180,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GraphicsResourceInputSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A7B metadata/RLE source segment; 1A35/1A67 DAT output segment"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8211,
     "segment": 2473,
     "kind": "record_table",
@@ -50941,6 +51186,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "ReadRawResourceFile stores the filename here;1949 error printer reads it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9524,
+    "segment": 2473,
+    "kind": "data",
+    "size": 11,
+    "symbol_name": "GraphicsDatFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1B19 filename offset; static bytes vgagr0.dat followed by NUL"
     ],
     "verification_status": "UNRESOLVED"
   },

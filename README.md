@@ -27,9 +27,10 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Twenty-four original routine entries now have verified C11 cores: two checksums, thirteen DAT
+Twenty-five original routine entries now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
-decoder, four special-resource VGA strip entries and three PC-speaker helpers, totaling 1,505 original
+decoder, four special-resource VGA strip entries, their connected setup caller and
+three PC-speaker helpers, totaling 1,704 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -68,7 +69,13 @@ see [resource RLE C](docs/resource-rle.md).
 The four special-resource VGA strips now have a verified native core, with 28
 cases checking plane contents, port/MMIO order, flags and live stack aliases;
 see [special VGA strips](docs/special-blit.md). The native VGA backend and higher
-graphics setup remain open.
+graphics ownership remain open.
+
+The special graphics setup caller now connects metadata, four RLE/strip pairs
+and two normal graphics DAT sections through native cores. Twenty integrated
+cases include all four VGASPEC inputs and paired VGAGR sections, with independent
+metadata/plane checks; see [connected graphics setup](docs/special-setup.md).
+Upstream selection/allocation and full level setup remain open.
 
 ## Reproduce
 
