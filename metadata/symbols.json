@@ -7169,9 +7169,11 @@
     "address": 6422,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1916",
-    "aliases": [],
+    "size": 51,
+    "symbol_name": "ReadRawResourceFile",
+    "aliases": [
+      "sub_1916"
+    ],
     "callers": [
       6620,
       6680
@@ -7206,12 +7208,28 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 116
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 116,
+    "c_implementation": "c/resource_raw.c",
+    "c_code_ranges": [
+      [
+        6422,
+        6463
+      ],
+      [
+        6464,
+        6469
+      ],
+      [
+        6470,
+        6473
+      ]
+    ],
+    "verification_evidence": "tests/resource_raw.py: 46 original-vs-C cases,27 sites,eight branch edges,three compiled mutants; declared preserving DOS open/read/close,1949 fatal boundary,live saved-segment aliases; docs/resource-raw.md"
   },
   {
     "address": 6473,
@@ -50778,6 +50796,54 @@
     "confidence": "PROVEN",
     "evidence": [
       "CheckDatFile passes this offset to original DOS error-print transfer at1949"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8613,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "ResourceReadErrorMessage",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1940 read-error transfer selects this DOS message offset"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8630,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "ResourceCloseErrorMessage",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1946 close-error transfer selects this DOS message offset"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9512,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LastResourceFilenameOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "ReadRawResourceFile stores the filename here;1949 error printer reads it"
     ],
     "verification_status": "UNRESOLVED"
   },

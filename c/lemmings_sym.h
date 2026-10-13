@@ -66,7 +66,7 @@
 #define CS_sub_189D 0x189Du
 #define CS_sub_18B2 0x18B2u
 #define CS_CriticalErrorHandler 0x18F8u
-#define CS_sub_1916 0x1916u
+#define CS_ReadRawResourceFile 0x1916u
 #define CS_DatFileErrorTransfer 0x1949u
 #define CS_sub_197D 0x197Du
 #define CS_sub_1A7B 0x1A7Bu
@@ -326,5 +326,8 @@
 #define SEG09A9_DatCriticalErrorFlag 0x1FDFu
 #define SEG09A9_DisplayProbeRecords 0x2013u
 #define SEG09A9_DatFileErrorMessage 0x2194u
+#define SEG09A9_ResourceReadErrorMessage 0x21A5u
+#define SEG09A9_ResourceCloseErrorMessage 0x21B6u
+#define SEG09A9_LastResourceFilenameOffset 0x2528u
 #define SEG09A9_InputPollCallback 0x25A0u
 #endif

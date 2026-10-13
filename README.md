@@ -27,8 +27,9 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Eighteen original routines now have verified C11 cores: two checksums, thirteen DAT
-resource/decoder/file/read/cache routines, plus three PC-speaker helpers, totaling 1,137 original
+Nineteen original routines now have verified C11 cores: two checksums, thirteen DAT
+resource/decoder/file/read/cache routines, one raw-resource reader and three PC-speaker helpers,
+totaling 1,186 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -55,6 +56,9 @@ The resource caller now connects check/open/decode through direct native core
 calls. Twenty-four integrated cases retain the original ignored-open-carry and
 saved-DS behavior; see [DAT resource C](docs/dat-load.md). Higher resource ownership,
 retry rendering/input and fatal cleanup remain open.
+
+The raw-resource open/read/close primitive has 46 differential cases, including
+short reads and all three error exits; see [raw resource C](docs/resource-raw.md).
 
 ## Reproduce
 

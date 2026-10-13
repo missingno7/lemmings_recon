@@ -76,7 +76,13 @@ def report():
             raise ValueError('Stale DAT resource differential report for '+path+'; run tools/difftest.py')
     if resource['image_sha256']!=sha(image):raise ValueError('DAT resource differential oracle changed')
     executed.update(resource['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource)
+    raw=read_json(BUILD/'resource-raw-differential.json')
+    for path,digest in raw['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale raw resource differential report for '+path+'; run tools/difftest.py')
+    if raw['image_sha256']!=sha(image):raise ValueError('Raw resource differential oracle changed')
+    executed.update(raw['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -148,9 +154,10 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT resource/decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and thirteen DAT main
-routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
-docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md and docs/dat-load.md's domains; remaining
+resource/decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum,
+thirteen DAT and raw-resource main routines are TESTED within docs/checksum.md,
+docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
+docs/dat-load.md and docs/resource-raw.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -276,6 +283,15 @@ without asserting that a normal CheckDatFile return can produce carry. The UNKNO
 1B97 byte is excluded; overlapping shared-tail bytes/sites are counted once.
 DOS and 4B1C retry bodies remain declared seams; fatal cleanup and higher resource
 ownership are still open. See dat-load.md.
+
+The raw-resource open/read/close routine at 1916 now has a C11 core: {raw['case_count']}
+cases cover all 27 instruction sites and eight branch edges, with three compiled
+mutations detected. Full memory/register/defined-flag and service traces preserve
+short reads, partial AH writes, live restored-segment corruption and all three
+distinct fatal frames/message offsets. Its 49 C-covered bytes exclude two UNKNOWN
+skipped bytes; the shared 1949 error-print path remains untranslated. Actual DOS
+behavior across segment ends and higher resource ownership remain open.
+See resource-raw.md.
 '''
     return m,text
 

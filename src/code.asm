@@ -2245,13 +2245,13 @@ CriticalErrorHandler:
     iret ; @01907
 ; UNKNOWN: unresolved bytes
     db 0x80,0x3e,0xde,0x1f,0xf8,0x74,0x06,0xba,0xf2,0x03,0xb0,0x03,0xee,0xc3 ; @01908
-sub_1916:
+ReadRawResourceFile:
     push ds ; @01916
     push es ; @01917
     push ax ; @01918
     push es ; @01919
     push cx ; @0191A
-    mov [0x2528],dx ; @0191B
+    mov [LastResourceFilenameOffset-GameDataImage],dx ; @0191B
     mov ax,0x3d00 ; @0191F
     int 0x21 ; @01922
     jc loc_193A ; @01924
@@ -2269,17 +2269,17 @@ sub_1916:
     pop ds ; @01938
     ret ; @01939
 loc_193A:
-    mov dx,0x2194 ; @0193A
+    mov dx,DatFileErrorMessage-GameDataImage ; @0193A
     jmp short loc_1949 ; @0193D
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0193F
 loc_1940:
-    mov dx,0x21a5 ; @01940
+    mov dx,ResourceReadErrorMessage-GameDataImage ; @01940
     jmp short loc_1949 ; @01943
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01945
 loc_1946:
-    mov dx,0x21b6 ; @01946
+    mov dx,ResourceCloseErrorMessage-GameDataImage ; @01946
 loc_1949:
 DatFileErrorTransfer:
     push dx ; @01949
@@ -2292,7 +2292,7 @@ DatFileErrorTransfer:
     mov ah,0x2 ; @01957
     mov dl,0x20 ; @01959
     int 0x21 ; @0195B
-    mov bx,[0x2528] ; @0195D
+    mov bx,[LastResourceFilenameOffset-GameDataImage] ; @0195D
 loc_1961:
     mov dl,[bx] ; @01961
     db 0x22,0xd2 ; ENCODED: and dl,dl (NASM chooses a different encoding) ; @01963
@@ -2355,7 +2355,7 @@ loc_19C4:
     lea dx,[0x2566] ; @019D1
     lea ax,[0x5566] ; @019D5
     mov cx,0x1180 ; @019D9
-    call sub_1916 ; @019DC
+    call ReadRawResourceFile ; @019DC
     pop ax ; @019DF
     shr al,1 ; @019E0
     mov dh,0x38 ; @019E2
@@ -2380,7 +2380,7 @@ loc_1A00:
     pop es ; @01A10
     lea ax,[0x1b4b] ; @01A11
     mov cx,0x1000 ; @01A15
-    call sub_1916 ; @01A18
+    call ReadRawResourceFile ; @01A18
     mov al,[0xfe6] ; @01A1B
     lea si,[0x2539] ; @01A1E
     add al,0x30 ; @01A22

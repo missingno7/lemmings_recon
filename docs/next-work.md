@@ -48,6 +48,7 @@
     retry seam and 1949 fatal transfer. The 1B79 caller and 1BA9 shared tail now
     connect those cores directly, verified in 24 integrated cases; see dat-load.md.
     Port higher section-selection/seek/close callers and startup resource ownership next,
+    using the tested 1916 raw-resource reader where applicable; see resource-raw.md.
     investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
     Do not substitute the static extractor's stricter checks. No SDL3
