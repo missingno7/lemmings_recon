@@ -72,5 +72,55 @@
         "closure": "UNRESOLVED: AL80..9F reaches dispatch;98..9F reads past visible table"
       }
     ]
+  },
+  "pcspeaker": {
+    "entry": 386,
+    "vector": 96,
+    "entry_evidence": "Main1652 relocated0842 frame and165A offset0182 install INT60;5972 loads MAIN.DAT section5 into this frame",
+    "regions": [
+      {
+        "start": 0,
+        "end": 30,
+        "class": "runtime_data",
+        "evidence": "Dispatcher DS=CS; AH>=20 writes offsets0..DF; commands10..1F read fields"
+      },
+      {
+        "start": 30,
+        "end": 40,
+        "class": "lookup_table",
+        "evidence": "0196 calls doubled original AH through five visible near words; zero and out-of-table targets remain unresolved"
+      },
+      {
+        "start": 40,
+        "end": 385,
+        "class": "effect_record_table",
+        "evidence": "01B3/01B6/01B8 select base0028 plus signed AL*15;01C1 loop copies15 bytes;23 visible records end0181. Out-of-range/signed selections are unchecked."
+      }
+    ],
+    "dispatch_tables": [
+      {
+        "start": 30,
+        "end": 40,
+        "site": 406,
+        "commands": "00..04",
+        "unresolved_targets": [
+          0
+        ],
+        "closure": "Unresolved: AH00..10 passes table branch;02/04 point to data at0;05..10 reads data beyond table; write commands can change table"
+      }
+    ],
+    "indirect_transfers": [
+      {
+        "address": 406,
+        "bytes": "ff971e00",
+        "targets": [
+          468,
+          591,
+          432
+        ],
+        "evidence": "Nonzero visible service table words; all live pointer values remain possible under mutable data commands",
+        "closure": "Zero words, out-of-table commands, and table mutation/producer domains remain open"
+      }
+    ]
   }
 }

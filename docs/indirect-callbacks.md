@@ -85,9 +85,10 @@ live word. They do not prove that an unlisted value is reachable in an unmodifie
 game run. Callback bodies are intercepted, so these are caller routing/stack tests,
 not device, graphics, callee, C or game execution coverage.
 
-The evidence census currently contains 1,448 direct data memory operands and 1,130
+The evidence census currently contains 1,453 direct data memory operands and 1,130
 indexed write operands in recovered main code. These are operands rather than
 distinct functions or alias-resolved writes. Stack effects, implicit memory use,
 platform services and unresolved bytes prevent a whole-program write claim.
 The saved INT08 vector at DS:1FBE is named and its direct producer is recorded;
-the far chains at 1899 and 4C6C still require their external IRET contracts.
+the far chains at 1899 and 4C6C now have explicit external IRET edges and bounded
+caller checks. Complete provider/timing and memory-alias contracts remain open.

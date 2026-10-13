@@ -7,20 +7,20 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Metric | Value |
 |---|---:|
 | Canonical image bytes | 82,906 |
-| Classified image bytes | 44,887 |
-| Decoded instruction bytes | 35,711 |
+| Classified image bytes | 45,694 |
+| Decoded instruction bytes | 35,760 |
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
-| Identified routine entry candidates | 271 |
+| Identified routine entry candidates | 273 |
 | Translated C routines | 2 |
 | Translated C code bytes | 116 |
 | Differential cases | 12 |
 | Mutation checks detected | 3 |
-| Original instruction coverage | 44 / 15,371 decoded (0.286%) |
-| Unresolved image bytes / runs | 38,019 / 115 |
-| Unresolved runs inside provisional code frame | 112 (2,905 bytes) |
-| Resolved static CFG edges, including fallthrough | 16,945 |
-| Unresolved direct targets / indirect transfers | 1 / 7 |
+| Original instruction coverage | 44 / 15,392 decoded (0.286%) |
+| Unresolved image bytes / runs | 37,212 / 115 |
+| Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
+| Resolved static CFG edges, including fallthrough | 16,969 |
+| Unresolved direct targets / indirect transfers | 1 / 5 |
 | Runtime-modified control-flow frontiers | 2 |
 | Additional state-specific main instruction sites | 401 |
 | Known conditional indirect edges | 18 |
@@ -29,7 +29,7 @@ The decoded instruction denominator is incomplete: unknown runs in the main and
 sound-driver images may add executable bytes. Entry candidates include historical leads,
 shared tails and manually investigated code; they are not proven disjoint functions.
 The complete region partition labels uncertainty rather than claiming classification.
-There are 1,566 main-image decoded instructions expressed as explicit encoding exceptions.
+There are 1,567 main-image decoded instructions expressed as explicit encoding exceptions.
 
 Gate A passes for the main EXE: deterministic static unpack, full byte comparison,
 63 independently checked relocations, entry/stack state and input identity. Gate B
@@ -44,22 +44,23 @@ branch edges. They compare registers, defined flags and the entire 1 MiB memory,
 including push/pop residue, across poisoned fixtures. AF is excluded only on the
 phase-wrap path, where the last XOR makes it architecturally undefined.
 
-External driver images now reconstruct exactly, with separate static accounting:
+Loaded sound-component images reconstruct exactly, with separate static accounting:
 
 | Image | Exact ASM bytes | Classified bytes | Decoded instructions | Entry candidates | Unresolved transfers | C routines |
 |---|---:|---:|---:|---:|---:|---:|
 | adlib | 22,125 | 1,438 | 655 | 17 | 1 | 0 |
 | tandysnd | 21,702 | 1,890 | 754 | 40 | 1 | 0 |
+| pcspeaker | 758 | 596 | 89 | 4 | 1 | 0 |
 
-Across all three images, 126,733 ASM bytes are exact and 17,181
-instructions have been decoded. C differential coverage remains 44 / 17,181
-(0.256%) of this still-incomplete decoded inventory. Four bounded
+Across all four component images, 127,491 ASM bytes are exact and 17,291
+instructions have been decoded. C differential coverage remains 44 / 17,291
+(0.254%) of this still-incomplete decoded inventory. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
 All 16 legacy AdLib signatures at segment 2911 match the static extraction. The
 seventeenth external lead is F000:FF53 firmware/environment code, not a driver entry.
-Both sound dispatch tables lack sufficient bounds checks; their out-of-table paths
+All three sound dispatch tables lack sufficient bounds checks; their out-of-table paths
 remain unresolved. Driver code/data closure and behavioral translation are open.
 Main INT3 protection has independently checked state-specific views: 372 stream
 instructions (325 TF-on, 47 TF-off) and 29 transformed INT1 instructions. The
@@ -80,3 +81,16 @@ bounded caller fixtures cover 214 original caller instruction sites with declare
 callee boundaries. They check routing and save/restore behavior, including DF-set
 traversal and unlisted live pointers; they are not C coverage or callee tests.
 See indirect-callbacks.md for alias and incoming-state obligations.
+
+The PC-speaker image is MAIN.DAT section 5: 758 separately reconstructed payload
+bytes loaded over canonical zeros at main 08420..08715. Component byte totals count
+both stored main bytes and the payload image; they are not unique runtime-memory
+bytes. Original extraction is checked at the actual overlay destination at two loads.
+The payload's trailing 161 bytes and single pre-entry byte remain UNKNOWN.
+
+Two saved INT08 chains now have explicit external IRET edges and original return
+continuations. Nineteen bounded tail cases check complete memory and saved-register/
+flag results across loads, stack wrap and external clobbers. Nineteen installed-
+handler fixtures check 0F6F/0F70/18F8 and their declared service boundaries. These
+are caller/handler checks, not full timer, BIOS, C or game execution coverage.
+See interrupts.md for provider contracts and the menu wrapper's unsaved ES effect.

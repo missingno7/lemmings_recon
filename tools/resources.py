@@ -73,6 +73,16 @@ def decode_section(data):
     return bytes(out),dict(packed_size=packed,image_size=size,image_sha256=sha(out),
                            checksum=data[1],remaining_bits=bits.left,token_count=len(tokens))
 
+def section_spans(data):
+    """Locate packed sections by header extents without executing their contents."""
+    spans=[];at=0
+    while at<len(data):
+        if len(data)-at<10:raise ValueError('Truncated section header')
+        count=int.from_bytes(data[at+6:at+10],'big')
+        if count<=10 or at+count>len(data):raise ValueError('Invalid section extent')
+        spans.append((at,at+count));at+=count
+    return spans
+
 def sound_images():
     result={}
     for name in ('adlib','tandysnd'):
@@ -81,6 +91,14 @@ def sound_images():
         if meta['packed_size']!=len(data):
             raise ValueError('Unexpected extra sound section')
         result[name]=(image,dict(meta,source=f'assets/{name}.dat',source_sha256=sha(data)))
+    data=(ROOT/'assets/main.dat').read_bytes()
+    spans=section_spans(data)
+    if len(spans)!=7:raise ValueError('Unexpected MAIN.DAT section inventory')
+    start,end=spans[5]
+    image,meta=decode_section(data[start:end])
+    result['pcspeaker']=(image,dict(meta,source='assets/main.dat',source_sha256=sha(data),
+                                   section_index=5,section_offset=start,
+                                   load_frame=0x842,entry_offset=0x182))
     return result
 
 if __name__=='__main__':

@@ -17,6 +17,14 @@
     {
       "offset": 3507,
       "evidence": "0656 CALL-next pushes0659;0659 stores return at IVT INT3;065D adds075A =>0DB3;0665 stores CS"
+    },
+    {
+      "offset": 3951,
+      "evidence": "0F50/0F53 registers CS:0F6F as INT33 AX000C far callback"
+    },
+    {
+      "offset": 3952,
+      "evidence": "0F5D/0F60 installs CS:0F70 via DOS AH25 and live vector selector"
     }
   ],
   "regions": [
@@ -106,6 +114,12 @@
       "end": 5456,
       "class": "lookup_table",
       "evidence": "1462 uses CS:1530 XLAT;1410 indexes visible word table1536..154F. Hardware-supplied index bounds require an external contract."
+    },
+    {
+      "start": 33824,
+      "end": 34582,
+      "class": "runtime_executable_overlay_storage",
+      "evidence": "5972 decodes MAIN.DAT section5 (758 bytes) here;165D installs frame0842 offset0182 as INT60. Stored bytes remain canonical zeros."
     }
   ],
   "runtime_frontiers": [
@@ -204,6 +218,32 @@
       ],
       "evidence": "0FC1..0FF1 initializes nine DS:002E..003E drawing callbacks; object stores read these slots into record+14;70F0/7159 transfers saved pointer to AX",
       "closure": "Active object record lifecycle, bulk copies, DS-frame and write/alias contracts pending"
+    }
+  ],
+  "external_transfers": [
+    {
+      "address": 6297,
+      "bytes": "ff2ebe1f",
+      "return_target": 6301,
+      "pointer": {
+        "frame": 2473,
+        "offset": 8126,
+        "size": 4
+      },
+      "evidence": "0060 DOS get-vector INT08 supplies ES:BX stored0062/0066; caller pushes FLAGS,CS,return IP before far JMP",
+      "contract": "External service IRET through caller-supplied frame; preserves live frame contents. Register/DS/ES effects remain explicit provider behavior"
+    },
+    {
+      "address": 19564,
+      "bytes": "ff2ebe1f",
+      "return_target": 19568,
+      "pointer": {
+        "frame": 2473,
+        "offset": 8126,
+        "size": 4
+      },
+      "evidence": "0060 DOS get-vector INT08 supplies ES:BX stored0062/0066; caller pushes FLAGS,CS,return IP before far JMP",
+      "contract": "External service IRET through caller-supplied frame; preserves live frame contents. Register/DS/ES effects remain explicit provider behavior"
     }
   ]
 }

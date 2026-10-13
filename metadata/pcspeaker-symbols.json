@@ -1,0 +1,332 @@
+[
+  {
+    "address": 386,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "pcspeaker_InterruptEntry",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      432,
+      468,
+      591
+    ],
+    "data_references": [
+      {
+        "instruction": 406,
+        "segment": "default",
+        "displacement": 30,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 422,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 428,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 46,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Main1652 relocated0842 frame and165A offset0182 install INT60;5972 loads MAIN.DAT section5 into this frame"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 432,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "pcspeaker_sub_01B0",
+    "aliases": [],
+    "callers": [
+      406
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 445,
+        "segment": "default",
+        "displacement": 1,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 449,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 451,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 457,
+        "segment": "default",
+        "displacement": 23,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 460,
+        "segment": "default",
+        "displacement": 8,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 463,
+        "segment": "default",
+        "displacement": 1,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 36,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 468,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "pcspeaker_sub_01D4",
+    "aliases": [],
+    "callers": [
+      406
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 473,
+        "segment": "default",
+        "displacement": 2,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 476,
+        "segment": "default",
+        "displacement": 6,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 480,
+        "segment": "default",
+        "displacement": 1,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 486,
+        "segment": "default",
+        "displacement": 22,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 492,
+        "segment": "default",
+        "displacement": 1,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 562,
+        "segment": "default",
+        "displacement": 26,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 580,
+        "segment": "default",
+        "displacement": 26,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 498,
+        "segment": "default",
+        "displacement": 23,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 501,
+        "segment": "default",
+        "displacement": 9,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 507,
+        "segment": "default",
+        "displacement": 9,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 511,
+        "segment": "default",
+        "displacement": 20,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 515,
+        "segment": "default",
+        "displacement": 16,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 521,
+        "segment": "default",
+        "displacement": 18,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 525,
+        "segment": "default",
+        "displacement": 12,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 529,
+        "segment": "default",
+        "displacement": 12,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 533,
+        "segment": "default",
+        "displacement": 10,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 537,
+        "segment": "default",
+        "displacement": 8,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 8,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 546,
+        "segment": "default",
+        "displacement": 14,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 550,
+        "segment": "default",
+        "displacement": 12,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 554,
+        "segment": "default",
+        "displacement": 21,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 123,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 591,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "pcspeaker_sub_024F",
+    "aliases": [],
+    "callers": [
+      406
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 593,
+        "segment": "default",
+        "displacement": 1,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 6,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  }
+]

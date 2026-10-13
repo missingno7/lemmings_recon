@@ -15,7 +15,9 @@ from build import tool
 
 def analyze_driver(name,image):
     h=read_json(ROOT/'metadata/sound-hints.json')[name]
-    hints=dict(code_limit=len(image),entries=[dict(offset=0)],regions=h['regions'])
+    entry=h.get('entry',0)
+    hints=dict(code_limit=len(image),entries=[dict(offset=entry)],regions=h['regions'],
+               indirect_transfers=h.get('indirect_transfers',[]))
     if name=='adlib':
         for seed in read_json(ROOT/'metadata/legacy-seeds.json')['external']:
             if seed['segment']!=0x2911:
@@ -26,7 +28,9 @@ def analyze_driver(name,image):
             hints['entries'].append(dict(offset=off))
     for table in h['dispatch_tables']:
         for off in range(table['start'],table['end'],2):
-            hints['entries'].append(dict(offset=struct.unpack_from('<H',image,off)[0]))
+            target=struct.unpack_from('<H',image,off)[0]
+            if target not in table.get('unresolved_targets',[]):
+                hints['entries'].append(dict(offset=target))
     a=discover(image,hints,{'accepted':[]})
     a['dispatch_tables']=h['dispatch_tables']
     return a
@@ -43,12 +47,14 @@ def generate_driver(name,image,a):
     exceptions={r['address'] for n,r in enumerate(a['instructions'])
                 if encoded[n*32:(n+1)*32]!=bytes.fromhex(r['bytes'])+b'\xcc'*(32-r['size'])}
     labels={p:f'{name}_sub_{p:04X}' for p in a['routines']}
-    labels[0]=name+'_InterruptEntry'
+    h=read_json(ROOT/'metadata/sound-hints.json')[name]
+    entry=h.get('entry',0)
+    labels[entry]=name+'_InterruptEntry'
     for edge in a['edges']:
         if edge['kind']!='fallthrough' and edge['target'] is not None:
             labels.setdefault(edge['target'],f'{name}_loc_{edge["target"]:04X}')
     rows=['; Canonical decompressed driver. No initialization/relocation patches.',
-          '; Entry offset0000 is installed as INT61 by main CS:0576..057B.',
+          f'; Entry offset{entry:04X} is installed as INT{h.get("vector",0x61):02X}; see sound-hints.json for the original install.',
           '; UNKNOWN includes unclassified sound data; no no-code claim is implied.',
           'bits 16','org 0']
     ins={r['address']:r for r in a['instructions']}
@@ -92,26 +98,27 @@ def generate_driver(name,image,a):
             seen.add(p)
             refs.extend(dict(instruction=p,**r) for r in ins[p]['data_references'])
             for e in outgoing.get(p,[]):
-                if e['kind']=='call':
+                if e['kind'] in ('call','indirect_call'):
                     callees.add(e['target'])
                 elif e['target'] is not None:
                     todo.append(e['target'])
         symbols.append(dict(address=addr,segment='driver-relative',kind='entry',size=None,symbol_name=labels[addr],aliases=[],
-                            callers=[e['source'] for e in a['edges'] if e['target']==addr and e['kind']=='call'],
+                            callers=[e['source'] for e in a['edges'] if e['target']==addr and e['kind'] in ('call','indirect_call')],
                             callees=sorted(callees),data_references=refs,reachable_instruction_bytes=sum(ins[p]['size'] for p in seen),
-                            confidence='PROVEN' if addr==0 else 'STRONGLY_SUPPORTED',
-                            evidence=['Main0576..057B installs offset0 as INT61' if addr==0 else 'Static call/table target or signature-matched legacy lead'],
+                            confidence='PROVEN' if addr==entry else 'STRONGLY_SUPPORTED',
+                            evidence=[h.get('entry_evidence','Main0576..057B installs offset0 as INT61') if addr==entry else 'Static call/table target or signature-matched legacy lead'],
                             verification_status='UNTRANSLATED'))
     write_json(ROOT/f'metadata/{name}-symbols.json',symbols)
     write_json(ROOT/f'metadata/{name}-encodings.json',[
         dict(address=p,bytes=ins[p]['bytes'],instruction=text[p],reason='NASM chooses a different encoding') for p in sorted(exceptions)])
 
-def verify_drivers(generate=False):
+def verify_drivers(generate=False,generate_name=None):
     BUILD.mkdir(exist_ok=True)
     images=sound_images()
     if generate:
         # This bootstrap does not update the acceptance hashes automatically.
         for name,(image,meta) in images.items():
+            if generate_name is not None and name!=generate_name:continue
             a=analyze_driver(name,image)
             generate_driver(name,image,a)
     pins=read_json(ROOT/'metadata/sound-oracle.json')
@@ -146,5 +153,6 @@ def verify_drivers(generate=False):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--generate',action='store_true')
+    p.add_argument('--driver',choices=('adlib','tandysnd','pcspeaker'),help='Generate only this source when --generate is explicit')
     a=p.parse_args()
-    verify_drivers(a.generate)
+    verify_drivers(a.generate,a.driver)

@@ -14,18 +14,22 @@
 3. Resolve record initialization/copy/activation and DS/ES/SS aliases. All 32
    recovered object callback stores trace locally to DS:002E..003E, but this is
    not a proof that all possible writes have been identified.
-4. Explain 1899/4C6C far chaining through DS:1FBE (saved INT08 vector); represent an
-   external interrupt edge once register/stack contracts are independently reviewed.
+4. Complete provider, timing and alias contracts for installed handlers and the
+   explicit external IRET chains at 1899/4C6C. Bounded tails expose the menu's unsaved
+   ES and returned-DS dependencies; keep those original effects. See interrupts.md.
 5. Review every unknown run in build/analysis.json, especially pre-09A90 gaps and
    post-09A90 area. Locate all handler installs, dispatch tables, read/write crossrefs,
    data initialization, self modification and loaded overlays. Unknown is not padding.
 6. Investigate reachability of 8363 (incremental checksum); preserve its tested behavior
    without calling it reachable or dead. Preserve 188F..1898 code/data overlap.
-7. Close AdLib 01EA and Tandy 02BB command dispatches. Known visible tables cover
+7. Close AdLib 01EA, Tandy 02BB and PC-speaker 0196 command dispatches. The latter
+   is MAIN.DAT section 5, loaded into main frame 0842; it has mutable table words,
+   unchecked command/record indexes and 162 unresolved payload bytes.
+   AdLib/Tandy visible tables cover
    commands 80..87 and 80..97 respectively, but unchecked higher commands can read
    code/state as pointers. Recover producer domains and classify music/effect data.
-   Both driver images already assemble exactly; see sound-drivers.md. Their C
-   implementation and behavioral coverage are still zero.
+   All three component images already assemble exactly; see sound-drivers.md and
+   interrupts.md. Their C implementation and behavioral coverage are still zero.
 8. Refine ownership modules after dependencies are understood. Replace explicit
    encoding exceptions with reliable NASM encoding syntax where available.
 9. Only then assign additional bounded C clusters. Resource decoding/loading is a

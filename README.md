@@ -23,6 +23,10 @@ The static CFG also records 18 conditional callback edges. Bounded caller tests
 check live pointer routing and saved registers; write/alias domains remain open.
 See [callback evidence](docs/indirect-callbacks.md).
 
+The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
+127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
+returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
+
 ## Reproduce
 
 Supply the original files privately in assets; metadata/inputs.json pins their hashes.
@@ -37,6 +41,7 @@ the lock deliberately rather than bypassing it.
 .venv\Scripts\python.exe tools\sound.py
 .venv\Scripts\python.exe tools\protection.py
 .venv\Scripts\python.exe tools\indirect.py
+.venv\Scripts\python.exe tools\interrupts.py
 .venv\Scripts\python.exe -m unittest discover -s tests -p 'test_*.py'
 .venv\Scripts\python.exe tools\difftest.py
 .venv\Scripts\python.exe tools\coverage.py

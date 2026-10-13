@@ -69,3 +69,9 @@ assume the static image length bounds every runtime access.
 
 No driver routine has been translated to C or behaviorally verified. Byte-exact
 assembly and matched signatures do not establish full code/data or CFG closure.
+
+Further installation analysis identified MAIN.DAT section 5 as a 758-byte
+PC-speaker component loaded over main zero storage at relative frame 0842. It now
+has a separate exact source and inventory under src/sound/pcspeaker.asm and
+metadata/pcspeaker-*. See interrupts.md for its load, entry, mutable dispatch and
+unresolved trailing bytes. The known executable-component inventory has four images.

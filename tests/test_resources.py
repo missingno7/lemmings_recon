@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 from common import ROOT,read_json
-from resources import decode_section,ReverseBits,sound_images
+from resources import decode_section,ReverseBits,sound_images,section_spans
 
 class ResourceTests(unittest.TestCase):
     def test_pinned_drivers(self):
@@ -40,6 +40,17 @@ class ResourceTests(unittest.TestCase):
             sig=bytes.fromhex(r['signature']);off=r['offset']
             self.assertEqual(image[off:off+len(sig)],sig)
         self.assertEqual([(r['segment'],r['offset']) for r in records if r not in driver],[(0xf000,0xff53)])
+
+    def test_main_section_boundary_is_executable_overlay_source(self):
+        data=(ROOT/'assets/main.dat').read_bytes()
+        spans=section_spans(data)
+        self.assertEqual(len(spans),7)
+        self.assertEqual(spans[5],(0xd17a,0xd419))
+        image,meta=sound_images()['pcspeaker']
+        self.assertEqual(len(image),758)
+        self.assertEqual(image[0x182],0xfb)
+        self.assertEqual(meta['load_frame']*16+meta['entry_offset'],0x85a2)
+        with self.assertRaises(ValueError):section_spans(data[:-1])
 
 if __name__=='__main__':
     unittest.main()

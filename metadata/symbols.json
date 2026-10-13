@@ -4098,8 +4098,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_0F08",
-    "aliases": [],
+    "symbol_name": "InitializeMouseDriverHooks",
+    "aliases": [
+      "sub_0F08"
+    ],
     "callers": [
       177
     ],
@@ -4144,6 +4146,97 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 103
+  },
+  {
+    "address": 3951,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "MouseEventReturn",
+    "aliases": [
+      "sub_0F6F"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Signature-matched legacy entry lead",
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 1
+  },
+  {
+    "address": 3952,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "MouseIrqBridge",
+    "aliases": [
+      "sub_0F70"
+    ],
+    "callers": [],
+    "callees": [
+      22655
+    ],
+    "data_references": [
+      {
+        "instruction": 3959,
+        "segment": "default",
+        "displacement": 8194,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3963,
+        "segment": "default",
+        "displacement": 8195,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3969,
+        "segment": "default",
+        "displacement": 8195,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3973,
+        "segment": "default",
+        "displacement": 8194,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3977,
+        "segment": "cs",
+        "displacement": 33726,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3985,
+        "segment": "default",
+        "displacement": 8194,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Signature-matched legacy entry lead",
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 48
   },
   {
     "address": 4000,
@@ -5866,8 +5959,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1644",
-    "aliases": [],
+    "symbol_name": "InstallGameTimerVector",
+    "aliases": [
+      "sub_1644"
+    ],
     "callers": [
       387,
       1170
@@ -5903,8 +5998,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_16A9",
-    "aliases": [],
+    "symbol_name": "RestoreTimerState",
+    "aliases": [
+      "sub_16A9"
+    ],
     "callers": [
       763,
       1232,
@@ -5965,8 +6062,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_16D4",
-    "aliases": [],
+    "symbol_name": "KeyboardIrqHandler",
+    "aliases": [
+      "sub_16D4"
+    ],
     "callers": [],
     "callees": [
       6068,
@@ -6126,9 +6225,10 @@
         "size": 2
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 224
@@ -6179,8 +6279,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_17C7",
-    "aliases": [],
+    "symbol_name": "GameTimerIrqHandler",
+    "aliases": [
+      "sub_17C7"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -6329,9 +6431,10 @@
         "size": 4
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 235
@@ -6921,6 +7024,22 @@
         "base": null,
         "index": null,
         "size": 4
+      },
+      {
+        "instruction": 6302,
+        "segment": "default",
+        "displacement": 8143,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 6307,
+        "segment": "default",
+        "displacement": 8141,
+        "base": null,
+        "index": null,
+        "size": 1
       }
     ],
     "confidence": "HYPOTHESIS",
@@ -6928,7 +7047,7 @@
       "Signature-matched legacy entry lead"
     ],
     "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 10
+    "reachable_instruction_bytes": 31
   },
   {
     "address": 6297,
@@ -7006,8 +7125,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_18F8",
-    "aliases": [],
+    "symbol_name": "CriticalErrorHandler",
+    "aliases": [
+      "sub_18F8"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -7020,9 +7141,10 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 16
@@ -24954,8 +25076,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4C47",
-    "aliases": [],
+    "symbol_name": "MenuTimerIrqHandler",
+    "aliases": [
+      "sub_4C47"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -24987,9 +25111,10 @@
         "size": 4
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 54
@@ -26167,8 +26292,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_5028",
-    "aliases": [],
+    "symbol_name": "InstallMenuTimerVector",
+    "aliases": [
+      "sub_5028"
+    ],
     "callers": [
       17400,
       18170
@@ -29400,6 +29527,7 @@
     "symbol_name": "sub_587F",
     "aliases": [],
     "callers": [
+      3993,
       6270
     ],
     "callees": [],
@@ -29489,8 +29617,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_58D2",
-    "aliases": [],
+    "symbol_name": "LoadMainResourceSections",
+    "aliases": [
+      "sub_58D2"
+    ],
     "callers": [
       213
     ],

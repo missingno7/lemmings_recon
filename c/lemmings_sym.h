@@ -18,7 +18,9 @@
 #define CS_sub_0DBD 0x0DBDu
 #define CS_ProtectionEncodedInt1 0x0DFFu
 #define CS_sub_0EC2 0x0EC2u
-#define CS_sub_0F08 0x0F08u
+#define CS_InitializeMouseDriverHooks 0x0F08u
+#define CS_MouseEventReturn 0x0F6Fu
+#define CS_MouseIrqBridge 0x0F70u
 #define CS_sub_0FA0 0x0FA0u
 #define CS_sub_0FB2 0x0FB2u
 #define CS_sub_0FF8 0x0FF8u
@@ -44,12 +46,12 @@
 #define CS_sub_1582 0x1582u
 #define CS_sub_15AD 0x15ADu
 #define CS_sub_1602 0x1602u
-#define CS_sub_1644 0x1644u
-#define CS_sub_16A9 0x16A9u
-#define CS_sub_16D4 0x16D4u
+#define CS_InstallGameTimerVector 0x1644u
+#define CS_RestoreTimerState 0x16A9u
+#define CS_KeyboardIrqHandler 0x16D4u
 #define CS_sub_17B4 0x17B4u
 #define CS_sub_17BE 0x17BEu
-#define CS_sub_17C7 0x17C7u
+#define CS_GameTimerIrqHandler 0x17C7u
 #define CS_sub_183E 0x183Eu
 #define CS_sub_184E 0x184Eu
 #define CS_sub_1861 0x1861u
@@ -62,7 +64,7 @@
 #define CS_ChecksumWindowEnd 0x1899u
 #define CS_sub_189D 0x189Du
 #define CS_sub_18B2 0x18B2u
-#define CS_sub_18F8 0x18F8u
+#define CS_CriticalErrorHandler 0x18F8u
 #define CS_sub_1916 0x1916u
 #define CS_sub_197D 0x197Du
 #define CS_sub_1A7B 0x1A7Bu
@@ -147,7 +149,7 @@
 #define CS_sub_4C20 0x4C20u
 #define CS_sub_4C32 0x4C32u
 #define CS_sub_4C36 0x4C36u
-#define CS_sub_4C47 0x4C47u
+#define CS_MenuTimerIrqHandler 0x4C47u
 #define CS_ReadCodeInput 0x4C7Eu
 #define CS_sub_4D1A 0x4D1Au
 #define CS_sub_4D4D 0x4D4Du
@@ -165,7 +167,7 @@
 #define CS_sub_4FF8 0x4FF8u
 #define CS_sub_5017 0x5017u
 #define CS_sub_5019 0x5019u
-#define CS_sub_5028 0x5028u
+#define CS_InstallMenuTimerVector 0x5028u
 #define CS_DrawCodeInputText 0x503Bu
 #define CS_sub_5042 0x5042u
 #define CS_sub_51A2 0x51A2u
@@ -197,7 +199,7 @@
 #define CS_sub_57D1 0x57D1u
 #define CS_sub_5827 0x5827u
 #define CS_sub_587F 0x587Fu
-#define CS_sub_58D2 0x58D2u
+#define CS_LoadMainResourceSections 0x58D2u
 #define CS_sub_5950 0x5950u
 #define CS_sub_597D 0x597Du
 #define CS_sub_59BB 0x59BBu

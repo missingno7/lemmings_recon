@@ -15,6 +15,7 @@ def discover(image, hints, legacy, relocations=()):
     relocation_sites = {r['linear'] for r in relocations}
     runtime_frontiers={r['address']:r for r in hints.get('runtime_frontiers',[])}
     indirect_hints={r['address']:r for r in hints.get('indirect_transfers',[])}
+    external_hints={r['address']:r for r in hints.get('external_transfers',[])}
     while work:
         off = work.pop()
         while off not in instructions:
@@ -61,6 +62,18 @@ def discover(image, hints, legacy, relocations=()):
                     work.append(target)
                     routines.add(target)
                 else:
+                    external=external_hints.get(off)
+                    if external:
+                        if ins.bytes.hex()!=external['bytes'] or m not in ('ljmp','lcall'):
+                            raise ValueError(f'External transfer evidence differs at {off:04X}')
+                        edges.append(dict(source=off,target=None,kind='external_interrupt_chain',
+                                          pointer=external['pointer'],return_mechanism='iret',
+                                          evidence=external['evidence']))
+                        target=external['return_target']
+                        edges.append(dict(source=off,target=target,kind='external_interrupt_return',
+                                          contract=external['contract']))
+                        work.append(target)
+                        break
                     hint=indirect_hints.get(off)
                     if hint:
                         if ins.bytes.hex()!=hint['bytes']:

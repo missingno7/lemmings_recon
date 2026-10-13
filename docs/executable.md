@@ -61,13 +61,19 @@ are masked and no initialized game snapshot is involved.
   code/data interpretation; source and region inventory preserve it.
 - 8363..83B6 is a coherent incremental checksum routine sharing 83B9..83BC. Its current
   static callers are unknown; decoding and testing it does not establish reachability.
-- INT24 vector 18F8 is explicit at 008A. Timer/keyboard handler leads 16D4/17C7 and
-  chained far vectors require further contract work. DOS and hardware edges remain
-  platform boundaries, not unexplained direct branch targets.
+- Explicit installations cover INT24 at 18F8, keyboard 16D4, game/menu timer
+  17C7/4C47, mouse far callback 0F6F and private IRQ wrapper 0F70. Two saved INT08
+  chains now have explicit external IRET edges and bounded caller-tail checks.
+  DOS/device/provider and alias contracts remain open; see interrupts.md.
 - ADLIB.DAT and TANDYSND.DAT are now independently extracted and byte-exact ASM
   images (22,125 and 21,702 bytes). All 16 legacy AdLib signatures at 2911 match;
   the seventeenth external signature is F000:FF53 firmware/environment code.
   Their separate code/data and CFG frontier is in sound-drivers.md.
+- MAIN.DAT section 5 is a further executable component: 758 PC-speaker bytes loaded
+  over main 08420..08715 before INT60 is installed at relocated 0842:0182. Its
+  source payload and stored main zeros are independently reconstructed and verified.
+  The complete known component total is now 127,491 ASM bytes; it counts both
+  initial storage and the replacement payload. See interrupts.md for dispatch gaps.
 - Main 066C invokes INT3 installed at 0DB3 via 0659+075A. The handler negates 59 bytes
   at 0DFF..0E39, installs that address as INT1, changes saved TF/IF, and modifies
   forthcoming instruction words. Separate state-specific ASM and CFG now recover

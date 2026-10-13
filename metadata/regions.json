@@ -87,16 +87,6 @@
     },
     {
       "start": 3778,
-      "end": 3951,
-      "classification": "instruction"
-    },
-    {
-      "start": 3951,
-      "end": 4000,
-      "classification": "unresolved"
-    },
-    {
-      "start": 4000,
       "end": 4413,
       "classification": "instruction"
     },
@@ -1032,6 +1022,16 @@
     },
     {
       "start": 33727,
+      "end": 33824,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33824,
+      "end": 34582,
+      "classification": "runtime_executable_overlay_storage"
+    },
+    {
+      "start": 34582,
       "end": 34824,
       "classification": "unresolved"
     },

@@ -48,6 +48,7 @@ def report():
     m['sound']=verified['sound']
     m['protection']=verified['protection']
     m['indirect']=verified['indirect']
+    m['interrupts']=verified['interrupts']
     state_insns=m['protection']['stream_metrics']['instructions']+m['protection']['int1_instruction_count']
     m['state_specific_decoded_instructions']=state_insns
     combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
@@ -101,7 +102,7 @@ branch edges. They compare registers, defined flags and the entire 1 MiB memory,
 including push/pop residue, across poisoned fixtures. AF is excluded only on the
 phase-wrap path, where the last XOR makes it architecturally undefined.
 
-External driver images now reconstruct exactly, with separate static accounting:
+Loaded sound-component images reconstruct exactly, with separate static accounting:
 
 | Image | Exact ASM bytes | Classified bytes | Decoded instructions | Entry candidates | Unresolved transfers | C routines |
 |---|---:|---:|---:|---:|---:|---:|
@@ -109,15 +110,15 @@ External driver images now reconstruct exactly, with separate static accounting:
     for name,s in m['sound'].items():
         text+=f'| {name} | {s["byte_exact_asm_bytes"]:,} | {s["classified_bytes"]:,} | {s["instructions"]} | {s["identified_entry_candidates"]} | {s["unresolved_transfers"]} | 0 |\n'
     text+=f'''
-Across all three images, {combined_bytes:,} ASM bytes are exact and {combined_insns:,}
+Across all four component images, {combined_bytes:,} ASM bytes are exact and {combined_insns:,}
 instructions have been decoded. C differential coverage remains {len(executed)} / {combined_insns:,}
-({100*len(executed)/combined_insns:.3f}%) of this still-incomplete decoded inventory. Four bounded
+({100*len(executed)/combined_insns:.3f}%) of this still-incomplete decoded inventory. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
 All 16 legacy AdLib signatures at segment 2911 match the static extraction. The
 seventeenth external lead is F000:FF53 firmware/environment code, not a driver entry.
-Both sound dispatch tables lack sufficient bounds checks; their out-of-table paths
+All three sound dispatch tables lack sufficient bounds checks; their out-of-table paths
 remain unresolved. Driver code/data closure and behavioral translation are open.
 Main INT3 protection has independently checked state-specific views: 372 stream
 instructions (325 TF-on, 47 TF-off) and 29 transformed INT1 instructions. The
@@ -138,6 +139,19 @@ bounded caller fixtures cover 214 original caller instruction sites with declare
 callee boundaries. They check routing and save/restore behavior, including DF-set
 traversal and unlisted live pointers; they are not C coverage or callee tests.
 See indirect-callbacks.md for alias and incoming-state obligations.
+
+The PC-speaker image is MAIN.DAT section 5: 758 separately reconstructed payload
+bytes loaded over canonical zeros at main 08420..08715. Component byte totals count
+both stored main bytes and the payload image; they are not unique runtime-memory
+bytes. Original extraction is checked at the actual overlay destination at two loads.
+The payload's trailing 161 bytes and single pre-entry byte remain UNKNOWN.
+
+Two saved INT08 chains now have explicit external IRET edges and original return
+continuations. Nineteen bounded tail cases check complete memory and saved-register/
+flag results across loads, stack wrap and external clobbers. Nineteen installed-
+handler fixtures check 0F6F/0F70/18F8 and their declared service boundaries. These
+are caller/handler checks, not full timer, BIOS, C or game execution coverage.
+See interrupts.md for provider contracts and the menu wrapper's unsaved ES effect.
 '''
     return m,text
 

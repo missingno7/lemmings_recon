@@ -60,6 +60,20 @@ class StaticTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             discover(bytes.fromhex('ffd0c3c3'),hints,{'accepted':[]})
 
+    def test_external_iret_chain_has_explicit_conditional_return(self):
+        hints=dict(entries=[{'offset':0}],regions=[],code_limit=5,
+            external_transfers=[dict(address=0,bytes='ff2e0000',pointer={'frame':0,'offset':0},
+                                     return_target=4,evidence='Constructed saved ISR pointer',contract='IRET through supplied frame')])
+        result=discover(bytes.fromhex('ff2e0000cf'),hints,{'accepted':[]})
+        self.assertEqual(result['unresolved'],[])
+        external=[e for e in result['edges'] if e['kind']=='external_interrupt_chain']
+        self.assertEqual(len(external),1)
+        self.assertIsNone(external[0]['target'])
+        returns=[e for e in result['edges'] if e['kind']=='external_interrupt_return']
+        self.assertEqual(returns[0]['target'],4)
+        self.assertTrue(returns[0]['resolved'])
+        self.assertTrue(returns[0]['contract'])
+
     def test_complete_byte_partition(self):
         result=analyze()
         end=0

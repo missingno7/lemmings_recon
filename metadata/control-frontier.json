@@ -28,9 +28,12 @@
   },
   {
     "address": "1899",
-    "kind": "far_interrupt_chain",
+    "kind": "external_interrupt_chain",
     "evidence": "DS:1FBE saved via DOS get-vector INT08 at005D..0066",
-    "closure": "external vector contract pending"
+    "closure": "Explicit provider boundary and nominal return frame verified; complete provider/timing/alias contracts remain open",
+    "return_mechanism": "iret",
+    "return_target": "189D",
+    "verification": "19 bounded caller-tail cases; see metadata/interrupt-evidence.json and docs/interrupts.md"
   },
   {
     "address": "42A5",
@@ -46,9 +49,12 @@
   },
   {
     "address": "4C6C",
-    "kind": "far_interrupt_chain",
+    "kind": "external_interrupt_chain",
     "evidence": "DS:1FBE saved via DOS get-vector INT08",
-    "closure": "external vector contract pending"
+    "closure": "Explicit provider boundary and nominal return frame verified; complete provider/timing/alias contracts remain open",
+    "return_mechanism": "iret",
+    "return_target": "4C70",
+    "verification": "19 bounded caller-tail cases; see metadata/interrupt-evidence.json and docs/interrupts.md"
   },
   {
     "address": "4CC9",

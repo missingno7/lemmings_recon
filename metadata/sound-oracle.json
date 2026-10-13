@@ -18,5 +18,19 @@
     "token_count": 4699,
     "source": "assets/tandysnd.dat",
     "source_sha256": "d044398aced30dae67cf8663d57f946faf28a29c357f9ea3857a28eea7cc10c1"
+  },
+  "pcspeaker": {
+    "packed_size": 671,
+    "image_size": 758,
+    "image_sha256": "bdc1da6ea085bd247ab3060dfc78f522f7b447dcffe7235a3e19bf9938731287",
+    "checksum": 44,
+    "remaining_bits": 0,
+    "token_count": 187,
+    "source": "assets/main.dat",
+    "source_sha256": "2aec688c334e60322998811a8b6f9d5c13f8090b46ca6c2a6cb1c8db3b733545",
+    "section_index": 5,
+    "section_offset": 53626,
+    "load_frame": 2114,
+    "entry_offset": 386
   }
 }

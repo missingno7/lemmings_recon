@@ -1237,7 +1237,7 @@
     }
   ],
   "metrics": {
-    "direct_memory_accesses": 1448,
+    "direct_memory_accesses": 1453,
     "indexed_write_operands": 1130,
     "object_callback_stores": 32,
     "locally_traced_object_stores": 32,

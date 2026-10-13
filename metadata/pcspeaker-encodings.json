@@ -1,0 +1,62 @@
+[
+  {
+    "address": 395,
+    "bytes": "32ff",
+    "instruction": "xor bh,bh",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 397,
+    "bytes": "8adc",
+    "instruction": "mov bl,ah",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 406,
+    "bytes": "ff971e00",
+    "instruction": "call [bx+0x1e]",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 426,
+    "bytes": "8adc",
+    "instruction": "mov bl,ah",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 440,
+    "bytes": "03d8",
+    "instruction": "add bx,ax",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 471,
+    "bytes": "8afd",
+    "instruction": "mov bh,ch",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 560,
+    "bytes": "8bca",
+    "instruction": "mov cx,dx",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 572,
+    "bytes": "8ac1",
+    "instruction": "mov al,cl",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 576,
+    "bytes": "8ac5",
+    "instruction": "mov al,ch",
+    "reason": "NASM chooses a different encoding"
+  },
+  {
+    "address": 591,
+    "bytes": "32c0",
+    "instruction": "xor al,al",
+    "reason": "NASM chooses a different encoding"
+  }
+]

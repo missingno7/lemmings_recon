@@ -1,0 +1,238 @@
+{
+  "canonical_sha256": "b0c4ef403e4bd28fa7913cb51a8c87e4dbbba8c4f1c36ea1594ba4424d64ee4e",
+  "opcode_claims": [
+    {
+      "start": 64,
+      "end": 69,
+      "bytes": "c606c61f0c"
+    },
+    {
+      "start": 93,
+      "end": 132,
+      "bytes": "b80835cd21891ebe1f8c06c01fb435a0c61fcd21891ec21f8c06c41fb862251e061f8bd3cd211f"
+    },
+    {
+      "start": 133,
+      "end": 144,
+      "bytes": "b824250e1fbaf818cd211f"
+    },
+    {
+      "start": 3912,
+      "end": 3940,
+      "bytes": "b80c00b97f000e07ba6f0fcd33b425a0c61f1e0e1fba700fcd211fc3"
+    },
+    {
+      "start": 5474,
+      "end": 5504,
+      "bytes": "fa1e06b80935cd218c06bc1f891eba1f8cca8edabad416b80925cd21071f"
+    },
+    {
+      "start": 5700,
+      "end": 5728,
+      "bytes": "fa1eb808250e1fbac717cd211f1eb842088ed8b86025ba8201cd211f"
+    },
+    {
+      "start": 5813,
+      "end": 5831,
+      "bytes": "33c0c41ebe1f8ed8891e20008c062200fb1f"
+    },
+    {
+      "start": 6291,
+      "end": 6301,
+      "bytes": "b89d189c0e50ff2ebe1f"
+    },
+    {
+      "start": 19558,
+      "end": 19568,
+      "bytes": "b8704c9c0e50ff2ebe1f"
+    },
+    {
+      "start": 20520,
+      "end": 20539,
+      "bytes": "fa1e33c08ed8c7062000474c8c0e22001ffbc3"
+    },
+    {
+      "start": 22738,
+      "end": 22756,
+      "bytes": "1eba2b258e06e41f33ff33f68cc1e896c21f"
+    },
+    {
+      "start": 22764,
+      "end": 22781,
+      "bytes": "1e33ff33f68e06e41f8e1ee41fe8adc21f"
+    },
+    {
+      "start": 22786,
+      "end": 22803,
+      "bytes": "1e33ff33f68e06e41f8e1ee41fe897c21f"
+    },
+    {
+      "start": 22848,
+      "end": 22865,
+      "bytes": "1e33ff33f68e06ee1f8e1eee1fe859c21f"
+    },
+    {
+      "start": 22865,
+      "end": 22902,
+      "bytes": "1ea1ee1f05210f8ec08ed833ff33f6e846c21f535b1eb842088ec08ed833ff33f6e834c21f"
+    }
+  ],
+  "installations": [
+    {
+      "vector": 9,
+      "target_image": "main",
+      "offset": 5844,
+      "site": 5500,
+      "kind": "dos_set_vector"
+    },
+    {
+      "vector": 8,
+      "target_image": "main",
+      "offset": 6087,
+      "site": 5710,
+      "kind": "dos_set_vector"
+    },
+    {
+      "vector": 8,
+      "target_image": "main",
+      "offset": 19527,
+      "site": 20526,
+      "kind": "direct_ivt_write"
+    },
+    {
+      "vector": 36,
+      "target_image": "main",
+      "offset": 6392,
+      "site": 141,
+      "kind": "dos_set_vector"
+    },
+    {
+      "vector_from": {
+        "frame": 2473,
+        "offset": 8134
+      },
+      "initial_value": 12,
+      "target_image": "main",
+      "offset": 3952,
+      "site": 3936,
+      "kind": "dos_set_vector"
+    },
+    {
+      "api": "INT33 AX000C",
+      "target_image": "main",
+      "offset": 3951,
+      "site": 3923,
+      "kind": "far_mouse_callback",
+      "return_mechanism": "retf"
+    },
+    {
+      "vector": 96,
+      "target_image": "pcspeaker",
+      "frame": 2114,
+      "offset": 386,
+      "site": 5725,
+      "kind": "loaded_component",
+      "flat_runtime_offset": 34210
+    },
+    {
+      "vector": 97,
+      "target_image": "adlib_or_tandysnd",
+      "offset": 0,
+      "site": 1403,
+      "kind": "allocated_component"
+    },
+    {
+      "vector": 98,
+      "target_image": "external_saved_private_irq",
+      "site": 129,
+      "kind": "dos_set_vector",
+      "source": {
+        "frame": 2473,
+        "offset": 8130
+      }
+    }
+  ],
+  "restorations": [
+    {
+      "vector": 9,
+      "site": 5518,
+      "source": {
+        "frame": 2473,
+        "offset": 8122
+      }
+    },
+    {
+      "vector": 8,
+      "site": 5821,
+      "source": {
+        "frame": 2473,
+        "offset": 8126
+      }
+    },
+    {
+      "vector_from": {
+        "frame": 2473,
+        "offset": 8134
+      },
+      "site": 4014,
+      "source": {
+        "frame": 2473,
+        "offset": 8130
+      }
+    }
+  ],
+  "pc_speaker_load": {
+    "source": "assets/main.dat",
+    "section_index": 5,
+    "section_offset": 53626,
+    "section_size": 671,
+    "decoded_size": 758,
+    "sha256": "bdc1da6ea085bd247ab3060dfc78f522f7b447dcffe7235a3e19bf9938731287",
+    "decode_sites": [
+      22752,
+      22777,
+      22799,
+      22861,
+      22880,
+      22898
+    ],
+    "graphics_helper_entries_without_file_reads": [
+      22481,
+      22971,
+      23233,
+      23313,
+      23472,
+      23558,
+      23745,
+      23773,
+      23910
+    ]
+  },
+  "external_chains": [
+    {
+      "address": 6297,
+      "bytes": "ff2ebe1f",
+      "return_target": 6301,
+      "pointer": {
+        "frame": 2473,
+        "offset": 8126,
+        "size": 4
+      },
+      "evidence": "0060 DOS get-vector INT08 supplies ES:BX stored0062/0066; caller pushes FLAGS,CS,return IP before far JMP",
+      "contract": "External service IRET through caller-supplied frame; preserves live frame contents. Register/DS/ES effects remain explicit provider behavior"
+    },
+    {
+      "address": 19564,
+      "bytes": "ff2ebe1f",
+      "return_target": 19568,
+      "pointer": {
+        "frame": 2473,
+        "offset": 8126,
+        "size": 4
+      },
+      "evidence": "0060 DOS get-vector INT08 supplies ES:BX stored0062/0066; caller pushes FLAGS,CS,return IP before far JMP",
+      "contract": "External service IRET through caller-supplied frame; preserves live frame contents. Register/DS/ES effects remain explicit provider behavior"
+    }
+  ],
+  "scope": "Known installed vectors and opcode evidence; generic writes/aliases and additional installs remain open"
+}
