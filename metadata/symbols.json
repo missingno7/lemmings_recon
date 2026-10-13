@@ -8845,10 +8845,22 @@
     "evidence": [
       "Static direct call target",
       "1D2E..1E1B preserves near-call save frame and routes direct DOS read, cached copy, or FCB-sized cache creation",
-      "tests/dat_io.py: 41 bounded original-wrapper cases, 106 instructions, 12 branch edges; constructed DOS providers and full memory/register/defined-flag comparison; C remains untranslated"
+      "tests/dat_io.py: 45 bounded original-wrapper cases, 106 instructions, 12 branch edges; constructed DOS providers and full memory/register/defined-flag comparison"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 237
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 237,
+    "c_implementation": "c/dat_io.c",
+    "c_code_ranges": [
+      [
+        7470,
+        7548
+      ],
+      [
+        7549,
+        7708
+      ]
+    ],
+    "verification_evidence": "tests/dat_io_c.py: original wrapper vs C; 45 cases, 106 instructions, 12 branch edges, three compiled mutants; declared DOS preservation/live-frame domain in docs/dat-io.md; UNKNOWN 1D7C excluded"
   },
   {
     "address": 7708,

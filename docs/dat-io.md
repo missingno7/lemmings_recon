@@ -2,6 +2,8 @@
 
 ReadDatBytes is CS:1D2E..1E1B, 238 stored bytes. Its closed control flow contains
 106 instructions, four conditional branches and four direct jumps (twelve edges).
+Its C11 core in c/dat_io.c translates all 237 instruction bytes; the one skipped
+UNKNOWN byte is excluded through explicit ledger-owned C ranges.
 The NOP at 1D7C remains UNKNOWN: the preceding jump bypasses it, but that alone
 does not prove it can never execute. Names and DS offsets belong to the symbol
 ledger; maintained ASM uses the generated segment-relative expressions.
@@ -20,7 +22,9 @@ DatCacheEnabled and DatCacheSelected, each compared specifically with FF.
 
 These are calling contracts, not assertions about arbitrary interrupt clobbers.
 The bounded DOS fixtures preserve registers other than AX, and replace arithmetic
-flags. A native DOS boundary must make its preservation rules explicit. Returned
+flags. Tests also explicitly set DF in two provider returns; copies then run
+backward and DF remains set on return. A native DOS boundary must make its
+preservation rules explicit. Returned
 saved registers can differ if file/cache writes overwrite their live stack slots;
 the tests include that case. Neither ES restoration nor untouched saved registers
 may be assumed when connecting this wrapper to the native section decoder.
@@ -46,7 +50,7 @@ short-read rejection is added.
 The new free pointer uses a sixteen-bit addition of data offset+returned AX,
 then adds that wrapped sum divided by sixteen to the old segment and keeps its
 low nibble. Overflow discarded by the first addition is not restored. Cached
-copies increment SI and DI modulo 65536 and never advance their segments when
+copies update SI and DI according to live DF, modulo 65536, and never advance their segments when
 offsets wrap. They read and write live memory byte by byte, including overlap.
 The read pointer is updated through the data segment popped from live stack memory.
 
@@ -59,14 +63,16 @@ complete write ownership.
 ## Independent bounded evidence
 
 tests/dat_io.py executes only the original ReadDatBytes interval, with constructed
-DOS AH=23/AH=3F providers and a separate functional cache model. Forty-one cases
+DOS AH=23/AH=3F providers and a separate functional cache model. Forty-five cases
 cover all 106 instructions and twelve branch edges at three loads.
 They compare complete 1 MiB memory, every register, defined flags and the DOS
-request trace. Input DF is set; returned DF must be clear. Cases include zero
+request trace, including incoming defined flags at each DOS boundary. Input DF
+is set; the wrapper clears it before selecting a path. Preserving providers leave
+it clear, while the two deliberate DF-clobber fixtures return it set. Cases include zero
 counts, three stack-wrap points, return-word crossing, direct errors/short reads,
 ignored FCB/cache-read errors, exact and insufficient cache budgets, paragraph and
 record-count wrap, cache-pointer overflow, wrapped copy cursors, overlap and writes
-into saved-register slots.
+into saved-register slots, full FFFF-byte cache fills and full FFFF-byte cached copies.
 
 The mapped-memory domain uses twenty-bit physical addresses and physically
 contiguous word accesses. Constructed read-service writes use sixteen-bit cursor
@@ -76,7 +82,25 @@ are quiescent. Real DOS/FCB handling, arbitrary provider clobbers, cache lookup 
 allocation are still separate obligations. This suite adds provider evidence,
 not C translation coverage or game execution coverage.
 
-The next native step is to preserve this wrapper's three paths and live save frame,
-then connect DecodeDatSection to it through explicit C read/cache services. The
-strict static extractor's bounds and checksum exceptions must not replace the
-original wrapper's unchecked behavior.
+## Native translation
+
+lmn_dat_read_core takes an explicit data segment, a transient call contract and
+narrow file-size/read services. The call contract includes original live stack
+coordinates and saved cursors because aliasing can change their restored values.
+It returns explicit values and segment/cursor effects. lmn_dat_read_adapter uses
+the machine carrier only at the original-code testing boundary and reads the
+original relocated data-segment operand there. Normal C callers can call the core
+directly; no interpreter, opcode dispatch or persistent game-state copy is added.
+
+tests/dat_io_c.py independently compares the compiled C core/adapter with original
+ReadDatBytes, using the same declared services. All 45 cases compare complete
+memory/registers, defined final flags and service traces. They execute all 106
+instruction sites and twelve edges. Compiled mutations that retain incoming ES
+on cache copies, discard error AX during cache fill, or restore SI/DI from host
+temporaries are each detected. The C routine is TESTED only in this stated domain;
+the contract-only suite remains separately accounted.
+
+Next connect DecodeDatSection to these services and cores. Full DOS/FCB platform
+implementation, cache lookup/allocation, decoder error exits and wider incoming
+aliases remain open. The strict static extractor's bounds and checksum exceptions
+must not replace the original wrapper's unchecked behavior.

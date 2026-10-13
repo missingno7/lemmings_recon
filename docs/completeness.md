@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 5 |
-| Translated C code bytes | 168 |
-| Differential cases | 484 |
-| Mutation checks detected | 6 |
-| Original instruction coverage | 77 / 15,392 decoded (0.500%) |
+| Translated C routines | 6 |
+| Translated C code bytes | 405 |
+| Differential cases | 529 |
+| Mutation checks detected | 9 |
+| Original instruction coverage | 183 / 15,392 decoded (1.189%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -35,8 +35,8 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT leaf and PC-speaker helper clusters. The two checksum and three DAT main
-routines are TESTED within docs/checksum.md and docs/dat.md's domains; remaining
+DAT leaf/read and PC-speaker helper clusters. The two checksum and four DAT main
+routines are TESTED within docs/checksum.md, docs/dat.md and docs/dat-io.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -49,7 +49,7 @@ The DAT leaf suite covers 33/33 instructions and all six local branch edges in
 470 cases. It compares full memory, registers and defined flags, including zero
 bit counts (256 iterations), zero incremented match counts (65,536 iterations),
 live overlapping copies and overwritten saved registers. Three compiled mutants
-are detected. The section decoder and file/cache provider remain UNTRANSLATED;
+are detected. The section decoder, cache lookup and allocation remain UNTRANSLATED;
 the strict static extractor's validation rules are not substituted for original
 runtime behavior. See dat.md.
 
@@ -62,10 +62,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 137 / 17,291
-(0.792%) of this still-incomplete decoded inventory. There are
-8 tested C routines occupying 333 original code bytes across images,
-with 819 differential cases and 9 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 243 / 17,291
+(1.405%) of this still-incomplete decoded inventory. There are
+9 tested C routines occupying 570 original code bytes across images,
+with 864 differential cases and 12 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -111,9 +111,15 @@ handler fixtures check 0F6F/0F70/18F8 and their declared service boundaries. The
 are caller/handler checks, not full timer, BIOS, C or game execution coverage.
 See interrupts.md for provider contracts and the menu wrapper's unsaved ES effect.
 
-The complete DAT read wrapper at 1D2E..1E1B now has 41
+The complete DAT read wrapper at 1D2E..1E1B now has 45
 bounded original-code cases, covering all 106 instructions and
 12 branch edges under declared DOS fixtures. Full memory/register/flag
 checks expose direct-read errors, short reads, cache creation and hits, saved-frame
 aliases, ignored cache-fill errors and pointer/count wrap. This is provider-contract
 evidence, not C translation or actual DOS execution coverage; see dat-io.md.
+The same original wrapper also has a C11 core and near-call adapter, verified in
+45 native differential cases covering all 106 sites and 12 branches, with
+three compiled mutations detected. Its narrow DOS file-size/read services have
+declared register-preservation contracts. The skipped UNKNOWN byte at 1D7C is
+excluded from translated-byte accounting. Full DOS/FCB platform behavior and the
+other resource-loading routines remain open.

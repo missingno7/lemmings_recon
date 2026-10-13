@@ -32,10 +32,18 @@ def field(mem,ds,name):return get16(mem,ds,FIELDS[name])
 def store(mem,ds,name,value):put16(mem,ds,FIELDS[name],value)
 def byte(mem,ds,name):return mem[at(ds,FIELDS[name])]
 def szp(value):return (0x40 if value==0 else 0)|(0x80 if value&0x8000 else 0)|(4 if (value&255).bit_count()%2==0 else 0)
-def copy_live(mem,source_seg,source,dest_seg,dest,count):
+def arithmetic(flags,a,b,width=16,add=False):
+    mask=(1<<width)-1;sign=1<<(width-1);value=(a+b if add else a-b)&mask
+    parity=4 if (value&255).bit_count()%2==0 else 0
+    common=(0x40 if not value else 0)|(0x80 if value&sign else 0)|parity|((a^b^value)&16)
+    carry=(a+b>mask) if add else a<b
+    overflow=(~(a^b)&(a^value)&sign) if add else ((a^b)&(a^value)&sign)
+    return (flags&~0x8d5)|common|(1 if carry else 0)|(0x800 if overflow else 0)
+def copy_live(mem,source_seg,source,dest_seg,dest,count,flags=0):
+    step=-1 if flags&0x400 else 1
     for _ in range(count):
         mem[at(dest_seg,dest)]=mem[at(source_seg,source)]
-        source=(source+1)&65535;dest=(dest+1)&65535
+        source=(source+step)&65535;dest=(dest+step)&65535
     return source,dest
 
 def prepare(case):
@@ -68,19 +76,19 @@ def services(case,mem,r,flags,trace,data_seg):
         size=case.get('size',0x21)
         put16(mem,data_seg,FIELDS['Fcb']+33,size)
         put16(mem,data_seg,FIELDS['Fcb']+35,size>>16)
-        trace.append(dict(function=0x23,segment=r['ds'],offset=r['dx'],size=size))
+        trace.append(dict(function=0x23,segment=r['ds'],offset=r['dx'],size=size,flags=flags&0xfd7))
         r['ax']=(r['ax']&0xff00)|case.get('fcb_status',0)
     elif function==0x3f:
         if r['bx']!=7:raise AssertionError('Wrong file handle')
         count=r['cx'];returned=min(count,case.get('returned',count))
         trace.append(dict(function=0x3f,segment=r['ds'],offset=r['dx'],count=count,
-                          returned=returned,error=case.get('error',False)))
+                          returned=returned,error=case.get('error',False),flags=flags&0xfd7))
         if case.get('error'):r['ax']=case.get('error_code',5)
         else:
             for i in range(returned):mem[at(r['ds'],r['dx']+i)]=(i*29+0x51)&255
             r['ax']=returned
     else:raise AssertionError(f'Unexpected DOS function {function:02x}')
-    return (flags&~0x8d5)|case.get('service_arith',0x894)|(1 if case.get('error') and function==0x3f else 0)
+    return (flags&~0x8d5)|case.get('service_arith',0x894)|(1 if case.get('error') and function==0x3f else 0)|(0x400 if case.get('provider_df') else 0)
 
 def expected(case,mem,r,flags,data_seg):
     """Functional cache model with explicit observable save-frame writes."""
@@ -91,6 +99,8 @@ def expected(case,mem,r,flags,data_seg):
     for n in ('di','si','ds','bx','cx','dx'):push(r[n])
     flags&=~0x400;r['ds']=data_seg;r['ax']=0x9a9
     enabled=byte(mem,data_seg,'Enabled')==255;selected=byte(mem,data_seg,'Selected')==255
+    flags=arithmetic(flags,byte(mem,data_seg,'Enabled'),255,8)
+    if enabled:flags=arithmetic(flags,byte(mem,data_seg,'Selected'),255,8)
     cached=enabled and selected
     if enabled and not selected:
         r['ax']=0x23a9;r['dx']=FIELDS['Fcb']
@@ -99,6 +109,7 @@ def expected(case,mem,r,flags,data_seg):
         size=get16(mem,data_seg,FIELDS['Fcb']+33)|(get16(mem,data_seg,FIELDS['Fcb']+35)<<16)
         push(size&65535);r['ax']=pop()&15
         paragraphs=((size>>4)+(1 if size&15 else 0))&65535
+        flags=arithmetic(flags,paragraphs,field(mem,data_seg,'RemainingParagraphs'))
         if paragraphs<=field(mem,data_seg,'RemainingParagraphs'):
             cached=True
             mem[at(data_seg,FIELDS['RecordCount'])]=(byte(mem,data_seg,'RecordCount')+1)&255
@@ -106,7 +117,8 @@ def expected(case,mem,r,flags,data_seg):
             push(data_seg);r['cx']=65535
             r['dx']=field(mem,data_seg,'FreeOffset');r['ax']=field(mem,data_seg,'FreeSegment')
             store(mem,data_seg,'RecordOffset',r['dx']);store(mem,data_seg,'RecordSegment',r['ax'])
-            mem[at(data_seg,FIELDS['Selected'])]=255;r['dx']=(r['dx']+13)&65535
+            mem[at(data_seg,FIELDS['Selected'])]=255
+            flags=arithmetic(flags,r['dx'],13,add=True);r['dx']=(r['dx']+13)&65535
             store(mem,data_seg,'ReadOffset',r['dx']);store(mem,data_seg,'ReadSegment',r['ax'])
             push(r['ax']);push(r['dx']);r['ds']=r['ax'];r['ax']=(r['ax']&255)|0x3f00
             flags=services(case,mem,r,flags,trace,data_seg);r['cx']=r['ax']
@@ -118,14 +130,14 @@ def expected(case,mem,r,flags,data_seg):
             r['dx']=get16(mem,r['ds'],FIELDS['Fcb']+35)
             put16(mem,r['es'],r['di']+11,r['cx'])
             flags=(flags&~0x8d5)|szp(r['di'])
-            r['si'],r['di']=copy_live(mem,r['ds'],FIELDS['Fcb']+1,r['es'],r['di'],11);r['cx']=0
+            r['si'],r['di']=copy_live(mem,r['ds'],FIELDS['Fcb']+1,r['es'],r['di'],11,flags);r['cx']=0
     elif cached:
         flags=(flags&~0x8d5)|0x44 # CMP selected,FF equal
     if cached:
         for n in ('di','cx','bx','es'):r[n]=pop()
         push(r['es']);push(r['di']);push(r['ds'])
         r['si']=field(mem,r['ds'],'ReadOffset');r['ds']=field(mem,r['ds'],'ReadSegment')
-        r['si'],r['di']=copy_live(mem,r['ds'],r['si'],r['es'],r['di'],r['cx']);r['cx']=0
+        r['si'],r['di']=copy_live(mem,r['ds'],r['si'],r['es'],r['di'],r['cx'],flags);r['cx']=0
         r['ax']=r['ds'];r['ds']=pop()
         store(mem,r['ds'],'ReadSegment',r['ax']);store(mem,r['ds'],'ReadOffset',r['si'])
         for n in ('dx','ds','si','di'):r[n]=pop()
@@ -137,8 +149,9 @@ def expected(case,mem,r,flags,data_seg):
     r['ip']=pop()
     return mem,r,flags,trace
 
-def run(case):
-    mem,r,flags,data_seg=prepare(case);want,regs,wantflags,trace=expected(case,mem,r,flags,data_seg)
+def run(case,native=None):
+    mem,r,flags,data_seg=prepare(case)
+    want,regs,wantflags,trace=(native if native else expected)(case,mem,r,flags,data_seg)
     u=Uc(UC_ARCH_X86,UC_MODE_16);u.mem_map(0,1<<20);u.mem_write(0,bytes(mem))
     for n,v in r.items():u.reg_write(REG[n],v)
     u.reg_write(x.UC_X86_REG_EFLAGS,flags);seen=set();edges=set();last=None;done=False;actualtrace=[]
@@ -167,7 +180,7 @@ def run(case):
     if actualtrace!=trace:raise AssertionError(f'{case["name"]}: service trace differs')
     return seen,edges,actualtrace
 
-def check():
+def cases():
     cases=[]
     def add(name,path,**kw):cases.append(dict(name=name,path=path,seed=len(cases),**kw))
     for path in ('direct','hit','miss'):
@@ -193,17 +206,25 @@ def check():
     add('cache-hit-live-overlap','hit',source_seg=0x3000,source=0x100,dest=0x101,count=12)
     add('cache-hit-saved-frame-alias','hit',stack_alias=True)
     add('direct-saved-frame-alias','direct',stack_alias=True)
+    add('cache-full-fill','miss',returned=65535)
+    add('cache-full-copy','hit',count=65535)
+    add('cache-provider-sets-df','miss',provider_df=True,returned=33)
+    add('direct-provider-sets-df','direct',provider_df=True)
+    return cases
+
+def check():
+    baseline=cases()
     coverage=set();edges=set();results=[]
-    for case in cases:
+    for case in baseline:
         sites,branches,trace=run(case);coverage|=sites;edges|=branches
         results.append(dict(case=case,services=trace))
     if coverage!=set(INS):raise AssertionError(f'Missing instructions {set(INS)-coverage}')
     if edges!=EDGES:raise AssertionError(f'Missing/extra edges {EDGES-edges}/{edges-EDGES}')
-    report=dict(case_count=len(cases),original_instruction_sites=sorted(coverage),branch_edges=sorted(edges),
+    report=dict(case_count=len(baseline),original_instruction_sites=sorted(coverage),branch_edges=sorted(edges),
         cases=results,image_sha256=sha(IMAGE),domain='Constructed DOS AH23/AH3F; original wrapper only; full mapped memory; quiescent interrupts',
         input_hashes={p:sha((ROOT/p).read_bytes()) for p in ('tests/dat_io.py','metadata/symbols.json')})
     write_json(BUILD/'dat-io-tests.json',report)
-    print(f'PASS DAT read contracts: {len(cases)} cases, {len(coverage)} original sites, {len(edges)} branch edges; no C coverage claimed')
+    print(f'PASS DAT read contracts: {len(baseline)} cases, {len(coverage)} original sites, {len(edges)} branch edges; no C coverage claimed')
     return report
 
 if __name__=='__main__':check()

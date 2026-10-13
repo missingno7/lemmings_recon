@@ -1,4 +1,4 @@
-"""Build the native Windows C translation of the checksum cluster."""
+"""Build a portable C11 translation cluster for bounded native verification."""
 import os
 from pathlib import Path
 import shutil
@@ -16,7 +16,7 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("checksum","pcspeaker","dat"):
+    if cluster not in ("checksum","pcspeaker","dat","dat_io"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
