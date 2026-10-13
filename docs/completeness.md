@@ -7,28 +7,29 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Metric | Value |
 |---|---:|
 | Canonical image bytes | 82,906 |
-| Classified image bytes | 44,757 |
-| Decoded instruction bytes | 35,613 |
+| Classified image bytes | 44,887 |
+| Decoded instruction bytes | 35,711 |
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
-| Identified routine entry candidates | 268 |
+| Identified routine entry candidates | 271 |
 | Translated C routines | 2 |
 | Translated C code bytes | 116 |
 | Differential cases | 12 |
 | Mutation checks detected | 3 |
-| Original instruction coverage | 44 / 15,335 decoded (0.287%) |
-| Unresolved image bytes / runs | 38,149 / 118 |
-| Unresolved runs inside provisional code frame | 115 (3,035 bytes) |
-| Resolved static CFG edges, including fallthrough | 16,886 |
+| Original instruction coverage | 44 / 15,371 decoded (0.286%) |
+| Unresolved image bytes / runs | 38,019 / 115 |
+| Unresolved runs inside provisional code frame | 112 (2,905 bytes) |
+| Resolved static CFG edges, including fallthrough | 16,945 |
 | Unresolved direct targets / indirect transfers | 1 / 7 |
 | Runtime-modified control-flow frontiers | 2 |
 | Additional state-specific main instruction sites | 401 |
+| Known conditional indirect edges | 18 |
 
 The decoded instruction denominator is incomplete: unknown runs in the main and
 sound-driver images may add executable bytes. Entry candidates include historical leads,
 shared tails and manually investigated code; they are not proven disjoint functions.
 The complete region partition labels uncertainty rather than claiming classification.
-There are 1,558 main-image decoded instructions expressed as explicit encoding exceptions.
+There are 1,566 main-image decoded instructions expressed as explicit encoding exceptions.
 
 Gate A passes for the main EXE: deterministic static unpack, full byte comparison,
 63 independently checked relocations, entry/stack state and input identity. Gate B
@@ -50,9 +51,9 @@ External driver images now reconstruct exactly, with separate static accounting:
 | adlib | 22,125 | 1,438 | 655 | 17 | 1 | 0 |
 | tandysnd | 21,702 | 1,890 | 754 | 40 | 1 | 0 |
 
-Across all three images, 126,733 ASM bytes are exact and 17,145
-instructions have been decoded. C differential coverage remains 44 / 17,145
-(0.257%) of this still-incomplete decoded inventory. Four bounded
+Across all three images, 126,733 ASM bytes are exact and 17,181
+instructions have been decoded. C differential coverage remains 44 / 17,181
+(0.256%) of this still-incomplete decoded inventory. Four bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -70,3 +71,12 @@ the separate protection CFG. Platform contracts, memory aliases and skipped code
 still need review; see protection.md. No protected routine has been translated to C.
 No public executable or proprietary asset is tracked. See executable.md for local
 provenance, control-frontier.json for addresses, and next-work.md for proof obligations.
+
+Callback evidence traces all 32 recovered object-record pointer stores to nine
+drawing callback slots and identifies four display probes, three input callbacks
+and the code-input BP callback. The 18 known indirect edges are present in the CFG,
+while all five near-callback target domains remain explicitly incomplete. Thirty-two
+bounded caller fixtures cover 214 original caller instruction sites with declared
+callee boundaries. They check routing and save/restore behavior, including DF-set
+traversal and unlisted live pointers; they are not C coverage or callee tests.
+See indirect-callbacks.md for alias and incoming-state obligations.

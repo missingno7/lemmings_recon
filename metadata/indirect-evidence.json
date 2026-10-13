@@ -1,0 +1,1254 @@
+{
+  "canonical_sha256": "b0c4ef403e4bd28fa7913cb51a8c87e4dbbba8c4f1c36ea1594ba4424d64ee4e",
+  "fields": [
+    {
+      "name": "display_probe_records",
+      "segment_frame": 2473,
+      "start": 8211,
+      "end": 8223,
+      "initial_bytes": "00101400621400901400a014",
+      "direct_accesses": [
+        {
+          "address": 5097,
+          "bytes": "c6061920ff",
+          "instruction": "mov byte ptr [0x2019], 0xff",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8217,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5102,
+          "bytes": "c6061620ff",
+          "instruction": "mov byte ptr [0x2016], 0xff",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8214,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5107,
+          "bytes": "c6061c20ff",
+          "instruction": "mov byte ptr [0x201c], 0xff",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8220,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5115,
+          "bytes": "8d361320",
+          "instruction": "lea si, [0x2013]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8211,
+          "size": 2,
+          "access": "address"
+        },
+        {
+          "address": 5178,
+          "bytes": "c606192000",
+          "instruction": "mov byte ptr [0x2019], 0",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8217,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5183,
+          "bytes": "c606162000",
+          "instruction": "mov byte ptr [0x2016], 0",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8214,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5188,
+          "bytes": "c6061c2000",
+          "instruction": "mov byte ptr [0x201c], 0",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8220,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5212,
+          "bytes": "c6061c20ff",
+          "instruction": "mov byte ptr [0x201c], 0xff",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8220,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5251,
+          "bytes": "c606192000",
+          "instruction": "mov byte ptr [0x2019], 0",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8217,
+          "size": 1,
+          "access": "write"
+        },
+        {
+          "address": 5258,
+          "bytes": "c6061c2000",
+          "instruction": "mov byte ptr [0x201c], 0",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8220,
+          "size": 1,
+          "access": "write"
+        }
+      ],
+      "closure": "Direct-access census of recovered main code only; actual DS values and non-absolute aliases remain pending"
+    },
+    {
+      "name": "input_poll_callback",
+      "segment_frame": 2473,
+      "start": 9632,
+      "end": 9634,
+      "initial_bytes": "5242",
+      "direct_accesses": [
+        {
+          "address": 17057,
+          "bytes": "a1a025",
+          "instruction": "mov ax, word ptr [0x25a0]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 9632,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 19048,
+          "bytes": "a3a025",
+          "instruction": "mov word ptr [0x25a0], ax",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 9632,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 19072,
+          "bytes": "a3a025",
+          "instruction": "mov word ptr [0x25a0], ax",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 9632,
+          "size": 2,
+          "access": "write"
+        }
+      ],
+      "closure": "Direct-access census of recovered main code only; actual DS values and non-absolute aliases remain pending"
+    },
+    {
+      "name": "drawing_callback_slots",
+      "segment_frame": 2473,
+      "start": 46,
+      "end": 64,
+      "initial_bytes": "000000000000000000000000000000000000",
+      "direct_accesses": [
+        {
+          "address": 4033,
+          "bytes": "c7062e007061",
+          "instruction": "mov word ptr [0x2e], 0x6170",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4039,
+          "bytes": "c7063000d964",
+          "instruction": "mov word ptr [0x30], 0x64d9",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 48,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4045,
+          "bytes": "c7063200d865",
+          "instruction": "mov word ptr [0x32], 0x65d8",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 50,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4051,
+          "bytes": "c7063400d766",
+          "instruction": "mov word ptr [0x34], 0x66d7",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 52,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4057,
+          "bytes": "c70636001768",
+          "instruction": "mov word ptr [0x36], 0x6817",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 54,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4063,
+          "bytes": "c70638005769",
+          "instruction": "mov word ptr [0x38], 0x6957",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 56,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4069,
+          "bytes": "c7063a00976a",
+          "instruction": "mov word ptr [0x3a], 0x6a97",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 58,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4075,
+          "bytes": "c7063c00db6b",
+          "instruction": "mov word ptr [0x3c], 0x6bdb",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 60,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 4081,
+          "bytes": "c7063e00fc6c",
+          "instruction": "mov word ptr [0x3e], 0x6cfc",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 62,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 8392,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 8607,
+          "bytes": "a13000",
+          "instruction": "mov ax, word ptr [0x30]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 48,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 8689,
+          "bytes": "a13a00",
+          "instruction": "mov ax, word ptr [0x3a]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 58,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 8831,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 8910,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 9344,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 9467,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 9667,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 9855,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 10129,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 10192,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 10279,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 10537,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 10667,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 10735,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11031,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11211,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11360,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11497,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11589,
+          "bytes": "a13c00",
+          "instruction": "mov ax, word ptr [0x3c]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 60,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11759,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11837,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 11917,
+          "bytes": "a13c00",
+          "instruction": "mov ax, word ptr [0x3c]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 60,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 12141,
+          "bytes": "a13200",
+          "instruction": "mov ax, word ptr [0x32]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 50,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 12333,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 12420,
+          "bytes": "a13e00",
+          "instruction": "mov ax, word ptr [0x3e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 62,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 12605,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 12892,
+          "bytes": "a13800",
+          "instruction": "mov ax, word ptr [0x38]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 56,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 13070,
+          "bytes": "a13600",
+          "instruction": "mov ax, word ptr [0x36]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 54,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 13398,
+          "bytes": "a12e00",
+          "instruction": "mov ax, word ptr [0x2e]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 46,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 13619,
+          "bytes": "a13400",
+          "instruction": "mov ax, word ptr [0x34]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 52,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 13832,
+          "bytes": "a13600",
+          "instruction": "mov ax, word ptr [0x36]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 54,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 13911,
+          "bytes": "a13c00",
+          "instruction": "mov ax, word ptr [0x3c]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 60,
+          "size": 2,
+          "access": "read"
+        }
+      ],
+      "closure": "Direct-access census of recovered main code only; actual DS values and non-absolute aliases remain pending"
+    },
+    {
+      "name": "saved_timer_vector",
+      "segment_frame": 2473,
+      "start": 8126,
+      "end": 8130,
+      "initial_bytes": "00000000",
+      "direct_accesses": [
+        {
+          "address": 98,
+          "bytes": "891ebe1f",
+          "instruction": "mov word ptr [0x1fbe], bx",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8126,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 102,
+          "bytes": "8c06c01f",
+          "instruction": "mov word ptr [0x1fc0], es",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8128,
+          "size": 2,
+          "access": "write"
+        },
+        {
+          "address": 5815,
+          "bytes": "c41ebe1f",
+          "instruction": "les bx, ptr [0x1fbe]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8126,
+          "size": 2,
+          "access": "read"
+        },
+        {
+          "address": 6297,
+          "bytes": "ff2ebe1f",
+          "instruction": "ljmp [0x1fbe]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8126,
+          "size": 4,
+          "access": "read"
+        },
+        {
+          "address": 19564,
+          "bytes": "ff2ebe1f",
+          "instruction": "ljmp [0x1fbe]",
+          "segment": "ds",
+          "base": null,
+          "index": null,
+          "displacement": 8126,
+          "size": 4,
+          "access": "read"
+        }
+      ],
+      "closure": "Direct-access census of recovered main code only; actual DS values and non-absolute aliases remain pending"
+    }
+  ],
+  "drawing_constructors": [
+    {
+      "address": 4033,
+      "bytes": "c7062e007061",
+      "slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 4039,
+      "bytes": "c7063000d964",
+      "slot": 48,
+      "target": 25817
+    },
+    {
+      "address": 4045,
+      "bytes": "c7063200d865",
+      "slot": 50,
+      "target": 26072
+    },
+    {
+      "address": 4051,
+      "bytes": "c7063400d766",
+      "slot": 52,
+      "target": 26327
+    },
+    {
+      "address": 4057,
+      "bytes": "c70636001768",
+      "slot": 54,
+      "target": 26647
+    },
+    {
+      "address": 4063,
+      "bytes": "c70638005769",
+      "slot": 56,
+      "target": 26967
+    },
+    {
+      "address": 4069,
+      "bytes": "c7063a00976a",
+      "slot": 58,
+      "target": 27287
+    },
+    {
+      "address": 4075,
+      "bytes": "c7063c00db6b",
+      "slot": 60,
+      "target": 27611
+    },
+    {
+      "address": 4081,
+      "bytes": "c7063e00fc6c",
+      "slot": 62,
+      "target": 27900
+    }
+  ],
+  "object_callback_stores": [
+    {
+      "address": 8395,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 8392,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 8610,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 8607,
+        "bytes": "a13000",
+        "instruction": "mov ax, word ptr [0x30]"
+      },
+      "source_slot": 48,
+      "target": 25817
+    },
+    {
+      "address": 8692,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 8689,
+        "bytes": "a13a00",
+        "instruction": "mov ax, word ptr [0x3a]"
+      },
+      "source_slot": 58,
+      "target": 27287
+    },
+    {
+      "address": 8834,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 8831,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 8913,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 8910,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 9347,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 9344,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 9470,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 9467,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 9670,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 9667,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 9858,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 9855,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 10132,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 10129,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 10195,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 10192,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 10282,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 10279,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 10540,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 10537,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 10670,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 10667,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 10738,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 10735,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11034,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11031,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11214,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11211,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11363,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11360,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11500,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11497,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11592,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11589,
+        "bytes": "a13c00",
+        "instruction": "mov ax, word ptr [0x3c]"
+      },
+      "source_slot": 60,
+      "target": 27611
+    },
+    {
+      "address": 11762,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11759,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11840,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11837,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 11920,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 11917,
+        "bytes": "a13c00",
+        "instruction": "mov ax, word ptr [0x3c]"
+      },
+      "source_slot": 60,
+      "target": 27611
+    },
+    {
+      "address": 12144,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 12141,
+        "bytes": "a13200",
+        "instruction": "mov ax, word ptr [0x32]"
+      },
+      "source_slot": 50,
+      "target": 26072
+    },
+    {
+      "address": 12336,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 12333,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 12423,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 12420,
+        "bytes": "a13e00",
+        "instruction": "mov ax, word ptr [0x3e]"
+      },
+      "source_slot": 62,
+      "target": 27900
+    },
+    {
+      "address": 12608,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 12605,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 12895,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 12892,
+        "bytes": "a13800",
+        "instruction": "mov ax, word ptr [0x38]"
+      },
+      "source_slot": 56,
+      "target": 26967
+    },
+    {
+      "address": 13077,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 13070,
+        "bytes": "a13600",
+        "instruction": "mov ax, word ptr [0x36]"
+      },
+      "source_slot": 54,
+      "target": 26647
+    },
+    {
+      "address": 13401,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 13398,
+        "bytes": "a12e00",
+        "instruction": "mov ax, word ptr [0x2e]"
+      },
+      "source_slot": 46,
+      "target": 24944
+    },
+    {
+      "address": 13622,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 13619,
+        "bytes": "a13400",
+        "instruction": "mov ax, word ptr [0x34]"
+      },
+      "source_slot": 52,
+      "target": 26327
+    },
+    {
+      "address": 13835,
+      "bytes": "894414",
+      "instruction": "mov word ptr [si + 0x14], ax",
+      "owner_contract": "SI points into the active 2D-byte object-record array; DS is the game data frame",
+      "definition": {
+        "address": 13832,
+        "bytes": "a13600",
+        "instruction": "mov ax, word ptr [0x36]"
+      },
+      "source_slot": 54,
+      "target": 26647
+    }
+  ],
+  "conditional_indirect_targets": [
+    {
+      "address": 5127,
+      "bytes": "ffd0",
+      "targets": [
+        5136,
+        5218,
+        5264,
+        5280
+      ],
+      "evidence": "Four original DS:2013 records: enable byte and near pointer; 13FB/1402 supplies AX",
+      "closure": "DF-clear, DS-frame and pointer-write/alias contracts pending"
+    },
+    {
+      "address": 17061,
+      "bytes": "ffd0",
+      "targets": [
+        16978,
+        17204,
+        17241
+      ],
+      "evidence": "Static DS:25A0=4252; direct stores4A68/4A80 install4334/4359",
+      "closure": "Known direct stores; indexed/string writes, aliases and unknown code remain open"
+    },
+    {
+      "address": 19657,
+      "bytes": "ffd5",
+      "targets": [
+        20539
+      ],
+      "evidence": "4C88 sets BP=503B; loop pushes and restores BP around callbacks",
+      "closure": "Closed under 4C7E entry and balanced callee stack contract; alternate incoming/alias paths pending"
+    },
+    {
+      "address": 19736,
+      "bytes": "ffe5",
+      "targets": [
+        20539
+      ],
+      "evidence": "4CDA restores saved BP before final JMP; original callback is503B",
+      "closure": "Shared input-loop entry/stack/alias contract pending"
+    },
+    {
+      "address": 29019,
+      "bytes": "ffd0",
+      "targets": [
+        24944,
+        25817,
+        26072,
+        26327,
+        26647,
+        26967,
+        27287,
+        27611,
+        27900
+      ],
+      "evidence": "0FC1..0FF1 initializes nine DS:002E..003E drawing callbacks; object stores read these slots into record+14;70F0/7159 transfers saved pointer to AX",
+      "closure": "Active object record lifecycle, bulk copies, DS-frame and write/alias contracts pending"
+    }
+  ],
+  "metrics": {
+    "direct_memory_accesses": 1448,
+    "indexed_write_operands": 1130,
+    "object_callback_stores": 32,
+    "locally_traced_object_stores": 32,
+    "conditional_edges": 18,
+    "all_target_domains_complete": false
+  },
+  "open_obligations": [
+    "Unclassified bytes may contain additional writers or incoming control transfers",
+    "Indexed writes, string stores, stack effects and segment aliases require ownership/range proofs",
+    "Interrupt/platform services can change memory/register state and require explicit contracts",
+    "Display probe traversal uses incoming DF and live enable/pointer bytes without validation",
+    "Object record cloning and activation must preserve the drawing callback producer domain"
+  ]
+}

@@ -22,8 +22,9 @@
       "1490",
       "14A0"
     ],
-    "evidence": "Four static records at DS:2013, three-byte stride; 13F8 sets count4",
-    "closure": "all writes/aliases pending"
+    "evidence": "Four original DS:2013 records: enable byte and near pointer; 13FB/1402 supplies AX",
+    "closure": "DF-clear, DS-frame and pointer-write/alias contracts pending",
+    "target_domain_complete": false
   },
   {
     "address": "1899",
@@ -39,8 +40,9 @@
       "4334",
       "4359"
     ],
-    "evidence": "DS:25A0 static4252 and direct stores4A68/4A80",
-    "closure": "alias/store census pending"
+    "evidence": "Static DS:25A0=4252; direct stores4A68/4A80 install4334/4359",
+    "closure": "Known direct stores; indexed/string writes, aliases and unknown code remain open",
+    "target_domain_complete": false
   },
   {
     "address": "4C6C",
@@ -54,8 +56,9 @@
     "known_targets": [
       "503B"
     ],
-    "evidence": "4C88 LEA BP,503B before password input loop",
-    "closure": "other incoming paths pending"
+    "evidence": "4C88 sets BP=503B; loop pushes and restores BP around callbacks",
+    "closure": "Closed under 4C7E entry and balanced callee stack contract; alternate incoming/alias paths pending",
+    "target_domain_complete": false
   },
   {
     "address": "4D18",
@@ -63,13 +66,26 @@
     "known_targets": [
       "503B"
     ],
-    "evidence": "BP callback preserved in input loop",
-    "closure": "stack flow and other incoming paths pending"
+    "evidence": "4CDA restores saved BP before final JMP; original callback is503B",
+    "closure": "Shared input-loop entry/stack/alias contract pending",
+    "target_domain_complete": false
   },
   {
     "address": "715B",
     "kind": "near_indirect_call",
-    "evidence": "AX restored from stack; earlier push [DI+14] at70F0",
-    "closure": "record callback inventory pending"
+    "evidence": "0FC1..0FF1 initializes nine DS:002E..003E drawing callbacks; object stores read these slots into record+14;70F0/7159 transfers saved pointer to AX",
+    "closure": "Active object record lifecycle, bulk copies, DS-frame and write/alias contracts pending",
+    "known_targets": [
+      "6170",
+      "64D9",
+      "65D8",
+      "66D7",
+      "6817",
+      "6957",
+      "6A97",
+      "6BDB",
+      "6CFC"
+    ],
+    "target_domain_complete": false
   }
 ]

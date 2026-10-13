@@ -44,6 +44,22 @@ class StaticTests(unittest.TestCase):
         self.assertEqual(result['unresolved'][0]['kind'],'indirect_or_far_transfer')
         self.assertEqual(result['unresolved'][0]['address'],0)
 
+    def test_known_indirect_target_does_not_close_its_domain(self):
+        hints=dict(entries=[{'offset':0}],regions=[],code_limit=4,
+                   indirect_transfers=[dict(address=0,bytes='ffd0',targets=[3],
+                       evidence='Constructed callback slot',closure='Aliased pointer domain pending')])
+        result=discover(bytes.fromhex('ffd0c3c3'),hints,{'accepted':[]})
+        known=[e for e in result['edges'] if e['kind']=='indirect_call']
+        self.assertEqual(len(known),1)
+        self.assertEqual(known[0]['target'],3)
+        self.assertTrue(known[0]['resolved'])
+        self.assertFalse(known[0]['target_domain_complete'])
+        self.assertEqual(result['unresolved'][0]['known_targets'],[3])
+        self.assertFalse(result['unresolved'][0]['target_domain_complete'])
+        hints['indirect_transfers'][0]['bytes']='ffe0'
+        with self.assertRaises(ValueError):
+            discover(bytes.fromhex('ffd0c3c3'),hints,{'accepted':[]})
+
     def test_complete_byte_partition(self):
         result=analyze()
         end=0

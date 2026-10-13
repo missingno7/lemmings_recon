@@ -5114,12 +5114,19 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_13DC",
-    "aliases": [],
+    "symbol_name": "DetectVideoAdapters",
+    "aliases": [
+      "sub_13DC"
+    ],
     "callers": [
       5589
     ],
-    "callees": [],
+    "callees": [
+      5136,
+      5218,
+      5264,
+      5280
+    ],
     "data_references": [
       {
         "instruction": 5084,
@@ -5258,13 +5265,142 @@
     "reachable_instruction_bytes": 93
   },
   {
+    "address": 5136,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "ProbeDisplayCombination",
+    "aliases": [
+      "sub_1410"
+    ],
+    "callers": [
+      5127
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 5157,
+        "segment": "cs",
+        "displacement": 5430,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5162,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5171,
+        "segment": "cs",
+        "displacement": 5430,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5176,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5178,
+        "segment": "default",
+        "displacement": 8217,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 5183,
+        "segment": "default",
+        "displacement": 8214,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 5188,
+        "segment": "default",
+        "displacement": 8220,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 5193,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5195,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 5200,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5203,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 5208,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 5212,
+        "segment": "default",
+        "displacement": 8220,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static direct call target",
+      "Original table word at DS:2014; routine uses BIOS AX1A00 and visible CS:1536 display pair table"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 82
+  },
+  {
     "address": 5218,
     "segment": 0,
     "kind": "entry",
     "size": null,
     "symbol_name": "sub_1462",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      5127
+    ],
     "callees": [
       5411
     ],
@@ -5302,13 +5438,40 @@
     "reachable_instruction_bytes": 46
   },
   {
+    "address": 5264,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "ProbeColorCrtc",
+    "aliases": [
+      "sub_1490"
+    ],
+    "callers": [
+      5127
+    ],
+    "callees": [
+      5344,
+      5411
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static direct call target",
+      "Original table word at DS:201A; routine tests color CRTC through14E0 and stores display kind through1523"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 16
+  },
+  {
     "address": 5280,
     "segment": 0,
     "kind": "entry",
     "size": null,
     "symbol_name": "sub_14A0",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      5127
+    ],
     "callees": [
       5344,
       5411
@@ -5362,7 +5525,8 @@
     "symbol_name": "sub_14E0",
     "aliases": [],
     "callers": [
-      5283
+      5283,
+      5267
     ],
     "callees": [],
     "data_references": [],
@@ -5381,8 +5545,9 @@
     "symbol_name": "sub_1523",
     "aliases": [],
     "callers": [
-      5243,
-      5340
+      5340,
+      5276,
+      5243
     ],
     "callees": [],
     "data_references": [
@@ -5425,6 +5590,40 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 13
+  },
+  {
+    "address": 5424,
+    "segment": 0,
+    "kind": "lookup_table",
+    "size": 6,
+    "symbol_name": "DisplayConfigLookup",
+    "aliases": [
+      "EgaDisplayLookup"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1471 LEA BX1530 then1475 CS XLAT; six visible lookup bytes before the display word table"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5430,
+    "segment": 0,
+    "kind": "lookup_table",
+    "size": 26,
+    "symbol_name": "BiosDisplayPairLookup",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1426/1433 indexed CS word reads use1536; visible table ends1550; hardware-supplied index domain remains open"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 5456,
@@ -20113,7 +20312,11 @@
       6208,
       19570
     ],
-    "callees": [],
+    "callees": [
+      16978,
+      17204,
+      17241
+    ],
     "data_references": [
       {
         "instruction": 16780,
@@ -20316,6 +20519,61 @@
     "reachable_instruction_bytes": 424
   },
   {
+    "address": 16978,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "PollMousePosition",
+    "aliases": [
+      "sub_4252"
+    ],
+    "callers": [
+      17061
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 16994,
+        "segment": "default",
+        "displacement": 8203,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 17001,
+        "segment": "default",
+        "displacement": 20,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 17022,
+        "segment": "default",
+        "displacement": 16,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 17043,
+        "segment": "default",
+        "displacement": 18,
+        "base": null,
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static direct call target",
+      "Original DS:25A0 callback word; INT33 AX3 polling body preserves registers and writes clamped mouse coordinates"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 79
+  },
+  {
     "address": 17204,
     "segment": 0,
     "kind": "entry",
@@ -20323,7 +20581,8 @@
     "symbol_name": "sub_4334",
     "aliases": [],
     "callers": [
-      19056
+      19056,
+      17061
     ],
     "callees": [
       17286
@@ -20361,7 +20620,8 @@
     "symbol_name": "sub_4359",
     "aliases": [],
     "callers": [
-      19080
+      19080,
+      17061
     ],
     "callees": [
       17286
@@ -24739,15 +24999,19 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4C7E",
-    "aliases": [],
+    "symbol_name": "ReadCodeInput",
+    "aliases": [
+      "sub_4C7E"
+    ],
     "callers": [
       18838
     ],
     "callees": [
       5456,
       19488,
-      19738
+      19738,
+      19832,
+      20539
     ],
     "data_references": [
       {
@@ -24847,6 +25111,46 @@
         "size": 1
       },
       {
+        "instruction": 20539,
+        "segment": "default",
+        "displacement": 19951,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 19789,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 19798,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 19801,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 19813,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
         "instruction": 19714,
         "segment": "default",
         "displacement": 0,
@@ -24876,7 +25180,7 @@
       "Static direct call target"
     ],
     "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 156
+    "reachable_instruction_bytes": 206
   },
   {
     "address": 19738,
@@ -25900,9 +26204,13 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_503B",
-    "aliases": [],
-    "callers": [],
+    "symbol_name": "DrawCodeInputText",
+    "aliases": [
+      "sub_503B"
+    ],
+    "callers": [
+      19657
+    ],
     "callees": [
       19832
     ],
@@ -25948,9 +26256,10 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "4C88 explicitly loads callback into BP;4CC9 CALL and4D18 tail JMP route to it in bounded original caller fixtures"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 50
@@ -31166,7 +31475,9 @@
     "size": null,
     "symbol_name": "sub_6170",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -32936,7 +33247,9 @@
     "size": null,
     "symbol_name": "sub_64D9",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -33170,7 +33483,9 @@
     "size": null,
     "symbol_name": "sub_65D8",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -33404,7 +33719,9 @@
     "size": null,
     "symbol_name": "sub_66D7",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -33702,7 +34019,9 @@
     "size": null,
     "symbol_name": "sub_6817",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -34000,7 +34319,9 @@
     "size": null,
     "symbol_name": "sub_6957",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -35507,7 +35828,9 @@
     "size": null,
     "symbol_name": "sub_6A97",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -35805,7 +36128,9 @@
     "size": null,
     "symbol_name": "sub_6BDB",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -37126,7 +37451,9 @@
     "size": null,
     "symbol_name": "sub_6CFC",
     "aliases": [],
-    "callers": [],
+    "callers": [
+      29019
+    ],
     "callees": [],
     "data_references": [
       {
@@ -37922,12 +38249,23 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_706F",
-    "aliases": [],
+    "symbol_name": "DrawObjectSprite",
+    "aliases": [
+      "sub_706F"
+    ],
     "callers": [
       13941
     ],
     "callees": [
+      24944,
+      25817,
+      26072,
+      26327,
+      26647,
+      26967,
+      27287,
+      27611,
+      27900,
       28539
     ],
     "data_references": [
@@ -49545,5 +49883,85 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 122
+  },
+  {
+    "address": 0,
+    "segment": 2473,
+    "kind": "image_frame",
+    "size": 43338,
+    "symbol_name": "GameDataImage",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original entry loads relative DS frame09A9; flat image frame begins09A90 and ends143DA"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 46,
+    "segment": 2473,
+    "kind": "pointer_array",
+    "size": 18,
+    "symbol_name": "DrawingCallbackSlots",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0FC1..0FF1 stores nine drawing entry offsets;32 recovered object-record stores read these slots into record+14"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8126,
+    "segment": 2473,
+    "kind": "pointer_data",
+    "size": 4,
+    "symbol_name": "SavedTimerVector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "DOS AH35 AL08 at005D returns ES:BX;0062/0066 save pointer used by far chains1899/4C6C and restore16B7"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8211,
+    "segment": 2473,
+    "kind": "record_table",
+    "size": 12,
+    "symbol_name": "DisplayProbeRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9632,
+    "segment": 2473,
+    "kind": "pointer_data",
+    "size": 2,
+    "symbol_name": "InputPollCallback",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

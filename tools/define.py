@@ -4,11 +4,13 @@ from common import ROOT, read_json, write_json
 from where import address, rows
 import symtab
 
-def define(off,name,kind,size,evidence):
+def define(off,name,kind,size,evidence,segment=0):
     symbols=read_json(ROOT/'metadata/symbols.json')
-    if any(s['address']==off and s['segment']==0 for s in symbols):
+    if any(s['address']+s['segment']*16==off for s in symbols):
         raise ValueError('Address already defined; use rename.py')
-    symbols.append(dict(address=off,segment=0,kind=kind,size=size,symbol_name=name,aliases=[],
+    relative=off-segment*16
+    if relative<0 or (segment and relative>0xffff):raise ValueError('Symbol outside selected segment frame')
+    symbols.append(dict(address=relative,segment=segment,kind=kind,size=size,symbol_name=name,aliases=[],
                         callers=[],callees=[],data_references=[],confidence='PROVEN',evidence=[evidence],verification_status='UNRESOLVED'))
     symtab.validate(symbols)
     matches=[r for r in rows() if r[0]<=off]
@@ -26,13 +28,14 @@ def define(off,name,kind,size,evidence):
         lines[n-1:n]=['    db '+','.join(values[:split])+f' ; @{start:05X}',name+':',
                        '    db '+','.join(values[split:])+f' ; @{off:05X}']
     path.write_text('\n'.join(lines)+'\n')
-    write_json(ROOT/'metadata/symbols.json',sorted(symbols,key=lambda r:r['address']))
+    write_json(ROOT/'metadata/symbols.json',sorted(symbols,key=lambda r:r['segment']*16+r['address']))
     symtab.generate()
 
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('address');p.add_argument('name')
     p.add_argument('--kind',default='data');p.add_argument('--size',type=int)
+    p.add_argument('--segment',type=lambda value:int(value,16),default=0)
     p.add_argument('--evidence',required=True)
     a=p.parse_args()
-    define(address(a.address),a.name,a.kind,a.size,a.evidence)
+    define(address(a.address),a.name,a.kind,a.size,a.evidence,a.segment)

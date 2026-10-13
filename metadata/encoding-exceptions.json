@@ -402,6 +402,54 @@
     "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
   },
   {
+    "address": 5145,
+    "bytes": "8bcb",
+    "instruction": "mov cx,bx",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5147,
+    "bytes": "32ff",
+    "instruction": "xor bh,bh",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5149,
+    "bytes": "0aed",
+    "instruction": "or ch,ch",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5153,
+    "bytes": "8add",
+    "instruction": "mov bl,ch",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5155,
+    "bytes": "03db",
+    "instruction": "add bx,bx",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5165,
+    "bytes": "8ad9",
+    "instruction": "mov bl,cl",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5167,
+    "bytes": "32ff",
+    "instruction": "xor bh,bh",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 5169,
+    "bytes": "03db",
+    "instruction": "add bx,bx",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
     "address": 5229,
     "bytes": "8ac1",
     "instruction": "mov al,cl",

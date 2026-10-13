@@ -15,8 +15,8 @@ def assemble():
     out.mkdir(parents=True,exist_ok=True)
     checks=['%include "program.asm"']
     for symbol in read_json(ROOT/'metadata/symbols.json'):
-        if symbol['segment']==0:
-            checks.append(f'times -(({symbol["symbol_name"]} - $$) != {symbol["address"]}) db 0 ; assert {symbol["symbol_name"]}')
+        linear=symbol['segment']*16+symbol['address']
+        checks.append(f'times -(({symbol["symbol_name"]} - $$) != {linear}) db 0 ; assert {symbol["symbol_name"]}')
     checked=out/'checked.asm'
     checked.write_text('\n'.join(checks)+'\n')
     subprocess.run([tool('nasm'),'-f','bin','-O0','-I',str(ROOT/'src')+os.sep,

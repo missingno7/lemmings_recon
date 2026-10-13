@@ -14,13 +14,13 @@ reports overlapping decodes, and does not assume skipped bytes are padding.
 All 264 main-image legacy signatures match the explicitly relocated canonical image
 at load 1010. Earlier raw-image mismatches were relocated operands, not permission to
 mask bytes. The 17 external signatures remain separate and do not expand the EXE
-census. Main-image analysis now has 268 entry candidates, not 268 proven disjoint
+census. Main-image analysis now has 271 entry candidates, not 271 proven disjoint
 functions. Shared tails and seed boundaries can overlap; the ledger records reachable
 bytes per entry without summing them into a fictitious program coverage total.
 
 NDISASM provides assembler spelling only for recursively discovered instruction
 ranges. A separate NASM probe assembles every spelling at a fixed slot and compares
-its original bytes. The 1,558 main-image mismatches are preserved as annotated ENCODED db rows,
+its original bytes. The 1,566 main-image mismatches are preserved as annotated ENCODED db rows,
 usually opposite direction-bit forms of register/register instructions. They are
 decoded instructions, not UNKNOWN data. Improving their source notation is open work.
 The final whole-image comparison is independent of those probes.
@@ -51,3 +51,9 @@ protection.md. Sector-buffer uses remain overlays on unresolved initial bytes.
 Sound drivers have independent source, symbol and region inventories under
 src/sound and metadata/adlib-*/tandysnd-*. Main-image metrics exclude them; the
 completeness report also gives totals across all three byte-exact images.
+
+Known callback targets now contribute 18 conditional indirect edges and add the
+previously unknown display probes 1410/1490. Their domains remain open for alias,
+incoming-state and record-lifecycle proofs. Segment-relative data names use their
+original 09A9 frame offsets; the assembler checks the corresponding flat image
+locations, and memory operands subtract GameDataImage to preserve DS offsets.

@@ -35,8 +35,8 @@ ProgramEntry:
     mov [0x1fba],bx ; @00059
     mov ax,0x3508 ; @0005D
     int 0x21 ; @00060
-    mov [0x1fbe],bx ; @00062
-    mov [0x1fc0],es ; @00066
+    mov [SavedTimerVector-GameDataImage],bx ; @00062
+    mov [SavedTimerVector-GameDataImage+2],es ; @00066
     mov ah,0x35 ; @0006A
     mov al,[0x1fc6] ; @0006C
     int 0x21 ; @0006F
@@ -1118,15 +1118,15 @@ sub_0FB2:
     mov ax,0x1613 ; @00FBC
     out dx,ax ; @00FBF
     sti ; @00FC0
-    mov word [0x2e],0x6170 ; @00FC1
-    mov word [0x30],0x64d9 ; @00FC7
-    mov word [0x32],0x65d8 ; @00FCD
-    mov word [0x34],0x66d7 ; @00FD3
-    mov word [0x36],0x6817 ; @00FD9
-    mov word [0x38],0x6957 ; @00FDF
-    mov word [0x3a],0x6a97 ; @00FE5
-    mov word [0x3c],0x6bdb ; @00FEB
-    mov word [0x3e],0x6cfc ; @00FF1
+    mov word [DrawingCallbackSlots-GameDataImage+0x0],0x6170 ; @00FC1
+    mov word [DrawingCallbackSlots-GameDataImage+0x2],0x64d9 ; @00FC7
+    mov word [DrawingCallbackSlots-GameDataImage+0x4],0x65d8 ; @00FCD
+    mov word [DrawingCallbackSlots-GameDataImage+0x6],0x66d7 ; @00FD3
+    mov word [DrawingCallbackSlots-GameDataImage+0x8],0x6817 ; @00FD9
+    mov word [DrawingCallbackSlots-GameDataImage+0xa],0x6957 ; @00FDF
+    mov word [DrawingCallbackSlots-GameDataImage+0xc],0x6a97 ; @00FE5
+    mov word [DrawingCallbackSlots-GameDataImage+0xe],0x6bdb ; @00FEB
+    mov word [DrawingCallbackSlots-GameDataImage+0x10],0x6cfc ; @00FF1
     ret ; @00FF7
 sub_0FF8:
     mov al,[0x1fe1] ; @00FF8
@@ -1569,7 +1569,7 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
-sub_13DC:
+DetectVideoAdapters:
     lea di,[0x2006] ; @013DC
     mov word [di],0x0 ; @013E0
     mov word [di+0x2],0x0 ; @013E4
@@ -1577,7 +1577,7 @@ sub_13DC:
     mov byte [0x2016],0xff ; @013EE
     mov byte [0x201c],0xff ; @013F3
     mov cx,0x4 ; @013F8
-    lea si,[0x2013] ; @013FB
+    lea si,[DisplayProbeRecords-GameDataImage] ; @013FB
 loc_13FF:
     lodsb ; @013FF
     test al,al ; @01400
@@ -1591,18 +1591,39 @@ loc_13FF:
 loc_140B:
     loop loc_13FF ; @0140B
     jmp loc_14FA ; @0140D
-; UNKNOWN: unresolved bytes
-    db 0xb8,0x00,0x1a,0xcd,0x10,0x3c,0x1a,0x75,0x48,0x8b,0xcb,0x32,0xff,0x0a,0xed,0x74 ; @01410
-; UNKNOWN: unresolved bytes
-    db 0x10,0x8a,0xdd,0x03,0xdb,0x2e,0x8b,0x87,0x36,0x15,0x89,0x45,0x02,0x8a,0xd9,0x32 ; @01420
-; UNKNOWN: unresolved bytes
-    db 0xff,0x03,0xdb,0x2e,0x8b,0x87,0x36,0x15,0x89,0x05,0xc6,0x06,0x19,0x20,0x00,0xc6 ; @01430
-; UNKNOWN: unresolved bytes
-    db 0x06,0x16,0x20,0x00,0xc6,0x06,0x1c,0x20,0x00,0x8d,0x1d,0x80,0x3f,0x01,0x74,0x08 ; @01440
-; UNKNOWN: unresolved bytes
-    db 0x8d,0x5d,0x02,0x80,0x3f,0x01,0x75,0x09,0xc7,0x07,0x00,0x00,0xc6,0x06,0x1c,0x20 ; @01450
-; UNKNOWN: unresolved bytes
-    db 0xff,0xc3 ; @01460
+ProbeDisplayCombination:
+    mov ax,0x1a00 ; @01410
+    int 0x10 ; @01413
+    cmp al,0x1a ; @01415
+    jnz loc_1461 ; @01417
+    db 0x8b,0xcb ; ENCODED: mov cx,bx (NASM chooses a different encoding) ; @01419
+    db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @0141B
+    db 0x0a,0xed ; ENCODED: or ch,ch (NASM chooses a different encoding) ; @0141D
+    jz loc_1431 ; @0141F
+    db 0x8a,0xdd ; ENCODED: mov bl,ch (NASM chooses a different encoding) ; @01421
+    db 0x03,0xdb ; ENCODED: add bx,bx (NASM chooses a different encoding) ; @01423
+    mov ax,[cs:bx+BiosDisplayPairLookup] ; @01425
+    mov [di+0x2],ax ; @0142A
+    db 0x8a,0xd9 ; ENCODED: mov bl,cl (NASM chooses a different encoding) ; @0142D
+    db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @0142F
+loc_1431:
+    db 0x03,0xdb ; ENCODED: add bx,bx (NASM chooses a different encoding) ; @01431
+    mov ax,[cs:bx+BiosDisplayPairLookup] ; @01433
+    mov [di],ax ; @01438
+    mov byte [0x2019],0x0 ; @0143A
+    mov byte [0x2016],0x0 ; @0143F
+    mov byte [0x201c],0x0 ; @01444
+    lea bx,[di] ; @01449
+    cmp byte [bx],0x1 ; @0144B
+    jz loc_1458 ; @0144E
+    lea bx,[di+0x2] ; @01450
+    cmp byte [bx],0x1 ; @01453
+    jnz loc_1461 ; @01456
+loc_1458:
+    mov word [bx],0x0 ; @01458
+    mov byte [0x201c],0xff ; @0145C
+loc_1461:
+    ret ; @01461
 sub_1462:
     mov bl,0x10 ; @01462
     mov ah,0x12 ; @01464
@@ -1611,7 +1632,7 @@ sub_1462:
     jz loc_148F ; @0146B
     db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @0146D
     shr al,1 ; @0146F
-    lea bx,[0x1530] ; @01471
+    lea bx,[DisplayConfigLookup] ; @01471
     cs xlatb ; @01475
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @01477
     mov al,0x3 ; @01479
@@ -1624,8 +1645,15 @@ loc_148A:
     mov byte [0x201c],0x0 ; @0148A
 loc_148F:
     ret ; @0148F
-; UNKNOWN: unresolved bytes
-    db 0xba,0xd4,0x03,0xe8,0x4a,0x00,0x72,0x07,0xb0,0x02,0xb4,0x02,0xe8,0x84,0x00,0xc3 ; @01490
+ProbeColorCrtc:
+    mov dx,0x3d4 ; @01490
+    call sub_14E0 ; @01493
+    jc loc_149F ; @01496
+    mov al,0x2 ; @01498
+    mov ah,0x2 ; @0149A
+    call sub_1523 ; @0149C
+loc_149F:
+    ret ; @0149F
 sub_14A0:
     mov dx,0x3b4 ; @014A0
     call sub_14E0 ; @014A3
@@ -1710,9 +1738,12 @@ sub_1523:
 loc_152D:
     mov [bx],ax ; @0152D
     ret ; @0152F
-; UNKNOWN: unresolved bytes
-    db 0x02,0x03,0x01,0x02,0x03,0x01,0x00,0x00,0x01,0x01,0x02,0x02,0x00,0x00,0x03,0x03 ; @01530
-; UNKNOWN: unresolved bytes
+; DATA: lookup_table
+DisplayConfigLookup:
+    db 0x02,0x03,0x01,0x02,0x03,0x01 ; @01530
+BiosDisplayPairLookup:
+    db 0x00,0x00,0x01,0x01,0x02,0x02,0x00,0x00,0x03,0x03 ; @01536
+; DATA: lookup_table
     db 0x03,0x01,0x00,0x00,0x05,0x04,0x05,0x05,0x00,0x00,0x04,0x03,0x04,0x04,0x04,0x05 ; @01540
 sub_1550:
     mov dx,[0x1fda] ; @01550
@@ -1773,7 +1804,7 @@ loc_15BB:
     cmp ax,0xc8 ; @015D0
     jz loc_15E9 ; @015D3
 loc_15D5:
-    call sub_13DC ; @015D5
+    call DetectVideoAdapters ; @015D5
     mov bx,0x140 ; @015D8
     lea di,[0x2006] ; @015DB
     mov al,[di+0x1] ; @015DF
@@ -1901,7 +1932,7 @@ sub_16A9:
     out 0x40,al ; @016B1
     out 0x40,al ; @016B3
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @016B5
-    les bx,[0x1fbe] ; @016B7
+    les bx,[SavedTimerVector-GameDataImage] ; @016B7
     mov ds,ax ; @016BB
     mov [0x20],bx ; @016BD
     mov [0x22],es ; @016C1
@@ -2155,7 +2186,7 @@ sub_1893:
     push cs ; @01897
     push ax ; @01898
 ChecksumWindowEnd:
-    jmp far [0x1fbe] ; @01899
+    jmp far [SavedTimerVector-GameDataImage] ; @01899
 sub_189D:
     sti ; @0189D
     mov byte [0x1fcf],0xff ; @0189E
@@ -3198,7 +3229,7 @@ loc_2068:
     mov word [si+0x4],0xfff8 ; @020BA
     mov word [si+0x6],0xfff6 ; @020BF
     mov byte [si+0x29],0x4 ; @020C4
-    mov ax,[0x2e] ; @020C8
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @020C8
     mov [si+0x14],ax ; @020CB
     mov byte [si+0x2a],0x0 ; @020CE
     and byte [si+0x24],0x1 ; @020D2
@@ -3278,7 +3309,7 @@ loc_2179:
     mov word [si+0x12],0x30 ; @02190
     mov word [si+0x4],0xfff8 ; @02195
     mov word [si+0x6],0xfff4 ; @0219A
-    mov ax,[0x30] ; @0219F
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x2] ; @0219F
     mov [si+0x14],ax ; @021A2
     mov byte [si+0x2a],0xff ; @021A5
     mov byte [si+0x29],0x8 ; @021A9
@@ -3301,7 +3332,7 @@ loc_21B0:
     mov word [si+0xe],0x0 ; @021E3
     mov word [si+0x6],0xfff0 ; @021E8
     mov byte [si+0x29],0x8 ; @021ED
-    mov ax,[0x3a] ; @021F1
+    mov ax,[DrawingCallbackSlots-GameDataImage+0xc] ; @021F1
     mov [si+0x14],ax ; @021F4
     mov byte [si+0x2a],0xff ; @021F7
     and byte [si+0x24],0x1 ; @021FB
@@ -3351,7 +3382,7 @@ loc_224D:
     mov byte [si+0x27],0x0 ; @02273
     mov byte [si+0x20],0x0 ; @02277
     mov byte [si+0x29],0x0 ; @0227B
-    mov ax,[0x2e] ; @0227F
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0227F
     mov [si+0x14],ax ; @02282
     mov byte [si+0x2a],0x0 ; @02285
     and byte [si+0x24],0x1 ; @02289
@@ -3373,7 +3404,7 @@ loc_22A3:
     mov word [si+0x4],0xfff8 ; @022C0
     mov word [si+0x6],0xfff6 ; @022C5
     mov byte [si+0x29],0x9 ; @022CA
-    mov ax,[0x2e] ; @022CE
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @022CE
     mov [si+0x14],ax ; @022D1
     mov byte [si+0x2a],0x0 ; @022D4
     and byte [si+0x24],0x1 ; @022D8
@@ -3564,7 +3595,7 @@ loc_243D:
     mov word [si+0x4],0xfff8 ; @02472
     mov word [si+0x6],0xfff6 ; @02477
     mov byte [si+0x29],0x4 ; @0247C
-    mov ax,[0x2e] ; @02480
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02480
     mov [si+0x14],ax ; @02483
     mov byte [si+0x2a],0x0 ; @02486
     and byte [si+0x24],0x1 ; @0248A
@@ -3608,7 +3639,7 @@ loc_24D0:
     mov word [si+0x4],0xfff8 ; @024ED
     mov word [si+0x6],0xfff6 ; @024F2
     mov byte [si+0x29],0x9 ; @024F7
-    mov ax,[0x2e] ; @024FB
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @024FB
     mov [si+0x14],ax ; @024FE
     mov byte [si+0x2a],0x0 ; @02501
     and byte [si+0x24],0x1 ; @02505
@@ -3687,7 +3718,7 @@ loc_2591:
     mov word [si+0x4],0xfff8 ; @025B5
     mov word [si+0x6],0xfff6 ; @025BA
     mov byte [si+0x29],0x4 ; @025BF
-    mov ax,[0x2e] ; @025C3
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @025C3
     mov [si+0x14],ax ; @025C6
     mov byte [si+0x2a],0x0 ; @025C9
     and byte [si+0x24],0x1 ; @025CD
@@ -3748,7 +3779,7 @@ loc_2654:
     mov word [si+0x4],0xfff8 ; @02671
     mov word [si+0x6],0xfff6 ; @02676
     mov byte [si+0x29],0x9 ; @0267B
-    mov ax,[0x2e] ; @0267F
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0267F
     mov [si+0x14],ax ; @02682
     mov byte [si+0x2a],0x0 ; @02685
     and byte [si+0x24],0x1 ; @02689
@@ -3868,7 +3899,7 @@ loc_2766:
     mov word [si+0x4],0xfff8 ; @02783
     mov word [si+0x6],0xfff6 ; @02788
     mov byte [si+0x29],0x9 ; @0278D
-    mov ax,[0x2e] ; @02791
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02791
     mov [si+0x14],ax ; @02794
     mov byte [si+0x2a],0x0 ; @02797
     and byte [si+0x24],0x1 ; @0279B
@@ -3884,7 +3915,7 @@ loc_27A5:
     mov word [si+0x4],0xfff8 ; @027C2
     mov word [si+0x6],0xfff6 ; @027C7
     mov byte [si+0x29],0x8 ; @027CC
-    mov ax,[0x2e] ; @027D0
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @027D0
     mov [si+0x14],ax ; @027D3
     mov byte [si+0x2a],0x0 ; @027D6
     and byte [si+0x24],0x1 ; @027DA
@@ -3909,7 +3940,7 @@ loc_27FC:
     mov word [si+0x4],0xfff8 ; @02819
     mov word [si+0x6],0xfff6 ; @0281E
     mov byte [si+0x29],0x9 ; @02823
-    mov ax,[0x2e] ; @02827
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02827
     mov [si+0x14],ax ; @0282A
     mov byte [si+0x2a],0x0 ; @0282D
     and byte [si+0x24],0x1 ; @02831
@@ -4024,7 +4055,7 @@ loc_28FE:
     mov word [si+0x4],0xfff8 ; @0291B
     mov word [si+0x6],0xfff6 ; @02920
     mov byte [si+0x29],0x9 ; @02925
-    mov ax,[0x2e] ; @02929
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02929
     mov [si+0x14],ax ; @0292C
     mov byte [si+0x2a],0x0 ; @0292F
     and byte [si+0x24],0x1 ; @02933
@@ -4068,7 +4099,7 @@ loc_297A:
     mov word [si+0x4],0xfff8 ; @0299D
     mov word [si+0x6],0xfff6 ; @029A2
     mov byte [si+0x29],0x4 ; @029A7
-    mov ax,[0x2e] ; @029AB
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @029AB
     mov [si+0x14],ax ; @029AE
     mov byte [si+0x2a],0x0 ; @029B1
     and byte [si+0x24],0x1 ; @029B5
@@ -4085,7 +4116,7 @@ loc_29C1:
     mov word [si+0x4],0xfff8 ; @029E1
     mov word [si+0x6],0xfff6 ; @029E6
     mov byte [si+0x29],0x9 ; @029EB
-    mov ax,[0x2e] ; @029EF
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @029EF
     mov [si+0x14],ax ; @029F2
     mov byte [si+0x2a],0x0 ; @029F5
     and byte [si+0x24],0x1 ; @029F9
@@ -4210,7 +4241,7 @@ loc_2AEC:
     mov word [si+0x4],0xfff8 ; @02B09
     mov word [si+0x6],0xfff6 ; @02B0E
     mov byte [si+0x29],0x9 ; @02B13
-    mov ax,[0x2e] ; @02B17
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02B17
     mov [si+0x14],ax ; @02B1A
     mov byte [si+0x2a],0x0 ; @02B1D
     and byte [si+0x24],0x1 ; @02B21
@@ -4287,7 +4318,7 @@ loc_2B9D:
     mov word [si+0x4],0xfff8 ; @02BBD
     mov word [si+0x6],0xfff6 ; @02BC2
     mov byte [si+0x29],0x4 ; @02BC7
-    mov ax,[0x2e] ; @02BCB
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02BCB
     mov [si+0x14],ax ; @02BCE
     mov byte [si+0x2a],0x0 ; @02BD1
     and byte [si+0x24],0x1 ; @02BD5
@@ -4340,7 +4371,7 @@ loc_2C28:
     mov word [si+0x4],0xfff8 ; @02C52
     mov word [si+0x6],0xfff6 ; @02C57
     mov byte [si+0x29],0x4 ; @02C5C
-    mov ax,[0x2e] ; @02C60
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02C60
     mov [si+0x14],ax ; @02C63
     mov byte [si+0x2a],0x0 ; @02C66
     and byte [si+0x24],0x1 ; @02C6A
@@ -4392,7 +4423,7 @@ loc_2CBB:
     mov word [si+0x4],0xfff8 ; @02CDB
     mov word [si+0x6],0xfff6 ; @02CE0
     mov byte [si+0x29],0x9 ; @02CE5
-    mov ax,[0x2e] ; @02CE9
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02CE9
     mov [si+0x14],ax ; @02CEC
     mov byte [si+0x2a],0x0 ; @02CEF
     and byte [si+0x24],0x1 ; @02CF3
@@ -4421,7 +4452,7 @@ loc_2D0F:
     mov word [si+0x6],0xffe7 ; @02D37
     mov word [si+0x4],0xfff0 ; @02D3C
     mov byte [si+0x29],0x0 ; @02D41
-    mov ax,[0x3c] ; @02D45
+    mov ax,[DrawingCallbackSlots-GameDataImage+0xe] ; @02D45
     mov [si+0x14],ax ; @02D48
     mov byte [si+0x2a],0x0 ; @02D4B
     mov byte [si+0x22],0xf ; @02D4F
@@ -4484,7 +4515,7 @@ loc_2DC4:
     mov word [si+0x4],0xfff8 ; @02DE1
     mov word [si+0x6],0xfff6 ; @02DE6
     mov byte [si+0x29],0x9 ; @02DEB
-    mov ax,[0x2e] ; @02DEF
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02DEF
     mov [si+0x14],ax ; @02DF2
     mov byte [si+0x2a],0x0 ; @02DF5
     and byte [si+0x24],0x1 ; @02DF9
@@ -4505,7 +4536,7 @@ sub_2E04:
     mov word [si+0x4],0xfff8 ; @02E2F
     mov word [si+0x6],0xfff6 ; @02E34
     mov byte [si+0x29],0x0 ; @02E39
-    mov ax,[0x2e] ; @02E3D
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02E3D
     mov [si+0x14],ax ; @02E40
     mov byte [si+0x2a],0x0 ; @02E43
     and byte [si+0x24],0x1 ; @02E47
@@ -4530,7 +4561,7 @@ loc_2E63:
     mov word [si+0x6],0xffe7 ; @02E7F
     mov word [si+0x4],0xfff0 ; @02E84
     mov byte [si+0x29],0x0 ; @02E89
-    mov ax,[0x3c] ; @02E8D
+    mov ax,[DrawingCallbackSlots-GameDataImage+0xe] ; @02E8D
     mov [si+0x14],ax ; @02E90
     mov byte [si+0x2a],0x0 ; @02E93
     mov byte [si+0x22],0xf ; @02E97
@@ -4622,7 +4653,7 @@ loc_2F3B:
     mov word [si+0x4],0xfff8 ; @02F5F
     mov word [si+0x6],0xfff3 ; @02F64
     mov byte [si+0x29],0x0 ; @02F69
-    mov ax,[0x32] ; @02F6D
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x4] ; @02F6D
     mov [si+0x14],ax ; @02F70
     mov byte [si+0x2a],0xff ; @02F73
     and byte [si+0x24],0x1 ; @02F77
@@ -4694,7 +4725,7 @@ loc_3002:
     mov word [si+0x4],0xfff8 ; @0301F
     mov word [si+0x6],0xfff6 ; @03024
     mov byte [si+0x29],0x0 ; @03029
-    mov ax,[0x2e] ; @0302D
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0302D
     mov [si+0x14],ax ; @03030
     mov byte [si+0x2a],0x0 ; @03033
     and byte [si+0x24],0x1 ; @03037
@@ -4720,7 +4751,7 @@ loc_3059:
     mov word [si+0x4],0xfff8 ; @03076
     mov word [si+0x6],0xfff2 ; @0307B
     mov byte [si+0x29],0x0 ; @03080
-    mov ax,[0x3e] ; @03084
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x10] ; @03084
     mov [si+0x14],ax ; @03087
     mov byte [si+0x2a],0xff ; @0308A
     and byte [si+0x24],0x1 ; @0308E
@@ -4785,7 +4816,7 @@ loc_30F3:
     mov word [si+0x4],0xfff8 ; @0312F
     mov word [si+0x6],0xfff6 ; @03134
     mov byte [si+0x29],0x4 ; @03139
-    mov ax,[0x2e] ; @0313D
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0313D
     mov [si+0x14],ax ; @03140
     mov byte [si+0x2a],0x0 ; @03143
     and byte [si+0x24],0x1 ; @03147
@@ -4902,7 +4933,7 @@ loc_3224:
     mov word [si+0x4],0xfff8 ; @0324E
     mov word [si+0x6],0xfff4 ; @03253
     mov byte [si+0x29],0x0 ; @03258
-    mov ax,[0x38] ; @0325C
+    mov ax,[DrawingCallbackSlots-GameDataImage+0xa] ; @0325C
     mov [si+0x14],ax ; @0325F
     mov byte [si+0x1f],0x8 ; @03262
     mov byte [si+0x2a],0xff ; @03266
@@ -4960,7 +4991,7 @@ loc_32D6:
     mov word [si+0x10],0x68 ; @03300
     mov word [si+0x12],0x4e ; @03305
     mov byte [si+0x29],0x10 ; @0330A
-    mov ax,[0x36] ; @0330E
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x8] ; @0330E
     mov byte [si+0x2a],0xff ; @03311
     mov [si+0x14],ax ; @03315
     and byte [si+0x24],0x1 ; @03318
@@ -5096,7 +5127,7 @@ loc_3422:
     mov byte [si+0x29],0x0 ; @03448
     mov word [si+0x4],0xfff8 ; @0344C
     mov word [si+0x6],0xfff6 ; @03451
-    mov ax,[0x2e] ; @03456
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @03456
     mov [si+0x14],ax ; @03459
     mov byte [si+0x2a],0x0 ; @0345C
     and byte [si+0x24],0x1 ; @03460
@@ -5180,7 +5211,7 @@ loc_34F6:
     mov word [si+0x12],0x3c ; @03526
     mov byte [si+0x29],0x20 ; @0352B
     mov byte [si+0x2a],0xff ; @0352F
-    mov ax,[0x34] ; @03533
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x6] ; @03533
     mov [si+0x14],ax ; @03536
     and byte [si+0x24],0x1 ; @03539
     jmp loc_31E5 ; @0353D
@@ -5252,7 +5283,7 @@ loc_35CF:
     mov word [si+0x10],0x68 ; @035FA
     mov word [si+0x12],0x4e ; @035FF
     mov byte [si+0x29],0x18 ; @03604
-    mov ax,[0x36] ; @03608
+    mov ax,[DrawingCallbackSlots-GameDataImage+0x8] ; @03608
     mov [si+0x14],ax ; @0360B
     mov byte [si+0x2a],0xff ; @0360E
     and byte [si+0x24],0x1 ; @03612
@@ -5282,7 +5313,7 @@ loc_3645:
     inc byte [0x45] ; @0364D
     call sub_6FE2 ; @03651
     call sub_5726 ; @03654
-    mov ax,[0x3c] ; @03657
+    mov ax,[DrawingCallbackSlots-GameDataImage+0xe] ; @03657
     cmp ax,[di+0x14] ; @0365A
     jnz loc_3670 ; @0365D
     mov al,[di+0x28] ; @0365F
@@ -5297,7 +5328,7 @@ loc_3645:
     db 0x90 ; @0366F
 loc_3670:
     mov byte [0x50],0xff ; @03670
-    call sub_706F ; @03675
+    call DrawObjectSprite ; @03675
 sub_3678:
     mov byte [0x50],0x0 ; @03678
 loc_367D:
@@ -6528,7 +6559,7 @@ loc_418B:
 sub_418C:
     cmp byte [0x25a6],0x0 ; @0418C
     jnz loc_4196 ; @04191
-    jmp loc_4252 ; @04193
+    jmp PollMousePosition ; @04193
 loc_4196:
     cmp byte [0x25a6],0x1 ; @04196
     jnz loc_41A0 ; @0419B
@@ -6610,7 +6641,7 @@ loc_423F:
 loc_424D:
     mov [0x14],bx ; @0424D
     ret ; @04251
-loc_4252:
+PollMousePosition:
     push es ; @04252
     push ds ; @04253
     push bp ; @04254
@@ -6657,7 +6688,7 @@ loc_4293:
     pop es ; @0429F
     ret ; @042A0
 loc_42A1:
-    mov ax,[0x25a0] ; @042A1
+    mov ax,[InputPollCallback-GameDataImage] ; @042A1
     push dx ; @042A4
     call ax ; @042A5
     pop dx ; @042A7
@@ -7427,7 +7458,7 @@ loc_497D:
     call sub_1550 ; @0498D
     call sub_4C32 ; @04990
     call sub_536C ; @04993
-    call sub_4C7E ; @04996
+    call ReadCodeInput ; @04996
     call sub_51A2 ; @04999
     jnz loc_49EC ; @0499C
     mov al,[0x1f6b] ; @0499E
@@ -7512,7 +7543,7 @@ loc_4A4E:
     cmp cl,0x1 ; @04A60
     jz loc_4A7D ; @04A63
     mov ax,0x4334 ; @04A65
-    mov [0x25a0],ax ; @04A68
+    mov [InputPollCallback-GameDataImage],ax ; @04A68
     mov al,0x1 ; @04A6B
     mov [0x25a6],al ; @04A6D
     call sub_4334 ; @04A70
@@ -7521,7 +7552,7 @@ loc_4A4E:
     jmp short loc_4A95 ; @04A7B
 loc_4A7D:
     mov ax,0x4359 ; @04A7D
-    mov [0x25a0],ax ; @04A80
+    mov [InputPollCallback-GameDataImage],ax ; @04A80
     mov al,0x1 ; @04A83
     mov [0x25a6],al ; @04A85
     call sub_4359 ; @04A88
@@ -7751,7 +7782,7 @@ loc_4C66:
     pushf ; @04C69
     push cs ; @04C6A
     push ax ; @04C6B
-    jmp far [0x1fbe] ; @04C6C
+    jmp far [SavedTimerVector-GameDataImage] ; @04C6C
 loc_4C70:
     mov dl,0xff ; @04C70
     call sub_418C ; @04C72
@@ -7764,7 +7795,7 @@ loc_4C70:
     pop bx ; @04C7B
     pop ax ; @04C7C
     iret ; @04C7D
-sub_4C7E:
+ReadCodeInput:
     lea si,[0x4df2] ; @04C7E
     mov cx,0xa ; @04C82
     mov bx,0x5a41 ; @04C85
@@ -8219,7 +8250,7 @@ sub_5028:
     pop ds ; @05038
     sti ; @05039
     ret ; @0503A
-sub_503B:
+DrawCodeInputText:
     lea si,[0x4def] ; @0503B
     jmp sub_4D4D ; @0503F
 sub_5042:
@@ -12358,7 +12389,7 @@ loc_6FED:
     sti ; @0706D
 loc_706E:
     ret ; @0706E
-sub_706F:
+DrawObjectSprite:
     push di ; @0706F
     mov bx,[di] ; @07070
     add bx,[di+0x4] ; @07072

@@ -47,6 +47,7 @@ def report():
     m['runtime_control_frontiers']=sum(r['kind'].startswith('runtime_modified') for r in analysis['unresolved'])
     m['sound']=verified['sound']
     m['protection']=verified['protection']
+    m['indirect']=verified['indirect']
     state_insns=m['protection']['stream_metrics']['instructions']+m['protection']['int1_instruction_count']
     m['state_specific_decoded_instructions']=state_insns
     combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
@@ -79,6 +80,7 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Unresolved direct targets / indirect transfers | {m['unresolved_direct_targets']} / {m['unresolved_indirect_transfers']} |
 | Runtime-modified control-flow frontiers | {m['runtime_control_frontiers']} |
 | Additional state-specific main instruction sites | {state_insns} |
+| Known conditional indirect edges | {m['indirect']['conditional_edges']} |
 
 The decoded instruction denominator is incomplete: unknown runs in the main and
 sound-driver images may add executable bytes. Entry candidates include historical leads,
@@ -127,6 +129,15 @@ the separate protection CFG. Platform contracts, memory aliases and skipped code
 still need review; see protection.md. No protected routine has been translated to C.
 No public executable or proprietary asset is tracked. See executable.md for local
 provenance, control-frontier.json for addresses, and next-work.md for proof obligations.
+
+Callback evidence traces all 32 recovered object-record pointer stores to nine
+drawing callback slots and identifies four display probes, three input callbacks
+and the code-input BP callback. The 18 known indirect edges are present in the CFG,
+while all five near-callback target domains remain explicitly incomplete. Thirty-two
+bounded caller fixtures cover 214 original caller instruction sites with declared
+callee boundaries. They check routing and save/restore behavior, including DF-set
+traversal and unlisted live pointers; they are not C coverage or callee tests.
+See indirect-callbacks.md for alias and incoming-state obligations.
 '''
     return m,text
 

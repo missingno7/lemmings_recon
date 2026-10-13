@@ -157,26 +157,6 @@
     },
     {
       "start": 4906,
-      "end": 5136,
-      "classification": "instruction"
-    },
-    {
-      "start": 5136,
-      "end": 5218,
-      "classification": "unresolved"
-    },
-    {
-      "start": 5218,
-      "end": 5264,
-      "classification": "instruction"
-    },
-    {
-      "start": 5264,
-      "end": 5280,
-      "classification": "unresolved"
-    },
-    {
-      "start": 5280,
       "end": 5313,
       "classification": "instruction"
     },
@@ -193,7 +173,7 @@
     {
       "start": 5424,
       "end": 5456,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 5456,

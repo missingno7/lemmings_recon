@@ -14,6 +14,7 @@ def discover(image, hints, legacy, relocations=()):
     limit = hints['code_limit']
     relocation_sites = {r['linear'] for r in relocations}
     runtime_frontiers={r['address']:r for r in hints.get('runtime_frontiers',[])}
+    indirect_hints={r['address']:r for r in hints.get('indirect_transfers',[])}
     while work:
         off = work.pop()
         while off not in instructions:
@@ -60,7 +61,20 @@ def discover(image, hints, legacy, relocations=()):
                     work.append(target)
                     routines.add(target)
                 else:
-                    unresolved.append(dict(address=off,kind='indirect_or_far_transfer',instruction=m+' '+ins.op_str))
+                    hint=indirect_hints.get(off)
+                    if hint:
+                        if ins.bytes.hex()!=hint['bytes']:
+                            raise ValueError(f'Indirect evidence bytes differ at {off:04X}')
+                        for target in hint.get('targets',[]):
+                            edges.append(dict(source=off,target=target,kind='indirect_call' if ins.group(capstone.CS_GRP_CALL) else 'indirect_branch',
+                                              evidence=hint['evidence'],target_domain_complete=False))
+                            work.append(target)
+                            if ins.group(capstone.CS_GRP_CALL):routines.add(target)
+                    item=dict(address=off,kind='indirect_or_far_transfer',instruction=m+' '+ins.op_str)
+                    if hint:
+                        item.update(known_targets=hint.get('targets',[]),
+                                    closure=hint['closure'],target_domain_complete=False)
+                    unresolved.append(item)
             if m == 'int':
                 edges.append(dict(source=off,target=None,kind='interrupt',vector=ins.operands[0].imm))
                 # Known DOS terminate service is a non-returning platform edge.

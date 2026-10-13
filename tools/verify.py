@@ -49,6 +49,8 @@ def verify(check_stub=True):
     sound_metrics=verify_drivers()
     from protection import verify as verify_protection
     protection_metrics=verify_protection()
+    from indirect import verify as verify_indirect
+    indirect_metrics=verify_indirect()
     if check_stub:
         import importlib.util
         spec=importlib.util.spec_from_file_location('sound_unpack',ROOT/'tests/sound_unpack.py')
@@ -62,11 +64,18 @@ def verify(check_stub=True):
         checks=suite.check()
         protection_metrics['handler_test_cases']=checks['case_count']
         protection_metrics['handler_instruction_sites']=len(checks['instruction_addresses'])
+        spec=importlib.util.spec_from_file_location('dispatch_tests',ROOT/'tests/dispatch.py')
+        suite=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(suite)
+        checks=suite.check()
+        indirect_metrics['bounded_caller_cases']=checks['case_count']
+        indirect_metrics['caller_instruction_sites']=len(checks['original_instruction_sites'])
     metrics=dict(analysis['metrics'],reconstructed_asm_bytes=len(actual),byte_exact_asm_bytes=len(actual),
                  encoding_exceptions=len(read_json(ROOT/'metadata/encoding-exceptions.json')),
                  canonical_sha256=sha(image))
     metrics['sound']=sound_metrics
     metrics['protection']=protection_metrics
+    metrics['indirect']=indirect_metrics
     metrics['bounded_extractor_checks']=bool(check_stub)
     inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
         ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
@@ -76,7 +85,8 @@ def verify(check_stub=True):
          'tools/resources.py','tools/sound.py','tests/sound_unpack.py',
          'metadata/sound-oracle.json','metadata/sound-hints.json',
          'tools/protection.py','tests/protection.py','metadata/protection-symbols.json',
-         'metadata/protection-views.json','metadata/protection-cfg.json','metadata/protection-encodings.json')]
+         'metadata/protection-views.json','metadata/protection-cfg.json','metadata/protection-encodings.json',
+         'tools/indirect.py','tests/dispatch.py','metadata/indirect-evidence.json')]
     inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
     write_json(BUILD/'verification.json',metrics)

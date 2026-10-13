@@ -19,6 +19,10 @@ State-specific protection ASM now recovers the disk-check stream and INT1 handle
 401 additional instruction sites, checked against bounded original-handler execution.
 See [protection](docs/protection.md) for representation boundaries and open contracts.
 
+The static CFG also records 18 conditional callback edges. Bounded caller tests
+check live pointer routing and saved registers; write/alias domains remain open.
+See [callback evidence](docs/indirect-callbacks.md).
+
 ## Reproduce
 
 Supply the original files privately in assets; metadata/inputs.json pins their hashes.
@@ -32,6 +36,7 @@ the lock deliberately rather than bypassing it.
 .venv\Scripts\python.exe tools\verify.py
 .venv\Scripts\python.exe tools\sound.py
 .venv\Scripts\python.exe tools\protection.py
+.venv\Scripts\python.exe tools\indirect.py
 .venv\Scripts\python.exe -m unittest discover -s tests -p 'test_*.py'
 .venv\Scripts\python.exe tools\difftest.py
 .venv\Scripts\python.exe tools\coverage.py

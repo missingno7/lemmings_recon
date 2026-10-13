@@ -30,11 +30,15 @@
 #define CS_sub_123F 0x123Fu
 #define CS_sub_1293 0x1293u
 #define CS_sub_13A8 0x13A8u
-#define CS_sub_13DC 0x13DCu
+#define CS_DetectVideoAdapters 0x13DCu
+#define CS_ProbeDisplayCombination 0x1410u
 #define CS_sub_1462 0x1462u
+#define CS_ProbeColorCrtc 0x1490u
 #define CS_sub_14A0 0x14A0u
 #define CS_sub_14E0 0x14E0u
 #define CS_sub_1523 0x1523u
+#define CS_DisplayConfigLookup 0x1530u
+#define CS_BiosDisplayPairLookup 0x1536u
 #define CS_sub_1550 0x1550u
 #define CS_sub_1562 0x1562u
 #define CS_sub_1582 0x1582u
@@ -117,6 +121,7 @@
 #define CS_sub_410F 0x410Fu
 #define CS_sub_417B 0x417Bu
 #define CS_sub_418C 0x418Cu
+#define CS_PollMousePosition 0x4252u
 #define CS_sub_4334 0x4334u
 #define CS_sub_4359 0x4359u
 #define CS_sub_4386 0x4386u
@@ -143,7 +148,7 @@
 #define CS_sub_4C32 0x4C32u
 #define CS_sub_4C36 0x4C36u
 #define CS_sub_4C47 0x4C47u
-#define CS_sub_4C7E 0x4C7Eu
+#define CS_ReadCodeInput 0x4C7Eu
 #define CS_sub_4D1A 0x4D1Au
 #define CS_sub_4D4D 0x4D4Du
 #define CS_sub_4D78 0x4D78u
@@ -161,7 +166,7 @@
 #define CS_sub_5017 0x5017u
 #define CS_sub_5019 0x5019u
 #define CS_sub_5028 0x5028u
-#define CS_sub_503B 0x503Bu
+#define CS_DrawCodeInputText 0x503Bu
 #define CS_sub_5042 0x5042u
 #define CS_sub_51A2 0x51A2u
 #define CS_sub_52F4 0x52F4u
@@ -236,7 +241,7 @@
 #define CS_sub_6E83 0x6E83u
 #define CS_sub_6F7B 0x6F7Bu
 #define CS_sub_6FE2 0x6FE2u
-#define CS_sub_706F 0x706Fu
+#define CS_DrawObjectSprite 0x706Fu
 #define CS_sub_715D 0x715Du
 #define CS_sub_715F 0x715Fu
 #define CS_sub_7218 0x7218u
@@ -277,4 +282,9 @@
 #define CS_sub_988B 0x988Bu
 #define CS_sub_9967 0x9967u
 #define CS_sub_9A15 0x9A15u
+#define SEG09A9_GameDataImage 0x0000u
+#define SEG09A9_DrawingCallbackSlots 0x002Eu
+#define SEG09A9_SavedTimerVector 0x1FBEu
+#define SEG09A9_DisplayProbeRecords 0x2013u
+#define SEG09A9_InputPollCallback 0x25A0u
 #endif

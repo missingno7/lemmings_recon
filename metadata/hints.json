@@ -100,6 +100,12 @@
       "class": "runtime_sector_buffer",
       "overlay": true,
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
+    },
+    {
+      "start": 5424,
+      "end": 5456,
+      "class": "lookup_table",
+      "evidence": "1462 uses CS:1530 XLAT;1410 indexes visible word table1536..154F. Hardware-supplied index bounds require an external contract."
     }
   ],
   "runtime_frontiers": [
@@ -138,6 +144,66 @@
       "start": 3642,
       "end": 3686,
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    }
+  ],
+  "indirect_transfers": [
+    {
+      "address": 5127,
+      "bytes": "ffd0",
+      "targets": [
+        5136,
+        5218,
+        5264,
+        5280
+      ],
+      "evidence": "Four original DS:2013 records: enable byte and near pointer; 13FB/1402 supplies AX",
+      "closure": "DF-clear, DS-frame and pointer-write/alias contracts pending"
+    },
+    {
+      "address": 17061,
+      "bytes": "ffd0",
+      "targets": [
+        16978,
+        17204,
+        17241
+      ],
+      "evidence": "Static DS:25A0=4252; direct stores4A68/4A80 install4334/4359",
+      "closure": "Known direct stores; indexed/string writes, aliases and unknown code remain open"
+    },
+    {
+      "address": 19657,
+      "bytes": "ffd5",
+      "targets": [
+        20539
+      ],
+      "evidence": "4C88 sets BP=503B; loop pushes and restores BP around callbacks",
+      "closure": "Closed under 4C7E entry and balanced callee stack contract; alternate incoming/alias paths pending"
+    },
+    {
+      "address": 19736,
+      "bytes": "ffe5",
+      "targets": [
+        20539
+      ],
+      "evidence": "4CDA restores saved BP before final JMP; original callback is503B",
+      "closure": "Shared input-loop entry/stack/alias contract pending"
+    },
+    {
+      "address": 29019,
+      "bytes": "ffd0",
+      "targets": [
+        24944,
+        25817,
+        26072,
+        26327,
+        26647,
+        26967,
+        27287,
+        27611,
+        27900
+      ],
+      "evidence": "0FC1..0FF1 initializes nine DS:002E..003E drawing callbacks; object stores read these slots into record+14;70F0/7159 transfers saved pointer to AX",
+      "closure": "Active object record lifecycle, bulk copies, DS-frame and write/alias contracts pending"
     }
   ]
 }

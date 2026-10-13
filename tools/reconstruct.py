@@ -54,8 +54,8 @@ def generate():
             exceptions.add(r['address'])
     ledger_path=ROOT/'metadata/symbols.json'
     ledger=read_json(ledger_path) if ledger_path.exists() else []
-    known={r['address']:r for r in ledger}
-    call_targets={e['target'] for e in a['edges'] if e['kind'] in ('call','far_call')}
+    known={r['segment']*16+r['address']:r for r in ledger}
+    call_targets={e['target'] for e in a['edges'] if e['kind'] in ('call','far_call','indirect_call')}
     for off in a['routines']:
         if off not in known:
             known[off]=dict(address=off,segment=0,kind='entry',size=None,symbol_name=f'sub_{off:04X}',aliases=[],
@@ -79,15 +79,15 @@ def generate():
             seen.add(pc)
             refs.extend(dict(instruction=pc,**r) for r in ins[pc]['data_references'])
             for e in outgoing.get(pc,[]):
-                if e['kind'] in ('call','far_call'):
+                if e['kind'] in ('call','far_call','indirect_call'):
                     callees.add(e['target'])
                 elif e['target'] is not None:
                     todo.append(e['target'])
-        s['callers']=[e['source'] for e in a['edges'] if e['target']==off and e['kind'] in ('call','far_call')]
+        s['callers']=[e['source'] for e in a['edges'] if e['target']==off and e['kind'] in ('call','far_call','indirect_call')]
         s['callees']=sorted(callees)
         s['data_references']=refs
         s['reachable_instruction_bytes']=sum(ins[p]['size'] for p in seen)
-    write_json(ledger_path,sorted(known.values(),key=lambda r:r['address']))
+    write_json(ledger_path,sorted(known.values(),key=lambda r:r['segment']*16+r['address']))
     names={off:s['symbol_name'] for off,s in known.items()}
     for e in a['edges']:
         if e['target'] in ins:
