@@ -8,3 +8,5 @@ ROOT = Path(__file__).resolve().parents[1]
 if __name__ == "__main__":
     subprocess.run([sys.executable, str(ROOT / "tests" / "checksum.py")],
                    cwd=ROOT, check=True)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "pcspeaker.py")],
+                   cwd=ROOT, check=True)

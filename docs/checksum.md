@@ -36,7 +36,7 @@ the cached `build/canonical.bin`. The runner compares all registers and the
 full 1 MiB memory image, and records input hashes and coverage in the ignored
 generated file `build/differential.json`. The constructed SS:SP return word and
 saved-register stack slots stay outside the checksum state and scan ranges, so
-pathological stack aliasing is not covered. Twelve cases cover the phase-wrap
+pathological stack aliasing is not covered. Fourteen cases cover the phase-wrap
 branch, both sides of the cursor-limit branch, both `loop` outcomes, a full
 chunk, 16-bit pointer wrap, and final BX values `7FFF` and `8000`. Three cases
 vary the checksum window; another scans across the phase byte after it has been
@@ -44,3 +44,10 @@ updated. AF is compared for every case except phase wrap, which ends in XOR
 AH,AH and leaves AF undefined. Three separately compiled C mutations are
 required to fail against the same oracle cases. The 8363 routine's static
 reachability remains unresolved; these tests establish bounded behavior only.
+
+Two stack fixtures cross the segment end with an odd return word at SP=FFFF and
+a saved DS word after a push from SP=0001. Word bytes remain physically contiguous;
+only the offset update between instructions wraps. The previous C adapter wrapped
+the second byte back to segment offset zero. Both new cases fail against that
+prior implementation and pass after correcting word access. Stack residue is
+compared byte-for-byte rather than excluding the discrepancy.

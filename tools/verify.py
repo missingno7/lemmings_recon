@@ -41,6 +41,9 @@ def verify(check_stub=True):
         raise ValueError('Region inventory stale; investigate source/hints before regenerating')
     if (ROOT/'c/lemmings_sym.h').read_text()!=symtab.header():
         raise ValueError('C symbol header stale; run tools/symtab.py')
+    from pcspeaker_symtab import header as pcspeaker_header
+    if (ROOT/'c/pcspeaker_sym.h').read_text()!=pcspeaker_header():
+        raise ValueError('PC-speaker C symbol header stale')
     if check_stub:
         from check_unpack import check
         for load,poison in ((0x1010,0),(0x1213,0xa5),(0x2345,0x5a)):
@@ -100,6 +103,8 @@ def verify(check_stub=True):
          'metadata/protection-views.json','metadata/protection-cfg.json','metadata/protection-encodings.json',
          'tools/indirect.py','tests/dispatch.py','metadata/indirect-evidence.json',
          'tools/interrupts.py','tests/interrupts.py','tests/timer_chain.py','metadata/interrupt-evidence.json')]
+    inputs.append(ROOT/'tools/pcspeaker_symtab.py')
+    inputs.append(ROOT/'metadata/pcspeaker-producers.json')
     inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
     write_json(BUILD/'verification.json',metrics)

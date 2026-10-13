@@ -101,6 +101,9 @@ def put16(mem, off, value):
 def prepare_case(kind, patch, tag):
     mem = make_memory(tag, kind, patch)
     r = make_regs(tag)
+    if tag in (13,14):
+        r.ss=0x7000
+        r.sp=0xffff if tag==13 else 1
     if kind != "init":
         phase, cursor, acc = patch
         mem[LOAD + SYMBOLS["ChecksumPhase"]] = phase
@@ -178,6 +181,8 @@ CASES = [
     ("initialize-window", "init", None, 1),
     ("initialize-window-poison-b", "init", None, 8),
     ("initialize-window-poison-c", "init", None, 9),
+    ("return-word-crosses-segment-end", "init", None, 13),
+    ("saved-ds-word-crosses-segment-end", "init", None, 14),
     ("phase-wrap-reset", "advance", (0xFF, 0x7777, 0xA6), 2),
     ("advance-800-byte-chunk", "advance", (0x00, 0x2000, 0x5C), 3),
     ("cursor-at-limit", "advance", (0x00, SYMBOLS["ChecksumLimit"], 0x37), 4),
@@ -255,6 +260,7 @@ def main():
         "input_hashes": {
             "checksum.c": hashlib.sha256((ROOT / "c" / "checksum.c").read_bytes()).hexdigest(),
             "checksum.h": hashlib.sha256((ROOT / "c" / "checksum.h").read_bytes()).hexdigest(),
+            "regs.h": hashlib.sha256((ROOT / "c" / "regs.h").read_bytes()).hexdigest(),
             "lemmings_sym.h": hashlib.sha256((ROOT / "c" / "lemmings_sym.h").read_bytes()).hexdigest(),
             "symbols.json": hashlib.sha256((ROOT / "metadata" / "symbols.json").read_bytes()).hexdigest(),
             "checksum.py": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),

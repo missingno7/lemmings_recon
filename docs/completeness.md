@@ -14,7 +14,7 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Identified routine entry candidates | 273 |
 | Translated C routines | 2 |
 | Translated C code bytes | 116 |
-| Differential cases | 12 |
+| Differential cases | 14 |
 | Mutation checks detected | 3 |
 | Original instruction coverage | 44 / 15,392 decoded (0.286%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
@@ -34,8 +34,9 @@ There are 1,567 main-image decoded instructions expressed as explicit encoding e
 Gate A passes for the main EXE: deterministic static unpack, full byte comparison,
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
-transfer, external-driver and semantic closure. Gates C/D have only the checksum
-cluster: both routines are TESTED within docs/checksum.md's domain; all other main
+transfer, external-driver and semantic closure. Gates C/D have the checksum and
+PC-speaker helper clusters. Both main checksum routines are TESTED within
+docs/checksum.md's domain; all other main
 entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -50,11 +51,13 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 |---|---:|---:|---:|---:|---:|---:|
 | adlib | 22,125 | 1,438 | 655 | 17 | 1 | 0 |
 | tandysnd | 21,702 | 1,890 | 754 | 40 | 1 | 0 |
-| pcspeaker | 758 | 596 | 89 | 4 | 1 | 0 |
+| pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage remains 44 / 17,291
-(0.254%) of this still-incomplete decoded inventory. Six bounded
+instructions have been decoded. C differential coverage is 104 / 17,291
+(0.601%) of this still-incomplete decoded inventory. There are
+5 tested C routines occupying 281 original code bytes across images,
+with 349 differential cases and 6 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -86,7 +89,12 @@ The PC-speaker image is MAIN.DAT section 5: 758 separately reconstructed payload
 bytes loaded over canonical zeros at main 08420..08715. Component byte totals count
 both stored main bytes and the payload image; they are not unique runtime-memory
 bytes. Original extraction is checked at the actual overlay destination at two loads.
-The payload's trailing 161 bytes and single pre-entry byte remain UNKNOWN.
+The payload's trailing 161 bytes and single pre-entry byte remain UNKNOWN. Its three
+closed helpers (effect selection, tick and stop) now have C11 cores and near-call
+adapters. The PC-speaker suite compares full memory/registers, defined flags and
+port traces in 335 cases, covers all 60 helper instruction sites and all 17 branches,
+and detects three compiled mutations. The IRQ dispatcher remains UNTRANSLATED;
+none of its unresolved target paths has been silently replaced. See pcspeaker.md.
 
 Two saved INT08 chains now have explicit external IRET edges and original return
 continuations. Nineteen bounded tail cases check complete memory and saved-register/

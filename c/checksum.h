@@ -2,13 +2,7 @@
 #define LEMMINGS_CHECKSUM_H
 
 #include <stdint.h>
-
-/* 16-bit real-mode register state at a near CALL boundary. */
-typedef struct LmnRegs {
-    uint16_t ax, bx, cx, dx, si, di, bp, sp;
-    uint16_t cs, ds, es, ss;
-    uint16_t ip, flags;
-} LmnRegs;
+#include "regs.h"
 
 typedef struct LmnChecksumResult {
     uint16_t ax, bx, cx, flags, defined_flags_mask;

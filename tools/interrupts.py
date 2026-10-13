@@ -36,6 +36,20 @@ def registry():
         todo.extend(symbols[pc0]['callees'])
     file_entries={0x1b79,0x1ba9,0x1baf,0x1d2e}
     if seen&file_entries:raise ValueError('Resource helper may consume additional packed sections')
+    before={r['address']+r['size']:r for r in a['instructions']}
+    producers=[]
+    for e in a['edges']:
+        if e['kind']=='interrupt' and e['vector']==0x60:
+            row=before[e['source']]
+            if row['mnemonic']!='mov' or not row['operands'].startswith('ax, '):
+                raise ValueError('INT60 producer requires extended analysis')
+            producers.append(dict(site=e['source'],definition=row['address'],bytes=row['bytes'],ax=int(row['operands'].split(', ')[1],0)))
+    producer_evidence=dict(canonical_source='metadata/oracle.json',recovered_sites=sorted(producers,key=lambda r:r['site']),
+        raw_opcode_candidates=[i for i in range(len(image)-1) if image[i:i+2]==b'\xcd\x60'],
+        commands=sorted({r['ax']>>8 for r in producers}),effects=sorted({r['ax']&255 for r in producers if r['ax']>>8==3}),
+        closure='Recovered main instruction producers only; alias writes, external callers and unknown transformed code still require review')
+    if read_json(ROOT/'metadata/pcspeaker-producers.json')!=producer_evidence:
+        raise ValueError('PC-speaker producer evidence stale')
     return dict(canonical_sha256=sha(image),opcode_claims=[dict(start=lo,end=hi,bytes=image[lo:hi].hex()) for lo,hi in ranges],
         installations=[
           dict(vector=9,target_image='main',offset=0x16d4,site=0x157c,kind='dos_set_vector'),

@@ -3,12 +3,61 @@
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
 bits 16
 org 0
+pcspeaker_CurrentEffect equ pcspeaker_PeriodStep
+pcspeaker_EffectRecordSize equ 15
+pcspeaker_sub_01B0 equ pcspeaker_LoadEffect
+pcspeaker_sub_01D4 equ pcspeaker_Tick
+pcspeaker_sub_024F equ pcspeaker_Stop
 ; DATA: runtime_data
-    db 0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x90,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @00000
+    db 0x00 ; @00000
+pcspeaker_EffectActive:
 ; DATA: runtime_data
-    db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x90,0x00,0x00,0x00,0x00 ; @00010
+    db 0x00 ; @00001
+pcspeaker_NoiseStep:
+; DATA: runtime_data
+    db 0x00,0x01,0x00,0x00 ; @00002
+pcspeaker_NoisePhase:
+; DATA: runtime_data
+    db 0x00,0x90 ; @00006
+pcspeaker_PulseCountdown:
+; DATA: runtime_data
+    db 0x00 ; @00008
+pcspeaker_ModulationCountdown:
+; DATA: runtime_data
+    db 0x00 ; @00009
+pcspeaker_PeriodStep:
+; DATA: runtime_data
+    db 0x00,0x00 ; @0000A
+pcspeaker_CurrentPeriod:
+; DATA: runtime_data
+    db 0x00,0x00 ; @0000C
+pcspeaker_PulseResetPeriod:
+; DATA: runtime_data
+    db 0x00,0x00 ; @0000E
+pcspeaker_ModulationDeltaA:
+; DATA: runtime_data
+    db 0x00,0x00 ; @00010
+pcspeaker_ModulationDeltaB:
+; DATA: runtime_data
+    db 0x00,0x00 ; @00012
+pcspeaker_ModulationPattern:
+; DATA: runtime_data
+    db 0x00 ; @00014
+pcspeaker_GatePattern:
+; DATA: runtime_data
+    db 0x00 ; @00015
+pcspeaker_EffectDuration:
+; DATA: runtime_data
+    db 0x00 ; @00016
+pcspeaker_EffectReload:
+; DATA: runtime_data
+    db 0x00,0x00,0x90 ; @00017
+pcspeaker_LastPitPeriod:
+; DATA: runtime_data
+    db 0x00,0x00,0x00,0x00 ; @0001A
 ; DATA: lookup_table
     db 0xd4,0x01,0x4f,0x02,0x00,0x00,0xb0,0x01,0x00,0x00 ; @0001E
+pcspeaker_EffectRecords:
 ; DATA: effect_record_table
     db 0x20,0x03,0x80,0x0c,0x80,0x0c,0x40,0x01,0xc0,0xfe,0x55,0x00,0x0a,0x00,0x01,0x90 ; @00028
 ; DATA: effect_record_table
@@ -88,7 +137,7 @@ pcspeaker_loc_01AA:
     db 0x8a,0xdc ; ENCODED: mov bl,ah (NASM selects different opcode/operand width) ; @001AA
     mov al,[bx] ; @001AC
     jmp short pcspeaker_loc_019A ; @001AE
-pcspeaker_sub_01B0:
+pcspeaker_LoadEffect:
     mov cx,0xf ; @001B0
     mov bx,0x28 ; @001B3
     imul cl ; @001B6
@@ -105,7 +154,7 @@ pcspeaker_loc_01C1:
     mov [0x8],ax ; @001CC
     dec byte [0x1] ; @001CF
     ret ; @001D3
-pcspeaker_sub_01D4:
+pcspeaker_Tick:
     mov cx,0x2 ; @001D4
     db 0x8a,0xfd ; ENCODED: mov bh,ch (NASM selects different opcode/operand width) ; @001D7
     mov al,[0x2] ; @001D9
@@ -154,7 +203,7 @@ pcspeaker_loc_0248:
     or al,0x3 ; @0024A
     out 0x61,al ; @0024C
     ret ; @0024E
-pcspeaker_sub_024F:
+pcspeaker_Stop:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM selects different opcode/operand width) ; @0024F
     mov [0x1],al ; @00251
     ret ; @00254

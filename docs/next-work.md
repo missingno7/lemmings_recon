@@ -29,9 +29,12 @@
    commands 80..87 and 80..97 respectively, but unchecked higher commands can read
    code/state as pointers. Recover producer domains and classify music/effect data.
    All three component images already assemble exactly; see sound-drivers.md and
-   interrupts.md. Their C implementation and behavioral coverage are still zero.
+   interrupts.md. Three closed PC-speaker helpers now have tested C11 cores, while
+   its dispatcher and the AdLib/Tandy code remain untranslated. Verify producers,
+   writes and aliases before replacing any live indirect target with a native call.
 8. Refine ownership modules after dependencies are understood. Replace explicit
    encoding exceptions with reliable NASM encoding syntax where available.
-9. Only then assign additional bounded C clusters. Resource decoding/loading is a
+9. Continue bounded C clusters after their static boundaries and contracts are
+    reliable. Resource decoding/loading is a
     candidate after its original entry and memory contracts are recovered. No SDL3
     integration or gameplay milestone is needed to progress these investigations.

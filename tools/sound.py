@@ -46,10 +46,13 @@ def generate_driver(name,image,a):
     encoded=path.with_suffix('.bin').read_bytes()
     exceptions={r['address'] for n,r in enumerate(a['instructions'])
                 if encoded[n*32:(n+1)*32]!=bytes.fromhex(r['bytes'])+b'\xcc'*(32-r['size'])}
-    labels={p:f'{name}_sub_{p:04X}' for p in a['routines']}
+    symbol_path=ROOT/f'metadata/{name}-symbols.json'
+    existing={s['address']:s for s in read_json(symbol_path)} if symbol_path.exists() else {}
+    labels={p:s['symbol_name'] for p,s in existing.items()}
+    for p in a['routines']:labels.setdefault(p,f'{name}_sub_{p:04X}')
     h=read_json(ROOT/'metadata/sound-hints.json')[name]
     entry=h.get('entry',0)
-    labels[entry]=name+'_InterruptEntry'
+    labels.setdefault(entry,name+'_InterruptEntry')
     for edge in a['edges']:
         if edge['kind']!='fallthrough' and edge['target'] is not None:
             labels.setdefault(edge['target'],f'{name}_loc_{edge["target"]:04X}')
@@ -57,6 +60,10 @@ def generate_driver(name,image,a):
           f'; Entry offset{entry:04X} is installed as INT{h.get("vector",0x61):02X}; see sound-hints.json for the original install.',
           '; UNKNOWN includes unclassified sound data; no no-code claim is implied.',
           'bits 16','org 0']
+    for s in existing.values():
+        rows += [f'{alias} equ {s["symbol_name"]}' for alias in s['aliases']]
+        if 'element_size_symbol' in s:
+            rows.append(f'{s["element_size_symbol"]} equ {s["element_size"]}')
     ins={r['address']:r for r in a['instructions']}
     kind={p:r['classification'] for r in a['regions'] for p in range(r['start'],r['end'])}
     at=0
@@ -102,12 +109,19 @@ def generate_driver(name,image,a):
                     callees.add(e['target'])
                 elif e['target'] is not None:
                     todo.append(e['target'])
-        symbols.append(dict(address=addr,segment='driver-relative',kind='entry',size=None,symbol_name=labels[addr],aliases=[],
+        row=dict(address=addr,segment='driver-relative',kind='entry',size=None,symbol_name=labels[addr],aliases=[],
                             callers=[e['source'] for e in a['edges'] if e['target']==addr and e['kind'] in ('call','indirect_call')],
                             callees=sorted(callees),data_references=refs,reachable_instruction_bytes=sum(ins[p]['size'] for p in seen),
                             confidence='PROVEN' if addr==entry else 'STRONGLY_SUPPORTED',
                             evidence=[h.get('entry_evidence','Main0576..057B installs offset0 as INT61') if addr==entry else 'Static call/table target or signature-matched legacy lead'],
-                            verification_status='UNTRANSLATED'))
+                            verification_status='UNTRANSLATED')
+        if addr in existing:
+            kept=dict(existing[addr])
+            for field in ('callers','callees','data_references','reachable_instruction_bytes'):kept[field]=row[field]
+            row=kept
+        symbols.append(row)
+    symbols += [s for p,s in existing.items() if p not in a['routines']]
+    symbols.sort(key=lambda s:s['address'])
     write_json(ROOT/f'metadata/{name}-symbols.json',symbols)
     write_json(ROOT/f'metadata/{name}-encodings.json',[
         dict(address=p,bytes=ins[p]['bytes'],instruction=text[p],reason='NASM chooses a different encoding') for p in sorted(exceptions)])
@@ -144,7 +158,8 @@ def verify_drivers(generate=False,generate_name=None):
         write_json(BUILD/f'{name}-analysis.json',a)
         result[name]=dict(a['metrics'],byte_exact_asm_bytes=len(image),image_sha256=sha(image),
                           encoding_exceptions=len(read_json(ROOT/f'metadata/{name}-encodings.json')),
-                          c_routines=0,c_bytes=0,differential_c_instructions=0,
+                          c_routines=sum(bool(s.get('c_implementation')) for s in read_json(ROOT/f'metadata/{name}-symbols.json')),
+                          c_bytes=sum(s['size'] for s in read_json(ROOT/f'metadata/{name}-symbols.json') if s.get('c_implementation')),
                           source_sha256=sha(source.read_bytes()))
         print(f'PASS {name}: {len(image)} ASM bytes exact; {a["metrics"]["decoded_instruction_bytes"]} decoded bytes; {a["metrics"]["unresolved_transfers"]} unresolved transfers')
     write_json(BUILD/'sound-verification.json',result)

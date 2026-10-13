@@ -1,5 +1,265 @@
 [
   {
+    "address": 1,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_EffectActive",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_NoiseStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_NoisePhase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_PulseCountdown",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_ModulationCountdown",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 10,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_PeriodStep",
+    "aliases": [
+      "pcspeaker_CurrentEffect"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 12,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_CurrentPeriod",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 14,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_PulseResetPeriod",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_ModulationDeltaA",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_ModulationDeltaB",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_ModulationPattern",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_GatePattern",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "pcspeaker_EffectDuration",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 23,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_EffectReload",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 26,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "pcspeaker_LastPitPeriod",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 40,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 345,
+    "symbol_name": "pcspeaker_EffectRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+    ],
+    "verification_status": "STATIC",
+    "element_size": 15,
+    "element_size_symbol": "pcspeaker_EffectRecordSize"
+  },
+  {
     "address": 386,
     "segment": "driver-relative",
     "kind": "entry",
@@ -49,9 +309,11 @@
     "address": 432,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
-    "symbol_name": "pcspeaker_sub_01B0",
-    "aliases": [],
+    "size": 36,
+    "symbol_name": "pcspeaker_LoadEffect",
+    "aliases": [
+      "pcspeaker_sub_01B0"
+    ],
     "callers": [
       406
     ],
@@ -107,19 +369,24 @@
       }
     ],
     "reachable_instruction_bytes": 36,
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static call/table target or signature-matched legacy lead"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/pcspeaker.c",
+    "c_core": "lmn_pc_sound_effect_core",
+    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed"
   },
   {
     "address": 468,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
-    "symbol_name": "pcspeaker_sub_01D4",
-    "aliases": [],
+    "size": 123,
+    "symbol_name": "pcspeaker_Tick",
+    "aliases": [
+      "pcspeaker_sub_01D4"
+    ],
     "callers": [
       406
     ],
@@ -295,19 +562,24 @@
       }
     ],
     "reachable_instruction_bytes": 123,
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static call/table target or signature-matched legacy lead"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/pcspeaker.c",
+    "c_core": "lmn_pc_sound_tick_core",
+    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed"
   },
   {
     "address": 591,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
-    "symbol_name": "pcspeaker_sub_024F",
-    "aliases": [],
+    "size": 6,
+    "symbol_name": "pcspeaker_Stop",
+    "aliases": [
+      "pcspeaker_sub_024F"
+    ],
     "callers": [
       406
     ],
@@ -323,10 +595,13 @@
       }
     ],
     "reachable_instruction_bytes": 6,
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static call/table target or signature-matched legacy lead"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/pcspeaker.c",
+    "c_core": "lmn_pc_sound_stop_core",
+    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed"
   }
 ]

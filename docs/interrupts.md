@@ -57,6 +57,9 @@ write data indexes 00..DF, including the dispatch table. AX is an output, while 
 entry saves BX/CX/DX/SI/DI/DS. These unchecked and mutable paths remain explicit
 control/producer obligations; no clamp or substitute callback is added.
 
+The three closed helper bodies now have separately verified C11 cores. The IRQ
+dispatcher remains untranslated; see pcspeaker.md for exact byte/coverage domains.
+
 tests/sound_unpack.py verifies this payload with original main CS:1BAF at two
 loads, writing directly into the corresponding overlay destination. Both cases
 match all 758 bytes after the original header and payload reads. No PC-speaker

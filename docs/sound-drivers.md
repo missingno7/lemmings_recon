@@ -67,11 +67,16 @@ tables, music/effect streams, and data. Out-of-image accesses such as Tandy 0629
 write to 5958 require allocation/state analysis; do not add a shadow variable or
 assume the static image length bounds every runtime access.
 
-No driver routine has been translated to C or behaviorally verified. Byte-exact
-assembly and matched signatures do not establish full code/data or CFG closure.
+AdLib/Tandy routines remain untranslated. Byte-exact assembly and matched
+signatures do not establish full code/data or CFG closure.
 
 Further installation analysis identified MAIN.DAT section 5 as a 758-byte
 PC-speaker component loaded over main zero storage at relative frame 0842. It now
 has a separate exact source and inventory under src/sound/pcspeaker.asm and
 metadata/pcspeaker-*. See interrupts.md for its load, entry, mutable dispatch and
 unresolved trailing bytes. The known executable-component inventory has four images.
+
+Three closed PC-speaker helpers now have verified C11 cores: 165 bytes, 60
+instruction sites, 335 differential cases and three compiled mutations detected.
+The dispatcher remains untranslated. See pcspeaker.md for preserved sound behavior,
+flag/port contracts and the remaining target-domain obligations.

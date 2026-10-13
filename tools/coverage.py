@@ -28,7 +28,7 @@ def report():
     m['translated_c_code_bytes']=len(code_bytes)
     d=read_json(BUILD/'differential.json')
     paths={'checksum.c':'c/checksum.c','checksum.h':'c/checksum.h',
-           'lemmings_sym.h':'c/lemmings_sym.h','symbols.json':'metadata/symbols.json',
+           'lemmings_sym.h':'c/lemmings_sym.h','regs.h':'c/regs.h','symbols.json':'metadata/symbols.json',
            'checksum.py':'tests/checksum.py','difftest.py':'tools/difftest.py','cbuild.py':'tools/cbuild.py'}
     for name,path in paths.items():
         if d['input_hashes'][name]!=sha((ROOT/path).read_bytes()):
@@ -46,6 +46,19 @@ def report():
     m['unresolved_indirect_transfers']=sum(r['kind']=='indirect_or_far_transfer' for r in analysis['unresolved'])
     m['runtime_control_frontiers']=sum(r['kind'].startswith('runtime_modified') for r in analysis['unresolved'])
     m['sound']=verified['sound']
+    pc=read_json(BUILD/'pcspeaker-differential.json')
+    for path,digest in pc['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale PC-speaker differential report for '+path+'; run tools/difftest.py')
+    if pc['image_sha256']!=m['sound']['pcspeaker']['image_sha256']:
+        raise ValueError('PC-speaker differential oracle changed')
+    m['sound']['pcspeaker']['differential_c_instructions']=len(pc['executed_instruction_addresses'])
+    m['all_images_translated_c_routines']=m['translated_c_routines']+m['sound']['pcspeaker']['c_routines']
+    m['all_images_translated_c_bytes']=m['translated_c_code_bytes']+pc['translated_code_bytes']
+    m['all_images_differential_cases']=m['differential_cases']+pc['case_count']
+    m['all_images_mutations_detected']=m['mutations_detected']+pc['mutation_count']
+    c_executed=len(executed)+len(pc['executed_instruction_addresses'])
+    m['all_images_original_c_instructions_executed']=c_executed
     m['protection']=verified['protection']
     m['indirect']=verified['indirect']
     m['interrupts']=verified['interrupts']
@@ -92,8 +105,9 @@ There are {verified['encoding_exceptions']:,} main-image decoded instructions ex
 Gate A passes for the main EXE: deterministic static unpack, full byte comparison,
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
-transfer, external-driver and semantic closure. Gates C/D have only the checksum
-cluster: both routines are TESTED within docs/checksum.md's domain; all other main
+transfer, external-driver and semantic closure. Gates C/D have the checksum and
+PC-speaker helper clusters. Both main checksum routines are TESTED within
+docs/checksum.md's domain; all other main
 entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -108,11 +122,13 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 |---|---:|---:|---:|---:|---:|---:|
 '''
     for name,s in m['sound'].items():
-        text+=f'| {name} | {s["byte_exact_asm_bytes"]:,} | {s["classified_bytes"]:,} | {s["instructions"]} | {s["identified_entry_candidates"]} | {s["unresolved_transfers"]} | 0 |\n'
+        text+=f'| {name} | {s["byte_exact_asm_bytes"]:,} | {s["classified_bytes"]:,} | {s["instructions"]} | {s["identified_entry_candidates"]} | {s["unresolved_transfers"]} | {s["c_routines"]} |\n'
     text+=f'''
 Across all four component images, {combined_bytes:,} ASM bytes are exact and {combined_insns:,}
-instructions have been decoded. C differential coverage remains {len(executed)} / {combined_insns:,}
-({100*len(executed)/combined_insns:.3f}%) of this still-incomplete decoded inventory. Six bounded
+instructions have been decoded. C differential coverage is {c_executed} / {combined_insns:,}
+({100*c_executed/combined_insns:.3f}%) of this still-incomplete decoded inventory. There are
+{m['all_images_translated_c_routines']} tested C routines occupying {m['all_images_translated_c_bytes']} original code bytes across images,
+with {m['all_images_differential_cases']} differential cases and {m['all_images_mutations_detected']} compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -144,7 +160,12 @@ The PC-speaker image is MAIN.DAT section 5: 758 separately reconstructed payload
 bytes loaded over canonical zeros at main 08420..08715. Component byte totals count
 both stored main bytes and the payload image; they are not unique runtime-memory
 bytes. Original extraction is checked at the actual overlay destination at two loads.
-The payload's trailing 161 bytes and single pre-entry byte remain UNKNOWN.
+The payload's trailing 161 bytes and single pre-entry byte remain UNKNOWN. Its three
+closed helpers (effect selection, tick and stop) now have C11 cores and near-call
+adapters. The PC-speaker suite compares full memory/registers, defined flags and
+port traces in 335 cases, covers all 60 helper instruction sites and all 17 branches,
+and detects three compiled mutations. The IRQ dispatcher remains UNTRANSLATED;
+none of its unresolved target paths has been silently replaced. See pcspeaker.md.
 
 Two saved INT08 chains now have explicit external IRET edges and original return
 continuations. Nineteen bounded tail cases check complete memory and saved-register/

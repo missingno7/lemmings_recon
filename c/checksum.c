@@ -36,13 +36,14 @@ static void write8(uint8_t *mem, uint16_t seg, uint16_t off, uint8_t v) {
 }
 
 static uint16_t read16(const uint8_t *mem, uint16_t seg, uint16_t off) {
-    return (uint16_t)(read8(mem, seg, off) |
-                      ((uint16_t)read8(mem, seg, (uint16_t)(off + 1u)) << 8));
+    uint32_t at = physical(seg, off);
+    return (uint16_t)(mem[at] | ((uint16_t)mem[(at + 1u) & (MEM_SIZE - 1u)] << 8));
 }
 
 static void write16(uint8_t *mem, uint16_t seg, uint16_t off, uint16_t v) {
-    write8(mem, seg, off, (uint8_t)v);
-    write8(mem, seg, (uint16_t)(off + 1u), (uint8_t)(v >> 8));
+    uint32_t at = physical(seg, off);
+    mem[at] = (uint8_t)v;
+    mem[(at + 1u) & (MEM_SIZE - 1u)] = (uint8_t)(v >> 8);
 }
 
 static unsigned parity_even8(uint8_t value) {
