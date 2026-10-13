@@ -8,6 +8,8 @@ def report():
     analysis=analyze()
     m=dict(analysis['metrics'])
     verified=read_json(BUILD/'verification.json')
+    if not verified.get('bounded_extractor_checks'):
+        raise ValueError('Full extractor checks required for coverage; run tools/verify.py without --skip-stub')
     for path,digest in verified['verification_inputs'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale static verification for '+path+'; run tools/verify.py')
@@ -41,8 +43,15 @@ def report():
     m['unresolved_main_code_candidate_runs']=sum(r['classification']=='unresolved' and r['start']<0x9a90 for r in analysis['regions'])
     m['unresolved_image_bytes']=len(image)-m['classified_bytes']
     m['unresolved_direct_targets']=sum(e['target'] is not None and not e.get('resolved',False) for e in analysis['edges'])
+    m['unresolved_indirect_transfers']=sum(r['kind']=='indirect_or_far_transfer' for r in analysis['unresolved'])
+    m['runtime_control_frontiers']=sum(r['kind'].startswith('runtime_modified') for r in analysis['unresolved'])
+    m['sound']=verified['sound']
+    combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
+    combined_insns=m['instructions']+sum(s['instructions'] for s in m['sound'].values())
+    m['all_images_byte_exact_asm_bytes']=combined_bytes
+    m['all_images_decoded_instructions']=combined_insns
     write_json(BUILD/'coverage.json',m)
-    text=f'''# Completeness at the first verified milestone
+    text=f'''# Reconstruction completeness
 
 Main-image identity is established. Full static, C and native completion are not.
 Regenerate this report with tools/verify.py, tools/difftest.py, then tools/coverage.py
@@ -64,13 +73,14 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Unresolved image bytes / runs | {m['unresolved_image_bytes']:,} / {m['unresolved_byte_runs']} |
 | Unresolved runs inside provisional code frame | {m['unresolved_main_code_candidate_runs']} ({m['unresolved_main_code_candidate_bytes']:,} bytes) |
 | Resolved static CFG edges, including fallthrough | {m['resolved_edges']:,} |
-| Unresolved direct targets / indirect transfers | {m['unresolved_direct_targets']} / {m['unresolved_transfers']} |
+| Unresolved direct targets / indirect transfers | {m['unresolved_direct_targets']} / {m['unresolved_indirect_transfers']} |
+| Runtime-modified control-flow frontiers | {m['runtime_control_frontiers']} |
 
 The decoded instruction denominator is incomplete: unknown runs and external sound
 driver code may add executable bytes. Entry candidates include historical leads,
 shared tails and manually investigated code; they are not proven disjoint functions.
 The complete region partition labels uncertainty rather than claiming classification.
-There are 1,556 decoded instructions expressed as explicit encoding exceptions.
+There are {verified['encoding_exceptions']:,} main-image decoded instructions expressed as explicit encoding exceptions.
 
 Gate A passes for the main EXE: deterministic static unpack, full byte comparison,
 63 independently checked relocations, entry/stack state and input identity. Gate B
@@ -85,8 +95,26 @@ branch edges. They compare registers, defined flags and the entire 1 MiB memory,
 including push/pop residue, across poisoned fixtures. AF is excluded only on the
 phase-wrap path, where the last XOR makes it architecturally undefined.
 
-External executable inventory is still open: 17 legacy entry signatures at historical
-segment2911 are recorded, but their reconstructed bytes and tested coverage are zero.
+External driver images now reconstruct exactly, with separate static accounting:
+
+| Image | Exact ASM bytes | Classified bytes | Decoded instructions | Entry candidates | Unresolved transfers | C routines |
+|---|---:|---:|---:|---:|---:|---:|
+'''
+    for name,s in m['sound'].items():
+        text+=f'| {name} | {s["byte_exact_asm_bytes"]:,} | {s["classified_bytes"]:,} | {s["instructions"]} | {s["identified_entry_candidates"]} | {s["unresolved_transfers"]} | 0 |\n'
+    text+=f'''
+Across all three images, {combined_bytes:,} ASM bytes are exact and {combined_insns:,}
+instructions have been decoded. C differential coverage remains {len(executed)} / {combined_insns:,}
+({100*len(executed)/combined_insns:.3f}%) of this still-incomplete decoded inventory. Four bounded
+DAT extraction checks exercise 145 main-image instructions; these are extractor
+verification, not C translation coverage and not driver execution tests.
+
+All 16 legacy AdLib signatures at segment 2911 match the static extraction. The
+seventeenth external lead is F000:FF53 firmware/environment code, not a driver entry.
+Both sound dispatch tables lack sufficient bounds checks; their out-of-table paths
+remain unresolved. Driver code/data closure and behavioral translation are open.
+Main INT3 protection modifies the instruction stream; its static return path is
+quarantined, and the negated 59-byte INT1 region is classified runtime-modified code.
 No public executable or proprietary asset is tracked. See executable.md for local
 provenance, control-frontier.json for addresses, and next-work.md for proof obligations.
 '''

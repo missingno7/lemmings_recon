@@ -54,5 +54,21 @@ class StaticTests(unittest.TestCase):
         self.assertEqual(end,82906)
         self.assertGreater(result['metrics']['unresolved_byte_runs'],0)
 
+    def test_runtime_modified_target_is_not_decoded(self):
+        image=bytes.fromhex('eb00 c3')
+        hints=dict(entries=[{'offset':0}],regions=[{'start':2,'end':3,'class':'runtime_modified_code'}],
+                   code_limit=3,blocked_decode_ranges=[{'start':2,'end':3,'evidence':'fixture transformation'}])
+        result=discover(image,hints,{'accepted':[]})
+        self.assertEqual([i['address'] for i in result['instructions']],[0])
+        self.assertEqual(result['unresolved'][0]['kind'],'runtime_modified_target')
+        self.assertFalse(result['edges'][0]['resolved'])
+
+    def test_protection_interrupt_stops_static_fallthrough(self):
+        hints=dict(entries=[{'offset':0}],regions=[],code_limit=3,
+                   runtime_frontiers=[{'address':0,'evidence':'fixture INT3 changes return code'}])
+        result=discover(bytes.fromhex('cc90c3'),hints,{'accepted':[]})
+        self.assertEqual([i['address'] for i in result['instructions']],[0])
+        self.assertEqual(result['unresolved'][0]['continuation'],1)
+
 if __name__=='__main__':
     unittest.main()

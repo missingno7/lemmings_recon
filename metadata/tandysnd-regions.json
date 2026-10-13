@@ -1,0 +1,60 @@
+{
+  "regions": [
+    {
+      "start": 0,
+      "end": 74,
+      "classification": "instruction"
+    },
+    {
+      "start": 74,
+      "end": 78,
+      "classification": "static_data"
+    },
+    {
+      "start": 78,
+      "end": 114,
+      "classification": "embedded_resource"
+    },
+    {
+      "start": 114,
+      "end": 886,
+      "classification": "instruction"
+    },
+    {
+      "start": 886,
+      "end": 933,
+      "classification": "unresolved"
+    },
+    {
+      "start": 933,
+      "end": 1223,
+      "classification": "instruction"
+    },
+    {
+      "start": 1223,
+      "end": 1224,
+      "classification": "unresolved"
+    },
+    {
+      "start": 1224,
+      "end": 1890,
+      "classification": "instruction"
+    },
+    {
+      "start": 1890,
+      "end": 1899,
+      "classification": "unresolved"
+    },
+    {
+      "start": 1899,
+      "end": 1947,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 1947,
+      "end": 21702,
+      "classification": "unresolved"
+    }
+  ],
+  "overlays": []
+}

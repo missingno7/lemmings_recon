@@ -1,0 +1,3766 @@
+[
+  {
+    "address": 0,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_InterruptEntry",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      375,
+      938,
+      1111,
+      1308,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 295,
+        "segment": "default",
+        "displacement": 2923,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 353,
+        "segment": "default",
+        "displacement": 2923,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 360,
+        "segment": "default",
+        "displacement": 2922,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 363,
+        "segment": "default",
+        "displacement": 2923,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 72,
+        "segment": "default",
+        "displacement": 109,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 79,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 91,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 53,
+        "segment": "default",
+        "displacement": 238,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 45,
+        "segment": "default",
+        "displacement": 240,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 37,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 280,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Main0576..057B installs offset0 as INT61"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 375,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0177",
+    "aliases": [],
+    "callers": [
+      302,
+      308,
+      314,
+      320,
+      326,
+      332,
+      338,
+      344,
+      350
+    ],
+    "callees": [
+      825,
+      841,
+      970,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 375,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 382,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 386,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 393,
+        "segment": "default",
+        "displacement": 2923,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 400,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 436,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 435,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_01B3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 13,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 448,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_01C0",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 27,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 825,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0339",
+    "aliases": [],
+    "callers": [
+      406
+    ],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 825,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 833,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 837,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 843,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 847,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 857,
+        "segment": "default",
+        "displacement": 2727,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 861,
+        "segment": "default",
+        "displacement": 2823,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 880,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 900,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 919,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 925,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 113,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 841,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0349",
+    "aliases": [],
+    "callers": [
+      432
+    ],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 843,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 847,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 857,
+        "segment": "default",
+        "displacement": 2727,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 861,
+        "segment": "default",
+        "displacement": 2823,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 880,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 900,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 919,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 925,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 97,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 938,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_03AA",
+    "aliases": [],
+    "callers": [
+      66
+    ],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 32,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 970,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_03CA",
+    "aliases": [],
+    "callers": [
+      409
+    ],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 970,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 975,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 979,
+        "segment": "default",
+        "displacement": 14,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 983,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 989,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 996,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 32,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1045,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0415",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      841,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 451,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1055,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_041F",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      841,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 414,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1072,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0430",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      841,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 407,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1082,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_043A",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 13,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1095,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0447",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      841,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 405,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1103,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_044F",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      841,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 405,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1111,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0457",
+    "aliases": [],
+    "callers": [
+      289
+    ],
+    "callees": [
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1111,
+        "segment": "default",
+        "displacement": 238,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1118,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1121,
+        "segment": "default",
+        "displacement": 239,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1124,
+        "segment": "default",
+        "displacement": 239,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1134,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1139,
+        "segment": "default",
+        "displacement": 239,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1151,
+        "segment": "default",
+        "displacement": 238,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1163,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1168,
+        "segment": "default",
+        "displacement": 1468,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1171,
+        "segment": "default",
+        "displacement": 1488,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1174,
+        "segment": "default",
+        "displacement": 1508,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1177,
+        "segment": "default",
+        "displacement": 1528,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1180,
+        "segment": "default",
+        "displacement": 1548,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1183,
+        "segment": "default",
+        "displacement": 1568,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1186,
+        "segment": "default",
+        "displacement": 1588,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1189,
+        "segment": "default",
+        "displacement": 1608,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1192,
+        "segment": "default",
+        "displacement": 1628,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1195,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1196,
+        "segment": "default",
+        "displacement": 1448,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1199,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1203,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1206,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1207,
+        "segment": "default",
+        "displacement": 2922,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1210,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1215,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1222,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1228,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1235,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1239,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1243,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1248,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1265,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1302,
+        "segment": "default",
+        "displacement": 2923,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 229,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1308,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_051C",
+    "aliases": [],
+    "callers": [
+      292
+    ],
+    "callees": [
+      841,
+      1369
+    ],
+    "data_references": [
+      {
+        "instruction": 1308,
+        "segment": "default",
+        "displacement": 240,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1327,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1341,
+        "segment": "default",
+        "displacement": 240,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1346,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1359,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1361,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 414,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 421,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 425,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 435,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 439,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 443,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 490,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 500,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 503,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 509,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 520,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 524,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 543,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 547,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 556,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 560,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 589,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 605,
+        "segment": "default",
+        "displacement": 2920,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 620,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 624,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 628,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 639,
+        "segment": "default",
+        "displacement": 1,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 650,
+        "segment": "default",
+        "displacement": 2,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 661,
+        "segment": "default",
+        "displacement": 3,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 672,
+        "segment": "default",
+        "displacement": 6,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 683,
+        "segment": "default",
+        "displacement": 7,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 694,
+        "segment": "default",
+        "displacement": 9,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 698,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 707,
+        "segment": "default",
+        "displacement": 4,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 718,
+        "segment": "default",
+        "displacement": 5,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 729,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 733,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 737,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 741,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 750,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 754,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 773,
+        "segment": "default",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 777,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 781,
+        "segment": "default",
+        "displacement": 10,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 790,
+        "segment": "default",
+        "displacement": 2215,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 794,
+        "segment": "default",
+        "displacement": 12,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 813,
+        "segment": "default",
+        "displacement": 8,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 817,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 494,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 458,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1369,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "adlib_sub_0559",
+    "aliases": [],
+    "callers": [
+      993,
+      906,
+      932,
+      429,
+      540,
+      576,
+      636,
+      647,
+      658,
+      669,
+      680,
+      691,
+      704,
+      715,
+      726,
+      770,
+      810,
+      949,
+      1269,
+      1281,
+      1287,
+      1293,
+      1299,
+      172,
+      178,
+      186,
+      192,
+      205,
+      211,
+      80,
+      452,
+      1086
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 1370,
+        "segment": "default",
+        "displacement": 2211,
+        "base": null,
+        "index": null,
+        "size": 2
+      }
+    ],
+    "reachable_instruction_bytes": 71,
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static call/table target or signature-matched legacy lead"
+    ],
+    "verification_status": "UNTRANSLATED"
+  }
+]

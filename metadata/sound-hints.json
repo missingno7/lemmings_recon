@@ -1,0 +1,76 @@
+{
+  "adlib": {
+    "regions": [
+      {
+        "start": 109,
+        "end": 163,
+        "class": "lookup_table",
+        "evidence": "003A..0053 sends27 register/value words with LODSW/CALL0559"
+      },
+      {
+        "start": 237,
+        "end": 239,
+        "class": "static_data",
+        "evidence": "INT61 commands3/5 write00ED/00EE"
+      },
+      {
+        "start": 240,
+        "end": 241,
+        "class": "static_data",
+        "evidence": "INT61 command4 writes00F0"
+      },
+      {
+        "start": 241,
+        "end": 277,
+        "class": "embedded_resource",
+        "evidence": "Literal ASCII driver credit between IRET and entry0115"
+      },
+      {
+        "start": 1002,
+        "end": 1018,
+        "class": "lookup_table",
+        "evidence": "01E0..01EA dispatches through eight visible near pointer words; higher command indexes remain unbounded"
+      }
+    ],
+    "dispatch_tables": [
+      {
+        "start": 1002,
+        "end": 1018,
+        "site": 490,
+        "commands": "80..87",
+        "closure": "UNRESOLVED: AL80..AF reaches dispatch;88..AF indexes past visible table into code"
+      }
+    ]
+  },
+  "tandysnd": {
+    "regions": [
+      {
+        "start": 74,
+        "end": 78,
+        "class": "static_data",
+        "evidence": "INT61 commands and playback state access004A..004D"
+      },
+      {
+        "start": 78,
+        "end": 114,
+        "class": "embedded_resource",
+        "evidence": "Literal ASCII driver credit between IRET and entry0072"
+      },
+      {
+        "start": 1899,
+        "end": 1947,
+        "class": "lookup_table",
+        "evidence": "02B1..02BB dispatches through24 visible code pointers; higher indexes unresolved"
+      }
+    ],
+    "dispatch_tables": [
+      {
+        "start": 1899,
+        "end": 1947,
+        "site": 699,
+        "commands": "80..97",
+        "closure": "UNRESOLVED: AL80..9F reaches dispatch;98..9F reads past visible table"
+      }
+    ]
+  }
+}

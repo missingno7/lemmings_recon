@@ -1,0 +1,22 @@
+{
+  "adlib": {
+    "packed_size": 12988,
+    "image_size": 22125,
+    "image_sha256": "ad4f33eb383c60b5a67945987f27580fc0540e38558d4c158efe1a672db5f490",
+    "checksum": 57,
+    "remaining_bits": 0,
+    "token_count": 4784,
+    "source": "assets/adlib.dat",
+    "source_sha256": "43eceee3e88fde48c679c635ee208d2af9ade1ed789dc291d647e7d314ffdcfe"
+  },
+  "tandysnd": {
+    "packed_size": 12399,
+    "image_size": 21702,
+    "image_sha256": "20214a92f2466945c108f0ba1a36522d6542f2e34aadbb72027492051da3c659",
+    "checksum": 84,
+    "remaining_bits": 0,
+    "token_count": 4699,
+    "source": "assets/tandysnd.dat",
+    "source_sha256": "d044398aced30dae67cf8663d57f946faf28a29c357f9ea3857a28eea7cc10c1"
+  }
+}

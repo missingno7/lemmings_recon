@@ -13,9 +13,14 @@ def discover(image, hints, legacy, relocations=()):
     occupied = {}
     limit = hints['code_limit']
     relocation_sites = {r['linear'] for r in relocations}
+    runtime_frontiers={r['address']:r for r in hints.get('runtime_frontiers',[])}
     while work:
         off = work.pop()
         while off not in instructions:
+            blocked=next((r for r in hints.get('blocked_decode_ranges',[]) if r['start']<=off<r['end']),None)
+            if blocked:
+                unresolved.append(dict(address=off,kind='runtime_modified_target',evidence=blocked['evidence']))
+                break
             if not 0 <= off < limit:
                 unresolved.append(dict(address=off, kind='target_outside_provisional_code', evidence='Requires segment/region investigation'))
                 break
@@ -62,6 +67,11 @@ def discover(image, hints, legacy, relocations=()):
                 prev = [r for r in instructions.values() if r['address']+r['size']==off]
                 if ins.operands[0].imm==0x21 and prev and prev[-1]['mnemonic']=='mov' and prev[-1]['operands'].startswith('ax, 0x4c'):
                     terminal = True
+            if off in runtime_frontiers:
+                unresolved.append(dict(address=off,kind='runtime_modified_continuation',
+                                       continuation=nxt,evidence=runtime_frontiers[off]['evidence']))
+                edges.append(dict(source=off,target=None,kind='runtime_interrupt',vector=3))
+                terminal=True
             if not terminal:
                 edges.append(dict(source=off,target=nxt,kind='fallthrough'))
             else:

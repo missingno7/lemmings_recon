@@ -3454,8 +3454,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_054E",
-    "aliases": [],
+    "symbol_name": "InitializeSoundDriver",
+    "aliases": [
+      "sub_054E"
+    ],
     "callers": [
       171
     ],
@@ -3577,9 +3579,9 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "054E..060B allocates driver memory, installs INT61, loads ADLIB.DAT then hardware-detected TANDYSND.DAT fallback"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 190
@@ -3749,22 +3751,6 @@
         "base": null,
         "index": null,
         "size": 2
-      },
-      {
-        "instruction": 1648,
-        "segment": "default",
-        "displacement": 0,
-        "base": "bp",
-        "index": "di",
-        "size": 1
-      },
-      {
-        "instruction": 1651,
-        "segment": "default",
-        "displacement": 0,
-        "base": "bp",
-        "index": "di",
-        "size": 1
       }
     ],
     "confidence": "STRONGLY_SUPPORTED",
@@ -3772,7 +3758,7 @@
       "Static direct call target"
     ],
     "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 56
+    "reachable_instruction_bytes": 47
   },
   {
     "address": 1625,
@@ -3809,22 +3795,6 @@
         "base": null,
         "index": null,
         "size": 2
-      },
-      {
-        "instruction": 1648,
-        "segment": "default",
-        "displacement": 0,
-        "base": "bp",
-        "index": "di",
-        "size": 1
-      },
-      {
-        "instruction": 1651,
-        "segment": "default",
-        "displacement": 0,
-        "base": "bp",
-        "index": "di",
-        "size": 1
       }
     ],
     "confidence": "STRONGLY_SUPPORTED",
@@ -3832,7 +3802,225 @@
       "Static direct call target"
     ],
     "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 29
+    "reachable_instruction_bytes": 20
+  },
+  {
+    "address": 3507,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "ProtectionInt3Handler",
+    "aliases": [
+      "sub_0DB3"
+    ],
+    "callers": [],
+    "callees": [
+      3517
+    ],
+    "data_references": [
+      {
+        "instruction": 3517,
+        "segment": "default",
+        "displacement": 4,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3521,
+        "segment": "default",
+        "displacement": 4,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3528,
+        "segment": "default",
+        "displacement": 6,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3532,
+        "segment": "default",
+        "displacement": 4,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3539,
+        "segment": "cs",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3548,
+        "segment": "ss",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3553,
+        "segment": "ss",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3560,
+        "segment": "default",
+        "displacement": 0,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3564,
+        "segment": "default",
+        "displacement": -2,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3571,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3577,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0656 pushes0659;0659/065D set IVT INT3 offset0DB3 and0665 sets CS"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 76
+  },
+  {
+    "address": 3517,
+    "segment": 0,
+    "kind": "entry",
+    "size": null,
+    "symbol_name": "sub_0DBD",
+    "aliases": [],
+    "callers": [
+      3514
+    ],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 3517,
+        "segment": "default",
+        "displacement": 4,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3521,
+        "segment": "default",
+        "displacement": 4,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3528,
+        "segment": "default",
+        "displacement": 6,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3532,
+        "segment": "default",
+        "displacement": 4,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3539,
+        "segment": "cs",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3548,
+        "segment": "ss",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3553,
+        "segment": "ss",
+        "displacement": 11,
+        "base": "si",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 3560,
+        "segment": "default",
+        "displacement": 0,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3564,
+        "segment": "default",
+        "displacement": -2,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3571,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 3577,
+        "segment": "default",
+        "displacement": 0,
+        "base": "si",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static direct call target"
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 66
   },
   {
     "address": 3778,
@@ -7367,8 +7555,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1BAF",
-    "aliases": [],
+    "symbol_name": "DecodeDatSection",
+    "aliases": [
+      "sub_1BAF"
+    ],
     "callers": [
       7082
     ],
@@ -7464,9 +7654,9 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "1BAF..1C79 loads DAT section header and runs reverse LZ/bit decoding; independently verified on both sound assets"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 248
@@ -7886,8 +8076,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1CA3",
-    "aliases": [],
+    "symbol_name": "ReadReverseBits",
+    "aliases": [
+      "sub_1CA3"
+    ],
     "callers": [
       7161,
       7171,
@@ -7910,9 +8102,9 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "1CA3..1CB8 consumes CL reverse-stream bits from DL, assembles AX using carry, XORs refilled bytes into DH"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 22

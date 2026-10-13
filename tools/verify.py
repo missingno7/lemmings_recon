@@ -8,6 +8,7 @@ from explore import analyze
 import symtab
 
 def verify(check_stub=True):
+    (BUILD/'verification.json').unlink(missing_ok=True)
     for row in read_json(ROOT/'metadata/inputs.json')['files']:
         data=(ROOT/row['path']).read_bytes()
         if len(data)!=row['size'] or sha(data)!=row['sha256']:
@@ -44,13 +45,28 @@ def verify(check_stub=True):
         from check_unpack import check
         for load,poison in ((0x1010,0),(0x1213,0xa5),(0x2345,0x5a)):
             check(load,poison)
+    from sound import verify_drivers
+    sound_metrics=verify_drivers()
+    if check_stub:
+        import importlib.util
+        spec=importlib.util.spec_from_file_location('sound_unpack',ROOT/'tests/sound_unpack.py')
+        suite=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(suite)
+        results=[suite.check(n,s,p) for n in ('adlib','tandysnd') for s,p in ((0x3000,0xa5),(0x4000,0x5a))]
+        write_json(BUILD/'sound-unpack-tests.json',results)
     metrics=dict(analysis['metrics'],reconstructed_asm_bytes=len(actual),byte_exact_asm_bytes=len(actual),
                  encoding_exceptions=len(read_json(ROOT/'metadata/encoding-exceptions.json')),
                  canonical_sha256=sha(image))
-    inputs=list((ROOT/'src').glob('*.asm'))+[ROOT/p for p in
+    metrics['sound']=sound_metrics
+    metrics['bounded_extractor_checks']=bool(check_stub)
+    inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
         ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
+         'metadata/regions.json','metadata/encoding-exceptions.json',
          'metadata/legacy-seeds.json','tools/unpack.py','tools/explore.py',
-         'tools/build.py','tools/check_unpack.py','tools/verify.py')]
+         'tools/build.py','tools/check_unpack.py','tools/verify.py',
+         'tools/resources.py','tools/sound.py','tests/sound_unpack.py',
+         'metadata/sound-oracle.json','metadata/sound-hints.json')]
+    inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
     write_json(BUILD/'verification.json',metrics)
     write_json(BUILD/'analysis.json',analysis)

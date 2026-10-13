@@ -13,6 +13,10 @@
     {
       "offset": 33635,
       "evidence": "Manually decoded coherent checksum continuation 8363..83B6 with shared state 83B9..83BC; no static caller yet found; reachability UNRESOLVED"
+    },
+    {
+      "offset": 3507,
+      "evidence": "0656 CALL-next pushes0659;0659 stores return at IVT INT3;065D adds075A =>0DB3;0665 stores CS"
     }
   ],
   "regions": [
@@ -46,6 +50,25 @@
       "end": 49202,
       "class": "pointer_data",
       "evidence": "42A1 loads indirect callback from DS:25A0; static4252; stores4334/4359 at4A68/4A80"
+    },
+    {
+      "start": 3583,
+      "end": 3642,
+      "class": "runtime_modified_code",
+      "evidence": "0DBA CALL-next pushes0DBD;0DC1 adds0042 =>0DFF;0DD0..0DD8 negates003B bytes before using this INT1 handler"
+    }
+  ],
+  "runtime_frontiers": [
+    {
+      "address": 1644,
+      "evidence": "INT3 vector0DB3 toggles saved TF/IF at SS:[SP+0B] and transforms upcoming code; static fallthrough is not a proved runtime stream"
+    }
+  ],
+  "blocked_decode_ranges": [
+    {
+      "start": 3583,
+      "end": 3642,
+      "evidence": "0DBA CALL-next pushes0DBD;0DC1 adds0042 =>0DFF;0DD0..0DD8 negates003B bytes before using this INT1 handler"
     }
   ]
 }

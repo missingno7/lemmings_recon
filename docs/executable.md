@@ -64,7 +64,12 @@ are masked and no initialized game snapshot is involved.
 - INT24 vector 18F8 is explicit at 008A. Timer/keyboard handler leads 16D4/17C7 and
   chained far vectors require further contract work. DOS and hardware edges remain
   platform boundaries, not unexplained direct branch targets.
-- External code at historical segment 2911 has 17 legacy entry signatures. ADLIB.DAT
-  is compressed executable content according to legacy evidence; extraction and
-  independent binding of every driver entry remain required. It is not counted as
-  reconstructed merely because the main EXE is byte-exact.
+- ADLIB.DAT and TANDYSND.DAT are now independently extracted and byte-exact ASM
+  images (22,125 and 21,702 bytes). All 16 legacy AdLib signatures at 2911 match;
+  the seventeenth external signature is F000:FF53 firmware/environment code.
+  Their separate code/data and CFG frontier is in sound-drivers.md.
+- Main 066C invokes INT3 installed at 0DB3 via 0659+075A. The handler negates 59 bytes
+  at 0DFF..0E39, installs that address as INT1, changes saved TF/IF, and modifies
+  forthcoming instruction words. Static fallthrough after 066C and raw decoding
+  of the transformed INT1 region are blocked. Both representations must be
+  investigated separately; the canonical acceptance image remains unchanged.

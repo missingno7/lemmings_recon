@@ -204,6 +204,18 @@
     "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
   },
   {
+    "address": 3510,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
+    "address": 3546,
+    "bytes": "8bf4",
+    "instruction": "mov si,sp",
+    "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
+  },
+  {
     "address": 3697,
     "bytes": "8bd8",
     "instruction": "mov bx,ax",

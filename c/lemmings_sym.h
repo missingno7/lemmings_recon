@@ -8,11 +8,13 @@
 #define CS_sub_03D7 0x03D7u
 #define CS_sub_03E7 0x03E7u
 #define CS_sub_04F9 0x04F9u
-#define CS_sub_054E 0x054Eu
+#define CS_InitializeSoundDriver 0x054Eu
 #define CS_sub_060C 0x060Cu
 #define CS_sub_062B 0x062Bu
 #define CS_sub_063E 0x063Eu
 #define CS_sub_0659 0x0659u
+#define CS_ProtectionInt3Handler 0x0DB3u
+#define CS_sub_0DBD 0x0DBDu
 #define CS_sub_0EC2 0x0EC2u
 #define CS_sub_0F08 0x0F08u
 #define CS_sub_0FA0 0x0FA0u
@@ -62,7 +64,7 @@
 #define CS_sub_1B79 0x1B79u
 #define CS_sub_1BA9 0x1BA9u
 #define CS_sub_1BAD 0x1BADu
-#define CS_sub_1BAF 0x1BAFu
+#define CS_DecodeDatSection 0x1BAFu
 #define CS_sub_1BF7 0x1BF7u
 #define CS_sub_1C01 0x1C01u
 #define CS_sub_1C0B 0x1C0Bu
@@ -81,7 +83,7 @@
 #define CS_sub_1C87 0x1C87u
 #define CS_sub_1C8A 0x1C8Au
 #define CS_sub_1C9F 0x1C9Fu
-#define CS_sub_1CA3 0x1CA3u
+#define CS_ReadReverseBits 0x1CA3u
 #define CS_sub_1CB9 0x1CB9u
 #define CS_sub_1CD9 0x1CD9u
 #define CS_sub_1D2E 0x1D2Eu

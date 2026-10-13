@@ -118,7 +118,10 @@ def generate():
             m=re.match(r'^(\w+) (short |near )?(0x[0-9a-f]+)$',text)
             if m and (m[1].startswith('j') or m[1].startswith('loop') or m[1]=='call'):
                 target=int(m[3],16)&0xffff
-                text=m[1]+' '+(m[2] or '')+labels.get(target,f'0x{target:04x}')
+                # Keep the probed relative expression for unresolved targets.
+                # NASM -O0 can widen an absolute numeric Jcc to a near branch.
+                text=(m[1]+' '+(m[2] or '')+labels[target]
+                      if target in labels else relative(text,row))
             if pos in exceptions:
                 text='db '+','.join(f'0x{b:02x}' for b in bytes.fromhex(row['bytes']))+' ; ENCODED: '+text+' (NASM chooses a different encoding)'
             lines.append('    '+text+f' ; @{pos:05X}')

@@ -10,6 +10,11 @@ discovery and byte classification are partial. This is **not a complete recovere
 program or native game**. See [completeness](docs/completeness.md) and
 [next work](docs/next-work.md) for the precise frontier.
 
+The next milestone adds exact static reconstructions of both executable sound
+assets: AdLib (22,125 bytes) and Tandy (21,702 bytes), independently checked against
+the original DAT decoder. Total reconstructed image bytes: 126,733. Driver
+translation and command-dispatch closure remain open; see [sound drivers](docs/sound-drivers.md).
+
 ## Reproduce
 
 Supply the original files privately in assets; metadata/inputs.json pins their hashes.
@@ -21,6 +26,7 @@ the lock deliberately rather than bypassing it.
 ```powershell
 .venv\Scripts\python.exe tools\unpack.py
 .venv\Scripts\python.exe tools\verify.py
+.venv\Scripts\python.exe tools\sound.py
 .venv\Scripts\python.exe -m unittest discover -s tests -p 'test_*.py'
 .venv\Scripts\python.exe tools\difftest.py
 .venv\Scripts\python.exe tools\coverage.py

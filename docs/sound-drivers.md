@@ -1,0 +1,71 @@
+# Static external sound images
+
+The original routine at main CS:054E installs INT61 at allocated-segment:0000
+(0576..057B), loads `adlib.dat` through 1B79 with DS=ES=the allocated segment,
+SI=DI=0, and invokes its AH=1 detection service. The fallback reloads `tandysnd.dat`
+at the same destination (05BD..05CA). Both are executable DAT assets. The main
+loader allocates 0567 paragraphs (22,128 bytes); the driver load segment is a runtime
+DOS allocation result, not intrinsically 2911h.
+
+## Reproducible extraction and identity
+
+tools/resources.py statically implements the original decoder at 1BAF..1CB8.
+The ten-byte header contains initial valid bits, XOR checksum, big-endian decoded
+length and packed section length. Bits are read from the last payload byte toward
+the first, LSB first within a byte, with each requested field accumulated MSB first.
+Output is written backward. Six token forms are preserved: literals of 1..8 or
+9..264 bytes; matches of length 2/3/4 with 8/9/10-bit distances; variable match length
+1..256 with a 12-bit distance. Encoded distances are incremented by one. Reverse
+overlap copies read already decoded higher addresses. The original bit reader XORs
+each fetched payload byte into DH and the final AND DH,DH reports checksum success.
+
+This extractor rejects lengths above 65535 and invalid token bounds. The original
+uses only the low size words in this path; apparent 32-bit header fields do not
+establish support for larger sections. Rejection policy is tooling validation,
+not a modification of the original decoder or a claim about malformed-file behavior.
+
+| Image | Packed bytes | Static bytes | SHA256 of decoded image |
+|---|---:|---:|---|
+| AdLib | 12,988 | 22,125 | `ad4f33eb383c60b5a67945987f27580fc0540e38558d4c158efe1a672db5f490` |
+| Tandy | 12,399 | 21,702 | `20214a92f2466945c108f0ba1a36522d6542f2e34aadbb72027492051da3c659` |
+
+metadata/sound-oracle.json pins packed and decoded identities separately. Each
+driver has its own hints, region partition, relative symbol ledger, and encoding
+exceptions. src/sound contains maintained NASM sources; tools/sound.py checks every
+byte and each named label without regenerating them. There is no MZ header and no
+load-segment fixup table for these extracted sections. No initialization is needed
+to reproduce the 16 legacy AdLib signatures, all of which match exactly.
+
+Correction to the first milestone: the legacy list has 17 *external* records, but
+only 16 belong to 2911h. The other is F000:FF53 with an IRET signature, a separate
+firmware/environment lead. It must not inflate the sound-driver routine inventory.
+
+tests/sound_unpack.py enters only original main CS:1BAF. The fixture supplies the
+DOS read service and disables the optional cached-file path. At two destination
+segments with different memory poison, the original performs exactly two reads
+(10-byte header, then payload), returns to the sentinel, reports a valid checksum,
+and matches every output byte. These four extraction checks execute 145 main-image
+instructions; no driver service or game startup is executed. They are not C tests.
+
+## Dispatch and remaining proof obligations
+
+AdLib entry 0000 dispatches AH=0..5. Recognized services include update 0115,
+hardware detection 00A3, reset 003A and three byte-setting IRET paths. OPL writes go
+through 0559, which preserves the explicit IN delays and takes its base from 08A3.
+The 27 reset register/value words at 006D..00A2 are a proven data table.
+
+AdLib command dispatch 01EA indexes table 03EA using doubled AL. Eight visible
+entries at 03EA..03F9 cover commands 80..87. However the preceding comparisons allow
+80..AF; commands 88..AF would read pointers from following instruction bytes. The
+table is not silently expanded into code, and no bounds check or bug fix is added.
+Prove the command producer/stream domain or model those paths explicitly.
+
+Tandy dispatch 02BB indexes 076B. Twenty-four visible entries at 076B..079A cover
+80..97; control flow allows 80..9F, so 98..9F remain unresolved. The table adds targets
+that entry-only recursive descent misses. Both drivers still contain unclassified
+tables, music/effect streams, and data. Out-of-image accesses such as Tandy 0629's
+write to 5958 require allocation/state analysis; do not add a shadow variable or
+assume the static image length bounds every runtime access.
+
+No driver routine has been translated to C or behaviorally verified. Byte-exact
+assembly and matched signatures do not establish full code/data or CFG closure.
