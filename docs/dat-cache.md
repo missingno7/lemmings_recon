@@ -80,7 +80,8 @@ suite process at 120 seconds, including native calls. Fixtures keep executing co
 and active return words intact, use quiescent interrupts and clear TF. Name scans
 reach a dot; a missing dot can loop indefinitely in the original and native code.
 
-File opening at 1CB9, attribute/retry handling at 1CD9, resource ownership/callers,
+File opening at 1CB9 and attribute/retry handling at 1CD9 now have tested native
+cores; see dat-files.md for their declared retry-callee seam. Resource ownership/callers
 and the UNKNOWN allocation code starting 1ED7 remain untranslated or unresolved.
 The 04D0 fatal cleanup also remains open. Cache selection and decoding being native
 does not establish a complete loader or game.

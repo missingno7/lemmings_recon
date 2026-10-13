@@ -43,7 +43,9 @@
     covering all 106 instructions; see dat-io.md for ignored cache errors,
     returned ES, provider DF effects and wrap. Filename preparation, cache selection
     and startup disabling at 1E1C/1E64/1ED1 now have tested C cores; see dat-cache.md.
-    Port file open/attribute wrappers and resource callers at 1CB9/1CD9 next,
+    File open/attribute wrappers at 1CB9/1CD9 now call native cache cores and have
+    40 bounded differential cases; see dat-files.md for the explicit 4B1C game
+    retry seam and 1949 fatal transfer. Port resource callers starting at 1B79 next,
     investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
     Do not substitute the static extractor's stricter checks. No SDL3

@@ -15,7 +15,7 @@ IMAGE,ORACLE=unpack(ASSET.read_bytes())
 SYMBOLS={s['symbol_name']:s for s in read_json(ROOT/'metadata/symbols.json')}
 ENTRY=SYMBOLS['DecodeDatSection']['address'];FATAL=SYMBOLS['DatFatalTransfer']['address']
 MD=capstone.Cs(capstone.CS_ARCH_X86,capstone.CS_MODE_16);MD.detail=True
-LOCAL_END=SYMBOLS['sub_1CB9']['address']
+LOCAL_END=SYMBOLS['OpenDatFile']['address']
 LOCAL={i.address:i for i in MD.disasm(IMAGE[ENTRY:LOCAL_END],ENTRY) if i.mnemonic!='nop'}
 INS={**LOCAL,**io_oracle.INS}
 BRANCHES={pc for pc,i in INS.items() if i.group(capstone.CS_GRP_JUMP) or i.mnemonic.startswith('loop')}

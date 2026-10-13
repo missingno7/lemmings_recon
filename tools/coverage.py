@@ -64,7 +64,13 @@ def report():
             raise ValueError('Stale DAT cache differential report for '+path+'; run tools/difftest.py')
     if cache['image_sha256']!=sha(image):raise ValueError('DAT cache differential oracle changed')
     executed.update(cache['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache)
+    files=read_json(BUILD/'dat-files-differential.json')
+    for path,digest in files['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale DAT file differential report for '+path+'; run tools/difftest.py')
+    if files['image_sha256']!=sha(image):raise ValueError('DAT file differential oracle changed')
+    executed.update(files['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -136,9 +142,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT decoder/read/cache/leaf and PC-speaker helper clusters. The two checksum and nine DAT main
+DAT decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and eleven DAT main
 routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
-docs/dat-section.md and docs/dat-cache.md's domains; remaining
+docs/dat-section.md, docs/dat-cache.md and docs/dat-files.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -151,7 +157,7 @@ The DAT leaf suite covers 33/33 instructions and all six local branch edges in
 470 cases. It compares full memory, registers and defined flags, including zero
 bit counts (256 iterations), zero incremented match counts (65,536 iterations),
 live overlapping copies and overwritten saved registers. Three compiled mutants
-are detected. File open/check wrappers and cache allocation remain UNTRANSLATED;
+are detected. Cache allocation, retry UI and fatal cleanup remain UNTRANSLATED;
 the strict static extractor's validation rules are not substituted for original
 runtime behavior. See dat.md.
 
@@ -243,8 +249,16 @@ C11 cores: {cache['case_count']} cases cover all 96 instruction sites and 18 bra
 with three compiled mutations detected. Full memory/register/defined-flag checks
 preserve wrapped padding counts, DF, the last-byte mismatch hit, record-pointer
 wrap and saved-register aliases. No host filename normalization or corrected
-string comparison is substituted. File open/attribute wrappers and the UNKNOWN
-cache allocation code remain open; see dat-cache.md.
+string comparison is substituted. The UNKNOWN cache allocation code remains
+open; see dat-cache.md.
+
+File open/check wrappers now have C cores: {files['case_count']} cases cover all 69
+wrapper sites and 16 wrapper edges, with three compiled mutations detected.
+Native cache calls are exercised inside CheckDatFile. DOS open/attributes and
+the original game retry callee at 4B1C are declared verification boundaries;
+the retry callee's rendering/input body is not translated or counted as executed.
+The 1949 fatal transfer preserves the original outer save frame and message offset.
+See dat-files.md for clobbers, aliases and remaining caller/platform ownership.
 '''
     return m,text
 

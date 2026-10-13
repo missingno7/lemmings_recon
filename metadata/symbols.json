@@ -7214,6 +7214,22 @@
     "reachable_instruction_bytes": 116
   },
   {
+    "address": 6473,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatFileErrorTransfer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT file wrapper continuation; see docs/dat-files.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 6525,
     "segment": 0,
     "kind": "entry",
@@ -8763,9 +8779,11 @@
     "address": 7353,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1CB9",
-    "aliases": [],
+    "size": 32,
+    "symbol_name": "OpenDatFile",
+    "aliases": [
+      "sub_1CB9"
+    ],
     "callers": [
       7047
     ],
@@ -8788,20 +8806,24 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 32
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 32,
+    "c_implementation": "c/dat_files.c",
+    "verification_evidence": "tests/dat_files.py: 40 original-vs-C cases, 69 wrapper instructions, all 16 wrapper edges; three compiled mutants; preserving DOS services, declared 4B1C retry seam, 1949 fatal boundary; see docs/dat-files.md"
   },
   {
     "address": 7385,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1CD9",
-    "aliases": [],
+    "size": 85,
+    "symbol_name": "CheckDatFile",
+    "aliases": [
+      "sub_1CD9"
+    ],
     "callers": [
       7034
     ],
@@ -8854,12 +8876,62 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 152
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 152,
+    "c_implementation": "c/dat_files.c",
+    "verification_evidence": "tests/dat_files.py: 40 original-vs-C cases, 69 wrapper instructions, all 16 wrapper edges; three compiled mutants; preserving DOS services, declared 4B1C retry seam, 1949 fatal boundary; see docs/dat-files.md"
+  },
+  {
+    "address": 7401,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterNamePreparation",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT file wrapper continuation; see docs/dat-files.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7404,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterCacheSelection",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT file wrapper continuation; see docs/dat-files.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7450,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatAfterFileRetry",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original DAT file wrapper continuation; see docs/dat-files.md"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 7470,
@@ -50372,6 +50444,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8053,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "DatRetryEnabled",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "CheckDatFile chooses 4B1C retry or1949 fatal branch from this live byte"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8064,
     "segment": 2473,
     "kind": "data",
@@ -50580,6 +50668,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8159,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "DatCriticalErrorFlag",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "INT24 handler at18F8 sets this flag; CheckDatFile tests it after AH43"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8211,
     "segment": 2473,
     "kind": "record_table",
@@ -50592,6 +50696,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8596,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "DatFileErrorMessage",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "CheckDatFile passes this offset to original DOS error-print transfer at1949"
     ],
     "verification_status": "UNRESOLVED"
   },

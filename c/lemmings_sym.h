@@ -67,6 +67,7 @@
 #define CS_sub_18B2 0x18B2u
 #define CS_CriticalErrorHandler 0x18F8u
 #define CS_sub_1916 0x1916u
+#define CS_DatFileErrorTransfer 0x1949u
 #define CS_sub_197D 0x197Du
 #define CS_sub_1A7B 0x1A7Bu
 #define CS_sub_1B42 0x1B42u
@@ -108,8 +109,11 @@
 #define CS_CopyReverseMatch 0x1C8Au
 #define CS_sub_1C9F 0x1C9Fu
 #define CS_ReadReverseBits 0x1CA3u
-#define CS_sub_1CB9 0x1CB9u
-#define CS_sub_1CD9 0x1CD9u
+#define CS_OpenDatFile 0x1CB9u
+#define CS_CheckDatFile 0x1CD9u
+#define CS_DatAfterNamePreparation 0x1CE9u
+#define CS_DatAfterCacheSelection 0x1CECu
+#define CS_DatAfterFileRetry 0x1D1Au
 #define CS_ReadDatBytes 0x1D2Eu
 #define CS_PrepareDatCacheName 0x1E1Cu
 #define CS_SelectCachedDatFile 0x1E64u
@@ -302,6 +306,7 @@
 #define CS_sub_9A15 0x9A15u
 #define SEG09A9_GameDataImage 0x0000u
 #define SEG09A9_DrawingCallbackSlots 0x002Eu
+#define SEG09A9_DatRetryEnabled 0x1F75u
 #define SEG09A9_DatCacheBaseSegment 0x1F80u
 #define SEG09A9_DatCacheRecordOffset 0x1F82u
 #define SEG09A9_DatCacheRecordSegment 0x1F84u
@@ -315,6 +320,8 @@
 #define SEG09A9_DatCacheSelected 0x1F94u
 #define SEG09A9_DatCacheFcb 0x1F95u
 #define SEG09A9_SavedTimerVector 0x1FBEu
+#define SEG09A9_DatCriticalErrorFlag 0x1FDFu
 #define SEG09A9_DisplayProbeRecords 0x2013u
+#define SEG09A9_DatFileErrorMessage 0x2194u
 #define SEG09A9_InputPollCallback 0x25A0u
 #endif

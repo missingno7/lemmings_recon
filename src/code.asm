@@ -56,7 +56,7 @@ ProgramEntry:
     mov dx,0x18f8 ; @0008A
     int 0x21 ; @0008D
     pop ds ; @0008F
-    mov byte [0x1fdf],0x0 ; @00090
+    mov byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @00090
     push ds ; @00095
     mov ah,0x1b ; @00096
     int 0x21 ; @00098
@@ -86,7 +86,7 @@ ProgramEntry:
     call LoadMainResourceSections ; @000D5
 sub_00D8:
     call DisableDatCache ; @000D8
-    mov byte [0x1f75],0xff ; @000DB
+    mov byte [DatRetryEnabled-GameDataImage],0xff ; @000DB
     call sub_062B ; @000E0
     call sub_1562 ; @000E3
     cli ; @000E6
@@ -2239,7 +2239,7 @@ CriticalErrorHandler:
     push ds ; @018F9
     mov ax,0x9a9 ; @018FA
     mov ds,ax ; @018FD
-    mov byte [0x1fdf],0xff ; @018FF
+    mov byte [DatCriticalErrorFlag-GameDataImage],0xff ; @018FF
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01904
     pop ds ; @01906
     iret ; @01907
@@ -2281,6 +2281,7 @@ loc_1940:
 loc_1946:
     mov dx,0x21b6 ; @01946
 loc_1949:
+DatFileErrorTransfer:
     push dx ; @01949
     mov dx,0x9a9 ; @0194A
     mov ds,dx ; @0194D
@@ -2550,13 +2551,13 @@ loc_1B78:
     ret ; @01B78
 sub_1B79:
     push cx ; @01B79
-    call sub_1CD9 ; @01B7A
+    call CheckDatFile ; @01B7A
     pop cx ; @01B7D
     jc loc_1B98 ; @01B7E
-    cmp byte [0x1fdf],0x0 ; @01B80
+    cmp byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @01B80
     jnz loc_1B98 ; @01B85
-    call sub_1CB9 ; @01B87
-    cmp byte [0x1fdf],0x0 ; @01B8A
+    call OpenDatFile ; @01B87
+    cmp byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @01B8A
     jnz loc_1B98 ; @01B8F
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01B91
     mov ds,cx ; @01B93
@@ -2764,7 +2765,7 @@ loc_1CB0:
     dec cl ; @01CB4
     jnz loc_1CA5 ; @01CB6
     ret ; @01CB8
-sub_1CB9:
+OpenDatFile:
     push ds ; @01CB9
     push dx ; @01CBA
     push es ; @01CBB
@@ -2786,7 +2787,7 @@ loc_1CD2:
     pop dx ; @01CD6
     pop ds ; @01CD7
     ret ; @01CD8
-sub_1CD9:
+CheckDatFile:
     push ds ; @01CD9
     push dx ; @01CDA
     push es ; @01CDB
@@ -2796,14 +2797,16 @@ sub_1CD9:
     cmp byte [DatCacheEnabled-GameDataImage],0xff ; @01CDF
     jnz loc_1CEE ; @01CE4
     call PrepareDatCacheName ; @01CE6
+DatAfterNamePreparation:
     call SelectCachedDatFile ; @01CE9
+DatAfterCacheSelection:
     jnc loc_1CFE ; @01CEC
 loc_1CEE:
     mov ax,0x4300 ; @01CEE
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @01CF1
     int 0x21 ; @01CF3
     jc loc_1D05 ; @01CF5
-    cmp byte [0x1fdf],0x0 ; @01CF7
+    cmp byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @01CF7
     jnz loc_1D05 ; @01CFC
 loc_1CFE:
     pop si ; @01CFE
@@ -2822,9 +2825,10 @@ loc_1D05:
     push si ; @01D0A
     mov ax,0x9a9 ; @01D0B
     mov ds,ax ; @01D0E
-    cmp byte [0x1f75],0x0 ; @01D10
+    cmp byte [DatRetryEnabled-GameDataImage],0x0 ; @01D10
     jz loc_1D22 ; @01D15
     call sub_4B1C ; @01D17
+DatAfterFileRetry:
     pop si ; @01D1A
     pop di ; @01D1B
     pop ds ; @01D1C
@@ -2839,7 +2843,7 @@ loc_1D22:
     pop es ; @01D25
     pop cx ; @01D26
     pop dx ; @01D27
-    mov dx,0x2194 ; @01D28
+    mov dx,DatFileErrorMessage-GameDataImage ; @01D28
     jmp loc_1949 ; @01D2B
 ReadDatBytes:
     push di ; @01D2E
@@ -7644,7 +7648,7 @@ loc_4AFD:
     jc loc_4ACF ; @04B0E
     call sub_531E ; @04B10
     call sub_4DEF ; @04B13
-    mov byte [0x1fdf],0x0 ; @04B16
+    mov byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @04B16
 loc_4B1B:
     ret ; @04B1B
 sub_4B1C:
@@ -7669,7 +7673,7 @@ loc_4B40:
 loc_4B50:
     call sub_531E ; @04B50
     call sub_4DEF ; @04B53
-    mov byte [0x1fdf],0x0 ; @04B56
+    mov byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @04B56
     ret ; @04B5B
 sub_4B5C:
     mov byte [si+0x3],0x20 ; @04B5C

@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 11 |
-| Translated C code bytes | 802 |
-| Differential cases | 882 |
-| Mutation checks detected | 15 |
-| Original instruction coverage | 375 / 15,392 decoded (2.436%) |
+| Translated C routines | 13 |
+| Translated C code bytes | 919 |
+| Differential cases | 922 |
+| Mutation checks detected | 18 |
+| Original instruction coverage | 444 / 15,392 decoded (2.885%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -35,9 +35,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT decoder/read/cache/leaf and PC-speaker helper clusters. The two checksum and nine DAT main
+DAT decoder/file/read/cache/leaf and PC-speaker helper clusters. The two checksum and eleven DAT main
 routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
-docs/dat-section.md and docs/dat-cache.md's domains; remaining
+docs/dat-section.md, docs/dat-cache.md and docs/dat-files.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -50,7 +50,7 @@ The DAT leaf suite covers 33/33 instructions and all six local branch edges in
 470 cases. It compares full memory, registers and defined flags, including zero
 bit counts (256 iterations), zero incremented match counts (65,536 iterations),
 live overlapping copies and overwritten saved registers. Three compiled mutants
-are detected. File open/check wrappers and cache allocation remain UNTRANSLATED;
+are detected. Cache allocation, retry UI and fatal cleanup remain UNTRANSLATED;
 the strict static extractor's validation rules are not substituted for original
 runtime behavior. See dat.md.
 
@@ -63,10 +63,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 435 / 17,291
-(2.516%) of this still-incomplete decoded inventory. There are
-14 tested C routines occupying 967 original code bytes across images,
-with 1217 differential cases and 18 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 504 / 17,291
+(2.915%) of this still-incomplete decoded inventory. There are
+16 tested C routines occupying 1084 original code bytes across images,
+with 1257 differential cases and 21 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -142,5 +142,13 @@ C11 cores: 305 cases cover all 96 instruction sites and 18 branch edges,
 with three compiled mutations detected. Full memory/register/defined-flag checks
 preserve wrapped padding counts, DF, the last-byte mismatch hit, record-pointer
 wrap and saved-register aliases. No host filename normalization or corrected
-string comparison is substituted. File open/attribute wrappers and the UNKNOWN
-cache allocation code remain open; see dat-cache.md.
+string comparison is substituted. The UNKNOWN cache allocation code remains
+open; see dat-cache.md.
+
+File open/check wrappers now have C cores: 40 cases cover all 69
+wrapper sites and 16 wrapper edges, with three compiled mutations detected.
+Native cache calls are exercised inside CheckDatFile. DOS open/attributes and
+the original game retry callee at 4B1C are declared verification boundaries;
+the retry callee's rendering/input body is not translated or counted as executed.
+The 1949 fatal transfer preserves the original outer save frame and message offset.
+See dat-files.md for clobbers, aliases and remaining caller/platform ownership.
