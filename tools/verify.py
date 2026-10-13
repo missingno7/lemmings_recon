@@ -84,6 +84,13 @@ def verify(check_stub=True):
             checks=suite.check()
             interrupt_metrics[prefix+'_test_cases']=checks['case_count']
             interrupt_metrics[prefix+'_instruction_sites']=len(checks['original_instruction_sites'])
+        spec=importlib.util.spec_from_file_location('dat_io_tests',ROOT/'tests/dat_io.py')
+        suite=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(suite)
+        checks=suite.check()
+        dat_io_metrics=dict(case_count=checks['case_count'],
+                            original_instruction_sites=len(checks['original_instruction_sites']),
+                            branch_edges=len(checks['branch_edges']))
     metrics=dict(analysis['metrics'],reconstructed_asm_bytes=len(actual),byte_exact_asm_bytes=len(actual),
                  encoding_exceptions=len(read_json(ROOT/'metadata/encoding-exceptions.json')),
                  canonical_sha256=sha(image))
@@ -91,6 +98,7 @@ def verify(check_stub=True):
     metrics['protection']=protection_metrics
     metrics['indirect']=indirect_metrics
     metrics['interrupts']=interrupt_metrics
+    if check_stub:metrics['dat_io']=dat_io_metrics
     metrics['bounded_extractor_checks']=bool(check_stub)
     inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
         ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
@@ -105,6 +113,7 @@ def verify(check_stub=True):
          'tools/interrupts.py','tests/interrupts.py','tests/timer_chain.py','metadata/interrupt-evidence.json')]
     inputs.append(ROOT/'tools/pcspeaker_symtab.py')
     inputs.append(ROOT/'metadata/pcspeaker-producers.json')
+    inputs.append(ROOT/'tests/dat_io.py')
     inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
     write_json(BUILD/'verification.json',metrics)

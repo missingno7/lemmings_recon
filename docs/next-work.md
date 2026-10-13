@@ -37,6 +37,8 @@
 9. Continue bounded C clusters after their static boundaries and contracts are
     reliable. Three resource decoder leaf routines at 1C82/1C8A/1CA3 now have
     tested C cores; see dat.md. Recover the full 1BAF decoder and 1D2E cached/DOS
-    read provider contracts next, including malformed sizes, errors and aliases.
+    read provider in C next, including malformed sizes, errors and aliases.
+    The complete 1D2E wrapper now has 41 bounded contract cases covering all 106
+    instructions; see dat-io.md for ignored cache errors, returned ES and wrap.
     Do not substitute the static extractor's stricter checks. No SDL3
     integration or gameplay milestone is needed to progress these investigations.

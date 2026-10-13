@@ -2590,7 +2590,7 @@ DecodeDatSection:
     db 0x8b,0xef ; ENCODED: mov bp,di (NASM chooses a different encoding) ; @01BB2
     mov cx,0xa ; @01BB4
     db 0x8b,0xd6 ; ENCODED: mov dx,si (NASM chooses a different encoding) ; @01BB7
-    call sub_1D2E ; @01BB9
+    call ReadDatBytes ; @01BB9
     jnc loc_1BC1 ; @01BBC
     jmp loc_1C7A ; @01BBE
 loc_1BC1:
@@ -2611,7 +2611,7 @@ loc_1BC1:
     db 0x8b,0xd6 ; ENCODED: mov dx,si (NASM chooses a different encoding) ; @01BE2
     db 0x03,0xf1 ; ENCODED: add si,cx (NASM chooses a different encoding) ; @01BE4
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01BE6
-    call sub_1D2E ; @01BE8
+    call ReadDatBytes ; @01BE8
     jnc loc_1BF0 ; @01BEB
     jmp loc_1C7A ; @01BED
 loc_1BF0:
@@ -2755,9 +2755,9 @@ sub_1CB9:
     push di ; @01CBC
     push cx ; @01CBD
     push si ; @01CBE
-    cmp byte [0x1f93],0xff ; @01CBF
+    cmp byte [DatCacheEnabled-GameDataImage],0xff ; @01CBF
     jnz loc_1CCD ; @01CC4
-    cmp byte [0x1f94],0xff ; @01CC6
+    cmp byte [DatCacheSelected-GameDataImage],0xff ; @01CC6
     jz loc_1CD2 ; @01CCB
 loc_1CCD:
     mov ax,0x3d00 ; @01CCD
@@ -2777,7 +2777,7 @@ sub_1CD9:
     push di ; @01CDC
     push cx ; @01CDD
     push si ; @01CDE
-    cmp byte [0x1f93],0xff ; @01CDF
+    cmp byte [DatCacheEnabled-GameDataImage],0xff ; @01CDF
     jnz loc_1CEE ; @01CE4
     call sub_1E1C ; @01CE6
     call sub_1E64 ; @01CE9
@@ -2825,7 +2825,7 @@ loc_1D22:
     pop dx ; @01D27
     mov dx,0x2194 ; @01D28
     jmp loc_1949 ; @01D2B
-sub_1D2E:
+ReadDatBytes:
     push di ; @01D2E
     push si ; @01D2F
     push ds ; @01D30
@@ -2835,16 +2835,16 @@ sub_1D2E:
     cld ; @01D34
     mov ax,0x9a9 ; @01D35
     mov ds,ax ; @01D38
-    cmp byte [0x1f93],0xff ; @01D3A
+    cmp byte [DatCacheEnabled-GameDataImage],0xff ; @01D3A
     jz loc_1D44 ; @01D3F
     jmp loc_1E11 ; @01D41
 loc_1D44:
-    cmp byte [0x1f94],0xff ; @01D44
+    cmp byte [DatCacheSelected-GameDataImage],0xff ; @01D44
     jnz loc_1D4E ; @01D49
     jmp loc_1DF1 ; @01D4B
 loc_1D4E:
     mov ah,0x23 ; @01D4E
-    lea dx,[0x1f95] ; @01D50
+    lea dx,[DatCacheFcb-GameDataImage] ; @01D50
     mov word [0x1fa3],0x1 ; @01D54
     int 0x21 ; @01D5A
     mov dx,[0x1fb6] ; @01D5C
@@ -2867,22 +2867,22 @@ loc_1D4E:
 loc_1D7D:
     inc dx ; @01D7D
 loc_1D7E:
-    cmp dx,[0x1f90] ; @01D7E
+    cmp dx,[DatCacheRemainingParagraphs-GameDataImage] ; @01D7E
     jna loc_1D87 ; @01D82
     jmp loc_1E11 ; @01D84
 loc_1D87:
-    inc byte [0x1f92] ; @01D87
-    sub [0x1f90],dx ; @01D8B
+    inc byte [DatCacheRecordCount-GameDataImage] ; @01D87
+    sub [DatCacheRemainingParagraphs-GameDataImage],dx ; @01D8B
     push ds ; @01D8F
     mov cx,0xffff ; @01D90
-    mov dx,[0x1f8a] ; @01D93
-    mov ax,[0x1f8c] ; @01D97
-    mov [0x1f82],dx ; @01D9A
-    mov [0x1f84],ax ; @01D9E
-    mov byte [0x1f94],0xff ; @01DA1
+    mov dx,[DatCacheFreeOffset-GameDataImage] ; @01D93
+    mov ax,[DatCacheFreeSegment-GameDataImage] ; @01D97
+    mov [DatCacheRecordOffset-GameDataImage],dx ; @01D9A
+    mov [DatCacheRecordSegment-GameDataImage],ax ; @01D9E
+    mov byte [DatCacheSelected-GameDataImage],0xff ; @01DA1
     add dx,byte +0xd ; @01DA6
-    mov [0x1f86],dx ; @01DA9
-    mov [0x1f88],ax ; @01DAD
+    mov [DatCacheReadOffset-GameDataImage],dx ; @01DA9
+    mov [DatCacheReadSegment-GameDataImage],ax ; @01DAD
     push ax ; @01DB0
     push dx ; @01DB1
     mov ds,ax ; @01DB2
@@ -2901,10 +2901,10 @@ loc_1D87:
     db 0x03,0xc2 ; ENCODED: add ax,dx (NASM chooses a different encoding) ; @01DC8
     pop dx ; @01DCA
     and dx,byte +0xf ; @01DCB
-    mov [0x1f8a],dx ; @01DCE
-    mov [0x1f8c],ax ; @01DD2
-    mov di,[0x1f82] ; @01DD5
-    mov es,[0x1f84] ; @01DD9
+    mov [DatCacheFreeOffset-GameDataImage],dx ; @01DCE
+    mov [DatCacheFreeSegment-GameDataImage],ax ; @01DD2
+    mov di,[DatCacheRecordOffset-GameDataImage] ; @01DD5
+    mov es,[DatCacheRecordSegment-GameDataImage] ; @01DD9
     mov dx,[0x1fb8] ; @01DDD
     mov [es:di+0xb],cx ; @01DE1
     lea si,[0x1f96] ; @01DE5
@@ -2919,13 +2919,13 @@ loc_1DF1:
     push es ; @01DF5
     push di ; @01DF6
     push ds ; @01DF7
-    mov si,[0x1f86] ; @01DF8
-    mov ds,[0x1f88] ; @01DFC
+    mov si,[DatCacheReadOffset-GameDataImage] ; @01DF8
+    mov ds,[DatCacheReadSegment-GameDataImage] ; @01DFC
     rep movsb ; @01E00
     mov ax,ds ; @01E02
     pop ds ; @01E04
-    mov [0x1f88],ax ; @01E05
-    mov [0x1f86],si ; @01E08
+    mov [DatCacheReadSegment-GameDataImage],ax ; @01E05
+    mov [DatCacheReadOffset-GameDataImage],si ; @01E08
     pop dx ; @01E0C
     pop ds ; @01E0D
     pop si ; @01E0E
@@ -2992,7 +2992,7 @@ loc_1E58:
     jmp short loc_1E38 ; @01E62
 sub_1E64:
     push ds ; @01E64
-    mov cl,[0x1f92] ; @01E65
+    mov cl,[DatCacheRecordCount-GameDataImage] ; @01E65
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @01E69
     jz loc_1EA7 ; @01E6B
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @01E6D
@@ -3028,7 +3028,7 @@ loc_1E7B:
     loop loc_1E7B ; @01EA5
 loc_1EA7:
     pop ds ; @01EA7
-    mov byte [0x1f94],0x0 ; @01EA8
+    mov byte [DatCacheSelected-GameDataImage],0x0 ; @01EA8
     stc ; @01EAD
     ret ; @01EAE
 loc_1EAF:
@@ -3037,18 +3037,18 @@ loc_1EAF:
     pop cx ; @01EB2
     mov cx,0x9a9 ; @01EB3
     mov ds,cx ; @01EB6
-    mov [0x1f82],si ; @01EB8
-    mov [0x1f84],ax ; @01EBC
+    mov [DatCacheRecordOffset-GameDataImage],si ; @01EB8
+    mov [DatCacheRecordSegment-GameDataImage],ax ; @01EBC
     add si,byte +0xd ; @01EBF
-    mov [0x1f86],si ; @01EC2
-    mov [0x1f88],ax ; @01EC6
-    mov byte [0x1f94],0xff ; @01EC9
+    mov [DatCacheReadOffset-GameDataImage],si ; @01EC2
+    mov [DatCacheReadSegment-GameDataImage],ax ; @01EC6
+    mov byte [DatCacheSelected-GameDataImage],0xff ; @01EC9
     pop ds ; @01ECE
     clc ; @01ECF
     ret ; @01ED0
 sub_1ED1:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01ED1
-    mov [0x1f93],al ; @01ED3
+    mov [DatCacheEnabled-GameDataImage],al ; @01ED3
     ret ; @01ED6
 ; UNKNOWN: unresolved bytes
     db 0xb4,0x48,0xbb,0xff,0xff,0xcd,0x21,0x81,0xfb,0x80,0x0c,0x72,0x2f,0x89,0x1e,0x8e ; @01ED7

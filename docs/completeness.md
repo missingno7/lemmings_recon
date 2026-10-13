@@ -110,3 +110,10 @@ flag results across loads, stack wrap and external clobbers. Nineteen installed-
 handler fixtures check 0F6F/0F70/18F8 and their declared service boundaries. These
 are caller/handler checks, not full timer, BIOS, C or game execution coverage.
 See interrupts.md for provider contracts and the menu wrapper's unsaved ES effect.
+
+The complete DAT read wrapper at 1D2E..1E1B now has 41
+bounded original-code cases, covering all 106 instructions and
+12 branch edges under declared DOS fixtures. Full memory/register/flag
+checks expose direct-read errors, short reads, cache creation and hits, saved-frame
+aliases, ignored cache-fill errors and pointer/count wrap. This is provider-contract
+evidence, not C translation or actual DOS execution coverage; see dat-io.md.

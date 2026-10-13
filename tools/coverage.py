@@ -68,6 +68,7 @@ def report():
     m['protection']=verified['protection']
     m['indirect']=verified['indirect']
     m['interrupts']=verified['interrupts']
+    m['dat_io']=verified['dat_io']
     state_insns=m['protection']['stream_metrics']['instructions']+m['protection']['int1_instruction_count']
     m['state_specific_decoded_instructions']=state_insns
     combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
@@ -187,6 +188,13 @@ flag results across loads, stack wrap and external clobbers. Nineteen installed-
 handler fixtures check 0F6F/0F70/18F8 and their declared service boundaries. These
 are caller/handler checks, not full timer, BIOS, C or game execution coverage.
 See interrupts.md for provider contracts and the menu wrapper's unsaved ES effect.
+
+The complete DAT read wrapper at 1D2E..1E1B now has {m['dat_io']['case_count']}
+bounded original-code cases, covering all {m['dat_io']['original_instruction_sites']} instructions and
+{m['dat_io']['branch_edges']} branch edges under declared DOS fixtures. Full memory/register/flag
+checks expose direct-read errors, short reads, cache creation and hits, saved-frame
+aliases, ignored cache-fill errors and pointer/count wrap. This is provider-contract
+evidence, not C translation or actual DOS execution coverage; see dat-io.md.
 '''
     return m,text
 

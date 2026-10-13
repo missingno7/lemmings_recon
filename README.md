@@ -33,6 +33,11 @@ The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs
 The sound suite compares registers, full memory, flags and port traces;
 see [PC-speaker C](docs/pcspeaker.md).
 
+The complete DAT read wrapper now has bounded contracts for direct DOS reads,
+cache creation and cache hits: 41 cases cover 106 original instruction sites,
+including ignored cache-fill errors and saved-frame aliases. Its C translation
+remains open; see [DAT read contracts](docs/dat-io.md).
+
 ## Reproduce
 
 Supply the original files privately in assets; metadata/inputs.json pins their hashes.

@@ -8581,9 +8581,11 @@
     "address": 7470,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1D2E",
-    "aliases": [],
+    "size": 238,
+    "symbol_name": "ReadDatBytes",
+    "aliases": [
+      "sub_1D2E"
+    ],
     "callers": [
       7097,
       7144
@@ -8839,9 +8841,11 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1D2E..1E1B preserves near-call save frame and routes direct DOS read, cached copy, or FCB-sized cache creation",
+      "tests/dat_io.py: 41 bounded original-wrapper cases, 106 instructions, 12 branch edges; constructed DOS providers and full memory/register/defined-flag comparison; C remains untranslated"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 237
@@ -50056,6 +50060,182 @@
     "confidence": "PROVEN",
     "evidence": [
       "0FC1..0FF1 stores nine drawing entry offsets;32 recovered object-record stores read these slots into record+14"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8066,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheRecordOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8068,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheRecordSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8070,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheReadOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8072,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheReadSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8074,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheFreeOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8076,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheFreeSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8080,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheRemainingParagraphs",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8082,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "DatCacheRecordCount",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8083,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "DatCacheEnabled",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8084,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "DatCacheSelected",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8085,
+    "segment": 2473,
+    "kind": "data",
+    "size": 37,
+    "symbol_name": "DatCacheFcb",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original ReadDatBytes/1E64 use; see docs/dat-io.md"
     ],
     "verification_status": "UNRESOLVED"
   },
