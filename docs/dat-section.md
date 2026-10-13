@@ -76,6 +76,7 @@ live; broader code/return-word self modification and arbitrary DOS register
 clobbers are not proven by these cases. The strict static extractor's bounds,
 checksum exceptions and host file policies are not part of the native decoder.
 
-Next port file/cache lookup and ownership at 1CB9/1CD9/1E1C/1E64, investigate the
+Filename preparation, cache selection and startup disabling are now native; see
+dat-cache.md. Next port file opening/attribute checks and ownership at 1CB9/1CD9, investigate the
 UNKNOWN allocation code at 1ED7, and connect level/resource callers and the 04D0
 error path. The translated decoder does not by itself make the native game complete.

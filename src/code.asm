@@ -85,7 +85,7 @@ ProgramEntry:
     out 0x40,al ; @000D3
     call LoadMainResourceSections ; @000D5
 sub_00D8:
-    call sub_1ED1 ; @000D8
+    call DisableDatCache ; @000D8
     mov byte [0x1f75],0xff ; @000DB
     call sub_062B ; @000E0
     call sub_1562 ; @000E3
@@ -2795,8 +2795,8 @@ sub_1CD9:
     push si ; @01CDE
     cmp byte [DatCacheEnabled-GameDataImage],0xff ; @01CDF
     jnz loc_1CEE ; @01CE4
-    call sub_1E1C ; @01CE6
-    call sub_1E64 ; @01CE9
+    call PrepareDatCacheName ; @01CE6
+    call SelectCachedDatFile ; @01CE9
     jnc loc_1CFE ; @01CEC
 loc_1CEE:
     mov ax,0x4300 ; @01CEE
@@ -2957,7 +2957,7 @@ loc_1E11:
     pop si ; @01E19
     pop di ; @01E1A
     ret ; @01E1B
-sub_1E1C:
+PrepareDatCacheName:
     push dx ; @01E1C
     push es ; @01E1D
     push ax ; @01E1E
@@ -3006,7 +3006,7 @@ loc_1E58:
     mov al,0x20 ; @01E5E
     rep stosb ; @01E60
     jmp short loc_1E38 ; @01E62
-sub_1E64:
+SelectCachedDatFile:
     push ds ; @01E64
     mov cl,[DatCacheRecordCount-GameDataImage] ; @01E65
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @01E69
@@ -3014,7 +3014,7 @@ sub_1E64:
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @01E6D
     push ds ; @01E6F
     pop es ; @01E70
-    mov ds,[0x1f80] ; @01E71
+    mov ds,[DatCacheBaseSegment-GameDataImage] ; @01E71
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01E75
     lea di,[0x1f96] ; @01E77
 loc_1E7B:
@@ -3062,7 +3062,7 @@ loc_1EAF:
     pop ds ; @01ECE
     clc ; @01ECF
     ret ; @01ED0
-sub_1ED1:
+DisableDatCache:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01ED1
     mov [DatCacheEnabled-GameDataImage],al ; @01ED3
     ret ; @01ED6

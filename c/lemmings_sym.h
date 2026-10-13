@@ -111,9 +111,9 @@
 #define CS_sub_1CB9 0x1CB9u
 #define CS_sub_1CD9 0x1CD9u
 #define CS_ReadDatBytes 0x1D2Eu
-#define CS_sub_1E1C 0x1E1Cu
-#define CS_sub_1E64 0x1E64u
-#define CS_sub_1ED1 0x1ED1u
+#define CS_PrepareDatCacheName 0x1E1Cu
+#define CS_SelectCachedDatFile 0x1E64u
+#define CS_DisableDatCache 0x1ED1u
 #define CS_sub_1F19 0x1F19u
 #define CS_sub_283B 0x283Bu
 #define CS_sub_2E04 0x2E04u
@@ -302,6 +302,7 @@
 #define CS_sub_9A15 0x9A15u
 #define SEG09A9_GameDataImage 0x0000u
 #define SEG09A9_DrawingCallbackSlots 0x002Eu
+#define SEG09A9_DatCacheBaseSegment 0x1F80u
 #define SEG09A9_DatCacheRecordOffset 0x1F82u
 #define SEG09A9_DatCacheRecordSegment 0x1F84u
 #define SEG09A9_DatCacheReadOffset 0x1F86u

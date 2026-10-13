@@ -58,8 +58,15 @@ def report():
             raise ValueError('Stale DAT section differential report for '+path+'; run tools/difftest.py')
     if section['image_sha256']!=sha(image):raise ValueError('DAT section differential oracle changed')
     executed.update(section['executed_instruction_addresses'])
-    m['differential_cases']=d['case_count']+dat['case_count']+io['case_count']+section['case_count']
-    m['mutations_detected']=d['mutation_count']+dat['mutation_count']+io['mutation_count']+section['mutation_count']
+    cache=read_json(BUILD/'dat-cache-differential.json')
+    for path,digest in cache['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale DAT cache differential report for '+path+'; run tools/difftest.py')
+    if cache['image_sha256']!=sha(image):raise ValueError('DAT cache differential oracle changed')
+    executed.update(cache['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache)
+    m['differential_cases']=sum(r['case_count'] for r in reports)
+    m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
     m['unresolved_main_code_candidate_bytes']=sum(r['end']-r['start'] for r in analysis['regions'] if r['classification']=='unresolved' and r['start']<0x9a90)
     m['unresolved_main_code_candidate_runs']=sum(r['classification']=='unresolved' and r['start']<0x9a90 for r in analysis['regions'])
@@ -129,9 +136,9 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-DAT decoder/read/leaf and PC-speaker helper clusters. The two checksum and six DAT main
+DAT decoder/read/cache/leaf and PC-speaker helper clusters. The two checksum and nine DAT main
 routines are TESTED within docs/checksum.md, docs/dat.md, docs/dat-io.md and
-docs/dat-section.md's domains; remaining
+docs/dat-section.md and docs/dat-cache.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -144,7 +151,7 @@ The DAT leaf suite covers 33/33 instructions and all six local branch edges in
 470 cases. It compares full memory, registers and defined flags, including zero
 bit counts (256 iterations), zero incremented match counts (65,536 iterations),
 live overlapping copies and overwritten saved registers. Three compiled mutants
-are detected. Cache lookup and allocation remain UNTRANSLATED;
+are detected. File open/check wrappers and cache allocation remain UNTRANSLATED;
 the strict static extractor's validation rules are not substituted for original
 runtime behavior. See dat.md.
 
@@ -230,6 +237,14 @@ not a translated cleanup routine. Four skipped UNKNOWN bytes are excluded from
 translated-byte accounting. Direct helper calls retain original return-word residue;
 overwriting those active return words is outside the current verification domain.
 See dat-section.md for unsigned termination, ignored high size words and aliases.
+
+DAT filename preparation, cache selection and startup cache disabling now have
+C11 cores: {cache['case_count']} cases cover all 96 instruction sites and 18 branch edges,
+with three compiled mutations detected. Full memory/register/defined-flag checks
+preserve wrapped padding counts, DF, the last-byte mismatch hit, record-pointer
+wrap and saved-register aliases. No host filename normalization or corrected
+string comparison is substituted. File open/attribute wrappers and the UNKNOWN
+cache allocation code remain open; see dat-cache.md.
 '''
     return m,text
 

@@ -16,3 +16,5 @@ if __name__ == "__main__":
                    cwd=ROOT, check=True)
     subprocess.run([sys.executable, str(ROOT / "tests" / "dat_section.py")],
                    cwd=ROOT, check=True, timeout=120)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "dat_cache.py")],
+                   cwd=ROOT, check=True, timeout=120)

@@ -9150,9 +9150,11 @@
     "address": 7708,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1E1C",
-    "aliases": [],
+    "size": 72,
+    "symbol_name": "PrepareDatCacheName",
+    "aliases": [
+      "sub_1E1C"
+    ],
     "callers": [
       7398
     ],
@@ -9231,20 +9233,24 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 72
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 72,
+    "c_implementation": "c/dat_cache.c",
+    "verification_evidence": "tests/dat_cache.py: 305 bounded original-vs-C cases; 96 instruction sites, 18 branch edges, three compiled mutants; DF, padding wrap, last-byte mismatch, live saves and pointer wrap; domain in docs/dat-cache.md"
   },
   {
     "address": 7780,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1E64",
-    "aliases": [],
+    "size": 109,
+    "symbol_name": "SelectCachedDatFile",
+    "aliases": [
+      "sub_1E64"
+    ],
     "callers": [
       7401
     ],
@@ -9347,20 +9353,24 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 109
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 109,
+    "c_implementation": "c/dat_cache.c",
+    "verification_evidence": "tests/dat_cache.py: 305 bounded original-vs-C cases; 96 instruction sites, 18 branch edges, three compiled mutants; DF, padding wrap, last-byte mismatch, live saves and pointer wrap; domain in docs/dat-cache.md"
   },
   {
     "address": 7889,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1ED1",
-    "aliases": [],
+    "size": 6,
+    "symbol_name": "DisableDatCache",
+    "aliases": [
+      "sub_1ED1"
+    ],
     "callers": [
       216
     ],
@@ -9375,12 +9385,14 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 6
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 6,
+    "c_implementation": "c/dat_cache.c",
+    "verification_evidence": "tests/dat_cache.py: 305 bounded original-vs-C cases; 96 instruction sites, 18 branch edges, three compiled mutants; DF, padding wrap, last-byte mismatch, live saves and pointer wrap; domain in docs/dat-cache.md"
   },
   {
     "address": 7961,
@@ -50356,6 +50368,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "0FC1..0FF1 stores nine drawing entry offsets;32 recovered object-record stores read these slots into record+14"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8064,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheBaseSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "SelectCachedDatFile starts scanning records at this segment, offset zero"
     ],
     "verification_status": "UNRESOLVED"
   },

@@ -55,8 +55,9 @@ offsets wrap. They read and write live memory byte by byte, including overlap.
 The read pointer is updated through the data segment popped from live stack memory.
 
 The cache-enabled/selected flags, record start, read cursor, free cursor, remaining
-paragraphs, record count and FCB now have ledger-owned names. Other cache routines
-at 1E1C/1E64 and the UNKNOWN allocation code starting 1ED7 still need contracts.
+paragraphs, record count and FCB now have ledger-owned names. Filename preparation
+and cache selection at 1E1C/1E64 now have tested cores; see dat-cache.md. The UNKNOWN
+allocation code starting 1ED7 still needs contracts.
 Naming these fields does not extend the existing byte classification or establish
 complete write ownership.
 
@@ -78,7 +79,7 @@ The mapped-memory domain uses twenty-bit physical addresses and physically
 contiguous word accesses. Constructed read-service writes use sixteen-bit cursor
 increments; these fixtures do not prove actual DOS behavior across a segment end.
 Executing code and the near return word remain intact. TF is clear and interrupts
-are quiescent. Real DOS/FCB handling, arbitrary provider clobbers, cache lookup and
+are quiescent. Real DOS/FCB handling, arbitrary provider clobbers, cache ownership and
 allocation are still separate obligations. This suite adds provider evidence,
 not C translation coverage or game execution coverage.
 
@@ -101,6 +102,6 @@ temporaries are each detected. The C routine is TESTED only in this stated domai
 the contract-only suite remains separately accounted.
 
 DecodeDatSection now calls these services and cores directly; see dat-section.md.
-Full DOS/FCB platform implementation, cache lookup/allocation, the fatal cleanup
+Full DOS/FCB platform implementation, cache allocation/ownership, the fatal cleanup
 continuation and wider incoming aliases remain open. The strict static extractor's bounds and checksum exceptions
 must not replace the original wrapper's unchecked behavior.
