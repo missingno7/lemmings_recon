@@ -10,6 +10,10 @@ times -(($-$$) != 0x378a) db 0 ; module end assertion
 %include "level_objects.asm"
 times -(($-$$) != 0x3944) db 0 ; module end assertion
 %include "game_code_late.asm"
+times -(($-$$) != 0x796f) db 0 ; module end assertion
+%include "minimap.asm"
+times -(($-$$) != 0x7a5a) db 0 ; module end assertion
+%include "game_code_late_tail.asm"
 times -(($-$$) != 0x8238) db 0 ; module end assertion
 %include "special_graphics.asm"
 times -(($-$$) != 0x8343) db 0 ; module end assertion

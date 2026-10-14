@@ -18,7 +18,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 01916..01ED6 | resources.asm | Raw files, selection, special setup and DAT/cache cluster |
 | 01ED7..03789 | game_code.asm | Mixed ownership remains provisional |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
-| 03944..08237 | game_code_late.asm | Mixed ownership remains provisional |
+| 03944..0796E | game_code_late.asm | Mixed ownership remains provisional |
+| 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
+| 07A5A..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
 | 08343..083BE | checksum.asm | Tested checksums, state and code/data overlap |
 | 083BF..09A8F | code_tail.asm | Overlay storage, drawing code and unresolved spans |
@@ -118,3 +120,9 @@ The 4DF8 VGA clear and 8808 layout setter now feed native 368E/36AD callers.
 They operate on live SS mirrors, device planes, DS layout fields and original
 near/far CALL frames. See level-drawing.md for changed-return exits and the
 explicit Unicorn RETF observation limits before connecting broader drawing code.
+
+The closed 796F..7A59 minimap cluster now has its own flat ASM module and
+direct native column/row/sample cores. Its CS scratch window, live SS saves,
+signed column update, DF-sensitive clear and VGA compare/care contract are
+documented in minimap.md. The surrounding modules retain their provisional
+ownership and UNKNOWN classifications.

@@ -46,3 +46,5 @@ if __name__ == "__main__":
                    cwd=ROOT, check=True, timeout=120)
     for suite in ('vga_clear','drawing_layout','level_drawing'):
         subprocess.run([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)
+    for suite in ('minimap_sample','minimap_row','minimap_column'):
+        subprocess.run([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)

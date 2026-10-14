@@ -302,9 +302,11 @@
 #define CS_sub_780D 0x780Du
 #define CS_sub_789E 0x789Eu
 #define CS_sub_7900 0x7900u
-#define CS_sub_796F 0x796Fu
-#define CS_sub_7A25 0x7A25u
-#define CS_sub_7A39 0x7A39u
+#define CS_UpdateMinimapColumn 0x796Fu
+#define CS_MinimapColumnAfterRow 0x79FBu
+#define CS_AccumulateMinimapRow 0x7A25u
+#define CS_MinimapRowAfterSample 0x7A2Fu
+#define CS_AccumulateMinimapSample 0x7A39u
 #define CS_sub_7A5A 0x7A5Au
 #define CS_sub_7BB8 0x7BB8u
 #define CS_sub_7C67 0x7C67u
@@ -327,6 +329,7 @@
 #define CS_ChecksumPhase 0x83B9u
 #define CS_ChecksumAccumulator 0x83BAu
 #define CS_ChecksumCursor 0x83BBu
+#define CS_MinimapColumnBits 0x83C1u
 #define CS_SetDrawingLayout 0x8808u
 #define CS_sub_8822 0x8822u
 #define CS_sub_988B 0x988Bu
@@ -334,6 +337,7 @@
 #define CS_sub_9A15 0x9A15u
 #define SEG09A9_GameDataImage 0x0000u
 #define SEG09A9_DrawingCallbackSlots 0x002Eu
+#define SEG09A9_MinimapSourceColumnByteOffset 0x0056u
 #define SEG09A9_TypeOneObjectCoordinates 0x0E98u
 #define SEG09A9_LoadedLevelRecord 0x0FCBu
 #define SEG09A9_LevelGraphicsSetByte 0x0FE6u
@@ -393,6 +397,8 @@
 #define SEG143E_RuntimeStackFrame 0x0000u
 #define SEG143E_VgaGraphicsModeMirror 0x0000u
 #define SEG143E_VgaDataRotateMirror 0x0002u
+#define SEG143E_VgaColorCompareMirror 0x0004u
+#define SEG143E_VgaColorCareMirror 0x0006u
 #define SEG143E_VgaMapMaskMirror 0x0008u
 #define SEG143E_VgaSetResetMirror 0x000Au
 #define SEG143E_VgaEnableSetResetMirror 0x000Cu

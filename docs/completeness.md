@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 33 |
-| Translated C code bytes | 2412 |
-| Differential cases | 2867 |
-| Mutation checks detected | 63 |
-| Original instruction coverage | 1109 / 15,392 decoded (7.205%) |
+| Translated C routines | 36 |
+| Translated C code bytes | 2647 |
+| Differential cases | 3045 |
+| Mutation checks detected | 72 |
+| Original instruction coverage | 1205 / 15,392 decoded (7.829%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -39,12 +39,12 @@ resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper c
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
-and connected level-drawing callers are TESTED within docs/checksum.md,
+and connected level-drawing/minimap callers are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
-docs/drawing-layout.md and docs/level-drawing.md's domains; remaining
+docs/drawing-layout.md, docs/level-drawing.md and docs/minimap.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -70,10 +70,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1169 / 17,291
-(6.761%) of this still-incomplete decoded inventory. There are
-36 tested C routines occupying 2577 original code bytes across images,
-with 3202 differential cases and 66 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1265 / 17,291
+(7.316%) of this still-incomplete decoded inventory. There are
+39 tested C routines occupying 2812 original code bytes across images,
+with 3380 differential cases and 75 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -280,3 +280,18 @@ The connected suite independently records and isolates Unicorn's RETF read-hook
 artifact without patching return targets. CPU-family stack-limit faults, IRQ
 delivery, minimap, terrain and the broader level consumers remain open. See
 vga-clear.md, drawing-layout.md and level-drawing.md.
+
+The closed minimap sample/row/column at 7A39/7A25/796F now compose native cores
+in 67/49/62 cases, covering all 96 sites and fourteen
+integrated edges. Two complete thirteen-call cycles compare original and native
+on the same evolving RAM/device state with both DF values. Full RAM/register/
+defined-flag, ordered port/MMIO and independent whole-plane checks preserve the
+population>8 threshold, separate ES byte wrap, live SS save/RET/counter aliases,
+signed column comparison, DF-sensitive CS clear, twenty accumulated/nineteen
+displayed rows and final latch reads. Nine compiled mutants are detected. The
+65,536 native source-population vectors remain separate from original differential
+and instruction coverage. This adds 235 unique C bytes; the dedicated flat
+minimap.asm module keeps byte order and UNKNOWN classifications unchanged.
+IRQ/device timing, executing-code corruption, CPU-family segment-limit faults,
+terrain/far drawing and broader level consumers remain open; see minimap.md and
+minimap-vga.md.

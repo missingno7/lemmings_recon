@@ -2418,7 +2418,7 @@ ObjectStateAfterCoordinates:
     mov cx,0xd ; @03779
 loc_377C:
     push cx ; @0377C
-    call sub_796F ; @0377D
+    call UpdateMinimapColumn ; @0377D
     pop cx ; @03780
     loop loc_377C ; @03781
     mov ax,[LevelGraphicsSegment-GameDataImage] ; @03783

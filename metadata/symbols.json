@@ -42947,9 +42947,11 @@
     "address": 31087,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_796F",
-    "aliases": [],
+    "size": 182,
+    "symbol_name": "UpdateMinimapColumn",
+    "aliases": [
+      "sub_796F"
+    ],
     "callers": [
       15048,
       14205
@@ -43105,18 +43107,45 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Fresh static dependency graph establishes closed minimap routine bounds before C translation; actual segment/stack/device contracts are maintained beside source",
+      "Bounded full RAM/register/defined-flag native comparison; live CS scratch and SS CALL/save/RET aliases; minimap mode1 VGA/latch/plane contract and independent footprints documented in docs/minimap.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 182
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 182,
+    "c_implementation": "c/minimap_column.c",
+    "c_code_ranges": [
+      [
+        31087,
+        31269
+      ]
+    ]
+  },
+  {
+    "address": 31227,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "MinimapColumnAfterRow",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live near return after CALL7A25 at79F8"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 31269,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7A25",
-    "aliases": [],
+    "size": 20,
+    "symbol_name": "AccumulateMinimapRow",
+    "aliases": [
+      "sub_7A25"
+    ],
     "callers": [
       31224
     ],
@@ -43126,18 +43155,45 @@
     "data_references": [],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Fresh static dependency graph establishes closed minimap routine bounds before C translation; actual segment/stack/device contracts are maintained beside source",
+      "Bounded full RAM/register/defined-flag native comparison; live CS scratch and SS CALL/save/RET aliases; minimap mode1 VGA/latch/plane contract and independent footprints documented in docs/minimap.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 20
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 20,
+    "c_implementation": "c/minimap_row.c",
+    "c_code_ranges": [
+      [
+        31269,
+        31289
+      ]
+    ]
+  },
+  {
+    "address": 31279,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "MinimapRowAfterSample",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live near return after CALL7A39 at7A2C"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 31289,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7A39",
-    "aliases": [],
+    "size": 33,
+    "symbol_name": "AccumulateMinimapSample",
+    "aliases": [
+      "sub_7A39"
+    ],
     "callers": [
       31276
     ],
@@ -43170,10 +43226,19 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Fresh static dependency graph establishes closed minimap routine bounds before C translation; actual segment/stack/device contracts are maintained beside source",
+      "Bounded full RAM/register/defined-flag native comparison; live CS scratch and SS CALL/save/RET aliases; minimap mode1 VGA/latch/plane contract and independent footprints documented in docs/minimap.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 33
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 33,
+    "c_implementation": "c/minimap_sample.c",
+    "c_code_ranges": [
+      [
+        31289,
+        31322
+      ]
+    ]
   },
   {
     "address": 31322,
@@ -46214,6 +46279,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "8343 sets 188F; 8363 loads and stores scan cursor"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 33729,
+    "segment": 0,
+    "kind": "data",
+    "size": 20,
+    "symbol_name": "MinimapColumnBits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "796F clears20 CS bytes, 7A39 ORs sampled row masks here, 796F copies19 rows to VGA"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51082,6 +51163,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 86,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MinimapSourceColumnByteOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "796F reads and updates DS:0056 with wrapped +16 and signed comparison against208"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 3736,
     "segment": 2473,
     "kind": "data",
@@ -52022,6 +52119,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original SS:0002 mirror of indexed VGA word OUT at 82B5; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaColorCompareMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "796F mirrors graphics controller color compare/care OUT words through live SS; no stored runtime initialization claimed"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaColorCareMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "796F mirrors graphics controller color compare/care OUT words through live SS; no stored runtime initialization claimed"
     ],
     "verification_status": "UNRESOLVED"
   },

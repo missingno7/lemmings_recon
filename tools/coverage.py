@@ -110,10 +110,14 @@ def report():
     clear=read_json(BUILD/'vga-clear-differential.json')
     layout=read_json(BUILD/'drawing-layout-differential.json')
     drawing=read_json(BUILD/'level-drawing-differential.json')
+    sample=read_json(BUILD/'minimap-sample-differential.json')
+    mmrow=read_json(BUILD/'minimap-row-differential.json')
+    mmcolumn=read_json(BUILD/'minimap-column-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
-                        ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing)):
+                        ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing),
+                        ('minimap sample',sample),('minimap row',mmrow),('minimap column',mmcolumn)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -125,8 +129,8 @@ def report():
     executed.update(cells['instruction_sites'])
     executed.update(steel['instruction_sites'])
     executed.update(state['executed_instruction_addresses'])
-    for extra in (clear,layout,drawing):executed.update(extra['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing)
+    for extra in (clear,layout,drawing,sample,mmrow,mmcolumn):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -203,12 +207,12 @@ resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper c
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
-and connected level-drawing callers are TESTED within docs/checksum.md,
+and connected level-drawing/minimap callers are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
-docs/drawing-layout.md and docs/level-drawing.md's domains; remaining
+docs/drawing-layout.md, docs/level-drawing.md and docs/minimap.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -444,6 +448,21 @@ The connected suite independently records and isolates Unicorn's RETF read-hook
 artifact without patching return targets. CPU-family stack-limit faults, IRQ
 delivery, minimap, terrain and the broader level consumers remain open. See
 vga-clear.md, drawing-layout.md and level-drawing.md.
+
+The closed minimap sample/row/column at 7A39/7A25/796F now compose native cores
+in {sample['case_count']}/{mmrow['case_count']}/{mmcolumn['case_count']} cases, covering all 96 sites and fourteen
+integrated edges. Two complete thirteen-call cycles compare original and native
+on the same evolving RAM/device state with both DF values. Full RAM/register/
+defined-flag, ordered port/MMIO and independent whole-plane checks preserve the
+population>8 threshold, separate ES byte wrap, live SS save/RET/counter aliases,
+signed column comparison, DF-sensitive CS clear, twenty accumulated/nineteen
+displayed rows and final latch reads. Nine compiled mutants are detected. The
+{sample['native_exhaustive_population_vectors']:,} native source-population vectors remain separate from original differential
+and instruction coverage. This adds 235 unique C bytes; the dedicated flat
+minimap.asm module keeps byte order and UNKNOWN classifications unchanged.
+IRQ/device timing, executing-code corruption, CPU-family segment-limit faults,
+terrain/far drawing and broader level consumers remain open; see minimap.md and
+minimap-vga.md.
 '''
     return m,text
 

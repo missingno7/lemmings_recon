@@ -8,8 +8,9 @@ record copy and 389F coordinate collector now pass 131 and 159 native cases.
 The 37C2/3839 SS cell writers now pass 123/386 cases, and their four-call setup
 span with 378A/389F passes 105 integrated cases. The 4DF8/8808 VGA-clear/layout
 leaves and 368E/36AD callers now pass
-33/151/27 bounded cases. Continue the terrain/drawing and minimap dependencies
-of 36B6/394F next.
+33/151/27 bounded cases. The minimap sample, connected row and column now pass
+67/49/62 cases, including two complete thirteen-column cycles. Continue the
+terrain/far drawing dependencies of 36B6/394F next.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -90,8 +91,14 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     The 4DF8 clear and 8808 layout leaves are native in 33/151 cases, and 368E/36AD
     connect them in 27 cases; see vga-clear.md, drawing-layout.md and level-drawing.md.
     Keep the isolated Unicorn RETF hook/SP artifacts explicit in future far callers.
-    Start with the 7A39 minimap leaf, then 7A25/796F. Terrain/far drawing at
-    7C67/8822 and its 9967/9A15 dependencies remain open.
+    The 7A39 sample and connected 7A25/796F minimap row/column are native in
+    67/49/62 cases, with all 96 integrated sites and fourteen edges; see minimap.md.
+    Start with the 9967/9A15 leaves feeding far drawing at 8822, then 7C67.
+    Preserve relocation/far-return, clipping, shift, segment and alias contracts.
+    Review 9967's saved CH byte at DS:A949 and live DS:66FA/66FC/66FE cursor
+    adjustments. The 9A15 SS writer uses DS:0026, a 40-byte row stride, packed
+    low-byte height rounding and unchecked zero-size loops; establish those
+    state/alias contracts before translating either leaf.
     Native VGA ownership and asynchronous IRQ behavior remain open.
     Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
