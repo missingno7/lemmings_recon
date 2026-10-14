@@ -14,8 +14,14 @@ terrain/far drawing dependencies of 36B6/394F next. The 9967/9A15 clipping
 and dirty-cell leaves now compose in the 882D preparation span with 59/2066/102
 cases. Destination/dispatch and four source-row spans now connect in 77/236/744
 cases. The 983B aligned opaque body now connects in 55/776 cases, including 290
-complete body runs. Continue aligned masked 93F6, then shifted/effect drawing
+complete body runs. The 93F6 default masked body now connects in 100 cases,
+including 90 masked and 8 general-API opaque draws. Continue aligned effects 953E/969C/9737/97A4, then shifted drawing
 bodies, preserving plane/shift/segment and live control contracts.
+The 9737 and 97A4 effects differ in row cursor updates: 9737 adds the source
+row advance to SI while its mask BX continues without that row adjustment;
+97A4 adds the row advance to BX while SI stays at the initial mask cursor.
+Preserve this asymmetry. The 969C path introduces byte OUT/IN operations and
+VGA read mode 1; establish an explicit port-read/provider contract first.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -105,17 +111,21 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     88AB RETF or a changed childRET. The 885E/939E destination/dispatch and four
     source prefixes at 88BF/9140/93A7/9810 now connect in 77/236/744 cases;
     see drawing-dispatch.md, drawing-source.md and drawing-plan.md. Continue
-    the remaining VGA bodies, starting with aligned masked default 93F6, then
-    shifted/effect variants. The 983B opaque body is native in 55 cases, and its
+    the remaining VGA bodies, starting with aligned masked effects 953E/969C/9737/97A4, then
+    shifted variants. The 983B opaque body is native in 55 cases, and its
     connection in 776 cases includes 290 complete draws; see aligned-opaque.md
-    and drawing-render.md. Its 298 C bytes exclude UNKNOWN 98F4/9932. Establish port/mirror,
-    source-plane, count/DF, live save, asynchronous IRQ and far-return contracts.
+    and drawing-render.md. Its 298 C bytes exclude UNKNOWN 98F4/9932. The 93F6
+    default masked body is native in 20 cases; its 100-case general renderer
+    connection includes 90 masked draws, 8 opaque draws and 2 live effect seams.
+    Its 326 C bytes exclude UNKNOWN 94C7/9507; see aligned-masked.md for mask-BX
+    increment, per-byte CLI/STI, VGA OR and live segment/stack contracts.
+    Continue source-plane/mask producer domains and asynchronous IRQ/device ownership.
     The clear/strip/minimap VGA fixture can verify device behavior independently.
     Preserve CLI/STI/latch ordering and source self modification. At 983B, DH
     becomes BP after swapping the DX bytes. The first pass enables all planes,
     then conditional passes select 02/04/08; the fourth ends without another BP
-    test. Establish that incoming plane-limit contract, including zero/>4, live
-    saves, row/byte zero counts and STI setting IF even when incoming IF is clear.
+    test. Bounded tests preserve zero/>4 plane limits, live saves, row/byte zero
+    counts and STI setting IF even when incoming IF is clear.
     Keep the 988B shared LOOP entry's separate incoming-state obligations explicit.
     Then continue 7C67.
     Keep DS:66F8/66FA/66FC/66FE and A949 live, including saved words and shifted

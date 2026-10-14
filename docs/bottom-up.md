@@ -150,3 +150,9 @@ latch reads and mirrored ports, IF/DF/count wrap and live DS/SS frames. Two
 UNKNOWN NOP bytes stay outside C accounting; the 988B shared-entry contract and
 remaining drawing variants stay open. The 8822 original prologue remains separate
 execution evidence. See aligned-opaque.md and drawing-render.md.
+
+The default aligned masked 93F6 body now has its own logical C API. Its BX mask
+cursor advances forward even with DF set, and its later passes use VGA logical OR.
+The general preparation/drawing API composes both default aligned bodies while
+retaining effect/shift seams and live SS control aliases. See aligned-masked.md
+and drawing-render.md for tested scopes, original far returns and bounded guards.

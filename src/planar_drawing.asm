@@ -1787,6 +1787,12 @@ loc_93ED:
     jz PlanarAlignedMaskedDefaultBody ; @093F1
     jmp PlanarAlignedMasked40Body ; @093F3
 loc_93F6:
+; Masked normal entry: DS:BX supplies first-pass bit masks; INC BX ignores DF.
+; SI/DI follow DF through separate LODSB/STOSB; CLI/STI surround each first-pass byte.
+; Later passes select 02/04/08 and OR source bytes with latched destination bits.
+; First-pass row advance adds live DS:6702 to BOTH SI and BX; later passes only SI.
+; BX is never plane-saved; MOV AX,rowAdvance makes that live word the final AX.
+; PUSH/POP DS, counters/cursors and far-return words stay live in SS.
 PlanarAlignedMaskedDefaultBody:
     push ds ; @093F6
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @093F7
@@ -1797,20 +1803,20 @@ PlanarAlignedMaskedDefaultBody:
     db 0x8b,0xea ; ENCODED: mov bp,dx (NASM chooses a different encoding) ; @09404
     mov dx,0x3c4 ; @09406
     mov ax,0xf02 ; @09409
-    mov [ss:0x8],ax ; @0940C
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @0940C
     out dx,ax ; @09410
     mov dx,0x3ce ; @09411
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @09414
-    mov [ss:0xa],ax ; @09416
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @09416
     out dx,ax ; @0941A
     mov ax,0xe01 ; @0941B
-    mov [ss:0xc],ax ; @0941E
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @0941E
     out dx,ax ; @09422
     mov ax,0x5 ; @09423
-    mov [ss:0x0],ax ; @09426
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @09426
     out dx,ax ; @0942A
     mov ax,0x3 ; @0942B
-    mov [ss:0x2],ax ; @0942E
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @0942E
     out dx,ax ; @09432
     push di ; @09433
     push si ; @09434
@@ -1822,7 +1828,7 @@ loc_9439:
     mov ah,[bx] ; @09439
     inc bx ; @0943B
     mov al,0x8 ; @0943C
-    mov [ss:0xe],ax ; @0943E
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0943E
     out dx,ax ; @09442
     cli ; @09443
     mov al,[es:di] ; @09444
@@ -1856,17 +1862,17 @@ loc_946E:
     add si,[DrawingSourcePlaneExtent-GameDataImage] ; @09474
     pop ds ; @09478
     mov ax,0x1 ; @09479
-    mov [ss:0xc],ax ; @0947C
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @0947C
     out dx,ax ; @09480
     mov ax,0x1003 ; @09481
-    mov [ss:0x2],ax ; @09484
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @09484
     out dx,ax ; @09488
     mov ax,0xff08 ; @09489
-    mov [ss:0xe],ax ; @0948C
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0948C
     out dx,ax ; @09490
     mov dl,0xc4 ; @09491
     mov ax,0x202 ; @09493
-    mov [ss:0x8],ax ; @09496
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @09496
     out dx,ax ; @0949A
     push di ; @0949B
     push si ; @0949C
@@ -1906,7 +1912,7 @@ loc_94C8:
     add si,[DrawingSourcePlaneExtent-GameDataImage] ; @094CE
     pop ds ; @094D2
     mov ax,0x402 ; @094D3
-    mov [ss:0x8],ax ; @094D6
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @094D6
     out dx,ax ; @094DA
     push di ; @094DB
     push si ; @094DC
@@ -1946,7 +1952,7 @@ loc_9508:
     add si,[DrawingSourcePlaneExtent-GameDataImage] ; @0950E
     pop ds ; @09512
     mov ax,0x802 ; @09513
-    mov [ss:0x8],ax ; @09516
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @09516
     out dx,ax ; @0951A
 loc_951B:
     push cx ; @0951B
@@ -1970,6 +1976,7 @@ loc_951F:
     jnz loc_951B ; @0953A
 loc_953C:
     pop ds ; @0953C
+PlanarAlignedMaskedFarReturn:
     retf ; @0953D
 loc_953E:
 PlanarAlignedMasked8000Body:

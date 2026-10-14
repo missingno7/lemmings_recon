@@ -348,6 +348,7 @@
 #define CS_SelectUnshiftedPlanarPath 0x939Eu
 #define CS_PrepareAlignedMaskedPlanarRows 0x93A7u
 #define CS_PlanarAlignedMaskedDefaultBody 0x93F6u
+#define CS_PlanarAlignedMaskedFarReturn 0x953Du
 #define CS_PlanarAlignedMasked8000Body 0x953Eu
 #define CS_PlanarAlignedMasked4000Body 0x969Cu
 #define CS_PlanarAlignedMasked20Body 0x9737u

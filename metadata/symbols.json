@@ -51005,7 +51005,7 @@
     "address": 37878,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 328,
     "symbol_name": "PlanarAlignedMaskedDefaultBody",
     "aliases": [],
     "callers": [],
@@ -51013,7 +51013,40 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated",
+      "Closed normal-entry static body93F6..953D; sole discovered outside edge93F1->93F6;328 physical bytes,326 decoded bytes/166 sites; UNKNOWN94C7/9507 preserved; first-pass maskBX+1 ignoresDF, laterpasses VGAOR and liveSS/DS rows",
+      "20 bounded original/native leaf cases cover165 core sites26 edges;4 actual original953D RETF probes produce166-site union;100 generic preparation connections cover535 sites98 edges with90 masked8 opaque draws and2 live savedBP effect seams; CPU/device/IRQ domains explicit"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/aligned_masked.c",
+    "c_code_ranges": [
+      [
+        37878,
+        38087
+      ],
+      [
+        38088,
+        38151
+      ],
+      [
+        38152,
+        38206
+      ]
+    ]
+  },
+  {
+    "address": 38205,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMaskedFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer RETF after live saved-DS POP953C; native logical body will leave IP:CS words live"
     ],
     "verification_status": "UNRESOLVED"
   },

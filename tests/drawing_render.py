@@ -1,6 +1,8 @@
 """Connected original 8822 entry and aligned opaque VGA renderer at 983B."""
 import ctypes
 import random
+import os
+import gc
 import sys
 from pathlib import Path
 
@@ -15,12 +17,16 @@ from unicorn import x86_const as x
 
 from common import ROOT, BUILD, read_json, write_json, sha
 from cbuild import build
+from bounded_process import run_bounded, temporary_build_directory
 from dat_io_c import Regs, MEM
 from minimap_vga import MinimapVga, fixture_vectors
 from special_blit import Bus, READ, WRITE, OUT
 from unpack import ASSET, unpack, relocated
 import dat_io as oracle
 import drawing_plan as plan
+
+LIBRARY_DIRECTORY = BUILD
+NATIVE_EVENT_LIMIT = 1000000
 
 
 IMAGE, ORACLE = unpack(ASSET.read_bytes())
@@ -142,7 +148,7 @@ def prepare(case):
 
 
 def library(mutation=0):
-    lib = ctypes.CDLL(str(build(BUILD / f'drawing-render-connection-m{mutation}.dll',
+    lib = ctypes.CDLL(str(build(LIBRARY_DIRECTORY / f'drawing-render-connection-m{mutation}.dll',
                                 mutation, 'drawing_render')))
     lib.lmn_draw_prepared_aligned_opaque_adapter.argtypes = [
         MEM, ctypes.POINTER(Regs), ctypes.c_uint16, ctypes.POINTER(Bus)]
@@ -284,18 +290,36 @@ def compare(lib, case):
 
     @READ
     def c_read(ctx, mem, p, event_flags):
-        value = c_vga.read(c_memory, p & 0xfffff, event_flags)
+        if len(c_events) >= NATIVE_EVENT_LIMIT:
+            os.write(2, b'drawing_render: native access budget exceeded\n')
+            os._exit(86)
+        try:
+            value = c_vga.read(c_memory, p & 0xfffff, event_flags)
+        except Exception as error:
+            os.write(2, (f'drawing_render: native read fixture failed: {error}\n').encode())
+            os._exit(87)
         c_events.append(('read', p & 0xfffff, value, event_flags))
         return value
 
     @WRITE
     def c_write(ctx, mem, p, value, event_flags):
-        c_vga.write(c_memory, p & 0xfffff, value, event_flags)
+        if len(c_events) >= NATIVE_EVENT_LIMIT:
+            os.write(2, b'drawing_render: native access budget exceeded\n')
+            os._exit(86)
+        try:
+            c_vga.write(c_memory, p & 0xfffff, value, event_flags)
+        except Exception as error:
+            os.write(2, (f'drawing_render: native write fixture failed: {error}\n').encode())
+            os._exit(87)
         c_events.append(('write', p & 0xfffff, value, event_flags))
 
     @OUT
     def c_output(ctx, port, value, event_flags):
-        c_vga.out(port, value, event_flags)
+        try:
+            c_vga.out(port, value, event_flags)
+        except Exception as error:
+            os.write(2, (f'drawing_render: native port fixture failed: {error}\n').encode())
+            os._exit(87)
 
     bus = Bus(None, c_read, c_write, c_output)
     lib.lmn_draw_prepared_aligned_opaque_adapter(
@@ -458,7 +482,7 @@ def compare(lib, case):
         raise AssertionError(f'{case["name"]}: far return without entering 983B')
     intact_image = relocated(IMAGE, ORACLE['relocations'], regs['cs'])
     for start, end in ((0x8822, 0x88aa), (0x88ac, 0x890e),
-                       (0x9140, 0x916b), (0x939e, 0x93f6),
+                       (0x9140, 0x916b), (0x939e, 0x953e),
                        (0x9810, 0x9967), (0x9967, 0x9a8f)):
         p = (regs['cs'] << 4) + start
         if actual[p:p + end - start] != intact_image[start:end]:
@@ -489,6 +513,7 @@ def main():
         prologue |= case_prologue
         boundaries[boundary[0]] = boundaries.get(boundary[0], 0) + 1
         body_cases += int(ran_body)
+        gc.collect()
 
     expected_sites = set(PREP_INS) | set(BODY_INS)
     expected_edges = (PREP_EDGES - {(0x88a6, 0x88ab)}) | BODY_EDGES
@@ -516,7 +541,8 @@ def main():
 
     paths = tuple('c/' + name for name in (
         'drawing_render.c', 'drawing_render.h', 'aligned_opaque.c',
-        'aligned_opaque.h', 'drawing_plan.c', 'drawing_plan.h',
+        'aligned_opaque.h', 'aligned_masked.c', 'aligned_masked.h',
+        'drawing_plan.c', 'drawing_plan.h',
         'drawing_inputs.c', 'drawing_inputs.h', 'drawing_clip.c',
         'drawing_clip.h', 'drawing_dirty.c', 'drawing_dirty.h',
         'drawing_dispatch.c', 'drawing_dispatch.h', 'drawing_source.c',
@@ -526,7 +552,7 @@ def main():
         'tests/minimap_vga.py', 'tests/level_drawing.py',
         'tests/dat_io.py', 'tests/dat_io_c.py', 'tools/cbuild.py',
         'tools/difftest.py', 'tools/coverage.py', 'tools/unpack.py',
-        'metadata/symbols.json')
+        'metadata/symbols.json', 'tools/bounded_process.py')
     write_json(report, dict(image='main', image_sha256=sha(IMAGE),
         case_count=len(baseline), body_case_count=body_cases,
         mutation_count=3, cases=baseline, mutations_detected=mutations,
@@ -547,4 +573,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 3 and sys.argv[1] == '--bounded-worker':
+        LIBRARY_DIRECTORY = Path(sys.argv[2])
+        main()
+    elif len(sys.argv) == 1:
+        (BUILD / 'drawing-render-differential.json').unlink(missing_ok=True)
+        with temporary_build_directory(prefix='drawing-render-', parent=BUILD) as directory:
+            run_bounded([sys.executable, str(Path(__file__).resolve()),
+                         '--bounded-worker', directory], cwd=ROOT, timeout=180)
+    else:
+        raise SystemExit('Unexpected drawing_render arguments')

@@ -61,3 +61,27 @@ the body, and leaving the outer far return unconsumed. The generated
 `build/drawing-render-differential.json` contains the case list, executed sites,
 branch edges, mutation results, RETF observation and hashes of the C/test/oracle
 dependencies.
+
+## Default aligned masked connection
+
+`lmn_draw_prepared_planar_core` and its adapter compose native preparation with
+either 983B opaque or 93F6 default masked drawing. The existing opaque-scoped API
+retains its explicit 93F6 seam. The new mask cursor is the preparation result
+second_source_cursor (BX); the core returns its live first-pass progress.
+
+`tests/drawing_masked_render.py` passes 100 constructed original/native cases:
+90 complete masked draws, 8 complete opaque draws through the general API, and
+2 source-row/saved-BP aliases that select the unported 969C effect body. The suite
+covers 535 integrated instruction sites and 98 edges, with 3 compiled mutants.
+It checks all RAM/registers/defined flags, ordered byte/port/VGA accesses and
+independent whole-plane expectations across DF, reverse-source preparation,
+plane limits 0..5/FF, clipping and dirty marking. Both original far-return opcodes
+are single-stepped with the documented read-hook observation. Prologue sites
+remain original-only evidence; connection coverage is unioned with other suites.
+
+Both connection verifiers run in disposable bounded workers with the Windows
+512 MiB process/768 MiB tree cap, 180-second deadline and a 1,000,000-byte-access
+trace limit. DLL directories are cleaned after termination; completed Unicorn
+callback cycles are collected between cases. Guard exhaustion fails verification.
+Selected shifted/effect bodies, asynchronous IRQ delivery and native VGA timing
+remain unresolved. No complete 8822 C entry or full game is claimed.

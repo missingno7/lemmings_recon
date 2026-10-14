@@ -1,18 +1,22 @@
 #include "drawing_render.h"
 #include "aligned_opaque.h"
+#include "aligned_masked.h"
 #include "lemmings_sym.h"
 #ifndef RENDER_MUTATION
 #define RENDER_MUTATION 0
 #endif
-LmnDrawingRenderResult lmn_draw_prepared_aligned_opaque_core(
-    uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus) {
+static LmnDrawingRenderResult draw_prepared(
+    uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus,
+    unsigned allow_masked) {
     LmnDrawingRenderResult result = {
         lmn_prepare_planar_drawing_plan_core(memory, &call->inputs, bus),
         call->inputs.data_segment, call->output_segment, 0};
     LmnDrawingSourceResult *state = &result.plan.state;
     LmnAlignedOpaqueCall body_call;
     LmnAlignedOpaqueResult drawn;
-    if (result.plan.changed_return || state->continuation != CS_PlanarAlignedOpaqueBody)
+    if (result.plan.changed_return ||
+        (state->continuation != CS_PlanarAlignedOpaqueBody &&
+         !(allow_masked && state->continuation == CS_PlanarAlignedMaskedDefaultBody)))
         return result;
 #if RENDER_MUTATION == 1
     return result;
@@ -20,6 +24,28 @@ LmnDrawingRenderResult lmn_draw_prepared_aligned_opaque_core(
 #if RENDER_MUTATION == 2
     state->flags = (uint16_t)(state->flags & ~0x400u);
 #endif
+    if (state->continuation == CS_PlanarAlignedMaskedDefaultBody) {
+        LmnAlignedMaskedCall masked_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->second_source_cursor, state->destination_cursor, state->flags};
+        LmnAlignedMaskedResult masked =
+            lmn_draw_aligned_masked_core(memory, &masked_call, bus);
+        state->work_value = masked.work_value;
+        state->packed_counts = masked.packed_counts;
+        state->width_state = masked.port;
+        state->source_cursor = masked.source_cursor;
+        state->second_source_cursor = masked.mask_cursor;
+        state->destination_cursor = masked.destination_cursor;
+        state->control = masked.plane_counter;
+        state->stack_offset = masked.stack_offset;
+        state->flags = masked.flags;
+        state->continuation = CS_PlanarAlignedMaskedFarReturn;
+        result.source_segment = masked.source_segment;
+        result.output_segment = masked.output_segment;
+        result.body_returned = 1;
+        return result;
+    }
     body_call = (LmnAlignedOpaqueCall){call->inputs.data_segment,
         call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
         state->packed_counts, state->width_state, state->source_cursor,
@@ -39,6 +65,14 @@ LmnDrawingRenderResult lmn_draw_prepared_aligned_opaque_core(
     result.body_returned = 1;
     return result;
 }
+LmnDrawingRenderResult lmn_draw_prepared_aligned_opaque_core(
+    uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus) {
+    return draw_prepared(memory, call, bus, 0);
+}
+LmnDrawingRenderResult lmn_draw_prepared_planar_core(
+    uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus) {
+    return draw_prepared(memory, call, bus, 1);
+}
 static uint16_t return_word(uint8_t *memory, uint16_t ss, uint16_t offset,
     uint16_t flags, const LmnRasterBus *bus) {
     uint32_t p = (((uint32_t)ss << 4) + offset) & 0xfffffu;
@@ -47,11 +81,8 @@ static uint16_t return_word(uint8_t *memory, uint16_t ss, uint16_t offset,
     uint8_t high = bus && bus->read_byte ? bus->read_byte(bus->context, memory, high_address, flags) : memory[high_address];
     return (uint16_t)(low | ((uint16_t)high << 8));
 }
-void lmn_draw_prepared_aligned_opaque_adapter(
-    uint8_t *memory, LmnRegs *regs, uint16_t game_data_segment, const LmnRasterBus *bus) {
-    LmnDrawingRenderCall call = {{regs->ds, regs->ss, regs->sp, regs->ax, regs->bx,
-        regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
-    LmnDrawingRenderResult result = lmn_draw_prepared_aligned_opaque_core(memory, &call, bus);
+static void apply_boundary_result(uint8_t *memory, LmnRegs *regs,
+    LmnDrawingRenderResult result, const LmnRasterBus *bus) {
     LmnDrawingSourceResult *state = &result.plan.state;
     regs->ax = state->work_value; regs->bx = state->second_source_cursor;
     regs->cx = state->packed_counts; regs->dx = state->width_state;
@@ -68,5 +99,21 @@ void lmn_draw_prepared_aligned_opaque_adapter(
     }
 #else
     (void)return_word;
+    (void)memory;
+    (void)bus;
 #endif
+}
+void lmn_draw_prepared_aligned_opaque_adapter(
+    uint8_t *memory, LmnRegs *regs, uint16_t game_data_segment, const LmnRasterBus *bus) {
+    LmnDrawingRenderCall call = {{regs->ds, regs->ss, regs->sp, regs->ax, regs->bx,
+        regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
+    apply_boundary_result(memory, regs,
+        lmn_draw_prepared_aligned_opaque_core(memory, &call, bus), bus);
+}
+void lmn_draw_prepared_planar_adapter(
+    uint8_t *memory, LmnRegs *regs, uint16_t game_data_segment, const LmnRasterBus *bus) {
+    LmnDrawingRenderCall call = {{regs->ds, regs->ss, regs->sp, regs->ax, regs->bx,
+        regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
+    apply_boundary_result(memory, regs,
+        lmn_draw_prepared_planar_core(memory, &call, bus), bus);
 }

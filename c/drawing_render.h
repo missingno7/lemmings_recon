@@ -15,4 +15,11 @@ LmnDrawingRenderResult lmn_draw_prepared_aligned_opaque_core(
     uint8_t *, const LmnDrawingRenderCall *, const LmnRasterBus *);
 void lmn_draw_prepared_aligned_opaque_adapter(
     uint8_t *, LmnRegs *, uint16_t game_data_segment, const LmnRasterBus *);
+
+/* Composes preparation with either aligned opaque or default masked drawing.
+   All other selected bodies and changed child returns retain their seams. */
+LmnDrawingRenderResult lmn_draw_prepared_planar_core(
+    uint8_t *, const LmnDrawingRenderCall *, const LmnRasterBus *);
+void lmn_draw_prepared_planar_adapter(
+    uint8_t *, LmnRegs *, uint16_t game_data_segment, const LmnRasterBus *);
 #endif
