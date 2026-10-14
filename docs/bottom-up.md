@@ -143,3 +143,10 @@ and dispatch at 885E/939E compose with four native source-row prefixes. Their
 cursors and control changed by dirty or source-row stores. Selected VGA bodies
 remain unported; the original 8822 prologue remains separately executed evidence,
 not C coverage. See drawing-plan.md before expanding a drawing body.
+
+The aligned opaque 983B..9966 body now has a native core and live far-return
+adapter. Its 55 body/776 connection cases check all four plane passes, ordered
+latch reads and mirrored ports, IF/DF/count wrap and live DS/SS frames. Two
+UNKNOWN NOP bytes stay outside C accounting; the 988B shared-entry contract and
+remaining drawing variants stay open. The 8822 original prologue remains separate
+execution evidence. See aligned-opaque.md and drawing-render.md.

@@ -51103,7 +51103,7 @@
     "address": 38971,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 300,
     "symbol_name": "PlanarAlignedOpaqueBody",
     "aliases": [],
     "callers": [],
@@ -51111,9 +51111,26 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated",
+      "983B..9966 four-plane opaque body; live DS/SS restore, read-latch/MOVSB/CLI/STI rows; excludes UNKNOWN98F4/9932 from normal-entry native scope",
+      "55 bounded original/native body cases,149 sites incl52 isolated original farRET probes,26 edges;776 connected cases cover436sites123edges and290 completebodyruns; CPU/device/IRQ domains remain explicit"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/aligned_opaque.c",
+    "c_code_ranges": [
+      [
+        38971,
+        39156
+      ],
+      [
+        39157,
+        39218
+      ],
+      [
+        39219,
+        39271
+      ]
+    ]
   },
   {
     "address": 39051,
@@ -51348,6 +51365,22 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 226
+  },
+  {
+    "address": 39270,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedOpaqueFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer far return after live saved-DS pop9965; native core boundary leaves return words live"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 39271,

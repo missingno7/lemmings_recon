@@ -2376,6 +2376,10 @@ PrepareAlignedOpaquePlanarRows:
 loc_9836:
     mov [DrawingSourceRowAdvance-GameDataImage],bp ; @09836
     pop bp ; @0983A
+; Four plane passes: first all-map with upper-plane set/reset, then02/04/08.
+; DH supplies plane-limit after byte swap; zero/>4 still reach fourth pass.
+; Each row reads ES latch before MOVSB; CLI/STI force IF, DF controls cursors.
+; Rows and saved DS/counters/cursors remain live in SS, including outer RETF.
 PlanarAlignedOpaqueBody:
     push ds ; @0983B
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @0983C
@@ -2543,6 +2547,7 @@ loc_994A:
     jnz loc_9946 ; @09963
 loc_9965:
     pop ds ; @09965
+PlanarAlignedOpaqueFarReturn:
     retf ; @09966
 ; AX x,BX y,DX width,CX packed height,BP clipping bits 4/8. CH saved live in DS.
 ; Signed compares and SF-only paths differ; zero-size checks occur only at 99FE.

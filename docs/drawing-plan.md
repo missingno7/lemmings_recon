@@ -11,8 +11,8 @@ The bounded oracle first executes the seven original `8822` prologue sites and
 feeds their exact RAM/register/flag state to the native composition. Those seven
 sites remain separate from C coverage. The outer far-return frame stays live;
 the composition stops before a selected drawing body, `88AB` far return, or a
-changed clipping/dirty child-return target. The renderer entry remains
-UNTRANSLATED until its drawing bodies and platform contracts are closed.
+changed clipping/dirty child-return target. The aligned opaque selection now continues in drawing_render.c; other drawing
+bodies remain explicit boundaries. The renderer entry remains UNTRANSLATED until its drawing bodies and platform contracts are closed.
 
 The geometry stores `left & 7` in live DS:A948, then rereads the pushed left
 word. It multiplies the row by live destination pitch, restores width through

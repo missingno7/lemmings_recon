@@ -52,3 +52,5 @@ if __name__ == "__main__":
         run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)
     for suite in ('drawing_dispatch','drawing_source','drawing_plan'):
         run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)
+    for suite in ('aligned_opaque','drawing_render'):
+        run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=180)

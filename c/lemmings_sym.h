@@ -355,6 +355,7 @@
 #define CS_PrepareAlignedOpaquePlanarRows 0x9810u
 #define CS_PlanarAlignedOpaqueBody 0x983Bu
 #define CS_sub_988B 0x988Bu
+#define CS_PlanarAlignedOpaqueFarReturn 0x9966u
 #define CS_ClipPlanarDrawingRectangle 0x9967u
 #define CS_MarkDrawingDirtyCells 0x9A15u
 #define SEG09A9_GameDataImage 0x0000u

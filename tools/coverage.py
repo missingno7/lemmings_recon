@@ -119,13 +119,16 @@ def report():
     dispatch=read_json(BUILD/'drawing-dispatch-differential.json')
     source=read_json(BUILD/'drawing-source-differential.json')
     plan=read_json(BUILD/'drawing-plan-differential.json')
+    opaque=read_json(BUILD/'aligned-opaque-differential.json')
+    render=read_json(BUILD/'drawing-render-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
                         ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing),
                         ('minimap sample',sample),('minimap row',mmrow),('minimap column',mmcolumn),
                         ('drawing clip',clip),('drawing dirty',dirty),('drawing inputs',inputs),
-                        ('drawing dispatch',dispatch),('drawing source',source),('drawing plan',plan)):
+                        ('drawing dispatch',dispatch),('drawing source',source),('drawing plan',plan),
+                        ('aligned opaque',opaque),('connected opaque draw',render)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -141,8 +144,8 @@ def report():
     executed.update(clip['executed_instruction_addresses'])
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
-    for extra in (dispatch,source,plan):executed.update(extra['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan)
+    for extra in (dispatch,source,plan,opaque,render):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -220,14 +223,16 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation/geometry/dispatch/source spans are TESTED within docs/checksum.md,
+planar preparation/geometry/dispatch/source spans and the aligned opaque body
+are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
 docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
 docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
-docs/drawing-dispatch.md, docs/drawing-source.md and docs/drawing-plan.md's domains; remaining
+docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
+docs/aligned-opaque.md and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -511,6 +516,18 @@ The planar family now has a flat physical module at 8822..9A8F with exact end
 assertions. Selected VGA bodies, far returns, IRQ/device semantics, self
 modification and broader level consumers remain open; DrawPlanarBitmap remains
 UNTRANSLATED. See drawing-dispatch.md, drawing-source.md and drawing-plan.md.
+
+The aligned opaque body at 983B now has a native core composed with drawing
+preparation. The body/connection suites pass {opaque['case_count']}/{render['case_count']} original/native cases,
+including four plane passes, count wrap, DF, live segment/stack aliases, latch
+reads, ordered port/MMIO/SS accesses and CLI/STI effects. The 149 normal-entry
+body sites add 298 unique C bytes; UNKNOWN 98F4/9932 remain excluded without
+dead-code claims, and the 988B shared entry retains separate incoming-state
+obligations. The connection adds no bytes and keeps original 8822 prologue sites
+outside C accounting. Six compiled mutants are detected. Selected other VGA
+bodies, asynchronous IRQ delivery, executing-code mutation, CPU-family faults
+and full 8822 entry translation remain open. See aligned-opaque.md and
+drawing-render.md for the exact tested domains and return-oracle observations.
 '''
     return m,text
 

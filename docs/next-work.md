@@ -13,8 +13,9 @@ leaves and 368E/36AD callers now pass
 terrain/far drawing dependencies of 36B6/394F next. The 9967/9A15 clipping
 and dirty-cell leaves now compose in the 882D preparation span with 59/2066/102
 cases. Destination/dispatch and four source-row spans now connect in 77/236/744
-cases. Continue the selected VGA drawing bodies, preserving plane/shift/segment
-state and live control aliases; see drawing-plan.md.
+cases. The 983B aligned opaque body now connects in 55/776 cases, including 290
+complete body runs. Continue aligned masked 93F6, then shifted/effect drawing
+bodies, preserving plane/shift/segment and live control contracts.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -104,8 +105,10 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     88AB RETF or a changed childRET. The 885E/939E destination/dispatch and four
     source prefixes at 88BF/9140/93A7/9810 now connect in 77/236/744 cases;
     see drawing-dispatch.md, drawing-source.md and drawing-plan.md. Continue
-    the selected VGA bodies, starting with aligned opaque 983B and aligned masked
-    default 93F6, then their shifted and effect variants. Establish port/mirror,
+    the remaining VGA bodies, starting with aligned masked default 93F6, then
+    shifted/effect variants. The 983B opaque body is native in 55 cases, and its
+    connection in 776 cases includes 290 complete draws; see aligned-opaque.md
+    and drawing-render.md. Its 298 C bytes exclude UNKNOWN 98F4/9932. Establish port/mirror,
     source-plane, count/DF, live save, asynchronous IRQ and far-return contracts.
     The clear/strip/minimap VGA fixture can verify device behavior independently.
     Preserve CLI/STI/latch ordering and source self modification. At 983B, DH

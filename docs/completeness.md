@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 45 |
-| Translated C code bytes | 3339 |
-| Differential cases | 6329 |
-| Mutation checks detected | 90 |
-| Original instruction coverage | 1492 / 15,392 decoded (9.693%) |
+| Translated C routines | 46 |
+| Translated C code bytes | 3637 |
+| Differential cases | 7160 |
+| Mutation checks detected | 96 |
+| Original instruction coverage | 1641 / 15,392 decoded (10.661%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -40,14 +40,16 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation/geometry/dispatch/source spans are TESTED within docs/checksum.md,
+planar preparation/geometry/dispatch/source spans and the aligned opaque body
+are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
 docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
 docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
-docs/drawing-dispatch.md, docs/drawing-source.md and docs/drawing-plan.md's domains; remaining
+docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
+docs/aligned-opaque.md and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -73,10 +75,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1552 / 17,291
-(8.976%) of this still-incomplete decoded inventory. There are
-48 tested C routines occupying 3504 original code bytes across images,
-with 6664 differential cases and 93 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1701 / 17,291
+(9.837%) of this still-incomplete decoded inventory. There are
+49 tested C routines occupying 3802 original code bytes across images,
+with 7495 differential cases and 99 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -331,3 +333,15 @@ The planar family now has a flat physical module at 8822..9A8F with exact end
 assertions. Selected VGA bodies, far returns, IRQ/device semantics, self
 modification and broader level consumers remain open; DrawPlanarBitmap remains
 UNTRANSLATED. See drawing-dispatch.md, drawing-source.md and drawing-plan.md.
+
+The aligned opaque body at 983B now has a native core composed with drawing
+preparation. The body/connection suites pass 55/776 original/native cases,
+including four plane passes, count wrap, DF, live segment/stack aliases, latch
+reads, ordered port/MMIO/SS accesses and CLI/STI effects. The 149 normal-entry
+body sites add 298 unique C bytes; UNKNOWN 98F4/9932 remain excluded without
+dead-code claims, and the 988B shared entry retains separate incoming-state
+obligations. The connection adds no bytes and keeps original 8822 prologue sites
+outside C accounting. Six compiled mutants are detected. Selected other VGA
+bodies, asynchronous IRQ delivery, executing-code mutation, CPU-family faults
+and full 8822 entry translation remain open. See aligned-opaque.md and
+drawing-render.md for the exact tested domains and return-oracle observations.

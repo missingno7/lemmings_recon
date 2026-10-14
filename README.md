@@ -27,14 +27,14 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Forty-eight original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+Forty-nine original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
 their connected setup span, VGA clear/layout, two drawing callers, three minimap
 routines, two clipping/dirty-cell leaves, their scoped drawing preparation span,
 destination geometry/shared dispatch and four source-row spans,
-and three PC-speaker helpers, totaling 3,504 original
+the aligned opaque drawing body and three PC-speaker helpers, totaling 3,802 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -103,6 +103,13 @@ now compose with those cores. Their 1,057 bounded cases include an independent
 ASM family is grouped without changing bytes; selected VGA drawing bodies remain
 open. See [connected drawing selection](docs/drawing-plan.md).
 
+The aligned opaque VGA body now connects through the native preparation chain.
+Its 55 body cases and 776 connected cases preserve all four plane passes,
+latch-before-copy order, DF/count wrap, CLI/STI and live stack/segment/return
+aliases. Remaining drawing variants stay open; see
+[aligned opaque drawing](docs/aligned-opaque.md) and
+[connected rendering](docs/drawing-render.md).
+
 ## Reproduce
 
 Supply the original files privately in assets; metadata/inputs.json pins their hashes.
@@ -131,6 +138,12 @@ On this machine the Windows Store python alias is unusable. A local .venv was cr
 using the available Codex Python 3.12 runtime and populated with pinned Capstone and
 Unicorn wheels. MSYS NASM requires execution outside the restricted sandbox because
 its shared-object initialization fails inside it. GCC runs normally.
+
+Native differential suites run in child processes with explicit deadlines and,
+on Windows, a 512 MiB process / 768 MiB process-tree commit ceiling. The clipping
+suite also bounds each callback trace and removes temporary DLLs after failure.
+Harness regressions verify runaway-loop termination, allocation rejection and
+child cleanup; see [clipping verification](docs/drawing-clip.md).
 
 ## Files and workflow
 
