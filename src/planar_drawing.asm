@@ -158,7 +158,7 @@ loc_8952:
     push cx ; @08955
     push di ; @08956
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08957
-    lea di,[0x6706] ; @08959
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08959
     rep movsb ; @0895D
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0895F
     stosb ; @08961
@@ -169,7 +169,7 @@ loc_8952:
     push di ; @08966
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08967
     db 0x8b,0xf3 ; ENCODED: mov si,bx (NASM chooses a different encoding) ; @08969
-    lea di,[0x6748] ; @0896B
+    lea di,[DrawingMaskRowScratch-GameDataImage] ; @0896B
     rep movsb ; @0896F
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08971
     stosb ; @08973
@@ -180,8 +180,8 @@ loc_8952:
     pop ds ; @08978
     mov ax,0xa000 ; @08979
     mov es,ax ; @0897C
-    lea bx,[0x6748] ; @0897E
-    lea si,[0x6706] ; @08982
+    lea bx,[DrawingMaskRowScratch-GameDataImage] ; @0897E
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08982
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08986
 loc_8989:
     push si ; @08989
@@ -274,7 +274,7 @@ loc_8A12:
     push cx ; @08A15
     push di ; @08A16
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08A17
-    lea di,[0x6706] ; @08A19
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08A19
     rep movsb ; @08A1D
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08A1F
     stosb ; @08A21
@@ -285,7 +285,7 @@ loc_8A12:
     pop ds ; @08A26
     mov ax,0xa000 ; @08A27
     mov es,ax ; @08A2A
-    lea si,[0x6706] ; @08A2C
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08A2C
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08A30
 loc_8A33:
     push si ; @08A33
@@ -344,7 +344,7 @@ loc_8A80:
     push cx ; @08A83
     push di ; @08A84
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08A85
-    lea di,[0x6706] ; @08A87
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08A87
     rep movsb ; @08A8B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08A8D
     stosb ; @08A8F
@@ -355,7 +355,7 @@ loc_8A80:
     pop ds ; @08A94
     mov ax,0xa000 ; @08A95
     mov es,ax ; @08A98
-    lea si,[0x6706] ; @08A9A
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08A9A
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08A9E
 loc_8AA1:
     push si ; @08AA1
@@ -413,7 +413,7 @@ loc_8AEB:
     push cx ; @08AEE
     push di ; @08AEF
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08AF0
-    lea di,[0x6706] ; @08AF2
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08AF2
     rep movsb ; @08AF6
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08AF8
     stosb ; @08AFA
@@ -424,7 +424,7 @@ loc_8AEB:
     pop ds ; @08AFF
     mov ax,0xa000 ; @08B00
     mov es,ax ; @08B03
-    lea si,[0x6706] ; @08B05
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08B05
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08B09
 loc_8B0C:
     push si ; @08B0C
@@ -508,7 +508,7 @@ loc_8B96:
     push cx ; @08B99
     push di ; @08B9A
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08B9B
-    lea di,[0x6706] ; @08B9D
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08B9D
     rep movsb ; @08BA1
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08BA3
     stosb ; @08BA5
@@ -519,7 +519,7 @@ loc_8B96:
     pop ds ; @08BAA
     mov ax,0xa000 ; @08BAB
     mov es,ax ; @08BAE
-    lea si,[0x6706] ; @08BB0
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08BB0
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08BB4
 loc_8BB7:
     push si ; @08BB7
@@ -587,7 +587,7 @@ loc_8C13:
     push cx ; @08C16
     push di ; @08C17
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08C18
-    lea di,[0x6706] ; @08C1A
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08C1A
     rep movsb ; @08C1E
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08C20
     stosb ; @08C22
@@ -598,7 +598,7 @@ loc_8C13:
     pop ds ; @08C27
     mov ax,0xa000 ; @08C28
     mov es,ax ; @08C2B
-    lea si,[0x6706] ; @08C2D
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08C2D
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08C31
 loc_8C34:
     push si ; @08C34
@@ -664,7 +664,7 @@ loc_8C8E:
     push cx ; @08C91
     push di ; @08C92
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08C93
-    lea di,[0x6706] ; @08C95
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08C95
     rep movsb ; @08C99
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08C9B
     stosb ; @08C9D
@@ -675,7 +675,7 @@ loc_8C8E:
     pop ds ; @08CA2
     mov ax,0xa000 ; @08CA3
     mov es,ax ; @08CA6
-    lea si,[0x6706] ; @08CA8
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08CA8
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08CAC
 loc_8CAF:
     push si ; @08CAF
@@ -740,7 +740,7 @@ loc_8D06:
     push cx ; @08D09
     push di ; @08D0A
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08D0B
-    lea di,[0x6706] ; @08D0D
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08D0D
     rep movsb ; @08D11
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08D13
     stosb ; @08D15
@@ -751,7 +751,7 @@ loc_8D06:
     pop ds ; @08D1A
     mov ax,0xa000 ; @08D1B
     mov es,ax ; @08D1E
-    lea si,[0x6706] ; @08D20
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08D20
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08D24
 loc_8D27:
     push si ; @08D27
@@ -834,7 +834,7 @@ PlanarShiftedMasked4000Body:
     push bp ; @08DB9
     push di ; @08DBA
     push si ; @08DBB
-    lea bp,[0x6748] ; @08DBC
+    lea bp,[DrawingMaskRowScratch-GameDataImage] ; @08DBC
 loc_8DC0:
     push cx ; @08DC0
     push ds ; @08DC1
@@ -895,7 +895,7 @@ loc_8DFB:
     pop di ; @08E15
     pop bp ; @08E16
     pop cx ; @08E17
-    lea bx,[0x6748] ; @08E18
+    lea bx,[DrawingMaskRowScratch-GameDataImage] ; @08E18
     push di ; @08E1C
     push si ; @08E1D
     push cx ; @08E1E
@@ -907,7 +907,7 @@ loc_8E20:
     push cx ; @08E23
     push di ; @08E24
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08E25
-    lea di,[0x6706] ; @08E27
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08E27
     rep movsb ; @08E2B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08E2D
     stosb ; @08E2F
@@ -918,7 +918,7 @@ loc_8E20:
     pop ds ; @08E34
     mov ax,0xa000 ; @08E35
     mov es,ax ; @08E38
-    lea si,[0x6706] ; @08E3A
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08E3A
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08E3E
 loc_8E41:
     push si ; @08E41
@@ -994,7 +994,7 @@ loc_8EB5:
     push cx ; @08EB8
     push di ; @08EB9
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08EBA
-    lea di,[0x6706] ; @08EBC
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08EBC
     rep movsb ; @08EC0
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08EC2
     stosb ; @08EC4
@@ -1005,7 +1005,7 @@ loc_8EB5:
     pop ds ; @08EC9
     mov ax,0xa000 ; @08ECA
     mov es,ax ; @08ECD
-    lea si,[0x6706] ; @08ECF
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08ECF
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08ED3
 loc_8ED6:
     push si ; @08ED6
@@ -1070,7 +1070,7 @@ loc_8F2B:
     push cx ; @08F2E
     push di ; @08F2F
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08F30
-    lea di,[0x6706] ; @08F32
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08F32
     rep movsb ; @08F36
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08F38
     stosb ; @08F3A
@@ -1081,7 +1081,7 @@ loc_8F2B:
     pop ds ; @08F3F
     mov ax,0xa000 ; @08F40
     mov es,ax ; @08F43
-    lea si,[0x6706] ; @08F45
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08F45
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08F49
 loc_8F4C:
     push si ; @08F4C
@@ -1142,7 +1142,7 @@ loc_8F9B:
     push cx ; @08F9E
     push di ; @08F9F
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08FA0
-    lea di,[0x6706] ; @08FA2
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @08FA2
     rep movsb ; @08FA6
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @08FA8
     stosb ; @08FAA
@@ -1153,7 +1153,7 @@ loc_8F9B:
     pop ds ; @08FAF
     mov ax,0xa000 ; @08FB0
     mov es,ax ; @08FB3
-    lea si,[0x6706] ; @08FB5
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @08FB5
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @08FB9
 loc_8FBC:
     push si ; @08FBC
@@ -1197,6 +1197,10 @@ loc_8FF4:
     pop ds ; @08FF5
     retf ; @08FF6
 loc_8FF7:
+; Decrement live destination-row advance; save DS,load graphics DS/game ES.
+; DF-sensitive mask copy+sentinel into live6748 scratch; forward SHR/RCR carry chain.
+; Unchecked shift byte and CL/CH wraps; both variants advance restored SI perrow.
+; Live SS saves preserve DS/ES/counts/cursors; VGA byte cycles retain CLI/latch/STI.
 PlanarShiftedMasked20Body:
     dec word [DrawingActiveDestinationRowAdvance-GameDataImage] ; @08FF7
     push ds ; @08FFB
@@ -1205,22 +1209,22 @@ PlanarShiftedMasked20Body:
     mov es,ax ; @09003
     mov dx,0x3c4 ; @09005
     mov ax,0xf02 ; @09008
-    mov [ss:0x8],ax ; @0900B
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @0900B
     out dx,ax ; @0900F
     mov dx,0x3ce ; @09010
     mov ax,0xf00 ; @09013
-    mov [ss:0xa],ax ; @09016
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @09016
     out dx,ax ; @0901A
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @0901B
     and ah,0xf ; @0901D
     mov al,0x1 ; @09020
-    mov [ss:0xc],ax ; @09022
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @09022
     out dx,ax ; @09026
     mov ax,0x5 ; @09027
-    mov [ss:0x0],ax ; @0902A
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @0902A
     out dx,ax ; @0902E
     mov ax,0x3 ; @0902F
-    mov [ss:0x2],ax ; @09032
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @09032
     out dx,ax ; @09036
     db 0x8b,0xf3 ; ENCODED: mov si,bx (NASM chooses a different encoding) ; @09037
 loc_9039:
@@ -1230,7 +1234,7 @@ loc_9039:
     push cx ; @0903C
     push di ; @0903D
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @0903E
-    lea di,[0x6748] ; @09040
+    lea di,[DrawingMaskRowScratch-GameDataImage] ; @09040
     rep movsb ; @09044
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @09046
     stosb ; @09048
@@ -1241,7 +1245,7 @@ loc_9039:
     pop ds ; @0904D
     mov ax,0xa000 ; @0904E
     mov es,ax ; @09051
-    lea bx,[0x6748] ; @09053
+    lea bx,[DrawingMaskRowScratch-GameDataImage] ; @09053
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @09057
 loc_905A:
     push bx ; @0905A
@@ -1267,7 +1271,7 @@ loc_9074:
     mov ah,[bx] ; @09074
     inc bx ; @09076
     mov al,0x8 ; @09077
-    mov [ss:0xe],ax ; @09079
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @09079
     out dx,ax ; @0907D
     cli ; @0907E
     mov al,[es:di] ; @0907F
@@ -1286,8 +1290,13 @@ loc_9074:
     jmp short loc_9039 ; @09098
 loc_909A:
     pop ds ; @0909A
+PlanarShiftedMask20FarReturn:
     retf ; @0909B
 loc_909C:
+; Decrement live destination-row advance; save DS,load graphics DS/game ES.
+; DF-sensitive mask copy+sentinel into live6748 scratch; forward SHR/RCR carry chain.
+; Unchecked shift byte and CL/CH wraps; both variants advance restored SI perrow.
+; Live SS saves preserve DS/ES/counts/cursors; VGA byte cycles retain CLI/latch/STI.
 PlanarShiftedMasked40Body:
     dec word [DrawingActiveDestinationRowAdvance-GameDataImage] ; @0909C
     push ds ; @090A0
@@ -1296,22 +1305,22 @@ PlanarShiftedMasked40Body:
     mov es,ax ; @090A8
     mov dx,0x3c4 ; @090AA
     mov ax,0xf02 ; @090AD
-    mov [ss:0x8],ax ; @090B0
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @090B0
     out dx,ax ; @090B4
     mov dx,0x3ce ; @090B5
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @090B8
-    mov [ss:0xa],ax ; @090BA
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @090BA
     out dx,ax ; @090BE
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @090BF
     and ah,0xf ; @090C1
     mov al,0x1 ; @090C4
-    mov [ss:0xc],ax ; @090C6
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @090C6
     out dx,ax ; @090CA
     mov ax,0x5 ; @090CB
-    mov [ss:0x0],ax ; @090CE
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @090CE
     out dx,ax ; @090D2
     mov ax,0x3 ; @090D3
-    mov [ss:0x2],ax ; @090D6
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @090D6
     out dx,ax ; @090DA
     db 0x8b,0xf3 ; ENCODED: mov si,bx (NASM chooses a different encoding) ; @090DB
 loc_90DD:
@@ -1321,7 +1330,7 @@ loc_90DD:
     push cx ; @090E0
     push di ; @090E1
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @090E2
-    lea di,[0x6748] ; @090E4
+    lea di,[DrawingMaskRowScratch-GameDataImage] ; @090E4
     rep movsb ; @090E8
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @090EA
     stosb ; @090EC
@@ -1332,7 +1341,7 @@ loc_90DD:
     pop ds ; @090F1
     mov ax,0xa000 ; @090F2
     mov es,ax ; @090F5
-    lea bx,[0x6748] ; @090F7
+    lea bx,[DrawingMaskRowScratch-GameDataImage] ; @090F7
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @090FB
 loc_90FE:
     push bx ; @090FE
@@ -1358,7 +1367,7 @@ loc_9118:
     mov ah,[bx] ; @09118
     inc bx ; @0911A
     mov al,0x8 ; @0911B
-    mov [ss:0xe],ax ; @0911D
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0911D
     out dx,ax ; @09121
     cli ; @09122
     mov al,[es:di] ; @09123
@@ -1377,6 +1386,7 @@ loc_9118:
     jmp short loc_90DD ; @0913C
 loc_913E:
     pop ds ; @0913E
+PlanarShiftedMask40FarReturn:
     retf ; @0913F
 loc_9140:
 ; Save BP live, read skips, optionally reverse source cursors with BP bit 80.
@@ -1436,7 +1446,7 @@ loc_91AF:
     push cx ; @091B2
     push di ; @091B3
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @091B4
-    lea di,[0x6706] ; @091B6
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @091B6
     rep movsb ; @091BA
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @091BC
     stosb ; @091BE
@@ -1446,7 +1456,7 @@ loc_91AF:
     push di ; @091C2
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @091C3
     mov al,0xff ; @091C5
-    lea di,[0x6748] ; @091C7
+    lea di,[DrawingMaskRowScratch-GameDataImage] ; @091C7
     rep stosb ; @091CB
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @091CD
     stosb ; @091CF
@@ -1457,8 +1467,8 @@ loc_91AF:
     pop ds ; @091D4
     mov ax,0xa000 ; @091D5
     mov es,ax ; @091D8
-    lea si,[0x6706] ; @091DA
-    lea bx,[0x6748] ; @091DE
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @091DA
+    lea bx,[DrawingMaskRowScratch-GameDataImage] ; @091DE
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @091E2
 loc_91E5:
     push si ; @091E5
@@ -1552,7 +1562,7 @@ loc_926E:
     push cx ; @09271
     push di ; @09272
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @09273
-    lea di,[0x6706] ; @09275
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @09275
     rep movsb ; @09279
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0927B
     stosb ; @0927D
@@ -1563,7 +1573,7 @@ loc_926E:
     pop ds ; @09282
     mov ax,0xa000 ; @09283
     mov es,ax ; @09286
-    lea si,[0x6706] ; @09288
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @09288
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @0928C
 loc_928F:
     push si ; @0928F
@@ -1622,7 +1632,7 @@ loc_92DC:
     push cx ; @092DF
     push di ; @092E0
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @092E1
-    lea di,[0x6706] ; @092E3
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @092E3
     rep movsb ; @092E7
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @092E9
     stosb ; @092EB
@@ -1633,7 +1643,7 @@ loc_92DC:
     pop ds ; @092F0
     mov ax,0xa000 ; @092F1
     mov es,ax ; @092F4
-    lea si,[0x6706] ; @092F6
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @092F6
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @092FA
 loc_92FD:
     push si ; @092FD
@@ -1691,7 +1701,7 @@ loc_9347:
     push cx ; @0934A
     push di ; @0934B
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @0934C
-    lea di,[0x6706] ; @0934E
+    lea di,[DrawingSourceRowScratch-GameDataImage] ; @0934E
     rep movsb ; @09352
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @09354
     stosb ; @09356
@@ -1702,7 +1712,7 @@ loc_9347:
     pop ds ; @0935B
     mov ax,0xa000 ; @0935C
     mov es,ax ; @0935F
-    lea si,[0x6706] ; @09361
+    lea si,[DrawingSourceRowScratch-GameDataImage] ; @09361
     mov al,[DrawingLeftBitShiftByte-GameDataImage] ; @09365
 loc_9368:
     push si ; @09368

@@ -167,3 +167,13 @@ retain their scopes. UNKNOWN 9659 stays outside C accounting, alongside the
 previous aligned UNKNOWN bytes. Continue shifted bodies after reviewing their
 source-shift/self-modification and shared-entry contracts; full 8822 translation,
 IRQ ownership and native device timing remain open.
+
+The shifted 20/40 effects at8FF7/909C now have native cores in54 standalone
+cases and349 preparation connections. Both use the relocated09A9 operand for
+initial scratch ES, then follow live stack-restored DS/ES between rows. Mask
+copies and their sentinel follow DF; the carry chain and mask reads advance
+forward. Both variants advance SI per row. The ledger names6706/6748 scratch
+bases without claiming allocation extents or resolving their stored UNKNOWN
+bytes. Four other shifted bodies remain untranslated. Close their source/mask
+scratch and segment/flag/plane contracts next; see shifted-mask-effects.md,
+shifted-drawing.md and drawing-render.md.

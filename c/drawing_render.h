@@ -31,4 +31,13 @@ LmnDrawingRenderResult lmn_draw_prepared_aligned_core(
 void lmn_draw_prepared_aligned_adapter(
     uint8_t *, LmnRegs *, uint16_t game_data_segment, const LmnRasterBus *,
     const LmnRasterBytePorts *);
+/* Preparation, all six aligned bodies and the shifted 20/40 effects.
+   Other shifted bodies, absent byte providers and changed child returns stop
+   at their explicit continuations. Existing API scopes remain unchanged. */
+LmnDrawingRenderResult lmn_draw_prepared_planar_effects_core(
+    uint8_t *, const LmnDrawingRenderCall *, const LmnRasterBus *,
+    const LmnRasterBytePorts *);
+void lmn_draw_prepared_planar_effects_adapter(
+    uint8_t *, LmnRegs *, uint16_t game_data_segment, const LmnRasterBus *,
+    const LmnRasterBytePorts *);
 #endif

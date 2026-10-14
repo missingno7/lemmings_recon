@@ -127,6 +127,8 @@ def report():
     effects=read_json(BUILD/'aligned-mask-effects-differential.json')
     readmask=read_json(BUILD/'aligned-read-mask-differential.json')
     aligned_render=read_json(BUILD/'drawing-aligned-render-differential.json')
+    shifted_effects=read_json(BUILD/'shifted-mask-effects-differential.json')
+    shifted_render=read_json(BUILD/'drawing-shifted-render-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -137,7 +139,8 @@ def report():
                         ('aligned opaque',opaque),('connected opaque draw',render),
                         ('aligned masked',masked),('connected masked draw',masked_render),
                         ('aligned protected',protected),('aligned mask effects',effects),
-                        ('aligned read mask',readmask),('connected aligned draw',aligned_render)):
+                        ('aligned read mask',readmask),('connected aligned draw',aligned_render),
+                        ('shifted mask effects',shifted_effects),('connected shifted draw',shifted_render)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -153,8 +156,8 @@ def report():
     executed.update(clip['executed_instruction_addresses'])
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
-    for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render):executed.update(extra['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render)
+    for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -232,7 +235,8 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation/geometry/dispatch/source spans and all six aligned bodies
+planar preparation/geometry/dispatch/source spans, all six aligned bodies and
+the shifted20/40 bodies
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -242,7 +246,8 @@ docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
 docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
 docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
 docs/aligned-opaque.md, docs/aligned-masked.md, docs/aligned-protected.md,
-docs/aligned-read-mask.md, docs/aligned-mask-effects.md and docs/drawing-render.md's domains; remaining
+docs/aligned-read-mask.md, docs/aligned-mask-effects.md, docs/shifted-mask-effects.md
+and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -565,7 +570,20 @@ comparison/protection, live savedDX/DS, explicit byte OUT/IN replies and the
 leave969C explicit. These four suites detect twelve compiled mutants. See
 aligned-protected.md, aligned-read-mask.md, aligned-mask-effects.md and
 drawing-render.md for constructed-state domains and IRQ/device timing limits.
-The original8822 prologue and shifted bodies remain outside these C ranges.
+The original8822 prologue and other shifted bodies remain outside these C ranges.
+
+The shifted20/40 bodies at8FF7/909C add329 translated bytes/168 original sites,
+including their two far-return adapters. They pass
+{shifted_effects['case_count']} standalone original/native cases and
+{shifted_render['case_count']} preparation connections. Their scratch masks are
+copied through live DS/ES with incoming DF, then shifted forward through SHR/RCR
+carry chains. Both variants advance SI between rows. The relocated09A9 operand,
+live saves, decremented destination-row word and unchecked count/shift wraps
+remain original behavior. The connection covers seven shift residues, DF,
+reversal, enable masks and the preserved older API/provider/unported-body seams.
+The two suites detect six compiled mutants. See shifted-mask-effects.md,
+shifted-drawing.md and drawing-render.md. Scratch names identify runtime bases,
+not proven allocation extents; their stored UNKNOWN bytes remain unresolved.
  Other drawing variants, asynchronous IRQ/device scheduling
 and broader gameplay integration remain open.
 '''

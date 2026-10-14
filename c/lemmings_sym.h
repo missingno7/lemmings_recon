@@ -342,7 +342,9 @@
 #define CS_PlanarShiftedMasked8000Body 0x8B42u
 #define CS_PlanarShiftedMasked4000Body 0x8D66u
 #define CS_PlanarShiftedMasked20Body 0x8FF7u
+#define CS_PlanarShiftedMask20FarReturn 0x909Bu
 #define CS_PlanarShiftedMasked40Body 0x909Cu
+#define CS_PlanarShiftedMask40FarReturn 0x913Fu
 #define CS_PrepareShiftedOpaquePlanarRows 0x9140u
 #define CS_PlanarShiftedOpaqueBody 0x916Bu
 #define CS_SelectUnshiftedPlanarPath 0x939Eu
@@ -432,6 +434,8 @@
 #define SEG09A9_DrawingDestinationRowAdvance 0x6700u
 #define SEG09A9_DrawingSourceRowAdvance 0x6702u
 #define SEG09A9_DrawingActiveDestinationRowAdvance 0x6704u
+#define SEG09A9_DrawingSourceRowScratch 0x6706u
+#define SEG09A9_DrawingMaskRowScratch 0x6748u
 #define SEG09A9_DrawingLeftBitShiftByte 0xA948u
 #define SEG09A9_DrawingSavedHeightHighByte 0xA949u
 #define SEG143E_RuntimeStackFrame 0x0000u
@@ -443,6 +447,6 @@
 #define SEG143E_VgaSetResetMirror 0x000Au
 #define SEG143E_VgaEnableSetResetMirror 0x000Cu
 #define SEG143E_VgaBitMaskMirror 0x000Eu
-#define SEG143E_InteractionCellMapBase 0x0012u
 #define SEG143E_VgaReadMapMirror 0x0010u
+#define SEG143E_InteractionCellMapBase 0x0012u
 #endif

@@ -117,3 +117,31 @@ aligned-protected.md, aligned-read-mask.md and aligned-mask-effects.md for their
 zero-count, physical-wrap, stack-device and live-save domains. The new bodies
 add 721 translated bytes; UNKNOWN9659 remains unresolved. Coverage unions
 instruction sites across suites and excludes the original-only 8822 prologue.
+
+## Shifted 20/40 connection
+
+`lmn_draw_prepared_planar_effects_core` and its adapter add the shifted mask
+effects at8FF7/909C to all six aligned bodies. Other shifted paths remain
+explicit continuations, and the older APIs retain their scopes. Both shifted
+cores consume prepared BX as the mask-source cursor and live BP for the enable
+mask. Their initial scratch ES is the relocated game data segment; subsequent
+rows use live saved DS/ES. The returned ES normally contains the scratch segment,
+unlike the aligned bodies' A000 value. The common far-return adapter preserves
+that actual result and reads the live return frame through the bus.
+
+`tests/drawing_shifted_render.py` passes349 cases:336 complete shifted draws
+cover all seven shift residues, widths8/24, both DF values, source reversal,
+enable masks0/5/F and one to three rows. Six additional draws exercise every
+aligned path through the expanded API. Four cases retain the other shifted
+body continuations, two keep the older all-aligned API's shifted-effect seams,
+and one keeps the missing-byte-provider seam. The suite covers935 integrated
+sites101 branch edges and detects three finite renderer mutants.
+
+Every complete body executes its actual original RETF with the documented hook
+observation. Whole RAM, registers, defined flags, ordered bus/port/VGA state
+are compared. Independent packed-bit shifts model the scratch mask as one
+integer, then apply the set/reset plane truth table to check every VGA byte.
+This separates the expected carry propagation from the native instruction-shaped
+loop. Standalone alias, zero-count and wrap domains are in shifted-mask-effects.md.
+The new bodies add329 original C bytes, without classifying scratch UNKNOWN
+contents or completing the8822 prologue and remaining shifted/game/device work.

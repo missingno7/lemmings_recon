@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 51 |
-| Translated C code bytes | 4684 |
-| Differential cases | 7596 |
-| Mutation checks detected | 114 |
-| Original instruction coverage | 2158 / 15,392 decoded (14.020%) |
+| Translated C routines | 53 |
+| Translated C code bytes | 5013 |
+| Differential cases | 7999 |
+| Mutation checks detected | 120 |
+| Original instruction coverage | 2326 / 15,392 decoded (15.112%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -40,7 +40,8 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation/geometry/dispatch/source spans and all six aligned bodies
+planar preparation/geometry/dispatch/source spans, all six aligned bodies and
+the shifted20/40 bodies
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -50,7 +51,8 @@ docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
 docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
 docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
 docs/aligned-opaque.md, docs/aligned-masked.md, docs/aligned-protected.md,
-docs/aligned-read-mask.md, docs/aligned-mask-effects.md and docs/drawing-render.md's domains; remaining
+docs/aligned-read-mask.md, docs/aligned-mask-effects.md, docs/shifted-mask-effects.md
+and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -76,10 +78,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 2218 / 17,291
-(12.827%) of this still-incomplete decoded inventory. There are
-54 tested C routines occupying 4849 original code bytes across images,
-with 7931 differential cases and 117 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 2386 / 17,291
+(13.799%) of this still-incomplete decoded inventory. There are
+56 tested C routines occupying 5178 original code bytes across images,
+with 8334 differential cases and 123 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -373,6 +375,19 @@ comparison/protection, live savedDX/DS, explicit byte OUT/IN replies and the
 leave969C explicit. These four suites detect twelve compiled mutants. See
 aligned-protected.md, aligned-read-mask.md, aligned-mask-effects.md and
 drawing-render.md for constructed-state domains and IRQ/device timing limits.
-The original8822 prologue and shifted bodies remain outside these C ranges.
+The original8822 prologue and other shifted bodies remain outside these C ranges.
+
+The shifted20/40 bodies at8FF7/909C add329 translated bytes/168 original sites,
+including their two far-return adapters. They pass
+54 standalone original/native cases and
+349 preparation connections. Their scratch masks are
+copied through live DS/ES with incoming DF, then shifted forward through SHR/RCR
+carry chains. Both variants advance SI between rows. The relocated09A9 operand,
+live saves, decremented destination-row word and unchecked count/shift wraps
+remain original behavior. The connection covers seven shift residues, DF,
+reversal, enable masks and the preserved older API/provider/unported-body seams.
+The two suites detect six compiled mutants. See shifted-mask-effects.md,
+shifted-drawing.md and drawing-render.md. Scratch names identify runtime bases,
+not proven allocation extents; their stored UNKNOWN bytes remain unresolved.
  Other drawing variants, asynchronous IRQ/device scheduling
 and broader gameplay integration remain open.

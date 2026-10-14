@@ -1,12 +1,13 @@
 # Shifted drawing frontier
 
-The aligned bodies are native; the six shifted bodies remain untranslated.
+The aligned bodies and shifted20/40 effects are native; four shifted bodies
+remain untranslated at890E/8B42/8D66/916B.
 The fresh `DrawPlanarBitmap --tree` and `--bottom-up` views retain the complete
 8822 entry as UNTRANSLATED. Calls to clipping/dirty-cell helpers do not prove
-the remaining drawing contracts. This review is static evidence, not C or
-execution coverage.
+the remaining drawing contracts. The evidence below identifies the two now
+tested shifted effect bodies; their native domains are in shifted-mask-effects.md.
 
-The two shifted set/reset effects form the smallest next independent cluster.
+The two shifted set/reset effects form a closed normal-entry cluster.
 The current analysis finds no calls or outgoing direct edges inside either
 body and only the following incoming edges. Indirect and modified-code incoming
 states remain unproven.
@@ -17,8 +18,10 @@ states remain unproven.
 | `PlanarShiftedMasked40Body` | 909C..913F, 164 | 84 | 890B -> 909C | `3bf36e4682b479a6842d87bd055ec981156ac0874b944dceba05f2111a065577` |
 
 All bytes in these two ranges decode, including their four known NOPs each.
-The core boundaries would end after POP DS at 909A/913E; RETF at 909B/913F
-belongs to an adapter. Those boundaries have not yet been verified natively.
+The core boundaries end after POP DS at 909A/913E; RETF at 909B/913F belongs
+to an adapter. Their54 standalone cases cover166 core sites18 edges and four
+actual original RETF probes;349 preparation connections cover935 integrated
+sites101 edges. Each suite detects three compiled mutants.
 
 Both bodies first decrement incoming DS:6704, then push incoming DS and read
 the graphics-source segment through DS:1FE4. ES becomes the relocated game
@@ -41,13 +44,36 @@ cursor. Both shifted variants add live DS:6702 to SI and DS:6704 to DI before
 restoring CX, ES and DS and decrementing CH. This differs from the aligned
 20/40 row-cursor asymmetry and must be translated separately.
 
-Before C promotion, verify zero CL/CH and shift-count behavior, CF/OF definedness
+The standalone suite verifies zero CL/CH and shift-count behavior, CF/OF definedness
 for SHR/RCR, forward carry propagation under DF, scratch/source overlap, physical
 and SP wrap, live saved DS/ES/cursors/counts, and SS aliases of source/stride/shift
-fields. For CL=0, REP copies no bytes but the subsequent RCR LOOP underflows;
+fields within its constructed domains. For CL=0, REP copies no bytes but the subsequent RCR LOOP underflows;
 for CL=FF, INC CL wraps the drawing count to zero. A zero shift byte wraps the
 outer decrement loop. These are unchecked original paths, not validated caller
 domains. Scratch stores may change live fields when the constructed ranges
 overlap. The exact valid producer/buffer domain and asynchronous IRQ/device
 ownership remain open. Use the bounded worker limits for every native case and
 mutant, and treat any exhausted guard as a failed check.
+
+## Remaining closed static ranges
+
+The current analysis finds one discovered incoming edge and no calls or outgoing
+direct edges for each remaining shifted body. This establishes physical review
+boundaries, not native readiness or complete indirect entry domains.
+
+| Body | Inclusive range | Physical/decoded bytes | Decoded sites | UNKNOWN byte | Incoming edge |
+|---|---|---:|---:|---|---|
+| Default masked | 890E..8B41 | 564 / 563 | 318 | 8ADD | 8909 -> 890E |
+| Protected 8000 | 8B42..8D65 | 548 / 547 | 306 | 8CF4 | 88F9 -> 8B42 |
+| Read-mask 4000 | 8D66..8FF6 | 657 / 656 | 369 | 8F8D | 88F0 -> 8D66 |
+| Opaque | 916B..939D | 563 / 562 | 317 | 9339 | 916A -> 916B |
+
+The opaque916B body is the next ordinary drawing dependency. Its first pass
+copies source bytes to6706 and fills6748 with FF bytes plus a zero sentinel,
+all through DF. It shifts source scratch first, then rereads the live A948 byte
+before shifting mask scratch. Preserve that second read: source stores/shifts
+can alias the field. First-pass mask/source reads walk their buffers separately;
+the bit-mask word OUT at921E has no corresponding SS mirror store. Later passes
+use live ES:66F8 plane advances and switch to OR. Keep those differences from
+the set/reset effect cores, all plane-limit/count cases, live saved ES/DS/cursors,
+and UNKNOWN9339. Review bounded original contracts before C promotion.

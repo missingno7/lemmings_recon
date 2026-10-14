@@ -499,7 +499,7 @@ def compare(lib, case):
         raise AssertionError(f'{case["name"]}: far return without entering 983B')
     intact_image = relocated(IMAGE, ORACLE['relocations'], regs['cs'])
     for start, end in ((0x8822, 0x88aa), (0x88ac, 0x890e),
-                       (0x9140, 0x916b), (0x939e, 0x9810),
+                       (0x8ff7, 0x916b), (0x939e, 0x9810),
                        (0x9810, 0x9967), (0x9967, 0x9a8f)):
         p = (regs['cs'] << 4) + start
         if actual[p:p + end - start] != intact_image[start:end]:
@@ -562,6 +562,7 @@ def main():
         'aligned_protected.c', 'aligned_protected.h',
         'aligned_mask_effects.c', 'aligned_mask_effects.h',
         'aligned_read_mask.c', 'aligned_read_mask.h',
+        'shifted_mask_effects.c', 'shifted_mask_effects.h',
         'drawing_plan.c', 'drawing_plan.h',
         'drawing_inputs.c', 'drawing_inputs.h', 'drawing_clip.c',
         'drawing_clip.h', 'drawing_dirty.c', 'drawing_dirty.h',

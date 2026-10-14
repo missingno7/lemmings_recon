@@ -50903,7 +50903,7 @@
     "address": 36855,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 165,
     "symbol_name": "PlanarShiftedMasked20Body",
     "aliases": [],
     "callers": [],
@@ -50911,7 +50911,33 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selector-bit name retained; scoped normal-entry shifted effect now has a native C core and explicit live far-return adapter",
+      "Fresh closed normal-entry body8FF7..909B,165 decoded bytes84 sites; only discovered incoming8902->8FF7; no calls/outgoing directedges; four knownNOPs preserved; shift/count and live DS/ES/SS domains require bounded verification",
+      "tests/shifted_mask_effects.py:54 bounded original/native cases acrossboth bodies,166 core sites18 edges,4 actual originalRETF probes,3 finite mutants; relocated09A9/liveDS/ES/SS,DFcopy/STOS sentinel,forwardSHR/RCRcarry,unchecked shift/count wraps and live savedwords; docs/shifted-mask-effects.md",
+      "tests/drawing_shifted_render.py:349 preparation/native cases,including336 complete shifted draws covering sevenresidues/DF/reverse/enables,935 integrated sites101 edges3 mutants,independent packed-bit scratch/plane calculations; existing scopes/provider/other shifted continuations preserved; original8822 prologue excluded"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/shifted_mask_effects.c",
+    "c_code_ranges": [
+      [
+        36855,
+        37020
+      ]
+    ]
+  },
+  {
+    "address": 37019,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMask20FarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far-return boundary after shifted20 POPDS909A; not an independent routine entry"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -50919,7 +50945,7 @@
     "address": 37020,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 164,
     "symbol_name": "PlanarShiftedMasked40Body",
     "aliases": [],
     "callers": [],
@@ -50927,7 +50953,33 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selector-bit name retained; scoped normal-entry shifted effect now has a native C core and explicit live far-return adapter",
+      "Fresh closed normal-entry body909C..913F,164 decoded bytes84 sites; only discovered incoming890B->909C; no calls/outgoing directedges; four knownNOPs preserved; shift/count and live DS/ES/SS domains require bounded verification",
+      "tests/shifted_mask_effects.py:54 bounded original/native cases acrossboth bodies,166 core sites18 edges,4 actual originalRETF probes,3 finite mutants; relocated09A9/liveDS/ES/SS,DFcopy/STOS sentinel,forwardSHR/RCRcarry,unchecked shift/count wraps and live savedwords; docs/shifted-mask-effects.md",
+      "tests/drawing_shifted_render.py:349 preparation/native cases,including336 complete shifted draws covering sevenresidues/DF/reverse/enables,935 integrated sites101 edges3 mutants,independent packed-bit scratch/plane calculations; existing scopes/provider/other shifted continuations preserved; original8822 prologue excluded"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/shifted_mask_effects.c",
+    "c_code_ranges": [
+      [
+        37020,
+        37184
+      ]
+    ]
+  },
+  {
+    "address": 37183,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMask40FarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far-return boundary after shifted40 POPDS913E; not an independent routine entry"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52808,6 +52860,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 26374,
+    "segment": 2473,
+    "kind": "data",
+    "size": 0,
+    "symbol_name": "DrawingSourceRowScratch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shifted planar rows copy source bytes and a sentinel to gameDS:6706; named base only,allocation extent and producer domain remain unproven"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26440,
+    "segment": 2473,
+    "kind": "data",
+    "size": 0,
+    "symbol_name": "DrawingMaskRowScratch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shifted planar rows copy mask bytes and a sentinel to gameDS:6748 and shift live bytes there; named base only,allocation extent and producer domain remain unproven"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 43336,
     "segment": 2473,
     "kind": "data",
@@ -52984,22 +53068,6 @@
     "verification_status": "UNRESOLVED"
   },
   {
-    "address": 18,
-    "segment": 5182,
-    "kind": "runtime_data",
-    "size": null,
-    "symbol_name": "InteractionCellMapBase",
-    "aliases": [],
-    "callers": [],
-    "callees": [],
-    "data_references": [],
-    "confidence": "PROVEN",
-    "evidence": [
-      "37C2/3839 compute wrapped SS:0012+416*row+column cell writes; SS also holds stack and VGA mirrors; no stored image bytes,initialization or bounded map extent implied"
-    ],
-    "verification_status": "UNRESOLVED"
-  },
-  {
     "address": 16,
     "segment": 5182,
     "kind": "runtime_data",
@@ -53012,6 +53080,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "969C body mirrors0804 GC read-map OUT word through live SS:0010; no stored initialization or unaliased frame implied"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": null,
+    "symbol_name": "InteractionCellMapBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "37C2/3839 compute wrapped SS:0012+416*row+column cell writes; SS also holds stack and VGA mirrors; no stored image bytes,initialization or bounded map extent implied"
     ],
     "verification_status": "UNRESOLVED"
   }
