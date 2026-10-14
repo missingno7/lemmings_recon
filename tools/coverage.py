@@ -134,6 +134,8 @@ def report():
     shifted_protected=read_json(BUILD/'shifted-protected-differential.json')
     shifted_readmask=read_json(BUILD/'shifted-read-mask-differential.json')
     bitmap=read_json(BUILD/'drawing-bitmap-differential.json')
+    terrain_inputs=read_json(BUILD/'terrain-inputs-differential.json')
+    terrain=read_json(BUILD/'terrain-drawing-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -148,7 +150,8 @@ def report():
                         ('shifted mask effects',shifted_effects),('connected shifted draw',shifted_render),
                         ('shifted opaque',shifted_opaque),('shifted masked',shifted_masked),
                         ('shifted protected',shifted_protected),('shifted read mask',shifted_readmask),
-                        ('actual bitmap entry',bitmap)):
+                        ('actual bitmap entry',bitmap),('terrain inputs',terrain_inputs),
+                        ('connected terrain drawing',terrain)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -165,7 +168,9 @@ def report():
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
     for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
+    for extra in (terrain_inputs,terrain):executed.update(extra['executed_instruction_addresses'])
     reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
+    reports+=terrain_inputs,terrain
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -244,7 +249,7 @@ special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
 planar preparation/geometry/dispatch/source spans, all six aligned bodies and
-all six shifted bodies and the actual8822 entry
+all six shifted bodies, the actual8822 entry and packed terrain caller
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -619,6 +624,25 @@ flags and ordered bus/ports/VGA state match original execution. Older scopes,
 changed child return and missing aligned969C byte-provider seams remain visible.
 UNKNOWN bytes, shared988B other incoming states, allocation/producer domains,
 asynchronous IRQ/device scheduling and broader gameplay integration remain open.
+
+DrawPackedTerrainPiece at7C67 now derives the original control/coordinates and
+reads a live eightbyte GROUNDterrain record before calling the native8822 core.
+Its {terrain_inputs['case_count']} prefix cases cover all33 caller-prefix sites/four
+conditional edges; {terrain['case_count']} connected cases cover36 caller sites and
+{len(terrain['executed_instruction_addresses'])} integrated sites. The full connection
+uses every supplied GROUNDterrain record (320 metadata records) with constructed
+source bytes. Independent packed-input, whole-plane and untouched-record checks
+complement whole RAM/register/defined-flag/orderedbus/VGA comparison. Six direct
+core-boundary probes verify ready/changednear/changedfar statuses. Eight mutation
+checks are detected across the prefix/connection suites. This adds85 unique C
+bytes; shared renderer sites/bytes are unioned, not summed.
+The far CALL writes CS then7CBA; changed live IP/CS stop before any target executes.
+Normal return pops live savedSI before the caller's nearRET. Tests retain signed
+SAR-y, ignored selectorbit6, x/control bits, reversal, scratch/stack aliases and
+physical/offset wraps. The actual original RETF is executed with its documented
+read-hook observation, then hooks are restored before caller continuation. IRQ,
+device/producer/allocation ownership and higher terrain loops remain open. See
+terrain-drawing.md; no game was booted and no assets were changed.
 '''
     return m,text
 

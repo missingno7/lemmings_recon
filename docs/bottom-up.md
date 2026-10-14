@@ -184,5 +184,22 @@ The four new leaves preserve forward SHR/RCR with backward copies, independent
 mask/source shift-byte reads, first-pass VGA masks and later OR passes. Backward
 scratch stores can overwrite live row fields; neither C nor its independent
 packed-bit expectations cache those fields. UNKNOWN bytes and allocation extents
-stay unresolved. Continue the upstream 36B6/394F/7C67 terrain/object drawing
-contracts, source/mask producer domains and device/IRQ ownership.
+stay unresolved. The 7C67 connection below closes its normal caller domain;
+source/mask producer domains and device/IRQ ownership remain open.
+
+The 7C67..7CBB DrawPackedTerrainPiece caller now has a logical C11 prefix and
+complete native renderer connection. It derives signed y and control/x bits
+from two packed words, reads one of64 live GROUNDrecords and builds the original
+far-call frame. The connection passes609 cases with all320 supplied terrain
+metadata records, constructed source bytes and independent whole-plane checks.
+Six directcore boundary probes verify normal/changednear/changedfar statuses.
+No converted terrain or shadow game state was introduced.
+
+SS aliases can overwrite metadata, saved coordinates, savedSI and the child's
+far frame. A finite alias preserves the expected farCS while changing restored
+SI to1000; another returnsCS0210 and stops before caller continuation. Two dirty
+map aliases expose near targets8801/015E. The actual original RETF is executed
+with the documented read-hook observation, then hooks are restored before
+continuing. Next close the two big-endian terrain-command loops3752..3769 and
+3962..3979 inside36B6/394F, including their FFFF sentinel, live iterator and
+changed-return domains. See terrain-drawing.md.

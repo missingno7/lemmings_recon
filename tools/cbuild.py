@@ -16,7 +16,7 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs","drawing_dispatch","drawing_source","drawing_plan","aligned_opaque","drawing_render","aligned_masked","aligned_mask_effects","aligned_protected","aligned_read_mask","shifted_mask_effects","shifted_opaque","shifted_masked","shifted_protected","shifted_read_mask"):
+    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs","drawing_dispatch","drawing_source","drawing_plan","aligned_opaque","drawing_render","aligned_masked","aligned_mask_effects","aligned_protected","aligned_read_mask","shifted_mask_effects","shifted_opaque","shifted_masked","shifted_protected","shifted_read_mask","terrain_drawing"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -32,7 +32,9 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="minimap_column":sources += [ROOT/'c/minimap_row.c',ROOT/'c/minimap_sample.c']
     if cluster=="drawing_inputs":sources += [ROOT/'c/drawing_clip.c',ROOT/'c/drawing_dirty.c']
     if cluster=='drawing_plan':sources += [ROOT/'c'/(n+'.c') for n in ('drawing_inputs','drawing_clip','drawing_dirty','drawing_dispatch','drawing_source')]
-    if cluster=='drawing_render':sources += [ROOT/'c'/(n+'.c') for n in ('drawing_plan','drawing_inputs','drawing_clip','drawing_dirty','drawing_dispatch','drawing_source','aligned_opaque','aligned_masked','aligned_mask_effects','aligned_protected','aligned_read_mask','shifted_mask_effects','shifted_opaque','shifted_masked','shifted_protected','shifted_read_mask')]
+    if cluster in ('drawing_render','terrain_drawing'):
+        if cluster=='terrain_drawing':sources += [ROOT/'c/drawing_render.c']
+        sources += [ROOT/'c'/(n+'.c') for n in ('drawing_plan','drawing_inputs','drawing_clip','drawing_dirty','drawing_dispatch','drawing_source','aligned_opaque','aligned_masked','aligned_mask_effects','aligned_protected','aligned_read_mask','shifted_mask_effects','shifted_opaque','shifted_masked','shifted_protected','shifted_read_mask')]
     defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
     if cluster=="dat_files":defines=["-DMUTATION=0","-DFILE_MUTATION="+str(mutation)]
     if cluster=="dat_load":defines=["-DMUTATION=0","-DLOAD_MUTATION="+str(mutation)]
@@ -67,6 +69,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=='shifted_protected':defines=['-DSHIFTED_PROTECTED_MUTATION='+str(mutation)]
     if cluster=='shifted_read_mask':defines=['-DSHIFTED_READ_MASK_MUTATION='+str(mutation)]
     if cluster=='drawing_render':defines=['-DRENDER_MUTATION='+str(mutation)]
+    if cluster=='terrain_drawing':defines=['-DMUTATION=0','-DTERRAIN_MUTATION='+str(mutation)]
     subprocess.run([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
         "-shared", *defines,

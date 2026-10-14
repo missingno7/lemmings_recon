@@ -250,7 +250,10 @@ loc_7C5E:
     add si,byte +0x1c ; @07C61
     loop loc_7C15 ; @07C64
     ret ; @07C66
-sub_7C67:
+; TERRAIN: packed AX x/flags, BX signed-y/type; index low6 selects liveGROUNDrecord.
+; Preserve live SS savedSI/coordinates, relocated farCALL frame, returnedDS/ES/flags.
+; Prefix7C67..7CB4, farcallee8822, livePOPSI7CBA andnearRET7CBB; no hidden state.
+DrawPackedTerrainPiece:
     push si ; @07C67
     db 0x8b,0xd0 ; ENCODED: mov dx,ax (NASM chooses a different encoding) ; @07C68
     mov cl,0x7 ; @07C6A
@@ -278,16 +281,19 @@ loc_7C87:
     mul dx ; @07C9D
     add ax,GroundTerrainGraphicsRecords-GameDataImage ; @07C9F
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @07CA2
-    mov dl,[bx] ; @07CA4
+    mov dl,[bx+GroundTerrainRecordWidthByte-GroundTerrainGraphicsRecords] ; @07CA4
     db 0x32,0xf6 ; ENCODED: xor dh,dh (NASM chooses a different encoding) ; @07CA6
-    mov cl,[bx+0x1] ; @07CA8
-    mov si,[bx+0x2] ; @07CAB
-    mov di,[bx+0x4] ; @07CAE
+    mov cl,[bx+GroundTerrainRecordHeightByte-GroundTerrainGraphicsRecords] ; @07CA8
+    mov si,[bx+GroundTerrainRecordSourceOffset-GroundTerrainGraphicsRecords] ; @07CAB
+    mov di,[bx+GroundTerrainRecordMaskOffset-GroundTerrainGraphicsRecords] ; @07CAE
     pop ax ; @07CB1
     pop bx ; @07CB2
     mov ch,0x4 ; @07CB3
+TerrainPieceBitmapCall:
     call 0x0:0x8822 ; @07CB5
+TerrainPieceAfterBitmap:
     pop si ; @07CBA
+TerrainPieceReturn:
     ret ; @07CBB
 sub_7CBC:
     lea ax,[0x49ce] ; @07CBC

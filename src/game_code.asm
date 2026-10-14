@@ -2400,7 +2400,7 @@ loc_3752:
     add si,byte +0x4 ; @0375D
     cmp ax,0xffff ; @03760
     jz loc_376A ; @03763
-    call sub_7C67 ; @03765
+    call DrawPackedTerrainPiece ; @03765
     jmp short loc_3752 ; @03768
 loc_376A:
 PrepareLevelObjectState:

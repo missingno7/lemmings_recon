@@ -22,7 +22,9 @@ through preparation and all six aligned bodies. The shifted effects8FF7/909C pas
 890E/8B42/8D66/916B are now native, preserving source/mask shifts, live segments
 and VGA/stack effects. The actual 8822 entry connects all twelve bodies in 2,147
 constructed cases, including the prologue and no-draw far return. Continue the
-36B6/394F/7C67 caller and source/mask producer contracts. Keep UNKNOWN bytes,
+36B6/394F terrain-loop and source/mask producer contracts. 7C67 now calls the
+complete native renderer in609 cases,includingall320 suppliedterrainrecords.
+Keep UNKNOWN bytes,
 shared988B incoming states, changed-return and IRQ/device seams explicit; see
 shifted-drawing.md and drawing-render.md.
 The 9737 and 97A4 effects differ in row cursor updates: 9737 adds the source
@@ -155,7 +157,14 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     test. Bounded tests preserve zero/>4 plane limits, live saves, row/byte zero
     counts and STI setting IF even when incoming IF is clear.
     Keep the 988B shared LOOP entry's separate incoming-state obligations explicit.
-    Then continue 7C67.
+    The 7C67 DrawPackedTerrainPiece caller now connects the native renderer in
+    609 cases/36 caller/1366 integrated sites/198 edges. It retains signed packed
+    y, all64 selectors and ignoredbit6, control/reversal/protection bits, live
+    savedSI/coordinates and changed near/far returns. Six direct core-boundary
+    probes verify status flags; see terrain-drawing.md. Continue the two terrain
+    producer loops3752..3769 and3962..3979, including live DS and SS iterator
+    saves, big-endian commands, FFFF sentinel and changed child returns. Their
+    wider36B6/394F resource/object/platform consumers remain untranslated.
     Keep DS:66F8/66FA/66FC/66FE and A949 live, including saved words and shifted
     cursor aliases. Preserve original far-return, signed/sign-only clipping,
     segment/offset wrap, self modification and unchecked zero-size behavior.

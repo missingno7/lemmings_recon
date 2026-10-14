@@ -60,3 +60,5 @@ if __name__ == "__main__":
         run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=180)
     for suite in ('shifted_opaque','shifted_masked','shifted_protected','shifted_read_mask','drawing_bitmap'):
         run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=180)
+    for suite in ('terrain_inputs','terrain_drawing'):
+        run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=180)

@@ -27,7 +27,7 @@ loc_3962:
     add si,byte +0x4 ; @0396D
     cmp ax,0xffff ; @03970
     jz loc_397A ; @03973
-    call sub_7C67 ; @03975
+    call DrawPackedTerrainPiece ; @03975
     jmp short loc_3962 ; @03978
 loc_397A:
     call CopyLevelObjectGraphicsRecords ; @0397A

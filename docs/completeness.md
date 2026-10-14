@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 58 |
-| Translated C code bytes | 7353 |
-| Differential cases | 10249 |
-| Mutation checks detected | 135 |
-| Original instruction coverage | 3644 / 15,392 decoded (23.675%) |
+| Translated C routines | 59 |
+| Translated C code bytes | 7438 |
+| Differential cases | 11123 |
+| Mutation checks detected | 143 |
+| Original instruction coverage | 3680 / 15,392 decoded (23.909%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -41,7 +41,7 @@ special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
 planar preparation/geometry/dispatch/source spans, all six aligned bodies and
-all six shifted bodies and the actual8822 entry
+all six shifted bodies, the actual8822 entry and packed terrain caller
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -79,10 +79,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 3704 / 17,291
-(21.422%) of this still-incomplete decoded inventory. There are
-61 tested C routines occupying 7518 original code bytes across images,
-with 10584 differential cases and 138 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 3740 / 17,291
+(21.630%) of this still-incomplete decoded inventory. There are
+62 tested C routines occupying 7603 original code bytes across images,
+with 11458 differential cases and 146 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -416,3 +416,22 @@ flags and ordered bus/ports/VGA state match original execution. Older scopes,
 changed child return and missing aligned969C byte-provider seams remain visible.
 UNKNOWN bytes, shared988B other incoming states, allocation/producer domains,
 asynchronous IRQ/device scheduling and broader gameplay integration remain open.
+
+DrawPackedTerrainPiece at7C67 now derives the original control/coordinates and
+reads a live eightbyte GROUNDterrain record before calling the native8822 core.
+Its 265 prefix cases cover all33 caller-prefix sites/four
+conditional edges; 609 connected cases cover36 caller sites and
+1366 integrated sites. The full connection
+uses every supplied GROUNDterrain record (320 metadata records) with constructed
+source bytes. Independent packed-input, whole-plane and untouched-record checks
+complement whole RAM/register/defined-flag/orderedbus/VGA comparison. Six direct
+core-boundary probes verify ready/changednear/changedfar statuses. Eight mutation
+checks are detected across the prefix/connection suites. This adds85 unique C
+bytes; shared renderer sites/bytes are unioned, not summed.
+The far CALL writes CS then7CBA; changed live IP/CS stop before any target executes.
+Normal return pops live savedSI before the caller's nearRET. Tests retain signed
+SAR-y, ignored selectorbit6, x/control bits, reversal, scratch/stack aliases and
+physical/offset wraps. The actual original RETF is executed with its documented
+read-hook observation, then hooks are restored before caller continuation. IRQ,
+device/producer/allocation ownership and higher terrain loops remain open. See
+terrain-drawing.md; no game was booted and no assets were changed.

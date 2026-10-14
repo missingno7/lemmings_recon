@@ -43743,9 +43743,11 @@
     "address": 31847,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7C67",
-    "aliases": [],
+    "size": 85,
+    "symbol_name": "DrawPackedTerrainPiece",
+    "aliases": [
+      "sub_7C67"
+    ],
     "callers": [
       14181,
       14709
@@ -43789,10 +43791,73 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "7C67..7CBB closed physical body,85 decoded bytes/36sites,hashce45f1424864d5c54fb12b3538c56d62ade4fba0893102c230cbae9f75b12f16; incomingcalls3765/3975 only,no discovered interiorentry; singlefarcallee8822,return7CBA,ownRET7CBB",
+      "Packed AX controls x/effect/reversal/protection; signed SAR BX7 minus4 gives y,BXlow6 selects64 live eightbyteGROUNDrecords; savedcoordinates/SI andchildfarframe remain live onSS",
+      "609 bounded original/native complete caller cases cover36 caller/1366 integrated sites/198 edges,includingall320 suppliedGROUNDterrainmetadatarecords andconstructedsourcebytes;fivecompiledmutants",
+      "Six directcore boundaryprobes retainready/changednear/changedfar status;actualRETF uses documented originalreadhook observation before resuming7CBA only onmatchingCS:IP;changedfarCS0210 andnear8801/015E stopbeforetarget;liveSIoverwrite1000 retained",
+      "Intact executing code andquiescentIRQ,explicitnativeVGAfixture domains; higherterrainloops/producerallocation/platformownership remainopen",
+      "265 standalone prefix cases,33 sites/four edges/52 adapter probes,three compiled mutants; all64 selectors withbit6 bothways,10x7 packedboundaries,8x6 initialflags/control inputs,liveDS/SSfieldaliases andwrap"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 85
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 85,
+    "c_implementation": "c/terrain_drawing.c",
+    "c_code_ranges": [
+      [
+        31847,
+        31932
+      ]
+    ]
+  },
+  {
+    "address": 31925,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TerrainPieceBitmapCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      34850
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7C67 prefix stops before original fivebyte farCALL7CB5,returns7CBA"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31930,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TerrainPieceAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7CB5 farCALL8822 returns at7CBA,livePOP SI thennearRET7CBB; nativeconnection boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31931,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TerrainPieceReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7CB5 farCALL8822 returns at7CBA,livePOP SI thennearRET7CBB; nativeconnection boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 31932,
@@ -52174,6 +52239,74 @@
     "confidence": "PROVEN",
     "evidence": [
       "7C8D masks terrain selector to0..63;7C9A..7CAE uses eight-byte records atDS1D0B,width/height bytes andtwoLEoffsetwords;512bytes liesinside1056-byte suppliedGROUNDinput"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7435,
+    "segment": 2473,
+    "kind": "data",
+    "size": 0,
+    "symbol_name": "GroundTerrainRecordWidthByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7CA4 reads selectedrecord+0 asDL pixelwidth;7CA6 clearsDH",
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7436,
+    "segment": 2473,
+    "kind": "data",
+    "size": 0,
+    "symbol_name": "GroundTerrainRecordHeightByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7CA8 reads selectedrecord+1 asCL height;7CB3 setsCH4",
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7437,
+    "segment": 2473,
+    "kind": "data",
+    "size": 0,
+    "symbol_name": "GroundTerrainRecordSourceOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7CAB reads selectedrecord+2 LE sourcecursor intoSI",
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7439,
+    "segment": 2473,
+    "kind": "data",
+    "size": 0,
+    "symbol_name": "GroundTerrainRecordMaskOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7CAE reads selectedrecord+4 LE second/maskcursor intoDI",
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
     ],
     "verification_status": "UNRESOLVED"
   },

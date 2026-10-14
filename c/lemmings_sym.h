@@ -309,7 +309,10 @@
 #define CS_AccumulateMinimapSample 0x7A39u
 #define CS_sub_7A5A 0x7A5Au
 #define CS_sub_7BB8 0x7BB8u
-#define CS_sub_7C67 0x7C67u
+#define CS_DrawPackedTerrainPiece 0x7C67u
+#define CS_TerrainPieceBitmapCall 0x7CB5u
+#define CS_TerrainPieceAfterBitmap 0x7CBAu
+#define CS_TerrainPieceReturn 0x7CBBu
 #define CS_sub_7CBC 0x7CBCu
 #define CS_sub_7CE6 0x7CE6u
 #define CS_sub_7D0D 0x7D0Du
@@ -385,6 +388,10 @@
 #define SEG09A9_LevelObjectGraphicsRecords 0x17CBu
 #define SEG09A9_GroundResourceBuffer 0x1B4Bu
 #define SEG09A9_GroundTerrainGraphicsRecords 0x1D0Bu
+#define SEG09A9_GroundTerrainRecordWidthByte 0x1D0Bu
+#define SEG09A9_GroundTerrainRecordHeightByte 0x1D0Cu
+#define SEG09A9_GroundTerrainRecordSourceOffset 0x1D0Du
+#define SEG09A9_GroundTerrainRecordMaskOffset 0x1D0Fu
 #define SEG09A9_SpecialMetadataRemap8 0x1F0Bu
 #define SEG09A9_SpecialMetadata8Base 0x1F13u
 #define SEG09A9_SpecialMetadata24 0x1F23u
