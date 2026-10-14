@@ -72,14 +72,19 @@ printing their open seams. Decoded leaves and C presence are investigation
 evidence, not readiness proofs. Syntactic operand tags do not establish DS/ES/SS
 ownership. Full protection and sound frontiers retain their separate inventories.
 
-The immediate independent leaf is `WriteDecimalByteDigits` (4BC2..4BE6). AL
+The independent leaf `WriteDecimalByteDigits` (4BC2..4BE6) is now native. AL
 produces three ASCII digits, incoming AH is ignored, AX returns tens/units ASCII,
 and SI advances two. Writes go forward even with DF set. The original-only
 contract suite covers 260 cases, all 19 sites and four branch edges, comparing
-whole RAM, registers and defined flags. This is not C coverage.
+whole RAM, registers and defined flags. That suite remains separate from C coverage.
+The native suite adds 270 comparisons, including physical wrap and controlled live
+return aliases, with three compiled mutants detected; see decimal-digits.md.
 
-Translate that leaf, then compose 197D with native file/decoder cores and explicit
-fatal/platform seams. Recover the 36B6/394F object/terrain dependencies before
+The 197D caller now composes that leaf and native file/decoder/raw cores directly:
+59 cases cover 108 caller/560 integrated sites, nine caller edges and three mutants.
+Live saved order/counter/DS words, unchecked closes, in-place decoding and paired
+original resources are verified; see resource-select.md for fatal/platform seams.
+Recover the 36B6/378A/394F object/terrain dependencies before
 translating those parents. For each cluster, resolve the state/table/target
 uncertainty that would force guessing, document its live segment/flag contract,
 verify exact ASM, and translate with logical parameters and direct native calls.

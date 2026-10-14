@@ -6,6 +6,8 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 if __name__ == "__main__":
+    subprocess.run([sys.executable, str(ROOT / "tests" / "decimal_digits_c.py")],
+                   cwd=ROOT, check=True, timeout=120)
     subprocess.run([sys.executable, str(ROOT / "tests" / "checksum.py")],
                    cwd=ROOT, check=True)
     subprocess.run([sys.executable, str(ROOT / "tests" / "pcspeaker.py")],
@@ -29,4 +31,6 @@ if __name__ == "__main__":
     subprocess.run([sys.executable, str(ROOT / "tests" / "special_blit.py")],
                    cwd=ROOT, check=True, timeout=120)
     subprocess.run([sys.executable, str(ROOT / "tests" / "special_setup.py")],
+                   cwd=ROOT, check=True, timeout=120)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "resource_select.py")],
                    cwd=ROOT, check=True, timeout=120)

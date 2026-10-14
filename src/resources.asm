@@ -73,8 +73,9 @@ loc_196E:
 ; LoadedLevelRecord. Odd overrides copy24 header bytes and32 footer bytes.
 ; Ground/VGAGR selectors come from the resulting record; special value0 uses
 ; two VGAGR sections, nonzero loads VGASPEC first section. Close carry is ignored.
-; DOS, returned ES/DS, saved-frame aliases and fatal continuations are not closed
-; for this caller yet. Decimal leaf is the next independent C dependency.
+; Native decimal/raw/file/cache/decoder composition: c/resource_select.c.
+; Bounded live ES/DS/stack, DF and fatal contracts: docs/resource-select.md.
+; DOS, 4B1C retry UI and 1949/04D0 fatal bodies remain explicit unported seams.
 LoadSelectedLevelResources:
     mov bl,[LevelResourceSelectionByte-GameDataImage] ; @0197D
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @01981
@@ -92,6 +93,7 @@ LoadSelectedLevelResources:
     lea si,[LevelResourceFilenameDigits-GameDataImage] ; @0199B
     push cx ; @0199F
     call WriteDecimalByteDigits ; @019A0
+SelectionAfterDecimal:
     pop cx ; @019A3
     lea dx,[LevelResourceFilename-GameDataImage] ; @019A4
     push ds ; @019A8
@@ -101,12 +103,14 @@ LoadSelectedLevelResources:
     mov cx,es ; @019AF
     db 0x8b,0xf7 ; ENCODED: mov si,di (NASM chooses a different encoding) ; @019B1
     call LoadDatResource ; @019B3
+SelectionAfterFirstLevelSection:
     pop cx ; @019B6
     jcxz loc_19C4 ; @019B7
 loc_19B9:
     push cx ; @019B9
     lea di,[LoadedLevelRecord-GameDataImage] ; @019BA
     call DecodeDatPreservingSegment ; @019BE
+SelectionAfterNextLevelSection:
     pop cx ; @019C1
     loop loc_19B9 ; @019C2
 loc_19C4:
@@ -122,6 +126,7 @@ loc_19C4:
     lea ax,[OddLevelOverrideBuffer-GameDataImage] ; @019D5
     mov cx,0x1180 ; @019D9
     call ReadRawResourceFile ; @019DC
+SelectionAfterOddOverrideRead:
     pop ax ; @019DF
     shr al,1 ; @019E0
     mov dh,0x38 ; @019E2
@@ -138,7 +143,7 @@ loc_19C4:
     rep movsw ; @019FE
 loc_1A00:
     mov al,[LevelGraphicsSetByte-GameDataImage] ; @01A00
-    lea si,[0x2545] ; @01A03
+    lea si,[GroundFilenameSelector-GameDataImage] ; @01A03
     add al,0x30 ; @01A07
     mov [si],al ; @01A09
     lea dx,[GroundResourceFilename-GameDataImage] ; @01A0B
@@ -147,8 +152,9 @@ loc_1A00:
     lea ax,[GroundResourceBuffer-GameDataImage] ; @01A11
     mov cx,0x1000 ; @01A15
     call ReadRawResourceFile ; @01A18
+SelectionAfterGroundRead:
     mov al,[LevelGraphicsSetByte-GameDataImage] ; @01A1B
-    lea si,[0x2539] ; @01A1E
+    lea si,[GraphicsFilenameSelector-GameDataImage] ; @01A1E
     add al,0x30 ; @01A22
     mov [si],al ; @01A24
     mov al,[LevelSpecialGraphicsSetByte-GameDataImage] ; @01A26
@@ -159,12 +165,13 @@ loc_1A00:
     db 0x90 ; @01A2F
 loc_1A30:
     push ds ; @01A30
-    lea dx,[0x2534] ; @01A31
+    lea dx,[GraphicsDatFilename-GameDataImage] ; @01A31
     mov es,[GraphicsResourceInputSegment-GameDataImage] ; @01A35
     mov di,0x10 ; @01A39
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @01A3C
     mov cx,es ; @01A3E
     call LoadDatResource ; @01A40
+SelectionAfterGraphicsLoad:
     pop ds ; @01A43
     push ds ; @01A44
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @01A45
@@ -172,12 +179,13 @@ loc_1A30:
     mov es,[LevelGraphicsSegment-GameDataImage] ; @01A49
     mov ds,[LevelGraphicsSegment-GameDataImage] ; @01A4D
     call DecodeDatPreservingSegment ; @01A51
+SelectionAfterGraphicsDecode:
     pop ds ; @01A54
     mov ah,0x3e ; @01A55
     int 0x21 ; @01A57
     ret ; @01A59
 loc_1A5A:
-    lea si,[0x2560] ; @01A5A
+    lea si,[SpecialFilenameSelector-GameDataImage] ; @01A5A
     add al,0x2f ; @01A5E
     mov [si],al ; @01A60
     push ds ; @01A62
@@ -187,6 +195,7 @@ loc_1A5A:
     mov di,0x10 ; @01A6D
     mov cx,es ; @01A70
     call LoadDatResource ; @01A72
+SelectionAfterSpecialLoad:
     pop ds ; @01A75
     mov ah,0x3e ; @01A76
     int 0x21 ; @01A78

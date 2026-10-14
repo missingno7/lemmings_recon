@@ -27,10 +27,10 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Twenty-five original routine entries now have verified C11 cores: two checksums, thirteen DAT
+Twenty-seven original routine entries now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
-decoder, four special-resource VGA strip entries, their connected setup caller and
-three PC-speaker helpers, totaling 1,704 original
+decoder, four special-resource VGA strip entries, their connected setup caller,
+the decimal helper, connected resource selection and three PC-speaker helpers, totaling 1,994 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -125,6 +125,12 @@ The checked-in ledger and source do not require neighboring projects to build.
 The semantic ASM/resource refactoring and dependency order are documented in
 [bottom-up convergence](docs/bottom-up.md). Module end assertions keep layout
 fixed; the bootstrap generator refuses to overwrite these maintained modules.
+
+The decimal helper passes 270 native/ASM cases, and resource selection now calls
+the native resource cores directly in 59 integrated cases. Live stack/segment
+aliases, unchecked indexes, in-place decoding and ignored close carry remain
+observable; see [decimal helper](docs/decimal-digits.md) and
+[resource selection](docs/resource-select.md). Object/terrain ownership is next.
 
 Symbols may be changed with tools/rename.py, data names added with tools/define.py,
 and C offsets regenerated with tools/symtab.py. Always run the exact verifier next.

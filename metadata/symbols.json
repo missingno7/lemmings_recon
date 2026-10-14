@@ -7536,8 +7536,148 @@
       "Static direct call target",
       "Static instructions and callers support reconstructed purpose; contract comments in maintained ASM"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 253
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 253,
+    "c_implementation": "c/resource_select.c",
+    "c_code_ranges": [
+      [
+        6525,
+        6703
+      ],
+      [
+        6704,
+        6779
+      ]
+    ],
+    "verification_evidence": "tests/resource_select.py:59 original-vs-C cases,108 caller/560 integrated sites,nine caller edges,three compiled mutants; direct native decimal/raw/file/cache/decoder calls,paired original resources including odd override,live aliases and fatal frames; docs/resource-select.md"
+  },
+  {
+    "address": 6563,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterDecimal",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6582,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterFirstLevelSection",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6593,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterNextLevelSection",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6623,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterOddOverrideRead",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6683,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterGroundRead",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6723,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterGraphicsLoad",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6740,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterGraphicsDecode",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6773,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionAfterSpecialLoad",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 6779,
@@ -25372,9 +25512,10 @@
       "Static direct call target",
       "Static instructions and callers support reconstructed purpose; contract comments in maintained ASM"
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 37,
-    "verification_evidence": "tests/decimal_digits.py:260 original-only independent-formula cases,19 sites,4 branch edges; poisoned AH,control flags,SI/stack wrap; no C implementation"
+    "verification_evidence": "tests/decimal_digits_c.py:270 original-vs-C cases,19 instruction sites,four branch edges,three compiled mutants; whole RAM/registers/defined flags,DF-independent forward writes,wrap and live return aliases; docs/decimal-digits.md",
+    "c_implementation": "c/decimal_digits.c"
   },
   {
     "address": 19431,
@@ -51311,6 +51452,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 9529,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "GraphicsFilenameSelector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A24 writes normal graphics filename selector"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 9535,
     "segment": 2473,
     "kind": "data",
@@ -51323,6 +51480,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A0B raw-ground filename; staticground0o.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9541,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "GroundFilenameSelector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A09 writes ground filename selector"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51371,6 +51544,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A63 filename vgaspec0.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9568,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "SpecialFilenameSelector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A60 writes special filename selector withAL+2F"
     ],
     "verification_status": "UNRESOLVED"
   },

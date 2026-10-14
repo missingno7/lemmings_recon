@@ -4679,7 +4679,8 @@ sub_4BBE:
 ; AX returns tens ASCII inAH, units ASCII inAL; SI advances2 with16-bit wrap.
 ; Writes are live and increment forwards even withDF set. Other registers/segments
 ; are unchanged; final ADD AL,30 defines arithmetic flags, preserves control flags.
-; Original-only exhaustive contract check: tests/decimal_digits.py; C still absent.
+; Native C and active-return alias checks: tests/decimal_digits_c.py.
+; Separate original-only contract check: tests/decimal_digits.py; docs/decimal-digits.md.
 WriteDecimalByteDigits:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04BC2
 loc_4BC4:

@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 22 |
-| Translated C code bytes | 1539 |
-| Differential cases | 1423 |
-| Mutation checks detected | 33 |
-| Original instruction coverage | 739 / 15,392 decoded (4.801%) |
+| Translated C routines | 24 |
+| Translated C code bytes | 1829 |
+| Differential cases | 1752 |
+| Mutation checks detected | 39 |
+| Original instruction coverage | 866 / 15,392 decoded (5.626%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -37,10 +37,10 @@ has an exact buildable initial ASM image, but remains open for code/data, indire
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
-special graphics setup main routines are TESTED within docs/checksum.md,
+special graphics setup, decimal helper and resource selection main routines are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
-docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md
-and docs/special-setup.md's domains; remaining
+docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
+docs/special-setup.md, docs/decimal-digits.md and docs/resource-select.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -66,10 +66,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 799 / 17,291
-(4.621%) of this still-incomplete decoded inventory. There are
-25 tested C routines occupying 1704 original code bytes across images,
-with 1758 differential cases and 36 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 926 / 17,291
+(5.355%) of this still-incomplete decoded inventory. There are
+27 tested C routines occupying 1994 original code bytes across images,
+with 2087 differential cases and 42 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -192,7 +192,7 @@ aliases. Sixteen cases use the pinned VGASPEC streams; an independent expected
 plane check also verifies untouched video memory in the forward cases. The three
 skipped UNKNOWN bytes remain excluded; shared bytes and sites are counted once.
 This is a bounded device fixture, not a native VGA backend or IRQ scheduler.
-Upstream graphics setup, platform ownership and SDL3 remain open. See special-blit.md.
+Platform ownership and SDL3 remain open. See special-blit.md.
 
 The special graphics setup caller at 1A7B now connects metadata copies, four
 RLE/strip calls and two normal graphics DAT sections through direct native cores.
@@ -204,14 +204,28 @@ expected metadata and four-strip plane contents also pass in the forward cases.
 Three compiled mutations are detected. The unchecked final close result remains
 unchecked; original fatal frames stay live. This adds 199 C-covered caller bytes;
 dependency bytes/sites are counted once. DOS, retry UI, VGA backend and IRQ delivery
-remain declared seams. Upstream selection/allocation and full native startup are
+remain declared seams. Allocation and full native startup are
 still open. See special-setup.md.
 
-The decimal filename helper at4BC2..4BE6 now has an original-only independent
-contract check:260 cases execute all19 sites and four branch edges, covering all
-AL values, poisoned AH/control flags and cursor/stack wrap. Its37 bytes remain
-UNTRANSLATED and these checks do not enter C coverage. The source is split into
+The decimal filename helper at 4BC2..4BE6 now has a native C11 core. Its
+270 original-versus-C cases cover all 19 sites and four branch edges,
+all AL values, poisoned AH/control flags, cursor/stack/physical wrap and overwritten
+live return words. Three compiled mutations are detected. The separate 260-case
+original-only contract check remains extractor evidence and is not added to C coverage.
+See decimal-digits.md. The source is split into
 maintained physical modules with exact end assertions, and fresh call/dependency
 views guide the next cluster. See bottom-up.md. All80 pinned LEVEL sections also
 match static extraction and bounded original/native decoding, including13 valid
 zero-initial-bit headers; these cases are part of the DAT section C suite above.
+
+The resource selection caller at 197D..1A7A now composes the native decimal,
+raw-resource, file/cache and section decoder cores directly. Its
+59 integrated cases cover all 108 caller sites and nine branch edges.
+Full memory/register/defined-flag/service comparisons preserve unchecked order-byte
+wrap, repeated in-place level decoding, odd override copies, DF, short/long ground
+reads, live saved-counter/order/DS aliases, unchecked closes and distinct fatal frames.
+Paired original LEVEL/ground/odd/VGAGR/VGASPEC inputs also pass, with independent
+record expectations. Three compiled mutations are detected. The 253 C-covered
+caller bytes exclude the skipped UNKNOWN NOP; dependency bytes/sites are counted
+once. DOS, 4B1C retry UI and 1949/04D0 fatal bodies remain explicit unported seams.
+Object/terrain ownership and native startup remain open; see resource-select.md.

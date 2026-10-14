@@ -2,9 +2,9 @@
 
 Current working order follows the Pre2-style semantic ASM/dependency pass in
 bottom-up.md. Review source contracts and the fresh graph before expanding C.
-Translate WriteDecimalByteDigits (4BC2) next, then compose LoadSelectedLevelResources
-(197D) with existing native resource cores. Recover record/object/terrain ownership
-for 36B6/394F next. Keep the platform/fatal/IRQ seams and broader static obligations
+WriteDecimalByteDigits (4BC2) and LoadSelectedLevelResources (197D) now have connected
+native cores verified in 270 and 59 cases respectively. Recover record/object/terrain
+ownership for 36B6/378A/394F next. Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
 1. Complete the protected disk-check contracts after the recovered state-specific
@@ -54,7 +54,7 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     40 bounded differential cases; see dat-files.md for the explicit 4B1C game
     retry seam and 1949 fatal transfer. The 1B79 caller and 1BA9 shared tail now
     connect those cores directly, verified in 24 integrated cases; see dat-load.md.
-    Port higher section-selection/seek/close callers and startup resource ownership next,
+    Continue startup resource ownership and higher callers next,
     using the tested 1916 raw-resource reader where applicable; see resource-raw.md.
     The 1B42 RLE helper is also native, with 303 cases covering its incoming DF,
     overlaps and rollover AL bug; see resource-rle.md. The four special-resource
@@ -64,8 +64,15 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     The higher 1A7B metadata/RLE/strip and two-section normal VGAGR caller now
     connects these native cores in 20 cases, covering all 87 caller sites and
     621 integrated sites; see special-setup.md for live restores and unchecked close.
-    Recover upstream 197D resource selection/load and 36B6/394F level setup next,
-    with explicit object/palette ownership and preserved segment aliases.
+    The upstream 197D resource-selection caller now directly connects native
+    decimal/raw/file/cache/decoder cores in 59 cases (108 caller/560 integrated
+    sites, nine caller edges); see resource-select.md. It preserves wrapped order
+    bytes, in-place sections, odd overrides, long/short ground reads, live saved
+    counters/order/DS, ignored closes and both fatal seams. The 4BC2 decimal leaf
+    passes 270 native cases, including controlled live RET aliases; see decimal-digits.md.
+    Recover 36B6/378A/394F level setup next, with explicit object/palette/terrain
+    ownership and preserved segment aliases. The 378A first-word-zero stale slot,
+    unchecked wrapped ground-type lookup and incoming DF remain proof obligations.
     Native VGA ownership and asynchronous IRQ behavior remain open.
     Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.
