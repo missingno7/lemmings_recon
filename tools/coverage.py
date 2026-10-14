@@ -102,14 +102,19 @@ def report():
     executed.update(setup['executed_instruction_addresses'])
     decimal=read_json(BUILD/'decimal-digits-c-differential.json')
     selection=read_json(BUILD/'resource-select-differential.json')
-    for label,extra in (('decimal digits',decimal),('resource selection',selection)):
+    objects=read_json(BUILD/'object-graphics-differential.json')
+    coordinates=read_json(BUILD/'object-coordinates-differential.json')
+    for label,extra in (('decimal digits',decimal),('resource selection',selection),
+                        ('object graphics',objects),('object coordinates',coordinates)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
         if extra['image_sha256']!=sha(image):raise ValueError(label+' differential oracle changed')
     executed.update(decimal['instruction_sites'])
     executed.update(selection['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection)
+    executed.update(objects['instruction_sites'])
+    executed.update(coordinates['instruction_sites'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -184,10 +189,12 @@ has an exact buildable initial ASM image, but remains open for code/data, indire
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
-special graphics setup, decimal helper and resource selection main routines are TESTED within docs/checksum.md,
+special graphics setup, decimal helper, resource selection and two object-record
+main routines are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
-docs/special-setup.md, docs/decimal-digits.md and docs/resource-select.md's domains; remaining
+docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
+docs/object-records.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -376,6 +383,20 @@ record expectations. Three compiled mutations are detected. The 253 C-covered
 caller bytes exclude the skipped UNKNOWN NOP; dependency bytes/sites are counted
 once. DOS, 4B1C retry UI and 1949/04D0 fatal bodies remain explicit unported seams.
 Object/terrain ownership and native startup remain open; see resource-select.md.
+
+Two closed level-object helpers now have native C11 cores. The graphics-record
+copy at 378A has {objects['case_count']} cases covering all 26 sites and four edges;
+the type-one coordinate collector at 389F has {coordinates['case_count']} cases
+covering all 63 sites and 12 edges. Each suite includes all 80 supplied LEVEL
+sections; the graphics copy also uses the matching GROUND inputs. Full RAM,
+registers and defined-flag comparisons retain stale slots, incoming DF, wrapped
+unchecked type lookup, live saved-cursor/counter and return aliases, counts 0..32,
+zero-X acceptance, and the original default repeated+0A store/+0C stale bug.
+Six compiled mutations are detected. These disjoint 221 bytes add 89 original
+instruction sites; shared upstream dependencies remain counted once. The helper
+ASM is grouped at its unchanged physical position in level_objects.asm with
+start/end assertions. Interaction-cell writers 37C2/3839 and the larger 36B6/394F
+setup/drawing pipelines remain untranslated. See object-records.md.
 '''
     return m,text
 

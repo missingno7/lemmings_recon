@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 24 |
-| Translated C code bytes | 1829 |
-| Differential cases | 1752 |
-| Mutation checks detected | 39 |
-| Original instruction coverage | 866 / 15,392 decoded (5.626%) |
+| Translated C routines | 26 |
+| Translated C code bytes | 2050 |
+| Differential cases | 2042 |
+| Mutation checks detected | 45 |
+| Original instruction coverage | 955 / 15,392 decoded (6.205%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -37,10 +37,12 @@ has an exact buildable initial ASM image, but remains open for code/data, indire
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
-special graphics setup, decimal helper and resource selection main routines are TESTED within docs/checksum.md,
+special graphics setup, decimal helper, resource selection and two object-record
+main routines are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
-docs/special-setup.md, docs/decimal-digits.md and docs/resource-select.md's domains; remaining
+docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
+docs/object-records.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -66,10 +68,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 926 / 17,291
-(5.355%) of this still-incomplete decoded inventory. There are
-27 tested C routines occupying 1994 original code bytes across images,
-with 2087 differential cases and 42 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1015 / 17,291
+(5.870%) of this still-incomplete decoded inventory. There are
+29 tested C routines occupying 2215 original code bytes across images,
+with 2377 differential cases and 48 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -229,3 +231,17 @@ record expectations. Three compiled mutations are detected. The 253 C-covered
 caller bytes exclude the skipped UNKNOWN NOP; dependency bytes/sites are counted
 once. DOS, 4B1C retry UI and 1949/04D0 fatal bodies remain explicit unported seams.
 Object/terrain ownership and native startup remain open; see resource-select.md.
+
+Two closed level-object helpers now have native C11 cores. The graphics-record
+copy at 378A has 131 cases covering all 26 sites and four edges;
+the type-one coordinate collector at 389F has 159 cases
+covering all 63 sites and 12 edges. Each suite includes all 80 supplied LEVEL
+sections; the graphics copy also uses the matching GROUND inputs. Full RAM,
+registers and defined-flag comparisons retain stale slots, incoming DF, wrapped
+unchecked type lookup, live saved-cursor/counter and return aliases, counts 0..32,
+zero-X acceptance, and the original default repeated+0A store/+0C stale bug.
+Six compiled mutations are detected. These disjoint 221 bytes add 89 original
+instruction sites; shared upstream dependencies remain counted once. The helper
+ASM is grouped at its unchanged physical position in level_objects.asm with
+start/end assertions. Interaction-cell writers 37C2/3839 and the larger 36B6/394F
+setup/drawing pipelines remain untranslated. See object-records.md.

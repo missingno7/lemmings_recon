@@ -16,7 +16,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 |---|---|---|
 | 00000..01915 | entry_services.asm | Entry/service frame; protected views remain separate |
 | 01916..01ED6 | resources.asm | Raw files, selection, special setup and DAT/cache cluster |
-| 01ED7..08237 | game_code.asm | Mixed ownership remains provisional |
+| 01ED7..03789 | game_code.asm | Mixed ownership remains provisional |
+| 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
+| 03944..08237 | game_code_late.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
 | 08343..083BE | checksum.asm | Tested checksums, state and code/data overlap |
 | 083BF..09A8F | code_tail.asm | Overlay storage, drawing code and unresolved spans |
@@ -25,6 +27,12 @@ These are reconstruction boundaries, not claims about historical linker modules.
 Shared tails can cross files. All encoding exceptions, UNKNOWN markers and
 classifications remain unchanged. The bootstrap generator refuses to overwrite
 the maintained modular layout. Refine the actual ASM and keep exact verification.
+
+The contiguous 0378A..03943 object helpers now live in level_objects.asm,
+included directly by program.asm at their original position with start/end assertions.
+This groups the graphics-record copy, SS interaction rectangles and coordinate
+collector while keeping their broader setup and drawing callers outside the module.
+Record ownership and preserved quirks are documented in object-records.md.
 
 ## Resource and state handoff
 
@@ -84,8 +92,11 @@ The 197D caller now composes that leaf and native file/decoder/raw cores directl
 59 cases cover 108 caller/560 integrated sites, nine caller edges and three mutants.
 Live saved order/counter/DS words, unchecked closes, in-place decoding and paired
 original resources are verified; see resource-select.md for fatal/platform seams.
-Recover the 36B6/378A/394F object/terrain dependencies before
-translating those parents. For each cluster, resolve the state/table/target
+The 378A graphics-record copy and 389F coordinate collector are also native,
+with 131/159 cases and the live-copy/default-coordinate quirks documented in
+object-records.md. Recover the 37C2/3839 live SS interaction-cell contracts next,
+then close the remaining 36B6/394F setup dependencies before translating those
+parents. For each cluster, resolve the state/table/target
 uncertainty that would force guessing, document its live segment/flag contract,
 verify exact ASM, and translate with logical parameters and direct native calls.
 Keep register adapters at the oracle boundary. Recheck parents when dependencies

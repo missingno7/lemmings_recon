@@ -27,10 +27,11 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Twenty-seven original routine entries now have verified C11 cores: two checksums, thirteen DAT
+Twenty-nine original routine entries now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
-the decimal helper, connected resource selection and three PC-speaker helpers, totaling 1,994 original
+the decimal helper, connected resource selection, two object-record helpers and
+three PC-speaker helpers, totaling 2,215 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -130,7 +131,10 @@ The decimal helper passes 270 native/ASM cases, and resource selection now calls
 the native resource cores directly in 59 integrated cases. Live stack/segment
 aliases, unchecked indexes, in-place decoding and ignored close carry remain
 observable; see [decimal helper](docs/decimal-digits.md) and
-[resource selection](docs/resource-select.md). Object/terrain ownership is next.
+[resource selection](docs/resource-select.md). The object graphics-record copy and
+type-one coordinate collector now pass 131/159 cases, retaining live copies and
+the original default-coordinate bug. See [object records](docs/object-records.md).
+SS interaction cells and the larger setup/drawing callers are next.
 
 Symbols may be changed with tools/rename.py, data names added with tools/define.py,
 and C offsets regenerated with tools/symtab.py. Always run the exact verifier next.

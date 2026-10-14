@@ -3,8 +3,10 @@
 Current working order follows the Pre2-style semantic ASM/dependency pass in
 bottom-up.md. Review source contracts and the fresh graph before expanding C.
 WriteDecimalByteDigits (4BC2) and LoadSelectedLevelResources (197D) now have connected
-native cores verified in 270 and 59 cases respectively. Recover record/object/terrain
-ownership for 36B6/378A/394F next. Keep the platform/fatal/IRQ seams and broader static obligations
+native cores verified in 270 and 59 cases respectively. The closed 378A graphics
+record copy and 389F coordinate collector now pass 131 and 159 native cases.
+Recover live SS interaction-cell ownership at 37C2/3839 next, then connect the
+36B6/394F setup consumers as their drawing dependencies close. Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
 1. Complete the protected disk-check contracts after the recovered state-specific
@@ -70,9 +72,15 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     bytes, in-place sections, odd overrides, long/short ground reads, live saved
     counters/order/DS, ignored closes and both fatal seams. The 4BC2 decimal leaf
     passes 270 native cases, including controlled live RET aliases; see decimal-digits.md.
-    Recover 36B6/378A/394F level setup next, with explicit object/palette/terrain
-    ownership and preserved segment aliases. The 378A first-word-zero stale slot,
-    unchecked wrapped ground-type lookup and incoming DF remain proof obligations.
+    The 378A graphics-record copy and 389F coordinate collector now have C11
+    cores with 131/159 cases, including all80 supplied LEVEL sections. Their
+    221 original bytes/89 instruction sites preserve stale inactive slots,
+    unchecked wrapped ground-type lookup, DF, live saved cursors/counters/RET,
+    full type-one comparisons, zero-X acceptance and the repeated+0A default bug.
+    See object-records.md and src/level_objects.asm for ownership and bounded domains.
+    Recover 37C2/3839 interaction-cell routines next: SS also owns the stack and
+    VGA mirrors, dimensions have unchecked decrement semantics, and row saves
+    remain live. Then close the 36B6/394F object/palette/terrain setup dependencies.
     Native VGA ownership and asynchronous IRQ behavior remain open.
     Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.

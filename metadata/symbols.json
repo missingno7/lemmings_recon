@@ -18198,9 +18198,11 @@
     "address": 14218,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_378A",
-    "aliases": [],
+    "size": 56,
+    "symbol_name": "CopyLevelObjectGraphicsRecords",
+    "aliases": [
+      "sub_378A"
+    ],
     "callers": [
       14186,
       14714
@@ -18284,8 +18286,10 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 56
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 56,
+    "c_implementation": "c/object_graphics.c",
+    "verification_evidence": "tests/object_graphics.py:131 original-vs-C cases,26 instruction sites,four branch edges,three compiled mutants; all80LEVEL/ground pairs,DF,unchecked wrapped type lookup,live copies,saved SI/CX/DI andRET aliases; docs/object-records.md"
   },
   {
     "address": 14274,
@@ -18491,9 +18495,11 @@
     "address": 14495,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_389F",
-    "aliases": [],
+    "size": 165,
+    "symbol_name": "CollectTypeOneObjectCoordinates",
+    "aliases": [
+      "sub_389F"
+    ],
     "callers": [
       14195
     ],
@@ -18808,8 +18814,10 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 165
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 165,
+    "c_implementation": "c/object_coordinates.c",
+    "verification_evidence": "tests/object_coordinates.py:159 original-vs-C cases,63 instruction sites,12 branch edges,three compiled mutants; all80LEVEL sections,counts0..32,zeroX accepted,fullBEtype comparison,default repeated+0A bug,post-writeRET aliases; docs/object-records.md"
   },
   {
     "address": 14660,
@@ -50908,6 +50916,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 3736,
+    "segment": 2473,
+    "kind": "data",
+    "size": 128,
+    "symbol_name": "TypeOneObjectCoordinates",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "389F appends+24/+30 coordinate pairs from unchecked32 type-one definitions;30E2 indexesfourpairs;128bytes ismaximumwrites notprovenallocation"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 4043,
     "segment": 2473,
     "kind": "data",
@@ -50956,6 +50980,54 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 4075,
+    "segment": 2473,
+    "kind": "data",
+    "size": 256,
+    "symbol_name": "LevelObjectDefinitions",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "378A/37C2/389F/394F and object drawing consumers use32 big-endian eight-byte definitions atDS0FEB, insideLoadedLevelRecord+32"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4331,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1600,
+    "symbol_name": "LevelTerrainDefinitions",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "36B6/394F consume four-byteBEterrain records fromDS10EB untilFFFF sentinel;reservedspanendsat32 steel recordsDS172B,notan enforcedruntimebound"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5931,
+    "segment": 2473,
+    "kind": "data",
+    "size": 128,
+    "symbol_name": "LevelSteelDefinitions",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3839 consumes32 four-byte packed steel rectangles atDS172B..17AA immediatelybeforeLoadedLevelFooterBytes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 6059,
     "segment": 2473,
     "kind": "data",
@@ -50972,6 +51044,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 6091,
+    "segment": 2473,
+    "kind": "data",
+    "size": 896,
+    "symbol_name": "LevelObjectGraphicsRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "378A copies32 wrapped unchecked28-byte ground templates toDS17CB..1B4A;394F/7BB8/7C0A consume live slots; first-word-zero leaves stale bytes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 6987,
     "segment": 2473,
     "kind": "data",
@@ -50984,6 +51072,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A18 requests1000 bytes ofground?o.dat into main data frame atthis offset"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7435,
+    "segment": 2473,
+    "kind": "data",
+    "size": 512,
+    "symbol_name": "GroundTerrainGraphicsRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "7C8D masks terrain selector to0..63;7C9A..7CAE uses eight-byte records atDS1D0B,width/height bytes andtwoLEoffsetwords;512bytes liesinside1056-byte suppliedGROUNDinput"
     ],
     "verification_status": "UNRESOLVED"
   },

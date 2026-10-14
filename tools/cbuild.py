@@ -16,7 +16,7 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select"):
+    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -32,6 +32,8 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="special_setup":defines=["-DMUTATION=0","-DSETUP_MUTATION="+str(mutation)]
     if cluster=="decimal_digits":defines=["-DMUTATION=0","-DDECIMAL_MUTATION="+str(mutation)]
     if cluster=="resource_select":defines=["-DMUTATION=0","-DDECIMAL_MUTATION=0","-DSELECT_MUTATION="+str(mutation)]
+    if cluster=="object_graphics":defines=["-DMUTATION=0","-DOBJECT_MUTATION="+str(mutation)]
+    if cluster=="object_coordinates":defines=["-DMUTATION=0","-DCOORD_MUTATION="+str(mutation)]
     subprocess.run([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
         "-shared", *defines,

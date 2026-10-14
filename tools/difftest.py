@@ -34,3 +34,7 @@ if __name__ == "__main__":
                    cwd=ROOT, check=True, timeout=120)
     subprocess.run([sys.executable, str(ROOT / "tests" / "resource_select.py")],
                    cwd=ROOT, check=True, timeout=120)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "object_graphics.py")],
+                   cwd=ROOT, check=True, timeout=120)
+    subprocess.run([sys.executable, str(ROOT / "tests" / "object_coordinates.py")],
+                   cwd=ROOT, check=True, timeout=120)
