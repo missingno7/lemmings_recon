@@ -126,3 +126,11 @@ direct native column/row/sample cores. Its CS scratch window, live SS saves,
 signed column update, DF-sensitive clear and VGA compare/care contract are
 documented in minimap.md. The surrounding modules retain their provisional
 ownership and UNKNOWN classifications.
+
+The far drawing entry 8822 now exposes a scoped native preparation continuation
+at 882D, with direct clipping 9967 and dirty-cell 9A15 children. The fresh graph
+keeps DrawPlanarBitmap UNTRANSLATED while giving the 49-byte span its own exits
+at 885E/88AB. Live source pitch/extent/skips and saved CH names belong to the
+ledger. Its tests consume original-prologue state and keep those seven sites
+outside C accounting. Continue the planar body only after its dispatch, shift,
+VGA and segment contracts are closed; see drawing-inputs.md.

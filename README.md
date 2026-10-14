@@ -27,12 +27,13 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Thirty-nine original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+Forty-two original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
 their connected setup span, VGA clear/layout, two drawing callers, three minimap
-routines and three PC-speaker helpers, totaling 2,812 original
+routines, two clipping/dirty-cell leaves, their scoped drawing preparation span
+and three PC-speaker helpers, totaling 3,156 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -89,6 +90,11 @@ The minimap sample, row and column now share direct native cores and a dedicated
 ASM module. Their 178 cases include full thirteen-column cycles, live stack/cursor
 aliases and independent mode1/plane footprints. Exhaustive native population
 vectors are counted separately from original comparisons; see [minimap](docs/minimap.md).
+
+The planar clipping and dirty-cell leaves now compose directly in the 882D
+preparation span. Their 2,227 original/native cases preserve live field/save/return
+aliases and zero-count quirks. The seven-site original 8822 prologue and 885E
+renderer body remain separate; see [drawing preparation](docs/drawing-inputs.md).
 
 ## Reproduce
 

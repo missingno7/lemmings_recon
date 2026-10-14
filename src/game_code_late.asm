@@ -868,7 +868,7 @@ sub_410F:
     mov ax,es ; @04134
     mov cx,0x143e ; @04136
     mov es,cx ; @04139
-    mov bx,[0x26] ; @0413B
+    mov bx,[DrawingDirtyCellMapOffset-GameDataImage] ; @0413B
     mov byte [es:bx],0xff ; @0413F
     mov bx,[0x28] ; @04143
     mov byte [es:bx],0xff ; @04147
@@ -3476,8 +3476,8 @@ loc_574D:
     shr ax,1 ; @0574D
     shr ax,1 ; @0574F
     shr ax,1 ; @05751
-    add ax,[0x26] ; @05753
-    mov bp,[0x26] ; @05757
+    add ax,[DrawingDirtyCellMapOffset-GameDataImage] ; @05753
+    mov bp,[DrawingDirtyCellMapOffset-GameDataImage] ; @05757
     add bp,0x321 ; @0575B
     inc ax ; @0575F
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM chooses a different encoding) ; @05760
@@ -6579,7 +6579,7 @@ loc_6EEB:
     push dx ; @06EFE
     push bp ; @06EFF
     push si ; @06F00
-    mov si,[0x26] ; @06F01
+    mov si,[DrawingDirtyCellMapOffset-GameDataImage] ; @06F01
     inc si ; @06F05
     sub bp,byte +0x10 ; @06F06
     jns loc_6F0D ; @06F09

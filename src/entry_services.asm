@@ -109,7 +109,7 @@ loc_0105:
     xchg [0x1f76],ax ; @00108
     mov [0x1f78],ax ; @0010C
     mov ax,[0x28] ; @0010F
-    xchg [0x26],ax ; @00112
+    xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @00112
     mov [0x28],ax ; @00116
     cmp byte [0x200e],0xff ; @00119
     jnz loc_0164 ; @0011E
@@ -308,7 +308,7 @@ loc_02E3:
     mov ax,0x0 ; @002F1
     int 0x60 ; @002F4
 loc_02F6:
-    mov byte [0x2a],0x0 ; @002F6
+    mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0x0 ; @002F6
     call RestoreTimerState ; @002FB
     cmp byte [0x2010],0xff ; @002FE
     jnz loc_0311 ; @00303
@@ -441,7 +441,7 @@ sub_03E7:
     mov [0x1fd4],al ; @00438
     mov [0x1fd3],al ; @0043B
     mov [0x4f],al ; @0043E
-    mov [0x2a],al ; @00441
+    mov [DrawingDirtyCellsEnabledByte-GameDataImage],al ; @00441
     mov [0x52],al ; @00444
     mov [0x55],al ; @00447
     push ss ; @0044A

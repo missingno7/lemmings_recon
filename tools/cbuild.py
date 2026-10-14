@@ -16,7 +16,7 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","minimap_sample","minimap_row","minimap_column"):
+    if cluster not in ("checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -30,6 +30,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="level_drawing":sources += [ROOT/"c"/(n+".c") for n in ('vga_clear','drawing_layout')]
     if cluster=="minimap_row":sources += [ROOT/'c/minimap_sample.c']
     if cluster=="minimap_column":sources += [ROOT/'c/minimap_row.c',ROOT/'c/minimap_sample.c']
+    if cluster=="drawing_inputs":sources += [ROOT/'c/drawing_clip.c',ROOT/'c/drawing_dirty.c']
     defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
     if cluster=="dat_files":defines=["-DMUTATION=0","-DFILE_MUTATION="+str(mutation)]
     if cluster=="dat_load":defines=["-DMUTATION=0","-DLOAD_MUTATION="+str(mutation)]
@@ -47,6 +48,9 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="minimap_sample":defines=["-DSAMPLE_MUTATION="+str(mutation)]
     if cluster=="minimap_row":defines=["-DROW_MUTATION="+str(mutation)]
     if cluster=="minimap_column":defines=["-DCOLUMN_MUTATION="+str(mutation)]
+    if cluster=="drawing_clip":defines=["-DCLIP_MUTATION="+str(mutation)]
+    if cluster=="drawing_dirty":defines=["-DDIRTY_MUTATION="+str(mutation)]
+    if cluster=="drawing_inputs":defines=["-DINPUTS_MUTATION="+str(mutation)]
     subprocess.run([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
         "-shared", *defines,

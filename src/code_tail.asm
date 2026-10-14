@@ -158,7 +158,7 @@ SetDrawingLayout:
     mul bx ; @0881C
     mov [DrawingExtentBytes-GameDataImage],ax ; @0881E
     retf ; @08821
-sub_8822:
+DrawPlanarBitmap:
     push ax ; @08822
     push dx ; @08823
     push cx ; @08824
@@ -166,26 +166,32 @@ sub_8822:
     shr ax,1 ; @08827
     shr ax,1 ; @08829
     shr ax,1 ; @0882B
-    mov [0x66fa],ax ; @0882D
+; Native continuation begins with three live saved words from8822 prologue.
+; Stores pitch/extent, restores CX/DX/AX, zeroes skips, then native clip/dirty calls.
+; Ends before885E body or88AB RETF, or at a changed child RET.
+PreparePlanarDrawingInputs:
+    mov [DrawingSourcePitchBytes-GameDataImage],ax ; @0882D
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08830
     mul cx ; @08832
-    mov [0x66f8],ax ; @08834
+    mov [DrawingSourcePlaneExtent-GameDataImage],ax ; @08834
     pop cx ; @08837
     pop dx ; @08838
     pop ax ; @08839
-    mov word [0x66fe],0x0 ; @0883A
-    mov word [0x66fc],0x0 ; @08840
+    mov word [DrawingVerticalSkipBytes-GameDataImage],0x0 ; @0883A
+    mov word [DrawingHorizontalSkipBytes-GameDataImage],0x0 ; @08840
     test bp,0xc ; @08846
     jz loc_8853 ; @0884A
-    call sub_9967 ; @0884C
+    call ClipPlanarDrawingRectangle ; @0884C
+PlanarInputsAfterClip:
     db 0x23,0xc0 ; ENCODED: and ax,ax (NASM chooses a different encoding) ; @0884F
     js loc_88AB ; @08851
 loc_8853:
-    cmp byte [0x2a],0xff ; @08853
+    cmp byte [DrawingDirtyCellsEnabledByte-GameDataImage],0xff ; @08853
     nop ; @08858
     jnz loc_885E ; @08859
-    call sub_9A15 ; @0885B
+    call MarkDrawingDirtyCells ; @0885B
 loc_885E:
+PlanarInputsReady:
     xchg ax,bx ; @0885E
     push bx ; @0885F
     and bx,byte +0x7 ; @08860
@@ -212,7 +218,7 @@ loc_885E:
     db 0x8a,0xf5 ; ENCODED: mov dh,ch (NASM chooses a different encoding) ; @08894
     db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @08896
     db 0x8a,0xca ; ENCODED: mov cl,dl (NASM chooses a different encoding) ; @08898
-    mov ax,[0x66f8] ; @0889A
+    mov ax,[DrawingSourcePlaneExtent-GameDataImage] ; @0889A
     test bp,0x1 ; @0889D
     jnz loc_88A6 ; @088A1
     jmp loc_939E ; @088A3
@@ -222,6 +228,7 @@ loc_88A6:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @088AA
 loc_88AB:
+PlanarDrawingAbortReturn:
     retf ; @088AB
 loc_88AC:
     cmp byte [0xa948],0x0 ; @088AC
@@ -234,15 +241,15 @@ loc_88B6:
 loc_88BF:
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @088BF
     push bp ; @088C1
-    mov bp,[0x66fc] ; @088C2
+    mov bp,[DrawingHorizontalSkipBytes-GameDataImage] ; @088C2
     test ax,0x80 ; @088C6
     jz loc_88E5 ; @088C9
-    mov ax,[0x66f8] ; @088CB
-    sub ax,[0x66fe] ; @088CE
-    sub ax,[0x66fe] ; @088D2
+    mov ax,[DrawingSourcePlaneExtent-GameDataImage] ; @088CB
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @088CE
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @088D2
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @088D6
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @088D8
-    mov ax,[0x66fa] ; @088DA
+    mov ax,[DrawingSourcePitchBytes-GameDataImage] ; @088DA
     db 0x2b,0xd8 ; ENCODED: sub bx,ax (NASM chooses a different encoding) ; @088DD
     db 0x2b,0xf0 ; ENCODED: sub si,ax (NASM chooses a different encoding) ; @088DF
     db 0x2b,0xe8 ; ENCODED: sub bp,ax (NASM chooses a different encoding) ; @088E1
@@ -1520,15 +1527,15 @@ loc_913E:
 loc_9140:
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @09140
     push bp ; @09142
-    mov bp,[0x66fc] ; @09143
+    mov bp,[DrawingHorizontalSkipBytes-GameDataImage] ; @09143
     test ax,0x80 ; @09147
     jz loc_9166 ; @0914A
-    mov ax,[0x66f8] ; @0914C
-    sub ax,[0x66fe] ; @0914F
-    sub ax,[0x66fe] ; @09153
+    mov ax,[DrawingSourcePlaneExtent-GameDataImage] ; @0914C
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @0914F
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @09153
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @09157
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @09159
-    mov ax,[0x66fa] ; @0915B
+    mov ax,[DrawingSourcePitchBytes-GameDataImage] ; @0915B
     db 0x2b,0xd8 ; ENCODED: sub bx,ax (NASM chooses a different encoding) ; @0915E
     db 0x2b,0xf0 ; ENCODED: sub si,ax (NASM chooses a different encoding) ; @09160
     db 0x2b,0xe8 ; ENCODED: sub bp,ax (NASM chooses a different encoding) ; @09162
@@ -1885,15 +1892,15 @@ loc_939E:
 loc_93A7:
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @093A7
     push bp ; @093A9
-    mov bp,[0x66fc] ; @093AA
+    mov bp,[DrawingHorizontalSkipBytes-GameDataImage] ; @093AA
     test ax,0x80 ; @093AE
     jz loc_93CD ; @093B1
-    mov ax,[0x66f8] ; @093B3
-    sub ax,[0x66fe] ; @093B6
-    sub ax,[0x66fe] ; @093BA
+    mov ax,[DrawingSourcePlaneExtent-GameDataImage] ; @093B3
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @093B6
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @093BA
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @093BE
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @093C0
-    mov ax,[0x66fa] ; @093C2
+    mov ax,[DrawingSourcePitchBytes-GameDataImage] ; @093C2
     db 0x2b,0xd8 ; ENCODED: sub bx,ax (NASM chooses a different encoding) ; @093C5
     db 0x2b,0xf0 ; ENCODED: sub si,ax (NASM chooses a different encoding) ; @093C7
     db 0x2b,0xe8 ; ENCODED: sub bp,ax (NASM chooses a different encoding) ; @093C9
@@ -1982,7 +1989,7 @@ loc_946E:
     push ds ; @0946E
     mov ax,0x9a9 ; @0946F
     mov ds,ax ; @09472
-    add si,[0x66f8] ; @09474
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @09474
     pop ds ; @09478
     mov ax,0x1 ; @09479
     mov [ss:0xc],ax ; @0947C
@@ -2032,7 +2039,7 @@ loc_94C8:
     push ds ; @094C8
     mov ax,0x9a9 ; @094C9
     mov ds,ax ; @094CC
-    add si,[0x66f8] ; @094CE
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @094CE
     pop ds ; @094D2
     mov ax,0x402 ; @094D3
     mov [ss:0x8],ax ; @094D6
@@ -2072,7 +2079,7 @@ loc_9508:
     push ds ; @09508
     mov ax,0x9a9 ; @09509
     mov ds,ax ; @0950C
-    add si,[0x66f8] ; @0950E
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @0950E
     pop ds ; @09512
     mov ax,0x802 ; @09513
     mov [ss:0x8],ax ; @09516
@@ -2169,7 +2176,7 @@ loc_95C2:
     push ds ; @095C2
     mov ax,0x9a9 ; @095C3
     mov ds,ax ; @095C6
-    add si,[0x66f8] ; @095C8
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @095C8
     pop ds ; @095CC
     push dx ; @095CD
     mov dl,0xc4 ; @095CE
@@ -2213,7 +2220,7 @@ loc_960E:
     push ds ; @0960E
     mov ax,0x9a9 ; @0960F
     mov ds,ax ; @09612
-    add si,[0x66f8] ; @09614
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @09614
     pop ds ; @09618
     push dx ; @09619
     mov dl,0xc4 ; @0961A
@@ -2259,7 +2266,7 @@ loc_965A:
     push ds ; @0965A
     mov ax,0x9a9 ; @0965B
     mov ds,ax ; @0965E
-    add si,[0x66f8] ; @09660
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @09660
     pop ds ; @09664
     push dx ; @09665
     mov dl,0xc4 ; @09666
@@ -2482,15 +2489,15 @@ loc_980E:
 loc_9810:
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @09810
     push bp ; @09812
-    mov bp,[0x66fc] ; @09813
+    mov bp,[DrawingHorizontalSkipBytes-GameDataImage] ; @09813
     test ax,0x80 ; @09817
     jz loc_9836 ; @0981A
-    mov ax,[0x66f8] ; @0981C
-    sub ax,[0x66fe] ; @0981F
-    sub ax,[0x66fe] ; @09823
+    mov ax,[DrawingSourcePlaneExtent-GameDataImage] ; @0981C
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @0981F
+    sub ax,[DrawingVerticalSkipBytes-GameDataImage] ; @09823
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @09827
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @09829
-    mov ax,[0x66fa] ; @0982B
+    mov ax,[DrawingSourcePitchBytes-GameDataImage] ; @0982B
     db 0x2b,0xd8 ; ENCODED: sub bx,ax (NASM chooses a different encoding) ; @0982E
     db 0x2b,0xf0 ; ENCODED: sub si,ax (NASM chooses a different encoding) ; @09830
     db 0x2b,0xe8 ; ENCODED: sub bp,ax (NASM chooses a different encoding) ; @09832
@@ -2559,7 +2566,7 @@ loc_98AD:
     push ds ; @098AD
     mov ax,0x9a9 ; @098AE
     mov ds,ax ; @098B1
-    add si,[0x66f8] ; @098B3
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @098B3
     pop ds ; @098B7
     mov ax,0x1 ; @098B8
     mov [ss:0xc],ax ; @098BB
@@ -2601,7 +2608,7 @@ loc_98F5:
     push ds ; @098F5
     mov ax,0x9a9 ; @098F6
     mov ds,ax ; @098F9
-    add si,[0x66f8] ; @098FB
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @098FB
     pop ds ; @098FF
     mov ax,0x402 ; @09900
     mov [ss:0x8],ax ; @09903
@@ -2639,7 +2646,7 @@ loc_9933:
     push ds ; @09933
     mov ax,0x9a9 ; @09934
     mov ds,ax ; @09937
-    add si,[0x66f8] ; @09939
+    add si,[DrawingSourcePlaneExtent-GameDataImage] ; @09939
     pop ds ; @0993D
     mov ax,0x802 ; @0993E
     mov [ss:0x8],ax ; @09941
@@ -2665,9 +2672,12 @@ loc_994A:
 loc_9965:
     pop ds ; @09965
     retf ; @09966
-sub_9967:
+; AX x,BX y,DX width,CX packed height,BP clipping bits4/8. CH saved live in DS.
+; Signed compares and SF-only paths differ; zero-size checks occur only at99FE.
+; Horizontal counter/vertical source delta live in DS; mid-stage POP/PUSH BP is live.
+ClipPlanarDrawingRectangle:
     push bp ; @09967
-    mov [0xa949],ch ; @09968
+    mov [DrawingSavedHeightHighByte-GameDataImage],ch ; @09968
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @0996C
     test bp,0x4 ; @0996E
     jz loc_99B4 ; @09972
@@ -2680,7 +2690,7 @@ sub_9967:
 loc_9981:
     add si,byte +0x1 ; @09981
     add di,byte +0x1 ; @09984
-    add word [0x66fc],byte +0x1 ; @09987
+    add word [DrawingHorizontalSkipBytes-GameDataImage],byte +0x1 ; @09987
     sub dx,byte +0x8 ; @0998C
     add ax,0x8 ; @0998F
     js loc_9981 ; @09992
@@ -2695,7 +2705,7 @@ loc_9997:
 loc_99A1:
     cmp bp,[DrawingWidthPixels-GameDataImage] ; @099A1
     jl loc_99B4 ; @099A5
-    add word [0x66fc],byte +0x1 ; @099A7
+    add word [DrawingHorizontalSkipBytes-GameDataImage],byte +0x1 ; @099A7
     sub dx,byte +0x8 ; @099AC
     sub bp,byte +0x8 ; @099AF
     jmp short loc_99A1 ; @099B2
@@ -2711,7 +2721,7 @@ loc_99B4:
     js loc_9A0C ; @099C4
     db 0x03,0xcb ; ENCODED: add cx,bx (NASM chooses a different encoding) ; @099C6
     neg bx ; @099C8
-    mov bp,[0x66fa] ; @099CA
+    mov bp,[DrawingSourcePitchBytes-GameDataImage] ; @099CA
     push ax ; @099CE
     push dx ; @099CF
     db 0x8b,0xc3 ; ENCODED: mov ax,bx (NASM chooses a different encoding) ; @099D0
@@ -2721,10 +2731,10 @@ loc_99B4:
     pop ax ; @099D7
     db 0x03,0xf5 ; ENCODED: add si,bp (NASM chooses a different encoding) ; @099D8
     db 0x03,0xfd ; ENCODED: add di,bp (NASM chooses a different encoding) ; @099DA
-    mov [0x66fe],bp ; @099DC
+    mov [DrawingVerticalSkipBytes-GameDataImage],bp ; @099DC
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @099E0
 loc_99E2:
-    mov ch,[0xa949] ; @099E2
+    mov ch,[DrawingSavedHeightHighByte-GameDataImage] ; @099E2
     pop bp ; @099E6
     ret ; @099E7
 loc_99E8:
@@ -2741,15 +2751,19 @@ loc_99FE:
     jz loc_9A0C ; @09A00
     db 0x23,0xc9 ; ENCODED: and cx,cx (NASM chooses a different encoding) ; @09A02
     jz loc_9A0C ; @09A04
-    mov ch,[0xa949] ; @09A06
+    mov ch,[DrawingSavedHeightHighByte-GameDataImage] ; @09A06
     pop bp ; @09A0A
     ret ; @09A0B
 loc_9A0C:
     mov ax,0xffff ; @09A0C
-    mov ch,[0xa949] ; @09A0F
+    mov ch,[DrawingSavedHeightHighByte-GameDataImage] ; @09A0F
     pop bp ; @09A13
     ret ; @09A14
-sub_9A15:
+; Save seven registers through live SS, then mark dirty cells with AL=1.
+; DS:0026 chooses SS map base; stride40 and unsigned end=base+801.
+; CL rounds with byte wrap; zero counts retain do/LOOP and DEC behavior.
+; Writes may change row saves, all restored registers and RET; DF is untouched.
+MarkDrawingDirtyCells:
     push si ; @09A15
     push di ; @09A16
     push bp ; @09A17
@@ -2761,7 +2775,7 @@ sub_9A15:
     jns loc_9A23 ; @09A1F
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @09A21
 loc_9A23:
-    mov si,[0x26] ; @09A23
+    mov si,[DrawingDirtyCellMapOffset-GameDataImage] ; @09A23
     db 0x8b,0xee ; ENCODED: mov bp,si (NASM chooses a different encoding) ; @09A27
     add bp,0x321 ; @09A29
     inc si ; @09A2D

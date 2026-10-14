@@ -113,11 +113,15 @@ def report():
     sample=read_json(BUILD/'minimap-sample-differential.json')
     mmrow=read_json(BUILD/'minimap-row-differential.json')
     mmcolumn=read_json(BUILD/'minimap-column-differential.json')
+    clip=read_json(BUILD/'drawing-clip-differential.json')
+    dirty=read_json(BUILD/'drawing-dirty-differential.json')
+    inputs=read_json(BUILD/'drawing-inputs-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
                         ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing),
-                        ('minimap sample',sample),('minimap row',mmrow),('minimap column',mmcolumn)):
+                        ('minimap sample',sample),('minimap row',mmrow),('minimap column',mmcolumn),
+                        ('drawing clip',clip),('drawing dirty',dirty),('drawing inputs',inputs)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -130,7 +134,10 @@ def report():
     executed.update(steel['instruction_sites'])
     executed.update(state['executed_instruction_addresses'])
     for extra in (clear,layout,drawing,sample,mmrow,mmcolumn):executed.update(extra['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn)
+    executed.update(clip['executed_instruction_addresses'])
+    executed.update(dirty['instruction_sites'])
+    executed.update(inputs['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -207,12 +214,14 @@ resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper c
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
-and connected level-drawing/minimap callers are TESTED within docs/checksum.md,
+and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
+planar preparation span are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
-docs/drawing-layout.md, docs/level-drawing.md and docs/minimap.md's domains; remaining
+docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
+docs/drawing-clip.md, docs/drawing-dirty.md and docs/drawing-inputs.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -463,6 +472,22 @@ minimap.asm module keeps byte order and UNKNOWN classifications unchanged.
 IRQ/device timing, executing-code corruption, CPU-family segment-limit faults,
 terrain/far drawing and broader level consumers remain open; see minimap.md and
 minimap-vga.md.
+
+The clipping and dirty-cell leaves at 9967/9A15 now compose directly in the
+scoped 882D..885D preparation span, with {clip['case_count']}/{dirty['case_count']}/{inputs['case_count']} original/native cases.
+The leaves cover 73/63 sites and 29/16 edges; the connected span covers 18 caller/
+154 integrated sites and 51 edges. Full RAM/register/defined-flag and ordered byte
+checks retain signed versus sign-only clipping, byte-rounded zero counts, live
+DS/SS field/save aliases and changed childRET targets. Nine compiled mutants are
+detected. These add 344 unique C bytes and 154 sites. The original 8822 prologue's
+seven sites are recorded separately and excluded from C coverage; 885E drawing
+and 88AB RETF remain unported boundaries. The decoded 9996 NOP remains outside
+the normal-entry tests without a dead-code claim. An independent original MUL/
+MOV observation records Unicorn's transient memory-hook CF/OF artifact; bus
+flags use original instruction-boundary snapshots, with all defined bits checked.
+VGA devices, IRQ delivery, executing-code corruption and CPU-family faults
+remain open for this RAM scope. See drawing-clip.md, drawing-dirty.md and
+drawing-inputs.md.
 '''
     return m,text
 

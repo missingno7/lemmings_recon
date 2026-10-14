@@ -10,7 +10,9 @@ span with 378A/389F passes 105 integrated cases. The 4DF8/8808 VGA-clear/layout
 leaves and 368E/36AD callers now pass
 33/151/27 bounded cases. The minimap sample, connected row and column now pass
 67/49/62 cases, including two complete thirteen-column cycles. Continue the
-terrain/far drawing dependencies of 36B6/394F next.
+terrain/far drawing dependencies of 36B6/394F next. The 9967/9A15 clipping
+and dirty-cell leaves now compose in the 882D preparation span with 59/2066/102
+cases. Continue the 885E drawing body, preserving its plane/shift/segment state.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -93,12 +95,15 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     Keep the isolated Unicorn RETF hook/SP artifacts explicit in future far callers.
     The 7A39 sample and connected 7A25/796F minimap row/column are native in
     67/49/62 cases, with all 96 integrated sites and fourteen edges; see minimap.md.
-    Start with the 9967/9A15 leaves feeding far drawing at 8822, then 7C67.
-    Preserve relocation/far-return, clipping, shift, segment and alias contracts.
-    Review 9967's saved CH byte at DS:A949 and live DS:66FA/66FC/66FE cursor
-    adjustments. The 9A15 SS writer uses DS:0026, a 40-byte row stride, packed
-    low-byte height rounding and unchecked zero-size loops; establish those
-    state/alias contracts before translating either leaf.
+    The 9967 clipping and 9A15 dirty-cell leaves now have direct native cores,
+    verified in 59/2066 cases. Their 882D..885D preparation span passes 102 cases;
+    see drawing-clip.md, drawing-dirty.md and drawing-inputs.md. Its 49 bytes
+    exclude the seven-site original 8822 prologue and end before 885E drawing,
+    88AB RETF or a changed childRET. Continue the 885E plane/shift drawing body,
+    then 7C67, after establishing dispatch, VGA access and source-plane contracts.
+    Keep DS:66F8/66FA/66FC/66FE and A949 live, including saved words and shifted
+    cursor aliases. Preserve original far-return, signed/sign-only clipping,
+    segment/offset wrap, self modification and unchecked zero-size behavior.
     Native VGA ownership and asynchronous IRQ behavior remain open.
     Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.

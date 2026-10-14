@@ -824,7 +824,7 @@ sub_80FD:
     out dx,ax ; @08112
     push ss ; @08113
     pop es ; @08114
-    mov di,[0x26] ; @08115
+    mov di,[DrawingDirtyCellMapOffset-GameDataImage] ; @08115
     mov al,[es:di] ; @08119
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @0811C
     jz loc_8123 ; @0811E
@@ -855,7 +855,7 @@ loc_8147:
     add si,0x680 ; @0814C
     loop loc_813F ; @08150
     pop ds ; @08152
-    mov di,[0x26] ; @08153
+    mov di,[DrawingDirtyCellMapOffset-GameDataImage] ; @08153
     inc di ; @08157
     mov cx,0x320 ; @08158
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0815B
@@ -925,19 +925,19 @@ sub_81CC:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @081CC
     mov word [0x1f78],0x2520 ; @081D2
     mov word [0x1f7a],0x2c0 ; @081D8
-    mov word [0x26],0x42b2 ; @081DE
+    mov word [DrawingDirtyCellMapOffset-GameDataImage],0x42b2 ; @081DE
     mov word [0x28],0x45d3 ; @081E4
-    mov bx,[0x26] ; @081EA
+    mov bx,[DrawingDirtyCellMapOffset-GameDataImage] ; @081EA
     mov byte [ss:bx],0xff ; @081EE
     mov bx,[0x28] ; @081F2
     mov byte [ss:bx],0xff ; @081F6
-    mov byte [0x2a],0xff ; @081FA
+    mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0xff ; @081FA
     call sub_80FD ; @081FF
     mov ax,[0x1f78] ; @08202
     xchg [DrawingOrigin-GameDataImage],ax ; @08205
     mov [0x1f78],ax ; @08209
     mov ax,[0x28] ; @0820C
-    xchg [0x26],ax ; @0820F
+    xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @0820F
     mov [0x28],ax ; @08213
     call sub_39CE ; @08216
     call sub_80FD ; @08219

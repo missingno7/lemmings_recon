@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 36 |
-| Translated C code bytes | 2647 |
-| Differential cases | 3045 |
-| Mutation checks detected | 72 |
-| Original instruction coverage | 1205 / 15,392 decoded (7.829%) |
+| Translated C routines | 39 |
+| Translated C code bytes | 2991 |
+| Differential cases | 5272 |
+| Mutation checks detected | 81 |
+| Original instruction coverage | 1359 / 15,392 decoded (8.829%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -39,12 +39,14 @@ resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper c
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
-and connected level-drawing/minimap callers are TESTED within docs/checksum.md,
+and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
+planar preparation span are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
-docs/drawing-layout.md, docs/level-drawing.md and docs/minimap.md's domains; remaining
+docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
+docs/drawing-clip.md, docs/drawing-dirty.md and docs/drawing-inputs.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -70,10 +72,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1265 / 17,291
-(7.316%) of this still-incomplete decoded inventory. There are
-39 tested C routines occupying 2812 original code bytes across images,
-with 3380 differential cases and 75 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1419 / 17,291
+(8.207%) of this still-incomplete decoded inventory. There are
+42 tested C routines occupying 3156 original code bytes across images,
+with 5607 differential cases and 84 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -295,3 +297,19 @@ minimap.asm module keeps byte order and UNKNOWN classifications unchanged.
 IRQ/device timing, executing-code corruption, CPU-family segment-limit faults,
 terrain/far drawing and broader level consumers remain open; see minimap.md and
 minimap-vga.md.
+
+The clipping and dirty-cell leaves at 9967/9A15 now compose directly in the
+scoped 882D..885D preparation span, with 59/2066/102 original/native cases.
+The leaves cover 73/63 sites and 29/16 edges; the connected span covers 18 caller/
+154 integrated sites and 51 edges. Full RAM/register/defined-flag and ordered byte
+checks retain signed versus sign-only clipping, byte-rounded zero counts, live
+DS/SS field/save aliases and changed childRET targets. Nine compiled mutants are
+detected. These add 344 unique C bytes and 154 sites. The original 8822 prologue's
+seven sites are recorded separately and excluded from C coverage; 885E drawing
+and 88AB RETF remain unported boundaries. The decoded 9996 NOP remains outside
+the normal-entry tests without a dead-code claim. An independent original MUL/
+MOV observation records Unicorn's transient memory-hook CF/OF artifact; bus
+flags use original instruction-boundary snapshots, with all defined bits checked.
+VGA devices, IRQ delivery, executing-code corruption and CPU-family faults
+remain open for this RAM scope. See drawing-clip.md, drawing-dirty.md and
+drawing-inputs.md.
