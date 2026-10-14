@@ -1,6 +1,7 @@
 #ifndef LEMMINGS_DRAWING_RENDER_H
 #define LEMMINGS_DRAWING_RENDER_H
 #include "drawing_plan.h"
+#include "aligned_read_mask.h"
 typedef struct LmnDrawingRenderCall {
     LmnDrawingInputsCall inputs;
     uint16_t game_data_segment, output_segment;
@@ -22,4 +23,12 @@ LmnDrawingRenderResult lmn_draw_prepared_planar_core(
     uint8_t *, const LmnDrawingRenderCall *, const LmnRasterBus *);
 void lmn_draw_prepared_planar_adapter(
     uint8_t *, LmnRegs *, uint16_t game_data_segment, const LmnRasterBus *);
+/* All six aligned bodies. A missing byte-port provider leaves969C explicit;
+   shifted bodies and changed child returns retain their original seams. */
+LmnDrawingRenderResult lmn_draw_prepared_aligned_core(
+    uint8_t *, const LmnDrawingRenderCall *, const LmnRasterBus *,
+    const LmnRasterBytePorts *);
+void lmn_draw_prepared_aligned_adapter(
+    uint8_t *, LmnRegs *, uint16_t game_data_segment, const LmnRasterBus *,
+    const LmnRasterBytePorts *);
 #endif

@@ -123,6 +123,10 @@ def report():
     render=read_json(BUILD/'drawing-render-differential.json')
     masked=read_json(BUILD/'aligned-masked-differential.json')
     masked_render=read_json(BUILD/'drawing-masked-render-differential.json')
+    protected=read_json(BUILD/'aligned-protected-differential.json')
+    effects=read_json(BUILD/'aligned-mask-effects-differential.json')
+    readmask=read_json(BUILD/'aligned-read-mask-differential.json')
+    aligned_render=read_json(BUILD/'drawing-aligned-render-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -131,7 +135,9 @@ def report():
                         ('drawing clip',clip),('drawing dirty',dirty),('drawing inputs',inputs),
                         ('drawing dispatch',dispatch),('drawing source',source),('drawing plan',plan),
                         ('aligned opaque',opaque),('connected opaque draw',render),
-                        ('aligned masked',masked),('connected masked draw',masked_render)):
+                        ('aligned masked',masked),('connected masked draw',masked_render),
+                        ('aligned protected',protected),('aligned mask effects',effects),
+                        ('aligned read mask',readmask),('connected aligned draw',aligned_render)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -147,8 +153,8 @@ def report():
     executed.update(clip['executed_instruction_addresses'])
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
-    for extra in (dispatch,source,plan,opaque,render,masked,masked_render):executed.update(extra['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render)
+    for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -226,7 +232,7 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation/geometry/dispatch/source spans and aligned opaque/default masked bodies
+planar preparation/geometry/dispatch/source spans and all six aligned bodies
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -235,7 +241,8 @@ docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
 docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
 docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
 docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
-docs/aligned-opaque.md, docs/aligned-masked.md and docs/drawing-render.md's domains; remaining
+docs/aligned-opaque.md, docs/aligned-masked.md, docs/aligned-protected.md,
+docs/aligned-read-mask.md, docs/aligned-mask-effects.md and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -542,9 +549,24 @@ live. The general renderer API also retains the opaque 983B branch; the older
 opaque-scoped API preserves its explicit masked-body seam. The connection runs
 {masked_render['masked_body_case_count']} masked draws and
 {masked_render['opaque_body_case_count']} opaque draws; two saved-BP aliases select
-the unported 969C effect body. Six compiled mutants are detected. Original 8822
+the explicit 969C effect seam in this API. Six compiled mutants are detected. Original 8822
 prologue sites remain excluded from C accounting. See aligned-masked.md and
-drawing-render.md. Other drawing variants, asynchronous IRQ/device scheduling
+drawing-render.md.
+
+The four other aligned bodies add 721 unique translated bytes: protected953E
+(349, excluding UNKNOWN9659), read-mask969C (155), effect20 (109) and effect40
+(108). They pass {protected['case_count']}/{readmask['case_count']}/{effects['case_count']}
+standalone cases and {aligned_render['case_count']} all-aligned preparation
+connections. The connection covers {len(aligned_render['executed_instruction_addresses'])}
+integrated sites and {len(aligned_render['branch_edges'])} edges; sites are unioned,
+not summed. All original body RETFs receive actual single-step probes. Plane-3
+comparison/protection, live savedDX/DS, explicit byte OUT/IN replies and the
+20/40 row-cursor asymmetry remain original behavior. Missing byte providers
+leave969C explicit. These four suites detect twelve compiled mutants. See
+aligned-protected.md, aligned-read-mask.md, aligned-mask-effects.md and
+drawing-render.md for constructed-state domains and IRQ/device timing limits.
+The original8822 prologue and shifted bodies remain outside these C ranges.
+ Other drawing variants, asynchronous IRQ/device scheduling
 and broader gameplay integration remain open.
 '''
     return m,text

@@ -15,13 +15,21 @@ and dirty-cell leaves now compose in the 882D preparation span with 59/2066/102
 cases. Destination/dispatch and four source-row spans now connect in 77/236/744
 cases. The 983B aligned opaque body now connects in 55/776 cases, including 290
 complete body runs. The 93F6 default masked body now connects in 100 cases,
-including 90 masked and 8 general-API opaque draws. Continue aligned effects 953E/969C/9737/97A4, then shifted drawing
-bodies, preserving plane/shift/segment and live control contracts.
+including 90 masked and 8 general-API opaque draws. All four other aligned bodies
+953E/969C/9737/97A4 now pass 21/17/52 standalone cases and a 226-case connection
+through preparation and all six aligned bodies. Continue shifted drawing bodies,
+preserving plane/shift/segment, self-modification and live control contracts.
+The smallest next static cluster is shifted effects 8FF7..909B and 909C..913F:
+165/164 decoded bytes,84 sites each,only discovered incoming jumps8902/890B.
+See shifted-drawing.md for carry-chain scratch shifting, unchecked zero-count
+paths and the live DS/ES/SS obligations to verify before C promotion.
 The 9737 and 97A4 effects differ in row cursor updates: 9737 adds the source
 row advance to SI while its mask BX continues without that row adjustment;
 97A4 adds the row advance to BX while SI stays at the initial mask cursor.
 Preserve this asymmetry. The 969C path introduces byte OUT/IN operations and
-VGA read mode 1; establish an explicit port-read/provider contract first.
+VGA read mode 1; its native core now requires an explicit byte-port provider.
+Missing providers leave 969C as a continuation in the all-aligned API. Native
+hardware/timing ownership remains open.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -111,14 +119,20 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     88AB RETF or a changed childRET. The 885E/939E destination/dispatch and four
     source prefixes at 88BF/9140/93A7/9810 now connect in 77/236/744 cases;
     see drawing-dispatch.md, drawing-source.md and drawing-plan.md. Continue
-    the remaining VGA bodies, starting with aligned masked effects 953E/969C/9737/97A4, then
-    shifted variants. The 983B opaque body is native in 55 cases, and its
+    the remaining shifted VGA bodies. The 983B opaque body is native in 55 cases, and its
     connection in 776 cases includes 290 complete draws; see aligned-opaque.md
     and drawing-render.md. Its 298 C bytes exclude UNKNOWN 98F4/9932. The 93F6
     default masked body is native in 20 cases; its 100-case general renderer
     connection includes 90 masked draws, 8 opaque draws and 2 live effect seams.
     Its 326 C bytes exclude UNKNOWN 94C7/9507; see aligned-masked.md for mask-BX
     increment, per-byte CLI/STI, VGA OR and live segment/stack contracts.
+    The other aligned bodies now contribute 721 unique C bytes: 953E protection
+    (21 cases, UNKNOWN9659 excluded), 969C read-mask (17 cases, explicit byte-port
+    provider), and 9737/97A4 effects (52 cases). Their all-aligned preparation
+    connection passes 226 cases/759 integrated sites/117 edges, including the
+    missing-provider seam. See aligned-protected.md, aligned-read-mask.md,
+    aligned-mask-effects.md and drawing-render.md. Keep 20/40 cursor asymmetry,
+    live saved DX and separately read row advances.
     Continue source-plane/mask producer domains and asynchronous IRQ/device ownership.
     The clear/strip/minimap VGA fixture can verify device behavior independently.
     Preserve CLI/STI/latch ordering and source self modification. At 983B, DH

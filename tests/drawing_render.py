@@ -27,6 +27,7 @@ import drawing_plan as plan
 
 LIBRARY_DIRECTORY = BUILD
 NATIVE_EVENT_LIMIT = 1000000
+BYTE_PORT_FIXTURE = None
 
 
 IMAGE, ORACLE = unpack(ASSET.read_bytes())
@@ -266,14 +267,14 @@ def compare(lib, case):
             uc.emu_stop()
             return
         if off not in PROLOGUE:
-            raise AssertionError(f'{case["name"]}: original 8822 prologue escaped at {off:04x}')
+            raise RuntimeError(f'{case["name"]}: original 8822 prologue escaped at {off:04x}')
         prologue.add(off)
 
     prologue_hook = u.hook_add(UC_HOOK_CODE, prologue_code)
     wrap_read_hook, wrap_write_hook = _wrap_hooks(u)
     u.emu_start((regs['cs'] << 4) + 0x8822, 0, count=20)
     if not at_span or prologue != set(PROLOGUE):
-        raise AssertionError(f'{case["name"]}: original prologue did not reach 882D')
+        raise RuntimeError(f'{case["name"]}: original prologue did not reach 882D')
     u.hook_del(prologue_hook)
 
     span_regs = _get_regs(u)
@@ -322,6 +323,8 @@ def compare(lib, case):
             os._exit(87)
 
     bus = Bus(None, c_read, c_write, c_output)
+    bus.verification = dict(memory=c_memory, vga=c_vga, events=c_events, case=case,
+                            span_registers=span_regs)
     lib.lmn_draw_prepared_aligned_opaque_adapter(
         (ctypes.c_uint8 * (1 << 20)).from_buffer(c_memory),
         ctypes.byref(c_regs), game_ds, ctypes.byref(bus))
@@ -368,12 +371,12 @@ def compare(lib, case):
                 boundary = ('changed-child-return', off)
                 uc.emu_stop()
                 return
-            raise AssertionError(f'{case["name"]}: original drawing flow reached unresolved {off:04x}')
+            raise RuntimeError(f'{case["name"]}: original drawing flow reached unresolved {off:04x}')
         if uc.reg_read(oracle.REG['cs']) != regs['cs']:
-            raise AssertionError(f'{case["name"]}: original drawing flow changed CS before its boundary')
+            raise RuntimeError(f'{case["name"]}: original drawing flow changed CS before its boundary')
         steps += 1
         if steps > 900000:
-            raise AssertionError(f'{case["name"]}: original drawing instruction budget exceeded')
+            raise RuntimeError(f'{case["name"]}: original drawing instruction budget exceeded')
         seen.add(off)
         previous = off
         instruction_flags = uc.reg_read(x.UC_X86_REG_EFLAGS)
@@ -402,21 +405,35 @@ def compare(lib, case):
                 uc.mem_write(p, bytes((byte,)))
 
     def u_output(uc, port, size, value, _):
-        if size != 2:
-            raise AssertionError(f'{case["name"]}: non-word VGA output')
-        u_vga.out(port, value, uc.reg_read(x.UC_X86_REG_EFLAGS))
+        if size == 1 and BYTE_PORT_FIXTURE is not None:
+            BYTE_PORT_FIXTURE.out_byte(u_vga, port, value, instruction_flags)
+            u_events.append(('outb', port, value, instruction_flags))
+            u_event_masks.append(flag_mask)
+        elif size == 2:
+            u_vga.out(port, value, uc.reg_read(x.UC_X86_REG_EFLAGS))
+        else:
+            raise RuntimeError(f'{case["name"]}: non-word VGA output')
+
+    def u_input(uc, port, size, _):
+        if size != 1 or BYTE_PORT_FIXTURE is None:
+            raise RuntimeError(f'{case["name"]}: unsupported port input')
+        value = BYTE_PORT_FIXTURE.in_byte(u_vga, port, instruction_flags, case)
+        u_events.append(('inb', port, value, instruction_flags))
+        u_event_masks.append(flag_mask)
+        return value
 
     def intr(uc, num, _):
-        raise AssertionError(f'{case["name"]}: unexpected INT{num:02x}')
+        raise RuntimeError(f'{case["name"]}: unexpected INT{num:02x}')
 
     read_hook = u.hook_add(UC_HOOK_MEM_READ, u_read)
     u.hook_add(UC_HOOK_MEM_WRITE, u_write)
     u.hook_add(UC_HOOK_INSN, u_output, None, 1, 0, x.UC_X86_INS_OUT)
+    u.hook_add(UC_HOOK_INSN, u_input, None, 1, 0, x.UC_X86_INS_IN)
     u.hook_add(UC_HOOK_INTR, intr)
     u.emu_start((regs['cs'] << 4) + START, 0, count=900000)
     if boundary is None:
         live = _get_regs(u)
-        raise AssertionError(f'{case["name"]}: no bounded renderer exit after {steps} sites at '
+        raise RuntimeError(f'{case["name"]}: no bounded renderer exit after {steps} sites at '
             f'{live["cs"]:04x}:{live["ip"]:04x}, previous={previous!r}')
 
     if boundary[0] == 'body-retf':
@@ -482,7 +499,7 @@ def compare(lib, case):
         raise AssertionError(f'{case["name"]}: far return without entering 983B')
     intact_image = relocated(IMAGE, ORACLE['relocations'], regs['cs'])
     for start, end in ((0x8822, 0x88aa), (0x88ac, 0x890e),
-                       (0x9140, 0x916b), (0x939e, 0x953e),
+                       (0x9140, 0x916b), (0x939e, 0x9810),
                        (0x9810, 0x9967), (0x9967, 0x9a8f)):
         p = (regs['cs'] << 4) + start
         if actual[p:p + end - start] != intact_image[start:end]:
@@ -542,6 +559,9 @@ def main():
     paths = tuple('c/' + name for name in (
         'drawing_render.c', 'drawing_render.h', 'aligned_opaque.c',
         'aligned_opaque.h', 'aligned_masked.c', 'aligned_masked.h',
+        'aligned_protected.c', 'aligned_protected.h',
+        'aligned_mask_effects.c', 'aligned_mask_effects.h',
+        'aligned_read_mask.c', 'aligned_read_mask.h',
         'drawing_plan.c', 'drawing_plan.h',
         'drawing_inputs.c', 'drawing_inputs.h', 'drawing_clip.c',
         'drawing_clip.h', 'drawing_dirty.c', 'drawing_dirty.h',

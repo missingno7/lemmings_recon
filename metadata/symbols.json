@@ -51054,7 +51054,7 @@
     "address": 38206,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 350,
     "symbol_name": "PlanarAlignedMasked8000Body",
     "aliases": [],
     "callers": [],
@@ -51062,7 +51062,37 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selection boundary; selector-bit name retained in ledger; native normal-entry domain verified with explicit device/IRQ seams",
+      "Closed normal-entry static body 953E..969B; only discovered outside edge from corresponding93A7 selector; byte/port/provider and live alias obligations remain explicit",
+      "21 bounded original/native cases,176 core sites26 edges,4 actual969B RETF probes;349 C bytes exclude UNKNOWN9659. Readmode1 plane3 inverse mask,OR,live SS/DS/port saves; docs/aligned-protected.md",
+      "226 bounded preparation/all-six-aligned connections cover759 integrated sites117 edges and3 compiled mutants; actual original far returns; missing969C byte provider retains explicit continuation; original8822 prologue remains outside C accounting"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/aligned_protected.c",
+    "c_code_ranges": [
+      [
+        38206,
+        38489
+      ],
+      [
+        38490,
+        38556
+      ]
+    ]
+  },
+  {
+    "address": 38555,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedProtectedFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer RETF after live saved-DS POP at969A; adapter boundary preserves live return words"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51070,7 +51100,7 @@
     "address": 38556,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 155,
     "symbol_name": "PlanarAlignedMasked4000Body",
     "aliases": [],
     "callers": [],
@@ -51078,7 +51108,33 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selection boundary; selector-bit name retained in ledger; native normal-entry domain verified with explicit device/IRQ seams",
+      "Closed normal-entry static body 969C..9736; only discovered outside edge from corresponding93A7 selector; byte/port/provider and live alias obligations remain explicit",
+      "17 bounded original/native cases,75 core sites6 edges,3 actual9736 RETF probes;155 C bytes. Mandatory byte OUT/IN provider,mode8/9/0/FF,live savedDX and separately read row words; changed foreign wordport remains provider seam; docs/aligned-read-mask.md",
+      "226 bounded preparation/all-six-aligned connections cover759 integrated sites117 edges and3 compiled mutants; actual original far returns; missing969C byte provider retains explicit continuation; original8822 prologue remains outside C accounting"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/aligned_read_mask.c",
+    "c_code_ranges": [
+      [
+        38556,
+        38711
+      ]
+    ]
+  },
+  {
+    "address": 38710,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedReadMaskFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer RETF after live saved-DS POP at9735; adapter boundary preserves live return words"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51086,7 +51142,7 @@
     "address": 38711,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 109,
     "symbol_name": "PlanarAlignedMasked20Body",
     "aliases": [],
     "callers": [],
@@ -51094,7 +51150,33 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selection boundary; selector-bit name retained in ledger; native normal-entry domain verified with explicit device/IRQ seams",
+      "Closed normal-entry static body 9737..97A3; only discovered outside edge from corresponding93A7 selector; byte/port/provider and live alias obligations remain explicit",
+      "52 bounded original/native cases across20/40 cover96 core sites10 edges and4 actual RETF probes;109 C bytes for20. BX+1 ignoresDF; rowstride adds toSI only; live SS/DS; docs/aligned-mask-effects.md",
+      "226 bounded preparation/all-six-aligned connections cover759 integrated sites117 edges and3 compiled mutants; actual original far returns; missing969C byte provider retains explicit continuation; original8822 prologue remains outside C accounting"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/aligned_mask_effects.c",
+    "c_code_ranges": [
+      [
+        38711,
+        38820
+      ]
+    ]
+  },
+  {
+    "address": 38819,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMask20FarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer RETF after live saved-DS POP at97A2; adapter boundary preserves live return words"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51102,7 +51184,7 @@
     "address": 38820,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 108,
     "symbol_name": "PlanarAlignedMasked40Body",
     "aliases": [],
     "callers": [],
@@ -51110,7 +51192,33 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Original planar selection boundary; selector-bit name retained in ledger; native normal-entry domain verified with explicit device/IRQ seams",
+      "Closed normal-entry static body 97A4..980F; only discovered outside edge from corresponding93A7 selector; byte/port/provider and live alias obligations remain explicit",
+      "52 bounded original/native cases across20/40 cover96 core sites10 edges and4 actual RETF probes;108 C bytes for40. BX+1 ignoresDF; rowstride adds toBX only; SI staysinitialmaskcopy; live SS/DS; docs/aligned-mask-effects.md",
+      "226 bounded preparation/all-six-aligned connections cover759 integrated sites117 edges and3 compiled mutants; actual original far returns; missing969C byte provider retains explicit continuation; original8822 prologue remains outside C accounting"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/aligned_mask_effects.c",
+    "c_code_ranges": [
+      [
+        38820,
+        38928
+      ]
+    ]
+  },
+  {
+    "address": 38927,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMask40FarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer RETF after live saved-DS POP at980E; adapter boundary preserves live return words"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52888,6 +52996,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "37C2/3839 compute wrapped SS:0012+416*row+column cell writes; SS also holds stack and VGA mirrors; no stored image bytes,initialization or bounded map extent implied"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": 2,
+    "symbol_name": "VgaReadMapMirror",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "969C body mirrors0804 GC read-map OUT word through live SS:0010; no stored initialization or unaliased frame implied"
     ],
     "verification_status": "UNRESOLVED"
   }

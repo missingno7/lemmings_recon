@@ -54,3 +54,5 @@ if __name__ == "__main__":
         run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)
     for suite in ('aligned_opaque','drawing_render','aligned_masked','drawing_masked_render'):
         run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=180)
+    for suite in ('aligned_protected','aligned_mask_effects','aligned_read_mask','drawing_aligned_render'):
+        run_bounded([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=180)

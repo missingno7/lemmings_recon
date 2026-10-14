@@ -350,9 +350,13 @@
 #define CS_PlanarAlignedMaskedDefaultBody 0x93F6u
 #define CS_PlanarAlignedMaskedFarReturn 0x953Du
 #define CS_PlanarAlignedMasked8000Body 0x953Eu
+#define CS_PlanarAlignedProtectedFarReturn 0x969Bu
 #define CS_PlanarAlignedMasked4000Body 0x969Cu
+#define CS_PlanarAlignedReadMaskFarReturn 0x9736u
 #define CS_PlanarAlignedMasked20Body 0x9737u
+#define CS_PlanarAlignedMask20FarReturn 0x97A3u
 #define CS_PlanarAlignedMasked40Body 0x97A4u
+#define CS_PlanarAlignedMask40FarReturn 0x980Fu
 #define CS_PrepareAlignedOpaquePlanarRows 0x9810u
 #define CS_PlanarAlignedOpaqueBody 0x983Bu
 #define CS_sub_988B 0x988Bu
@@ -440,4 +444,5 @@
 #define SEG143E_VgaEnableSetResetMirror 0x000Cu
 #define SEG143E_VgaBitMaskMirror 0x000Eu
 #define SEG143E_InteractionCellMapBase 0x0012u
+#define SEG143E_VgaReadMapMirror 0x0010u
 #endif

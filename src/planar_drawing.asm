@@ -1979,6 +1979,9 @@ loc_953C:
 PlanarAlignedMaskedFarReturn:
     retf ; @0953D
 loc_953E:
+; Read mode1 compares plane3; complement its byte into each pixel bit mask.
+; OR source into selected plane only where plane3 was clear. MOVSB leaves AX.
+; Live PUSH/POP DX surrounds interplane Sequencer writes; restored DX drives pixel OUT.
 PlanarAlignedMasked8000Body:
     push ds ; @0953E
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @0953F
@@ -1989,26 +1992,26 @@ PlanarAlignedMasked8000Body:
     db 0x8b,0xea ; ENCODED: mov bp,dx (NASM chooses a different encoding) ; @0954C
     mov dx,0x3c4 ; @0954E
     mov ax,0x102 ; @09551
-    mov [ss:0x8],ax ; @09554
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @09554
     out dx,ax ; @09558
     mov dx,0x3ce ; @09559
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0955C
-    mov [ss:0xa],ax ; @0955E
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @0955E
     out dx,ax ; @09562
     mov ax,0x1 ; @09563
-    mov [ss:0xc],ax ; @09566
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @09566
     out dx,ax ; @0956A
     mov ax,0x1003 ; @0956B
-    mov [ss:0x2],ax ; @0956E
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @0956E
     out dx,ax ; @09572
     mov ax,0x805 ; @09573
-    mov [ss:0x0],ax ; @09576
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @09576
     out dx,ax ; @0957A
     mov ax,0x807 ; @0957B
-    mov [ss:0x6],ax ; @0957E
+    mov [ss:VgaColorCareMirror-RuntimeStackFrame],ax ; @0957E
     out dx,ax ; @09582
     mov ax,0x802 ; @09583
-    mov [ss:0x4],ax ; @09586
+    mov [ss:VgaColorCompareMirror-RuntimeStackFrame],ax ; @09586
     out dx,ax ; @0958A
     push di ; @0958B
     push si ; @0958C
@@ -2021,7 +2024,7 @@ loc_9592:
     mov ah,[es:di] ; @09592
     not ah ; @09595
     mov al,0x8 ; @09597
-    mov [ss:0xe],ax ; @09599
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @09599
     out dx,ax ; @0959D
     movsb ; @0959E
     loop loc_9592 ; @0959F
@@ -2053,7 +2056,7 @@ loc_95C2:
     push dx ; @095CD
     mov dl,0xc4 ; @095CE
     mov ax,0x202 ; @095D0
-    mov [ss:0x8],ax ; @095D3
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @095D3
     out dx,ax ; @095D7
     pop dx ; @095D8
     push di ; @095D9
@@ -2067,7 +2070,7 @@ loc_95E0:
     mov ah,[es:di] ; @095E0
     not ah ; @095E3
     mov al,0x8 ; @095E5
-    mov [ss:0xe],ax ; @095E7
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @095E7
     out dx,ax ; @095EB
     movsb ; @095EC
     loop loc_95E0 ; @095ED
@@ -2097,7 +2100,7 @@ loc_960E:
     push dx ; @09619
     mov dl,0xc4 ; @0961A
     mov ax,0x402 ; @0961C
-    mov [ss:0x8],ax ; @0961F
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @0961F
     out dx,ax ; @09623
     pop dx ; @09624
     push di ; @09625
@@ -2111,7 +2114,7 @@ loc_962C:
     mov ah,[es:di] ; @0962C
     not ah ; @0962F
     mov al,0x8 ; @09631
-    mov [ss:0xe],ax ; @09633
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @09633
     out dx,ax ; @09637
     movsb ; @09638
     loop loc_962C ; @09639
@@ -2143,7 +2146,7 @@ loc_965A:
     push dx ; @09665
     mov dl,0xc4 ; @09666
     mov ax,0x802 ; @09668
-    mov [ss:0x8],ax ; @0966B
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @0966B
     out dx,ax ; @0966F
     pop dx ; @09670
 loc_9671:
@@ -2154,7 +2157,7 @@ loc_9675:
     mov ah,[es:di] ; @09675
     not ah ; @09678
     mov al,0x8 ; @0967A
-    mov [ss:0xe],ax ; @0967C
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0967C
     out dx,ax ; @09680
     movsb ; @09681
     loop loc_9675 ; @09682
@@ -2171,8 +2174,13 @@ loc_9675:
     jnz loc_9671 ; @09698
 loc_969A:
     pop ds ; @0969A
+PlanarAlignedProtectedFarReturn:
     retf ; @0969B
 loc_969C:
+; Read mode1 plane3 comparison AND source mask controls replace/set-reset writes.
+; Row byte OUT selects GC5, IN reads through a provider; CMP8 skips only a known NOP.
+; PUSH DX is live: provider/SS aliases can change the POP DX port used for every pixel.
+; Row BX and SI advances are separately read from live DS:6702; final cursors restored live.
 PlanarAlignedMasked4000Body:
     push ds ; @0969C
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @0969D
@@ -2183,29 +2191,29 @@ PlanarAlignedMasked4000Body:
     db 0x8b,0xea ; ENCODED: mov bp,dx (NASM chooses a different encoding) ; @096AA
     mov dx,0x3c4 ; @096AC
     mov ax,0xf02 ; @096AF
-    mov [ss:0x8],ax ; @096B2
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @096B2
     out dx,ax ; @096B6
     mov dx,0x3ce ; @096B7
     mov ax,0x400 ; @096BA
-    mov [ss:0xa],ax ; @096BD
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @096BD
     out dx,ax ; @096C1
     mov ax,0xe01 ; @096C2
-    mov [ss:0xc],ax ; @096C5
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @096C5
     out dx,ax ; @096C9
     mov ax,0x3 ; @096CA
-    mov [ss:0x2],ax ; @096CD
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @096CD
     out dx,ax ; @096D1
     mov ax,0x805 ; @096D2
-    mov [ss:0x0],ax ; @096D5
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @096D5
     out dx,ax ; @096D9
     mov ax,0x802 ; @096DA
-    mov [ss:0x4],ax ; @096DD
+    mov [ss:VgaColorCompareMirror-RuntimeStackFrame],ax ; @096DD
     out dx,ax ; @096E1
     mov ax,0x807 ; @096E2
-    mov [ss:0x6],ax ; @096E5
+    mov [ss:VgaColorCareMirror-RuntimeStackFrame],ax ; @096E5
     out dx,ax ; @096E9
     mov ax,0x804 ; @096EA
-    mov [ss:0x10],ax ; @096ED
+    mov [ss:VgaReadMapMirror-RuntimeStackFrame],ax ; @096ED
     out dx,ax ; @096F1
     push cx ; @096F2
     push si ; @096F3
@@ -2231,7 +2239,7 @@ loc_9706:
     nop ; @0970B
     nop ; @0970C
     mov al,0x8 ; @0970D
-    mov [ss:0xe],ax ; @0970F
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0970F
     out dx,ax ; @09713
     movsb ; @09714
     inc bx ; @09715
@@ -2252,8 +2260,12 @@ loc_9706:
     pop si ; @09733
     pop cx ; @09734
     pop ds ; @09735
+PlanarAlignedReadMaskFarReturn:
     retf ; @09736
 loc_9737:
+; Mask BX always increments forward; STOSB destination follows DF.
+; Original asymmetry: row stride adds to SI only, while mask BX remains contiguous.
+; BP high nibble chooses enable-set/reset, value0F; IF is set after each pixel.
 PlanarAlignedMasked20Body:
     push ds ; @09737
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @09738
@@ -2261,22 +2273,22 @@ PlanarAlignedMasked20Body:
     mov es,ax ; @0973F
     mov dx,0x3c4 ; @09741
     mov ax,0xf02 ; @09744
-    mov [ss:0x8],ax ; @09747
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @09747
     out dx,ax ; @0974B
     mov dx,0x3ce ; @0974C
     mov ax,0xf00 ; @0974F
-    mov [ss:0xa],ax ; @09752
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @09752
     out dx,ax ; @09756
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @09757
     and ah,0xf ; @09759
     mov al,0x1 ; @0975C
-    mov [ss:0xc],ax ; @0975E
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @0975E
     out dx,ax ; @09762
     mov ax,0x5 ; @09763
-    mov [ss:0x0],ax ; @09766
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @09766
     out dx,ax ; @0976A
     mov ax,0x3 ; @0976B
-    mov [ss:0x2],ax ; @0976E
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @0976E
     out dx,ax ; @09772
     db 0x8b,0xf3 ; ENCODED: mov si,bx (NASM chooses a different encoding) ; @09773
 loc_9775:
@@ -2286,7 +2298,7 @@ loc_9778:
     mov ah,[bx] ; @09778
     inc bx ; @0977A
     mov al,0x8 ; @0977B
-    mov [ss:0xe],ax ; @0977D
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0977D
     out dx,ax ; @09781
     cli ; @09782
     mov al,[es:di] ; @09783
@@ -2306,8 +2318,12 @@ loc_9778:
     jmp short loc_9775 ; @097A0
 loc_97A2:
     pop ds ; @097A2
+PlanarAlignedMask20FarReturn:
     retf ; @097A3
 loc_97A4:
+; Mask BX always increments forward; STOSB destination follows DF.
+; Row stride adds to BX, while SI remains the initial BX copy; preserve20/40 asymmetry.
+; BP high nibble chooses enable-set/reset, value00; IF is set after each pixel.
 PlanarAlignedMasked40Body:
     push ds ; @097A4
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @097A5
@@ -2315,22 +2331,22 @@ PlanarAlignedMasked40Body:
     mov es,ax ; @097AC
     mov dx,0x3c4 ; @097AE
     mov ax,0xf02 ; @097B1
-    mov [ss:0x8],ax ; @097B4
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @097B4
     out dx,ax ; @097B8
     mov dx,0x3ce ; @097B9
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @097BC
-    mov [ss:0xa],ax ; @097BE
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @097BE
     out dx,ax ; @097C2
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @097C3
     and ah,0xf ; @097C5
     mov al,0x1 ; @097C8
-    mov [ss:0xc],ax ; @097CA
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @097CA
     out dx,ax ; @097CE
     mov ax,0x5 ; @097CF
-    mov [ss:0x0],ax ; @097D2
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @097D2
     out dx,ax ; @097D6
     mov ax,0x3 ; @097D7
-    mov [ss:0x2],ax ; @097DA
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @097DA
     out dx,ax ; @097DE
     db 0x8b,0xf3 ; ENCODED: mov si,bx (NASM chooses a different encoding) ; @097DF
 loc_97E1:
@@ -2340,7 +2356,7 @@ loc_97E4:
     mov ah,[bx] ; @097E4
     inc bx ; @097E6
     mov al,0x8 ; @097E7
-    mov [ss:0xe],ax ; @097E9
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @097E9
     out dx,ax ; @097ED
     cli ; @097EE
     mov al,[es:di] ; @097EF
@@ -2360,6 +2376,7 @@ loc_97E4:
     jmp short loc_97E1 ; @0980C
 loc_980E:
     pop ds ; @0980E
+PlanarAlignedMask40FarReturn:
     retf ; @0980F
 loc_9810:
 ; Save BP live, read skips, optionally reverse source cursors with BP bit 80.

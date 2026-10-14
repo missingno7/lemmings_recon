@@ -1,22 +1,28 @@
 #include "drawing_render.h"
 #include "aligned_opaque.h"
 #include "aligned_masked.h"
+#include "aligned_mask_effects.h"
+#include "aligned_protected.h"
 #include "lemmings_sym.h"
 #ifndef RENDER_MUTATION
 #define RENDER_MUTATION 0
 #endif
 static LmnDrawingRenderResult draw_prepared(
     uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus,
-    unsigned allow_masked) {
+    unsigned scope, const LmnRasterBytePorts *ports) {
     LmnDrawingRenderResult result = {
         lmn_prepare_planar_drawing_plan_core(memory, &call->inputs, bus),
         call->inputs.data_segment, call->output_segment, 0};
     LmnDrawingSourceResult *state = &result.plan.state;
     LmnAlignedOpaqueCall body_call;
     LmnAlignedOpaqueResult drawn;
-    if (result.plan.changed_return ||
-        (state->continuation != CS_PlanarAlignedOpaqueBody &&
-         !(allow_masked && state->continuation == CS_PlanarAlignedMaskedDefaultBody)))
+    unsigned supported = state->continuation == CS_PlanarAlignedOpaqueBody ||
+        (scope >= 1 && state->continuation == CS_PlanarAlignedMaskedDefaultBody) ||
+        (scope >= 2 && (state->continuation == CS_PlanarAlignedMasked8000Body ||
+         state->continuation == CS_PlanarAlignedMasked20Body ||
+         state->continuation == CS_PlanarAlignedMasked40Body ||
+         (state->continuation == CS_PlanarAlignedMasked4000Body && ports)));
+    if (result.plan.changed_return || !supported)
         return result;
 #if RENDER_MUTATION == 1
     return result;
@@ -24,6 +30,61 @@ static LmnDrawingRenderResult draw_prepared(
 #if RENDER_MUTATION == 2
     state->flags = (uint16_t)(state->flags & ~0x400u);
 #endif
+    if (state->continuation == CS_PlanarAlignedMasked20Body ||
+        state->continuation == CS_PlanarAlignedMasked40Body) {
+        unsigned forty = state->continuation == CS_PlanarAlignedMasked40Body;
+        LmnAlignedMaskEffectCall effect_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->second_source_cursor, state->destination_cursor,
+            state->control, state->flags};
+        LmnAlignedMaskEffectResult effect = forty ?
+            lmn_draw_aligned_mask40_core(memory, &effect_call, bus) :
+            lmn_draw_aligned_mask20_core(memory, &effect_call, bus);
+        state->work_value = effect.work_value; state->packed_counts = effect.packed_counts;
+        state->width_state = effect.port; state->source_cursor = effect.source_cursor;
+        state->second_source_cursor = effect.mask_cursor;
+        state->destination_cursor = effect.destination_cursor;
+        state->control = effect.control; state->stack_offset = effect.stack_offset;
+        state->flags = effect.flags;
+        state->continuation = forty ? CS_PlanarAlignedMask40FarReturn : CS_PlanarAlignedMask20FarReturn;
+        result.source_segment = effect.source_segment; result.output_segment = effect.output_segment;
+        result.body_returned = 1;
+        return result;
+    }
+    if (state->continuation == CS_PlanarAlignedMasked8000Body) {
+        LmnAlignedProtectedCall protected_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->destination_cursor, state->flags};
+        LmnAlignedProtectedResult protected_result =
+            lmn_draw_aligned_protected_core(memory, &protected_call, bus);
+        state->work_value = protected_result.work_value;
+        state->packed_counts = protected_result.packed_counts;
+        state->width_state = protected_result.port; state->source_cursor = protected_result.source_cursor;
+        state->destination_cursor = protected_result.destination_cursor;
+        state->control = protected_result.plane_counter; state->stack_offset = protected_result.stack_offset;
+        state->flags = protected_result.flags; state->continuation = CS_PlanarAlignedProtectedFarReturn;
+        result.source_segment = protected_result.source_segment;
+        result.output_segment = protected_result.output_segment; result.body_returned = 1;
+        return result;
+    }
+    if (state->continuation == CS_PlanarAlignedMasked4000Body) {
+        LmnAlignedReadMaskCall read_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->second_source_cursor, state->destination_cursor, state->flags};
+        LmnAlignedReadMaskResult read_result =
+            lmn_draw_aligned_read_mask_core(memory, &read_call, bus, ports);
+        state->work_value = read_result.work_value; state->packed_counts = read_result.packed_counts;
+        state->width_state = read_result.port; state->source_cursor = read_result.source_cursor;
+        state->second_source_cursor = read_result.mask_cursor;
+        state->destination_cursor = read_result.destination_cursor;
+        state->control = read_result.plane_counter; state->stack_offset = read_result.stack_offset;
+        state->flags = read_result.flags; state->continuation = CS_PlanarAlignedReadMaskFarReturn;
+        result.source_segment = read_result.source_segment; result.output_segment = read_result.output_segment;
+        result.body_returned = 1;
+        return result;
+    }
     if (state->continuation == CS_PlanarAlignedMaskedDefaultBody) {
         LmnAlignedMaskedCall masked_call = {call->inputs.data_segment,
             call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
@@ -67,11 +128,16 @@ static LmnDrawingRenderResult draw_prepared(
 }
 LmnDrawingRenderResult lmn_draw_prepared_aligned_opaque_core(
     uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus) {
-    return draw_prepared(memory, call, bus, 0);
+    return draw_prepared(memory, call, bus, 0, 0);
 }
 LmnDrawingRenderResult lmn_draw_prepared_planar_core(
     uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus) {
-    return draw_prepared(memory, call, bus, 1);
+    return draw_prepared(memory, call, bus, 1, 0);
+}
+LmnDrawingRenderResult lmn_draw_prepared_aligned_core(
+    uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus,
+    const LmnRasterBytePorts *ports) {
+    return draw_prepared(memory, call, bus, 2, ports);
 }
 static uint16_t return_word(uint8_t *memory, uint16_t ss, uint16_t offset,
     uint16_t flags, const LmnRasterBus *bus) {
@@ -116,4 +182,11 @@ void lmn_draw_prepared_planar_adapter(
         regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
     apply_boundary_result(memory, regs,
         lmn_draw_prepared_planar_core(memory, &call, bus), bus);
+}
+void lmn_draw_prepared_aligned_adapter(uint8_t *memory, LmnRegs *regs,
+    uint16_t game_data_segment, const LmnRasterBus *bus, const LmnRasterBytePorts *ports) {
+    LmnDrawingRenderCall call = {{regs->ds, regs->ss, regs->sp, regs->ax, regs->bx,
+        regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
+    apply_boundary_result(memory, regs,
+        lmn_draw_prepared_aligned_core(memory, &call, bus, ports), bus);
 }

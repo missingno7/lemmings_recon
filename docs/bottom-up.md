@@ -154,5 +154,16 @@ execution evidence. See aligned-opaque.md and drawing-render.md.
 The default aligned masked 93F6 body now has its own logical C API. Its BX mask
 cursor advances forward even with DF set, and its later passes use VGA logical OR.
 The general preparation/drawing API composes both default aligned bodies while
-retaining effect/shift seams and live SS control aliases. See aligned-masked.md
+retaining its effect/shift seams and live SS control aliases. See aligned-masked.md
 and drawing-render.md for tested scopes, original far returns and bounded guards.
+
+All four other aligned bodies now have native cores: 953E protection, 969C
+read-mask and 9737/97A4 mask effects. Their 21/17/52 standalone cases establish
+live segment/stack behavior, VGA comparison/latch ordering and the original
+effect cursor asymmetry. The new all-aligned API directly composes preparation
+and all six bodies in 226 cases. It requires an explicit byte OUT/IN provider
+to enter 969C; without one that continuation remains visible. The older APIs
+retain their scopes. UNKNOWN 9659 stays outside C accounting, alongside the
+previous aligned UNKNOWN bytes. Continue shifted bodies after reviewing their
+source-shift/self-modification and shared-entry contracts; full 8822 translation,
+IRQ ownership and native device timing remain open.

@@ -475,19 +475,33 @@ def oracle_body(case, memory, regs, flags, device):
                 return
 
     def out(uc, _port, size, value, _):
-        if size != 2:
-            stop_failure(uc, f'{case["name"]}: original used non-word VGA output')
-            return
         port = uc.reg_read(x.UC_X86_REG_DX)
         try:
-            device.vga.out(port, value, instruction_flags)
-            device.events.add('out', port, value, instruction_flags, flag_mask)
+            if size == 1 and hasattr(device, 'out_port_byte'):
+                device.out_port_byte(port, value, instruction_flags, flag_mask)
+            elif size == 2:
+                device.vga.out(port, value, instruction_flags)
+                device.events.add('out', port, value, instruction_flags, flag_mask)
+            else:
+                stop_failure(uc, f'{case["name"]}: unsupported original port output')
+                return
             if len(device.vga.trace) > MAX_VGA_EVENTS:
                 device.vga.trace.pop()
                 device.vga_exhausted = True
         except BaseException as error:
             device.record_error(error)
             stop_failure(uc, f'{case["name"]}: original VGA output callback failed')
+
+    def inp(uc, port, size, _):
+        if size != 1 or not hasattr(device, 'in_port_byte'):
+            stop_failure(uc, f'{case["name"]}: unsupported original port input')
+            return 0
+        try:
+            return device.in_port_byte(port, instruction_flags, flag_mask, uc)
+        except BaseException as error:
+            device.record_error(error)
+            stop_failure(uc, f'{case["name"]}: original byte input callback failed')
+            return 0
 
     def intr(uc, number, _):
         stop_failure(uc, f'{case["name"]}: unexpected INT{number:02x}')
@@ -497,6 +511,7 @@ def oracle_body(case, memory, regs, flags, device):
     write_hook = u.hook_add(UC_HOOK_MEM_WRITE, mem_write)
     out_hook = u.hook_add(UC_HOOK_INSN, out, None, 1, 0,
                           x.UC_X86_INS_OUT)
+    in_hook = u.hook_add(UC_HOOK_INSN, inp, None, 1, 0, x.UC_X86_INS_IN)
     intr_hook = u.hook_add(UC_HOOK_INTR, intr)
     wrap_read_hook = u.hook_add(UC_HOOK_MEM_READ, lambda uc, a, p, n, v, d:
                                 _wrap_read(uc, p, n))
@@ -515,7 +530,7 @@ def oracle_body(case, memory, regs, flags, device):
         raise VerificationFailure(f'{case["name"]}: original did not stop before RETF')
     if steps >= MAX_STEPS:
         raise GuardExhaustion(f'{case["name"]}: original step cap exhausted')
-    return u, seen, edges, (code_hook, read_hook, write_hook, out_hook,
+    return u, seen, edges, (code_hook, read_hook, write_hook, out_hook, in_hook,
                             intr_hook, wrap_read_hook, wrap_write_hook)
 
 

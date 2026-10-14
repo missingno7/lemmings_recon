@@ -27,14 +27,14 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Fifty original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+Fifty-four original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
 their connected setup span, VGA clear/layout, two drawing callers, three minimap
 routines, two clipping/dirty-cell leaves, their scoped drawing preparation span,
 destination geometry/shared dispatch and four source-row spans,
-the aligned opaque and default masked drawing bodies and three PC-speaker helpers, totaling 4,128 original
+all six aligned drawing bodies and three PC-speaker helpers, totaling 4,849 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -109,6 +109,13 @@ latch-before-copy order, DF/count wrap, CLI/STI and live stack/segment/return
 aliases. Remaining drawing variants stay open; see
 [aligned opaque drawing](docs/aligned-opaque.md) and
 [connected rendering](docs/drawing-render.md).
+
+The protected 953E, read-mask 969C and mask effects 9737/97A4 now connect through
+the same preparation chain. Their 90 standalone and 226 connected cases preserve
+plane-3 protection, explicit byte-port reads, live saved DX/DS and the original
+20/40 row-cursor asymmetry. Shifted drawing bodies remain open. See
+[protected drawing](docs/aligned-protected.md), [read-mask drawing](docs/aligned-read-mask.md)
+and [mask effects](docs/aligned-mask-effects.md).
 
 ## Reproduce
 

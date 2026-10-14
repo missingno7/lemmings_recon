@@ -1,4 +1,4 @@
-# Connected aligned opaque planar rendering
+# Connected aligned planar rendering
 
 `drawing_render.c` composes the native `882D` preparation with the aligned,
 opaque `983B` VGA body. The adapter is entered after the original `8822` caller
@@ -71,7 +71,7 @@ second_source_cursor (BX); the core returns its live first-pass progress.
 
 `tests/drawing_masked_render.py` passes 100 constructed original/native cases:
 90 complete masked draws, 8 complete opaque draws through the general API, and
-2 source-row/saved-BP aliases that select the unported 969C effect body. The suite
+2 source-row/saved-BP aliases that retain the 969C effect seam in this API. The suite
 covers 535 integrated instruction sites and 98 edges, with 3 compiled mutants.
 It checks all RAM/registers/defined flags, ordered byte/port/VGA accesses and
 independent whole-plane expectations across DF, reverse-source preparation,
@@ -79,9 +79,41 @@ plane limits 0..5/FF, clipping and dirty marking. Both original far-return opcod
 are single-stepped with the documented read-hook observation. Prologue sites
 remain original-only evidence; connection coverage is unioned with other suites.
 
-Both connection verifiers run in disposable bounded workers with the Windows
+All connection verifiers run in disposable bounded workers with the Windows
 512 MiB process/768 MiB tree cap, 180-second deadline and a 1,000,000-byte-access
 trace limit. DLL directories are cleaned after termination; completed Unicorn
 callback cycles are collected between cases. Guard exhaustion fails verification.
-Selected shifted/effect bodies, asynchronous IRQ delivery and native VGA timing
+Selected shifted bodies, asynchronous IRQ delivery and native VGA timing
 remain unresolved. No complete 8822 C entry or full game is claimed.
+
+## All aligned bodies
+
+`lmn_draw_prepared_aligned_core` and its adapter add the four other aligned
+paths: protected 953E, read-mask 969C and mask effects 9737/97A4. The existing
+opaque-only and default-planar APIs retain their scopes. Each new path calls
+its logical native core directly on the same RAM and returns through its own
+live far frame. The protected path retains preparation's BX; the effect paths
+use live prepared BP to select set/reset enable bits.
+
+969C requires a supplied `LmnRasterBytePorts` with both callbacks. Byte OUT
+selects GC register 5, and IN returns the provider's actual value; the original
+CMP branch skips only a NOP. No fixed reply or repair is substituted. Without
+the provider, preparation returns the explicit 969C continuation. Provider
+callbacks can access canonical RAM; the standalone suite verifies changed
+saved DX. The word-port/MMIO bus remains unchanged.
+
+`tests/drawing_aligned_render.py` passes 226 cases covering 759 integrated
+instruction sites and 117 branch edges: 56 each for opaque, default masked and
+protected draws, 9 read-mask draws, 24 each for the two effects, and one missing
+provider case. This covers both DF values, source reversal, plane counts,
+widths, multiple rows and read-mode replies 08/09. It compares full RAM,
+registers, defined flags, ordered bus/byte-port/word-port events and VGA state,
+with independent whole-plane expectations. Every body's actual original RETF
+is single-stepped with the documented hook observation. Three compiled mutants
+detect skipping the protected body, clearing DF and failing to consume RETF.
+
+The three standalone suites cover four bodies in 90 cases and nine further mutants; see
+aligned-protected.md, aligned-read-mask.md and aligned-mask-effects.md for their
+zero-count, physical-wrap, stack-device and live-save domains. The new bodies
+add 721 translated bytes; UNKNOWN9659 remains unresolved. Coverage unions
+instruction sites across suites and excludes the original-only 8822 prologue.

@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 47 |
-| Translated C code bytes | 3963 |
-| Differential cases | 7280 |
-| Mutation checks detected | 102 |
-| Original instruction coverage | 1807 / 15,392 decoded (11.740%) |
+| Translated C routines | 51 |
+| Translated C code bytes | 4684 |
+| Differential cases | 7596 |
+| Mutation checks detected | 114 |
+| Original instruction coverage | 2158 / 15,392 decoded (14.020%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -40,7 +40,7 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation/geometry/dispatch/source spans and aligned opaque/default masked bodies
+planar preparation/geometry/dispatch/source spans and all six aligned bodies
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -49,7 +49,8 @@ docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
 docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
 docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
 docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
-docs/aligned-opaque.md, docs/aligned-masked.md and docs/drawing-render.md's domains; remaining
+docs/aligned-opaque.md, docs/aligned-masked.md, docs/aligned-protected.md,
+docs/aligned-read-mask.md, docs/aligned-mask-effects.md and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -75,10 +76,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1867 / 17,291
-(10.798%) of this still-incomplete decoded inventory. There are
-50 tested C routines occupying 4128 original code bytes across images,
-with 7615 differential cases and 105 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 2218 / 17,291
+(12.827%) of this still-incomplete decoded inventory. There are
+54 tested C routines occupying 4849 original code bytes across images,
+with 7931 differential cases and 117 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -356,7 +357,22 @@ live. The general renderer API also retains the opaque 983B branch; the older
 opaque-scoped API preserves its explicit masked-body seam. The connection runs
 90 masked draws and
 8 opaque draws; two saved-BP aliases select
-the unported 969C effect body. Six compiled mutants are detected. Original 8822
+the explicit 969C effect seam in this API. Six compiled mutants are detected. Original 8822
 prologue sites remain excluded from C accounting. See aligned-masked.md and
-drawing-render.md. Other drawing variants, asynchronous IRQ/device scheduling
+drawing-render.md.
+
+The four other aligned bodies add 721 unique translated bytes: protected953E
+(349, excluding UNKNOWN9659), read-mask969C (155), effect20 (109) and effect40
+(108). They pass 21/17/52
+standalone cases and 226 all-aligned preparation
+connections. The connection covers 759
+integrated sites and 117 edges; sites are unioned,
+not summed. All original body RETFs receive actual single-step probes. Plane-3
+comparison/protection, live savedDX/DS, explicit byte OUT/IN replies and the
+20/40 row-cursor asymmetry remain original behavior. Missing byte providers
+leave969C explicit. These four suites detect twelve compiled mutants. See
+aligned-protected.md, aligned-read-mask.md, aligned-mask-effects.md and
+drawing-render.md for constructed-state domains and IRQ/device timing limits.
+The original8822 prologue and shifted bodies remain outside these C ranges.
+ Other drawing variants, asynchronous IRQ/device scheduling
 and broader gameplay integration remain open.

@@ -171,6 +171,9 @@ def main():
     dependencies = tuple('c/' + p for p in (
         'drawing_render.c', 'drawing_render.h', 'aligned_masked.c', 'aligned_masked.h',
         'aligned_opaque.c', 'aligned_opaque.h', 'drawing_plan.c', 'drawing_plan.h',
+        'aligned_protected.c', 'aligned_protected.h',
+        'aligned_mask_effects.c', 'aligned_mask_effects.h',
+        'aligned_read_mask.c', 'aligned_read_mask.h',
         'drawing_inputs.c', 'drawing_inputs.h', 'drawing_clip.c', 'drawing_clip.h',
         'drawing_dirty.c', 'drawing_dirty.h', 'drawing_dispatch.c', 'drawing_dispatch.h',
         'drawing_source.c', 'drawing_source.h', 'lemmings_sym.h', 'regs.h', 'special_blit.h'))

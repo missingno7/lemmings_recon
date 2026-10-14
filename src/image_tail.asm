@@ -5572,3 +5572,5 @@ InteractionCellMapBase equ RuntimeStackFrame+0x12
 
 VgaColorCompareMirror equ RuntimeStackFrame+0x0004
 VgaColorCareMirror equ RuntimeStackFrame+0x0006
+
+VgaReadMapMirror equ RuntimeStackFrame+0x0010
