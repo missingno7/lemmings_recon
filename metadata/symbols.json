@@ -50776,7 +50776,7 @@
     "address": 34910,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 97,
     "symbol_name": "PlanarInputsReady",
     "aliases": [],
     "callers": [],
@@ -50784,7 +50784,36 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Live near-return continuation after9A15 and drawing body start"
+      "Live near-return continuation after9A15 and drawing body start",
+      "885E destination geometry and shifted/bit2 path selection; 88AA UNKNOWN and88AB far return outside native scope",
+      "77 bounded original/native dispatch cases,41 caller/shared-tail sites; live stores, packed counts, page/pitch/save aliases, direct88A6 incomingZF and native939E selection"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/drawing_dispatch.c",
+    "c_code_ranges": [
+      [
+        34910,
+        34986
+      ],
+      [
+        34988,
+        35007
+      ]
+    ]
+  },
+  {
+    "address": 34982,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarIncomingFlagGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -50801,6 +50830,288 @@
     "confidence": "PROVEN",
     "evidence": [
       "8822 preparation branches here on negative returned AX; this RETF remains outside native882D span"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 35007,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 79,
+    "symbol_name": "PrepareShiftedMaskedPlanarRows",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Statically bounded planar drawing preparation span; exits before variant VGA body, preserving live source cursor/stack/control state",
+      "236 bounded original/native cases across four spans,92 sites and32 edges; independent cursor/row expectations and live PUSH/store/POP aliases"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/drawing_source.c"
+  },
+  {
+    "address": 35086,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMaskedDefaultBody",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 35650,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMasked8000Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 36198,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMasked4000Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 36855,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMasked20Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 37020,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMasked40Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 37184,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 43,
+    "symbol_name": "PrepareShiftedOpaquePlanarRows",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Statically bounded planar drawing preparation span; exits before variant VGA body, preserving live source cursor/stack/control state",
+      "236 bounded original/native cases across four spans,92 sites and32 edges; independent cursor/row expectations and live PUSH/store/POP aliases"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/drawing_source.c"
+  },
+  {
+    "address": 37227,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedOpaqueBody",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 37790,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 9,
+    "symbol_name": "SelectUnshiftedPlanarPath",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Statically bounded planar drawing preparation span; exits before variant VGA body, preserving live source cursor/stack/control state",
+      "77 bounded original/native dispatch cases,41 caller/shared-tail sites; live stores, packed counts, page/pitch/save aliases, direct88A6 incomingZF and native939E selection"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/drawing_dispatch.c"
+  },
+  {
+    "address": 37799,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 79,
+    "symbol_name": "PrepareAlignedMaskedPlanarRows",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Statically bounded planar drawing preparation span; exits before variant VGA body, preserving live source cursor/stack/control state",
+      "236 bounded original/native cases across four spans,92 sites and32 edges; independent cursor/row expectations and live PUSH/store/POP aliases"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/drawing_source.c"
+  },
+  {
+    "address": 37878,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMaskedDefaultBody",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 38206,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMasked8000Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 38556,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMasked4000Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 38711,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMasked20Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 38820,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedMasked40Body",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 38928,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 43,
+    "symbol_name": "PrepareAlignedOpaquePlanarRows",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Statically bounded planar drawing preparation span; exits before variant VGA body, preserving live source cursor/stack/control state",
+      "236 bounded original/native cases across four spans,92 sites and32 edges; independent cursor/row expectations and live PUSH/store/POP aliases"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/drawing_source.c"
+  },
+  {
+    "address": 38971,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarAlignedOpaqueBody",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51211,7 +51522,7 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Static direct call target",
-      "Closed static near-return leaf boundary;09996 decoded NOP has no edge in the entry9967 body but is not claimed dead",
+      "Closed122-byte static near-return leaf; live SS dirty-cell writes and unchecked counters",
       "2066 bounded original/native cases,63 sites and16 edges; live SS map/save/RET aliases and unchecked zero-size loops preserved"
     ],
     "verification_status": "TESTED",
@@ -51583,6 +51894,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8058,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingPageByteOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "81D8 initializes02C0; menus zero it; 0147/17E9/7EB7/885E add it to drawing destinations"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52255,6 +52582,70 @@
     "confidence": "PROVEN",
     "evidence": [
       "8822 zeroes it; 9967 stores low16(negativeY * source pitch)"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26368,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingDestinationRowAdvance",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "888E stores drawing pitch minus rendered byte width; 8891 repeats the value at6704; no direct consumer of6700 established"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26370,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingSourceRowAdvance",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "88E5/9166/93CD/9836 store horizontal skip or reversed skip-minus-two-pitches; rows reread live"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26372,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingActiveDestinationRowAdvance",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8891 copies pitch minus rendered width; shifted variants decrement it before drawing"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 43336,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "DrawingLeftBitShiftByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8863 stores low3(left); shifted planar loops consume the live byte"
     ],
     "verification_status": "UNRESOLVED"
   },

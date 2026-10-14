@@ -132,7 +132,7 @@ loc_013F:
     sub dl,0x6 ; @0013F
     cli ; @00142
     mov bx,[0x1f78] ; @00143
-    add bx,[0x1f7a] ; @00147
+    add bx,[DrawingPageByteOffset-GameDataImage] ; @00147
     add bx,byte +0x2 ; @0014B
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @0014E
     mov al,0xc ; @00150
@@ -2101,7 +2101,7 @@ GameTimerIrqHandler:
     cli ; @017E0
     mov dx,[0x1fda] ; @017E1
     mov bx,[0x1f78] ; @017E5
-    add bx,[0x1f7a] ; @017E9
+    add bx,[DrawingPageByteOffset-GameDataImage] ; @017E9
     add bx,byte +0x2 ; @017ED
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @017F0
     mov al,0xc ; @017F2

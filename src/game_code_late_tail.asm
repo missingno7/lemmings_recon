@@ -533,7 +533,7 @@ loc_7E7F:
 sub_7EB2:
     push ds ; @07EB2
     mov di,[DrawingOrigin-GameDataImage] ; @07EB3
-    add di,[0x1f7a] ; @07EB7
+    add di,[DrawingPageByteOffset-GameDataImage] ; @07EB7
     add di,0x64f ; @07EBB
     mov si,0x4f22 ; @07EBF
     mov dx,0x3c4 ; @07EC2
@@ -924,7 +924,7 @@ loc_81BD:
 sub_81CC:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @081CC
     mov word [0x1f78],0x2520 ; @081D2
-    mov word [0x1f7a],0x2c0 ; @081D8
+    mov word [DrawingPageByteOffset-GameDataImage],0x2c0 ; @081D8
     mov word [DrawingDirtyCellMapOffset-GameDataImage],0x42b2 ; @081DE
     mov word [0x28],0x45d3 ; @081E4
     mov bx,[DrawingDirtyCellMapOffset-GameDataImage] ; @081EA

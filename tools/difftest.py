@@ -50,3 +50,5 @@ if __name__ == "__main__":
         subprocess.run([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)
     for suite in ('drawing_clip','drawing_dirty','drawing_inputs'):
         subprocess.run([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)
+    for suite in ('drawing_dispatch','drawing_source','drawing_plan'):
+        subprocess.run([sys.executable,str(ROOT/'tests'/(suite+'.py'))],cwd=ROOT,check=True,timeout=120)

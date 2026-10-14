@@ -23,7 +23,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 07A5A..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
 | 08343..083BE | checksum.asm | Tested checksums, state and code/data overlap |
-| 083BF..09A8F | code_tail.asm | Overlay storage, drawing code and unresolved spans |
+| 083BF..08821 | code_tail.asm | Overlay storage, layout setter and unresolved spans |
+| 08822..09A8F | planar_drawing.asm | Planar renderer, dispatch, row preparation and clip/dirty leaves |
 | 09A90..143D9 | image_tail.asm | Data frame; UNKNOWN may contain executable code |
 
 Shared tails can cross files. All encoding exceptions, UNKNOWN markers and
@@ -134,3 +135,11 @@ at 885E/88AB. Live source pitch/extent/skips and saved CH names belong to the
 ledger. Its tests consume original-prologue state and keep those seven sites
 outside C accounting. Continue the planar body only after its dispatch, shift,
 VGA and segment contracts are closed; see drawing-inputs.md.
+
+The 8822..9A8F planar family now lives in planar_drawing.asm, included directly
+between the unchanged code-tail and data-frame modules. Destination geometry
+and dispatch at 885E/939E compose with four native source-row prefixes. Their
+77/236/744 cases preserve live shift/pitch/page words, packed counts, reversed
+cursors and control changed by dirty or source-row stores. Selected VGA bodies
+remain unported; the original 8822 prologue remains separately executed evidence,
+not C coverage. See drawing-plan.md before expanding a drawing body.

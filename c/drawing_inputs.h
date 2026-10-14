@@ -10,7 +10,7 @@ typedef struct LmnDrawingInputsResult {
     uint16_t stack_offset,flags,continuation,changed_return;
 } LmnDrawingInputsResult;
 /* 882D assumes three pending save words from the original 8822 prologue.
-   Ends before the unported 885E drawing body or 88AB RETF, or at changed RET. */
+   Ends before the separately scoped 885E drawing dispatch or 88AB RETF, or at changed RET. */
 LmnDrawingInputsResult lmn_prepare_planar_drawing_inputs_core(uint8_t *,const LmnDrawingInputsCall *,const LmnRasterBus *);
 void lmn_prepare_planar_drawing_inputs_adapter(uint8_t *,LmnRegs *,const LmnRasterBus *);
 #endif

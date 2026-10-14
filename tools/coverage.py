@@ -116,12 +116,16 @@ def report():
     clip=read_json(BUILD/'drawing-clip-differential.json')
     dirty=read_json(BUILD/'drawing-dirty-differential.json')
     inputs=read_json(BUILD/'drawing-inputs-differential.json')
+    dispatch=read_json(BUILD/'drawing-dispatch-differential.json')
+    source=read_json(BUILD/'drawing-source-differential.json')
+    plan=read_json(BUILD/'drawing-plan-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
                         ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing),
                         ('minimap sample',sample),('minimap row',mmrow),('minimap column',mmcolumn),
-                        ('drawing clip',clip),('drawing dirty',dirty),('drawing inputs',inputs)):
+                        ('drawing clip',clip),('drawing dirty',dirty),('drawing inputs',inputs),
+                        ('drawing dispatch',dispatch),('drawing source',source),('drawing plan',plan)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -137,7 +141,8 @@ def report():
     executed.update(clip['executed_instruction_addresses'])
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs)
+    for extra in (dispatch,source,plan):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -215,13 +220,14 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation span are TESTED within docs/checksum.md,
+planar preparation/geometry/dispatch/source spans are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
 docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
-docs/drawing-clip.md, docs/drawing-dirty.md and docs/drawing-inputs.md's domains; remaining
+docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
+docs/drawing-dispatch.md, docs/drawing-source.md and docs/drawing-plan.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -480,14 +486,31 @@ The leaves cover 73/63 sites and 29/16 edges; the connected span covers 18 calle
 checks retain signed versus sign-only clipping, byte-rounded zero counts, live
 DS/SS field/save aliases and changed childRET targets. Nine compiled mutants are
 detected. These add 344 unique C bytes and 154 sites. The original 8822 prologue's
-seven sites are recorded separately and excluded from C coverage; 885E drawing
-and 88AB RETF remain unported boundaries. The decoded 9996 NOP remains outside
+seven sites are recorded separately and excluded from C coverage; 885E dispatch is a separate native scope and
+88AB RETF remains an unported boundary. The decoded 9996 NOP remains outside
 the normal-entry tests without a dead-code claim. An independent original MUL/
 MOV observation records Unicorn's transient memory-hook CF/OF artifact; bus
 flags use original instruction-boundary snapshots, with all defined bits checked.
 VGA devices, IRQ delivery, executing-code corruption and CPU-family faults
 remain open for this RAM scope. See drawing-clip.md, drawing-dirty.md and
 drawing-inputs.md.
+
+The destination-positioning and path selector at 885E, shared 939E tail and
+four source-row spans at 88BF/9140/93A7/9810 now compose directly with the
+native 882D preparation. The dispatch/source/connection suites pass
+{dispatch['case_count']}/{source['case_count']}/{plan['case_count']} original/native cases, with 41/92/287 original sites.
+They retain live page/pitch/shift words, packed count truncation, reverse-source
+wrap, two separate vertical-skip reads, PUSH/store/POP control aliases and
+4000/8000/20/40 priority. Independent geometry/cursor/stride/body expectations
+cover all eight residues and low-bit modes, overlapping effect flags and both
+reverse states. Nine compiled mutants are detected. This adds 348 unique bytes
+and 133 sites; the connected wrapper adds no caller bytes. Original 8822 prologue
+sites remain separate. Incoming 88A6 ZF-to-88AB is tested as its own bounded entry
+state and excluded from the normal-entry connection without a dead-code claim.
+The planar family now has a flat physical module at 8822..9A8F with exact end
+assertions. Selected VGA bodies, far returns, IRQ/device semantics, self
+modification and broader level consumers remain open; DrawPlanarBitmap remains
+UNTRANSLATED. See drawing-dispatch.md, drawing-source.md and drawing-plan.md.
 '''
     return m,text
 

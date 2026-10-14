@@ -20,5 +20,7 @@ times -(($-$$) != 0x8343) db 0 ; module end assertion
 %include "checksum.asm"
 times -(($-$$) != 0x83bf) db 0 ; module end assertion
 %include "code_tail.asm"
+times -(($-$$) != 0x8822) db 0 ; module end assertion
+%include "planar_drawing.asm"
 times -(($-$$) != 0x9a90) db 0 ; module end assertion
 %include "image_tail.asm"

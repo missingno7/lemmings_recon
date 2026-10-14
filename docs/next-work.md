@@ -12,7 +12,9 @@ leaves and 368E/36AD callers now pass
 67/49/62 cases, including two complete thirteen-column cycles. Continue the
 terrain/far drawing dependencies of 36B6/394F next. The 9967/9A15 clipping
 and dirty-cell leaves now compose in the 882D preparation span with 59/2066/102
-cases. Continue the 885E drawing body, preserving its plane/shift/segment state.
+cases. Destination/dispatch and four source-row spans now connect in 77/236/744
+cases. Continue the selected VGA drawing bodies, preserving plane/shift/segment
+state and live control aliases; see drawing-plan.md.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -99,8 +101,20 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     verified in 59/2066 cases. Their 882D..885D preparation span passes 102 cases;
     see drawing-clip.md, drawing-dirty.md and drawing-inputs.md. Its 49 bytes
     exclude the seven-site original 8822 prologue and end before 885E drawing,
-    88AB RETF or a changed childRET. Continue the 885E plane/shift drawing body,
-    then 7C67, after establishing dispatch, VGA access and source-plane contracts.
+    88AB RETF or a changed childRET. The 885E/939E destination/dispatch and four
+    source prefixes at 88BF/9140/93A7/9810 now connect in 77/236/744 cases;
+    see drawing-dispatch.md, drawing-source.md and drawing-plan.md. Continue
+    the selected VGA bodies, starting with aligned opaque 983B and aligned masked
+    default 93F6, then their shifted and effect variants. Establish port/mirror,
+    source-plane, count/DF, live save, asynchronous IRQ and far-return contracts.
+    The clear/strip/minimap VGA fixture can verify device behavior independently.
+    Preserve CLI/STI/latch ordering and source self modification. At 983B, DH
+    becomes BP after swapping the DX bytes. The first pass enables all planes,
+    then conditional passes select 02/04/08; the fourth ends without another BP
+    test. Establish that incoming plane-limit contract, including zero/>4, live
+    saves, row/byte zero counts and STI setting IF even when incoming IF is clear.
+    Keep the 988B shared LOOP entry's separate incoming-state obligations explicit.
+    Then continue 7C67.
     Keep DS:66F8/66FA/66FC/66FE and A949 live, including saved words and shifted
     cursor aliases. Preserve original far-return, signed/sign-only clipping,
     segment/offset wrap, self modification and unchecked zero-size behavior.

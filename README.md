@@ -27,13 +27,14 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Forty-two original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+Forty-eight original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
 their connected setup span, VGA clear/layout, two drawing callers, three minimap
-routines, two clipping/dirty-cell leaves, their scoped drawing preparation span
-and three PC-speaker helpers, totaling 3,156 original
+routines, two clipping/dirty-cell leaves, their scoped drawing preparation span,
+destination geometry/shared dispatch and four source-row spans,
+and three PC-speaker helpers, totaling 3,504 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -95,6 +96,12 @@ The planar clipping and dirty-cell leaves now compose directly in the 882D
 preparation span. Their 2,227 original/native cases preserve live field/save/return
 aliases and zero-count quirks. The seven-site original 8822 prologue and 885E
 renderer body remain separate; see [drawing preparation](docs/drawing-inputs.md).
+
+The destination geometry, shared path selector and four source-row preparations
+now compose with those cores. Their 1,057 bounded cases include an independent
+640-case mode/shift/reverse/effect matrix and live control aliases. The planar
+ASM family is grouped without changing bytes; selected VGA drawing bodies remain
+open. See [connected drawing selection](docs/drawing-plan.md).
 
 ## Reproduce
 

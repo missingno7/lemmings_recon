@@ -21,7 +21,8 @@ selects the direct native dirty-cell call; other byte values skip it. Each child
 return is read through live SS. A changed return exposes its actual target
 before executing any target instruction. Normal preparation ends before 885E's
 XCHG and the planar renderer body. The original outer far-return frame remains
-live and unconsumed. See drawing-clip.md and drawing-dirty.md for child contracts.
+live and unconsumed. The separate drawing-dispatch/source cores now continue
+from 885E; see drawing-plan.md. See drawing-clip.md and drawing-dirty.md for child contracts.
 
 Every word access reads or writes the low then high physical byte. Physical
 addresses wrap at 20 bits; stack offsets wrap at 16 bits and the second byte is

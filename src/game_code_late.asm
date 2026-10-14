@@ -1229,7 +1229,7 @@ sub_43F2:
 loc_4401:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04401
     mov word [0x1f78],0x6d60 ; @04407
-    mov word [0x1f7a],0x0 ; @0440D
+    mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0440D
     call sub_4C32 ; @04413
     mov byte [0x1f6f],0xff ; @04416
     mov byte [0x1f72],0xff ; @0441B
@@ -1451,10 +1451,10 @@ loc_45F2:
     call sub_4C20 ; @0460F
     call sub_394F ; @04612
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04615
-    mov word [0x1f7a],0x0 ; @0461B
+    mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0461B
     call sub_7EB2 ; @04621
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04624
-    mov word [0x1f7a],0x0 ; @0462A
+    mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0462A
     call sub_4C17 ; @04630
     call sub_4C07 ; @04633
     mov bx,0x4e ; @04636
@@ -2083,7 +2083,7 @@ sub_4BE7:
 sub_4BF5:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04BF5
     mov word [0x1f78],0x6d60 ; @04BFB
-    mov word [0x1f7a],0x0 ; @04C01
+    mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @04C01
 sub_4C07:
     mov ax,0x280 ; @04C07
     mov bx,0x15e ; @04C0A
@@ -6607,7 +6607,7 @@ loc_6F0D:
     shr bp,1 ; @06F34
     db 0x03,0xfd ; ENCODED: add di,bp (NASM chooses a different encoding) ; @06F36
     add di,[DrawingOrigin-GameDataImage] ; @06F38
-    add di,[0x1f7a] ; @06F3C
+    add di,[DrawingPageByteOffset-GameDataImage] ; @06F3C
     and ax,0x7 ; @06F40
     lea bx,[0x547c] ; @06F43
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @06F47

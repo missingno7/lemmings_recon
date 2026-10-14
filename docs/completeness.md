@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 39 |
-| Translated C code bytes | 2991 |
-| Differential cases | 5272 |
-| Mutation checks detected | 81 |
-| Original instruction coverage | 1359 / 15,392 decoded (8.829%) |
+| Translated C routines | 45 |
+| Translated C code bytes | 3339 |
+| Differential cases | 6329 |
+| Mutation checks detected | 90 |
+| Original instruction coverage | 1492 / 15,392 decoded (9.693%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -40,13 +40,14 @@ The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
-planar preparation span are TESTED within docs/checksum.md,
+planar preparation/geometry/dispatch/source spans are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
 docs/drawing-layout.md, docs/level-drawing.md, docs/minimap.md,
-docs/drawing-clip.md, docs/drawing-dirty.md and docs/drawing-inputs.md's domains; remaining
+docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
+docs/drawing-dispatch.md, docs/drawing-source.md and docs/drawing-plan.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -72,10 +73,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1419 / 17,291
-(8.207%) of this still-incomplete decoded inventory. There are
-42 tested C routines occupying 3156 original code bytes across images,
-with 5607 differential cases and 84 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1552 / 17,291
+(8.976%) of this still-incomplete decoded inventory. There are
+48 tested C routines occupying 3504 original code bytes across images,
+with 6664 differential cases and 93 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -305,11 +306,28 @@ The leaves cover 73/63 sites and 29/16 edges; the connected span covers 18 calle
 checks retain signed versus sign-only clipping, byte-rounded zero counts, live
 DS/SS field/save aliases and changed childRET targets. Nine compiled mutants are
 detected. These add 344 unique C bytes and 154 sites. The original 8822 prologue's
-seven sites are recorded separately and excluded from C coverage; 885E drawing
-and 88AB RETF remain unported boundaries. The decoded 9996 NOP remains outside
+seven sites are recorded separately and excluded from C coverage; 885E dispatch is a separate native scope and
+88AB RETF remains an unported boundary. The decoded 9996 NOP remains outside
 the normal-entry tests without a dead-code claim. An independent original MUL/
 MOV observation records Unicorn's transient memory-hook CF/OF artifact; bus
 flags use original instruction-boundary snapshots, with all defined bits checked.
 VGA devices, IRQ delivery, executing-code corruption and CPU-family faults
 remain open for this RAM scope. See drawing-clip.md, drawing-dirty.md and
 drawing-inputs.md.
+
+The destination-positioning and path selector at 885E, shared 939E tail and
+four source-row spans at 88BF/9140/93A7/9810 now compose directly with the
+native 882D preparation. The dispatch/source/connection suites pass
+77/236/744 original/native cases, with 41/92/287 original sites.
+They retain live page/pitch/shift words, packed count truncation, reverse-source
+wrap, two separate vertical-skip reads, PUSH/store/POP control aliases and
+4000/8000/20/40 priority. Independent geometry/cursor/stride/body expectations
+cover all eight residues and low-bit modes, overlapping effect flags and both
+reverse states. Nine compiled mutants are detected. This adds 348 unique bytes
+and 133 sites; the connected wrapper adds no caller bytes. Original 8822 prologue
+sites remain separate. Incoming 88A6 ZF-to-88AB is tested as its own bounded entry
+state and excluded from the normal-entry connection without a dead-code claim.
+The planar family now has a flat physical module at 8822..9A8F with exact end
+assertions. Selected VGA bodies, far returns, IRQ/device semantics, self
+modification and broader level consumers remain open; DrawPlanarBitmap remains
+UNTRANSLATED. See drawing-dispatch.md, drawing-source.md and drawing-plan.md.

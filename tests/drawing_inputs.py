@@ -206,6 +206,6 @@ def main():
     write_json(report,dict(image='main',image_sha256=sha(IMAGE),case_count=len(baseline),mutation_count=3,cases=baseline,mutations_detected=mutants,
         executed_instruction_addresses=sorted(seen),caller_instruction_addresses=sorted(LOCAL),branch_edges=sorted(edges),original_only_prologue_sites=sorted(prologue),
         translated_code_bytes=49,mul_write_hook_observation=hook_observation,input_hashes={p:sha((ROOT/p).read_bytes()) for p in paths},
-        domain='882D..885D native continuation with three live saves from original8822 prologue; near clip/dirty calls native; explicit885E unported body,88AB unported RETF or changed childRET; intact executing code; RAM/null/callback buses; quiescentIRQ; permissive20-bit stack model'))
+        domain='882D..885D native continuation with three live saves from original8822 prologue; near clip/dirty calls native; separate885E dispatch scope,88AB unported RETF or changed childRET; intact executing code; RAM/null/callback buses; quiescentIRQ; permissive20-bit stack model'))
     print(f'PASS drawing inputs: {len(baseline)} cases,{len(LOCAL)} caller sites,{len(seen)} integrated sites,{len(edges)} edges;3 compiled mutants detected;{len(prologue)} prologue sites excluded from C coverage')
 if __name__=='__main__':main()
