@@ -1,5 +1,6 @@
 """Connected original metadata/RLE/VGA/DAT setup versus direct native cores."""
 import ctypes
+import gc
 import random
 from unicorn import Uc,UC_ARCH_X86,UC_MODE_16,UC_HOOK_CODE,UC_HOOK_INTR,UC_HOOK_INSN,UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE
 from unicorn import x86_const as x
@@ -220,6 +221,9 @@ def main():
     report=BUILD/'special-setup-differential.json';report.unlink(missing_ok=True);baseline=cases();lib=library();seen=set();edges=set()
     for case in baseline:
         a,b=compare(lib,case);seen|=a;edges|=b
+        # Unicorn hooks and ctypes callbacks form cycles retaining completed
+        # RAM/device traces. Drain them between cases, before starting another.
+        gc.collect()
     if not set(LOCAL)<=seen:raise AssertionError(f'Missing setup sites {set(LOCAL)-seen}')
     mutations=[]
     for mutation in (1,2,3):
@@ -227,6 +231,7 @@ def main():
         for case in baseline:
             try:compare(lib,case)
             except AssertionError:hit=case['name'];break
+            finally:gc.collect()
         if not hit:raise AssertionError(f'Setup mutation {mutation} survived')
         mutations.append(dict(mutation=mutation,case=hit))
     paths=tuple('c/'+n for n in ('special_setup.c','special_setup.h','special_blit.c','special_blit.h','resource_rle.c','resource_rle.h',

@@ -92,6 +92,23 @@ runs through the null-bus RAM backend. The suite detects three compiled
 mutants: unsigned instead of signed horizontal/vertical `JNL`, and a seven
 pixel instead of eight-pixel horizontal step.
 
+The standalone suite runs in a disposable child process with a 120-second
+deadline. On Windows a Job Object caps each process at 512 MiB of committed
+memory and the complete child tree at 768 MiB; closing the job kills remaining
+children. Each callback trace permits at most 200,000 byte accesses per native
+call. Exceeding this limit exits the worker because a Python exception inside
+a ctypes callback cannot unwind a native loop. Timeout or budget exhaustion
+fails verification and does not count as a detected differential mutant.
+The parent removes its temporary DLL directory after success, crash, or timeout.
+
+`tests/test_bounded_process.py` separately reproduces the unsigned horizontal
+mutant with screen width `8000`: it bypasses the original signed rejection,
+then its right-edge loop can never fall below the minimum signed value.
+The traced probe must exit at its access budget; the null-bus probe must be
+terminated by its deadline. These harness checks add no translated coverage.
+The main `tools/difftest.py` runner applies the same Windows commit ceiling and
+explicit deadlines to every native suite, including compiler descendants.
+
 The run covered 73 instruction addresses and 29 observed branch edges. It did
 not execute `09996`. `translated_code_bytes` is 173 for the maintained C range;
 the return instructions are handled by the shared near-return adapter. The

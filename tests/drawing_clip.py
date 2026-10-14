@@ -14,6 +14,8 @@ from unicorn import x86_const as x
 import dat_io as oracle
 from common import ROOT, BUILD, read_json, sha, write_json
 from cbuild import build
+from bounded_process import (run_bounded, DEFAULT_MEMORY_MIB,
+                             temporary_build_directory)
 from unpack import ASSET, unpack, relocated
 
 MEMORY_SIZE = 1 << 20
@@ -47,6 +49,9 @@ FIELDS = {
     'DrawingSavedHeightHighByte': SYMS['DrawingSavedHeightHighByte']['address'],
 }
 LOADS = (0x1010, 0x1213, 0x2345)
+NATIVE_EVENT_LIMIT = 200000
+BUDGET_EXIT = 86
+LIBRARY_DIRECTORY = BUILD
 
 
 class Regs(ctypes.Structure):
@@ -232,7 +237,7 @@ def prepare(case):
 
 
 def library(mutation=0):
-    path = build(BUILD / f'drawing-clip-m{mutation}-pid{os.getpid()}.dll',
+    path = build(LIBRARY_DIRECTORY / f'drawing-clip-m{mutation}.dll',
                  mutation, 'drawing_clip')
     lib = ctypes.CDLL(str(path))
     lib.lmn_clip_planar_drawing_rectangle_adapter.argtypes = [
@@ -245,8 +250,16 @@ def make_bus(memory):
     events = []
     errors = []
 
+    def reserve_event():
+        if len(events) >= NATIVE_EVENT_LIMIT:
+            # Exceptions raised by ctypes callbacks do not unwind the native
+            # loop. Exit this disposable worker instead, before growing RAM.
+            os.write(2, b'drawing_clip: native access budget exceeded\n')
+            os._exit(BUDGET_EXIT)
+
     @READ
     def read(_context, _memory, address, flags):
+        reserve_event()
         try:
             address &= 0xfffff
             value = memory[address]
@@ -258,6 +271,7 @@ def make_bus(memory):
 
     @WRITE
     def write(_context, _memory, address, value, flags):
+        reserve_event()
         try:
             address &= 0xfffff
             memory[address] = value
@@ -514,7 +528,7 @@ def main():
         'tests/dat_io.py', 'tools/common.py', 'tools/cbuild.py',
         'tools/difftest.py', 'tools/coverage.py', 'tools/unpack.py',
         'metadata/symbols.json', 'assets/vgalemmi.exe',
-        'docs/drawing-clip.md',
+        'docs/drawing-clip.md', 'tools/bounded_process.py',
     )
     routine_bytes = IMAGE[ENTRY:END]
     mutations = [
@@ -526,6 +540,9 @@ def main():
         image='main', image_sha256=sha(IMAGE), case_count=len(CASES),
         cases=[case['name'] for case in CASES],
         mutation_count=mutant_count, mutations_detected=mutations,
+        execution_limits=dict(native_accesses_per_call=NATIVE_EVENT_LIMIT,
+                              worker_timeout_seconds=120,
+                              windows_process_commit_mib=DEFAULT_MEMORY_MIB),
         instruction_addresses=sorted(INS), instruction_sites=sorted(all_sites),
         executed_instruction_addresses=sorted(all_sites),
         branch_instruction_addresses=sorted(BRANCHES),
@@ -564,5 +581,41 @@ def main():
           f'sites, {len(all_edges)} branch edges; {mutant_count} compiled mutations detected')
 
 
+def runaway_probe(null_bus=False):
+    """Unsigned mutant passes the original rejection, then loops forever.
+
+    With a signed-minimum screen width, no signed 16-bit right edge can be
+    smaller than the boundary. Keep this witness outside convergence cases.
+    """
+    case = dict(name='runaway-signed-minimum', left=0, top=2, height=5,
+                width=1, control=4, screen_width=0x8000, screen_height=24,
+                seed=0)
+    native = library(1)
+    if not null_bus:
+        compare(native, case)
+    else:
+        memory, regs, flags, _load = prepare(case)
+        state = Regs(**regs, flags=flags)
+        native.lmn_clip_planar_drawing_rectangle_adapter(
+            (ctypes.c_uint8 * MEMORY_SIZE).from_buffer(memory),
+            ctypes.byref(state), None)
+    raise AssertionError('Expected runaway mutant unexpectedly returned')
+
+
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 3 and sys.argv[1] in (
+            '--bounded-worker', '--runaway-probe', '--null-runaway-probe'):
+        LIBRARY_DIRECTORY = Path(sys.argv[2])
+        if sys.argv[1] == '--bounded-worker':
+            main()
+        else:
+            runaway_probe(sys.argv[1] == '--null-runaway-probe')
+    elif len(sys.argv) == 1:
+        # Parent owns artifacts, even when native execution crashes or times out.
+        BUILD.mkdir(exist_ok=True)
+        (BUILD / 'drawing-clip-differential.json').unlink(missing_ok=True)
+        with temporary_build_directory(prefix='drawing-clip-', parent=BUILD) as directory:
+            run_bounded([sys.executable, str(Path(__file__).resolve()),
+                         '--bounded-worker', directory], cwd=ROOT, timeout=120)
+    else:
+        raise SystemExit('Unexpected drawing_clip arguments')

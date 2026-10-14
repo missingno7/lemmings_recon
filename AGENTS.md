@@ -14,6 +14,12 @@ The symbol ledger owns names and offsets. Preserve original wrap, flags, segment
 effects, self modification, shared tails and bugs. No shadow game-state copies.
 Run tools/verify.py and relevant tests after changes. Coverage of bytes, translated
 code and executed instructions are separate. Never claim unresolved code is dead.
+Run native differential suites through tools/difftest.py or the run_bounded helper
+in tools/bounded_process.py with a timeout and Windows process-tree commit limit. Keep native
+callback traces bounded; ctypes callback exceptions cannot stop a C loop.
+Timeout, memory-limit or access-budget exhaustion fails verification and must not
+count as a detected differential mutant. Reap workers and remove owned temporary
+DLL directories even after failure. Do not launch unbounded native mutant calls.
 Only delegate independent C clusters after static boundaries are reliable. Workers
 must report addresses, bytes, cases, branches, quirks, dependencies and regressions.
 
