@@ -31,6 +31,22 @@ class ResourceTests(unittest.TestCase):
             with self.subTest(prefix=bad[:10].hex()),self.assertRaises(ValueError):
                 decode_section(bad)
 
+    def test_zero_initial_bits_refills_but_checksums_seed_byte(self):
+        bits=ReverseBits(bytes([0x81,0x06]),0)
+        self.assertEqual(bits.read(8),0x81)
+        self.assertEqual(bits.checksum,0x87)
+        with self.assertRaises(ValueError):bits.read(1)
+
+    def test_all_pinned_level_sections_are_2048_bytes(self):
+        count=zero=0
+        for path in sorted((ROOT/'assets').glob('level*.dat')):
+            data=path.read_bytes()
+            for start,end in section_spans(data):
+                image,meta=decode_section(data[start:end])
+                self.assertEqual(len(image),2048)
+                count+=1;zero+=data[start]==0
+        self.assertEqual((count,zero),(80,13))
+
     def test_legacy_segments_are_not_conflated(self):
         records=read_json(ROOT/'metadata/legacy-seeds.json')['external']
         image=sound_images()['adlib'][0]

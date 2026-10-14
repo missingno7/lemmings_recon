@@ -3,8 +3,10 @@ from common import ROOT, BUILD, sha, write_json
 
 class ReverseBits:
     def __init__(self, payload, valid_bits):
-        if not payload or not 1 <= valid_bits <= 8:
+        if not payload or not 0 <= valid_bits <= 8:
             raise ValueError('Invalid initial bit count or empty payload')
+        # Header zero is legal:1BC3 makes CH=1, then1CA5/1CA9 refill before
+        # consuming any seeded DL bits. The seeded last byte still joins XOR.
         self.payload, self.pos = payload, len(payload)-1
         self.value, self.left = payload[-1], valid_bits
         self.checksum = self.value

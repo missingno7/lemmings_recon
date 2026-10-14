@@ -14,7 +14,7 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Identified routine entry candidates | 273 |
 | Translated C routines | 22 |
 | Translated C code bytes | 1539 |
-| Differential cases | 1343 |
+| Differential cases | 1423 |
 | Mutation checks detected | 33 |
 | Original instruction coverage | 739 / 15,392 decoded (4.801%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
@@ -69,7 +69,7 @@ Across all four component images, 127,491 ASM bytes are exact and 17,291
 instructions have been decoded. C differential coverage is 799 / 17,291
 (4.621%) of this still-incomplete decoded inventory. There are
 25 tested C routines occupying 1704 original code bytes across images,
-with 1678 differential cases and 36 compiled mutations detected. Six bounded
+with 1758 differential cases and 36 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -129,7 +129,7 @@ excluded from translated-byte accounting. Full DOS/FCB platform behavior and the
 other resource-loading routines remain open.
 
 The DAT section decoder and its read-distance/shared-copy entry now call C cores
-directly. 48 integrated differential cases execute all 235 decoder,
+directly. 128 integrated differential cases execute all 235 decoder,
 leaf and read-wrapper sites and all 32 local decoder/leaf branch edges. They
 compare full memory, registers, defined flags and service traces, including real
 sound sections and malformed constructed headers. Three compiled section mutations
@@ -206,3 +206,12 @@ unchecked; original fatal frames stay live. This adds 199 C-covered caller bytes
 dependency bytes/sites are counted once. DOS, retry UI, VGA backend and IRQ delivery
 remain declared seams. Upstream selection/allocation and full native startup are
 still open. See special-setup.md.
+
+The decimal filename helper at4BC2..4BE6 now has an original-only independent
+contract check:260 cases execute all19 sites and four branch edges, covering all
+AL values, poisoned AH/control flags and cursor/stack wrap. Its37 bytes remain
+UNTRANSLATED and these checks do not enter C coverage. The source is split into
+maintained physical modules with exact end assertions, and fresh call/dependency
+views guide the next cluster. See bottom-up.md. All80 pinned LEVEL sections also
+match static extraction and bounded original/native decoding, including13 valid
+zero-initial-bit headers; these cases are part of the DAT section C suite above.

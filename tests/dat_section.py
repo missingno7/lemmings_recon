@@ -8,7 +8,7 @@ from dat_io_c import Regs,Io,QUERY,READ,MEM
 import dat_io as io_oracle
 from common import ROOT,BUILD,read_json,write_json,sha
 from unpack import ASSET,unpack,relocated
-from resources import sound_images
+from resources import sound_images,section_spans,decode_section
 from cbuild import build
 
 IMAGE,ORACLE=unpack(ASSET.read_bytes())
@@ -71,7 +71,7 @@ def cases():
     add('token-crosses-output-start',section([('literal',b'XY')],size=1),output=0x100)
     add('invalid-bit-count-255',section([('literal',b'\0')],valid=255))
     zero=bytearray(section([('literal',b'\0')]));zero[0]=0;zero[6:10]=(13).to_bytes(4,'big');zero+=b'\0'
-    add('invalid-bit-count-zero',bytes(zero))
+    add('zero-initial-bits',bytes(zero))
     add('short-header-accepted',packet,short_header=3)
     add('short-payload-accepted',section([('literal',b'\0')]),short_payload=1)
     add('header-read-error',packet,error_read=0)
@@ -82,6 +82,13 @@ def cases():
     add('distinct-cache-es',packet,path='hit')
     add('cache-budget-fallback',packet,path='miss',budget=0)
     add('cache-aligned-file',section([('literal',b'ABCDE')]),path='miss')
+    # Keep the existing branch/mutation fixtures first. Real records establish
+    # the zero-bit seed/refill path and loaded record layout, without a game boot.
+    for path in sorted((ROOT/'assets').glob('level*.dat')):
+        data=path.read_bytes()
+        for index,(start,end) in enumerate(section_spans(data)):
+            image,_=decode_section(data[start:end])
+            add(f'{path.stem}-section-{index}',data[start:end],asset=path.relative_to(ROOT).as_posix(),section_index=index,static_image_sha256=sha(image))
     return out
 
 def prepare(case):
@@ -176,6 +183,9 @@ def compare(lib,case):
         p=next(i for i,(a,b) in enumerate(zip(actual,c_mem)) if a!=b)
         raise AssertionError(f'{case["name"]}: memory differs at {p:05x}: original={actual[p]:02x}/C={c_mem[p]:02x}')
     if u_trace!=c_trace:raise AssertionError(f'{case["name"]}: service trace differs {u_trace}/{c_trace}')
+    if 'asset' in case:
+        expected,_=decode_section(case['data']);start=io_oracle.at(regs['es'],regs['di'])
+        if actual[start:start+len(expected)]!=expected:raise AssertionError(f'{case["name"]}: static record differs from original/native decode')
     return sites,edges
 
 def main():
@@ -199,6 +209,7 @@ def main():
            'c/lemmings_sym.h','tests/dat_section.py','tests/dat_io.py','tests/dat_io_c.py',
            'tools/cbuild.py','tools/difftest.py','metadata/symbols.json','metadata/inputs.json')
     paths += ('assets/vgalemmi.exe','assets/adlib.dat','assets/tandysnd.dat','assets/main.dat')
+    paths += ('tools/resources.py',)+tuple(sorted({c['asset'] for c in baseline if 'asset' in c}))
     public_cases=[{k:v for k,v in c.items() if k!='data'}|dict(input_sha256=sha(c['data'])) for c in baseline]
     write_json(report,dict(image='main',image_sha256=sha(IMAGE),case_count=len(baseline),mutation_count=3,
         mutations_detected=mutations,cases=public_cases,executed_instruction_addresses=sorted(sites),

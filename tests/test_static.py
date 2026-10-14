@@ -4,11 +4,18 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
-from common import ROOT,read_json
+from common import ROOT,read_json,sha
 from unpack import ASSET,unpack,relocated,Stream
 from explore import discover,analyze
 
 class StaticTests(unittest.TestCase):
+    def test_bootstrap_cannot_overwrite_maintained_semantic_source(self):
+        from reconstruct import generate
+        def snapshot():return {p.name:sha(p.read_bytes()) for p in (ROOT/'src').glob('*.asm')}
+        before=snapshot()
+        with self.assertRaisesRegex(ValueError,'Maintained modular ASM'):generate()
+        self.assertEqual(snapshot(),before)
+
     def test_pinned_extraction(self):
         image,meta=unpack(ASSET.read_bytes())
         self.assertEqual(meta,read_json(ROOT/'metadata/oracle.json'))

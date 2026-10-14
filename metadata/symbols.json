@@ -7251,9 +7251,11 @@
     "address": 6525,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_197D",
-    "aliases": [],
+    "size": 254,
+    "symbol_name": "LoadSelectedLevelResources",
+    "aliases": [
+      "sub_197D"
+    ],
     "callers": [
       17757
     ],
@@ -7529,9 +7531,10 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static instructions and callers support reconstructed purpose; contract comments in maintained ASM"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 253
@@ -8295,7 +8298,8 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "1BAF..1C79 loads DAT section header and runs reverse LZ/bit decoding; independently verified on both sound assets"
+      "1BAF..1C79 loads DAT section header and runs reverse LZ/bit decoding; independently verified on both sound assets",
+      "All80 pinned LEVEL sections added to bounded original/native/static decode comparison;13 use validzero initial bits"
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 248,
@@ -8322,7 +8326,7 @@
         7298
       ]
     ],
-    "verification_evidence": "tests/dat_section.py: 48 original-vs-C integrated cases, every decoder/leaf/read instruction, all 32 local branch edges; constructed DOS services; fatal 04D0 continuation is an explicit boundary; domain in docs/dat-section.md"
+    "verification_evidence": "tests/dat_section.py: 128 original-vs-C integrated cases, every decoder/leaf/read instruction, all 32 local branch edges; constructed DOS services; fatal 04D0 continuation is an explicit boundary; domain in docs/dat-section.md"
   },
   {
     "address": 7100,
@@ -8925,7 +8929,8 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "All80 pinned LEVEL sections added to bounded original/native/static decode comparison;13 use validzero initial bits"
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 28,
@@ -25327,9 +25332,11 @@
     "address": 19394,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4BC2",
-    "aliases": [],
+    "size": 37,
+    "symbol_name": "WriteDecimalByteDigits",
+    "aliases": [
+      "sub_4BC2"
+    ],
     "callers": [
       6560
     ],
@@ -25360,12 +25367,14 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static instructions and callers support reconstructed purpose; contract comments in maintained ASM"
     ],
     "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 37
+    "reachable_instruction_bytes": 37,
+    "verification_evidence": "tests/decimal_digits.py:260 original-only independent-formula cases,19 sites,4 branch edges; poisoned AH,control flags,SI/stack wrap; no C implementation"
   },
   {
     "address": 19431,
@@ -50758,6 +50767,86 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 4043,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2048,
+    "symbol_name": "LoadedLevelRecord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "197D decodes selected LEVEL section here; all80 pinned sections decode to2048 bytes, matched in bounded decoder tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4070,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelGraphicsSetByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A00/1A1B use this loaded-record low byte to select ground and vgagr filenames"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4072,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelSpecialGraphicsSetByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A26 selects normal/special path; 1A5E maps nonzero value toVGASPEC selector byadding2F"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6059,
+    "segment": 2473,
+    "kind": "data",
+    "size": 32,
+    "symbol_name": "LoadedLevelFooterBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "19F7 odd-table path replaces32 bytes here:final32 bytes of2048-byte loaded record"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6987,
+    "segment": 2473,
+    "kind": "data",
+    "size": 4096,
+    "symbol_name": "GroundResourceBuffer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A18 requests1000 bytes ofground?o.dat into main data frame atthis offset"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7947,
     "segment": 2473,
     "kind": "data",
@@ -50818,6 +50907,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A9A LEA base; 1A9E adds18 for second24-byte metadata copy"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8043,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelResourceSelectionByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "197D zero-extends this unchecked byte for order-byte lookup at54EE"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51206,6 +51311,86 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 9535,
+    "segment": 2473,
+    "kind": "data",
+    "size": 13,
+    "symbol_name": "GroundResourceFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A0B raw-ground filename; staticground0o.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9548,
+    "segment": 2473,
+    "kind": "data",
+    "size": 13,
+    "symbol_name": "LevelResourceFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "19A4 filename oflevel000.dat; decimal helper writes its three selector bytes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9553,
+    "segment": 2473,
+    "kind": "data",
+    "size": 3,
+    "symbol_name": "LevelResourceFilenameDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "19A0 passes this offset toWriteDecimalByteDigits"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9561,
+    "segment": 2473,
+    "kind": "data",
+    "size": 12,
+    "symbol_name": "SpecialResourceFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1A63 filename vgaspec0.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9574,
+    "segment": 2473,
+    "kind": "data",
+    "size": 13,
+    "symbol_name": "OddLevelOverrideFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "19D1 filename oddtable.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 9632,
     "segment": 2473,
     "kind": "pointer_data",
@@ -51218,6 +51403,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21742,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "LevelResourceOrderBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "197D lookup yields one-based section/odd-table selector; extent and valid index domain unresolved"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21862,
+    "segment": 2473,
+    "kind": "data",
+    "size": 4480,
+    "symbol_name": "OddLevelOverrideBuffer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "19DC reads requested1180 bytes ofoddtable.dat here; selected56-byte slice replaces record header/footer"
     ],
     "verification_status": "UNRESOLVED"
   },

@@ -41,8 +41,8 @@ cache creation and cache hits: 45 cases cover 106 original instruction sites,
 including ignored cache-fill errors, saved-frame aliases and provider DF effects.
 The complete wrapper now has a verified C11 core; see [DAT read contracts](docs/dat-io.md).
 
-The integrated section decoder directly calls these native cores. Forty-eight
-cases include the original sound sections through direct reads and both cache
+The integrated section decoder directly calls these native cores. One hundred twenty-eight
+cases include all80 pinned level sections and the original sound sections through direct reads and both cache
 paths, all token forms, malformed headers and both fatal read exits;
 see [DAT section C](docs/dat-section.md). Resource callers and fatal
 cleanup still require translation. Filename preparation, cache selection and
@@ -97,6 +97,8 @@ the lock deliberately rather than bypassing it.
 .venv\Scripts\python.exe tools\coverage.py
 .venv\Scripts\python.exe tools\where.py InitializeCodeChecksum --disasm 16
 .venv\Scripts\python.exe tools\graph.py InitializeCodeChecksum
+.venv\Scripts\python.exe tools\graph.py LoadSelectedLevelResources --tree --depth 3
+.venv\Scripts\python.exe tools\graph.py LoadSelectedLevelResources --bottom-up
 ```
 
 On this machine the Windows Store python alias is unusable. A local .venv was created
@@ -115,10 +117,14 @@ its shared-object initialization fails inside it. GCC runs normally.
 - host: reserved SDL3 boundary, no implementation yet.
 
 tools/verify.py never regenerates source or accepted hashes. tools/reconstruct.py
-is an explicit bootstrap generator and overwrites generated ASM; preserve hand
-annotations before running it. tools/inventory.py is a one-time evidence import,
+is a bootstrap generator that refuses the maintained modular layout.
+tools/inventory.py is a one-time evidence import,
 not part of verification. Neither command should be used to bless unexplained drift.
 The checked-in ledger and source do not require neighboring projects to build.
+
+The semantic ASM/resource refactoring and dependency order are documented in
+[bottom-up convergence](docs/bottom-up.md). Module end assertions keep layout
+fixed; the bootstrap generator refuses to overwrite these maintained modules.
 
 Symbols may be changed with tools/rename.py, data names added with tools/define.py,
 and C offsets regenerated with tools/symtab.py. Always run the exact verifier next.

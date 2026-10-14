@@ -25,6 +25,13 @@ facts. metadata/regions.json is the reproducible complete byte partition, includ
 unresolved spans and overlapping uses. Derived listings/graphs/reports live in build.
 Every original asset is private. No legacy lifted implementation is imported.
 
+The maintained ASM now has physical modules with separate resource, special-strip
+and checksum ownership. Broad game/tail ownership remains provisional. Routine
+contracts live beside the ASM and named data coordinates stay ledger-owned.
+The fresh graph's call tree and pending dependency order guide the next C cluster;
+see [bottom-up convergence](bottom-up.md) for the source layout, record handoff,
+open native seams and working loop adapted from Pre2.
+
 c owns translated logic on a canonical DOS backing memory. host will own native
 platform services; it currently has no implementation. tests and bounded unpacker verification alone may use Unicorn.
 Tools require Python; the eventual release executable must not.

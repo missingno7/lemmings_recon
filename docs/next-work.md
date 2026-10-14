@@ -1,5 +1,12 @@
 # Precise next frontier
 
+Current working order follows the Pre2-style semantic ASM/dependency pass in
+bottom-up.md. Review source contracts and the fresh graph before expanding C.
+Translate WriteDecimalByteDigits (4BC2) next, then compose LoadSelectedLevelResources
+(197D) with existing native resource cores. Recover record/object/terrain ownership
+for 36B6/394F next. Keep the platform/fatal/IRQ seams and broader static obligations
+below explicit; module extraction did not resolve UNKNOWN bytes.
+
 1. Complete the protected disk-check contracts after the recovered state-specific
    stream. The 372 stream and 29 INT1 instruction sites have exact maintained views,
    checked against original handlers at all 325 TF-on points. Review incoming state,
@@ -37,7 +44,7 @@
 9. Continue bounded C clusters after their static boundaries and contracts are
     reliable. Three resource decoder leaf routines at 1C82/1C8A/1CA3 now have
     tested C cores; see dat.md. The 1BAF decoder and 1C87 shared match entry now
-    call native read/bit/copy cores directly, verified in 48 integrated cases;
+    call native read/bit/copy cores directly, verified in 128 integrated cases;
     see dat-section.md for unchecked sizes, malformed headers and fatal exits.
     The complete 1D2E wrapper now has a C11 core verified in 45 bounded cases
     covering all 106 instructions; see dat-io.md for ignored cache errors,

@@ -16,3 +16,16 @@ Run tools/verify.py and relevant tests after changes. Coverage of bytes, transla
 code and executed instructions are separate. Never claim unresolved code is dead.
 Only delegate independent C clusters after static boundaries are reliable. Workers
 must report addresses, bytes, cases, branches, quirks, dependencies and regressions.
+
+# Bottom-up convergence
+
+Read docs/bottom-up.md when selecting the next region. Use fresh tools/graph.py
+--tree and --bottom-up views; TESTED C domains retain their platform/fatal seams.
+Choose the uncertainty that would force a future C translator to guess. Prioritize
+state ownership, record fields, tables, initialization, segment/flag contracts and
+shared tails before local-label cleanup. Keep contracts beside the ASM and names
+in the ledger. Refine physical modules without changing byte order or classifications.
+Translate an independently understood leaf, then connect and recheck its parent.
+Carry original live DS/ES/SS effects explicitly; do not copy Pre2's ES-only model
+without proving the same contract here. Bootstrap generation must not overwrite
+maintained semantic source. Current dependency order is recorded in docs/next-work.md.

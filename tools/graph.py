@@ -1,14 +1,126 @@
-"""Show callers, callees and references without executing the game."""
-import sys
-from common import ROOT, read_json
-from where import address
+"""Fresh static routine/dependency views for bottom-up investigation.
 
-if __name__=='__main__':
-    off=address(sys.argv[1])
-    symbols=read_json(ROOT/'metadata/symbols.json')
-    row=next(r for r in symbols if r['address']==off and r['segment']==0)
-    print(row['symbol_name'],row['confidence'],row['verification_status'])
-    for field in ('callers','callees'):
-        print(field+':',' '.join(f'{x:04X}' for x in row[field]))
-    for ref in row['data_references']:
-        print(ref)
+Bodies follow branches/shared tails without following calls. Native ranges are
+the ledger's tested domains; outgoing tails/calls outside C remain visible.
+Neither a decoded leaf nor TESTED establishes whole-program semantic closure.
+"""
+import argparse
+from bisect import bisect_right
+from common import ROOT,read_json
+from explore import analyze
+from where import address,rows
+
+CALLS={'call','far_call','indirect_call'}
+
+def body(entry,instructions,outgoing,frontiers,allowed=None):
+    todo=[entry];seen=set();callees=set();boundaries=set();problems=set();services=set()
+    while todo:
+        pc=todo.pop()
+        if pc in seen:continue
+        if allowed is not None and pc not in allowed:
+            boundaries.add(pc);continue
+        if pc not in instructions:
+            problems.add((pc,'missing decoded target'));continue
+        seen.add(pc)
+        for kind in frontiers.get(pc,()):problems.add((pc,kind))
+        mnemonic=instructions[pc]['mnemonic']
+        if mnemonic in ('in','out','insb','insw','outsb','outsw','cli','sti'):services.add((pc,mnemonic))
+        for edge in outgoing.get(pc,()):
+            kind,target=edge['kind'],edge['target']
+            if kind in CALLS:
+                if target is not None:callees.add(target)
+            elif kind in ('interrupt','runtime_interrupt','external_interrupt_chain'):
+                services.add((pc,kind))
+            elif target is not None:todo.append(target)
+    return dict(sites=seen,callees=callees,boundaries=boundaries,problems=problems,services=services,
+                bytes=sum(instructions[p]['size'] for p in seen))
+
+def routine_views(analysis,ledger):
+    instructions={r['address']:r for r in analysis['instructions']};outgoing={};frontiers={};callers={}
+    for edge in analysis['edges']:
+        outgoing.setdefault(edge['source'],[]).append(edge)
+        if edge['kind'] in CALLS:callers.setdefault(edge['target'],set()).add(edge['source'])
+    for item in analysis['unresolved']:frontiers.setdefault(item['address'],[]).append(item['kind'])
+    symbols={s['address']:s for s in ledger if s['segment']==0 and s['kind']=='entry'};views={}
+    for entry in sorted(set(analysis['routines'])|set(symbols)):
+        row=symbols.get(entry,dict(symbol_name=f'entry_{entry:04X}',verification_status='UNRESOLVED'))
+        allowed=None
+        if row.get('c_implementation'):
+            allowed={p for a,b in row.get('c_code_ranges',[(entry,entry+row['size'])]) for p in range(a,b)}
+        views[entry]=body(entry,instructions,outgoing,frontiers,allowed)|dict(symbol=row,callers=callers.get(entry,set()))
+    return views
+
+def dependency_order(root,views):
+    """Postorder investigation list. Stop at scoped native dependencies, flag cycles."""
+    done=set();active=set();order=[];cycles=set()
+    def visit(entry):
+        if entry in active:cycles.add(entry);return
+        if entry in done:return
+        view=views.get(entry)
+        if view and view['symbol'].get('c_implementation'):done.add(entry);return
+        active.add(entry)
+        if view:
+            for target in sorted(view['callees']):visit(target)
+        active.remove(entry);done.add(entry);order.append(entry)
+    visit(root);return order,cycles
+
+def tag(entry,views):
+    view=views.get(entry)
+    if view is None:return f'{entry:04X} UNRECOVERED'
+    row=view['symbol'];native=' C-domain' if row.get('c_implementation') else ''
+    return f'{entry:04X} {row["symbol_name"]} {row["verification_status"]}{native} ({view["bytes"]} decoded bytes/{len(view["sites"])} sites)'
+
+def details(entry,views):
+    view=views[entry];print(tag(entry,views))
+    source=rows();offsets=[r[0] for r in source];index=bisect_right(offsets,entry)-1
+    if index>=0:
+        _,path,line,_=source[index];print(f'source: {path.relative_to(ROOT)}:{line}')
+    print('call sites:',','.join(f'{p:04X}' for p in sorted(view['callers'])) or 'none')
+    print('callees:',', '.join(tag(t,views) for t in sorted(view['callees'])) or 'none')
+    for label,items in (('native exits/shared tails',view['boundaries']),('platform/IRQ sites',view['services']),('unresolved',view['problems'])):
+        if items:print(label+':',sorted(items))
+    if view['symbol'].get('c_implementation'):print('native contract:',view['symbol'].get('verification_evidence','scoped ledger implementation'))
+    for ref in view['symbol'].get('data_references',[]):print('operand reference:',ref)
+    print('Operand segment tags are syntactic; incoming DS/ES/SS ownership still requires a contract.')
+
+def tree(entry,views,depth,indent='',ancestors=()):
+    print(indent+tag(entry,views))
+    if entry in ancestors:print(indent+'  [cycle/shared recursion]');return
+    view=views.get(entry)
+    if view is None:return
+    if view['boundaries']:print(indent+'  native exits: '+','.join(f'{p:04X}' for p in sorted(view['boundaries'])))
+    if view['problems']:print(indent+'  unresolved: '+str(sorted(view['problems'])))
+    if depth:
+        for target in sorted(view['callees']):tree(target,views,depth-1,indent+'  ',(*ancestors,entry))
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('target',nargs='?');parser.add_argument('--tree',action='store_true')
+    parser.add_argument('--depth',type=int,default=3);parser.add_argument('--bottom-up',action='store_true')
+    args=parser.parse_args();views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'))
+    if args.target is None:
+        for entry in sorted(views):print(tag(entry,views))
+        return
+    entry=address(args.target)
+    if entry not in views:parser.error('Target is not a main-image routine entry')
+    if args.bottom_up:
+        order,cycles=dependency_order(entry,views)
+        print('Pending investigation order; native dependencies retain their bounded seams:')
+        for target in order:
+            view=views.get(target);note=''
+            if target in cycles:note=' [cycle: review as a cluster]'
+            elif view and not any(view[k] for k in ('callees','boundaries','problems','services')):note=' [decoded leaf: contract review required]'
+            print(tag(target,views)+note)
+        native={t for p in order if p in views for t in views[p]['callees']
+                if t in views and views[t]['symbol'].get('c_implementation')}
+        for target in sorted(native):
+            view=views[target]
+            unported={t for t in view['callees'] if t not in views or not views[t]['symbol'].get('c_implementation')}
+            print('native dependency:',tag(target,views),
+                  'exits='+','.join(f'{p:04X}' for p in sorted(view['boundaries'])),
+                  'unported calls='+','.join(f'{p:04X}' for p in sorted(unported)),
+                  f'platform/IRQ sites={len(view["services"])}')
+        print('This is an investigation order, not proof of native readiness or complete target domains.')
+    elif args.tree:tree(entry,views,max(0,args.depth))
+    else:details(entry,views)
+if __name__=='__main__':main()

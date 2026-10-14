@@ -35,6 +35,8 @@ def relative(text,row):
     return text
 
 def generate():
+    if (ROOT/'src/resources.asm').exists():
+        raise ValueError('Maintained modular ASM exists. Bootstrap generation cannot preserve its contracts/layout; edit maintained modules instead.')
     image,oracle=unpack(ASSET.read_bytes())
     a=analyze()
     BUILD.mkdir(exist_ok=True)

@@ -128,6 +128,7 @@ def report():
     m['indirect']=verified['indirect']
     m['interrupts']=verified['interrupts']
     m['dat_io']=verified['dat_io']
+    m['decimal_digits_contracts']=verified['decimal_digits_contracts']
     state_insns=m['protection']['stream_metrics']['instructions']+m['protection']['int1_instruction_count']
     m['state_specific_decoded_instructions']=state_insns
     combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
@@ -343,6 +344,15 @@ unchecked; original fatal frames stay live. This adds 199 C-covered caller bytes
 dependency bytes/sites are counted once. DOS, retry UI, VGA backend and IRQ delivery
 remain declared seams. Upstream selection/allocation and full native startup are
 still open. See special-setup.md.
+
+The decimal filename helper at4BC2..4BE6 now has an original-only independent
+contract check:260 cases execute all19 sites and four branch edges, covering all
+AL values, poisoned AH/control flags and cursor/stack wrap. Its37 bytes remain
+UNTRANSLATED and these checks do not enter C coverage. The source is split into
+maintained physical modules with exact end assertions, and fresh call/dependency
+views guide the next cluster. See bottom-up.md. All80 pinned LEVEL sections also
+match static extraction and bounded original/native decoding, including13 valid
+zero-initial-bit headers; these cases are part of the DAT section C suite above.
 '''
     return m,text
 

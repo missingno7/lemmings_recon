@@ -28,7 +28,8 @@ and cursor arithmetic retain sixteen-bit wrapping.
 After the payload read, the saved CH and checksum DH are restored. CH is header
 byte zero plus one with byte wrap. The final payload byte seeds DL and is XORed
 into DH. The bit reader consumes the stream backward; header bit counts outside
-1..8 are not normalized or rejected. Token branches select short/long literal
+0..8 are not normalized or rejected. Zero is a valid immediate-refill case;
+the seeded last byte still joins the checksum. Token branches select short/long literal
 runs and two-, three-, four- or variable-length matches. Length/distance arithmetic
 and copies use the already tested native leaf cores.
 
@@ -51,7 +52,7 @@ is still untranslated and must be connected when native error ownership is porte
 tests/dat_section.py runs only the identified original decoder, leaf and read
 wrapper intervals, stopping at near return or the declared 04D0 boundary. Each
 original case has a five-million-instruction budget; tools/difftest.py caps the
-section suite process at 120 seconds, including native calls. Forty-eight cases
+section suite process at 120 seconds, including native calls. One hundred twenty-eight cases
 compare complete 1 MiB memory, every register, defined final flags and
 DOS service requests, including incoming defined flags. All 235 instruction sites
 execute. All 32 local decoder/leaf branch edges are covered; read-wrapper branches
@@ -59,7 +60,8 @@ are also independently covered by tests/dat_io_c.py. Three compiled section
 mutations (forced checksum success, wrong returned ES, unwound read-error frame)
 are each detected; dependencies are compiled without their separate mutations.
 
-The cases include the three original sound payloads through direct reads, cache
+The cases include all80 original LEVEL sections, compared also with the static
+extractor, including13 zero-initial-bit headers. They also include the three original sound payloads through direct reads, cache
 hits and cache creation, constructed tokens covering all forms, length/distance
 boundaries, zero/oversized output claims, discarded high size words, invalid bit
 counts, checksum failure, accepted short reads, both read errors, cache-budget
