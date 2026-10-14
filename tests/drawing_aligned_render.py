@@ -193,6 +193,8 @@ def worker(directory):
         'aligned_masked.h','aligned_opaque.c','aligned_opaque.h','aligned_protected.c','aligned_protected.h',
         'aligned_mask_effects.c','aligned_mask_effects.h','aligned_read_mask.c','aligned_read_mask.h',
         'shifted_mask_effects.c','shifted_mask_effects.h',
+        'shifted_opaque.c','shifted_opaque.h','shifted_masked.c','shifted_masked.h',
+        'shifted_protected.c','shifted_protected.h','shifted_read_mask.c','shifted_read_mask.h',
         'drawing_plan.c','drawing_plan.h','drawing_inputs.c','drawing_inputs.h','drawing_clip.c','drawing_clip.h',
         'drawing_dirty.c','drawing_dirty.h','drawing_dispatch.c','drawing_dispatch.h','drawing_source.c',
         'drawing_source.h','special_blit.h','regs.h','lemmings_sym.h'))

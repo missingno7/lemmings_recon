@@ -129,27 +129,27 @@ documented in minimap.md. The surrounding modules retain their provisional
 ownership and UNKNOWN classifications.
 
 The far drawing entry 8822 now exposes a scoped native preparation continuation
-at 882D, with direct clipping 9967 and dirty-cell 9A15 children. The fresh graph
-keeps DrawPlanarBitmap UNTRANSLATED while giving the 49-byte span its own exits
-at 885E/88AB. Live source pitch/extent/skips and saved CH names belong to the
-ledger. Its tests consume original-prologue state and keep those seven sites
-outside C accounting. Continue the planar body only after its dispatch, shift,
-VGA and segment contracts are closed; see drawing-inputs.md.
+at 882D, with direct clipping 9967 and dirty-cell 9A15 children. The scoped API
+gives the 49-byte span its own exits at 885E/88AB. Live source pitch/extent/skips
+and saved CH names belong to the ledger. Its tests consume original-prologue state and keep those seven sites
+outside those C reports. The preparation-only tests retain their historical
+scope; see drawing-inputs.md.
+The complete normal-entry connection is described below.
 
 The 8822..9A8F planar family now lives in planar_drawing.asm, included directly
 between the unchanged code-tail and data-frame modules. Destination geometry
 and dispatch at 885E/939E compose with four native source-row prefixes. Their
 77/236/744 cases preserve live shift/pitch/page words, packed counts, reversed
-cursors and control changed by dirty or source-row stores. Selected VGA bodies
-remain unported; the original 8822 prologue remains separately executed evidence,
-not C coverage. See drawing-plan.md before expanding a drawing body.
+cursors and control changed by dirty or source-row stores. The preparation-only
+suites execute the original 8822 prologue separately.
+Their prologue evidence is excluded from those C reports; see drawing-plan.md.
 
 The aligned opaque 983B..9966 body now has a native core and live far-return
 adapter. Its 55 body/776 connection cases check all four plane passes, ordered
 latch reads and mirrored ports, IF/DF/count wrap and live DS/SS frames. Two
-UNKNOWN NOP bytes stay outside C accounting; the 988B shared-entry contract and
-remaining drawing variants stay open. The 8822 original prologue remains separate
-execution evidence. See aligned-opaque.md and drawing-render.md.
+UNKNOWN NOP bytes stay outside C accounting; the 988B shared entry retains
+separate incoming-state obligations. The older connection keeps prologue
+execution evidence separate. See aligned-opaque.md and drawing-render.md.
 
 The default aligned masked 93F6 body now has its own logical C API. Its BX mask
 cursor advances forward even with DF set, and its later passes use VGA logical OR.
@@ -164,9 +164,8 @@ effect cursor asymmetry. The new all-aligned API directly composes preparation
 and all six bodies in 226 cases. It requires an explicit byte OUT/IN provider
 to enter 969C; without one that continuation remains visible. The older APIs
 retain their scopes. UNKNOWN 9659 stays outside C accounting, alongside the
-previous aligned UNKNOWN bytes. Continue shifted bodies after reviewing their
-source-shift/self-modification and shared-entry contracts; full 8822 translation,
-IRQ ownership and native device timing remain open.
+previous aligned UNKNOWN bytes. The actual-entry connection below adds shifted
+bodies and the prologue; IRQ ownership and native device timing remain open.
 
 The shifted 20/40 effects at8FF7/909C now have native cores in54 standalone
 cases and349 preparation connections. Both use the relocated09A9 operand for
@@ -174,6 +173,16 @@ initial scratch ES, then follow live stack-restored DS/ES between rows. Mask
 copies and their sentinel follow DF; the carry chain and mask reads advance
 forward. Both variants advance SI per row. The ledger names6706/6748 scratch
 bases without claiming allocation extents or resolving their stored UNKNOWN
-bytes. Four other shifted bodies remain untranslated. Close their source/mask
-scratch and segment/flag/plane contracts next; see shifted-mask-effects.md,
-shifted-drawing.md and drawing-render.md.
+bytes. The four other shifted bodies now have native cores and actual-entry
+connections; see shifted-drawing.md and drawing-render.md.
+
+The 8822 API now runs its native seven-instruction prologue, preparation, all
+twelve planar bodies and the no-draw 88AB far return on canonical memory.
+The full-entry matrix checks 2,147 constructed cases, including prologue/live-save
+aliases, changed child return seams and the missing 969C byte-provider seam.
+The four new leaves preserve forward SHR/RCR with backward copies, independent
+mask/source shift-byte reads, first-pass VGA masks and later OR passes. Backward
+scratch stores can overwrite live row fields; neither C nor its independent
+packed-bit expectations cache those fields. UNKNOWN bytes and allocation extents
+stay unresolved. Continue the upstream 36B6/394F/7C67 terrain/object drawing
+contracts, source/mask producer domains and device/IRQ ownership.

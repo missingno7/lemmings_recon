@@ -27,15 +27,15 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Fifty-six original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+Sixty-one original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
 their connected setup span, VGA clear/layout, two drawing callers, three minimap
 routines, two clipping/dirty-cell leaves, their scoped drawing preparation span,
 destination geometry/shared dispatch and four source-row spans,
-all six aligned drawing bodies, shifted 20/40 effects and three PC-speaker helpers, totaling 5,178 original
-code bytes.
+all twelve planar drawing bodies and their complete normal-entry connection,
+and three PC-speaker helpers, totaling 7,518 unique original code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
 see [PC-speaker C](docs/pcspeaker.md).
@@ -94,8 +94,8 @@ vectors are counted separately from original comparisons; see [minimap](docs/min
 
 The planar clipping and dirty-cell leaves now compose directly in the 882D
 preparation span. Their 2,227 original/native cases preserve live field/save/return
-aliases and zero-count quirks. The seven-site original 8822 prologue and 885E
-renderer body remain separate; see [drawing preparation](docs/drawing-inputs.md).
+aliases and zero-count quirks. These preparation-only suites keep the original
+8822 prologue separate; the full-entry suite below translates it. See [drawing preparation](docs/drawing-inputs.md).
 
 The destination geometry, shared path selector and four source-row preparations
 now compose with those cores. Their 1,057 bounded cases include an independent
@@ -113,15 +113,22 @@ aliases. Remaining drawing variants stay open; see
 The protected 953E, read-mask 969C and mask effects 9737/97A4 now connect through
 the same preparation chain. Their 90 standalone and 226 connected cases preserve
 plane-3 protection, explicit byte-port reads, live saved DX/DS and the original
-20/40 row-cursor asymmetry. Shifted drawing bodies remain open. See
+20/40 row-cursor asymmetry. The complete entry also connects shifted bodies. See
 [protected drawing](docs/aligned-protected.md), [read-mask drawing](docs/aligned-read-mask.md)
 and [mask effects](docs/aligned-mask-effects.md).
 
 The shifted 20/40 effects now add 54 standalone and 349 preparation connections.
 They retain DF-sensitive scratch copies, forward SHR/RCR carry chains, the extra
 output byte, live DS/ES/SS saves and unchecked count/shift wraps. Their masks are
-also checked with independent packed-bit calculations. Four other shifted bodies
-remain open; see [shifted effects](docs/shifted-mask-effects.md).
+also checked with independent packed-bit calculations; see
+[shifted effects](docs/shifted-mask-effects.md).
+
+The other four shifted bodies now pass 103 standalone cases. The actual 8822
+entry composes its native prologue, preparation, all twelve bodies and no-draw
+far return in 2,147 cases, preserving live scratch/stride/save aliases. Earlier
+APIs keep their scopes. UNKNOWN bytes, source/mask allocation domains, shared
+incoming states and IRQ/device ownership remain open; see
+[complete drawing entry](docs/drawing-render.md).
 
 ## Reproduce
 

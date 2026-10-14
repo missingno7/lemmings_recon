@@ -1,11 +1,10 @@
 # Shifted drawing frontier
 
-The aligned bodies and shifted20/40 effects are native; four shifted bodies
-remain untranslated at890E/8B42/8D66/916B.
-The fresh `DrawPlanarBitmap --tree` and `--bottom-up` views retain the complete
-8822 entry as UNTRANSLATED. Calls to clipping/dirty-cell helpers do not prove
-the remaining drawing contracts. The evidence below identifies the two now
-tested shifted effect bodies; their native domains are in shifted-mask-effects.md.
+All six aligned and six shifted bodies now have native cores. The 8822 entry
+composes its native prologue/preparation with all twelve bodies in 2,147 bounded
+constructed cases. The older scoped APIs retain their continuation boundaries.
+See drawing-render.md for the complete entry domain and remaining provider,
+changed-return, IRQ and shared-entry seams.
 
 The two shifted set/reset effects form a closed normal-entry cluster.
 The current analysis finds no calls or outgoing direct edges inside either
@@ -55,11 +54,11 @@ overlap. The exact valid producer/buffer domain and asynchronous IRQ/device
 ownership remain open. Use the bounded worker limits for every native case and
 mutant, and treat any exhausted guard as a failed check.
 
-## Remaining closed static ranges
+## Four additional native ranges
 
 The current analysis finds one discovered incoming edge and no calls or outgoing
-direct edges for each remaining shifted body. This establishes physical review
-boundaries, not native readiness or complete indirect entry domains.
+direct edges for each additional shifted body. Their bounded native domains are documented
+separately; these edges do not prove complete indirect entry domains.
 
 | Body | Inclusive range | Physical/decoded bytes | Decoded sites | UNKNOWN byte | Incoming edge |
 |---|---|---:|---:|---|---|
@@ -68,7 +67,7 @@ boundaries, not native readiness or complete indirect entry domains.
 | Read-mask 4000 | 8D66..8FF6 | 657 / 656 | 369 | 8F8D | 88F0 -> 8D66 |
 | Opaque | 916B..939D | 563 / 562 | 317 | 9339 | 916A -> 916B |
 
-The opaque916B body is the next ordinary drawing dependency. Its first pass
+The opaque916B body is now native. Its first pass
 copies source bytes to6706 and fills6748 with FF bytes plus a zero sentinel,
 all through DF. It shifts source scratch first, then rereads the live A948 byte
 before shifting mask scratch. Preserve that second read: source stores/shifts
@@ -76,4 +75,11 @@ can alias the field. First-pass mask/source reads walk their buffers separately;
 the bit-mask word OUT at921E has no corresponding SS mirror store. Later passes
 use live ES:66F8 plane advances and switch to OR. Keep those differences from
 the set/reset effect cores, all plane-limit/count cases, live saved ES/DS/cursors,
-and UNKNOWN9339. Review bounded original contracts before C promotion.
+and UNKNOWN9339. The bounded tests retain those contracts; see shifted-opaque.md.
+
+The default masked/protected/read-mask/opaque native ranges add 2,328 decoded
+bytes and 1,310 known sites including RETF adapters. UNKNOWN8ADD/8CF4/8F8D/9339
+remain explicitly excluded. Their standalone suites and original RETF probes
+are documented in shifted-masked.md, shifted-protected.md, shifted-read-mask.md
+and shifted-opaque.md. All source scratch copies, sentinels and unchecked
+count/shift wraps follow original instructions; guards fail verification.

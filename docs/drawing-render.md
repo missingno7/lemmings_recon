@@ -1,6 +1,6 @@
-# Connected aligned planar rendering
+# Connected planar rendering
 
-`drawing_render.c` composes the native `882D` preparation with the aligned,
+The original opaque-scoped API in `drawing_render.c` composes native `882D` preparation with the aligned,
 opaque `983B` VGA body. The adapter is entered after the original `8822` caller
 prologue has executed its seven instructions and left three live words on SS.
 The render core first runs preparation against the same canonical 1 MiB RAM; it
@@ -83,8 +83,9 @@ All connection verifiers run in disposable bounded workers with the Windows
 512 MiB process/768 MiB tree cap, 180-second deadline and a 1,000,000-byte-access
 trace limit. DLL directories are cleaned after termination; completed Unicorn
 callback cycles are collected between cases. Guard exhaustion fails verification.
-Selected shifted bodies, asynchronous IRQ delivery and native VGA timing
-remain unresolved. No complete 8822 C entry or full game is claimed.
+These older scoped APIs expose shifted bodies as continuations. The actual-entry
+API below adds their native composition. Asynchronous IRQ delivery, native VGA
+timing and the full game remain open.
 
 ## All aligned bodies
 
@@ -116,7 +117,8 @@ The three standalone suites cover four bodies in 90 cases and nine further mutan
 aligned-protected.md, aligned-read-mask.md and aligned-mask-effects.md for their
 zero-count, physical-wrap, stack-device and live-save domains. The new bodies
 add 721 translated bytes; UNKNOWN9659 remains unresolved. Coverage unions
-instruction sites across suites and excludes the original-only 8822 prologue.
+instruction sites across suites. This older suite excludes the original-only
+8822 prologue; the actual-entry suite below verifies its native translation.
 
 ## Shifted 20/40 connection
 
@@ -144,4 +146,47 @@ integer, then apply the set/reset plane truth table to check every VGA byte.
 This separates the expected carry propagation from the native instruction-shaped
 loop. Standalone alias, zero-count and wrap domains are in shifted-mask-effects.md.
 The new bodies add329 original C bytes, without classifying scratch UNKNOWN
-contents or completing the8822 prologue and remaining shifted/game/device work.
+contents. The full-entry API below closes the remaining shifted/prologue work
+in constructed domains; gameplay and device ownership remain open.
+
+## Actual bitmap entry and all bodies
+
+`lmn_draw_planar_bitmap_core` starts at 8822. Its logical call contains the live
+segments/stack, coordinates, packed height, width, source/destination cursors,
+control and flags. The prologue pushes AX/DX/CX through the ordered bus, then
+performs the original three SHR operations. It directly calls native preparation
+and the selected one of twelve planar bodies. The adapter consumes the live
+outer RETF, including the no-draw 88AB return. `LmnRegs` is confined to adapters.
+`lmn_draw_prepared_bitmap_core` offers the same composition starting after that
+prologue. Earlier APIs retain their narrower scopes.
+
+`tests/drawing_bitmap.py` passes 2,147 cases, including 392 each for the four new
+shifted bodies, all 336 shifted-effect and 225 aligned-body matrix draws, four
+prepared-API checks, four older-scope seams, six prologue/clipping/save aliases,
+three changed child return targets and one missing byte-provider seam. The three
+renderer mutants are detected. Whole RAM, registers, defined flags, ordered
+bus/port/MMIO and VGA state are compared against the unchanged original code.
+All actual-entry prologue sites and 88AB are included in native executed-site
+accounting. Sites and translated byte ranges are unioned across composed cores.
+
+An independent packed-bit model checks source/mask shifts and whole-plane
+footprints. DF changes copies and source reads but carry chains and mask reads
+stay forward. At width three with DF set, source scratch overlaps DS:6704; row
+advances must be read again after the copy. The full-entry save-alias fixture at
+SS:66FC preserves a drawable continuation despite its initial clipping inputs.
+The implementation follows the changed live words and does not repair them.
+
+The 890E default masked body shifts source and mask separately; 916B fills the
+first-pass mask with FF and rereads the shift byte after source shifting. 8B42
+protects bits through the live plane-3 comparison and leaves BX untouched. 8D66
+caches all mask rows against plane 3 before drawing, then applies that cache on
+each plane. Its ports remain word operations; only aligned 969C requires byte
+providers. Both first-pass behavior and the different fourth-pass save tails
+remain original. The leaf documents record their zero-count, wrap, stack-device
+and live-segment cases.
+
+Native domains assume intact executing code, the constructed VGA device contract
+and no asynchronous IRQ. Changed child RET words expose their actual continuation
+before executing its target. Missing 969C providers retain that body seam. The
+988B shared entry's other incoming states, ten UNKNOWN bytes inside 8822..9966,
+producer/allocation domains and full game integration remain open.

@@ -46375,7 +46375,7 @@
     "address": 34850,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 4421,
     "symbol_name": "DrawPlanarBitmap",
     "aliases": [
       "sub_8822"
@@ -50733,10 +50733,60 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target; physicalnormal-entrybody8822..9966,4421bytes/4411decodedbytes,ten UNKNOWNbytes excluded from C ranges without dead-code claims",
+      "Native seven-site prologue and88AB no-draw RETF compose direct preparation/clip/dirty/dispatch/source/all12body cores on canonical RAM; LmnRegs confined to adapters, original segments/flags/livefarreturn preserved",
+      "2147 bounded actual-entry cases/2424 integrated sites/378 edges/three compiled mutants; all12normalbody paths, liveprologue/save/stride aliases, wholeRAM/register/definedflags/orderedbus/VGA and independentpackedbit/wholeplanechecks",
+      "Changed child RET words stop at actual target before target execution; absent aligned969C byteprovider remains seam; intact executing code, constructeddevice and quiescentIRQ domains only; shared988B other incoming states/UNKNOWN/producer allocation/deviceownership/fullgame remain open"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 4411
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 4411,
+    "c_implementation": "c/drawing_render.c",
+    "c_code_ranges": [
+      [
+        34850,
+        34986
+      ],
+      [
+        34987,
+        35549
+      ],
+      [
+        35550,
+        36084
+      ],
+      [
+        36085,
+        36749
+      ],
+      [
+        36750,
+        37689
+      ],
+      [
+        37690,
+        38087
+      ],
+      [
+        38088,
+        38151
+      ],
+      [
+        38152,
+        38489
+      ],
+      [
+        38490,
+        39156
+      ],
+      [
+        39157,
+        39218
+      ],
+      [
+        39219,
+        39271
+      ]
+    ]
   },
   {
     "address": 34861,
@@ -50855,7 +50905,7 @@
     "address": 35086,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 564,
     "symbol_name": "PlanarShiftedMaskedDefaultBody",
     "aliases": [],
     "callers": [],
@@ -50863,7 +50913,36 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Fresh closed normal-entry physicalbody890E..8B41,no calls/outgoing directedges,single discovered outsideincomingedge; UNKNOWN8ADD explicitly excluded from decoded span,live scratch/segment/flag/plane contracts preserved in bounded native domains",
+      "29 bounded original/native cases cover 317 core sites/44 direct edges; 3 unchanged original RETF probes and three compiled mutants; full RAM/register/defined flags/ordered bus/VGA state; UNKNOWN8ADD excluded without a dead-code claim",
+      "Actual8822 native prologue/preparation/all12body connection passes2147 cases/2424 integrated sites/378 edges/three renderer mutants; indirect incoming states, executing-code mutation and asynchronous IRQ/device ownership remain explicit"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/shifted_masked.c",
+    "c_code_ranges": [
+      [
+        35086,
+        35549
+      ],
+      [
+        35550,
+        35650
+      ]
+    ]
+  },
+  {
+    "address": 35649,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedMaskedFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far-return boundary after8B40 POPDS; not an independent routine entry"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -50871,7 +50950,7 @@
     "address": 35650,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 548,
     "symbol_name": "PlanarShiftedMasked8000Body",
     "aliases": [],
     "callers": [],
@@ -50879,7 +50958,36 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Fresh closed normal-entry physicalbody8B42..8D65,no calls/outgoing directedges,single discovered outsideincomingedge; UNKNOWN8CF4 explicitly excluded from decoded span,live scratch/segment/flag/plane contracts preserved in bounded native domains",
+      "20 bounded original/native cases cover 305 core sites/42 direct edges; 3 unchanged original RETF probes and three compiled mutants; full RAM/register/defined flags/ordered bus/VGA state; UNKNOWN8CF4 excluded without a dead-code claim",
+      "Actual8822 native prologue/preparation/all12body connection passes2147 cases/2424 integrated sites/378 edges/three renderer mutants; indirect incoming states, executing-code mutation and asynchronous IRQ/device ownership remain explicit"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/shifted_protected.c",
+    "c_code_ranges": [
+      [
+        35650,
+        36084
+      ],
+      [
+        36085,
+        36198
+      ]
+    ]
+  },
+  {
+    "address": 36197,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedProtectedFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far-return boundary after8D64 POPDS; not an independent routine entry"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -50887,7 +50995,7 @@
     "address": 36198,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 657,
     "symbol_name": "PlanarShiftedMasked4000Body",
     "aliases": [],
     "callers": [],
@@ -50895,7 +51003,36 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Fresh closed normal-entry physicalbody8D66..8FF6,no calls/outgoing directedges,single discovered outsideincomingedge; UNKNOWN8F8D explicitly excluded from decoded span,live scratch/segment/flag/plane contracts preserved in bounded native domains",
+      "25 bounded original/native cases cover 368 core sites/53 direct edges; 3 unchanged original RETF probes and three compiled mutants; full RAM/register/defined flags/ordered bus/VGA state; UNKNOWN8F8D excluded without a dead-code claim",
+      "Actual8822 native prologue/preparation/all12body connection passes2147 cases/2424 integrated sites/378 edges/three renderer mutants; indirect incoming states, executing-code mutation and asynchronous IRQ/device ownership remain explicit"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/shifted_read_mask.c",
+    "c_code_ranges": [
+      [
+        36198,
+        36749
+      ],
+      [
+        36750,
+        36855
+      ]
+    ]
+  },
+  {
+    "address": 36854,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedReadMaskFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far-return boundary after8FF5 POPDS; not an independent routine entry"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -51005,7 +51142,7 @@
     "address": 37227,
     "segment": 0,
     "kind": "continuation",
-    "size": 0,
+    "size": 563,
     "symbol_name": "PlanarShiftedOpaqueBody",
     "aliases": [],
     "callers": [],
@@ -51013,7 +51150,36 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original planar selection boundary; bit-number name describes selector only, variant drawing/VGA semantics remain untranslated"
+      "Fresh closed normal-entry physicalbody916B..939D,no calls/outgoing directedges,single discovered outsideincomingedge; UNKNOWN9339 explicitly excluded from decoded span,live scratch/segment/flag/plane contracts preserved in bounded native domains",
+      "29 bounded original/native cases cover 316 core sites/46 direct edges; 2 unchanged original RETF probes and three compiled mutants; full RAM/register/defined flags/ordered bus/VGA state; UNKNOWN9339 excluded without a dead-code claim",
+      "Actual8822 native prologue/preparation/all12body connection passes2147 cases/2424 integrated sites/378 edges/three renderer mutants; indirect incoming states, executing-code mutation and asynchronous IRQ/device ownership remain explicit"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/shifted_opaque.c",
+    "c_code_ranges": [
+      [
+        37227,
+        37689
+      ],
+      [
+        37690,
+        37790
+      ]
+    ]
+  },
+  {
+    "address": 37789,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "PlanarShiftedOpaqueFarReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far-return boundary after939C POPDS; not an independent routine entry"
     ],
     "verification_status": "UNRESOLVED"
   },

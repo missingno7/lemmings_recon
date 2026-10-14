@@ -70,10 +70,11 @@ def independent_planes(initial, memory, entry, data_segment):
     return result
 
 
-def library(directory, mutation=0, missing_ports=False, aligned_only=False):
-    path = Path(directory) / f'shifted-render-{mutation}-{int(missing_ports)}-{int(aligned_only)}.dll'
+def library(directory, mutation=0, missing_ports=False, aligned_only=False, entry_api=None):
+    path = Path(directory) / f'shifted-render-{mutation}-{int(missing_ports)}-{int(aligned_only)}-{entry_api or 'default'}.dll'
     lib = ctypes.CDLL(str(render.build(path, mutation, 'drawing_render')))
-    fn = (lib.lmn_draw_prepared_aligned_adapter if aligned_only else
+    fn = (getattr(lib, entry_api) if entry_api else
+          lib.lmn_draw_prepared_aligned_adapter if aligned_only else
           lib.lmn_draw_prepared_planar_effects_adapter)
     fn.argtypes = [render.MEM, ctypes.POINTER(render.Regs), ctypes.c_uint16,
                    ctypes.POINTER(render.Bus), ctypes.POINTER(Ports)]
@@ -211,7 +212,8 @@ def worker(directory):
         finally:
             gc.collect()
     sources = ('drawing_render', 'aligned_masked', 'aligned_opaque', 'aligned_protected',
-               'aligned_mask_effects', 'aligned_read_mask', 'shifted_mask_effects', 'drawing_plan',
+               'aligned_mask_effects', 'aligned_read_mask', 'shifted_mask_effects', 'shifted_opaque',
+               'shifted_masked', 'shifted_protected', 'shifted_read_mask', 'drawing_plan',
                'drawing_inputs', 'drawing_clip', 'drawing_dirty', 'drawing_dispatch', 'drawing_source')
     dependencies = tuple('c/' + n + ext for n in sources for ext in ('.c', '.h'))
     dependencies += ('c/special_blit.h', 'c/regs.h', 'c/lemmings_sym.h',

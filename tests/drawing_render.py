@@ -28,6 +28,8 @@ import drawing_plan as plan
 LIBRARY_DIRECTORY = BUILD
 NATIVE_EVENT_LIMIT = 1000000
 BYTE_PORT_FIXTURE = None
+ENTRY_FROM_8822 = False
+CONSUME_ABORT_RETURN = False
 
 
 IMAGE, ORACLE = unpack(ASSET.read_bytes())
@@ -270,12 +272,13 @@ def compare(lib, case):
             raise RuntimeError(f'{case["name"]}: original 8822 prologue escaped at {off:04x}')
         prologue.add(off)
 
-    prologue_hook = u.hook_add(UC_HOOK_CODE, prologue_code)
     wrap_read_hook, wrap_write_hook = _wrap_hooks(u)
-    u.emu_start((regs['cs'] << 4) + 0x8822, 0, count=20)
-    if not at_span or prologue != set(PROLOGUE):
-        raise RuntimeError(f'{case["name"]}: original prologue did not reach 882D')
-    u.hook_del(prologue_hook)
+    if not ENTRY_FROM_8822:
+        prologue_hook = u.hook_add(UC_HOOK_CODE, prologue_code)
+        u.emu_start((regs['cs'] << 4) + 0x8822, 0, count=20)
+        if not at_span or prologue != set(PROLOGUE):
+            raise RuntimeError(f'{case["name"]}: original prologue did not reach 882D')
+        u.hook_del(prologue_hook)
 
     span_regs = _get_regs(u)
     span_flags = u.reg_read(x.UC_X86_REG_EFLAGS)
@@ -292,7 +295,7 @@ def compare(lib, case):
     @READ
     def c_read(ctx, mem, p, event_flags):
         if len(c_events) >= NATIVE_EVENT_LIMIT:
-            os.write(2, b'drawing_render: native access budget exceeded\n')
+            os.write(2, (f'drawing_render: {case["name"]}: native access budget exceeded\n').encode())
             os._exit(86)
         try:
             value = c_vga.read(c_memory, p & 0xfffff, event_flags)
@@ -305,7 +308,7 @@ def compare(lib, case):
     @WRITE
     def c_write(ctx, mem, p, value, event_flags):
         if len(c_events) >= NATIVE_EVENT_LIMIT:
-            os.write(2, b'drawing_render: native access budget exceeded\n')
+            os.write(2, (f'drawing_render: {case["name"]}: native access budget exceeded\n').encode())
             os._exit(86)
         try:
             c_vga.write(c_memory, p & 0xfffff, value, event_flags)
@@ -330,7 +333,7 @@ def compare(lib, case):
         ctypes.byref(c_regs), game_ds, ctypes.byref(bus))
 
     last_op = None
-    flag_mask = FLAG_MASK
+    flag_mask = FULL_ARITH_MASK if ENTRY_FROM_8822 else FLAG_MASK
     instruction_flags = span_flags
     seen = set()
     edges = set()
@@ -350,7 +353,7 @@ def compare(lib, case):
         off = (pc - (regs['cs'] << 4)) & 0xffff
         if previous in BRANCHES:
             edges.add((previous, off))
-        if off in PREP_EXITS:
+        if off in PREP_EXITS and not (CONSUME_ABORT_RETURN and off == 0x88ab):
             boundary = ('continuation', off)
             uc.emu_stop()
             return
@@ -358,7 +361,7 @@ def compare(lib, case):
             body_entry = _get_regs(uc)
             body_entry['flags'] = uc.reg_read(x.UC_X86_REG_EFLAGS)
             body_memory = bytes(u_memory)
-        if off == BODY_RETF:
+        if off == BODY_RETF or (CONSUME_ABORT_RETURN and off == 0x88ab):
             seen.add(off)
             previous = off
             last_op = 'retf'
@@ -430,7 +433,7 @@ def compare(lib, case):
     u.hook_add(UC_HOOK_INSN, u_output, None, 1, 0, x.UC_X86_INS_OUT)
     u.hook_add(UC_HOOK_INSN, u_input, None, 1, 0, x.UC_X86_INS_IN)
     u.hook_add(UC_HOOK_INTR, intr)
-    u.emu_start((regs['cs'] << 4) + START, 0, count=900000)
+    u.emu_start((regs['cs'] << 4) + (0x8822 if ENTRY_FROM_8822 else START), 0, count=900000)
     if boundary is None:
         live = _get_regs(u)
         raise RuntimeError(f'{case["name"]}: no bounded renderer exit after {steps} sites at '
@@ -454,8 +457,9 @@ def compare(lib, case):
         u.hook_del(wrap_read_hook)
         u.hook_del(wrap_write_hook)
         u.ctl_remove_cache(0, 2 << 20)
-        u.emu_start((regs['cs'] << 4) + BODY_RETF, 0, count=1)
-        boundary = ('body-returned', BODY_RETF)
+        actual_retf = boundary[1]
+        u.emu_start((regs['cs'] << 4) + actual_retf, 0, count=1)
+        boundary = ('body-returned', actual_retf)
     elif boundary[0] == 'continuation' or boundary[0] == 'changed-child-return':
         pass
 
@@ -493,13 +497,12 @@ def compare(lib, case):
         if expected != u_vga.planes:
             plane = next(i for i in range(4) if expected[i] != u_vga.planes[i])
             offset = next(i for i, (a, b) in enumerate(zip(expected[plane], u_vga.planes[plane])) if a != b)
-            raise AssertionError(f'{case["name"]}: independent whole-plane footprint differs at plane {plane}, byte {offset:04x}')
+            raise AssertionError(f'{case["name"]}: independent whole-plane footprint differs at plane {plane}, byte {offset:04x}; expected={expected[plane][offset]:02x}, original={u_vga.planes[plane][offset]:02x}')
 
-    if body_entry is None and boundary[0] == 'body-returned':
+    if body_entry is None and boundary[0] == 'body-returned' and boundary[1] != 0x88ab:
         raise AssertionError(f'{case["name"]}: far return without entering 983B')
     intact_image = relocated(IMAGE, ORACLE['relocations'], regs['cs'])
-    for start, end in ((0x8822, 0x88aa), (0x88ac, 0x890e),
-                       (0x8ff7, 0x916b), (0x939e, 0x9810),
+    for start, end in ((0x8822, 0x88aa), (0x88ab, 0x9810),
                        (0x9810, 0x9967), (0x9967, 0x9a8f)):
         p = (regs['cs'] << 4) + start
         if actual[p:p + end - start] != intact_image[start:end]:
@@ -563,6 +566,8 @@ def main():
         'aligned_mask_effects.c', 'aligned_mask_effects.h',
         'aligned_read_mask.c', 'aligned_read_mask.h',
         'shifted_mask_effects.c', 'shifted_mask_effects.h',
+        'shifted_opaque.c', 'shifted_opaque.h', 'shifted_masked.c', 'shifted_masked.h',
+        'shifted_protected.c', 'shifted_protected.h', 'shifted_read_mask.c', 'shifted_read_mask.h',
         'drawing_plan.c', 'drawing_plan.h',
         'drawing_inputs.c', 'drawing_inputs.h', 'drawing_clip.c',
         'drawing_clip.h', 'drawing_dirty.c', 'drawing_dirty.h',

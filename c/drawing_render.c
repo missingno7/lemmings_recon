@@ -4,6 +4,10 @@
 #include "aligned_mask_effects.h"
 #include "aligned_protected.h"
 #include "shifted_mask_effects.h"
+#include "shifted_opaque.h"
+#include "shifted_masked.h"
+#include "shifted_protected.h"
+#include "shifted_read_mask.h"
 #include "lemmings_sym.h"
 #ifndef RENDER_MUTATION
 #define RENDER_MUTATION 0
@@ -24,7 +28,11 @@ static LmnDrawingRenderResult draw_prepared(
          state->continuation == CS_PlanarAlignedMasked40Body ||
          (state->continuation == CS_PlanarAlignedMasked4000Body && ports))) ||
         (scope >= 3 && (state->continuation == CS_PlanarShiftedMasked20Body ||
-                       state->continuation == CS_PlanarShiftedMasked40Body));
+                       state->continuation == CS_PlanarShiftedMasked40Body)) ||
+        (scope >= 4 && (state->continuation == CS_PlanarShiftedOpaqueBody ||
+         state->continuation == CS_PlanarShiftedMaskedDefaultBody ||
+         state->continuation == CS_PlanarShiftedMasked8000Body ||
+         state->continuation == CS_PlanarShiftedMasked4000Body));
     if (result.plan.changed_return || !supported)
         return result;
 #if RENDER_MUTATION == 1
@@ -33,6 +41,65 @@ static LmnDrawingRenderResult draw_prepared(
 #if RENDER_MUTATION == 2
     state->flags = (uint16_t)(state->flags & ~0x400u);
 #endif
+    if (state->continuation == CS_PlanarShiftedOpaqueBody) {
+        LmnShiftedOpaqueCall shifted_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->destination_cursor, state->flags};
+        LmnShiftedOpaqueResult shifted = lmn_draw_shifted_opaque_core(memory, &shifted_call, bus);
+        state->work_value = shifted.work_value; state->packed_counts = shifted.packed_counts;
+        state->width_state = shifted.port; state->source_cursor = shifted.source_cursor;
+        state->second_source_cursor = shifted.mask_cursor;
+        state->destination_cursor = shifted.destination_cursor;
+        state->control = shifted.plane_counter; state->stack_offset = shifted.stack_offset;
+        state->flags = shifted.flags; state->continuation = CS_PlanarShiftedOpaqueFarReturn;
+        result.source_segment = shifted.source_segment; result.output_segment = shifted.output_segment;
+        result.body_returned = 1; return result;
+    }
+    if (state->continuation == CS_PlanarShiftedMasked8000Body) {
+        LmnShiftedProtectedCall shifted_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->destination_cursor, state->flags};
+        LmnShiftedProtectedResult shifted = lmn_draw_shifted_protected_core(memory, &shifted_call, bus);
+        state->work_value = shifted.work_value; state->packed_counts = shifted.packed_counts;
+        state->width_state = shifted.port; state->source_cursor = shifted.source_cursor;
+        state->destination_cursor = shifted.destination_cursor;
+        state->control = shifted.plane_counter; state->stack_offset = shifted.stack_offset;
+        state->flags = shifted.flags; state->continuation = CS_PlanarShiftedProtectedFarReturn;
+        result.source_segment = shifted.source_segment; result.output_segment = shifted.output_segment;
+        result.body_returned = 1; return result;
+    }
+    if (state->continuation == CS_PlanarShiftedMaskedDefaultBody) {
+        LmnShiftedMaskedCall shifted_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->second_source_cursor, state->destination_cursor, state->flags};
+        LmnShiftedMaskedResult shifted = lmn_draw_shifted_masked_core(memory, &shifted_call, bus);
+        state->work_value = shifted.work_value; state->packed_counts = shifted.packed_counts;
+        state->width_state = shifted.port; state->source_cursor = shifted.source_cursor;
+        state->second_source_cursor = shifted.mask_cursor;
+        state->destination_cursor = shifted.destination_cursor;
+        state->control = shifted.plane_counter; state->stack_offset = shifted.stack_offset;
+        state->flags = shifted.flags; state->continuation = CS_PlanarShiftedMaskedFarReturn;
+        result.source_segment = shifted.source_segment; result.output_segment = shifted.output_segment;
+        result.body_returned = 1; return result;
+    }
+    if (state->continuation == CS_PlanarShiftedMasked4000Body) {
+        LmnShiftedReadMaskCall shifted_call = {call->inputs.data_segment,
+            call->game_data_segment, call->inputs.stack_segment, state->stack_offset,
+            state->packed_counts, state->width_state, state->source_cursor,
+            state->second_source_cursor, state->destination_cursor, state->flags};
+        LmnShiftedReadMaskResult shifted = lmn_draw_shifted_read_mask_core(memory, &shifted_call, bus);
+        state->work_value = shifted.work_value; state->packed_counts = shifted.packed_counts;
+        state->width_state = shifted.port; state->source_cursor = shifted.source_cursor;
+        state->second_source_cursor = shifted.mask_cursor;
+        state->destination_cursor = shifted.destination_cursor;
+        state->control = shifted.plane_counter; state->stack_offset = shifted.stack_offset;
+        state->flags = shifted.flags; state->continuation = CS_PlanarShiftedReadMaskFarReturn;
+        result.source_segment = shifted.source_segment; result.output_segment = shifted.output_segment;
+        result.body_returned = 1; return result;
+    }
     if (state->continuation == CS_PlanarShiftedMasked20Body ||
         state->continuation == CS_PlanarShiftedMasked40Body) {
         unsigned forty = state->continuation == CS_PlanarShiftedMasked40Body;
@@ -168,6 +235,53 @@ LmnDrawingRenderResult lmn_draw_prepared_planar_effects_core(
     const LmnRasterBytePorts *ports) {
     return draw_prepared(memory, call, bus, 3, ports);
 }
+LmnDrawingRenderResult lmn_draw_prepared_bitmap_core(
+    uint8_t *memory, const LmnDrawingRenderCall *call, const LmnRasterBus *bus,
+    const LmnRasterBytePorts *ports) {
+    return draw_prepared(memory, call, bus, 4, ports);
+}
+static void entry_push(uint8_t *memory, uint16_t ss, uint16_t *sp,
+    uint16_t value, uint16_t flags, const LmnRasterBus *bus) {
+    uint32_t p;
+    *sp = (uint16_t)(*sp - 2u);
+    p = (((uint32_t)ss << 4) + *sp) & 0xfffffu;
+    if (bus && bus->write_byte) {
+        bus->write_byte(bus->context, memory, p, (uint8_t)value, flags);
+        bus->write_byte(bus->context, memory, (p + 1u) & 0xfffffu, (uint8_t)(value >> 8), flags);
+    } else {
+        memory[p] = (uint8_t)value;
+        memory[(p + 1u) & 0xfffffu] = (uint8_t)(value >> 8);
+    }
+}
+static uint16_t entry_shift_flags(uint16_t flags, uint16_t value) {
+    uint16_t pitch = (uint16_t)(value >> 3);
+    unsigned parity = 0;
+    for (unsigned bit = 0; bit < 8; ++bit) parity ^= (pitch >> bit) & 1u;
+    /* Three SHR count-one instructions: last CF is input bit2, last OF zero.
+       AF is undefined; all other status and control bits follow the original. */
+    return (uint16_t)((flags & ~0x8c5u) | ((value >> 2) & 1u) |
+        (parity ? 0u : 4u) | (pitch ? 0u : 0x40u));
+}
+LmnDrawingRenderResult lmn_draw_planar_bitmap_core(uint8_t *memory,
+    const LmnPlanarBitmapCall *call, const LmnRasterBus *bus,
+    const LmnRasterBytePorts *ports) {
+    uint16_t sp = call->stack_offset;
+    LmnDrawingRenderCall prepared;
+    LmnDrawingRenderResult result;
+    entry_push(memory, call->stack_segment, &sp, call->left, call->flags, bus);
+    entry_push(memory, call->stack_segment, &sp, call->width, call->flags, bus);
+    entry_push(memory, call->stack_segment, &sp, call->packed_height, call->flags, bus);
+    prepared = (LmnDrawingRenderCall){{call->data_segment, call->stack_segment, sp,
+        (uint16_t)(call->width >> 3), call->top, call->packed_height, call->width,
+        call->source_cursor, call->destination_cursor, call->control,
+        entry_shift_flags(call->flags, call->width)}, call->game_data_segment,
+        call->output_segment};
+    result = draw_prepared(memory, &prepared, bus, 4, ports);
+    if (!result.plan.changed_return &&
+        result.plan.state.continuation == CS_PlanarDrawingAbortReturn)
+        result.body_returned = 1; /* The no-draw branch also has a live RETF. */
+    return result;
+}
 static uint16_t return_word(uint8_t *memory, uint16_t ss, uint16_t offset,
     uint16_t flags, const LmnRasterBus *bus) {
     uint32_t p = (((uint32_t)ss << 4) + offset) & 0xfffffu;
@@ -225,4 +339,19 @@ void lmn_draw_prepared_planar_effects_adapter(uint8_t *memory, LmnRegs *regs,
         regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
     apply_boundary_result(memory, regs,
         lmn_draw_prepared_planar_effects_core(memory, &call, bus, ports), bus);
+}
+void lmn_draw_prepared_bitmap_adapter(uint8_t *memory, LmnRegs *regs,
+    uint16_t game_data_segment, const LmnRasterBus *bus, const LmnRasterBytePorts *ports) {
+    LmnDrawingRenderCall call = {{regs->ds, regs->ss, regs->sp, regs->ax, regs->bx,
+        regs->cx, regs->dx, regs->si, regs->di, regs->bp, regs->flags}, game_data_segment, regs->es};
+    apply_boundary_result(memory, regs,
+        lmn_draw_prepared_bitmap_core(memory, &call, bus, ports), bus);
+}
+void lmn_draw_planar_bitmap_adapter(uint8_t *memory, LmnRegs *regs,
+    uint16_t game_data_segment, const LmnRasterBus *bus, const LmnRasterBytePorts *ports) {
+    LmnPlanarBitmapCall call = {regs->ds, game_data_segment, regs->ss, regs->sp,
+        regs->ax, regs->bx, regs->cx, regs->dx, regs->si, regs->di, regs->bp,
+        regs->es, regs->flags};
+    apply_boundary_result(memory, regs,
+        lmn_draw_planar_bitmap_core(memory, &call, bus, ports), bus);
 }

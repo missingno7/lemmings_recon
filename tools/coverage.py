@@ -129,6 +129,11 @@ def report():
     aligned_render=read_json(BUILD/'drawing-aligned-render-differential.json')
     shifted_effects=read_json(BUILD/'shifted-mask-effects-differential.json')
     shifted_render=read_json(BUILD/'drawing-shifted-render-differential.json')
+    shifted_opaque=read_json(BUILD/'shifted-opaque-differential.json')
+    shifted_masked=read_json(BUILD/'shifted-masked-differential.json')
+    shifted_protected=read_json(BUILD/'shifted-protected-differential.json')
+    shifted_readmask=read_json(BUILD/'shifted-read-mask-differential.json')
+    bitmap=read_json(BUILD/'drawing-bitmap-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -140,7 +145,10 @@ def report():
                         ('aligned masked',masked),('connected masked draw',masked_render),
                         ('aligned protected',protected),('aligned mask effects',effects),
                         ('aligned read mask',readmask),('connected aligned draw',aligned_render),
-                        ('shifted mask effects',shifted_effects),('connected shifted draw',shifted_render)):
+                        ('shifted mask effects',shifted_effects),('connected shifted draw',shifted_render),
+                        ('shifted opaque',shifted_opaque),('shifted masked',shifted_masked),
+                        ('shifted protected',shifted_protected),('shifted read mask',shifted_readmask),
+                        ('actual bitmap entry',bitmap)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -156,8 +164,8 @@ def report():
     executed.update(clip['executed_instruction_addresses'])
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
-    for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render):executed.update(extra['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render)
+    for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -236,7 +244,7 @@ special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
 and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
 planar preparation/geometry/dispatch/source spans, all six aligned bodies and
-the shifted20/40 bodies
+all six shifted bodies and the actual8822 entry
 are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
@@ -247,7 +255,8 @@ docs/drawing-clip.md, docs/drawing-dirty.md, docs/drawing-inputs.md,
 docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
 docs/aligned-opaque.md, docs/aligned-masked.md, docs/aligned-protected.md,
 docs/aligned-read-mask.md, docs/aligned-mask-effects.md, docs/shifted-mask-effects.md
-and docs/drawing-render.md's domains; remaining
+docs/shifted-opaque.md, docs/shifted-masked.md, docs/shifted-protected.md,
+docs/shifted-read-mask.md and docs/drawing-render.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -506,8 +515,9 @@ The leaves cover 73/63 sites and 29/16 edges; the connected span covers 18 calle
 checks retain signed versus sign-only clipping, byte-rounded zero counts, live
 DS/SS field/save aliases and changed childRET targets. Nine compiled mutants are
 detected. These add 344 unique C bytes and 154 sites. The original 8822 prologue's
-seven sites are recorded separately and excluded from C coverage; 885E dispatch is a separate native scope and
-88AB RETF remains an unported boundary. The decoded 9996 NOP remains outside
+seven sites are separate evidence in these preparation-only suites; 885E dispatch
+and88AB RETF remain boundaries of that API. The actual-entry suite below verifies
+the native prologue and abort return. The decoded 9996 NOP remains outside
 the normal-entry tests without a dead-code claim. An independent original MUL/
 MOV observation records Unicorn's transient memory-hook CF/OF artifact; bus
 flags use original instruction-boundary snapshots, with all defined bits checked.
@@ -529,8 +539,8 @@ sites remain separate. Incoming 88A6 ZF-to-88AB is tested as its own bounded ent
 state and excluded from the normal-entry connection without a dead-code claim.
 The planar family now has a flat physical module at 8822..9A8F with exact end
 assertions. Selected VGA bodies, far returns, IRQ/device semantics, self
-modification and broader level consumers remain open; DrawPlanarBitmap remains
-UNTRANSLATED. See drawing-dispatch.md, drawing-source.md and drawing-plan.md.
+modification and broader level consumers retain explicit domains. The complete
+normal-entry connection is described below. See drawing-dispatch.md, drawing-source.md and drawing-plan.md.
 
 The aligned opaque body at 983B now has a native core composed with drawing
 preparation. The body/connection suites pass {opaque['case_count']}/{render['case_count']} original/native cases,
@@ -539,9 +549,9 @@ reads, ordered port/MMIO/SS accesses and CLI/STI effects. The 149 normal-entry
 body sites add 298 unique C bytes; UNKNOWN 98F4/9932 remain excluded without
 dead-code claims, and the 988B shared entry retains separate incoming-state
 obligations. The connection adds no bytes and keeps original 8822 prologue sites
-outside C accounting. Six compiled mutants are detected. Selected other VGA
-bodies, asynchronous IRQ delivery, executing-code mutation, CPU-family faults
-and full 8822 entry translation remain open. See aligned-opaque.md and
+outside this older scoped suite. Six compiled mutants are detected.
+Asynchronous IRQ delivery, executing-code mutation and CPU-family faults remain
+outside the native domains; the actual8822 connection is described below. See aligned-opaque.md and
 drawing-render.md for the exact tested domains and return-oracle observations.
 
 The default aligned masked body at 93F6 has a native core in
@@ -555,7 +565,7 @@ opaque-scoped API preserves its explicit masked-body seam. The connection runs
 {masked_render['masked_body_case_count']} masked draws and
 {masked_render['opaque_body_case_count']} opaque draws; two saved-BP aliases select
 the explicit 969C effect seam in this API. Six compiled mutants are detected. Original 8822
-prologue sites remain excluded from C accounting. See aligned-masked.md and
+prologue sites remain excluded from this older suite. See aligned-masked.md and
 drawing-render.md.
 
 The four other aligned bodies add 721 unique translated bytes: protected953E
@@ -570,7 +580,8 @@ comparison/protection, live savedDX/DS, explicit byte OUT/IN replies and the
 leave969C explicit. These four suites detect twelve compiled mutants. See
 aligned-protected.md, aligned-read-mask.md, aligned-mask-effects.md and
 drawing-render.md for constructed-state domains and IRQ/device timing limits.
-The original8822 prologue and other shifted bodies remain outside these C ranges.
+The original8822 prologue and other shifted bodies remain outside these older
+scoped suites; the new full-entry report verifies them below.
 
 The shifted20/40 bodies at8FF7/909C add329 translated bytes/168 original sites,
 including their two far-return adapters. They pass
@@ -584,8 +595,30 @@ reversal, enable masks and the preserved older API/provider/unported-body seams.
 The two suites detect six compiled mutants. See shifted-mask-effects.md,
 shifted-drawing.md and drawing-render.md. Scratch names identify runtime bases,
 not proven allocation extents; their stored UNKNOWN bytes remain unresolved.
- Other drawing variants, asynchronous IRQ/device scheduling
-and broader gameplay integration remain open.
+
+The shifted default masked890E, protected8B42, read-mask8D66 and opaque916B
+bodies add2,328 decoded C bytes/1,310 known sites, including far-return adapters.
+Their standalone suites pass {shifted_masked['case_count']}/{shifted_protected['case_count']}/{shifted_readmask['case_count']}/{shifted_opaque['case_count']}
+cases and detect twelve mutants. UNKNOWN8ADD/8CF4/8F8D/9339 stay excluded.
+Copies and sentinels follow DF while carry chains and mask reads go forward.
+Source shifts and mask shifts reread the live shift byte separately; backward
+copies may overwrite live row fields. The read-mask path caches all rows before
+drawing and keeps its word-port DX changes; protection leaves BX untouched.
+See shifted-masked.md, shifted-protected.md, shifted-read-mask.md and
+shifted-opaque.md for boundary hashes, return probes and unchecked domains.
+
+The actual8822 native entry now composes its seven-instruction prologue,
+preparation, all twelve bodies and88AB no-draw far return in {bitmap['case_count']}
+cases. It covers {len(bitmap['executed_instruction_addresses'])} integrated
+original sites and {len(bitmap['branch_edges'])} observed edges, and detects three
+renderer mutants. The prologue and88AB add12 unique translated bytes/eight sites;
+shared body sites/bytes are unioned with leaf and earlier connection evidence.
+Independent packed-bit models verify whole-plane footprints, including live
+stride changes caused by backward scratch copies. Full RAM/register/defined
+flags and ordered bus/ports/VGA state match original execution. Older scopes,
+changed child return and missing aligned969C byte-provider seams remain visible.
+UNKNOWN bytes, shared988B other incoming states, allocation/producer domains,
+asynchronous IRQ/device scheduling and broader gameplay integration remain open.
 '''
     return m,text
 
