@@ -2398,10 +2398,17 @@ loc_3752:
     call sub_7C67 ; @03765
     jmp short loc_3752 ; @03768
 loc_376A:
+PrepareLevelObjectState:
+    ; Native four-call span ends at3776 or an exposed changed near-return target.
+    ; No complete36B6 C implementation implied; docs/interaction-cells.md.
     call CopyLevelObjectGraphicsRecords ; @0376A
-    call sub_3839 ; @0376D
-    call sub_37C2 ; @03770
+ObjectStateAfterGraphicsCopy:
+    call WriteSteelInteractionCells ; @0376D
+ObjectStateAfterSteelCells:
+    call WriteObjectInteractionCells ; @03770
+ObjectStateAfterObjectCells:
     call CollectTypeOneObjectCoordinates ; @03773
+ObjectStateAfterCoordinates:
     call sub_36AD ; @03776
     mov cx,0xd ; @03779
 loc_377C:

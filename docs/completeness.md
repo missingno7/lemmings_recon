@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 26 |
-| Translated C code bytes | 2050 |
-| Differential cases | 2042 |
-| Mutation checks detected | 45 |
-| Original instruction coverage | 955 / 15,392 decoded (6.205%) |
+| Translated C routines | 29 |
+| Translated C code bytes | 2283 |
+| Differential cases | 2656 |
+| Mutation checks detected | 54 |
+| Original instruction coverage | 1060 / 15,392 decoded (6.887%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -37,12 +37,12 @@ has an exact buildable initial ASM image, but remains open for code/data, indire
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
-special graphics setup, decimal helper, resource selection and two object-record
-main routines are TESTED within docs/checksum.md,
+special graphics setup, decimal helper, resource selection, four object-record
+main routines and the four-call object-state span are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
-docs/object-records.md's domains; remaining
+docs/object-records.md and docs/interaction-cells.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -68,10 +68,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1015 / 17,291
-(5.870%) of this still-incomplete decoded inventory. There are
-29 tested C routines occupying 2215 original code bytes across images,
-with 2377 differential cases and 48 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1120 / 17,291
+(6.477%) of this still-incomplete decoded inventory. There are
+32 tested C routines occupying 2448 original code bytes across images,
+with 2991 differential cases and 57 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -243,5 +243,22 @@ zero-X acceptance, and the original default repeated+0A store/+0C stale bug.
 Six compiled mutations are detected. These disjoint 221 bytes add 89 original
 instruction sites; shared upstream dependencies remain counted once. The helper
 ASM is grouped at its unchanged physical position in level_objects.asm with
-start/end assertions. Interaction-cell writers 37C2/3839 and the larger 36B6/394F
-setup/drawing pipelines remain untranslated. See object-records.md.
+start/end assertions. The larger 36B6/394F setup/drawing pipelines remain
+untranslated. See object-records.md.
+
+The SS interaction-cell writers at 37C2/3839 now have native cores with
+123/386 cases, 54/47 sites and 9/8 branch edges.
+Zero object dimensions mean 256 iterations; all 256 packed steel dimensions,
+byte3-only presence, unchecked template lookup, live row-save/input/return aliases,
+offset and 20-bit wrap are retained. Each suite includes all 80 original LEVEL
+sections; object cases pair their GROUND inputs. Six compiled mutants are detected.
+No separate cell map replaces SS, which also owns the stack and VGA mirrors.
+
+The 376A..3775 span now connects the four native object helpers directly in
+105 cases, covering four caller/194 integrated sites and 33 integrated
+edges. Independent SS-window and graphics/coordinate output checks pass all 80
+LEVEL/GROUND pairs. Changed callee RET words after each of the four calls expose
+their actual target before any target instruction executes. Normal continuation
+is 3776; the outer 36B6 RET remains live. Three compiled mutants are detected.
+This adds 12 caller bytes without claiming a complete 36B6 translation. Full setup,
+VGA/IRQ ownership and far drawing remain open; see interaction-cells.md.

@@ -150,9 +150,14 @@
 #define CS_sub_368E 0x368Eu
 #define CS_sub_36AD 0x36ADu
 #define CS_sub_36B6 0x36B6u
+#define CS_PrepareLevelObjectState 0x376Au
+#define CS_ObjectStateAfterGraphicsCopy 0x376Du
+#define CS_ObjectStateAfterSteelCells 0x3770u
+#define CS_ObjectStateAfterObjectCells 0x3773u
+#define CS_ObjectStateAfterCoordinates 0x3776u
 #define CS_CopyLevelObjectGraphicsRecords 0x378Au
-#define CS_sub_37C2 0x37C2u
-#define CS_sub_3839 0x3839u
+#define CS_WriteObjectInteractionCells 0x37C2u
+#define CS_WriteSteelInteractionCells 0x3839u
 #define CS_CollectTypeOneObjectCoordinates 0x389Fu
 #define CS_sub_3944 0x3944u
 #define CS_sub_394F 0x394Fu
@@ -385,4 +390,5 @@
 #define SEG143E_VgaSetResetMirror 0x000Au
 #define SEG143E_VgaEnableSetResetMirror 0x000Cu
 #define SEG143E_VgaBitMaskMirror 0x000Eu
+#define SEG143E_InteractionCellMapBase 0x0012u
 #endif

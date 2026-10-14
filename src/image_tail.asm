@@ -5534,3 +5534,4 @@ VgaMapMaskMirror equ RuntimeStackFrame+0x8
 VgaSetResetMirror equ RuntimeStackFrame+0xa
 VgaEnableSetResetMirror equ RuntimeStackFrame+0xc
 VgaBitMaskMirror equ RuntimeStackFrame+0xe
+InteractionCellMapBase equ RuntimeStackFrame+0x12

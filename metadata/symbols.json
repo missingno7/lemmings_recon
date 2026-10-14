@@ -18195,6 +18195,88 @@
     "reachable_instruction_bytes": 211
   },
   {
+    "address": 14186,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 12,
+    "symbol_name": "PrepareLevelObjectState",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Identified four-CALL span inside36B6:378A,3839,37C2,389F; endsbeforeuntranslated36AD at3776,notcomplete36B6function"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/object_state.c",
+    "verification_evidence": "tests/object_state.py:105 original-vs-C cases,four span/194 integrated sites,33 integrated edges,three compiled mutants; four direct native cores,independent SS/record expectations,all80LEVEL/ground pairs,changed RET aftereachcallee; only376A..3775,36B6 remainsuntranslated; docs/interaction-cells.md"
+  },
+  {
+    "address": 14189,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ObjectStateAfterGraphicsCopy",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation after378A insidefour-call376A objectstate span"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14192,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ObjectStateAfterSteelCells",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation after3839 insidefour-call376A objectstate span"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14195,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ObjectStateAfterObjectCells",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation after37C2 insidefour-call376A objectstate span"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14198,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ObjectStateAfterCoordinates",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near-call return continuation after389F; nextCALL36AD remainsuntranslated"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 14218,
     "segment": 0,
     "kind": "entry",
@@ -18295,9 +18377,11 @@
     "address": 14274,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_37C2",
-    "aliases": [],
+    "size": 119,
+    "symbol_name": "WriteObjectInteractionCells",
+    "aliases": [
+      "sub_37C2"
+    ],
     "callers": [
       14192
     ],
@@ -18420,16 +18504,20 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 119
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 119,
+    "c_implementation": "c/object_cells.c",
+    "verification_evidence": "tests/object_cells.py:123 original-vs-C cases,54 sites,nine branch edges,three compiled mutants; all80LEVEL/ground pairs,zero dimensions,unchecked type/coordinates,live SS saves/definitions/RET,wrap; docs/interaction-cells.md"
   },
   {
     "address": 14393,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3839",
-    "aliases": [],
+    "size": 102,
+    "symbol_name": "WriteSteelInteractionCells",
+    "aliases": [
+      "sub_3839"
+    ],
     "callers": [
       14189
     ],
@@ -18488,8 +18576,10 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 102
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 102,
+    "c_implementation": "c/steel_cells.c",
+    "verification_evidence": "tests/steel_cells.py:386 original-vs-C cases,47 sites,eight branch edges,three compiled mutants; all80LEVEL steel spans,all256 packed dimension bytes,byte3presence,Xbit7,live SS saves/definitions/RET,wrap; docs/interaction-cells.md"
   },
   {
     "address": 14495,
@@ -51840,6 +51930,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original SS:000E mirror of indexed VGA word OUT at 82BD; verified live alias behavior in special strip tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18,
+    "segment": 5182,
+    "kind": "runtime_data",
+    "size": null,
+    "symbol_name": "InteractionCellMapBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "37C2/3839 compute wrapped SS:0012+416*row+column cell writes; SS also holds stack and VGA mirrors; no stored image bytes,initialization or bounded map extent implied"
     ],
     "verification_status": "UNRESOLVED"
   }

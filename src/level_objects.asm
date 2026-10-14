@@ -41,11 +41,12 @@ loc_37B9:
     ret ; @037C1
 ; OBJECT INTERACTION CELLS: first16 eight-byte definitions, no type bounds check.
 ; BE type*28 selects ground metadata; zero BE X skips the rectangle. Base SS offset
-; =12h+(X>>2+LEtemplate[0E])+416*(Y>>2+LEtemplate[10]-1), wrapped16.
+; =12h+((X>>2)+LEtemplate[0E])+416*((Y>>2)+LEtemplate[10]-1), wrapped16.
 ; Cell value=(definition ordinal<<4)|template[14]. Byte dimensions[12]/[13]
 ; are decrement loops: zero means256 writes/rows. Row-save words remain live inSS.
 ; SS is also the stack and VGA-register cache; don't substitute a separate map.
-sub_37C2:
+; Native core/finite aliases: c/object_cells.c; docs/interaction-cells.md.
+WriteObjectInteractionCells:
     lea di,[LevelObjectDefinitions-GameDataImage] ; @037C2
     mov cx,0x10 ; @037C6
     db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @037C9
@@ -75,7 +76,7 @@ loc_37CB:
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @03800
     pop ax ; @03802
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @03803
-    add bx,byte +0x12 ; @03805
+    add bx,byte InteractionCellMapBase-RuntimeStackFrame ; @03805
     db 0x8b,0xc5 ; ENCODED: mov ax,bp (NASM chooses a different encoding) ; @03808
     shl ax,1 ; @0380A
     shl ax,1 ; @0380C
@@ -109,7 +110,8 @@ loc_3838:
 ; X coordinate combines AH and AL bit7; row is AL&7F. DH high/low nibbles encode
 ; width/height minus1 (each1..16). Record byte3 participates only in the zero check.
 ; Writes byte9 at liveSS cells with416-byte row stride, using live stack row saves.
-sub_3839:
+; Native core/packed dimensions/finite aliases: c/steel_cells.c.
+WriteSteelInteractionCells:
     lea di,[LevelSteelDefinitions-GameDataImage] ; @03839
     mov cx,0x20 ; @0383D
 loc_3840:
@@ -141,7 +143,7 @@ loc_3840:
     mul bx ; @03877
     pop bx ; @03879
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @0387A
-    add bx,byte +0x12 ; @0387C
+    add bx,byte InteractionCellMapBase-RuntimeStackFrame ; @0387C
     pop dx ; @0387F
     add dx,0x101 ; @03880
 loc_3884:

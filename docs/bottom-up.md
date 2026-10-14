@@ -94,8 +94,10 @@ Live saved order/counter/DS words, unchecked closes, in-place decoding and paire
 original resources are verified; see resource-select.md for fatal/platform seams.
 The 378A graphics-record copy and 389F coordinate collector are also native,
 with 131/159 cases and the live-copy/default-coordinate quirks documented in
-object-records.md. Recover the 37C2/3839 live SS interaction-cell contracts next,
-then close the remaining 36B6/394F setup dependencies before translating those
+object-records.md. The 37C2/3839 SS cell writers are also native, verified in
+123/386 cases. Their four-call 376A setup span passes 105 integrated cases with
+explicit normal/changed-return boundaries; see interaction-cells.md. Close the
+4DF8/8808 VGA-clear/layout contracts and remaining 36B6/394F dependencies before translating those
 parents. For each cluster, resolve the state/table/target
 uncertainty that would force guessing, document its live segment/flag contract,
 verify exact ASM, and translate with logical parameters and direct native calls.

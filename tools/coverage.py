@@ -104,8 +104,12 @@ def report():
     selection=read_json(BUILD/'resource-select-differential.json')
     objects=read_json(BUILD/'object-graphics-differential.json')
     coordinates=read_json(BUILD/'object-coordinates-differential.json')
+    cells=read_json(BUILD/'object-cells-differential.json')
+    steel=read_json(BUILD/'steel-cells-differential.json')
+    state=read_json(BUILD/'object-state-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
-                        ('object graphics',objects),('object coordinates',coordinates)):
+                        ('object graphics',objects),('object coordinates',coordinates),
+                        ('object cells',cells),('steel cells',steel),('object state',state)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -114,7 +118,10 @@ def report():
     executed.update(selection['executed_instruction_addresses'])
     executed.update(objects['instruction_sites'])
     executed.update(coordinates['instruction_sites'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates)
+    executed.update(cells['instruction_sites'])
+    executed.update(steel['instruction_sites'])
+    executed.update(state['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -189,12 +196,12 @@ has an exact buildable initial ASM image, but remains open for code/data, indire
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
-special graphics setup, decimal helper, resource selection and two object-record
-main routines are TESTED within docs/checksum.md,
+special graphics setup, decimal helper, resource selection, four object-record
+main routines and the four-call object-state span are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
-docs/object-records.md's domains; remaining
+docs/object-records.md and docs/interaction-cells.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -395,8 +402,25 @@ zero-X acceptance, and the original default repeated+0A store/+0C stale bug.
 Six compiled mutations are detected. These disjoint 221 bytes add 89 original
 instruction sites; shared upstream dependencies remain counted once. The helper
 ASM is grouped at its unchanged physical position in level_objects.asm with
-start/end assertions. Interaction-cell writers 37C2/3839 and the larger 36B6/394F
-setup/drawing pipelines remain untranslated. See object-records.md.
+start/end assertions. The larger 36B6/394F setup/drawing pipelines remain
+untranslated. See object-records.md.
+
+The SS interaction-cell writers at 37C2/3839 now have native cores with
+{cells['case_count']}/{steel['case_count']} cases, 54/47 sites and 9/8 branch edges.
+Zero object dimensions mean 256 iterations; all 256 packed steel dimensions,
+byte3-only presence, unchecked template lookup, live row-save/input/return aliases,
+offset and 20-bit wrap are retained. Each suite includes all 80 original LEVEL
+sections; object cases pair their GROUND inputs. Six compiled mutants are detected.
+No separate cell map replaces SS, which also owns the stack and VGA mirrors.
+
+The 376A..3775 span now connects the four native object helpers directly in
+{state['case_count']} cases, covering four caller/194 integrated sites and 33 integrated
+edges. Independent SS-window and graphics/coordinate output checks pass all 80
+LEVEL/GROUND pairs. Changed callee RET words after each of the four calls expose
+their actual target before any target instruction executes. Normal continuation
+is 3776; the outer 36B6 RET remains live. Three compiled mutants are detected.
+This adds 12 caller bytes without claiming a complete 36B6 translation. Full setup,
+VGA/IRQ ownership and far drawing remain open; see interaction-cells.md.
 '''
     return m,text
 

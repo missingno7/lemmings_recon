@@ -5,8 +5,10 @@ bottom-up.md. Review source contracts and the fresh graph before expanding C.
 WriteDecimalByteDigits (4BC2) and LoadSelectedLevelResources (197D) now have connected
 native cores verified in 270 and 59 cases respectively. The closed 378A graphics
 record copy and 389F coordinate collector now pass 131 and 159 native cases.
-Recover live SS interaction-cell ownership at 37C2/3839 next, then connect the
-36B6/394F setup consumers as their drawing dependencies close. Keep the platform/fatal/IRQ seams and broader static obligations
+The 37C2/3839 SS cell writers now pass 123/386 cases, and their four-call setup
+span with 378A/389F passes 105 integrated cases. Close 4DF8/8808 VGA-clear/layout
+and 368E/36AD next, then the terrain/drawing and minimap dependencies of 36B6/394F.
+Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
 1. Complete the protected disk-check contracts after the recovered state-specific
@@ -78,9 +80,13 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     unchecked wrapped ground-type lookup, DF, live saved cursors/counters/RET,
     full type-one comparisons, zero-X acceptance and the repeated+0A default bug.
     See object-records.md and src/level_objects.asm for ownership and bounded domains.
-    Recover 37C2/3839 interaction-cell routines next: SS also owns the stack and
-    VGA mirrors, dimensions have unchecked decrement semantics, and row saves
-    remain live. Then close the 36B6/394F object/palette/terrain setup dependencies.
+    The 37C2/3839 SS cell writers are native in 123/386 cases, including live
+    saved dimensions/base/input/RET aliases and unchecked zero-size loops.
+    The 376A..3775 span directly composes all four object cores in 105 cases,
+    with independent SS/record checks and explicit changed-return boundaries;
+    see interaction-cells.md. This does not translate the entire 36B6 function.
+    Close the 4DF8 VGA-clear and 8808 layout contracts, then 368E/36AD callers.
+    Terrain/far drawing at 7C67/8822 and minimap at 796F/7A25/7A39 remain open.
     Native VGA ownership and asynchronous IRQ behavior remain open.
     Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.

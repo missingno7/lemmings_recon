@@ -41,7 +41,10 @@ def routine_views(analysis,ledger):
         outgoing.setdefault(edge['source'],[]).append(edge)
         if edge['kind'] in CALLS:callers.setdefault(edge['target'],set()).add(edge['source'])
     for item in analysis['unresolved']:frontiers.setdefault(item['address'],[]).append(item['kind'])
-    symbols={s['address']:s for s in ledger if s['segment']==0 and s['kind']=='entry'};views={}
+    # A native span is a scoped view of an existing body, not a new discovery
+    # seed or a claim that its containing function has been translated.
+    symbols={s['address']:s for s in ledger if s['segment']==0 and
+             (s['kind']=='entry' or (s['kind']=='continuation' and s.get('c_implementation')))};views={}
     for entry in sorted(set(analysis['routines'])|set(symbols)):
         row=symbols.get(entry,dict(symbol_name=f'entry_{entry:04X}',verification_status='UNRESOLVED'))
         allowed=None
@@ -102,7 +105,7 @@ def main():
         for entry in sorted(views):print(tag(entry,views))
         return
     entry=address(args.target)
-    if entry not in views:parser.error('Target is not a main-image routine entry')
+    if entry not in views:parser.error('Target is not a main-image routine entry or native span')
     if args.bottom_up:
         order,cycles=dependency_order(entry,views)
         print('Pending investigation order; native dependencies retain their bounded seams:')

@@ -84,9 +84,11 @@ as `byte1 & 7F`. The high and low nibbles of byte2 encode width and height minus
 one, producing 1..16 cells in each dimension. Byte3 participates only in the
 zero check. Rectangles write byte 9 at SS:0012+X+416*row with live row saves.
 
-These cell-writing routines, 36B6/394F setup consumers, native VGA ownership,
-far blit 8822, and all broader asynchronous and alias contracts remain unported.
-No full level setup or gameplay completion is claimed by the two closed leaves.
+These cell-writing routines now have native cores, and the four object calls
+inside 36B6 are connected within their original 376A..3775 span. See
+interaction-cells.md for live saves, return transfers and verification. The
+36B6/394F setup consumers, native VGA ownership, far blit 8822 and broader
+asynchronous/alias contracts remain unported. Full level setup is not complete.
 
 ## Native leaf verification
 
@@ -128,5 +130,5 @@ outside these finite fixture domains. No original game was booted.
 
 The four adjacent helpers now live in src/level_objects.asm at their original
 378A..3943 position. Start/end assertions preserve physical layout. The two
-interaction-cell routines have documented static contracts but no C coverage;
-native cell-map, drawing and larger caller integration is the next frontier.
+interaction-cell routines are now native within interaction-cells.md's bounded
+domains; drawing and larger caller integration remain the next frontier.

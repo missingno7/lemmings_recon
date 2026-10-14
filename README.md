@@ -27,11 +27,11 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Twenty-nine original routine entries now have verified C11 cores: two checksums, thirteen DAT
+Thirty-two original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
-the decimal helper, connected resource selection, two object-record helpers and
-three PC-speaker helpers, totaling 2,215 original
+the decimal helper, connected resource selection, four object-record helpers,
+their connected setup span and three PC-speaker helpers, totaling 2,448 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -134,7 +134,10 @@ observable; see [decimal helper](docs/decimal-digits.md) and
 [resource selection](docs/resource-select.md). The object graphics-record copy and
 type-one coordinate collector now pass 131/159 cases, retaining live copies and
 the original default-coordinate bug. See [object records](docs/object-records.md).
-SS interaction cells and the larger setup/drawing callers are next.
+The SS interaction-cell writers now pass 123/386 cases. Their four-call native
+setup span passes 105 integrated cases, including changed callee return targets;
+see [interaction cells](docs/interaction-cells.md). The full setup/drawing callers
+and VGA/IRQ ownership remain open.
 
 Symbols may be changed with tools/rename.py, data names added with tools/define.py,
 and C offsets regenerated with tools/symtab.py. Always run the exact verifier next.
