@@ -107,9 +107,13 @@ def report():
     cells=read_json(BUILD/'object-cells-differential.json')
     steel=read_json(BUILD/'steel-cells-differential.json')
     state=read_json(BUILD/'object-state-differential.json')
+    clear=read_json(BUILD/'vga-clear-differential.json')
+    layout=read_json(BUILD/'drawing-layout-differential.json')
+    drawing=read_json(BUILD/'level-drawing-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
-                        ('object cells',cells),('steel cells',steel),('object state',state)):
+                        ('object cells',cells),('steel cells',steel),('object state',state),
+                        ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
@@ -121,7 +125,8 @@ def report():
     executed.update(cells['instruction_sites'])
     executed.update(steel['instruction_sites'])
     executed.update(state['executed_instruction_addresses'])
-    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state)
+    for extra in (clear,layout,drawing):executed.update(extra['executed_instruction_addresses'])
+    reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     m['original_instructions_executed']=len(executed)
@@ -197,11 +202,13 @@ transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
-main routines and the four-call object-state span are TESTED within docs/checksum.md,
+main routines, the four-call object-state span, VGA clear, drawing-layout setter
+and connected level-drawing callers are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
-docs/object-records.md and docs/interaction-cells.md's domains; remaining
+docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
+docs/drawing-layout.md and docs/level-drawing.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -421,6 +428,22 @@ their actual target before any target instruction executes. Normal continuation
 is 3776; the outer 36B6 RET remains live. Three compiled mutants are detected.
 This adds 12 caller bytes without claiming a complete 36B6 translation. Full setup,
 VGA/IRQ ownership and far drawing remain open; see interaction-cells.md.
+
+The VGA clear at 4DF8 and far drawing-layout setter at 8808 now have native
+cores in {clear['case_count']}/{layout['case_count']} cases, covering 25/10 sites.
+The 368E initialization and 36AD clear tail connect them directly in
+{drawing['case_count']} cases, covering 14 caller/49 integrated sites and the
+single tail-JMP edge. Full RAM/register/defined-flag and device comparisons
+preserve live SS mirrors/CALL frames/RET targets, incoming DF and IF,
+truncated pitch/low extent, wrapped segment publication and aperture aliases.
+Independent plane footprints, untouched bytes, port words and layout fields pass.
+These four entries add 129 unique C bytes and 49 sites; nine compiled mutants
+are detected. The layout suite isolates two SP-boundary cases as body comparison
+plus permissive adapter-model checks, not original-hardware far-return equivalence.
+The connected suite independently records and isolates Unicorn's RETF read-hook
+artifact without patching return targets. CPU-family stack-limit faults, IRQ
+delivery, minimap, terrain and the broader level consumers remain open. See
+vga-clear.md, drawing-layout.md and level-drawing.md.
 '''
     return m,text
 

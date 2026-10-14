@@ -2308,29 +2308,34 @@ loc_367D:
     jmp sub_4B68 ; @0368A
 loc_368D:
     ret ; @0368D
-sub_368E:
+; Clear 34944 VGA bytes at 4A40 with incoming DF, then set 1664x164 layout.
+; Live near/far return frames and DS input-segment publication follow both calls.
+InitializeLevelDrawing:
     mov di,0x4a40 ; @0368E
     mov cx,0x8880 ; @03691
-    call sub_4DF8 ; @03694
+    call ClearVgaBytes ; @03694
+LevelDrawingAfterClear:
     mov ax,0x680 ; @03697
     mov bx,0xa4 ; @0369A
     mov dx,0x4a40 ; @0369D
-    call 0x0:0x8808 ; @036A0
-    mov ax,[0x1ff4] ; @036A5
+    call 0x0:SetDrawingLayout ; @036A0
+LevelDrawingAfterLayout:
+    mov ax,[GraphicsResourceInputSegment-GameDataImage] ; @036A5
     inc ax ; @036A8
-    mov [0x1fe4],ax ; @036A9
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @036A9
     ret ; @036AC
-sub_36AD:
+; Tail entry: clear 832 bytes at CC40 through ClearVgaBytes, using the outer RET.
+ClearLevelDrawingTail:
     mov di,0xcc40 ; @036AD
     mov cx,0x340 ; @036B0
-    jmp sub_4DF8 ; @036B3
+    jmp ClearVgaBytes ; @036B3
 ; LEVEL-RECORD CONSUMER: main DS, LoadedLevelRecord big-endian header words.
 ; Copies low bytes to64/67,47,44 and eight skill counters; time word+30 contributes
 ; only AL to20A7. Camera word+10 feeds pixel and byte offsets.
 ; Selects special setup or sentinel-terminated terrain records, then object helpers
 ; and13 calls to796F. Callee state/alias contracts remain open; no C closure claimed.
 sub_36B6:
-    call sub_368E ; @036B6
+    call InitializeLevelDrawing ; @036B6
     mov di,LoadedLevelRecord-GameDataImage ; @036B9
     mov ah,[di] ; @036BC
     mov al,[di+0x1] ; @036BE
@@ -2409,7 +2414,7 @@ ObjectStateAfterSteelCells:
 ObjectStateAfterObjectCells:
     call CollectTypeOneObjectCoordinates ; @03773
 ObjectStateAfterCoordinates:
-    call sub_36AD ; @03776
+    call ClearLevelDrawingTail ; @03776
     mov cx,0xd ; @03779
 loc_377C:
     push cx ; @0377C

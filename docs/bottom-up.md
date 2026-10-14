@@ -113,3 +113,8 @@ behavior were unchanged.
 
 Full classification, native devices, IRQ scheduling, gameplay and SDL3 remain
 open. No original game was booted, and assets/neighbors remain untouched.
+
+The 4DF8 VGA clear and 8808 layout setter now feed native 368E/36AD callers.
+They operate on live SS mirrors, device planes, DS layout fields and original
+near/far CALL frames. See level-drawing.md for changed-return exits and the
+explicit Unicorn RETF observation limits before connecting broader drawing code.

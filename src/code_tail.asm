@@ -142,16 +142,19 @@
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @087F6
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00 ; @08806
-sub_8808:
-    mov [0x66f2],ax ; @08808
-    mov [0x66f0],bx ; @0880B
-    mov [0x1f76],dx ; @0880F
+; FAR leaf: AX pixel width,BX height,DX aperture origin; live DS fields.
+; Pitch=width>>3 (truncate), extent=low16(pitch*height); AX low,DX high.
+; MUL defines CF/OF only; other arithmetic flags undefined. RETF reads live SS.
+SetDrawingLayout:
+    mov [DrawingWidthPixels-GameDataImage],ax ; @08808
+    mov [DrawingHeight-GameDataImage],bx ; @0880B
+    mov [DrawingOrigin-GameDataImage],dx ; @0880F
     shr ax,1 ; @08813
     shr ax,1 ; @08815
     shr ax,1 ; @08817
-    mov [0x66f4],ax ; @08819
+    mov [DrawingPitchBytes-GameDataImage],ax ; @08819
     mul bx ; @0881C
-    mov [0x66f6],ax ; @0881E
+    mov [DrawingExtentBytes-GameDataImage],ax ; @0881E
     retf ; @08821
 sub_8822:
     push ax ; @08822
@@ -190,17 +193,17 @@ loc_885E:
     shr bx,1 ; @0886A
     shr bx,1 ; @0886C
     push dx ; @0886E
-    mul word [0x66f4] ; @0886F
+    mul word [DrawingPitchBytes-GameDataImage] ; @0886F
     pop dx ; @08873
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @08874
-    add bx,[0x1f76] ; @08876
+    add bx,[DrawingOrigin-GameDataImage] ; @08876
     add bx,[0x1f7a] ; @0887A
     xchg di,bx ; @0887E
     shr dx,1 ; @08880
     shr dx,1 ; @08882
     shr dx,1 ; @08884
     db 0x8b,0xc2 ; ENCODED: mov ax,dx (NASM chooses a different encoding) ; @08886
-    sub ax,[0x66f4] ; @08888
+    sub ax,[DrawingPitchBytes-GameDataImage] ; @08888
     neg ax ; @0888C
     mov [0x6700],ax ; @0888E
     mov [0x6704],ax ; @08891
@@ -263,7 +266,7 @@ loc_8905:
 loc_890E:
     dec word [0x6704] ; @0890E
     push ds ; @08912
-    mov ds,[0x1fe4] ; @08913
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @08913
     mov ax,0x9a9 ; @08917
     mov es,ax ; @0891A
     xchg dl,dh ; @0891C
@@ -606,7 +609,7 @@ loc_8B40:
 loc_8B42:
     dec word [0x6704] ; @08B42
     push ds ; @08B46
-    mov ds,[0x1fe4] ; @08B47
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @08B47
     mov ax,0x9a9 ; @08B4B
     mov es,ax ; @08B4E
     xchg dl,dh ; @08B50
@@ -936,7 +939,7 @@ loc_8D64:
 loc_8D66:
     dec word [0x6704] ; @08D66
     push ds ; @08D6A
-    mov ds,[0x1fe4] ; @08D6B
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @08D6B
     mov ax,0x9a9 ; @08D6F
     mov es,ax ; @08D72
     xchg dl,dh ; @08D74
@@ -1335,7 +1338,7 @@ loc_8FF4:
 loc_8FF7:
     dec word [0x6704] ; @08FF7
     push ds ; @08FFB
-    mov ds,[0x1fe4] ; @08FFC
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @08FFC
     mov ax,0x9a9 ; @09000
     mov es,ax ; @09003
     mov dx,0x3c4 ; @09005
@@ -1425,7 +1428,7 @@ loc_909A:
 loc_909C:
     dec word [0x6704] ; @0909C
     push ds ; @090A0
-    mov ds,[0x1fe4] ; @090A1
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @090A1
     mov ax,0x9a9 ; @090A5
     mov es,ax ; @090A8
     mov dx,0x3c4 ; @090AA
@@ -1533,7 +1536,7 @@ loc_9166:
     pop bp ; @0916A
     dec word [0x6704] ; @0916B
     push ds ; @0916F
-    mov ds,[0x1fe4] ; @09170
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @09170
     mov ax,0x9a9 ; @09174
     mov es,ax ; @09177
     xchg dl,dh ; @09179
@@ -1913,7 +1916,7 @@ loc_93ED:
     jmp loc_97A4 ; @093F3
 loc_93F6:
     push ds ; @093F6
-    mov ds,[0x1fe4] ; @093F7
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @093F7
     mov ax,0xa000 ; @093FB
     mov es,ax ; @093FE
     xchg dl,dh ; @09400
@@ -2097,7 +2100,7 @@ loc_953C:
     retf ; @0953D
 loc_953E:
     push ds ; @0953E
-    mov ds,[0x1fe4] ; @0953F
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @0953F
     mov ax,0xa000 ; @09543
     mov es,ax ; @09546
     xchg dl,dh ; @09548
@@ -2290,7 +2293,7 @@ loc_969A:
     retf ; @0969B
 loc_969C:
     push ds ; @0969C
-    mov ds,[0x1fe4] ; @0969D
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @0969D
     mov ax,0xa000 ; @096A1
     mov es,ax ; @096A4
     xchg dl,dh ; @096A6
@@ -2370,7 +2373,7 @@ loc_9706:
     retf ; @09736
 loc_9737:
     push ds ; @09737
-    mov ds,[0x1fe4] ; @09738
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @09738
     mov ax,0xa000 ; @0973C
     mov es,ax ; @0973F
     mov dx,0x3c4 ; @09741
@@ -2423,7 +2426,7 @@ loc_97A2:
     retf ; @097A3
 loc_97A4:
     push ds ; @097A4
-    mov ds,[0x1fe4] ; @097A5
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @097A5
     mov ax,0xa000 ; @097A9
     mov es,ax ; @097AC
     mov dx,0x3c4 ; @097AE
@@ -2494,7 +2497,7 @@ loc_9836:
     mov [0x6702],bp ; @09836
     pop bp ; @0983A
     push ds ; @0983B
-    mov ds,[0x1fe4] ; @0983C
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @0983C
     mov ax,0xa000 ; @09840
     mov es,ax ; @09843
     xchg dl,dh ; @09845
@@ -2683,12 +2686,12 @@ loc_9981:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @09996
 loc_9997:
-    cmp ax,[0x66f2] ; @09997
+    cmp ax,[DrawingWidthPixels-GameDataImage] ; @09997
     jnl loc_9A0C ; @0999B
     db 0x8b,0xe8 ; ENCODED: mov bp,ax (NASM chooses a different encoding) ; @0999D
     db 0x03,0xea ; ENCODED: add bp,dx (NASM chooses a different encoding) ; @0999F
 loc_99A1:
-    cmp bp,[0x66f2] ; @099A1
+    cmp bp,[DrawingWidthPixels-GameDataImage] ; @099A1
     jl loc_99B4 ; @099A5
     add word [0x66fc],byte +0x1 ; @099A7
     sub dx,byte +0x8 ; @099AC
@@ -2723,13 +2726,13 @@ loc_99E2:
     pop bp ; @099E6
     ret ; @099E7
 loc_99E8:
-    cmp bx,[0x66f0] ; @099E8
+    cmp bx,[DrawingHeight-GameDataImage] ; @099E8
     jnl loc_9A0C ; @099EC
     db 0x8b,0xeb ; ENCODED: mov bp,bx (NASM chooses a different encoding) ; @099EE
     db 0x03,0xe9 ; ENCODED: add bp,cx (NASM chooses a different encoding) ; @099F0
-    cmp bp,[0x66f0] ; @099F2
+    cmp bp,[DrawingHeight-GameDataImage] ; @099F2
     jl loc_99FE ; @099F6
-    mov cx,[0x66f0] ; @099F8
+    mov cx,[DrawingHeight-GameDataImage] ; @099F8
     db 0x2b,0xcb ; ENCODED: sub cx,bx (NASM chooses a different encoding) ; @099FC
 loc_99FE:
     db 0x23,0xd2 ; ENCODED: and dx,dx (NASM chooses a different encoding) ; @099FE

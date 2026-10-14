@@ -9,7 +9,7 @@ loc_394E:
 ; object definitions; traverses32 entries and28-byte working records before far
 ; blit8822. No bounds/type ownership proof or full callee contract is established.
 sub_394F:
-    call sub_368E ; @0394F
+    call InitializeLevelDrawing ; @0394F
     mov al,[LevelSpecialGraphicsSetByte-GameDataImage] ; @03952
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @03955
     jz loc_395F ; @03957
@@ -35,7 +35,7 @@ loc_397A:
     lea di,[LevelObjectDefinitions-GameDataImage] ; @03981
     mov cx,0x20 ; @03985
     mov ax,[0x1ff0] ; @03988
-    mov [0x1fe4],ax ; @0398B
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @0398B
 loc_398E:
     mov ah,[di] ; @0398E
     mov al,[di+0x1] ; @03990
@@ -1227,7 +1227,7 @@ sub_43F2:
     call sub_53FC ; @043FB
     call sub_4AC5 ; @043FE
 loc_4401:
-    mov word [0x1f76],0x0 ; @04401
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @04401
     mov word [0x1f78],0x6d60 ; @04407
     mov word [0x1f7a],0x0 ; @0440D
     call sub_4C32 ; @04413
@@ -1446,14 +1446,14 @@ loc_45F2:
     mov al,0x1 ; @045FD
     nop ; @045FF
     call sub_53FE ; @04600
-    mov word [0x1f76],0x0 ; @04603
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @04603
     mov word [0x1f78],0x0 ; @04609
     call sub_4C20 ; @0460F
     call sub_394F ; @04612
-    mov word [0x1f76],0x0 ; @04615
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @04615
     mov word [0x1f7a],0x0 ; @0461B
     call sub_7EB2 ; @04621
-    mov word [0x1f76],0x0 ; @04624
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @04624
     mov word [0x1f7a],0x0 ; @0462A
     call sub_4C17 ; @04630
     call sub_4C07 ; @04633
@@ -2081,25 +2081,25 @@ sub_4BE7:
     int 0x10 ; @04BF2
     sti ; @04BF4
 sub_4BF5:
-    mov word [0x1f76],0x0 ; @04BF5
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @04BF5
     mov word [0x1f78],0x6d60 ; @04BFB
     mov word [0x1f7a],0x0 ; @04C01
 sub_4C07:
     mov ax,0x280 ; @04C07
     mov bx,0x15e ; @04C0A
-    mov dx,[0x1f76] ; @04C0D
-    call 0x0:0x8808 ; @04C11
+    mov dx,[DrawingOrigin-GameDataImage] ; @04C0D
+    call 0x0:SetDrawingLayout ; @04C11
     ret ; @04C16
 sub_4C17:
     mov di,0x15e0 ; @04C17
     mov cx,0x5780 ; @04C1A
-    jmp sub_4DF8 ; @04C1D
+    jmp ClearVgaBytes ; @04C1D
 sub_4C20:
-    mov bx,[0x1f76] ; @04C20
+    mov bx,[DrawingOrigin-GameDataImage] ; @04C20
     call sub_4C36 ; @04C24
-    mov ax,[0x1f76] ; @04C27
+    mov ax,[DrawingOrigin-GameDataImage] ; @04C27
     xchg [0x1f78],ax ; @04C2A
-    mov [0x1f76],ax ; @04C2E
+    mov [DrawingOrigin-GameDataImage],ax ; @04C2E
     ret ; @04C31
 sub_4C32:
     mov bx,[0x1f78] ; @04C32
@@ -2321,7 +2321,7 @@ sub_4D78:
     add di,byte +0x40 ; @04D96
     mov bx,[0x1fee] ; @04D99
     add bx,0x1000 ; @04D9D
-    mov [0x1fe4],bx ; @04DA1
+    mov [GraphicsResourceSegment-GameDataImage],bx ; @04DA1
     db 0x8a,0xdd ; ENCODED: mov bl,ch (NASM chooses a different encoding) ; @04DA5
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @04DA7
     db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @04DA9
@@ -2347,7 +2347,7 @@ sub_4DC2:
     mov [ss:0x0],ax ; @04DD3
     out dx,ax ; @04DD7
     push ds ; @04DD8
-    mov si,[0x1f76] ; @04DD9
+    mov si,[DrawingOrigin-GameDataImage] ; @04DD9
     mov di,[0x1f78] ; @04DDD
     mov ax,0xa000 ; @04DE1
     mov ds,ax ; @04DE4
@@ -2359,10 +2359,13 @@ sub_4DC2:
 sub_4DEF:
     mov di,0x0 ; @04DEF
     mov cx,0x6d60 ; @04DF2
-    jmp short sub_4DF8 ; @04DF5
+    jmp short ClearVgaBytes ; @04DF5
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04DF7
-sub_4DF8:
+; SS mirror words precede six OUTs. ES=A000, AX=A000, DX=3CE.
+; REP clears incoming CX bytes from DI with incoming DF; CX=0. No CLI/STI.
+; Final XOR defines CF/OF=0, PF/ZF=1,SF=0; AF undefined. RET reads live SS.
+ClearVgaBytes:
     mov dx,0x3c4 ; @04DF8
     mov ax,0xf02 ; @04DFB
     mov [ss:0x8],ax ; @04DFE
@@ -2401,7 +2404,7 @@ loc_4E46:
     mov byte [0x1f72],0x2 ; @04E4C
 loc_4E51:
     mov ax,[0x1fee] ; @04E51
-    mov [0x1fe4],ax ; @04E54
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04E54
     mov si,0xee30 ; @04E57
     mov al,[0x25a7] ; @04E5A
     test al,0x3 ; @04E5D
@@ -2445,7 +2448,7 @@ loc_4EB1:
 loc_4EBC:
     mov ax,[0x1fee] ; @04EBC
     add ax,0x1000 ; @04EBF
-    mov [0x1fe4],ax ; @04EC2
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04EC2
     mov bl,[0x1f6e] ; @04EC5
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @04EC9
     shl bx,1 ; @04ECB
@@ -2462,7 +2465,7 @@ loc_4EE6:
     db 0xf4,0x57,0x28,0x54,0x5c,0x50,0x90,0x4c ; @04EE7
 sub_4EEF:
     mov ax,[0x1fee] ; @04EEF
-    mov [0x1fe4],ax ; @04EF2
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04EF2
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04EF5
     mov bx,0x14 ; @04EF7
     mov bp,0xf42 ; @04EFA
@@ -2484,7 +2487,7 @@ sub_4EEF:
     ret ; @04F2A
 sub_4F2B:
     mov ax,[0x1fee] ; @04F2B
-    mov [0x1fe4],ax ; @04F2E
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04F2E
     mov bx,0x78 ; @04F31
     mov ax,0x44 ; @04F34
     mov cx,0x4 ; @04F37
@@ -2533,7 +2536,7 @@ sub_4F6E:
 sub_4F96:
     mov ax,[0x1fee] ; @04F96
     add ax,0x800 ; @04F99
-    mov [0x1fe4],ax ; @04F9C
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04F9C
     lea si,[0x4960] ; @04F9F
     mov cx,0xa ; @04FA3
 loc_4FA6:
@@ -3662,7 +3665,7 @@ sub_587F:
 LoadMainResourceSections:
     push ds ; @058D2
     mov dx,0x252b ; @058D3
-    mov es,[0x1fe4] ; @058D6
+    mov es,[GraphicsResourceSegment-GameDataImage] ; @058D6
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @058DA
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @058DC
     mov cx,es ; @058DE
@@ -3675,8 +3678,8 @@ LoadMainResourceSections:
     push ds ; @058EC
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @058ED
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @058EF
-    mov es,[0x1fe4] ; @058F1
-    mov ds,[0x1fe4] ; @058F5
+    mov es,[GraphicsResourceSegment-GameDataImage] ; @058F1
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @058F5
     call DecodeDatPreservingSegment ; @058F9
     pop ds ; @058FC
     push bx ; @058FD
@@ -3685,8 +3688,8 @@ LoadMainResourceSections:
     push ds ; @05902
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05903
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05905
-    mov es,[0x1fe4] ; @05907
-    mov ds,[0x1fe4] ; @0590B
+    mov es,[GraphicsResourceSegment-GameDataImage] ; @05907
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @0590B
     call DecodeDatPreservingSegment ; @0590F
     pop ds ; @05912
     push bx ; @05913
@@ -3696,14 +3699,14 @@ LoadMainResourceSections:
     mov cx,0x28 ; @0591A
     mov ax,0x2c ; @0591D
     mov bx,0x428 ; @05920
-    mov ds,[0x1fe4] ; @05923
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @05923
     call sub_57D1 ; @05927
     pop ds ; @0592A
     push ds ; @0592B
     mov si,0x1900 ; @0592C
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @0592F
     mov es,[0x1fec] ; @05931
-    mov ds,[0x1fe4] ; @05935
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @05935
     mov cx,0x3e0 ; @05939
     rep movsw ; @0593C
     pop ds ; @0593E
@@ -3739,8 +3742,8 @@ sub_5950:
     jnz loc_59BA ; @0597B
 sub_597D:
     push ds ; @0597D
-    mov es,[0x1fe4] ; @0597E
-    mov ds,[0x1fe4] ; @05982
+    mov es,[GraphicsResourceSegment-GameDataImage] ; @0597E
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @05982
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05986
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05988
     call DecodeDatPreservingSegment ; @0598A
@@ -3751,14 +3754,14 @@ sub_597D:
     mov cx,0x28 ; @05994
     mov ax,0x2c ; @05997
     mov bx,0x428 ; @0599A
-    mov ds,[0x1fe4] ; @0599D
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @0599D
     call sub_57D1 ; @059A1
     pop ds ; @059A4
     push ds ; @059A5
     mov di,0xa0 ; @059A6
     mov si,0x1900 ; @059A9
     mov es,[0x1fec] ; @059AC
-    mov ds,[0x1fe4] ; @059B0
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @059B0
     mov cx,0x720 ; @059B4
     rep movsb ; @059B7
     pop ds ; @059B9
@@ -3767,7 +3770,7 @@ loc_59BA:
 sub_59BB:
     push ds ; @059BB
     mov es,[0x1fe6] ; @059BC
-    mov ds,[0x1fe4] ; @059C0
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @059C0
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @059C4
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @059C6
     mov cx,0x12 ; @059C8
@@ -3897,7 +3900,7 @@ loc_5AAB:
 sub_5AC1:
     push ds ; @05AC1
     mov es,[0x1fe8] ; @05AC2
-    mov ds,[0x1fe4] ; @05AC6
+    mov ds,[GraphicsResourceSegment-GameDataImage] ; @05AC6
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05ACA
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05ACC
     mov cx,0x8 ; @05ACE
@@ -6603,7 +6606,7 @@ loc_6F0D:
     shr bp,1 ; @06F32
     shr bp,1 ; @06F34
     db 0x03,0xfd ; ENCODED: add di,bp (NASM chooses a different encoding) ; @06F36
-    add di,[0x1f76] ; @06F38
+    add di,[DrawingOrigin-GameDataImage] ; @06F38
     add di,[0x1f7a] ; @06F3C
     and ax,0x7 ; @06F40
     lea bx,[0x547c] ; @06F43
@@ -6709,7 +6712,7 @@ loc_6FED:
     shr ax,1 ; @0700C
     shr ax,1 ; @0700E
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @07010
-    add si,[0x1f76] ; @07012
+    add si,[DrawingOrigin-GameDataImage] ; @07012
     add si,0x2172 ; @07016
     add si,byte +0x2 ; @0701A
     add si,byte +0x2c ; @0701D
@@ -6823,7 +6826,7 @@ loc_70FF:
     pop dx ; @0710A
     pop ax ; @0710B
     db 0x03,0xfa ; ENCODED: add di,dx (NASM chooses a different encoding) ; @0710C
-    add di,[0x1f76] ; @0710E
+    add di,[DrawingOrigin-GameDataImage] ; @0710E
     mov cx,[0x1fe6] ; @07112
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @07116
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @07118
@@ -7487,7 +7490,7 @@ sub_7218:
     sti ; @075ED
     ret ; @075EE
 sub_75EF:
-    mov di,[0x1f76] ; @075EF
+    mov di,[DrawingOrigin-GameDataImage] ; @075EF
     add di,0x1e42 ; @075F3
     call sub_7602 ; @075F7
     mov di,[0x1f78] ; @075FA
@@ -7517,7 +7520,7 @@ sub_762A:
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @0762E
     db 0x8b,0xf8 ; ENCODED: mov di,ax (NASM chooses a different encoding) ; @07630
     add di,0x212c ; @07632
-    add di,[0x1f76] ; @07636
+    add di,[DrawingOrigin-GameDataImage] ; @07636
     add di,byte +0x2 ; @0763A
     mov dx,0xa000 ; @0763D
     mov es,dx ; @07640
@@ -7629,7 +7632,7 @@ sub_7708:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @0770C
     db 0x8b,0xf8 ; ENCODED: mov di,ax (NASM chooses a different encoding) ; @0770E
     add di,0x1e40 ; @07710
-    add di,[0x1f76] ; @07714
+    add di,[DrawingOrigin-GameDataImage] ; @07714
     add di,byte +0x2 ; @07718
     mov dx,0xa000 ; @0771B
     mov es,dx ; @0771E
@@ -7771,7 +7774,7 @@ sub_780D:
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @0780F
     db 0x8b,0xf8 ; ENCODED: mov di,ax (NASM chooses a different encoding) ; @07811
     add di,0x2100 ; @07813
-    add di,[0x1f76] ; @07817
+    add di,[DrawingOrigin-GameDataImage] ; @07817
     add di,byte +0x2 ; @0781B
     mov dx,0xa000 ; @0781E
     mov es,dx ; @07821
@@ -7844,7 +7847,7 @@ loc_78B3:
     db 0x8b,0xf8 ; ENCODED: mov di,ax (NASM chooses a different encoding) ; @078B8
     push di ; @078BA
     add di,0x2100 ; @078BB
-    add di,[0x1f76] ; @078BF
+    add di,[DrawingOrigin-GameDataImage] ; @078BF
     add di,byte +0x2 ; @078C3
     mov dx,0xa000 ; @078C6
     mov es,dx ; @078C9
@@ -7873,7 +7876,7 @@ loc_78F4:
     ret ; @078FF
 sub_7900:
     mov bp,ds ; @07900
-    mov di,[0x1f76] ; @07902
+    mov di,[DrawingOrigin-GameDataImage] ; @07902
     add di,0x2172 ; @07906
     add di,byte +0x2 ; @0790A
     mov si,0xd320 ; @0790D
@@ -8032,7 +8035,7 @@ sub_7A5A:
     shr di,1 ; @07A68
     shr di,1 ; @07A6A
     add di,0x2172 ; @07A6C
-    add di,[0x1f76] ; @07A70
+    add di,[DrawingOrigin-GameDataImage] ; @07A70
     add di,byte +0x2 ; @07A74
     mov dx,0xa000 ; @07A77
     mov es,dx ; @07A7A
@@ -8331,7 +8334,7 @@ loc_7CDB:
     loop loc_7CDB ; @07CE4
 sub_7CE6:
     mov ax,[0x1ff0] ; @07CE6
-    mov [0x1fe4],ax ; @07CE9
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @07CE9
     db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @07CEC
     mov ax,0x30 ; @07CEE
     mov bx,0x14e ; @07CF1
@@ -8341,7 +8344,7 @@ sub_7CE6:
     call 0x0:0x8822 ; @07CFC
     mov ax,[0x1fee] ; @07D01
     add ax,0x1000 ; @07D04
-    mov [0x1fe4],ax ; @07D07
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @07D07
     jmp loc_7E2F ; @07D0A
 sub_7D0D:
     call sub_7CE6 ; @07D0D
@@ -8529,7 +8532,7 @@ sub_7E65:
     ret ; @07E75
 loc_7E76:
     mov ax,[0x1fee] ; @07E76
-    mov [0x1fe4],ax ; @07E79
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @07E79
     mov cx,0x4 ; @07E7C
 loc_7E7F:
     push bx ; @07E7F
@@ -8555,7 +8558,7 @@ loc_7E7F:
     ret ; @07EB1
 sub_7EB2:
     push ds ; @07EB2
-    mov di,[0x1f76] ; @07EB3
+    mov di,[DrawingOrigin-GameDataImage] ; @07EB3
     add di,[0x1f7a] ; @07EB7
     add di,0x64f ; @07EBB
     mov si,0x4f22 ; @07EBF
@@ -8857,7 +8860,7 @@ sub_80FD:
 loc_8123:
     push ds ; @08123
     inc di ; @08124
-    mov bp,[0x1f76] ; @08125
+    mov bp,[DrawingOrigin-GameDataImage] ; @08125
     add bp,0x2c2 ; @08129
     mov si,0x4a40 ; @0812D
     mov ax,[0x2] ; @08130
@@ -8927,7 +8930,7 @@ loc_8187:
 loc_819D:
     mov byte [es:di],0x0 ; @0819D
     mov bp,ds ; @081A1
-    mov di,[0x1f76] ; @081A3
+    mov di,[DrawingOrigin-GameDataImage] ; @081A3
     add di,0x2c2 ; @081A7
     mov si,0x4a40 ; @081AB
     mov ax,[0x2] ; @081AE
@@ -8945,7 +8948,7 @@ loc_81BD:
     mov ds,bp ; @081C9
     ret ; @081CB
 sub_81CC:
-    mov word [0x1f76],0x0 ; @081CC
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @081CC
     mov word [0x1f78],0x2520 ; @081D2
     mov word [0x1f7a],0x2c0 ; @081D8
     mov word [0x26],0x42b2 ; @081DE
@@ -8957,7 +8960,7 @@ sub_81CC:
     mov byte [0x2a],0xff ; @081FA
     call sub_80FD ; @081FF
     mov ax,[0x1f78] ; @08202
-    xchg [0x1f76],ax ; @08205
+    xchg [DrawingOrigin-GameDataImage],ax ; @08205
     mov [0x1f78],ax ; @08209
     mov ax,[0x28] ; @0820C
     xchg [0x26],ax ; @0820F
@@ -8966,8 +8969,8 @@ sub_81CC:
     call sub_80FD ; @08219
     mov ax,0x160 ; @0821C
     mov bx,0xa0 ; @0821F
-    mov dx,[0x1f76] ; @08222
-    call 0x0:0x8808 ; @08226
+    mov dx,[DrawingOrigin-GameDataImage] ; @08222
+    call 0x0:SetDrawingLayout ; @08226
     mov word [0x8],0xd2c0 ; @0822B
     mov word [0xa],0xd2f0 ; @08231
     ret ; @08237

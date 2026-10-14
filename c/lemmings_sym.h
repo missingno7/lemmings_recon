@@ -147,8 +147,10 @@
 #define CS_sub_3150 0x3150u
 #define CS_sub_3634 0x3634u
 #define CS_sub_3678 0x3678u
-#define CS_sub_368E 0x368Eu
-#define CS_sub_36AD 0x36ADu
+#define CS_InitializeLevelDrawing 0x368Eu
+#define CS_LevelDrawingAfterClear 0x3697u
+#define CS_LevelDrawingAfterLayout 0x36A5u
+#define CS_ClearLevelDrawingTail 0x36ADu
 #define CS_sub_36B6 0x36B6u
 #define CS_PrepareLevelObjectState 0x376Au
 #define CS_ObjectStateAfterGraphicsCopy 0x376Du
@@ -202,7 +204,7 @@
 #define CS_sub_4D78 0x4D78u
 #define CS_sub_4DC2 0x4DC2u
 #define CS_sub_4DEF 0x4DEFu
-#define CS_sub_4DF8 0x4DF8u
+#define CS_ClearVgaBytes 0x4DF8u
 #define CS_sub_4E37 0x4E37u
 #define CS_sub_4EA2 0x4EA2u
 #define CS_sub_4EEF 0x4EEFu
@@ -325,7 +327,7 @@
 #define CS_ChecksumPhase 0x83B9u
 #define CS_ChecksumAccumulator 0x83BAu
 #define CS_ChecksumCursor 0x83BBu
-#define CS_sub_8808 0x8808u
+#define CS_SetDrawingLayout 0x8808u
 #define CS_sub_8822 0x8822u
 #define CS_sub_988B 0x988Bu
 #define CS_sub_9967 0x9967u
@@ -349,6 +351,7 @@
 #define SEG09A9_SpecialMetadataDuplicateBase 0x1F3Bu
 #define SEG09A9_LevelResourceSelectionByte 0x1F6Bu
 #define SEG09A9_DatRetryEnabled 0x1F75u
+#define SEG09A9_DrawingOrigin 0x1F76u
 #define SEG09A9_DatCacheBaseSegment 0x1F80u
 #define SEG09A9_DatCacheRecordOffset 0x1F82u
 #define SEG09A9_DatCacheRecordSegment 0x1F84u
@@ -383,6 +386,10 @@
 #define SEG09A9_InputPollCallback 0x25A0u
 #define SEG09A9_LevelResourceOrderBytes 0x54EEu
 #define SEG09A9_OddLevelOverrideBuffer 0x5566u
+#define SEG09A9_DrawingHeight 0x66F0u
+#define SEG09A9_DrawingWidthPixels 0x66F2u
+#define SEG09A9_DrawingPitchBytes 0x66F4u
+#define SEG09A9_DrawingExtentBytes 0x66F6u
 #define SEG143E_RuntimeStackFrame 0x0000u
 #define SEG143E_VgaGraphicsModeMirror 0x0000u
 #define SEG143E_VgaDataRotateMirror 0x0002u

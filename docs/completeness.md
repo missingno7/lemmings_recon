@@ -12,11 +12,11 @@ Regenerate this report with tools/verify.py, tools/difftest.py, then tools/cover
 | Reconstructed ASM bytes | 82,906 |
 | Byte-exact ASM bytes | 82,906 |
 | Identified routine entry candidates | 273 |
-| Translated C routines | 29 |
-| Translated C code bytes | 2283 |
-| Differential cases | 2656 |
-| Mutation checks detected | 54 |
-| Original instruction coverage | 1060 / 15,392 decoded (6.887%) |
+| Translated C routines | 33 |
+| Translated C code bytes | 2412 |
+| Differential cases | 2867 |
+| Mutation checks detected | 63 |
+| Original instruction coverage | 1109 / 15,392 decoded (7.205%) |
 | Unresolved image bytes / runs | 37,212 / 115 |
 | Unresolved runs inside provisional code frame | 112 (2,098 bytes) |
 | Resolved static CFG edges, including fallthrough | 16,969 |
@@ -38,11 +38,13 @@ transfer, external-driver and semantic closure. Gates C/D have the checksum,
 resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
 The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
-main routines and the four-call object-state span are TESTED within docs/checksum.md,
+main routines, the four-call object-state span, VGA clear, drawing-layout setter
+and connected level-drawing callers are TESTED within docs/checksum.md,
 docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
-docs/object-records.md and docs/interaction-cells.md's domains; remaining
+docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
+docs/drawing-layout.md and docs/level-drawing.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -68,10 +70,10 @@ Loaded sound-component images reconstruct exactly, with separate static accounti
 | pcspeaker | 758 | 596 | 89 | 4 | 1 | 3 |
 
 Across all four component images, 127,491 ASM bytes are exact and 17,291
-instructions have been decoded. C differential coverage is 1120 / 17,291
-(6.477%) of this still-incomplete decoded inventory. There are
-32 tested C routines occupying 2448 original code bytes across images,
-with 2991 differential cases and 57 compiled mutations detected. Six bounded
+instructions have been decoded. C differential coverage is 1169 / 17,291
+(6.761%) of this still-incomplete decoded inventory. There are
+36 tested C routines occupying 2577 original code bytes across images,
+with 3202 differential cases and 66 compiled mutations detected. Six bounded
 DAT extraction checks exercise 145 main-image instructions; these are extractor
 verification, not C translation coverage and not driver execution tests.
 
@@ -262,3 +264,19 @@ their actual target before any target instruction executes. Normal continuation
 is 3776; the outer 36B6 RET remains live. Three compiled mutants are detected.
 This adds 12 caller bytes without claiming a complete 36B6 translation. Full setup,
 VGA/IRQ ownership and far drawing remain open; see interaction-cells.md.
+
+The VGA clear at 4DF8 and far drawing-layout setter at 8808 now have native
+cores in 33/151 cases, covering 25/10 sites.
+The 368E initialization and 36AD clear tail connect them directly in
+27 cases, covering 14 caller/49 integrated sites and the
+single tail-JMP edge. Full RAM/register/defined-flag and device comparisons
+preserve live SS mirrors/CALL frames/RET targets, incoming DF and IF,
+truncated pitch/low extent, wrapped segment publication and aperture aliases.
+Independent plane footprints, untouched bytes, port words and layout fields pass.
+These four entries add 129 unique C bytes and 49 sites; nine compiled mutants
+are detected. The layout suite isolates two SP-boundary cases as body comparison
+plus permissive adapter-model checks, not original-hardware far-return equivalence.
+The connected suite independently records and isolates Unicorn's RETF read-hook
+artifact without patching return targets. CPU-family stack-limit faults, IRQ
+delivery, minimap, terrain and the broader level consumers remain open. See
+vga-clear.md, drawing-layout.md and level-drawing.md.

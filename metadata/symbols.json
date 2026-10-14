@@ -17668,9 +17668,11 @@
     "address": 13966,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_368E",
-    "aliases": [],
+    "size": 31,
+    "symbol_name": "InitializeLevelDrawing",
+    "aliases": [
+      "sub_368E"
+    ],
     "callers": [
       14006,
       14671
@@ -17699,18 +17701,61 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static closed routine boundary recovered before bottom-up C translation; original call/return and segment contracts retained",
+      "Bounded native/original full RAM, registers and defined flags; VGA clear/device order and connected live CALL/RET frames documented in docs/level-drawing.md; layout RETF emulator discrepancies isolated explicitly"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 31
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 31,
+    "c_implementation": "c/level_drawing.c",
+    "c_code_ranges": [
+      [
+        13966,
+        13997
+      ]
+    ]
+  },
+  {
+    "address": 13975,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelDrawingAfterClear",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Near return continuation after ClearVgaBytes in 368E"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 13989,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelDrawingAfterLayout",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Far return continuation after SetDrawingLayout in 368E"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 13997,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_36AD",
-    "aliases": [],
+    "size": 9,
+    "symbol_name": "ClearLevelDrawingTail",
+    "aliases": [
+      "sub_36AD"
+    ],
     "callers": [
       14198
     ],
@@ -17775,10 +17820,19 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static closed routine boundary recovered before bottom-up C translation; original call/return and segment contracts retained",
+      "Bounded native/original full RAM, registers and defined flags; VGA clear/device order and connected live CALL/RET frames documented in docs/level-drawing.md; layout RETF emulator discrepancies isolated explicitly"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 72
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 72,
+    "c_implementation": "c/level_drawing.c",
+    "c_code_ranges": [
+      [
+        13997,
+        14006
+      ]
+    ]
   },
   {
     "address": 14006,
@@ -26551,9 +26605,11 @@
     "address": 19960,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4DF8",
-    "aliases": [],
+    "size": 63,
+    "symbol_name": "ClearVgaBytes",
+    "aliases": [
+      "sub_4DF8"
+    ],
     "callers": [
       13972
     ],
@@ -26618,10 +26674,19 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static closed routine boundary recovered before bottom-up C translation; original call/return and segment contracts retained",
+      "Bounded native/original full RAM, registers and defined flags; VGA clear/device order and connected live CALL/RET frames documented in docs/level-drawing.md; layout RETF emulator discrepancies isolated explicitly"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 63
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 63,
+    "c_implementation": "c/vga_clear.c",
+    "c_code_ranges": [
+      [
+        19960,
+        20023
+      ]
+    ]
   },
   {
     "address": 20023,
@@ -46156,9 +46221,11 @@
     "address": 34824,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_8808",
-    "aliases": [],
+    "size": 26,
+    "symbol_name": "SetDrawingLayout",
+    "aliases": [
+      "sub_8808"
+    ],
     "callers": [
       19473,
       33318,
@@ -46209,10 +46276,19 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static closed routine boundary recovered before bottom-up C translation; original call/return and segment contracts retained",
+      "Bounded native/original full RAM, registers and defined flags; VGA clear/device order and connected live CALL/RET frames documented in docs/level-drawing.md; layout RETF emulator discrepancies isolated explicitly"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 26
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 26,
+    "c_implementation": "c/drawing_layout.c",
+    "c_code_ranges": [
+      [
+        34824,
+        34850
+      ]
+    ]
   },
   {
     "address": 34850,
@@ -51278,6 +51354,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8054,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingOrigin",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8064,
     "segment": 2473,
     "kind": "data",
@@ -51818,6 +51910,70 @@
     "confidence": "PROVEN",
     "evidence": [
       "19DC reads requested1180 bytes ofoddtable.dat here; selected56-byte slice replaces record header/footer"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26352,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingHeight",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26354,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingWidthPixels",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26356,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingPitchBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26358,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DrawingExtentBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
     ],
     "verification_status": "UNRESOLVED"
   },

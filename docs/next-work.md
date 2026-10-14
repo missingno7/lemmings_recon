@@ -6,8 +6,10 @@ WriteDecimalByteDigits (4BC2) and LoadSelectedLevelResources (197D) now have con
 native cores verified in 270 and 59 cases respectively. The closed 378A graphics
 record copy and 389F coordinate collector now pass 131 and 159 native cases.
 The 37C2/3839 SS cell writers now pass 123/386 cases, and their four-call setup
-span with 378A/389F passes 105 integrated cases. Close 4DF8/8808 VGA-clear/layout
-and 368E/36AD next, then the terrain/drawing and minimap dependencies of 36B6/394F.
+span with 378A/389F passes 105 integrated cases. The 4DF8/8808 VGA-clear/layout
+leaves and 368E/36AD callers now pass
+33/151/27 bounded cases. Continue the terrain/drawing and minimap dependencies
+of 36B6/394F next.
 Keep the platform/fatal/IRQ seams and broader static obligations
 below explicit; module extraction did not resolve UNKNOWN bytes.
 
@@ -85,8 +87,11 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     The 376A..3775 span directly composes all four object cores in 105 cases,
     with independent SS/record checks and explicit changed-return boundaries;
     see interaction-cells.md. This does not translate the entire 36B6 function.
-    Close the 4DF8 VGA-clear and 8808 layout contracts, then 368E/36AD callers.
-    Terrain/far drawing at 7C67/8822 and minimap at 796F/7A25/7A39 remain open.
+    The 4DF8 clear and 8808 layout leaves are native in 33/151 cases, and 368E/36AD
+    connect them in 27 cases; see vga-clear.md, drawing-layout.md and level-drawing.md.
+    Keep the isolated Unicorn RETF hook/SP artifacts explicit in future far callers.
+    Start with the 7A39 minimap leaf, then 7A25/796F. Terrain/far drawing at
+    7C67/8822 and its 9967/9A15 dependencies remain open.
     Native VGA ownership and asynchronous IRQ behavior remain open.
     Investigate UNKNOWN allocation code at
     1ED7, and recover native ownership of the fatal 04D0 continuation.

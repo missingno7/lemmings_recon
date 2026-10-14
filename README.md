@@ -27,11 +27,12 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Thirty-two original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+Thirty-six original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
-their connected setup span and three PC-speaker helpers, totaling 2,448 original
+their connected setup span, VGA clear/layout and two drawing callers, and three
+PC-speaker helpers, totaling 2,577 original
 code bytes.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
@@ -77,6 +78,12 @@ and two normal graphics DAT sections through native cores. Twenty integrated
 cases include all four VGASPEC inputs and paired VGAGR sections, with independent
 metadata/plane checks; see [connected graphics setup](docs/special-setup.md).
 Upstream selection/allocation and full level setup remain open.
+
+The VGA clear and drawing layout now connect directly to the 368E initialization
+and 36AD tail callers. Their 211 cases preserve live SS/device returns, DF,
+truncated drawing geometry and wrapped segment publication; see
+[level drawing](docs/level-drawing.md). The layout suite isolates documented
+Unicorn RETF artifacts instead of copying them into the native contract.
 
 ## Reproduce
 
