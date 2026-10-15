@@ -655,4 +655,18 @@
 #define CS_EntityInteractionObjectSoundReturn 0x2FF7u
 #define CS_EntityInteractionSecondSoundReturn 0x304Eu
 #define CS_EntityInteractionThirdSoundReturn 0x30A5u
+#define CS_FinishEntityInteractions 0x1FE8u
+#define CS_EntityIterationTail 0x1FEBu
+#define CS_AdvanceEntityZeroState 0x2047u
+#define CS_StoreEntityProbeHeight 0x20D6u
+#define CS_MarkEntityInactive 0x20E2u
+#define CS_FinishEntityStepHeight 0x2148u
+#define SEG09A9_EntityUpdateGate 0x002Bu
+#define SEG09A9_EntitySlotsRemaining 0x0042u
+#define SEG09A9_EntitySlotBound 0x0043u
+#define SEG09A9_EntityScanRequest 0x004Bu
+#define SEG09A9_EntityScanCursor 0x004Cu
+#define SEG09A9_EntityWorkGuard 0x0050u
+#define SEG09A9_EntityRecordsBase 0x0088u
+#define CS_EntityZeroStateAfterPixelCall 0x206Bu
 #endif

@@ -146,8 +146,14 @@ sites in311 fixtures,486 new main bytes/162 sites/all61 branch outcomes and
 eight mutants. Actual popped AX and returned DS/SI/CX own the later behavior.
 The normal C interface uses explicit inputs/results; the full-register adapter
 is confined to the oracle and the INT architecture boundary. See pcspeaker.md
-and entity-interactions.md. The next parent is1F19: map state priority, record
-ownership and shared1FE8/1FEB tails before connecting its larger body.
+and entity-interactions.md. The1F19 state priority and live record/counter/scan
+ownership are now recorded in entity-simulation.md. Shared1FE8/20D6/20E2/2148
+JMP tails pass24 fixtures/55 unique bytes/18 sites/eight edges/six mutants.
+Their zero-state2047 parent passes37 fixtures/309 additional bytes/104 sites/
+33 owned edges/eight mutants, including actual5DC6 and interaction CALL/RETs.
+The combined364 new bytes retain overlap, segment, stack and device contracts.
+Next connect21B0..22DE, then the remaining states and live1FEB iteration/scan
+parent. Its direct20E2 exit skips the Y store; optional INT61 remains explicit.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

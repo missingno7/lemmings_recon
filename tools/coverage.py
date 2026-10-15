@@ -241,6 +241,9 @@ def report():
     entity_mask_rows=read_json(BUILD/'entity-mask-rows-differential.json')
     coordinate_pixel=read_json(BUILD/'coordinate-pixel-differential.json')
     entity_countdown=read_json(BUILD/'entity-countdown-differential.json')
+    entity_interactions=read_json(BUILD/'entity-interactions-differential.json')
+    entity_finish=read_json(BUILD/'entity-finish-differential.json')
+    entity_zero_state=read_json(BUILD/'entity-zero-state-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -274,7 +277,10 @@ def report():
                         ('clipped entity mask',entity_mask),
                         ('entity mask rows',entity_mask_rows),
                         ('coordinate pixel',coordinate_pixel),
-                        ('entity countdown',entity_countdown)):
+                        ('entity countdown',entity_countdown),
+                        ('entity interactions',entity_interactions),
+                        ('entity finish tails',entity_finish),
+                        ('entity zero state',entity_zero_state)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py --all')
@@ -291,6 +297,9 @@ def report():
     executed.update(entity_mask_rows['executed_instruction_addresses'])
     executed.update(coordinate_pixel['executed_instruction_addresses'])
     executed.update(entity_countdown['executed_instruction_addresses'])
+    executed.update(entity_interactions['executed_instruction_addresses'])
+    executed.update(entity_finish['executed_instruction_addresses'])
+    executed.update(entity_zero_state['executed_instruction_addresses'])
     executed.update(selection['executed_instruction_addresses'])
     for path,digest in selection_full['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
@@ -316,6 +325,7 @@ def report():
     reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
     reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
     reports+=(entity_pattern,entity_pixel,entity_pixel_bus,entity_vga,entity_stroke,mask_generators,generated_graphics,entity_mask,entity_mask_rows,coordinate_pixel,entity_countdown)
+    reports+=(entity_interactions,entity_finish,entity_zero_state)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     decoded_sites={instruction['address'] for instruction in analysis['instructions']}

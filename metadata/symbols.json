@@ -15536,7 +15536,8 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live slot-bound/counter/scan ownership and first-match state priority audited; shared JMP tails ledger-owned; docs/entity-simulation.md"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 3744
@@ -57535,5 +57536,298 @@
       "Immediate continuation after original INT60/61 in2EC0 interaction routine"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 8168,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 3,
+    "symbol_name": "FinishEntityInteractions",
+    "aliases": [
+      "loc_1FE8"
+    ],
+    "callers": [],
+    "callees": [
+      11968
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared JMP entry CALLs2EC0 through live SS, actual return word must select1FEB; docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_finish.c",
+    "c_core": "lmn_entity_finish_core",
+    "c_code_ranges": [
+      [
+        8168,
+        8171
+      ]
+    ],
+    "verification_evidence": "tests/entity_finish.py:24 fixtures at logical-core/JMP-adapter boundaries,55 unique bytes/18 owned sites/all8 jump edges,95 integrated interaction sites,2026 ordered events,6 completed mutants; signed thresholds, live +06 reread, actual CALL/RET and changed targets, byte-only mark, physical/offset wrap, VGA and sound seams. docs/entity-simulation.md"
+  },
+  {
+    "address": 8171,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 8,
+    "symbol_name": "EntityIterationTail",
+    "aliases": [
+      "loc_1FEB"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live POP ES, SI+=2D, DEC DS0042, then1FF3 branch; no independent near-call frame; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 8263,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 361,
+    "symbol_name": "AdvanceEntityZeroState",
+    "aliases": [
+      "loc_2047"
+    ],
+    "callers": [],
+    "callees": [
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1F65 enters when record+08 is zero; animation/signed-X/pixel probes use shared20D6/20E2/2148 and1FE8/1FEB tails; docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_zero_state.c",
+    "c_core": "lmn_entity_zero_state_core",
+    "c_code_ranges": [
+      [
+        8263,
+        8406
+      ],
+      [
+        8425,
+        8520
+      ],
+      [
+        8553,
+        8624
+      ]
+    ],
+    "verification_evidence": "tests/entity_zero_state.py:37 fixtures at logical-core/JMP-adapter boundaries,309 unique owned bytes/104 sites/all33 jump edges,182 integrated main sites,5094 ordered events,8 completed mutants. Signed X/BP bounds, all forward/reverse probes, ordered state transitions, live pitch/callback/stack/record aliases, physical/offset wrap, actual pixel and interaction returns, DF and RAM/VGA bus. Neutral interaction map domain; child sound seams separately verified by entity_finish. docs/entity-simulation.md"
+  },
+  {
+    "address": 8406,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 19,
+    "symbol_name": "StoreEntityProbeHeight",
+    "aliases": [
+      "loc_20D6"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "JMP entries2D90/2D9F/2DAE/2DB2 and zero-state store live BP then signed B4 threshold; docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_finish.c",
+    "c_core": "lmn_entity_finish_core",
+    "c_code_ranges": [
+      [
+        8406,
+        8425
+      ]
+    ],
+    "verification_evidence": "tests/entity_finish.py:24 fixtures at logical-core/JMP-adapter boundaries,55 unique bytes/18 owned sites/all8 jump edges,95 integrated interaction sites,2026 ordered events,6 completed mutants; signed thresholds, live +06 reread, actual CALL/RET and changed targets, byte-only mark, physical/offset wrap, VGA and sound seams. docs/entity-simulation.md"
+  },
+  {
+    "address": 8418,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 7,
+    "symbol_name": "MarkEntityInactive",
+    "aliases": [
+      "loc_20E2"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Peer JMPs skip20D6 Y store and CMP, write record+26=FF then1FEB; docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_finish.c",
+    "c_core": "lmn_entity_finish_core",
+    "c_code_ranges": [
+      [
+        8418,
+        8425
+      ]
+    ],
+    "verification_evidence": "tests/entity_finish.py:24 fixtures at logical-core/JMP-adapter boundaries,55 unique bytes/18 owned sites/all8 jump edges,95 integrated interaction sites,2026 ordered events,6 completed mutants; signed thresholds, live +06 reread, actual CALL/RET and changed targets, byte-only mark, physical/offset wrap, VGA and sound seams. docs/entity-simulation.md"
+  },
+  {
+    "address": 8520,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 33,
+    "symbol_name": "FinishEntityStepHeight",
+    "aliases": [
+      "loc_2148"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared JMP entry stores BP then signed BP+record06 <=0A clamp through9-live06, NEG27, AND08 FFF7; docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_finish.c",
+    "c_core": "lmn_entity_finish_core",
+    "c_code_ranges": [
+      [
+        8520,
+        8553
+      ]
+    ],
+    "verification_evidence": "tests/entity_finish.py:24 fixtures at logical-core/JMP-adapter boundaries,55 unique bytes/18 owned sites/all8 jump edges,95 integrated interaction sites,2026 ordered events,6 completed mutants; signed thresholds, live +06 reread, actual CALL/RET and changed targets, byte-only mark, physical/offset wrap, VGA and sound seams. docs/entity-simulation.md"
+  },
+  {
+    "address": 43,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityUpdateGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1F19/30A6/3150/3944/3F52/3FEF/4032 compare exactly FF;4028 XORs FF; startup clears; aliases remain open. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 66,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntitySlotsRemaining",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1F31 copies live0043 here;1FEF decrements the live byte after each slot, including inactive slots. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 67,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntitySlotBound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "30CF selects slot0088+[0043]*2D;314B increments after producer;1F2E loop bound includes inactive slots; unchecked extent. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 75,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityScanRequest",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "400B writes FF;1FF8 enables scan;203C clears when live004C equals0043; no request-time cursor reset. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 76,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityScanCursor",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "2005/2008 compares live cursor against0043;2026/2037 increments; no explicit reset at400B/203C. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 80,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityWorkGuard",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1F26 and3670 set FF;1FFF/2041/3678 clear;3157 gates on exact FF;203B can return leaving it FF. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 136,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 45,
+    "symbol_name": "EntityRecordsBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1F2B and30C9 slot base;30D3..30F3 clear one2D-byte slot;1FEC stride2D; whole array extent/max count unproven. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8299,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityZeroStateAfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near-CALL return word from2068; changed live SS target stops before zero-state continuation. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

@@ -136,15 +136,36 @@ reserved IRET data words remain unrestricted and no memory bytes are masked.
 See entity-interactions.md and pcspeaker.md for exact scope and the original-IRET
 poison diagnostic.
 
-Next investigate1F19, now the nearest untranslated parent:3,744 decoded bytes/
-1,255 sites. Fresh tree/bottom-up views show all eleven direct CALL children have
-scoped native C. Preserve those device, IRQ and changed-target seams. First map
-its state-bit priority, live DS0088 record stride2D, count/current-record owners
-and shared1FE8 interaction /1FEB iteration tails. The initial zero-state block
-at2047 advances animation and signed X, bounds it, then uses the pixel helpers;
-its many jumps into the shared tails need explicit continuation contracts before
-connecting the larger parent. Tested children do not establish complete
-simulation readiness.
+The1F19 ownership audit now records the slot-bound versus live-pass counter,
+scan request/cursor, persistent work guard, exact gate XOR, ordered state-bit
+priority and per-record ES save in entity-simulation.md. These are ledger-owned
+DS locations; the unchecked record array extent remains unproven. The shared
+1FE8/20D6/20E2/2148 JMP tails now have scoped native acceptance:24fixtures at
+core/adapter boundaries,55unique bytes/18sites/eight edges,95integrated
+interaction sites,2,026events and six completed mutants. Their actual interaction
+CALL/RET and changed sound-child seams remain explicit.
+
+The initial zero-state2047 branch now passes37fixtures at core/adapter boundaries:
+309unique caller bytes/104sites/all33 owned jump edges,182integrated main sites,
+5,094ordered events and eight completed mutants. Its actual5DC6 CALL/RET and
+shared finish paths preserve signed/wrapped probes, live pitch/callback/record
+and stack aliases, DF and RAM/VGA observations. The focused parent map is neutral;
+shared-tail sound seams retain their own gate. Together these two new scopes own
+364unique bytes; child and overlapping suffix bytes are not counted again.
+This is scoped acceptance, not aggregate game or native-device readiness.
+
+Next,21B0..22DE is the state leaf:303bytes/87sites, entered by
+first-match state mask0004. It increments+28 modulo4, uses unsigned byte tests
+on raw+23/+25, then up to three pixel samples with signed B4 height checks.
+Its real5DC6 CALL returns at2205; exhausted first/second thresholds jump20E2
+without storing Y. A late occupied sample uses unsigned+23<=3C to choose its
+transition. The optional AX0408 INT61 at229E returns at22A0 before1FE8. Preserve
+live DS0004 pitch, callback slots002E/003A, sound gates2010/25A7, the actual
+CALL/INT frames and direct1FE8 versus20E2 exits. Those children already have
+scoped C; broader state meaning, IRQ timing and the whole1F19 parent remain open.
+Fresh tree/bottom-up views still show1F19 as the untranslated parent with all
+eleven direct CALL children scoped native. Tested children do not establish
+complete simulation readiness.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

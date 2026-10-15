@@ -340,7 +340,7 @@ class Access:
         return value & 0xFF
 
 
-def original(case, memory, regs, device, core):
+def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
     cpu = Uc(UC_ARCH_X86, UC_MODE_16)
     cpu.mem_map(0, SIZE * 2)
     cpu.mem_write(0, bytes(memory))
@@ -354,7 +354,8 @@ def original(case, memory, regs, device, core):
         cpu.mem_write(address + SIZE, bytes((value,)))
 
     access.mirror = mirror
-    current_flags, current_mask = regs['flags'], FLAGS
+    # Parent oracles carry defined FLAGS across their real CALL boundary.
+    current_flags, current_mask = regs['flags'], entry_flag_mask
     previous = None
     stopped, failure, status = False, None, None
     steps = 0

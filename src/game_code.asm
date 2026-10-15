@@ -5,15 +5,20 @@ loc_2EB2 equ EntityCountdownMaskedSoundReturn
 ; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
 sub_1F19:
-    cmp byte [0x2b],0xff ; @01F19
+; Simulation ownership contract (docs/entity-simulation.md): DS remains live.
+; [0043] bounds slots, including inactive records; [0042] is the live pass
+; counter. SI starts0088 and advances2D. No array extent is established.
+; Each visited slot PUSHes ES; only the shared1FEB tail POPs the live word.
+; Dispatch on +08 is first-match, not an independent set of Boolean handlers.
+    cmp byte [EntityUpdateGate-GameDataImage],0xff ; @01F19
     jnz loc_1F23 ; @01F1E
     jmp loc_1FFF ; @01F20
 loc_1F23:
     call ConfigureEntityPixelReadback ; @01F23
-    mov byte [0x50],0xff ; @01F26
-    mov si,0x88 ; @01F2B
-    mov al,[0x43] ; @01F2E
-    mov [0x42],al ; @01F31
+    mov byte [EntityWorkGuard-GameDataImage],0xff ; @01F26
+    mov si,EntityRecordsBase-GameDataImage ; @01F2B
+    mov al,[EntitySlotBound-GameDataImage] ; @01F2E
+    mov [EntitySlotsRemaining-GameDataImage],al ; @01F31
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01F34
     jnz loc_1F3B ; @01F36
     jmp loc_1FFF ; @01F38
@@ -103,23 +108,28 @@ loc_1FE0:
     test ax,0x4000 ; @01FE0
     jz loc_1FE8 ; @01FE3
     jmp loc_2340 ; @01FE5
+FinishEntityInteractions:
 loc_1FE8:
+; Shared JMP entry: CALL frame is real SS:SP, returning through live word1FEB.
+; The child may change DS/SI/CX/CS/SS/SP; preserve its explicit sound seams.
     call sub_2EC0 ; @01FE8
+EntityIterationTail:
 loc_1FEB:
+; No new frame: consume the per-record ES save, then update live SI/DS:[0042].
     pop es ; @01FEB
     add si,byte +0x2d ; @01FEC
-    dec byte [0x42] ; @01FEF
+    dec byte [EntitySlotsRemaining-GameDataImage] ; @01FEF
     jz loc_1FF8 ; @01FF3
     jmp loc_1F3B ; @01FF5
 loc_1FF8:
-    cmp byte [0x4b],0x0 ; @01FF8
+    cmp byte [EntityScanRequest-GameDataImage],0x0 ; @01FF8
     jnz loc_2005 ; @01FFD
 loc_1FFF:
-    mov byte [0x50],0x0 ; @01FFF
+    mov byte [EntityWorkGuard-GameDataImage],0x0 ; @01FFF
     ret ; @02004
 loc_2005:
-    mov al,[0x4c] ; @02005
-    cmp al,[0x43] ; @02008
+    mov al,[EntityScanCursor-GameDataImage] ; @02005
+    cmp al,[EntitySlotBound-GameDataImage] ; @02008
     jz loc_203C ; @0200C
     mov cx,0x2d ; @0200E
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @02011
@@ -130,20 +140,26 @@ loc_2005:
     jnz loc_2037 ; @0201E
     cmp byte [si+0x26],0xff ; @02020
     jnz loc_202C ; @02024
-    inc byte [0x4c] ; @02026
+    inc byte [EntityScanCursor-GameDataImage] ; @02026
     jmp short loc_2005 ; @0202A
 loc_202C:
     test word [si+0x8],0x3 ; @0202C
     jnz loc_2037 ; @02031
     mov byte [si+0x20],0x4f ; @02033
 loc_2037:
-    inc byte [0x4c] ; @02037
+    inc byte [EntityScanCursor-GameDataImage] ; @02037
     ret ; @0203B
 loc_203C:
-    mov byte [0x4b],0x0 ; @0203C
-    mov byte [0x50],0x0 ; @02041
+    mov byte [EntityScanRequest-GameDataImage],0x0 ; @0203C
+    mov byte [EntityWorkGuard-GameDataImage],0x0 ; @02041
     ret ; @02046
+AdvanceEntityZeroState:
 loc_2047:
+; JMP entry from1F65 after +08==0; no independent near RET.
+; +28 increments modulo8; signed +27 adds to X, then signed[0010,0680)
+; bounds select NEG+27 or actual CALL5DC6/RET206B. All row-pitch and
+; record reads remain live. Shared20D6/20E2/2148 tails also serve peer states.
+; C owns2047..20D5,20E9..2147,2169..21AF; tails have separate ownership.
     mov al,[si+0x28] ; @02047
     inc al ; @0204A
     and al,0x7 ; @0204C
@@ -160,6 +176,7 @@ loc_205F:
     jmp loc_2142 ; @02065
 loc_2068:
     call PrepareEntityPixelSample ; @02068
+EntityZeroStateAfterPixelCall:
     mov bp,[si+0x2] ; @0206B
     mov al,[es:di] ; @0206E
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02071
@@ -194,12 +211,18 @@ loc_2068:
     mov [si+0x14],ax ; @020CB
     mov byte [si+0x2a],0x0 ; @020CE
     and byte [si+0x24],0x1 ; @020D2
+StoreEntityProbeHeight:
 loc_20D6:
+; Shared JMP entry with BP=candidate Y. Store first, then signed compare B4.
+; Peer entries:2D90/2D9F/2DAE/2DB2. No CALL frame around this continuation.
     mov [si+0x2],bp ; @020D6
     cmp bp,0xb4 ; @020D9
     jnl loc_20E2 ; @020DD
     jmp loc_1FE8 ; @020DF
+MarkEntityInactive:
 loc_20E2:
+; Direct peer JMPs skip20D6 store/CMP; preserve incoming registers/FLAGS.
+; +26=FF keeps the slot in [0043]'s bound and skips interactions this pass.
     mov byte [si+0x26],0xff ; @020E2
     jmp loc_1FEB ; @020E6
 loc_20E9:
@@ -242,7 +265,11 @@ loc_20E9:
 loc_2142:
     neg byte [si+0x27] ; @02142
     jmp loc_1FE8 ; @02145
+FinishEntityStepHeight:
 loc_2148:
+; Shared JMP entry: store BP, add live +06, signed <=0A selects clamp.
+; Clamp rereads +06 after BP=9, writes Y, NEGs +27 and clears state bit0008.
+; Peer entries:23E1/23F0/2634/2651/2690/27A2/27E5. Continue via1FE8.
     mov [si+0x2],bp ; @02148
     add bp,[si+0x6] ; @0214B
     cmp bp,byte +0xa ; @0214E
@@ -1444,7 +1471,7 @@ loc_2D75:
 loc_2D78:
     cmp al,0x5 ; @02D78
     jnz loc_2D83 ; @02D7A
-    cmp byte [0x4b],0xff ; @02D7C
+    cmp byte [EntityScanRequest-GameDataImage],0xff ; @02D7C
     jnz loc_2D83 ; @02D81
 loc_2D83:
     call PrepareEntityPixelSample ; @02D83
@@ -1769,7 +1796,7 @@ EntityInteractionThirdSoundReturn:
 loc_30A5:
     ret ; @030A5
 sub_30A6:
-    cmp byte [0x2b],0xff ; @030A6
+    cmp byte [EntityUpdateGate-GameDataImage],0xff ; @030A6
     jnz loc_30B0 ; @030AB
     jmp loc_314F ; @030AD
 loc_30B0:
@@ -1783,9 +1810,9 @@ loc_30BA:
 loc_30C3:
     mov al,[0x49] ; @030C3
     mov [0x48],al ; @030C6
-    mov si,0x88 ; @030C9
+    mov si,EntityRecordsBase-GameDataImage ; @030C9
     mov al,[0x47] ; @030CC
-    mov ah,[0x43] ; @030CF
+    mov ah,[EntitySlotBound-GameDataImage] ; @030CF
     db 0x3a,0xc4 ; ENCODED: cmp al,ah (NASM chooses a different encoding) ; @030D3
     jz loc_314F ; @030D5
     db 0x8a,0xdc ; ENCODED: mov bl,ah (NASM chooses a different encoding) ; @030D7
@@ -1825,13 +1852,13 @@ loc_30F3:
     mov [si+0x14],ax ; @03140
     mov byte [si+0x2a],0x0 ; @03143
     and byte [si+0x24],0x1 ; @03147
-    inc byte [0x43] ; @0314B
+    inc byte [EntitySlotBound-GameDataImage] ; @0314B
 loc_314F:
     ret ; @0314F
 sub_3150:
-    cmp byte [0x2b],0xff ; @03150
+    cmp byte [EntityUpdateGate-GameDataImage],0xff ; @03150
     jz loc_31BD ; @03155
-    cmp byte [0x50],0xff ; @03157
+    cmp byte [EntityWorkGuard-GameDataImage],0xff ; @03157
     jnz loc_3161 ; @0315C
     jmp short loc_31BD ; @0315E
 ; UNKNOWN: unresolved bytes
@@ -2309,7 +2336,7 @@ loc_361F:
     jmp loc_35AC ; @03631
 sub_3634:
     mov di,0x88 ; @03634
-    mov cl,[0x43] ; @03637
+    mov cl,[EntitySlotBound-GameDataImage] ; @03637
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @0363B
     jz loc_368D ; @0363D
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @0363F
@@ -2336,10 +2363,10 @@ loc_3645:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0366F
 loc_3670:
-    mov byte [0x50],0xff ; @03670
+    mov byte [EntityWorkGuard-GameDataImage],0xff ; @03670
     call DrawObjectSprite ; @03675
 sub_3678:
-    mov byte [0x50],0x0 ; @03678
+    mov byte [EntityWorkGuard-GameDataImage],0x0 ; @03678
 loc_367D:
     pop di ; @0367D
     pop cx ; @0367E

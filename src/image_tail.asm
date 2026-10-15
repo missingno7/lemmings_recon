@@ -11,6 +11,14 @@ KeyboardScanCodeByte equ GameDataImage+0x1FD0
 LevelViewOriginPixels equ GameDataImage+0x0000
 LevelViewOriginBytes equ GameDataImage+0x0002
 EntityPixelRowPitchBytes equ GameDataImage+0x0004
+; Simulation owners are live DS storage, including aliases; no array bound inferred.
+EntityUpdateGate equ GameDataImage+0x002B
+EntitySlotsRemaining equ GameDataImage+0x0042
+EntitySlotBound equ GameDataImage+0x0043
+EntityScanRequest equ GameDataImage+0x004B
+EntityScanCursor equ GameDataImage+0x004C
+EntityWorkGuard equ GameDataImage+0x0050
+EntityRecordsBase equ GameDataImage+0x0088
 GeneratedGraphicsBufferSegment equ GameDataImage+0x1fe8
 LevelHeaderWord04LowByte equ GameDataImage+0x0044
 LevelCreationLimit equ GameDataImage+0x0047
