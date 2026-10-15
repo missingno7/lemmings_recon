@@ -45,3 +45,13 @@ No gameplay logic or semantic name has been copied from them. Naming must contin
 to be supported by the original instructions. PKLITE research references include
 [Jason Summers' analysis](https://github.com/jsummers/pkla); the implemented decoder
 was derived directly from this binary's stub, not downloaded code.
+
+Normal translated C interfaces expose explicit inputs and results. For example,
+the entity interaction core takes live segments, record/object cursors, stack,
+count, auxiliary value and flags; it returns observed results and a continuation.
+Its entry overwrites AX/BX, while BP/ES are preserved by the body and composed
+pinned sound prefixes, so those four registers are not inputs to that core.
+The oracle adapter reconstructs full machine state and performs the actual RET.
+Machine-register packets used by the INT60 connector describe its declared CPU
+boundary. They are transient values at that boundary, with canonical RAM still
+the only game-state owner; normal game logic composes through named C contracts.

@@ -121,7 +121,7 @@ subtraction has no clamp. See entity-mask.md and coordinate-pixel.md. All nine
 identified helpers in entity_graphics.asm now have scoped C implementations.
 The thirteen-row caller's signed-selector seam and broader initialization
 remain open. Fresh 1F19 graphs now leave2EC0 as its sole direct untranslated child,
-ahead of the parent. The shared-tail 5CC1 caller remains untranslated.
+ahead of the parent at that checkpoint. The shared-tail 5CC1 caller remains untranslated.
 
 The sound boundary for 2E04 now has native AdLib/Tandy dispatcher prefixes and
 six latch setters:106 unique bytes/65 sites/27 edges, verified in766 fixtures
@@ -140,8 +140,14 @@ dependency now has a scoped native0182..01AF dispatcher:282 core/adapter
 fixtures,46 new bytes/29 sites/six edges and eight mutants. Effect/Stop bus
 composition has274 additional fixtures/18 sites/two LOOP edges/five mutants.
 Temporary DS and actual table/stack/RET/IRET words stay live; Tick and other
-targets remain explicit exits. Next connect declared INT60 frame/vector
-transport to that dispatcher, then translate2EC0. See pcspeaker.md.
+targets remain explicit exits. The declared INT60 connector now passes25
+focused fixtures and six mutants. Its2EC0 parent now composes all five service
+sites in311 fixtures,486 new main bytes/162 sites/all61 branch outcomes and
+eight mutants. Actual popped AX and returned DS/SI/CX own the later behavior.
+The normal C interface uses explicit inputs/results; the full-register adapter
+is confined to the oracle and the INT architecture boundary. See pcspeaker.md
+and entity-interactions.md. The next parent is1F19: map state priority, record
+ownership and shared1FE8/1FEB tails before connecting its larger body.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

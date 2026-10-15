@@ -16,11 +16,13 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("pcspeaker_bus","pcspeaker_dispatch","entity_countdown","sound_interrupt","sound_latches","coordinate_pixel","entity_mask_rows","entity_mask","mask_generators","generated_graphics","entity_stroke","entity_vga","entity_pixel","entity_pattern","checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","cache_allocation","display_status","display_start","display_setup","display_pages","background_drawing","palette_channels","palette_rows","palette_ports","palette_row_select","palette_transition","retry_input","retry_ui","text_glyph","text_stream","video_restore","vector_restore","timer_restore","fatal_cleanup","file_error","resource_raw_full","resource_select_full","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","level_header","level_finish","level_initialize","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs","drawing_dispatch","drawing_source","drawing_plan","aligned_opaque","drawing_render","aligned_masked","aligned_mask_effects","aligned_protected","aligned_read_mask","shifted_mask_effects","shifted_opaque","shifted_masked","shifted_protected","shifted_read_mask","terrain_drawing","terrain_stream","object_drawing","level_redraw"):
+    if cluster not in ("pcspeaker_interrupt","entity_interactions","pcspeaker_bus","pcspeaker_dispatch","entity_countdown","sound_interrupt","sound_latches","coordinate_pixel","entity_mask_rows","entity_mask","mask_generators","generated_graphics","entity_stroke","entity_vga","entity_pixel","entity_pattern","checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","cache_allocation","display_status","display_start","display_setup","display_pages","background_drawing","palette_channels","palette_rows","palette_ports","palette_row_select","palette_transition","retry_input","retry_ui","text_glyph","text_stream","video_restore","vector_restore","timer_restore","fatal_cleanup","file_error","resource_raw_full","resource_select_full","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","level_header","level_finish","level_initialize","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs","drawing_dispatch","drawing_source","drawing_plan","aligned_opaque","drawing_render","aligned_masked","aligned_mask_effects","aligned_protected","aligned_read_mask","shifted_mask_effects","shifted_opaque","shifted_masked","shifted_protected","shifted_read_mask","terrain_drawing","terrain_stream","object_drawing","level_redraw"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
     sources=[ROOT/"c"/(cluster+".c")]
+    if cluster=="pcspeaker_interrupt":sources += [ROOT/"c/pcspeaker_dispatch.c",ROOT/"c/pcspeaker.c"]
+    if cluster=="entity_interactions":sources += [ROOT/"c"/(n+".c") for n in ("pcspeaker_interrupt","pcspeaker_dispatch","pcspeaker","sound_interrupt","sound_latches")]
     if cluster=="pcspeaker_bus":sources=[ROOT/"c/pcspeaker.c"]
     if cluster=="pcspeaker_dispatch":sources += [ROOT/"c/pcspeaker.c"]
     if cluster=="entity_countdown":sources += [ROOT/"c/sound_interrupt.c",ROOT/"c/sound_latches.c"]
@@ -80,6 +82,8 @@ def build(output=None, mutation=0, cluster="checksum"):
             "steel_cells_bus", "object_coordinates_bus", "level_finish",
             "minimap_column", "minimap_row", "minimap_sample")]
     defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
+    if cluster=="pcspeaker_interrupt":defines=["-DMUTATION=0","-DPC_INTERRUPT_MUTATION="+str(mutation)]
+    if cluster=="entity_interactions":defines=["-DMUTATION=0","-DENTITY_INTERACTIONS_MUTATION="+str(mutation)]
     if cluster=="pcspeaker_bus":defines=["-DMUTATION=0","-DEFFECT_BUS_MUTATION="+str(mutation)]
     if cluster=="pcspeaker_dispatch":defines=["-DMUTATION=0","-DPC_DISPATCH_MUTATION="+str(mutation)]
     if cluster=="entity_countdown":defines=["-DENTITY_COUNTDOWN_MUTATION="+str(mutation)]

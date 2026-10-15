@@ -15988,9 +15988,11 @@
     "address": 11968,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_2EC0",
-    "aliases": [],
+    "size": 486,
+    "symbol_name": "ApplyEntityCellInteractions",
+    "aliases": [
+      "sub_2EC0"
+    ],
     "callers": [
       8168
     ],
@@ -16535,10 +16537,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static2EC0..30A5 live SS interaction cells and saved-AX nibble dispatch; docs/entity-interactions.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 486
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 486,
+    "c_implementation": "c/entity_interactions.c",
+    "c_core": "lmn_entity_interactions_core",
+    "c_code_ranges": [
+      [
+        11968,
+        12454
+      ]
+    ],
+    "verification_evidence": "tests/entity_interactions.py:311 fixtures at logical-core/actual-RET boundaries,486 new main bytes/162 sites/all61 branch outcomes;all5 INT sites,37 PC and28 external-driver sites,17648 ordered events;8 completed mutants. Live SS samples/popped AX dispatch, callback/object/record aliases, actual INT60/61 registers and explicit changed/unbound/child exits. Declared INT transport and admissible entry FLAGS; all memory bytes compared. docs/entity-interactions.md"
   },
   {
     "address": 12454,
@@ -57433,6 +57445,94 @@
     "confidence": "PROVEN",
     "evidence": [
       "InitializeSoundDriver writes2010=00/FF and25A7=01/03 at05A4..0606;2E4B/2E52 and2E9F/2EA6 read these live gates; masks are preserved, not a boolean normalization"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 12174,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EntityInteractionPcSoundReturn",
+    "aliases": [
+      "loc_2F8E"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Immediate continuation after original INT60/61 in2EC0 interaction routine"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 12193,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EntityInteractionFirstSoundReturn",
+    "aliases": [
+      "loc_2FA1"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Immediate continuation after original INT60/61 in2EC0 interaction routine"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 12279,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EntityInteractionObjectSoundReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Immediate continuation after original INT60/61 in2EC0 interaction routine"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 12366,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EntityInteractionSecondSoundReturn",
+    "aliases": [
+      "loc_304E"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Immediate continuation after original INT60/61 in2EC0 interaction routine"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 12453,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EntityInteractionThirdSoundReturn",
+    "aliases": [
+      "loc_30A5"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Immediate continuation after original INT60/61 in2EC0 interaction routine"
     ],
     "verification_status": "STATIC"
   }

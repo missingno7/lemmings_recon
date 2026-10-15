@@ -1,8 +1,9 @@
-# Static frontier at 2EC0
+# Entity interaction cells and transitions
 
-The remaining direct untranslated child of1F19 is2EC0..30A5:486 decoded bytes,
-162 sites, caller1FE8 and no decoded CALL children. This is a static contract,
-not native acceptance. Keep the five interrupt services as dependencies.
+`ApplyEntityCellInteractions` at2EC0..30A5 has a maintained C core and actual
+near-RET adapter:486 original bytes/162 sites, caller1FE8 and no decoded CALL
+children. The five interrupt services remain explicit composed dependencies.
+This is scoped native acceptance, not complete simulation or game acceptance.
 
 The entry reads DS:[SI] and [SI+2]. Signed Y>=00B0 returns at2F3A. Otherwise,
 it subtracts0010 from Y, logically shifts both words twice, saves X/4 and DX
@@ -46,7 +47,48 @@ at30A3. The existing native INT61 connector can compose the four latter
 paths, retaining unbound vectors and changed IRET targets. The PC-speaker
 INT60 dispatcher at loaded0842:0182 now has scoped C, composing the exact
 LoadEffect/Stop targets through live table, temporary DS, near-return and IRET
-words. Tick and other targets remain explicit bus-domain seams. Next add the
-declared INT60 frame/vector transport, carrying all changed registers and actual
-CS:IP, before translating and claiming the complete2EC0 composition. See pcspeaker.md and
-interrupts.md. Loaded overlays and initial main zero storage remain separate.
+words. The declared INT60 frame/vector connector now carries all changed
+registers and actual CS:IP into this parent. Tick and other targets remain explicit
+bus-domain seams. See pcspeaker.md and interrupts.md. Loaded overlays and initial
+main zero storage remain separate.
+
+## Native acceptance
+
+The logical core takes count, auxiliary value, record/object cursors, DS/CS/SS,
+stack offset and flags; it returns named results and an actual continuation.
+AX/BX are overwritten at entry, while BP/ES are preserved by this body and every
+composed pinned sound prefix. They are therefore absent from the logical call.
+The oracle adapter retains BP/ES and consumes the actual outer RET only on a
+ready result. Register packets at the INT60 boundary are transient CPU-boundary
+values, not a permanent interface between normal game functions or shadow state.
+
+`tests/entity_interactions.py` passes311 fixtures at both boundaries: all256
+map bytes plus signed Y and logical-shift/wrap cases, both direction guards,
+all transition masks and sound gates, live callback/object/record/frame aliases,
+VGA map reads and seeded poison. It covers every one of the162 main sites and
+all61 decoded conditional/unconditional branch outcomes. All five original INT
+sites execute, integrating37 PC-speaker sites and28 AdLib/Tandy sites;17,648
+ordered bus events compare byte values and instruction-phase defined flags.
+Six direct-memory repetitions separately exercise the optional NULL-bus path.
+Eight separately compiled mutants must complete with a mismatch. Deadline,
+process/tree commit and hard callback limits fail verification rather than
+counting as mutant evidence; owned temporary DLL directories are removed.
+
+A strong stack/record fixture uses DS=SS=5000, SP=D000, SI=CFD3. The second
+sample's store at record+2B overwrites saved AX's low byte at CFFE. First cell04
+and second cell05 therefore select transition5 from popped AL; caching04 would
+select the object path. An object fixture aliases record+26 with object+1B, so
+the entity store changes the later sound byte toFF. A PC-speaker saved-DS change
+selects a different live second gate and then calls INT61 through that returned
+DS, while saved SI/CX changes survive the parent. Unbound vectors, a command-table
+pointer into LoadEffect at01B3, changed child RET and changed IRET targets stop
+with their actual state rather than resuming a guessed continuation.
+
+Entry FLAGS are admissible CPU values, `(raw & 7FD5h) | 2` with TF clear. Saved
+frame words remain unrestricted; full RAM and event byte values are compared.
+The reserved-bit injection artifact and independent original-IRET diagnostic are
+recorded in pcspeaker.md. No memory mask hides a difference. Writes changing
+forthcoming code, asynchronous debug/IRQ handlers, device timing and unknown
+service execution remain outside the current bodies. The311-case proof does not
+close the broader1F19 state machine or full game. Child bytes overlap existing
+translations and are not added to the486 main bytes.

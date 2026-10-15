@@ -103,7 +103,46 @@ stack or table as a separate state copy would change the executed child.
 
 The dispatcher and bus suites use constructed states and quiescent asynchronous
 interrupts. Their acceptance is scoped to the declared entry/body/exit contracts;
-it does not establish hardware bus timing or IRQ scheduling. INT60 frame/vector
-transport must still connect this entry to the main 2EC0 caller. Mutable unknown
+it does not establish hardware bus timing or IRQ scheduling. Mutable unknown
 targets, 162 unresolved payload bytes, broader sound playback and timing remain
 open. Helper or dispatcher acceptance does not establish whole-game readiness.
+
+## INT60 frame/vector connection
+
+`c/pcspeaker_interrupt.c` composes the dispatcher with the declared real-mode INT
+boundary also used for INT61 (see entity-countdown.md). It saves entry FLAGS,
+clears IF/TF for subsequent operations, pushes the interrupted CS and supplied
+return IP, then reads the live IVT CS word at 0182 followed by IP at 0180. Frame
+stores can alias the vector, so the lookup is not cached before the saves. Words
+use the next physical byte and 20-bit wrap. The original-code harness supplies
+this architecture boundary while executing the identified driver independently;
+it does not claim CPU microcode or physical bus timing verification.
+
+An exact bound segment and offset0182 enter the native dispatcher. An absent
+binding or other vector returns its actual CS:IP and built stack frame as an
+explicit unbound exit. The dispatcher may restore any of its six saved registers
+from changed stack words, so the connector carries every returned register.
+Untranslated child and changed near-return exits retain their actual states.
+A completed IRET is checked against the interrupted CS and supplied return IP;
+a changed destination is reported without resuming the caller. The binding
+requires the pinned instruction domain; code-mutating stack/data aliases stay
+outside these bodies rather than being repaired or interpreted.
+
+The focused transport suite passes25 fixtures with1,234 ordered byte events,
+29 dispatcher sites, six dispatcher edges and18 integrated child sites. Six
+compiled mutants complete with mismatches. Cases include all three recovered
+effect IDs, Stop/Tick/unknown seams, changed vectors after frame writes, the
+frame overwriting its own IVT entry, changed child/interrupt returns, all six
+saved-register values, real word wraps and a VGA stack with map mask zero.
+The latter leaves preseeded frame words intact despite the attempted pushes.
+This connector adds no original ASM bytes beyond the already translated driver.
+
+Constructed entry FLAGS obey `(raw & 7FD5h) | 2`; the parent also clears TF to
+keep its asynchronous debug-handler seam quiescent. This constrains entry CPU
+state, not stack data: saved IRET words such as FFFF remain unrestricted and
+completed transport IRET cases compare all16 restored flag bits. With invalid
+reserved bits injected through `reg_write`, Unicorn keeps bits3/5/15 sticky
+across IRET: initial002A with saved0006 returns002E, whereas admissible initial0002
+with savedFFFF returns7FD7 and saved002A returns0002. A two-interrupt poison case
+exposed that artifact by saving FLAGS again after IRET. No memory/event byte
+mask was added; ordinary full canonical-memory comparison remains in force.

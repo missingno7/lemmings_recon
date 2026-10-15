@@ -185,7 +185,7 @@
 #define CS_sub_1F19 0x1F19u
 #define CS_CopyEntityPatternToInteractionMap 0x283Bu
 #define CS_AdvanceEntityCountdown 0x2E04u
-#define CS_sub_2EC0 0x2EC0u
+#define CS_ApplyEntityCellInteractions 0x2EC0u
 #define CS_sub_30A6 0x30A6u
 #define CS_sub_3150 0x3150u
 #define CS_sub_3634 0x3634u
@@ -650,4 +650,9 @@
 #define CS_EntityCountdownMaskedReturn 0x2EBFu
 #define SEG09A9_ExternalSoundDriverEnabled 0x2010u
 #define SEG09A9_SoundOptionBits 0x25A7u
+#define CS_EntityInteractionPcSoundReturn 0x2F8Eu
+#define CS_EntityInteractionFirstSoundReturn 0x2FA1u
+#define CS_EntityInteractionObjectSoundReturn 0x2FF7u
+#define CS_EntityInteractionSecondSoundReturn 0x304Eu
+#define CS_EntityInteractionThirdSoundReturn 0x30A5u
 #endif

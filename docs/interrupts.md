@@ -117,8 +117,13 @@ entity-countdown.md records the composed native caller and its declared INT
 frame/vector model. Unbound targets and altered IRET returns remain explicit
 exits. Driver installation, mutable code and asynchronous IRQ timing remain open.
 
-Remaining work includes the provider contracts, further vector writes/aliases,
-PC-speaker dispatch/producer closure and the component's unexplained trailing bytes.
+INT60 now has a declared native frame/vector connector to the scoped PC-speaker
+dispatcher;25 focused fixtures include all saved-register outputs, vector/frame
+aliases, changed targets and VGA writes suppressed by map mask zero. The2EC0
+interaction parent composes that service and its four INT61 sites through actual
+returned state. See pcspeaker.md and entity-interactions.md. Remaining work
+includes provider contracts beyond these domains, vector installation, mutable
+code, unknown PC command targets, timing and unexplained component payloads.
 
 The retry UI input wait and its shared DS:0014 button word / DS:1FD0 scan-code
 latch are documented in retry-input.md. Its512 original-only16FE..1759 prefix

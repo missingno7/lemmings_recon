@@ -51,7 +51,9 @@ streams at both entries. Aggregate C coverage still requires fresh affected
 reports; see [terrain evidence](docs/terrain-stream.md).
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
-see [PC-speaker C](docs/pcspeaker.md).
+see [PC-speaker C](docs/pcspeaker.md). The native INT60 connection now composes
+with the [entity interaction parent](docs/entity-interactions.md), preserving
+live map/record/stack aliases and actual changed interrupt exits.
 
 The complete DAT read wrapper now has bounded contracts for direct DOS reads,
 cache creation and cache hits: 45 cases cover 106 original instruction sites,

@@ -121,15 +121,30 @@ RET and IRET words remain live. Tick/other targets and changed child returns
 stop explicitly. The separate335-case RAM/port regression also passes.
 See pcspeaker.md. This does not close Tick's wider bus domain or IRQ timing.
 
-Next resolve2EC0, the sole remaining direct untranslated child of1F19:
-486 bytes/162 sites, live SS interaction-map reads, saved words, state/record
-fields and transition tails. Its five interrupt sites retain their service
-boundaries. The static contract is in entity-interactions.md; its INT60 AX0302
-path next needs declared INT60 frame/vector transport connecting the verified
-native dispatcher to the caller, preserving every returned register and changed
-CS:IP. Then translate/recheck the2EC0 parent; do not repeat exhaustive child
-matrices merely to establish the handoff. The1F19 parent remains3,744 decoded bytes/1,255 sites and
-untranslated. Tested children do not establish complete simulation readiness.
+INT60 frame/vector transport now connects the native PC dispatcher:25 focused
+fixtures,1,234 ordered events and six completed mutants retain all returned
+registers, exact bindings, vector/frame aliases, changed targets and VGA stack
+writes suppressed by map mask zero. It adds no original ASM bytes.
+
+`ApplyEntityCellInteractions` at2EC0 now composes all five service sites:311
+fixtures at logical-core/RET-adapter boundaries,486 new main bytes/162 sites/
+61 branch outcomes,37 PC and28 external-driver sites,17,648 events and eight
+completed mutants. Popped AX owns nibble dispatch; live SS, callback slots,
+ordered record/object stores and PC-returned DS/SI/CX remain explicit. Unbound
+and changed targets stop with the actual state. Entry FLAGS are admissible;
+reserved IRET data words remain unrestricted and no memory bytes are masked.
+See entity-interactions.md and pcspeaker.md for exact scope and the original-IRET
+poison diagnostic.
+
+Next investigate1F19, now the nearest untranslated parent:3,744 decoded bytes/
+1,255 sites. Fresh tree/bottom-up views show all eleven direct CALL children have
+scoped native C. Preserve those device, IRQ and changed-target seams. First map
+its state-bit priority, live DS0088 record stride2D, count/current-record owners
+and shared1FE8 interaction /1FEB iteration tails. The initial zero-state block
+at2047 advances animation and signed X, bounds it, then uses the pixel helpers;
+its many jumps into the shared tails need explicit continuation contracts before
+connecting the larger parent. Tested children do not establish complete
+simulation readiness.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

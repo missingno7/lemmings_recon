@@ -1,3 +1,4 @@
+sub_2EC0 equ ApplyEntityCellInteractions
 sub_2E04 equ AdvanceEntityCountdown
 loc_2E5E equ EntityCountdownSoundReturn
 loc_2EB2 equ EntityCountdownMaskedSoundReturn
@@ -1569,7 +1570,16 @@ loc_2EBD:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @02EBD
 EntityCountdownMaskedReturn:
     ret ; @02EBF
-sub_2EC0:
+; Live SS interaction-cell contract: coordinate words are not clamped below B0.
+; Y-10 wraps then shifts logically; MUL keeps only its low product for the map.
+; Actual stack pops supply DX, map base and AX; record/map/stack aliases are live.
+; First cell is stored at record+2C, second at +2B. Nibbles dispatch from popped
+; AL, which may differ from that first cell after intervening record writes.
+; Low nibble1/5/6 initializes distinct transitions;2/3 conditionally NEG +27;
+;4 tests/sets the indexed object word then reads its live sound byte at+1B.
+; Preserve store/RMW flag phases, live0032/002E/003E callbacks, both sound-gate
+; rereads, all returned INT registers and actual RET. UNKNOWN targets stay open.
+ApplyEntityCellInteractions:
     mov ax,[si] ; @02EC0
     mov bx,[si+0x2] ; @02EC2
     cmp bx,0xb0 ; @02EC5
@@ -1653,6 +1663,7 @@ loc_2F3B:
     jz loc_2F8E ; @02F87
     mov ax,0x302 ; @02F89
     int 0x60 ; @02F8C
+EntityInteractionPcSoundReturn:
 loc_2F8E:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02F8E
     jnz loc_2FA1 ; @02F93
@@ -1660,6 +1671,7 @@ loc_2F8E:
     jz loc_2FA1 ; @02F9A
     mov ax,0x410 ; @02F9C
     int 0x61 ; @02F9F
+EntityInteractionFirstSoundReturn:
 loc_2FA1:
     ret ; @02FA1
 loc_2FA2:
@@ -1700,6 +1712,7 @@ loc_2FE9:
 loc_2FF3:
     mov ah,0x4 ; @02FF3
     int 0x61 ; @02FF5
+EntityInteractionObjectSoundReturn:
     ret ; @02FF7
 loc_2FF8:
     test word [si+0x8],0x1000 ; @02FF8
@@ -1725,6 +1738,7 @@ loc_3002:
     jz loc_304E ; @03047
     mov ax,0x411 ; @03049
     int 0x61 ; @0304C
+EntityInteractionSecondSoundReturn:
 loc_304E:
     ret ; @0304E
 loc_304F:
@@ -1751,6 +1765,7 @@ loc_3059:
     jz loc_30A5 ; @0309E
     mov ax,0x40d ; @030A0
     int 0x61 ; @030A3
+EntityInteractionThirdSoundReturn:
 loc_30A5:
     ret ; @030A5
 sub_30A6:

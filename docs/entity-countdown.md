@@ -101,5 +101,5 @@ physical70000, the constructed fixture's driver entry. That case is a code
 mutation, not an ordinary data-stack wrap; bounded tests use disjoint code
 backing for their wrap cases. No native instruction interpreter or repaired
 instruction bytes are introduced. General vector installation/aliases, mutable
-code, asynchronous IRQ delivery, playback and the broader untranslated1F19/2EC0 simulation
+code, asynchronous IRQ delivery, playback and the broader untranslated1F19 simulation
 remain open. The report's input hashes must match before retaining acceptance.
