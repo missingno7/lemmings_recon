@@ -1002,6 +1002,18 @@
     "reason": "NASM 2.x default encoding differs; explicit bytes preserve original opcode/operand widths"
   },
   {
+    "address": 7932,
+    "bytes": "33c0",
+    "instruction": "xor ax,ax",
+    "reason": "Original33 /r register-destination XOR is equivalent to NASM default31 /r register-source form; explicit bytes retain instruction direction opcode."
+  },
+  {
+    "address": 7955,
+    "bytes": "32c0",
+    "instruction": "xor al,al",
+    "reason": "Original32 /r register-destination XOR is equivalent to NASM default30 /r register-source form; explicit bytes retain instruction direction opcode."
+  },
+  {
     "address": 7988,
     "bytes": "22c0",
     "instruction": "and al,al",

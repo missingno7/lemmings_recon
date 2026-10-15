@@ -219,7 +219,8 @@ def byte_ports(device):
     return Ports(None,out,inp)
 
 
-def original(case,device,regs,flags,stop_before_outer=False):
+def original(case,device,regs,flags,stop_before_outer=False,*,continuations=(),
+             observe=None):
     u=Uc(UC_ARCH_X86,UC_MODE_16)
     u.mem_map(0,2<<20)
     u.mem_write(0,bytes(device.memory)*2)
@@ -260,13 +261,20 @@ def original(case,device,regs,flags,stop_before_outer=False):
             frames.pop()
             if (cs,off)!=expected:
                 boundary=('changed-child-near',cs,off);uc.emu_stop();return
+        # The previous branch has executed even when this destination is a
+        # stop-before-instruction continuation. Record its edge, not a site
+        # execution for the destination.
+        if previous in BRANCHES:edges.add((previous,off))
+        if cs==regs['cs'] and off in continuations:
+            boundary=('continuation',cs,off);uc.emu_stop();return
         if cs!=regs['cs'] or off not in INS:
             fail(f'{case["name"]}: original escaped at{cs:04x}:{off:04x};last={last},previous={previous},frames={frames}');return
         if stop_before_outer and off==0x7cbb:
             boundary=('ready-return',cs,off);uc.emu_stop();return
-        if previous in BRANCHES:edges.add((previous,off))
         ins=INS[off]
         event_flags=uc.reg_read(x.UC_X86_REG_EFLAGS)
+        if observe is not None:
+            observe(off,uc,device)
         steps+=1
         if steps>MAX_STEPS:fail('original step budget exhausted');return
         seen.add(off)
@@ -295,7 +303,10 @@ def original(case,device,regs,flags,stop_before_outer=False):
             try:
                 value=device.vga.read(device.memory,p,event_flags)
                 device.events.add('read',p,value,event_flags,mask)
-                uc.mem_write(raw,bytes((value,)))
+                # Ordinary RAM is already synchronized by the write hook.
+                # Device reads and the duplicate A20 mapping need injection.
+                if 0xa0000<=p<0xb0000 or raw>=1<<20:
+                    uc.mem_write(raw,bytes((value,)))
                 check_device(device,'original read')
             except BaseException as error:fail(str(error));return
 

@@ -1,8 +1,9 @@
-; Maintained image span 01916..01ED6; reconstruction module, not a historical linker claim.
+; Maintained image span 01916..01F18; reconstruction module, not a historical linker claim.
 ; CONTRACT: DS:DX filename, ES:AX destination, CX maximum byte count.
 ; Open/read/close preserve live save frames; short reads are accepted.
 ; Failures transfer to the shared error printer with stage-specific message.
-; Native domain and aliases: docs/resource-raw.md.
+; Raw-only andfull fatal contracts: docs/resource-raw.md/resource-raw-full.md.
+; Bus CPU words keep physical+1/A20 wrap; errors tail into1949 without unwind.
 ReadRawResourceFile:
     push ds ; @01916
     push es ; @01917
@@ -25,6 +26,7 @@ ReadRawResourceFile:
     jc loc_1946 ; @01935
     pop es ; @01937
     pop ds ; @01938
+RawResourceReturn:
     ret ; @01939
 loc_193A:
     mov dx,DatFileErrorMessage-GameDataImage ; @0193A
@@ -39,34 +41,47 @@ loc_1940:
 loc_1946:
     mov dx,ResourceCloseErrorMessage-GameDataImage ; @01946
 loc_1949:
+; Error continuation: incomingDX is pushed before selecting relocated mainDS.
+; Video returns through liveSSSP, then POPDX selects the DOS09 pointer.
+; DOS02 may changeDSBX between filename bytes; no length clamp or cached copy.
+; CR/LF flow into04EA byJMP, preserving all existing caller stack residue.
 DatFileErrorTransfer:
     push dx ; @01949
+FileErrorDataSegmentOperand equ $+1
     mov dx,0x9a9 ; @0194A
     mov ds,dx ; @0194D
-    call sub_0FF8 ; @0194F
+    call RestoreVideoModeAndPage ; @0194F
+FileErrorAfterVideo:
     pop dx ; @01952
     mov ah,0x9 ; @01953
+FileErrorMessageInterrupt:
     int 0x21 ; @01955
     mov ah,0x2 ; @01957
     mov dl,0x20 ; @01959
+FileErrorSpaceInterrupt:
     int 0x21 ; @0195B
     mov bx,[LastResourceFilenameOffset-GameDataImage] ; @0195D
 loc_1961:
+FileErrorFilenameLoop:
     mov dl,[bx] ; @01961
     db 0x22,0xd2 ; ENCODED: and dl,dl (NASM chooses a different encoding) ; @01963
     jz loc_196E ; @01965
     inc bx ; @01967
     mov ah,0x2 ; @01968
+FileErrorCharacterInterrupt:
     int 0x21 ; @0196A
     jmp short loc_1961 ; @0196C
 loc_196E:
     mov dl,0xd ; @0196E
     mov ah,0x2 ; @01970
+FileErrorCrInterrupt:
     int 0x21 ; @01972
     mov dl,0xa ; @01974
     mov ah,0x2 ; @01976
+FileErrorLfInterrupt:
     int 0x21 ; @01978
-    jmp loc_04EA ; @0197A
+FileErrorCleanupTail:
+    jmp ExitAfterKeyboardRestore ; @0197A
 ; CONTRACT: incoming DS is the live main-data frame; no bounds checks on selector.
 ; Order byte minus1 wraps; bit0 selects an odd-table override. Group=(value>>4),
 ; section=(value>>1)&7. The decimal leaf changes SI; selected DAT sections overwrite
@@ -75,7 +90,10 @@ loc_196E:
 ; two VGAGR sections, nonzero loads VGASPEC first section. Close carry is ignored.
 ; Native decimal/raw/file/cache/decoder composition: c/resource_select.c.
 ; Bounded live ES/DS/stack, DF and fatal contracts: docs/resource-select.md.
-; DOS, 4B1C retry UI and 1949/04D0 fatal bodies remain explicit unported seams.
+; DOS and4B1C retry UI remain open.1949 error printing and04D0/04EA cleanup
+; now connect through c/resource_select_full.c with original live fatal frames.
+; The execution API consumes all8 immediatechildRETs and surfaces changedtargets;
+; normal VGAGR/VGASPEC cores stop before their separate1A59/1A7A outerRETs.
 LoadSelectedLevelResources:
     mov bl,[LevelResourceSelectionByte-GameDataImage] ; @0197D
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @01981
@@ -183,6 +201,7 @@ SelectionAfterGraphicsDecode:
     pop ds ; @01A54
     mov ah,0x3e ; @01A55
     int 0x21 ; @01A57
+SelectionNormalReturn:
     ret ; @01A59
 loc_1A5A:
     lea si,[SpecialFilenameSelector-GameDataImage] ; @01A5A
@@ -199,6 +218,7 @@ SelectionAfterSpecialLoad:
     pop ds ; @01A75
     mov ah,0x3e ; @01A76
     int 0x21 ; @01A78
+SelectionSpecialReturn:
     ret ; @01A7A
 ; CONTRACT: loaded VGASPEC input atsegment[1FF4]:0010; main DS owns metadata.
 ; Prefix40 bytes ->four live metadata destinations; four RLE/strip pairs consume
@@ -367,7 +387,7 @@ loc_1B98:
     push ds ; @01B9B
     push di ; @01B9C
     push si ; @01B9D
-    call sub_4B1C ; @01B9E
+    call ShowResourceRetryScreen ; @01B9E
 DatAfterResourceRetry:
     pop si ; @01BA1
     pop di ; @01BA2
@@ -629,7 +649,7 @@ loc_1D05:
     mov ds,ax ; @01D0E
     cmp byte [DatRetryEnabled-GameDataImage],0x0 ; @01D10
     jz loc_1D22 ; @01D15
-    call sub_4B1C ; @01D17
+    call ShowResourceRetryScreen ; @01D17
 DatAfterFileRetry:
     pop si ; @01D1A
     pop di ; @01D1B
@@ -872,3 +892,39 @@ DisableDatCache:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01ED1
     mov [DatCacheEnabled-GameDataImage],al ; @01ED3
     ret ; @01ED6
+; Recovered allocation candidate; no known incoming execution edge.
+; CONTRACT: live DS cache fields, SS:SP near return; DOS AH48 provider seam.
+; First returned BX alone selects the unsigned >=0C80 paragraph path.
+; Neither carry result is tested: even second AX=0008 is published as a segment.
+; Low path clears AL/enabled only; all other cache fields and AH stay live.
+; See docs/cache-allocation.md and the separate original-only contract gate.
+AllocateDatCache:
+    mov ah,0x48 ; @01ED7
+    mov bx,0xffff ; @01ED9
+DatCacheAllocationRequest:
+    int 0x21 ; @01EDC
+    cmp bx,0xc80 ; @01EDE
+    jb DatCacheAllocationBelowThreshold ; @01EE2
+    mov [DatCacheRequestedParagraphs-GameDataImage],bx ; @01EE4
+    mov [DatCacheRemainingParagraphs-GameDataImage],bx ; @01EE8
+    mov ah,0x48 ; @01EEC
+    int 0x21 ; @01EEE
+    mov [DatCacheBaseSegment-GameDataImage],ax ; @01EF0
+    mov [DatCacheRecordSegment-GameDataImage],ax ; @01EF3
+    mov [DatCacheReadSegment-GameDataImage],ax ; @01EF6
+    mov [DatCacheFreeSegment-GameDataImage],ax ; @01EF9
+    db 0x33,0xc0 ; ENCODED: xor ax,ax (register destination opcode33; NASM chooses31) ; @01EFC
+    mov [DatCacheRecordOffset-GameDataImage],ax ; @01EFE
+    mov [DatCacheReadOffset-GameDataImage],ax ; @01F01
+    mov [DatCacheFreeOffset-GameDataImage],ax ; @01F04
+    mov [DatCacheRecordCount-GameDataImage],al ; @01F07
+    mov [DatCacheSelected-GameDataImage],al ; @01F0A
+    mov al,0xff ; @01F0D
+    mov [DatCacheEnabled-GameDataImage],al ; @01F0F
+DatCacheAllocationReadyReturn:
+    ret ; @01F12
+DatCacheAllocationBelowThreshold:
+    db 0x32,0xc0 ; ENCODED: xor al,al (register destination opcode32; NASM chooses30) ; @01F13
+    mov [DatCacheEnabled-GameDataImage],al ; @01F15
+DatCacheAllocationDisabledReturn:
+    ret ; @01F18

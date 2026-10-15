@@ -111,3 +111,9 @@ transport and the 587F cursor service are declared boundaries. The tests execute
 
 Remaining work includes the provider contracts, further vector writes/aliases,
 PC-speaker dispatch/producer closure and the component's unexplained trailing bytes.
+
+The retry UI input wait and its shared DS:0014 button word / DS:1FD0 scan-code
+latch are documented in retry-input.md. Its512 original-only16FE..1759 prefix
+cases check every raw scan byte at both200B gates before bitmap lookup. This
+producer evidence does not translate the keyboard handler or close its IRQ,
+port, bitmap and scheduling domains.

@@ -21,7 +21,7 @@ of an original retail release. Assets are private and gitignored.
    modulo 65536 to each of the 63 little-endian words listed in oracle.json, in
    recorded order. Canonical load 1010 gives code 1010, DS frame 19B9 and stack 244E.
    The decoder's relocated output is independently checked at loads 1010,1213,2345.
-4. **Initialized runtime memory:** NOT an oracle input. Startup clears DS:0000..2011,
+4. **Initialized runtime memory:** NOT an oracle input. With DF clear, startup clears DS:0000..2011,
    installs vectors, patches code state and accesses devices. Memory beyond the
    static image and the PSP have separate initialization contracts. The legacy
    boot image has intentionally poisoned code and is not usable as static source.

@@ -83,6 +83,8 @@ reach a dot; a missing dot can loop indefinitely in the original and native code
 File opening at 1CB9 and attribute/retry handling at 1CD9 now have tested native
 cores; see dat-files.md for their declared retry-callee seam. The 1B79 caller is
 also native; see dat-load.md. Higher resource ownership/callers
-and the UNKNOWN allocation code starting 1ED7 remain untranslated or unresolved.
+remain open. Allocation1ED7..1F18 now has maintained exact ASM and a separate
+original-only contract and282-case native gate in cache-allocation.md; its
+global reachability is unresolved. Startup's known1ED1 call returns before it.
 The 04D0 fatal cleanup also remains open. Cache selection and decoding being native
 does not establish a complete loader or game.

@@ -1,5 +1,6 @@
 """Fail-closed canonical/ASM/relocation gate; never rewrites source or pins."""
 import argparse
+import sys
 from pathlib import Path
 from common import ROOT, BUILD, read_json, write_json, sha
 from unpack import ASSET, unpack, relocated
@@ -94,6 +95,65 @@ def verify(check_stub=True):
         spec=importlib.util.spec_from_file_location('decimal_digits_tests',ROOT/'tests/decimal_digits.py')
         suite=importlib.util.module_from_spec(spec);spec.loader.exec_module(suite)
         decimal_metrics=suite.check()
+        from bounded_process import run_bounded
+        run_bounded([sys.executable,str(ROOT/'tests/cache_allocation_contract.py')],
+                    cwd=ROOT,timeout=60,memory_mib=256)
+        cache_report=read_json(BUILD/'cache-allocation-contract-original.json')
+        cache_allocation_metrics=dict(case_count=cache_report['case_count'],
+            original_instruction_sites=cache_report['routine']['decoded_sites'],
+            branch_outcomes=len(cache_report['branch_outcomes']['edges']),
+            c_coverage_claimed=False,reachability_proven=False)
+        run_bounded([sys.executable,str(ROOT/'tests/video_restore.py'),'--original-only'],
+                    cwd=ROOT,timeout=150,memory_mib=384)
+        video_report=read_json(BUILD/'video-restore-contract-original.json')
+        video_restore_metrics=dict(case_count=video_report['case_count'],
+            original_instruction_sites=len(video_report['executed_instruction_addresses']),
+            auxiliary_core_cases=video_report['auxiliary_core_cases'],c_coverage_claimed=False)
+        run_bounded([sys.executable,str(ROOT/'tests/vector_restore.py'),'--original-only'],
+                    cwd=ROOT,timeout=150,memory_mib=384)
+        vector_report=read_json(BUILD/'vector-restore-contract-original.json')
+        vector_restore_metrics=dict(case_count=vector_report['case_count'],
+            original_instruction_sites=len(vector_report['executed_instruction_addresses']),
+            auxiliary_core_cases=vector_report['auxiliary_core_cases'],c_coverage_claimed=False)
+        run_bounded([sys.executable,str(ROOT/'tests/timer_restore.py'),'--original-only'],
+                    cwd=ROOT,timeout=150,memory_mib=384)
+        timer_report=read_json(BUILD/'timer-restore-contract-original.json')
+        timer_restore_metrics=dict(case_count=timer_report['case_count'],
+            original_instruction_sites=len(timer_report['executed_instruction_addresses']),
+            auxiliary_core_cases=timer_report['auxiliary_core_cases'],c_coverage_claimed=False)
+        run_bounded([sys.executable,str(ROOT/'tests/fatal_cleanup.py'),'--original-only'],
+                    cwd=ROOT,timeout=150,memory_mib=384)
+        cleanup_report=read_json(BUILD/'fatal-cleanup-contract-original.json')
+        cleanup_metrics=dict(case_count=cleanup_report['case_count'],
+            original_instruction_sites=len(cleanup_report['executed_instruction_addresses']),
+            caller_instruction_sites=cleanup_report['caller_sites'],
+            branch_edges=len(cleanup_report['branch_edges']),c_coverage_claimed=False)
+        run_bounded([sys.executable,str(ROOT/'tests/file_error.py'),'--original-only'],
+                    cwd=ROOT,timeout=150,memory_mib=384)
+        file_error_report=read_json(BUILD/'file-error-contract-original.json')
+        file_error_metrics=dict(case_count=file_error_report['case_count'],
+            original_instruction_sites=len(file_error_report['executed_instruction_addresses']),
+            caller_instruction_sites=file_error_report['caller_sites'],
+            branch_edges=len(file_error_report['branch_edges']),c_coverage_claimed=False)
+        run_bounded([sys.executable,str(ROOT/'tests/resource_raw_full.py'),'--original-only'],
+                    cwd=ROOT,timeout=150,memory_mib=384)
+        raw_full_report=read_json(BUILD/'resource-raw-full-contract-original.json')
+        raw_full_metrics=dict(case_count=raw_full_report['case_count'],
+            original_instruction_sites=len(raw_full_report['executed_instruction_addresses']),
+            caller_instruction_sites=raw_full_report['caller_sites'],
+            original_boundaries_per_case=raw_full_report['original_boundaries_per_case'],
+            branch_edges=len(raw_full_report['branch_edges']),c_coverage_claimed=False)
+        display_metrics={}
+        for name in ('display_status','display_start','display_setup','text_glyph','text_stream','display_pages','background_drawing','palette_channels','palette_rows','palette_ports','palette_row_select','palette_transition','retry_input'):
+            run_bounded([sys.executable,str(ROOT/'tests'/(name+'.py')),'--original-only'],
+                        cwd=ROOT,timeout=180 if name=='retry_input' else 720 if name in ('palette_row_select','palette_transition') else 390 if name=='palette_ports' else 660 if name=='palette_rows' else 360 if name=='palette_channels' else 210 if name=='background_drawing' else 150,memory_mib=384)
+            report=read_json(BUILD/(name.replace('_','-')+'-contract-original.json'))
+            display_metrics[name]=dict(case_count=report['case_count'],
+                original_instruction_sites=len(report['executed_instruction_addresses']),
+                branch_edges=len(report['branch_edges']),c_coverage_claimed=False)
+            if name=='retry_input':
+                display_metrics[name].update(exhaustive_word_cases=report['exhaustive_word_cases'],
+                    original_only_keyboard_prefix_cases=report['producer_contracts']['case_count'])
     metrics=dict(analysis['metrics'],reconstructed_asm_bytes=len(actual),byte_exact_asm_bytes=len(actual),
                  encoding_exceptions=len(read_json(ROOT/'metadata/encoding-exceptions.json')),
                  canonical_sha256=sha(image))
@@ -103,6 +163,14 @@ def verify(check_stub=True):
     metrics['interrupts']=interrupt_metrics
     if check_stub:metrics['dat_io']=dat_io_metrics
     if check_stub:metrics['decimal_digits_contracts']=decimal_metrics
+    if check_stub:metrics['cache_allocation_contracts']=cache_allocation_metrics
+    if check_stub:metrics['video_restore_contracts']=video_restore_metrics
+    if check_stub:metrics['vector_restore_contracts']=vector_restore_metrics
+    if check_stub:metrics['timer_restore_contracts']=timer_restore_metrics
+    if check_stub:metrics['fatal_cleanup_contracts']=cleanup_metrics
+    if check_stub:metrics['file_error_contracts']=file_error_metrics
+    if check_stub:metrics['resource_raw_full_contracts']=raw_full_metrics
+    if check_stub:metrics['display_contracts']=display_metrics
     metrics['bounded_extractor_checks']=bool(check_stub)
     inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
         ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
@@ -119,6 +187,17 @@ def verify(check_stub=True):
     inputs.append(ROOT/'metadata/pcspeaker-producers.json')
     inputs.append(ROOT/'tests/dat_io.py')
     inputs.append(ROOT/'tests/decimal_digits.py')
+    if check_stub:
+        inputs.extend(ROOT/path for path in cache_report['input_sha256'])
+        inputs.extend(ROOT/path for path in video_report['input_hashes'])
+        inputs.extend(ROOT/path for path in vector_report['input_hashes'])
+        inputs.extend(ROOT/path for path in timer_report['input_hashes'])
+        inputs.extend(ROOT/path for path in cleanup_report['input_hashes'])
+        inputs.extend(ROOT/path for path in file_error_report['input_hashes'])
+        inputs.extend(ROOT/path for path in raw_full_report['input_hashes'])
+        for name in ('display_status','display_start','display_setup','text_glyph','text_stream','display_pages','background_drawing','palette_channels','palette_rows','palette_ports','palette_row_select','palette_transition','retry_input'):
+            report=read_json(BUILD/(name.replace('_','-')+'-contract-original.json'))
+            inputs.extend(ROOT/path for path in report['input_hashes'])
     inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
     write_json(BUILD/'verification.json',metrics)

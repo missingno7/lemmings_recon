@@ -1,15 +1,5 @@
-; Maintained image span 01ED7..03789; reconstruction module, not a historical linker claim.
+; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
-; UNKNOWN: unresolved bytes
-    db 0xb4,0x48,0xbb,0xff,0xff,0xcd,0x21,0x81,0xfb,0x80,0x0c,0x72,0x2f,0x89,0x1e,0x8e ; @01ED7
-; UNKNOWN: unresolved bytes
-    db 0x1f,0x89,0x1e,0x90,0x1f,0xb4,0x48,0xcd,0x21,0xa3,0x80,0x1f,0xa3,0x84,0x1f,0xa3 ; @01EE7
-; UNKNOWN: unresolved bytes
-    db 0x88,0x1f,0xa3,0x8c,0x1f,0x33,0xc0,0xa3,0x82,0x1f,0xa3,0x86,0x1f,0xa3,0x8a,0x1f ; @01EF7
-; UNKNOWN: unresolved bytes
-    db 0xa2,0x92,0x1f,0xa2,0x94,0x1f,0xb0,0xff,0xa2,0x93,0x1f,0xc3,0x32,0xc0,0xa2,0x93 ; @01F07
-; UNKNOWN: unresolved bytes
-    db 0x1f,0xc3 ; @01F17
 sub_1F19:
     cmp byte [0x2b],0xff ; @01F19
     jnz loc_1F23 ; @01F1E
@@ -1801,7 +1791,7 @@ sub_3150:
 loc_3161:
     cmp byte [0x63],0x0 ; @03161
     jz loc_31BD ; @03166
-    mov ax,[0x14] ; @03168
+    mov ax,[InputButtonsWord-GameDataImage] ; @03168
     and ax,0x1 ; @0316B
     jz loc_31BE ; @0316E
     cmp byte [0x61],0xff ; @03170
@@ -2308,119 +2298,3 @@ loc_367D:
     jmp sub_4B68 ; @0368A
 loc_368D:
     ret ; @0368D
-; Clear 34944 VGA bytes at 4A40 with incoming DF, then set 1664x164 layout.
-; Live near/far return frames and DS input-segment publication follow both calls.
-InitializeLevelDrawing:
-    mov di,0x4a40 ; @0368E
-    mov cx,0x8880 ; @03691
-    call ClearVgaBytes ; @03694
-LevelDrawingAfterClear:
-    mov ax,0x680 ; @03697
-    mov bx,0xa4 ; @0369A
-    mov dx,0x4a40 ; @0369D
-    call 0x0:SetDrawingLayout ; @036A0
-LevelDrawingAfterLayout:
-    mov ax,[GraphicsResourceInputSegment-GameDataImage] ; @036A5
-    inc ax ; @036A8
-    mov [GraphicsResourceSegment-GameDataImage],ax ; @036A9
-    ret ; @036AC
-; Tail entry: clear 832 bytes at CC40 through ClearVgaBytes, using the outer RET.
-ClearLevelDrawingTail:
-    mov di,0xcc40 ; @036AD
-    mov cx,0x340 ; @036B0
-    jmp ClearVgaBytes ; @036B3
-; LEVEL-RECORD CONSUMER: main DS, LoadedLevelRecord big-endian header words.
-; Copies low bytes to64/67,47,44 and eight skill counters; time word+30 contributes
-; only AL to20A7. Camera word+10 feeds pixel and byte offsets.
-; Selects special setup or sentinel-terminated terrain records, then object helpers
-; and13 calls to796F. Callee state/alias contracts remain open; no C closure claimed.
-sub_36B6:
-    call InitializeLevelDrawing ; @036B6
-    mov di,LoadedLevelRecord-GameDataImage ; @036B9
-    mov ah,[di] ; @036BC
-    mov al,[di+0x1] ; @036BE
-    mov [0x64],al ; @036C1
-    mov [0x67],al ; @036C4
-    mov ah,[di+0x2] ; @036C7
-    mov al,[di+0x3] ; @036CA
-    mov [0x47],al ; @036CD
-    mov ah,[di+0x4] ; @036D0
-    mov al,[di+0x5] ; @036D3
-    mov [0x44],al ; @036D6
-    mov ah,[di+0x6] ; @036D9
-    mov al,[di+0x7] ; @036DC
-    add ax,0x30 ; @036DF
-    mov [0x20a7],al ; @036E2
-    mov ah,[di+0x8] ; @036E5
-    mov al,[di+0x9] ; @036E8
-    mov [0x6a],al ; @036EB
-    mov ah,[di+0xa] ; @036EE
-    mov al,[di+0xb] ; @036F1
-    mov [0x6d],al ; @036F4
-    mov ah,[di+0xc] ; @036F7
-    mov al,[di+0xd] ; @036FA
-    mov [0x70],al ; @036FD
-    mov ah,[di+0xe] ; @03700
-    mov al,[di+0xf] ; @03703
-    mov [0x73],al ; @03706
-    mov ah,[di+0x10] ; @03709
-    mov al,[di+0x11] ; @0370C
-    mov [0x76],al ; @0370F
-    mov ah,[di+0x12] ; @03712
-    mov al,[di+0x13] ; @03715
-    mov [0x79],al ; @03718
-    mov ah,[di+0x14] ; @0371B
-    mov al,[di+0x15] ; @0371E
-    mov [0x7c],al ; @03721
-    mov ah,[di+0x16] ; @03724
-    mov al,[di+0x17] ; @03727
-    mov [0x7f],al ; @0372A
-    mov ah,[di+0x18] ; @0372D
-    mov al,[di+0x19] ; @03730
-    add ax,0x10 ; @03733
-    mov [0x0],ax ; @03736
-    shr ax,1 ; @03739
-    shr ax,1 ; @0373B
-    shr ax,1 ; @0373D
-    mov [0x2],ax ; @0373F
-    mov al,[LevelSpecialGraphicsSetByte-GameDataImage] ; @03742
-    db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @03745
-    jz loc_374F ; @03747
-    call SetupSpecialGraphicsResource ; @03749
-    jmp short loc_376A ; @0374C
-; UNKNOWN: unresolved bytes
-    db 0x90 ; @0374E
-loc_374F:
-    mov si,LevelTerrainDefinitions-GameDataImage ; @0374F
-loc_3752:
-    mov ah,[si] ; @03752
-    mov al,[si+0x1] ; @03754
-    mov bh,[si+0x2] ; @03757
-    mov bl,[si+0x3] ; @0375A
-    add si,byte +0x4 ; @0375D
-    cmp ax,0xffff ; @03760
-    jz loc_376A ; @03763
-    call DrawPackedTerrainPiece ; @03765
-    jmp short loc_3752 ; @03768
-loc_376A:
-PrepareLevelObjectState:
-    ; Native four-call span ends at3776 or an exposed changed near-return target.
-    ; No complete36B6 C implementation implied; docs/interaction-cells.md.
-    call CopyLevelObjectGraphicsRecords ; @0376A
-ObjectStateAfterGraphicsCopy:
-    call WriteSteelInteractionCells ; @0376D
-ObjectStateAfterSteelCells:
-    call WriteObjectInteractionCells ; @03770
-ObjectStateAfterObjectCells:
-    call CollectTypeOneObjectCoordinates ; @03773
-ObjectStateAfterCoordinates:
-    call ClearLevelDrawingTail ; @03776
-    mov cx,0xd ; @03779
-loc_377C:
-    push cx ; @0377C
-    call UpdateMinimapColumn ; @0377D
-    pop cx ; @03780
-    loop loc_377C ; @03781
-    mov ax,[LevelGraphicsSegment-GameDataImage] ; @03783
-    mov [GraphicsResourceSegment-GameDataImage],ax ; @03786
-    ret ; @03789

@@ -1,7 +1,9 @@
 # Observable memory before full level initialization
 
-`InitializeLevelFromRecord` at `36B6` is still untranslated. Naming and verifying
-its header prefix does not close the device and alias contracts of its children.
+`InitializeLevelFromRecord` at `36B6` now composes the bus-aware children in a
+separate36-case gate. Its explicit bounded domain inherits their device and
+alias contracts; implementation does not establish wider native hardware/IRQ
+ownership. See level-initialize.md.
 The maintained bytes now live in `src/level_initialize.asm` (`368E..3789`).
 
 The drawing initializer, clear tail, terrain renderer and minimap column already
@@ -63,8 +65,9 @@ target remains an explicit continuation before executing that target.
 The independent bus cell/coordinate fixtures now record ordered memory events
 and defined flags, with device-backed source, destination and stack cases.
 They compare optional-bus and existing null-bus paths in ordinary RAM and retain
-the old aliases and mutation witnesses. After the four-call bus span passes,
-compose the full parent's thirteen live minimap CALL/PUSH/POP/LOOP handoffs.
+the old aliases and mutation witnesses. The four-call span and finishing tail
+now connect the full parent's nominal thirteen live minimap CALL/PUSH/POP/LOOP
+handoffs, including finite aliases that change the saved count.
 Full terrain-stream acceptance and the existing platform/IRQ seams remain
 separate obligations.
 

@@ -42,7 +42,8 @@ class DeviceTrace:
 
 def original(case,device,regs,flags,*,instructions,far_calls,
              continuations=(),observe=None,stop_before=None,max_steps=2_000_000,
-             interrupt=None,trace_instruction=None):
+             interrupt=None,trace_instruction=None,phase_flags=None,
+             defined_mask_after=None):
     INS=instructions
     BRANCHES={p for p,i in INS.items() if i.group(piece.capstone.CS_GRP_JUMP)
               or i.mnemonic.startswith('loop')}
@@ -84,7 +85,8 @@ def original(case,device,regs,flags,*,instructions,far_calls,
         cs=uc.reg_read(oracle.REG['cs'])
         off=uc.reg_read(oracle.REG['ip'])
         if last is not None:
-            mask=render._defined_mask(last,mask)
+            mask=(defined_mask_after(previous,mask) if defined_mask_after is not None
+                  else render._defined_mask(last,mask))
         if pending_near is not None:
             expected=pending_near;pending_near=None
             if expected is False:
@@ -104,6 +106,11 @@ def original(case,device,regs,flags,*,instructions,far_calls,
             boundary=('ready-return',cs,off);uc.emu_stop();return
         ins=INS[off]
         event_flags=uc.reg_read(x.UC_X86_REG_EFLAGS)
+        # Optional instruction-specific normalization must be independently
+        # evidenced by the caller. Existing oracles retain their raw behavior.
+        # In particular37B4/37B6..37B8 may need the pinned REP/POP AF probe.
+        if phase_flags is not None:
+            event_flags=phase_flags(off,uc,event_flags)
         if observe is not None:
             observe(off,uc,device)
         steps+=1

@@ -322,7 +322,7 @@ sub_7CE6:
     mov cx,0x410 ; @07CF7
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @07CFA
     call 0x0:0x8822 ; @07CFC
-    mov ax,[0x1fee] ; @07D01
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @07D01
     add ax,0x1000 ; @07D04
     mov [GraphicsResourceSegment-GameDataImage],ax ; @07D07
     jmp loc_7E2F ; @07D0A
@@ -396,7 +396,7 @@ sub_7D8D:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @07D91
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @07D93
     db 0x8b,0xf8 ; ENCODED: mov di,ax (NASM chooses a different encoding) ; @07D95
-    mov ax,[0x1fee] ; @07D97
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @07D97
     add ax,0x1000 ; @07D9A
     mov ds,ax ; @07D9D
     mov cx,0x4 ; @07D9F
@@ -431,7 +431,7 @@ sub_7DB7:
     add si,0x5bc0 ; @07DD0
     db 0x8b,0xde ; ENCODED: mov bx,si (NASM chooses a different encoding) ; @07DD4
     add bx,byte +0x40 ; @07DD6
-    mov ax,[0x1fee] ; @07DD9
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @07DD9
     add ax,0x1000 ; @07DDC
     mov ds,ax ; @07DDF
     mov di,0x44 ; @07DE1
@@ -510,11 +510,14 @@ sub_7E65:
     mov bx,0x14e ; @07E6D
     call 0x0:0x8822 ; @07E70
     ret ; @07E75
-loc_7E76:
-    mov ax,[0x1fee] ; @07E76
+; Publish the UI graphics segment once, then two320x104/two-plane calls per row.
+; Saved BX,CX,BX remain live: dirty/stack aliases can change rows and loop count.
+; Relocated far frames return to7E95/7EAA; preserve all child DS/ES/flag effects.
+DrawScreenBackgroundTiles:
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @07E76
     mov [GraphicsResourceSegment-GameDataImage],ax ; @07E79
     mov cx,0x4 ; @07E7C
-loc_7E7F:
+BackgroundRowLoop:
     push bx ; @07E7F
     push cx ; @07E80
     push bx ; @07E81
@@ -524,6 +527,7 @@ loc_7E7F:
     mov cx,0x268 ; @07E8A
     mov si,0x0 ; @07E8D
     call 0x0:0x8822 ; @07E90
+BackgroundFirstAfterBitmap:
     mov ax,0x140 ; @07E95
     pop bx ; @07E98
     mov bp,0xc ; @07E99
@@ -531,10 +535,12 @@ loc_7E7F:
     mov cx,0x268 ; @07E9F
     mov si,0x0 ; @07EA2
     call 0x0:0x8822 ; @07EA5
+BackgroundSecondAfterBitmap:
     pop cx ; @07EAA
     pop bx ; @07EAB
     add bx,byte +0x68 ; @07EAC
-    loop loc_7E7F ; @07EAF
+    loop BackgroundRowLoop ; @07EAF
+BackgroundReturn:
     ret ; @07EB1
 sub_7EB2:
     push ds ; @07EB2
@@ -929,7 +935,7 @@ loc_81BD:
     ret ; @081CB
 sub_81CC:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @081CC
-    mov word [0x1f78],0x2520 ; @081D2
+    mov word [AlternateDrawingOrigin-GameDataImage],0x2520 ; @081D2
     mov word [DrawingPageByteOffset-GameDataImage],0x2c0 ; @081D8
     mov word [DrawingDirtyCellMapOffset-GameDataImage],0x42b2 ; @081DE
     mov word [0x28],0x45d3 ; @081E4
@@ -939,9 +945,9 @@ sub_81CC:
     mov byte [ss:bx],0xff ; @081F6
     mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0xff ; @081FA
     call sub_80FD ; @081FF
-    mov ax,[0x1f78] ; @08202
+    mov ax,[AlternateDrawingOrigin-GameDataImage] ; @08202
     xchg [DrawingOrigin-GameDataImage],ax ; @08205
-    mov [0x1f78],ax ; @08209
+    mov [AlternateDrawingOrigin-GameDataImage],ax ; @08209
     mov ax,[0x28] ; @0820C
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @0820F
     mov [0x28],ax ; @08213

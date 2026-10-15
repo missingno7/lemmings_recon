@@ -1,10 +1,152 @@
 # Precise next frontier
 
+Resource cleanup stopped the interrupted global campaign; partial reports do not
+accept complete terrain streams or promote aggregate C coverage. Keep native runs
+under the timeout, process-tree commit and hard callback budgets in AGENTS.md.
+The recovered1ED7..1F18 allocation candidate now has66 bytes/25 sites of maintained
+ASM; see cache-allocation.md for its separate267-case original-only contract and
+282-case native gate with four completed mutants. It has no known incoming
+execution edge. Before composing allocation
+with higher resource ownership, retain both ignored DOS carry results, the live
+returned BX threshold/request and actual near-return aliases. Continue the04D0
+cleanup/provider children after this leaf's contract is closed; do not infer that
+startup's1ED1 disabling call reaches1ED7.
+The video restore dependency0FF8..1006 now has a logical native core and a
+separate279-case original/native gate with four completed mutants; see
+video-restore.md. Preserve the duplicate1582 call and the live DS/mouse/provider
+effects in the broader cleanup.
+The1582/0FA0 vector leaves now pass328 adapter and328 core-boundary comparisons,
+with all15 sites/34 bytes and four compiled mutants observed at both entries.
+See vector-restore.md. The16A9 timer/PIT/IVT/BIOS-time restore now passes291
+adapter and291 core-boundary comparisons over43 bytes/19 sites, with four
+completed mutants; see timer-restore.md. Preserve its unconditional STI,
+loadedES, live poppedDS clock reads and BIOS-returned stack. The04D0 cleanup
+and independently reached04EA suffix now compose these cores in362 adapter
+and362 core comparisons,15 caller/56 integrated sites and two branch outcomes,
+with four completed mutants; see fatal-cleanup.md. ActualCALL/RET/changedreturns,
+liveDS mouse gate, duplicate1582call, returningDOS09 state and terminalDOS4C
+remain explicit. The1949 file-error printer now connects video and04EA in301
+adapter and301 core comparisons,25 caller/45 integrated sites and four edges,
+with four completed mutants; see file-error.md. Preserve relocated mainDS,live
+POPDX,DOS-returnedDSBX filename walking and the frame-free cleanup tail. The1916
+raw reader now has an optional-bus path and direct1949 fatal composition:87
+fixtures at four original/native boundaries,75NULL-bus repeats each,72 integrated
+sites/12edges and four completed mutants; its46-case legacyRAM gate also passes.
+See resource-raw-full.md. The rawDOS AX/flags-only preservation contract remains
+explicit. The197D selector now has an execution API for its eight live immediate
+childRET words and separate1A59/1A7A normal exits, plus a direct RAM connection
+to1949/04D0. Require the fresh72-case/four-boundary gate and four completed
+mutants in tests/resource_select_full.py before accepting this connection;
+see resource-select-full.md. InternalDAT returns and the4B1C retry UI retain
+their declared seams; wider bus/provider ownership remains open. The1550 status
+wait now passes280 adapter+280 core comparisons,275 null-bus repeats each and
+four completed mutants; see display-status.md. It reads liveDS:1FDA once, adds6
+toDL alone and polls untilbit3sets then clears. Original polling stays unbounded;
+the separate guard probe verifies disposable-worker exit86. The4C32/4C36 output
+entries and4C20 live origin-swap caller now pass277 fixtures across three entries
+and both boundaries,274 RAMfallback repeats each and four completed mutants.
+See display-start.md for the39-byte/17-site union,CLI/INC/STI,live childRET,
+provider effects andVGA aliases. The4BE7 setup and shared4BF5/4C07 entries
+now connect native8808 layout in55 fixtures across three entries and both
+boundaries, with51 null-bus repeats each and four completed mutants. Their
+48 caller bytes/14 sites and26 child bytes/10 sites remain separately counted.
+See display-setup.md for the all-state BIOS, unconditionalSTI, relocated farCALL,
+live far/near returns and explicit segment-limit seam. The4D78 glyph producer
+now connects native8822 in45 integrated fixtures at both boundaries, plus264
+prefix fixtures covering all256 byte selectors and null-bus repeats. Its74
+caller bytes/32 sites preserve unchecked96-byte glyph arithmetic, live graphics
+segment selection, actualfar/near returns and savedBP, with four completed
+mutants. See text-glyph.md for phase-definedflags, independentplane checks and
+the rejected unrestrictedVGA-stack stress domain. The4D4D text stream now
+connects that glyph core in295 fixtures at both boundaries, including all256
+style bytes and six pinned static records. Its43 caller bytes/26 sites and
+eight caller edges retain DF, CR versus header-zero grammar, byteCL wrap,
+live savedSI/BX/CX and actual glyph nearRET. Five completed mutants and the
+unterminated-stream exit86 probe pass; see text-stream.md. The4DC2 page copy
+and4DEF full-clear wrapper now pass45 fixtures at both boundaries, with six
+completed mutants and four independent mode1 fixture regressions. Their53
+new caller bytes/21 sites compose the existing63-byte clear tail without
+claiming UNKNOWN4DF7. Full6D60 copies preserve sequential overlap,DF,cursor
+wrap, liveorigin/DS/RET and provider seams; see display-pages.md. The5017/5019 bridge and7E76 tail now pass36 fixtures
+at both boundaries,26 caller/305 integrated sites,three caller edges and six
+completed mutants. Their65 caller bytes preserve the live saved rows/counter,
+full640x350 clipping quirks and actual child returns; see background-drawing.md.
+The531E/536C transitions now compose the palette writers, rows and1550 status
+wait; see palette-transition.md for their scoped native contract. The566C/5685/5696/569B/570C channel entries now pass all327680
+byte pairs plus88 fixtures at both boundaries,81 NULL-bus repeats each,
+69sites/14edges/144unique bytes and six completed mutants. Their signed/unsigned
+comparisons, sticky BP/BL and live wrapper returns are documented in
+palette-channels.md. The563E/56E2 row composers now pass89fixtures at both
+boundaries plus2 full65536-iteration zeroCL core cases,47caller/116integrated
+sites,4caller/18integrated edges and six completed mutants. Their88newbytes
+preserve sequential overlap, live savedCX, sticky markers, forward cursors even
+withDF and actual child returns; see palette-rows.md. The maintained232-byte
+ASM cluster lives in palette_steps.asm. The5425/54C4 byte-port leaves now have101unique Cbytes/61sites/8edges,
+577fixtures at both boundaries and2full65536-iteration zeroCL corecases,
+with six completed mutants; see palette-ports.md. Keep their liveDS200C recheck
+and resulting stack imbalance. The5569 CS52D4/52E4 row-pointer prefix now connects both row cores in
+586fixtures at both boundaries plus2fullzeroCLcores,32caller/148integratedsites
+and seven completed mutants; see palette-row-select.md. Its77newbytes inherit
+the row RET without an extra CALL frame. The531E/536C transition composition now passes1,191fixtures at both boundaries,
+82caller/268integratedsites,10caller/40integratededges and six completed mutants.
+Its157unique caller bytes preserve once-selected mode, before-wait JZ, ordered
+output/step/waits, live saves and childRET/status stops; see palette-transition.md.
+The4B3B/4B40 retry-input boundary now has a frame-free native core over21bytes/
+7sites/4edges, all65,536 button words and791fixtures at both native boundaries,
+with seven completed mutants and separate512-case original-only keyboard
+producer-prefix evidence; see retry-input.md. Next compose4B1C using its tested
+children and finite canonical-memory input providers, retaining the separate
+installed-handler/provider and IRQ scheduling seams.
+The53CA/53F6/53FC/53FE/5401 writer-pointer prefixes are separate setup paths.
+Keep unchecked indexes and buffer ownership explicit in palette-pointer-frontier.md. The contiguous52D4..563D
+front ends now live in palette_frontends.asm. The4B40 wait now has its own tested domain; actual IRQ scheduling remains open. The mode1 fixture extension makes older dependent
+reports stale; retain the fresh-report requirement before aggregate promotion.
+The4B1C retry UI now has native palette/status and input-wait children. Its
+full caller composition remains next, with live DS, actual CALL/RET frames,
+finite input updates and platform/IRQ seams kept explicit. Require fresh separate reports; do not promote global C
+coverage while complete terrain acceptance remains open.
+
 Current working order follows the Pre2-style semantic ASM/dependency pass in
 bottom-up.md. Review source contracts and the fresh graph before expanding C.
+The374F/395F terrain command loops now have native cores and a complete-stream
+campaign in tests/terrain_stream.py. Acceptance requires its fresh final report,
+including all80 pinned LEVEL streams at both entries; prefix or partial campaign
+results alone do not prove that connection. The resource-cleanup stop left no
+accepted full-stream report; rerun the complete bounded campaign before global
+coverage promotion. The397D..39CD object suffix now passes131 comparisons,
+51 core-boundary probes and4 mutants, including all80 LEVEL/GROUND pairs.
+See object-drawing.md. The broader394F caller now passes48 adapter and48 core
+boundary checks, all50 caller/1745 integrated sites and3 mutants, including
+four real VGASPEC/VGAGR pairs. Its normal/special/return/provider contracts are
+in level-redraw.md; tests/level_redraw.py supplies the fresh separate report.
+The36B9..3741 header prefix now passes92 native adapter and92 auxiliary core
+checks, with90 null-bus comparisons and4 mutants. Its137 bytes/47 sites remain
+separate from the full36B6 initializer. Source-word and destination names belong
+to the ledger; header+04 keeps a neutral name because its consumer is unresolved.
+See level-header.md and level-initialize-frontier.md. The object-state leaves
+now have separately verified optional-bus variants:128 object-cell,393 steel
+core (seven added bus adapter probes), and164 coordinate cases. The four-call
+bus span has a separate113-case gate in tests/object_state_bus.py; require its
+fresh final report before composing the full caller.
+See level-initialize-bus-frontier.md and object-state-bus.md.
+The3776..3789 finishing tail now has a separate22-case gate with22 auxiliary
+core probes,133 integrated sites/17 edges and4 completed mutants. It preserves
+the live savedCX loop (including finite one-column aliases), returnedDS and
+actual clear/minimap/outer returns. See level-finish.md. Full36B6 now connects
+these logical cores in36 cases (plus36 auxiliary core probes), with76 caller/
+1408 integrated sites,211 edges and4 mutants. It includes all four supplied
+VGASPEC/VGAGR pairs and preserves initial/header/selector handoffs and changed
+returns. See level-initialize.md. Fresh complete terrain acceptance remains open;
+refresh affected reports before promoting aggregate coverage or the broader batch.
+The ledger and global build/coverage tools now record these scoped translations;
+publish new coverage totals only after refreshing every affected report and
+passing the complete terrain-stream acceptance campaign.
+See terrain-stream.md for
+liveDS/SI/return witnesses and the explicit code-overlapping-stack seam.
 WriteDecimalByteDigits (4BC2) and LoadSelectedLevelResources (197D) now have connected
 native cores verified in 270 and 59 cases respectively. The closed 378A graphics
-record copy and 389F coordinate collector now pass 131 and 159 native cases.
+record copy and 389F coordinate collector now pass 265 and 159 native comparisons
+(graphics:131 null-bus and134 raster-bus, including device-backed ES/RET).
 The 37C2/3839 SS cell writers now pass 123/386 cases, and their four-call setup
 span with 378A/389F passes 105 integrated cases. The 4DF8/8808 VGA-clear/layout
 leaves and 368E/36AD callers now pass
@@ -101,7 +243,7 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     counters/order/DS, ignored closes and both fatal seams. The 4BC2 decimal leaf
     passes 270 native cases, including controlled live RET aliases; see decimal-digits.md.
     The 378A graphics-record copy and 389F coordinate collector now have C11
-    cores with 131/159 cases, including all80 supplied LEVEL sections. Their
+    cores with 265/159 comparisons, including all80 supplied LEVEL sections. Their
     221 original bytes/89 instruction sites preserve stale inactive slots,
     unchecked wrapped ground-type lookup, DF, live saved cursors/counters/RET,
     full type-one comparisons, zero-X acceptance and the repeated+0A default bug.
@@ -161,10 +303,21 @@ below explicit; module extraction did not resolve UNKNOWN bytes.
     609 cases/36 caller/1366 integrated sites/198 edges. It retains signed packed
     y, all64 selectors and ignoredbit6, control/reversal/protection bits, live
     savedSI/coordinates and changed near/far returns. Six direct core-boundary
-    probes verify status flags; see terrain-drawing.md. Continue the two terrain
-    producer loops3752..3769 and3962..3979, including live DS and SS iterator
-    saves, big-endian commands, FFFF sentinel and changed child returns. Their
-    wider36B6/394F resource/object/platform consumers remain untranslated.
+    probes verify status flags; see terrain-drawing.md. The two terrain loops
+    374F..3769 and395F..3979 now have a separate command reader and native
+    renderer composition. Require fresh terrain-commands/terrain-stream reports
+    before claiming its complete bounded domain. Their wider36B6/394F
+    resource/object/platform consumers retain their broader obligations.
+    The397D..39CD candidate reads dimensions at record+4/+5 and source words
+    at+8/+17; preserve
+    separate BEdefinition reads, three live SS saves, and the actual far return.
+    The378A copy now also has a bus-aware core and134 original comparisons,
+    including planar source/destination and provider-backed stack/ES/RET.
+    Use that API for397A..39CD; preserve its explicit finite provider/intact-code
+    domains. The static map is in object-drawing-frontier.md.
+    tests/terrain_code_alias.py records original-only SS=CS aliases that replace
+    each loop's next JMP with ADC. They remain outside the intact-code C domain;
+    neither these original-only probes nor UNKNOWN bytes add C coverage.
     Keep DS:66F8/66FA/66FC/66FE and A949 live, including saved words and shifted
     cursor aliases. Preserve original far-return, signed/sign-only clipping,
     segment/offset wrap, self modification and unchecked zero-size behavior.

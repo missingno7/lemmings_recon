@@ -108,6 +108,10 @@ The traced probe must exit at its access budget; the null-bus probe must be
 terminated by its deadline. These harness checks add no translated coverage.
 The main `tools/difftest.py` runner applies the same Windows commit ceiling and
 explicit deadlines to every native suite, including compiler descendants.
+Windows workers start suspended and resume only after their Job Object limits
+are installed. This also keeps Python redirector descendants inside the job.
+Separate regressions delay job setup and reject it outright: the child must not
+execute before attachment, and a failed setup must reap it without execution.
 
 The run covered 73 instruction addresses and 29 observed branch edges. It did
 not execute `09996`. `translated_code_bytes` is 173 for the maintained C range;

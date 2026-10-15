@@ -25,6 +25,10 @@
     {
       "offset": 3952,
       "evidence": "0F5D/0F60 installs CS:0F70 via DOS AH25 and live vector selector"
+    },
+    {
+      "offset": 7895,
+      "evidence": "Coherent66-byte cache allocation candidate1ED7..1F18 with two DOS AH48 calls and known cache field stores; declared entry for static accounting, no known incoming edge; reachability UNRESOLVED; docs/cache-allocation.md"
     }
   ],
   "regions": [

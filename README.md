@@ -27,7 +27,7 @@ The PC-speaker executable payload in MAIN.DAT adds a fourth component image:
 127,491 exact ASM bytes in total. Installed IRQ handlers and external timer-chain
 returns now have bounded checks; see [interrupts and overlay](docs/interrupts.md).
 
-Sixty-two original entries and setup spans now have verified C11 cores: two checksums, thirteen DAT
+C11 translations cover checksums and DAT
 resource/decoder/file/read/cache routines, a raw-resource reader, a resource RLE
 decoder, four special-resource VGA strip entries, their connected setup caller,
 the decimal helper, connected resource selection, four object-record helpers,
@@ -35,8 +35,12 @@ their connected setup span, VGA clear/layout, two drawing callers, three minimap
 routines, two clipping/dirty-cell leaves, their scoped drawing preparation span,
 destination geometry/shared dispatch and four source-row spans,
 all twelve planar drawing bodies and their complete normal-entry connection,
-the packed terrain-piece caller and three PC-speaker helpers, totaling 7,603
-unique original code bytes.
+the packed terrain-piece caller and three PC-speaker helpers.
+Additional scoped cores connect cleanup/resource failure paths, display setup,
+status and start programming, and the glyph/text-stream producers. See
+[bottom-up connections](docs/bottom-up.md) and [text records](docs/text-stream.md).
+Aggregate C coverage remains unpromoted until the complete terrain campaign and
+affected differential reports receive fresh acceptance.
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
 see [PC-speaker C](docs/pcspeaker.md).
@@ -49,19 +53,19 @@ The complete wrapper now has a verified C11 core; see [DAT read contracts](docs/
 The integrated section decoder directly calls these native cores. One hundred twenty-eight
 cases include all80 pinned level sections and the original sound sections through direct reads and both cache
 paths, all token forms, malformed headers and both fatal read exits;
-see [DAT section C](docs/dat-section.md). Resource callers and fatal
-cleanup still require translation. Filename preparation, cache selection and
+see [DAT section C](docs/dat-section.md). The scoped resource and fatal-cleanup
+connections are recorded in [next work](docs/next-work.md). Filename preparation, cache selection and
 startup disabling are now verified in 305 cases; see [DAT cache C](docs/dat-cache.md)
 for the preserved padding and last-byte comparison bugs.
 
 File open and attribute/retry wrappers are native in 40 verified cases. The
-renderer/input retry callee and fatal print path remain explicit unported
-boundaries; see [DAT file C](docs/dat-files.md).
+renderer/input retry callee remains an explicit unported boundary; the fatal
+printer has a separate [native connection](docs/file-error.md); see [DAT file C](docs/dat-files.md).
 
 The resource caller now connects check/open/decode through direct native core
 calls. Twenty-four integrated cases retain the original ignored-open-carry and
 saved-DS behavior; see [DAT resource C](docs/dat-load.md). Higher resource ownership,
-retry rendering/input and fatal cleanup remain open.
+retry rendering/input and platform ownership remain open.
 
 The raw-resource open/read/close primitive has 46 differential cases, including
 short reads and all three error exits; see [raw resource C](docs/resource-raw.md).
@@ -167,10 +171,13 @@ Unicorn wheels. MSYS NASM requires execution outside the restricted sandbox beca
 its shared-object initialization fails inside it. GCC runs normally.
 
 Native differential suites run in child processes with explicit deadlines and,
-on Windows, a 512 MiB process / 768 MiB process-tree commit ceiling. The clipping
+on Windows, default 512 MiB process / 768 MiB process-tree commit ceilings.
+The focused display/text workers use 384 MiB / 640 MiB limits. The clipping
 suite also bounds each callback trace and removes temporary DLLs after failure.
+Windows children start suspended until the commit limits are attached, including
+before a Python redirector can start its runtime child.
 Harness regressions verify runaway-loop termination, allocation rejection and
-child cleanup; see [clipping verification](docs/drawing-clip.md).
+child cleanup, including failed guard setup; see [clipping verification](docs/drawing-clip.md).
 
 ## Files and workflow
 

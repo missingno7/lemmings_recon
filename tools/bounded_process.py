@@ -88,21 +88,49 @@ def _windows_job(process, memory_mib):
     return kernel, job
 
 
+def _resume_windows_process(process):
+    # Popen closes the primary thread handle. Resume the suspended process by
+    # process handle only after its job is installed. If this API is unavailable
+    # or fails, the caller reaps the still-suspended child without running it.
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+    kernel.OpenProcess.restype = wintypes.HANDLE
+    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel.CloseHandle.restype = wintypes.BOOL
+    native = ctypes.WinDLL('ntdll')
+    native.NtResumeProcess.argtypes = [wintypes.HANDLE]
+    native.NtResumeProcess.restype = ctypes.c_int32
+    handle = kernel.OpenProcess(0x0800, False, process.pid)  # PROCESS_SUSPEND_RESUME
+    if not handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        status = native.NtResumeProcess(handle)
+        if status != 0:
+            raise OSError(f'NtResumeProcess failed: NTSTATUS {status & 0xffffffff:08X}')
+    finally:
+        kernel.CloseHandle(handle)
+
+
 def run_bounded(args, *, timeout, memory_mib=DEFAULT_MEMORY_MIB, check=True,
                 **kwargs):
     """Like subprocess.run, with guaranteed reaping and a Windows commit ceiling.
 
     A timeout is a failed check, never evidence of a differential mismatch.
+    Windows children start suspended until their job limits are installed, so
+    even redirectors cannot launch descendants outside the job during setup.
     Closing the Windows job also terminates any remaining compiler/test children.
     Other hosts retain the wall-clock bound; memory limits here are Windows-only.
     """
     if timeout <= 0 or memory_mib <= 0:
         raise ValueError('Test limits must be positive')
+    if os.name == 'nt':
+        kwargs['creationflags'] = kwargs.get('creationflags', 0) | 0x00000004
     process = subprocess.Popen(args, **kwargs)
     job = None
     try:
         if os.name == 'nt':
             job = _windows_job(process, memory_mib)
+            _resume_windows_process(process)
         stdout, stderr = process.communicate(timeout=timeout)
         result = subprocess.CompletedProcess(args, process.returncode, stdout, stderr)
         if check:

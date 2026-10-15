@@ -30,8 +30,9 @@ the next attribute service. Both inner and outer restores read live stack memory
 
 With retries disabled, only the inner frame is restored. DX becomes the original
 2194 message offset and execution jumps to 1949. The outer twelve-byte save frame
-is deliberately left on the stack. That print/cleanup path itself remains
-untranslated; the native result and oracle adapter expose the matching fatal exit.
+is deliberately left on the stack. That print/cleanup path now has a separately
+tested native core (file-error.md); this wrapper's native result and oracle
+adapter still expose the matching fatal exit until composed error ownership.
 
 ## Declared boundaries and verification
 

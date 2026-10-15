@@ -3,6 +3,7 @@ import os
 import ctypes
 import subprocess
 import sys
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -10,6 +11,7 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'tools'))
 from bounded_process import run_bounded, temporary_build_directory
+import bounded_process
 
 
 class BoundedProcessTests(unittest.TestCase):
@@ -35,6 +37,39 @@ class BoundedProcessTests(unittest.TestCase):
                 run_bounded([sys.executable, '-c', 'while True: pass'], timeout=1)
         self.assertEqual(len(launched), 1)
         self.assertIsNotNone(launched[0].poll())
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows suspended launch')
+    def test_child_cannot_execute_before_job_is_installed(self):
+        with temporary_build_directory(prefix='job-start-regression-',
+                                       parent=ROOT / 'build') as directory:
+            marker = Path(directory) / 'executed'
+            install = bounded_process._windows_job
+
+            def delayed_install(process, memory_mib):
+                time.sleep(0.3)
+                self.assertFalse(marker.exists(), 'Child ran before job setup')
+                return install(process, memory_mib)
+
+            code = 'import pathlib,sys; pathlib.Path(sys.argv[1]).touch()'
+            with patch('bounded_process._windows_job', side_effect=delayed_install):
+                run_bounded([sys.executable, '-c', code, str(marker)], timeout=5)
+            self.assertTrue(marker.exists(), 'Guarded child never executed')
+
+    @unittest.skipUnless(os.name == 'nt', 'Windows suspended launch')
+    def test_failed_job_setup_reaps_child_without_executing_it(self):
+        with temporary_build_directory(prefix='job-failure-regression-',
+                                       parent=ROOT / 'build') as directory:
+            marker = Path(directory) / 'executed'
+
+            def reject_install(process, memory_mib):
+                time.sleep(0.3)
+                raise RuntimeError('Constructed job setup failure')
+
+            code = 'import pathlib,sys; pathlib.Path(sys.argv[1]).touch()'
+            with patch('bounded_process._windows_job', side_effect=reject_install):
+                with self.assertRaisesRegex(RuntimeError, 'job setup failure'):
+                    run_bounded([sys.executable, '-c', code, str(marker)], timeout=5)
+            self.assertFalse(marker.exists(), 'Unguarded child executed')
 
     @unittest.skipUnless(os.name == 'nt', 'Windows commit ceiling')
     def test_memory_ceiling_rejects_allocation(self):

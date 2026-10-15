@@ -44,8 +44,9 @@ callee save frames and return-address writes remain observable in canonical memo
 Either read's carry error selects 1C7A: AX and DS become the original relocated
 error-data segment and execution jumps to 04D0. No local stack unwind occurs. The
 native core reports this as an explicit failed-read exit; the adapter reaches
-the same IP with the same stack/register/flag state. The 04D0 cleanup path itself
-is still untranslated and must be connected when native error ownership is ported.
+the same IP with the same stack/register/flag state. The04D0 cleanup path now has
+a separately tested native core (fatal-cleanup.md); connecting this decoder's
+failed-read result with its original stack residue remains open.
 
 ## Verification and remaining scope
 

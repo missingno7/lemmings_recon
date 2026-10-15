@@ -1,6 +1,8 @@
 # Object drawing frontier
 
-This is a static contract map for the object-drawing suffix of `sub_394F`.
+This is a static contract map for the object-drawing suffix of `RedrawLevel`
+(`394F`, formerly `sub_394F`). Native verification is maintained separately in
+object-drawing.md and level-redraw.md.
 It does not translate code or claim that arbitrary segment aliases are solved.
 
 ## Closed suffix and control flow

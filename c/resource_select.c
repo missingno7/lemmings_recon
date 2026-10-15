@@ -4,6 +4,9 @@
 #ifndef SELECT_MUTATION
 #define SELECT_MUTATION 0
 #endif
+#ifndef SELECT_RETURN_MUTATION
+#define SELECT_RETURN_MUTATION 0
+#endif
 enum {CF=1,PF=4,AF=16,ZF=64,SF=128,DF=1024,OF=2048,ARITH=0x8d5};
 static uint32_t physical(uint16_t seg,uint16_t off) {return (((uint32_t)seg<<4)+off)&0xfffffu;}
 static uint8_t byte(const uint8_t *mem,uint16_t seg,uint16_t off) {return mem[physical(seg,off)];}
@@ -40,26 +43,51 @@ static LmnDatFileCall state_from_result(const LmnDatFileResult *out,uint16_t ss)
     LmnDatFileCall s={out->value,out->handle,out->count,out->filename_offset,out->source_cursor,
         out->output_cursor,out->base_cursor,out->segment,out->extra_segment,ss,out->stack_offset,out->flags};return s;
 }
-static LmnDatFileResult result(const LmnDatFileCall *s,unsigned fatal) {
+static LmnDatFileResult legacy_result(const LmnDatFileCall *s,unsigned fatal) {
     LmnDatFileResult out={s->value,s->handle,s->count,s->filename_offset,s->source_cursor,
         s->output_cursor,s->base_cursor,s->segment,s->extra_segment,s->stack_offset,s->flags,(uint16_t)fatal};return out;
 }
-static unsigned dat_call(uint8_t *mem,LmnDatFileCall *s,uint16_t continuation,unsigned first,
+static LmnResourceSelectionExecution execution_result(const LmnDatFileCall *s,
+    uint16_t continuation,enum LmnResourceSelectionStatus status) {
+    LmnResourceSelectionExecution out={*s,continuation,status};return out;
+}
+typedef struct ChildTransfer {
+    uint16_t continuation;
+    enum LmnResourceSelectionStatus status;
+} ChildTransfer;
+static ChildTransfer child_transfer(uint16_t continuation,
+    enum LmnResourceSelectionStatus status) {
+    ChildTransfer out={continuation,status};return out;
+}
+static ChildTransfer consumed_child_return(const uint8_t *mem,LmnDatFileCall *s,
+    uint16_t expected) {
+    uint16_t target=pop(mem,s);
+#if SELECT_RETURN_MUTATION == 1
+    (void)target;
+    return child_transfer(expected,LMN_RESOURCE_SELECTION_READY);
+#else
+    return child_transfer(target,target==expected ? LMN_RESOURCE_SELECTION_READY:
+        LMN_RESOURCE_SELECTION_CHANGED_RETURN);
+#endif
+}
+static ChildTransfer dat_call(uint8_t *mem,LmnDatFileCall *s,uint16_t continuation,unsigned first,
     const LmnDatLoadSegments *segments,const LmnResourceSelectionServices *services) {
-    LmnDatFileResult out;push(mem,s,continuation);
+    LmnDatFileResult out;ChildTransfer transfer;push(mem,s,continuation);
     out=first ? lmn_dat_load_core(mem,s,segments,services->files,services->io):
         lmn_dat_decode_preserving_segment_core(mem,s,segments,services->io);
     *s=state_from_result(&out,s->stack_segment);
-    if(out.fatal)return out.fatal;
-    (void)pop(mem,s);return 0;
+    if(out.fatal==1)return child_transfer(CS_DatFileErrorTransfer,LMN_RESOURCE_SELECTION_FILE_ERROR);
+    if(out.fatal)return child_transfer(CS_DatFatalTransfer,LMN_RESOURCE_SELECTION_CLEANUP);
+    transfer=consumed_child_return(mem,s,continuation);return transfer;
 }
-static unsigned raw_call(uint8_t *mem,LmnDatFileCall *s,uint16_t continuation,const LmnRawResourceServices *services) {
-    LmnRawResourceCall call;LmnRawResourceResult out;push(mem,s,continuation);
+static ChildTransfer raw_call(uint8_t *mem,LmnDatFileCall *s,uint16_t continuation,
+    const LmnRawResourceServices *services) {
+    LmnRawResourceCall call;LmnRawResourceResult out;ChildTransfer transfer;push(mem,s,continuation);
     call=(LmnRawResourceCall){s->segment,s->filename_offset,s->extra_segment,s->value,s->count,s->handle,s->stack_segment,s->stack_offset,s->flags};
     out=lmn_read_raw_resource_core(mem,&call,services);s->value=out.value;s->handle=out.handle;s->count=out.count;
     s->filename_offset=out.offset;s->segment=out.segment;s->extra_segment=out.extra_segment;s->stack_offset=out.stack_offset;s->flags=out.flags;
-    if(out.error_stage)return 1;
-    (void)pop(mem,s);return 0;
+    if(out.error_stage)return child_transfer(CS_DatFileErrorTransfer,LMN_RESOURCE_SELECTION_FILE_ERROR);
+    transfer=consumed_child_return(mem,s,continuation);return transfer;
 }
 static void copy_words(uint8_t *mem,LmnDatFileCall *s) {
     uint16_t step=(s->flags&DF) ? 0xfffeu:2u;
@@ -77,10 +105,12 @@ static unsigned close_file(uint8_t *mem,LmnDatFileCall *s,const LmnRawResourceSe
 #endif
     return 0;
 }
-LmnDatFileResult lmn_load_selected_resources_core(uint8_t *mem,const LmnResourceSelectionCall *call,
-    const LmnDatLoadSegments *segments,const LmnResourceSelectionServices *services) {
-    LmnDatFileCall s={0,0,0,0,0,0,call->base_cursor,call->main_data_segment,0,call->stack_segment,call->stack_offset,call->flags};
-    LmnDecimalDigitsResult digits;unsigned fatal;
+
+LmnResourceSelectionExecution lmn_load_selected_resources_execution_core(uint8_t *mem,
+    const LmnDatFileCall *call,const LmnDatLoadSegments *segments,
+    const LmnResourceSelectionServices *services) {
+    LmnDatFileCall s=*call;
+    LmnDecimalDigitsResult digits;ChildTransfer transfer;uint16_t decimal_return;
     s.handle=byte(mem,s.segment,SEG09A9_LevelResourceSelectionByte);s.source_cursor=SEG09A9_LevelResourceOrderBytes;
     s.count=byte(mem,s.segment,(uint16_t)(s.source_cursor+s.handle));
 #if SELECT_MUTATION == 1
@@ -94,22 +124,34 @@ LmnDatFileResult lmn_load_selected_resources_core(uint8_t *mem,const LmnResource
     s.flags=logical(s.flags,s.count,16);s.source_cursor=SEG09A9_LevelResourceFilenameDigits;
     push(mem,&s,s.count);push(mem,&s,CS_SelectionAfterDecimal);
     digits=lmn_write_decimal_digits_core(mem,s.segment,s.source_cursor,(uint8_t)s.value,s.flags);
-    s.value=digits.value;s.source_cursor=digits.cursor;s.flags=digits.flags;(void)pop(mem,&s);s.count=pop(mem,&s);
+    s.value=digits.value;s.source_cursor=digits.cursor;s.flags=digits.flags;
+    decimal_return=pop(mem,&s);
+#if SELECT_RETURN_MUTATION == 1
+    (void)decimal_return;
+#else
+    if(decimal_return!=CS_SelectionAfterDecimal)
+        return execution_result(&s,decimal_return,LMN_RESOURCE_SELECTION_CHANGED_RETURN);
+#endif
+    s.count=pop(mem,&s);
     s.filename_offset=SEG09A9_LevelResourceFilename;push(mem,&s,s.segment);s.extra_segment=pop(mem,&s);
     s.output_cursor=SEG09A9_LoadedLevelRecord;push(mem,&s,s.count);s.count=s.extra_segment;s.source_cursor=s.output_cursor;
-    fatal=dat_call(mem,&s,CS_SelectionAfterFirstLevelSection,1,segments,services);if(fatal)return result(&s,fatal);
+    transfer=dat_call(mem,&s,CS_SelectionAfterFirstLevelSection,1,segments,services);
+    if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
     s.count=pop(mem,&s);
     while(s.count) {
         push(mem,&s,s.count);s.output_cursor=SEG09A9_LoadedLevelRecord;
-        fatal=dat_call(mem,&s,CS_SelectionAfterNextLevelSection,0,segments,services);if(fatal)return result(&s,fatal);
+        transfer=dat_call(mem,&s,CS_SelectionAfterNextLevelSection,0,segments,services);
+        if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
         s.count=pop(mem,&s);--s.count;
     }
-    if(close_file(mem,&s,services->raw))return result(&s,1);
+    if(close_file(mem,&s,services->raw))
+        return execution_result(&s,CS_DatFileErrorTransfer,LMN_RESOURCE_SELECTION_FILE_ERROR);
     s.value=pop(mem,&s);s.flags=logical(s.flags,(uint16_t)(s.value&1u),16);
     if(s.value&1u) {
         push(mem,&s,s.value);push(mem,&s,s.segment);s.extra_segment=pop(mem,&s);
         s.filename_offset=SEG09A9_OddLevelOverrideFilename;s.value=SEG09A9_OddLevelOverrideBuffer;s.count=0x1180;
-        fatal=raw_call(mem,&s,CS_SelectionAfterOddOverrideRead,services->raw);if(fatal)return result(&s,fatal);
+        transfer=raw_call(mem,&s,CS_SelectionAfterOddOverrideRead,services->raw);
+        if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
         s.value=pop(mem,&s);
         /* SHR AL / MUL DH discard incoming AH; DX retains its previous low byte. */
         s.value=(uint16_t)(((uint8_t)s.value>>1)*56u);s.filename_offset=(uint16_t)((s.filename_offset&255u)|0x3800u);
@@ -123,9 +165,10 @@ LmnDatFileResult lmn_load_selected_resources_core(uint8_t *mem,const LmnResource
     s.value=(uint16_t)((s.value&0xff00u)|(uint8_t)(s.value+0x30u));mem[physical(s.segment,s.source_cursor)]=(uint8_t)s.value;
     s.filename_offset=SEG09A9_GroundResourceFilename;push(mem,&s,s.segment);s.extra_segment=pop(mem,&s);
     s.value=SEG09A9_GroundResourceBuffer;s.count=0x1000;
-    fatal=raw_call(mem,&s,CS_SelectionAfterGroundRead,services->raw);if(fatal)return result(&s,fatal);
+    transfer=raw_call(mem,&s,CS_SelectionAfterGroundRead,services->raw);
+    if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
 #if SELECT_MUTATION == 2
-    s.segment=call->main_data_segment;
+    s.segment=call->segment;
 #endif
     s.value=(uint16_t)((s.value&0xff00u)|byte(mem,s.segment,SEG09A9_LevelGraphicsSetByte));
     s.source_cursor=SEG09A9_GraphicsFilenameSelector;s.flags=addition(s.flags,(uint8_t)s.value,0x30,8);
@@ -136,31 +179,53 @@ LmnDatFileResult lmn_load_selected_resources_core(uint8_t *mem,const LmnResource
         push(mem,&s,s.segment);s.filename_offset=SEG09A9_GraphicsDatFilename;
         s.extra_segment=word(mem,s.segment,SEG09A9_GraphicsResourceInputSegment);s.output_cursor=0x10;s.source_cursor=0;
         s.flags=logical(s.flags,0,16);s.count=s.extra_segment;
-        fatal=dat_call(mem,&s,CS_SelectionAfterGraphicsLoad,1,segments,services);if(fatal)return result(&s,fatal);
+        transfer=dat_call(mem,&s,CS_SelectionAfterGraphicsLoad,1,segments,services);
+        if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
         s.segment=pop(mem,&s);push(mem,&s,s.segment);s.output_cursor=0;s.source_cursor=0;s.flags=logical(s.flags,0,16);
         s.extra_segment=word(mem,s.segment,SEG09A9_LevelGraphicsSegment);s.segment=word(mem,s.segment,SEG09A9_LevelGraphicsSegment);
-        fatal=dat_call(mem,&s,CS_SelectionAfterGraphicsDecode,0,segments,services);if(fatal)return result(&s,fatal);
+        transfer=dat_call(mem,&s,CS_SelectionAfterGraphicsDecode,0,segments,services);
+        if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
         s.segment=pop(mem,&s);
+        if(close_file(mem,&s,services->raw))
+            return execution_result(&s,CS_DatFileErrorTransfer,LMN_RESOURCE_SELECTION_FILE_ERROR);
+        return execution_result(&s,CS_SelectionNormalReturn,LMN_RESOURCE_SELECTION_READY);
     } else {
         s.source_cursor=SEG09A9_SpecialFilenameSelector;s.flags=addition(s.flags,(uint8_t)s.value,0x2f,8);
         s.value=(uint16_t)((s.value&0xff00u)|(uint8_t)(s.value+0x2fu));mem[physical(s.segment,s.source_cursor)]=(uint8_t)s.value;
         push(mem,&s,s.segment);s.filename_offset=SEG09A9_SpecialResourceFilename;
         s.extra_segment=word(mem,s.segment,SEG09A9_GraphicsResourceInputSegment);s.source_cursor=0;s.flags=logical(s.flags,0,16);
         s.output_cursor=0x10;s.count=s.extra_segment;
-        fatal=dat_call(mem,&s,CS_SelectionAfterSpecialLoad,1,segments,services);if(fatal)return result(&s,fatal);
+        transfer=dat_call(mem,&s,CS_SelectionAfterSpecialLoad,1,segments,services);
+        if(transfer.status!=LMN_RESOURCE_SELECTION_READY)return execution_result(&s,transfer.continuation,transfer.status);
         s.segment=pop(mem,&s);
+        if(close_file(mem,&s,services->raw))
+            return execution_result(&s,CS_DatFileErrorTransfer,LMN_RESOURCE_SELECTION_FILE_ERROR);
+        return execution_result(&s,CS_SelectionSpecialReturn,LMN_RESOURCE_SELECTION_READY);
     }
-    if(close_file(mem,&s,services->raw))return result(&s,1);
-    return result(&s,0);
 }
+
+LmnDatFileResult lmn_load_selected_resources_core(uint8_t *mem,const LmnResourceSelectionCall *call,
+    const LmnDatLoadSegments *segments,const LmnResourceSelectionServices *services) {
+    LmnDatFileCall input={0,0,0,0,0,0,call->base_cursor,call->main_data_segment,0,
+        call->stack_segment,call->stack_offset,call->flags};
+    LmnResourceSelectionExecution execution=lmn_load_selected_resources_execution_core(mem,&input,segments,services);
+    unsigned fatal=execution.status==LMN_RESOURCE_SELECTION_FILE_ERROR ? 1u:
+        execution.status==LMN_RESOURCE_SELECTION_CLEANUP ? 2u:
+        execution.status==LMN_RESOURCE_SELECTION_CHANGED_RETURN ? 3u:0u;
+    return legacy_result(&execution.state,fatal);
+}
+
 void lmn_load_selected_resources_adapter(uint8_t *mem,LmnRegs *r,const LmnResourceSelectionServices *services) {
-    LmnResourceSelectionCall call={r->ds,r->ss,r->sp,r->flags,r->bp};
+    LmnDatFileCall call={r->ax,r->bx,r->cx,r->dx,r->si,r->di,r->bp,r->ds,r->es,r->ss,r->sp,r->flags};
     LmnDatLoadSegments segments={word(mem,r->cs,(uint16_t)(CS_CheckDatFile+0x33u)),
         word(mem,r->cs,(uint16_t)(CS_SelectCachedDatFile+0x50u)),word(mem,r->cs,(uint16_t)(CS_ReadDatBytes+8u)),
         word(mem,r->cs,(uint16_t)(CS_DatReadFailure+1u))};
-    LmnDatFileResult out=lmn_load_selected_resources_core(mem,&call,&segments,services);
-    r->ax=out.value;r->bx=out.handle;r->cx=out.count;r->dx=out.filename_offset;r->si=out.source_cursor;r->di=out.output_cursor;
-    r->bp=out.base_cursor;r->ds=out.segment;r->es=out.extra_segment;r->sp=out.stack_offset;r->flags=out.flags;
-    if(out.fatal)r->ip=out.fatal==1 ? CS_DatFileErrorTransfer:CS_DatFatalTransfer;
-    else {r->ip=word(mem,r->ss,r->sp);r->sp=(uint16_t)(r->sp+2u);}
+    LmnResourceSelectionExecution out=lmn_load_selected_resources_execution_core(mem,&call,&segments,services);
+    r->ax=out.state.value;r->bx=out.state.handle;r->cx=out.state.count;r->dx=out.state.filename_offset;
+    r->si=out.state.source_cursor;r->di=out.state.output_cursor;r->bp=out.state.base_cursor;
+    r->ds=out.state.segment;r->es=out.state.extra_segment;r->ss=out.state.stack_segment;
+    r->sp=out.state.stack_offset;r->flags=out.state.flags;
+    if(out.status==LMN_RESOURCE_SELECTION_READY) {
+        r->ip=word(mem,r->ss,r->sp);r->sp=(uint16_t)(r->sp+2u);
+    } else r->ip=out.continuation;
 }

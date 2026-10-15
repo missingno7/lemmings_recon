@@ -297,16 +297,6 @@
     },
     {
       "start": 7549,
-      "end": 7895,
-      "classification": "instruction"
-    },
-    {
-      "start": 7895,
-      "end": 7961,
-      "classification": "unresolved"
-    },
-    {
-      "start": 7961,
       "end": 9090,
       "classification": "instruction"
     },

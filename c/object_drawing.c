@@ -12,22 +12,18 @@ enum {
     LOGIC_DEFINED_FLAGS = CF | PF | ZF | SF | OF
 };
 
-/* These field offsets and local suffix PCs have no ledger symbols yet. Keep
-   them explicit here until the parent integrates the object-drawing ledger. */
+/* Repeated-record offsets are derived from ledger-owned first-record anchors. */
 enum {
-    OBJECT_DEFINITION_X_HIGH = 0x00u,
-    OBJECT_DEFINITION_X_LOW = 0x01u,
-    OBJECT_DEFINITION_Y_HIGH = 0x02u,
-    OBJECT_DEFINITION_Y_LOW = 0x03u,
-    OBJECT_DEFINITION_FLAGS_HIGH = 0x06u,
-    OBJECT_DEFINITION_FLAGS_LOW = 0x07u,
-    OBJECT_GRAPHICS_WIDTH = 0x04u,
-    OBJECT_GRAPHICS_HEIGHT = 0x05u,
-    OBJECT_GRAPHICS_MASK_SOURCE = 0x08u,
-    OBJECT_GRAPHICS_FRAME_SOURCE = 0x17u,
-    OBJECT_DRAWING_LOOP = 0x398eu,
-    OBJECT_DRAWING_AFTER_FAR_CALL = 0x39c2u,
-    OBJECT_DRAWING_NEAR_RETURN = 0x39cdu
+    OBJECT_DEFINITION_X_HIGH = SEG09A9_FirstObjectDefinitionX - SEG09A9_LevelObjectDefinitions,
+    OBJECT_DEFINITION_X_LOW = OBJECT_DEFINITION_X_HIGH + 1u,
+    OBJECT_DEFINITION_Y_HIGH = SEG09A9_FirstObjectDefinitionY - SEG09A9_LevelObjectDefinitions,
+    OBJECT_DEFINITION_Y_LOW = OBJECT_DEFINITION_Y_HIGH + 1u,
+    OBJECT_DEFINITION_FLAGS_HIGH = SEG09A9_FirstObjectDefinitionFlags - SEG09A9_LevelObjectDefinitions,
+    OBJECT_DEFINITION_FLAGS_LOW = OBJECT_DEFINITION_FLAGS_HIGH + 1u,
+    OBJECT_GRAPHICS_WIDTH = SEG09A9_FirstObjectGraphicsWidth - SEG09A9_LevelObjectGraphicsRecords,
+    OBJECT_GRAPHICS_HEIGHT = SEG09A9_FirstObjectGraphicsHeight - SEG09A9_LevelObjectGraphicsRecords,
+    OBJECT_GRAPHICS_MASK_SOURCE = SEG09A9_FirstObjectGraphicsMaskOffset - SEG09A9_LevelObjectGraphicsRecords,
+    OBJECT_GRAPHICS_FRAME_SOURCE = SEG09A9_FirstObjectGraphicsFrameOffset - SEG09A9_LevelObjectGraphicsRecords
 };
 
 static uint32_t physical(uint16_t segment, uint16_t offset) {
@@ -164,7 +160,7 @@ LmnObjectDrawingResult lmn_draw_level_objects_core(
         .control = call->control,
         .stack_offset = call->stack_offset,
         .flags = call->flags,
-        .continuation = OBJECT_DRAWING_LOOP
+        .continuation = CS_LevelObjectsLoop
     };
 
     /* 3988..398B load the live graphics segment and publish it before the
@@ -202,7 +198,7 @@ LmnObjectDrawingResult lmn_draw_level_objects_core(
             uint8_t object_width, object_height;
             uint16_t data_word;
             uint16_t child_return_ip, child_return_cs;
-            uint16_t expected_ip = OBJECT_DRAWING_AFTER_FAR_CALL;
+            uint16_t expected_ip = CS_LevelObjectsAfterBitmap;
 
             /* PUSH CX / DI / SI are live writes through SS, in this order. */
             stack_offset = result.state.stack_offset;
@@ -390,11 +386,11 @@ LmnObjectDrawingResult lmn_draw_level_objects_core(
         result.state.packed_counts =
             (uint16_t)(result.state.packed_counts - 1u);
         if (result.state.packed_counts == 0) {
-            result.state.continuation = OBJECT_DRAWING_NEAR_RETURN;
+            result.state.continuation = CS_LevelObjectsReturn;
             result.ready_to_return = 1;
             return result;
         }
-        result.state.continuation = OBJECT_DRAWING_LOOP;
+        result.state.continuation = CS_LevelObjectsLoop;
     }
 }
 

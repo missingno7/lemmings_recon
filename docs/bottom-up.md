@@ -15,10 +15,14 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | Inclusive image range | Source | Ownership status |
 |---|---|---|
 | 00000..01915 | entry_services.asm | Entry/service frame; protected views remain separate |
-| 01916..01ED6 | resources.asm | Raw files, selection, special setup and DAT/cache cluster |
-| 01ED7..03789 | game_code.asm | Mixed ownership remains provisional |
+| 01916..01F18 | resources.asm | Raw files, selection, special setup and DAT/cache cluster; allocation candidate has unresolved reachability |
+| 01F19..0368D | game_code.asm | Mixed ownership remains provisional |
+| 0368E..03789 | level_initialize.asm | Drawing initialization, live clear tail, header and level-state caller |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
-| 03944..0796E | game_code_late.asm | Mixed ownership remains provisional |
+| 03944..052D3 | game_code_late.asm | Mixed ownership remains provisional |
+| 052D4..0563D | palette_frontends.asm | Palette pointers, writers and transition callers; ownership/frontier contracts remain explicit |
+| 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
+| 05726..0796E | game_code_late_after_palette.asm | Mixed ownership remains provisional |
 | 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
 | 07A5A..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
@@ -49,8 +53,13 @@ decode to 2,048 bytes and match bounded original/native decoding. Odd overrides
 replace the first 24 bytes and last 32 bytes using a selected 56-byte slice.
 Record bytes FE6/FE8 select normal/special graphics. Ground definitions load at
 1B4B. Normal graphics use two DAT sections; VGASPEC feeds the already connected
-1A7B metadata/RLE/strip/VGAGR chain. The 36B6/394F consumers still need object,
-terrain, initialization and segment contracts.
+1A7B metadata/RLE/strip/VGAGR chain. RedrawLevel at394F now composes native
+initialization, special/terrain, record-copy and object drawing within the
+declared child domains. Its126 C bytes exclude UNKNOWN395E and overlap the
+27-byte terrain loop and81-byte suffix; coverage unions these bytes and all
+shared instruction sites. The36B6 initializer now composes its header, selection,
+object state and live minimap handoffs in36 bounded cases; see level-initialize.md.
+Broader field/provider/IRQ ownership and complete terrain acceptance remain open.
 
 The ledger now names these record fields, buffers, filenames and selector digits.
 They are aliases in canonical memory. No converted records or shadow state were
@@ -110,8 +119,8 @@ connect, using bounded original comparisons and independent data/device checks.
 The graphics-copy gate includes131 null-bus and134 raster-bus comparisons of
 the same56-byte span. Its bus-aware core preserves original access/flag order,
 live PUSH/POP/RET and independent VGA plane/readback effects. This supplies the
-copy dependency for the statically mapped397A..39CD object-drawing suffix;
-the suffix and the complete394F parent remain untranslated. See
+copy dependency for the397A..39CD object-drawing suffix and394F parent;
+their scoped native implementations require fresh acceptance reports. See
 object-graphics-bus.md and object-drawing-frontier.md.
 
 The pass exposed a static extractor gap: zero initial bits are legal. The original
@@ -121,8 +130,91 @@ extractor now accepts zero, with a known-answer test and all 80 level records in
 the original/native/static comparison. Original instructions and native decoder
 behavior were unchanged.
 
+The16A9 timer restore leaf now has a logical native core with291 adapter and
+291 core-boundary comparisons,19 sites/43 bytes and four completed mutants.
+Its PIT outputs precede live LES/IVT stores; unconditionalSTI and actualPOPDS
+select the clock reads before a returning BIOS service. See timer-restore.md.
+The04D0 full cleanup and04EA suffix now compose those cores in362 adapter
+and362 logical-core comparisons with four completed mutants. The 41 caller
+bytes/15 sites overlap no new child bytes; the integrated union is133 bytes/56
+sites. Live childreturns, mousegate, duplicatekeyboard and terminalDOS remain
+explicit. See fatal-cleanup.md. The1949 file-error printer now connects video
+and04EA directly in301 adapter and301 core comparisons,25 caller/45 integrated
+sites,four edges and four completed mutants; see file-error.md. The filename
+walk keeps live provider-returnedDSBX and the tail adds no CALL frame. Continue
+upper resource-selection/DAT error interfaces next. The1916 optional-bus reader
+and direct1949 fatal path now pass87 fixtures across four boundaries,72 integrated
+sites/12edges and four completed mutants, retaining each failed-call save frame
+and the narrow DOS preservation contract. See resource-raw-full.md. Those49 raw
+bytes overlap the prior RAM translation; no extra translated bytes are claimed.
+
 Full classification, native devices, IRQ scheduling, gameplay and SDL3 remain
 open. No original game was booted, and assets/neighbors remain untouched.
+
+The retry UI dependency1550 now has a native bit3-cycle wait, retaining one live
+base-port read, byte-onlyDL addition and both unbounded original loops. Its280
+adapter/core fixtures and four mutants use finite byte-port providers; missing
+providers and actualRET/VGA effects stay explicit. The4C32/4C36 word outputs and
+4C20 origin swap now compose directly, with277 fixtures at all three entries and
+both boundaries. This adds57 unique decoded C bytes across26 sites, with shared
+suffix bytes counted once. See display-status.md/display-start.md for separate
+gates and original-only evidence. The4BE7/4BF5/4C07 setup entries now connect
+native8808 layout in55 fixtures across three entries and both boundaries, with
+51 null-bus repeats each and four completed mutants. Their48 unique caller
+bytes/14 sites preserve all-state BIOS, unconditionalSTI and live far/near
+returns; see display-setup.md for the explicit segment-limit seam. The4D78
+glyph producer now connects8822 in45 integrated fixtures at both boundaries,
+with264 prefix fixtures for all256 byte selectors and null-bus repeats, and
+four completed mutants. Its74 caller bytes/32 sites retain unchecked96-byte
+indexing, liveDS segment selection, all returned renderer fields and savedBP;
+see text-glyph.md for the definedflag and device-stack domains. The4D4D
+stream now composes the glyph core in295 fixtures at both boundaries, including
+all256 style bytes and six pinned record slices. Its43 caller bytes/26 sites
+and eight caller edges preserve the live DF/DS/cursor/save-frame effects and
+CR/header-zero distinction; five mutants and a separate guard86 probe pass.
+See text-stream.md. The4DC2 page copy and4DEF fixed-clear wrapper now
+compose in45 fixtures at both boundaries with six completed mutants. Their
+53 new caller bytes/21 sites retain full6D60 counts, sequential overlap,DF,
+liveorigin/DS/RET and provider seams. Four mode1 device regressions and
+independent four-plane results support the latch-copy fixture; see
+display-pages.md. The5017/5019/7E76 background bridge now connects8822
+in36 fixtures at both boundaries,26 caller/305 integrated sites and six mutants,
+preserving live row/counter saves and full640x350 clipping; see
+background-drawing.md. The531E/536C palette transitions now compose those writers, row/channel and
+status cores in1,191fixtures at both boundaries,82caller/268integratedsites,
+40integratededges and six completed mutants. Their157unique caller bytes retain
+once-selected mode, before-wait JZ, live saves and actual child returns; see
+palette-transition.md. The4B3B/4B40 frame-free input wait now has21unique C bytes/7sites/4edges,
+all65,536 button words,791fixtures at both boundaries and seven completed
+mutants. Its512 original-only keyboard prefix cases add no C coverage; see
+retry-input.md for scan-code releases, shared button word and live memory
+updates. Continue full4B1C composition with explicit provider/IRQ seams.
+Native hardware timing remains open. Older reports affected by the
+fixture extension require refresh before aggregate coverage promotion.
+
+The cache-allocation candidate1ED7..1F18 now has explicit ASM and an investigation
+seed covering66 bytes/25 sites. Its two DOS calls, unsigned paragraph threshold,
+unchecked allocation result, partial AL updates and live near return are recorded
+in cache-allocation.md. Startup calls the separate1ED1 disabling stub and returns
+before this candidate; no known incoming execution edge is established. The new
+seed closes static accounting of that interval without adding C coverage or
+claiming global reachability. Requested paragraphs atDS:1F8E belong to the ledger;
+the name does not imply that DOS successfully allocated the requested block.
+The separate native allocation core now passes282 comparisons plus282 auxiliary
+core probes and four completed mutants. It preserves the live DOS AX/BX/flags
+boundary, optional RAM/VGA bus order and actual near returns; it introduces no
+startup call. The267-case original-only contract remains separate evidence.
+
+The15-byte0FF8 video mode/page restore leaf now has its own279-case original
+contract and native gate. The BIOS mode result's liveDS selects the page byte;
+all declared general/segment/stack/flag effects flow to the second provider and
+actual nearRET. See video-restore.md for missing-service and RAM/VGA boundaries.
+This closes one cleanup dependency, not the04D0 timer/vector/platform caller.
+The1582 keyboard and0FA0 private-vector restore leaves now add a separate native
+gate over34 bytes/15 sites. PUSHDS precedes live pointer reads; returnedSS:SP
+controls POPDS and RET, including a DOS IVT update that overwrites both words.
+Their328 primary cases and four variants at both entries remain separate from
+the16A9 timer dependency and the unported04D0 cleanup caller; see vector-restore.md.
 
 The 4DF8 VGA clear and 8808 layout setter now feed native 368E/36AD callers.
 They operate on live SS mirrors, device planes, DS layout fields and original
@@ -210,3 +302,37 @@ with the documented read-hook observation, then hooks are restored before
 continuing. Next close the two big-endian terrain-command loops3752..3769 and
 3962..3979 inside36B6/394F, including their FFFF sentinel, live iterator and
 changed-return domains. See terrain-drawing.md.
+
+The five palette channel entries at566C/5685/5696/569B/570C now have native
+cores over144 unique bytes/69 sites, retaining the shared569B suffix and live
+wrapper near returns. All327680 byte pairs match originalASM and independent
+channel/flag mathematics;88 fixtures at both boundaries cover14 edges,81
+NULL-bus repeats each and six completed mutants. Preserve signedJG versus
+unsigned channel ordering and sticky BP/BL; see palette-channels.md. The next
+parents are563E packed rows and56E2 RGB rows, followed by5425/54C4 port writers
+and the531E/536C palette loop. Palette pointer/buffer/device ownership and the
+separate4B40 input/IRQ wait remain open.
+
+The563E packed and56E2 RGB row composers now connect the channel cores over
+88 additional bytes/47 caller sites. Their89 fixtures at both boundaries and
+two full65536-iteration zeroCL core cases preserve sequential buffer overlap,
+live savedCX, sticky markers, actual child returns and explicit forward cursors
+withDF set. The232-byte palette-step cluster now has a maintained flat ASM
+module, with unchanged classifications/encodings and physical module assertions.
+See palette-rows.md. Continue5425/54C4 port writers and palette table/buffer
+ownership before531E/536C and the separate4B40 input/IRQ wait.
+
+The5425 attribute and54C4 mappedDAC port writers now have separate native cores
+for101bytes/61sites. Their577boundary fixtures plus2fullzeroCL corecases
+keep DF-dependent source reads, uncheckedCSindexes, byteADD, live saved words,
+and independently reread DS200C control. See palette-ports.md. The remaining
+531E/536C uncertainty is pointer/buffer ownership and live producer frames;
+palette-pointer-frontier.md records the pinned tables and next connection order.
+
+The5569 pointer prefix now connects both row cores through actual PUSH DS/POP ES
+and live unchecked CS word reads, without introducing a CALL frame. Its77new
+bytes/32sites are separate from the232-byte arithmetic cluster, with586fixtures
+at both boundaries andtwofull65536-iterationzeroCL cores. See palette-row-select.md.
+The contiguous52D4..563D front ends now live in palette_frontends.asm, preserving
+all UNKNOWN markers and physical byte order. Transition callers531E/536C remain the next dependencies to connect, preserving
+their own live frames; writer prefixes stay separate setup paths.

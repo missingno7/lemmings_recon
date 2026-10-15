@@ -1,6 +1,10 @@
 """Selected resources: original caller versus connected native decimal/file cores."""
 import ctypes
 import random
+import sys
+from pathlib import Path
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / 'tools'),
+                str(Path(__file__).resolve().parent)]
 from unicorn import Uc,UC_ARCH_X86,UC_MODE_16,UC_HOOK_CODE,UC_HOOK_INTR
 from unicorn import x86_const as x
 from dat_io_c import Regs,Io,QUERY,READ,MEM,Result
@@ -14,6 +18,9 @@ import decimal_digits_c as decimal
 from resources import section_spans,decode_section
 from common import ROOT,BUILD,read_json,write_json,sha
 from cbuild import build
+from bounded_process import run_bounded, temporary_build_directory
+
+LIBRARY_DIRECTORY = BUILD
 
 SYMS={s['symbol_name']:s for s in read_json(ROOT/'metadata/symbols.json')}
 ROUTINE=SYMS['LoadSelectedLevelResources'];ENTRY=ROUTINE['address'];END=ENTRY+ROUTINE['size']
@@ -204,7 +211,7 @@ class Provider:
         self.trace.append(dict(function='retry',view=view.copy()));return 0x1111,0x4567,0x6789,self.flags(view['flags'])
 
 def library(mutation=0):
-    lib=ctypes.CDLL(str(build(BUILD/f'resource_select-m{mutation}.dll',mutation,'resource_select')))
+    lib=ctypes.CDLL(str(build(LIBRARY_DIRECTORY/f'resource_select-m{mutation}.dll',mutation,'resource_select')))
     lib.lmn_load_selected_resources_adapter.argtypes=[MEM,ctypes.POINTER(Regs),ctypes.POINTER(SelectionServices)]
     lib.lmn_load_selected_resources_adapter.restype=None;return lib
 
@@ -212,11 +219,17 @@ def compare(lib,case):
     mem,regs,flags,data,payloads,chosen,assets=prepare(case);c_mem=bytearray(mem);r=Regs(**regs,flags=flags)
     cp=Provider(case,c_mem,regs,data,payloads,chosen);errors=[]
     def guarded(fn,out,*args):
+        if len(cp.trace) >= 512:
+            import os
+            os.write(2, b'resource_select: provider budget exhausted\n')
+            os._exit(86)
         try:
             values=fn(*args)
             for (name,_),value in zip(out.contents._fields_,values):setattr(out.contents,name,value)
-        except Exception as e:
-            errors.append(e);out.contents.value=5;out.contents.flags=1
+        except BaseException as e:
+            import os
+            os.write(2, f'resource_select callback: {e}\n'.encode())
+            os._exit(87)
     @FILE
     def opened(ctx,memory,seg,off,inflags,out):guarded(cp.file,out,0x3d,seg,off,inflags)
     @FILE
@@ -295,9 +308,18 @@ def main():
     paths=tuple('c/'+name for name in ('resource_select.c','resource_select.h','decimal_digits.c','decimal_digits.h','resource_raw.c','resource_raw.h',
         'dat_load.c','dat_load.h','dat_files.c','dat_files.h','dat_cache.c','dat_cache.h','dat_section.c','dat_section.h','dat_io.c','dat_io.h','dat.c','dat.h','regs.h','lemmings_sym.h'))
     paths+=('tests/resource_select.py','tests/decimal_digits_c.py','tests/resource_raw.py','tests/dat_load.py','tests/dat_files.py','tests/dat_section.py','tests/dat_io.py','tests/dat_io_c.py',
-        'tools/cbuild.py','tools/difftest.py','tools/resources.py','metadata/symbols.json','metadata/inputs.json')+tuple(sorted(assets))
+        'tools/cbuild.py','tools/difftest.py','tools/bounded_process.py','tools/resources.py','metadata/symbols.json','metadata/inputs.json')+tuple(sorted(assets))
     write_json(report,dict(image='main',image_sha256=sha(decoder.IMAGE),case_count=len(baseline),mutation_count=3,cases=baseline,mutations_detected=mutations,
         executed_instruction_addresses=sorted(seen),caller_instruction_addresses=sorted(LOCAL),caller_branch_edges=sorted(EDGES),branch_edges=sorted(edges),
         input_hashes={p:sha((ROOT/p).read_bytes()) for p in paths},domain='Connected native decimal/raw/file/cache/decoder cores; declared DOS and4B1C seams; intact active returns; explicit1949/04D0 exits'))
     print(f'PASS resource selection C: {len(baseline)} cases,{len(LOCAL)} caller sites,{len(seen)} integrated sites,{len(EDGES)} caller edges;3 compiled mutations detected')
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if len(sys.argv)==3 and sys.argv[1]=='--bounded-worker':
+        LIBRARY_DIRECTORY=Path(sys.argv[2]);main()
+    elif len(sys.argv)==1:
+        BUILD.mkdir(exist_ok=True)
+        (BUILD/'resource-select-differential.json').unlink(missing_ok=True)
+        with temporary_build_directory(prefix='resource-select-',parent=BUILD) as directory:
+            run_bounded([sys.executable,str(Path(__file__).resolve()),'--bounded-worker',directory],
+                        cwd=ROOT,timeout=120,memory_mib=384)
+    else:raise SystemExit('Unexpected resource_select arguments')

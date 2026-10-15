@@ -1,6 +1,8 @@
 """Original raw file open/read/close routine versus portable C."""
 import ctypes
 import random
+import sys
+from pathlib import Path
 import capstone
 from unicorn import Uc,UC_ARCH_X86,UC_MODE_16,UC_HOOK_CODE,UC_HOOK_INTR
 from unicorn import x86_const as x
@@ -9,6 +11,9 @@ import dat_io as oracle
 from common import ROOT,BUILD,read_json,write_json,sha
 from cbuild import build
 from unpack import ASSET,unpack,relocated
+from bounded_process import run_bounded,temporary_build_directory
+
+LIBRARY_DIRECTORY=BUILD
 
 IMAGE,ORACLE=unpack(ASSET.read_bytes());SYMS={r['symbol_name']:r for r in read_json(ROOT/'metadata/symbols.json')}
 ROUTINE=SYMS['ReadRawResourceFile'];ENTRY=ROUTINE['address'];END=ENTRY+ROUTINE['size']
@@ -22,7 +27,7 @@ OPEN=ctypes.CFUNCTYPE(None,ctypes.c_void_p,MEM,*([ctypes.c_uint16]*3),ctypes.POI
 class Services(ctypes.Structure):_fields_=[('context',ctypes.c_void_p),('open',OPEN),('read',READ),('close',OPEN)]
 
 def library(mutation=0):
-    lib=ctypes.CDLL(str(build(BUILD/f'resource_raw-m{mutation}.dll',mutation,'resource_raw')))
+    lib=ctypes.CDLL(str(build(LIBRARY_DIRECTORY/f'resource_raw-m{mutation}.dll',mutation,'resource_raw')))
     lib.lmn_read_raw_resource_adapter.argtypes=[MEM,ctypes.POINTER(Regs),ctypes.POINTER(Services)]
     lib.lmn_read_raw_resource_adapter.restype=None;return lib
 
@@ -135,10 +140,19 @@ def main():
         if not hit:raise AssertionError(f'Raw mutation {mutation} survived')
         mutations.append(dict(mutation=mutation,case=hit))
     paths=('c/resource_raw.c','c/resource_raw.h','c/dat_io.h','c/regs.h','c/lemmings_sym.h','tests/resource_raw.py',
-           'tests/dat_io.py','tests/dat_io_c.py','tools/cbuild.py','tools/difftest.py','metadata/symbols.json')
+           'tests/dat_io.py','tests/dat_io_c.py','tools/cbuild.py','tools/difftest.py','metadata/symbols.json',
+           'c/special_blit.h','tools/bounded_process.py')
     write_json(report,dict(image='main',image_sha256=sha(IMAGE),case_count=len(baseline),mutation_count=3,
         cases=baseline,mutations_detected=mutations,executed_instruction_addresses=sorted(seen),branch_edges=sorted(edges),
         translated_code_bytes=sum(i.size for i in INS.values()),input_hashes={p:sha((ROOT/p).read_bytes()) for p in paths},
         domain='Declared preserving DOS open/read/close; original1916..1948 only;1949 fatal exit; full mapped memory; live save-slot aliases'))
     print(f'PASS raw resource C: {len(baseline)} cases, {len(seen)} sites, {len(edges)} branch edges; 3 compiled mutations detected')
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if len(sys.argv)==3 and sys.argv[1]=='--worker':
+        LIBRARY_DIRECTORY=Path(sys.argv[2]);main()
+    elif len(sys.argv)==1:
+        BUILD.mkdir(exist_ok=True)
+        (BUILD/'resource-raw-differential.json').unlink(missing_ok=True)
+        with temporary_build_directory(prefix='resource-raw-',parent=BUILD) as directory:
+            run_bounded([sys.executable,str(Path(__file__).resolve()),'--worker',directory],cwd=ROOT,timeout=120,memory_mib=384)
+    else:raise SystemExit('Unexpected resource_raw arguments')

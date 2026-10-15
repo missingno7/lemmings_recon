@@ -3336,8 +3336,8 @@
   {
     "address": 1232,
     "segment": 0,
-    "kind": "code_location",
-    "size": null,
+    "kind": "continuation",
+    "size": 41,
     "symbol_name": "DatFatalTransfer",
     "aliases": [],
     "callers": [],
@@ -3345,7 +3345,186 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c"
+      "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c",
+      "04D0..04F8 has five live near calls, mouse conditional and DOS09/4C termination; no outerRET. Separate suffix at04EA; docs/fatal-cleanup.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/fatal_cleanup.c",
+    "c_code_ranges": [
+      [
+        1232,
+        1273
+      ]
+    ],
+    "verification_evidence": "tests/fatal_cleanup.py:362 adapter+362 auxiliary core cases,357 NULL-bus comparisons per boundary;312 full/50 suffix cases;41 unique caller bytes/15 sites,133 integrated bytes/56 sites,2 branch edges;four completed caller mutants. ActualCALL/RET/changedreturns,missing providers,liveDS mouse gate,duplicatekeyboard,DOS09 returnedallstate andterminalDOS4C;docs/fatal-cleanup.md. Hardware/IRQ andbroadresourcecaller composition remainopen.",
+    "original_verification_evidence": "tests/fatal_cleanup.py --original-only:362 original/model cases,56integratedsites/2edges;noCcoverage. Executes original nearCALL/RET andstops atchangedchildreturns,missingproviders orterminalDOS; neverexecutes04F9."
+  },
+  {
+    "symbol_name": "CleanupAfterTimer",
+    "address": 1235,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupAfterKeyboard",
+    "address": 1238,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupAfterPrivate",
+    "address": 1241,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupAfterVideo",
+    "address": 1244,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupMouseInterrupt",
+    "address": 1256,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "ExitAfterKeyboardRestore",
+    "address": 1258,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 15,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Conditional edge04E1 and fallthrough04E8 plus independent JMP106B reach the final keyboard/DOS09/DOS4C suffix"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/fatal_cleanup.c",
+    "c_code_ranges": [
+      [
+        1258,
+        1273
+      ]
+    ],
+    "verification_evidence": "tests/fatal_cleanup.py:362 adapter+362 auxiliary core cases,357 NULL-bus comparisons per boundary;312 full/50 suffix cases;41 unique caller bytes/15 sites,133 integrated bytes/56 sites,2 branch edges;four completed caller mutants. ActualCALL/RET/changedreturns,missing providers,liveDS mouse gate,duplicatekeyboard,DOS09 returnedallstate andterminalDOS4C;docs/fatal-cleanup.md. Hardware/IRQ andbroadresourcecaller composition remainopen.",
+    "original_verification_evidence": "tests/fatal_cleanup.py --original-only:362 original/model cases,56integratedsites/2edges;noCcoverage. Executes original nearCALL/RET andstops atchangedchildreturns,missingproviders orterminalDOS; neverexecutes04F9."
+  },
+  {
+    "symbol_name": "CleanupAfterFinalKeyboard",
+    "address": 1261,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupMessageInterrupt",
+    "address": 1266,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupTerminateInterrupt",
+    "address": 1271,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupAfterTerminate",
+    "address": 1273,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact cleanup CALL continuation or external service boundary; terminal04F9 is never executed in the DOS4C domain"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -4258,9 +4437,11 @@
     "address": 4000,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_0FA0",
-    "aliases": [],
+    "size": 18,
+    "symbol_name": "RestorePrivateVector",
+    "aliases": [
+      "sub_0FA0"
+    ],
     "callers": [
       1238,
       3813
@@ -4292,12 +4473,54 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live PUSHDS/saved vector pointer/DOS25/POPDS/RET contract in docs/vector-restore.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 18
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 18,
+    "c_implementation": "c/vector_restore.c",
+    "c_code_ranges": [
+      [
+        4000,
+        4018
+      ]
+    ],
+    "verification_evidence": "tests/vector_restore.py:276 primary+276 auxiliary core cases in328-case cluster;four completedvariants atbothentries,eightobservations;livePUSHDS/pointerreads/DOS25/returnedSS:SP POPDS/actualRET,RAM/VGA/A20/SP boundaries;docs/vector-restore.md. PlatformDOS/IRQ andparentcleanup remainopen.",
+    "original_verification_evidence": "tests/vector_restore.py --original-only:328 original/model adapter+328 core-boundary cases;15sites/34bytes,0branches;all256 private selectors,completeRAM/GPR/segment/stack/definedflags,busorder andVGAstate;noCcoverage."
+  },
+  {
+    "address": 4014,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestorePrivateVectorInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "DOS25 boundary afterPUSHDS andliveselector/pointerreads; missing-provider keepsframeactive"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4017,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestorePrivateVectorReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual nearRET afterPOPDS through provider-returnedSS:SP"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 4018,
@@ -4403,9 +4626,11 @@
     "address": 4088,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_0FF8",
-    "aliases": [],
+    "size": 15,
+    "symbol_name": "RestoreVideoModeAndPage",
+    "aliases": [
+      "sub_0FF8"
+    ],
     "callers": [
       1241,
       6479,
@@ -4431,12 +4656,86 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Startup00A2query storesALatDS1FE1/BHat1FE2;0FF8..1006 reads these live bytes for INT10 AH00/AH05; four decoded callers; docs/video-restore.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 15
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 15,
+    "c_implementation": "c/video_restore.c",
+    "c_code_ranges": [
+      [
+        4088,
+        4103
+      ]
+    ],
+    "original_verification_evidence": "tests/video_restore.py --original-only:279 adapter+279 core-boundary original/model cases,7sites,0branches; all256mode/page bytes,providerreturnedDS/ES/SS/SP/GPRs/flags andmemory effects,RAM/VGA reads andrealRET;declaredreturningproviderdomain.",
+    "verification_evidence": "tests/video_restore.py:279 adapter+279 auxiliary core cases,276NULL-bus comparisons at eachboundary,7sites/15bytes,four completedmutants;docs/video-restore.md;BIOS platformimplementation andbroadercleanup remainopen."
+  },
+  {
+    "address": 4093,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestoreVideoModeInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First video provider boundary aftermodebyte read and XORAH,AH"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4095,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestoreVideoAfterMode",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Normal firstINT10 return continuation;MOVAH05 thenpagebyte read through returnedDS"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4100,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestoreVideoPageInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Second video provider boundary afterAH05 andlive pagebyte read"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4102,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestoreVideoReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual nearRET through live returnedSS:SP aftersecondINT10"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 4103,
@@ -5738,9 +6037,11 @@
     "address": 5456,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1550",
-    "aliases": [],
+    "size": 18,
+    "symbol_name": "WaitForDisplayStatusBit3Cycle",
+    "aliases": [
+      "sub_1550"
+    ],
     "callers": [
       17482,
       17499,
@@ -5772,12 +6073,69 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "1550..1561 loadsDS:1FDA once, ADD DL,6 then polls IN AL,DX for bit3 set and bit3 clear; no other dependencies"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 18
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 18,
+    "c_implementation": "c/display_status.c",
+    "c_code_ranges": [
+      [
+        5456,
+        5474
+      ]
+    ],
+    "verification_evidence": "tests/display_status.py:280 adapter+280 core cases,275 RAM null-bus repeats each,all9 sites/4edges,4 completed mutants; allbase-low/AH/inputbytevalues,missingports,liveRET/bus aliases; separatebudget-exhaustion safetyprobe; docs/display-status.md"
+  },
+  {
+    "address": 5463,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayStatusWaitSet",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original1550 port-wait phase/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5468,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayStatusWaitClear",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original1550 port-wait phase/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5473,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayStatusReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original1550 port-wait phase/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 5474,
@@ -5819,9 +6177,11 @@
     "address": 5506,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1582",
-    "aliases": [],
+    "size": 16,
+    "symbol_name": "RestoreKeyboardVector",
+    "aliases": [
+      "sub_1582"
+    ],
     "callers": [
       1235,
       1258,
@@ -5847,12 +6207,54 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live PUSHDS/saved vector pointer/DOS25/POPDS/RET contract in docs/vector-restore.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 16
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 16,
+    "c_implementation": "c/vector_restore.c",
+    "c_code_ranges": [
+      [
+        5506,
+        5522
+      ]
+    ],
+    "verification_evidence": "tests/vector_restore.py:52 primary+52 auxiliary core cases in328-case cluster;four completedvariants atbothentries,eightobservations;livePUSHDS/pointerreads/DOS25/returnedSS:SP POPDS/actualRET,RAM/VGA/A20/SP boundaries;docs/vector-restore.md. PlatformDOS/IRQ andparentcleanup remainopen.",
+    "original_verification_evidence": "tests/vector_restore.py --original-only:328 original/model adapter+328 core-boundary cases;15sites/34bytes,0branches;all256 private selectors,completeRAM/GPR/segment/stack/definedflags,busorder andVGAstate;noCcoverage."
+  },
+  {
+    "address": 5518,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestoreKeyboardVectorInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "DOS25 boundary afterPUSHDS andlivepointerreads; missing-provider keepsframeactive"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5521,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RestoreKeyboardVectorReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual nearRET afterPOPDS through provider-returnedSS:SP"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 5549,
@@ -6013,7 +6415,7 @@
     "address": 5801,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 43,
     "symbol_name": "RestoreTimerState",
     "aliases": [
       "sub_16A9"
@@ -6066,12 +6468,102 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "PUSHDS/CLI, PIT byte outputs43:36/40:00/40:00, liveLES saved vector, IVT08 writes, unconditionalSTI/livePOPDS, saved BIOS clock INT1A/AH01; docs/timer-restore.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 43
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 43,
+    "c_implementation": "c/timer_restore.c",
+    "c_code_ranges": [
+      [
+        5801,
+        5844
+      ]
+    ],
+    "verification_evidence": "tests/timer_restore.py:291 adapter+291 auxiliary core cases;287 NULL-bus comparisons per boundary;19 sites/43 bytes,0 branches;4 completed mutants;livePUSH/LES/IVT/STI/POPDS/clock/BIOS/RET,RAM/VGA,A20/SP boundaries;docs/timer-restore.md. Hardware timing/IRQ/BIOS implementation and parentcleanup remain open.",
+    "original_verification_evidence": "tests/timer_restore.py --original-only:291 original/model adapter+291 core-boundary cases;all19sites,0branches;all256 incomingAHbytes,26alias/device/provider/wrapprofiles,9missing-provider cases;fullRAM/GPR/segment/stack/definedflags,busorder/portoutputs/VGAstate;noCcoverage."
+  },
+  {
+    "address": 5805,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "TimerRestoreControlPort",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First OUT43 boundary after PUSHDS/CLI/MOVAL36; missing byte-port provider stops here"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5809,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "TimerRestoreCounterLowPort",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First OUT40 after XORALAL; IF clear, AF undefined"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5811,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "TimerRestoreCounterHighPort",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Second OUT40 with unchanged zero AL; no intervening register changes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5841,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "TimerRestoreClockInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "INT1A/AH01 after IVT08 writes, unconditional STI, live POPDS and clock word reads"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 5843,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "TimerRestoreReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual nearRET through BIOS-provider-returned SS:SP"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 5844,
@@ -7214,7 +7706,7 @@
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 116,
-    "c_implementation": "c/resource_raw.c",
+    "c_implementation": "c/resource_raw_full.c",
     "c_code_ranges": [
       [
         6422,
@@ -7229,13 +7721,30 @@
         6473
       ]
     ],
-    "verification_evidence": "tests/resource_raw.py: 46 original-vs-C cases,27 sites,eight branch edges,three compiled mutants; declared preserving DOS open/read/close,1949 fatal boundary,live saved-segment aliases; docs/resource-raw.md"
+    "verification_evidence": "tests/resource_raw_full.py:87 fixtures atfulladapter/fullcore/rawbusadapter/rawbuscore boundaries,75 NULL repeats each,12VGAprofiles;49 existing decoded rawbytes/27sites,147 integratedbytes/72sites,12edges;4completedmutants;tests/resource_raw.py retains46 legacyRAM cases/3mutants. Directfatal1949 preservesstage-specificsavedframes;normalcorebefore1939RET. NarrowrawDOS AX/flags preservation;printerall-state contract. docs/resource-raw-full.md;noadditionaltranslatedbytes overexisting49.",
+    "original_verification_evidence": "tests/resource_raw_full.py --original-only:87 fixtures x4 boundaries;raw/fatalnormal/core/adapter original model equality,72sites/12edges;canonicalRAM/VGA/definedflags/serviceorder;noCcoverage."
+  },
+  {
+    "address": 6457,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "RawResourceReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Actual normal nearRET after the two live ES/DS pops; full raw core stops before this instruction"
+    ]
   },
   {
     "address": 6473,
     "segment": 0,
-    "kind": "code_location",
-    "size": null,
+    "kind": "continuation",
+    "size": 52,
     "symbol_name": "DatFileErrorTransfer",
     "aliases": [],
     "callers": [],
@@ -7243,9 +7752,163 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original DAT file wrapper continuation; see docs/dat-files.md"
+      "Original DAT file wrapper continuation; see docs/dat-files.md",
+      "1949..197C live message/video-return/DOS09/DOS02/uncheckedfilename loop/CRLF/tail04EA contract; docs/file-error.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/file_error.c",
+    "c_code_ranges": [
+      [
+        6473,
+        6525
+      ]
+    ],
+    "verification_evidence": "tests/file_error.py:301 adapter+301 auxiliary core comparisons,297 NULL-bus repeats at each boundary;52 caller bytes/25 sites,98 integrated bytes/45 sites,4 edges;4 completed mutants. LivePUSHDX/relocatedmainDS/videoCALLRET/POPDX/DOS09/space/filenameDSBX/CRLF/tail04EA contracts;docs/file-error.md. Resourcecaller composition/actualDOS/IRQ remainopen.",
+    "original_verification_evidence": "tests/file_error.py --original-only:301 original/model cases,45 integrated sites/4edges;all256firstfilenamebytes,returnedDSBXredirects,livepostspacepointer,stack/A20/BXwrap,VGA/missingservices;noCcoverage."
+  },
+  {
+    "address": 6475,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorDataSegmentOperand",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6482,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorAfterVideo",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6485,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorMessageInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6491,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorSpaceInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6497,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorFilenameLoop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6506,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorCharacterInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6514,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorCrInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6520,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorLfInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
+  },
+  {
+    "address": 6522,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "FileErrorCleanupTail",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "verification_status": "UNRESOLVED",
+    "evidence": [
+      "Original file-error service/return/loop/tail boundary;194B is relocated MOVDX immediate"
+    ]
   },
   {
     "address": 6525,
@@ -7664,6 +8327,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 6745,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionNormalReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original selected-resource normal near RET; separate normal/special branches"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 6773,
     "segment": 0,
     "kind": "continuation",
@@ -7676,6 +8355,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original near-call continuation in197D resource-selection caller"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6778,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SelectionSpecialReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original selected-resource normal near RET; separate normal/special branches"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -9864,6 +10559,203 @@
     "reachable_instruction_bytes": 6,
     "c_implementation": "c/dat_cache.c",
     "verification_evidence": "tests/dat_cache.py: 305 bounded original-vs-C cases; 96 instruction sites, 18 branch edges, three compiled mutants; DF, padding wrap, last-byte mismatch, live saves and pointer wrap; domain in docs/dat-cache.md"
+  },
+  {
+    "address": 7895,
+    "segment": 0,
+    "kind": "entry",
+    "size": 66,
+    "symbol_name": "AllocateDatCache",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 7908,
+        "segment": "default",
+        "displacement": 8078,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7912,
+        "segment": "default",
+        "displacement": 8080,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7920,
+        "segment": "default",
+        "displacement": 8064,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7923,
+        "segment": "default",
+        "displacement": 8068,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7926,
+        "segment": "default",
+        "displacement": 8072,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7929,
+        "segment": "default",
+        "displacement": 8076,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7934,
+        "segment": "default",
+        "displacement": 8066,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7937,
+        "segment": "default",
+        "displacement": 8070,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7940,
+        "segment": "default",
+        "displacement": 8074,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 7943,
+        "segment": "default",
+        "displacement": 8082,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 7946,
+        "segment": "default",
+        "displacement": 8084,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 7951,
+        "segment": "default",
+        "displacement": 8083,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 7957,
+        "segment": "default",
+        "displacement": 8083,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Static coherent instruction boundaries1ED7..1F18, both near RETs, known cache field writes; no decoded incoming edges or raw E8 targets; global reachability unresolved",
+      "Declared DOS-provider seam and original-only verification contract in docs/cache-allocation.md"
+    ],
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 66,
+    "reachability": "UNRESOLVED: explicit investigation seed, no known incoming execution edge",
+    "original_verification_evidence": "tests/cache_allocation_contract.py:267 original-only constructed DOS-provider cases at three loads;25 sites,both JB outcomes;full RAM/registers/defined flags/provider call order/live near returns. No C coverage or global reachability proof.",
+    "c_implementation": "c/cache_allocation.c",
+    "c_code_ranges": [
+      [
+        7895,
+        7961
+      ]
+    ],
+    "verification_evidence": "tests/cache_allocation.py:282 adapter+282 auxiliary core cases,273 NULL-bus adapter comparisons;25 original sites,both JB outcomes,four completed native mutants;DOS AX/BX/flags and canonical memory effects,RAM/VGA bus order/defined flags,live near returns,missing-provider stops. Declared domain in docs/cache-allocation.md; global reachability unresolved."
+  },
+  {
+    "address": 7900,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatCacheAllocationRequest",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First DOS AH48 boundary afterpartialAH/BXFFFF MOVs; missing-provider continuation beforeINT"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7954,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatCacheAllocationReadyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "High allocation path nearRET afterenabledFF store; consumed only by boundary adapter"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7955,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatCacheAllocationBelowThreshold",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Unsigned JB1EE2 enters here when first returnedBX<0C80; XORALAL, enabled-byte store andRET; bytes equal startup disable stub"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7960,
+    "segment": 0,
+    "kind": "code_location",
+    "size": null,
+    "symbol_name": "DatCacheAllocationDisabledReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Below-threshold nearRET afterenabled0 store; consumed only by boundary adapter"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 7961,
@@ -17838,9 +18730,11 @@
     "address": 14006,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_36B6",
-    "aliases": [],
+    "size": 212,
+    "symbol_name": "InitializeLevelFromRecord",
+    "aliases": [
+      "sub_36B6"
+    ],
     "callers": [
       1131
     ],
@@ -18243,10 +19137,486 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "36B6..3789: initialize drawing, publish live header bytes/words, special or terrain drawing, object/cell state and thirteen minimap calls; UNKNOWN374E excluded. Full caller remains untranslated.",
+      "Full36B6 native logicalcomposition verified in declared bounded domains; header/object/finish spans overlap within this211-byte union. Static UNKNOWN374E and broader provider/platform/gameplay obligations remain open.",
+      "Physical interval36B6..3789 is212bytes ending atownRET before378A; exactly211 aredecoded. UNKNOWN374E retains its unresolvedclassification and isexcludedfromboth Ccoderanges."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 211
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 211,
+    "c_implementation": "c/level_initialize.c",
+    "c_code_ranges": [
+      [
+        14006,
+        14158
+      ],
+      [
+        14159,
+        14218
+      ]
+    ],
+    "verification_evidence": "tests/level_initialize.py:36 fullentry adapter/36 auxiliary logicalcore comparisons;76 caller/1408 integrated sites,211 observed edges,4 completed-mutant mismatches. Headerfallthrough,ALselector,special/DOS/fatals,terrain/object-state/minimap directcores,liveSS/DS/returns andphasebusflags;4 realVGASPEC/VGAGR pairs. UNKNOWN374E excluded. DeclaredordinaryRAMspecial,provider,intactcode,quiescentIRQ domains; doesnotreplace complete192terrain gate. docs/level-initialize.md."
+  },
+  {
+    "address": 14009,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 137,
+    "symbol_name": "ApplyLevelHeader",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 14012,
+        "segment": "default",
+        "displacement": 0,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14014,
+        "segment": "default",
+        "displacement": 1,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14017,
+        "segment": "default",
+        "displacement": 100,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14020,
+        "segment": "default",
+        "displacement": 103,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14023,
+        "segment": "default",
+        "displacement": 2,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14026,
+        "segment": "default",
+        "displacement": 3,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14029,
+        "segment": "default",
+        "displacement": 71,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14032,
+        "segment": "default",
+        "displacement": 4,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14035,
+        "segment": "default",
+        "displacement": 5,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14038,
+        "segment": "default",
+        "displacement": 68,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14041,
+        "segment": "default",
+        "displacement": 6,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14044,
+        "segment": "default",
+        "displacement": 7,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14050,
+        "segment": "default",
+        "displacement": 8359,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14053,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14056,
+        "segment": "default",
+        "displacement": 9,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14059,
+        "segment": "default",
+        "displacement": 106,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14062,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14065,
+        "segment": "default",
+        "displacement": 11,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14068,
+        "segment": "default",
+        "displacement": 109,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14071,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14074,
+        "segment": "default",
+        "displacement": 13,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14077,
+        "segment": "default",
+        "displacement": 112,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14080,
+        "segment": "default",
+        "displacement": 14,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14083,
+        "segment": "default",
+        "displacement": 15,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14086,
+        "segment": "default",
+        "displacement": 115,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14092,
+        "segment": "default",
+        "displacement": 17,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14095,
+        "segment": "default",
+        "displacement": 118,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14098,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14101,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14104,
+        "segment": "default",
+        "displacement": 121,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14107,
+        "segment": "default",
+        "displacement": 20,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14110,
+        "segment": "default",
+        "displacement": 21,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14113,
+        "segment": "default",
+        "displacement": 124,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14116,
+        "segment": "default",
+        "displacement": 22,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14119,
+        "segment": "default",
+        "displacement": 23,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14122,
+        "segment": "default",
+        "displacement": 127,
+        "base": null,
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14125,
+        "segment": "default",
+        "displacement": 24,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14128,
+        "segment": "default",
+        "displacement": 25,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 14134,
+        "segment": "default",
+        "displacement": 0,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 14143,
+        "segment": "default",
+        "displacement": 2,
+        "base": null,
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Linear47-site137-byte prefix of36B6; original-only92-case contract checks all80 pinned headers, separate BEreads, low/word store widths, wrapped ADD and three SHR1 flag phases; tests/level_header_contract.py."
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/level_header.c",
+    "c_code_ranges": [
+      [
+        14009,
+        14146
+      ]
+    ],
+    "reachable_instruction_bytes": 137,
+    "verification_evidence": "tests/level_header.py:92 adapter cases,92 auxiliary logical-core comparisons,90 null-bus RAM comparisons,47 original sites and4 completed-mismatch mutations. Separate BE reads,byte-only destinations,word stores,wrapped ADD16 andthree SHR1 flag phases on canonical RAM/VGA. No stack access or RET; normal continuation3742. docs/level-header.md. Full36B6 remains untranslated."
+  },
+  {
+    "address": 14146,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelAfterHeader",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First instruction after ApplyLevelHeader; reads the live special selector. Not an invented RET boundary."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14156,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelInitializeAfterSpecial",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PinnedCALL1A7B at3749 returns374C; JMP376A preserves flags and has no additional stack effect."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14159,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 27,
+    "symbol_name": "DrawLevelTerrainStream",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      31847
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification",
+      "Native logical command reader and stream core directly compose existing terrain/renderer cores without shadow RAM,corrected400-command cap,or cached iterator/segments; actual changed child targets remain exposed"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/terrain_stream.c",
+    "c_code_ranges": [
+      [
+        14159,
+        14186
+      ]
+    ],
+    "verification_evidence": "tests/terrain_commands.py and tests/terrain_stream.py: bounded original/native readers and complete stream-to7C67/8822 connection; liveDS/SI/SS/near/far returns,FFFF sentinel,wrap; full campaign/report freshness required by tools/coverage.py; docs/terrain-stream.md"
+  },
+  {
+    "address": 14162,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SetupTerrainCommand",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14181,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SetupTerrainPieceCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14184,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "SetupTerrainAfterPiece",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 14186,
@@ -18318,6 +19688,34 @@
     "address": 14198,
     "segment": 0,
     "kind": "continuation",
+    "size": 20,
+    "symbol_name": "FinishLevelInitialization",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      13997,
+      31087
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned36B6 tail:CALL36AD at3776; MOVCX13 at3779; livePUSH/CALL796F/POP/LOOP at377C..3782; liveDSgraphics publication3783/3786; ownnearRET3789. Exact20-byte9-site span, child/provider/alias closure separate."
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/level_finish.c",
+    "c_code_ranges": [
+      [
+        14198,
+        14218
+      ]
+    ],
+    "reachable_instruction_bytes": 20,
+    "verification_evidence": "tests/level_finish.py:22 adapter and22 auxiliary logicalcore boundary comparisons;9 caller/133 integrated sites,17 edges,4 completed-mismatch mutants. Live13-or-alias-shortened LOOP, returnedDS6000, actual nearRET/SS mirror/VGA/physicalwrap, wholeRAM and ordered definedflagbus+ports. Only3776..3789; complete36B6 untranslated. docs/level-finish.md."
+  },
+  {
+    "address": 14198,
+    "segment": 0,
+    "kind": "continuation",
     "size": 0,
     "symbol_name": "ObjectStateAfterCoordinates",
     "aliases": [],
@@ -18326,7 +19724,71 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Original near-call return continuation after389F; nextCALL36AD remainsuntranslated"
+      "Original near-call return continuation after389F; shared address withFinishLevelInitialization at3776, whose separatelyverified C tail composes36AD and the live minimap loop."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14201,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelFinishAfterClear",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned36B6 tail:CALL36AD at3776; MOVCX13 at3779; livePUSH/CALL796F/POP/LOOP at377C..3782; liveDSgraphics publication3783/3786; ownnearRET3789. Exact20-byte9-site span, child/provider/alias closure separate."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14204,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelFinishMinimapLoop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned36B6 tail:CALL36AD at3776; MOVCX13 at3779; livePUSH/CALL796F/POP/LOOP at377C..3782; liveDSgraphics publication3783/3786; ownnearRET3789. Exact20-byte9-site span, child/provider/alias closure separate."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14208,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelFinishAfterColumn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned36B6 tail:CALL36AD at3776; MOVCX13 at3779; livePUSH/CALL796F/POP/LOOP at377C..3782; liveDSgraphics publication3783/3786; ownnearRET3789. Exact20-byte9-site span, child/provider/alias closure separate."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14217,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelFinishNearReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned36B6 tail:CALL36AD at3776; MOVCX13 at3779; livePUSH/CALL796F/POP/LOOP at377C..3782; liveDSgraphics publication3783/3786; ownnearRET3789. Exact20-byte9-site span, child/provider/alias closure separate."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -19108,9 +20570,11 @@
     "address": 14671,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_394F",
-    "aliases": [],
+    "size": 127,
+    "symbol_name": "RedrawLevel",
+    "aliases": [
+      "sub_394F"
+    ],
     "callers": [
       17938
     ],
@@ -19275,12 +20739,242 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "394F..39CD level-display rebuild: initializes layout, chooses normal terrain or special setup, copies and draws live object records;126 decoded bytes/50 sites,UNKNOWN395E excluded"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 126
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 126,
+    "c_implementation": "c/level_redraw.c",
+    "c_code_ranges": [
+      [
+        14671,
+        14686
+      ],
+      [
+        14687,
+        14798
+      ]
+    ],
+    "verification_evidence": "tests/level_redraw.py:48 adapter/48 core comparisons,50 caller sites,all10 caller edges,3 mutants; normal terrain and special1A7B/378A/397D composition with live segments/near/far frames. Ordinary-RAM special input/heap/stack,intact code/internal special returns,declared DOS/no retry UI and quiescent VGA domains; docs/level-redraw.md. Full terrain-stream report remains required by coverage."
+  },
+  {
+    "address": 14674,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelRedrawAfterInitialize",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live near return pushed by394F CALL368E; selector load begins here"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14684,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelRedrawAfterSpecial",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live near return pushed by3959 CALL1A7B; original JMP reaches397A"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14687,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 27,
+    "symbol_name": "RedrawLevelTerrainStream",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      31847
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification",
+      "Native logical command reader and stream core directly compose existing terrain/renderer cores without shadow RAM,corrected400-command cap,or cached iterator/segments; actual changed child targets remain exposed"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/terrain_stream.c",
+    "c_code_ranges": [
+      [
+        14687,
+        14714
+      ]
+    ],
+    "verification_evidence": "tests/terrain_commands.py and tests/terrain_stream.py: bounded original/native readers and complete stream-to7C67/8822 connection; liveDS/SI/SS/near/far returns,FFFF sentinel,wrap; full campaign/report freshness required by tools/coverage.py; docs/terrain-stream.md"
+  },
+  {
+    "address": 14690,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "RedrawTerrainCommand",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14709,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "RedrawTerrainPieceCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14712,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "RedrawTerrainAfterPiece",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14714,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "RedrawTerrainFinished",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Fresh closed normal-entry terrain loop,27 decoded bytes/10 sites,only outsideincoming conditionalbranch toinit; fourBEbyte reads,16bitSIadvance,FFFF sentinel; liveDS/SS/childreturn domain under verification"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14717,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 81,
+    "symbol_name": "DrawLevelObjects",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      34850
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Closed object suffix after397A graphics-copy CALL:81 decoded bytes/33 sites,all6 aligned bodies and all80 pinned LEVEL/GROUND entry states; predecessor copy modeled separately in this suite"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/object_drawing.c",
+    "c_code_ranges": [
+      [
+        14717,
+        14798
+      ]
+    ],
+    "verification_evidence": "tests/object_drawing.py:131 adapter/51 core probes,all33 caller sites/4 edges,4 mutants;live DS/cursors/count/near/far returns,all-RAM/bus/device checks and independent plane/input expectations. Intact code,finite providers and quiescent IRQ domains; docs/object-drawing.md. Overlap with RedrawLevel counted once."
+  },
+  {
+    "address": 14734,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelObjectsLoop",
+    "aliases": [
+      "loc_398E"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "BE X read and zero-X test at start of each object suffix iteration"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14786,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelObjectsAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Far return pushed by39BD CALL8822;live POP SI/DI/CX begin here"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14789,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelObjectsNext",
+    "aliases": [
+      "loc_39C5"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Zero-X and drawn-object paths meet for wrapped DI+8,SI+1C,LOOP"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14797,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "LevelObjectsReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Own near RET of397D suffix and394F caller;core leaves its live SS word unconsumed"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 14798,
@@ -25371,9 +27065,11 @@
     "address": 19228,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4B1C",
-    "aliases": [],
+    "size": 64,
+    "symbol_name": "ShowResourceRetryScreen",
+    "aliases": [
+      "sub_4B1C"
+    ],
     "callers": [
       7070,
       7447
@@ -25433,7 +27129,8 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned insert-disk prompt and eleven live child calls; docs/retry-ui.md"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 64
@@ -25673,9 +27370,11 @@
     "address": 19431,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4BE7",
-    "aliases": [],
+    "size": 48,
+    "symbol_name": "SetupDisplayModeAndLayout",
+    "aliases": [
+      "sub_4BE7"
+    ],
     "callers": [
       17394,
       18158,
@@ -25727,20 +27426,47 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "4BE7..4C16 originaldisplayBIOS/sharedorigininitialization/relocatedfar8808 layoutcall; fullregister and liveframe contract in docs/display-setup.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 48
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 48,
+    "c_implementation": "c/display_setup.c",
+    "c_code_ranges": [
+      [
+        19431,
+        19479
+      ]
+    ],
+    "verification_evidence": "tests/display_setup.py:55 fixtures x3entries x2boundaries,51 null-bus repeats each,14 caller/24 integrated sites,48 unique caller bytes,4 completed mutants; all-state BIOS, live far/near returns, ordered RAM/VGA accesses and defined flags; docs/display-setup.md"
+  },
+  {
+    "address": 19442,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplaySetupModeInterrupt",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original4BE7 BIOS/far-call continuation boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19445,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4BF5",
-    "aliases": [],
+    "size": 34,
+    "symbol_name": "InitializeDisplayOrigins",
+    "aliases": [
+      "sub_4BF5"
+    ],
     "callers": [
       18948,
       18794
@@ -25782,20 +27508,31 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "4BE7..4C16 originaldisplayBIOS/sharedorigininitialization/relocatedfar8808 layoutcall; fullregister and liveframe contract in docs/display-setup.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 34
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 34,
+    "c_implementation": "c/display_setup.c",
+    "c_code_ranges": [
+      [
+        19445,
+        19479
+      ]
+    ],
+    "verification_evidence": "tests/display_setup.py:55 fixtures x3entries x2boundaries,51 null-bus repeats each,14 caller/24 integrated sites,48 unique caller bytes,4 completed mutants; all-state BIOS, live far/near returns, ordered RAM/VGA accesses and defined flags; docs/display-setup.md"
   },
   {
     "address": 19463,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4C07",
-    "aliases": [],
+    "size": 16,
+    "symbol_name": "SetupDisplayLayout",
+    "aliases": [
+      "sub_4C07"
+    ],
     "callers": [
       17971
     ],
@@ -25812,12 +27549,37 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "4BE7..4C16 originaldisplayBIOS/sharedorigininitialization/relocatedfar8808 layoutcall; fullregister and liveframe contract in docs/display-setup.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 16
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 16,
+    "c_implementation": "c/display_setup.c",
+    "c_code_ranges": [
+      [
+        19463,
+        19479
+      ]
+    ],
+    "verification_evidence": "tests/display_setup.py:55 fixtures x3entries x2boundaries,51 null-bus repeats each,14 caller/24 integrated sites,48 unique caller bytes,4 completed mutants; all-state BIOS, live far/near returns, ordered RAM/VGA accesses and defined flags; docs/display-setup.md"
+  },
+  {
+    "address": 19478,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplaySetupAfterLayout",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original4BE7 BIOS/far-call continuation boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19479,
@@ -25899,9 +27661,11 @@
     "address": 19488,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4C20",
-    "aliases": [],
+    "size": 18,
+    "symbol_name": "SwapDrawingOriginsAndDisplay",
+    "aliases": [
+      "sub_4C20"
+    ],
     "callers": [
       17514,
       17935,
@@ -25948,20 +27712,63 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained4C20..4C46 directcall/sharedentry: original controller index0C/0D wordoutputs,unconditionalSTI,andliveoriginXCHG"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 18
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 18,
+    "c_implementation": "c/display_start.c",
+    "c_code_ranges": [
+      [
+        19488,
+        19506
+      ]
+    ],
+    "verification_evidence": "tests/display_start.py:277 fixtures x3entries x2boundaries,274 RAMfallback repeats each,all17 integrated sites/39 unique bytes,4completedmutants; liveCALL/RET/origins,wordOUT memoryeffects,STI andVGA planes; docs/display-start.md"
+  },
+  {
+    "address": 19495,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplaySwapAfterProgram",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Originaldisplay-startcall/OUT/RET boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19505,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplaySwapReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Originaldisplay-startcall/OUT/RET boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19506,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4C32",
-    "aliases": [],
+    "size": 21,
+    "symbol_name": "ProgramAlternateDisplayStart",
+    "aliases": [
+      "sub_4C32"
+    ],
     "callers": [
       17427,
       17485,
@@ -25989,20 +27796,31 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained4C20..4C46 directcall/sharedentry: original controller index0C/0D wordoutputs,unconditionalSTI,andliveoriginXCHG"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 21
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 21,
+    "c_implementation": "c/display_start.c",
+    "c_code_ranges": [
+      [
+        19506,
+        19527
+      ]
+    ],
+    "verification_evidence": "tests/display_start.py:277 fixtures x3entries x2boundaries,274 RAMfallback repeats each,all17 integrated sites/39 unique bytes,4completedmutants; liveCALL/RET/origins,wordOUT memoryeffects,STI andVGA planes; docs/display-start.md"
   },
   {
     "address": 19510,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4C36",
-    "aliases": [],
+    "size": 17,
+    "symbol_name": "ProgramDisplayStartFromValue",
+    "aliases": [
+      "sub_4C36"
+    ],
     "callers": [
       19492
     ],
@@ -26017,12 +27835,53 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained4C20..4C46 directcall/sharedentry: original controller index0C/0D wordoutputs,unconditionalSTI,andliveoriginXCHG"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 17
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 17,
+    "c_implementation": "c/display_start.c",
+    "c_code_ranges": [
+      [
+        19510,
+        19527
+      ]
+    ],
+    "verification_evidence": "tests/display_start.py:277 fixtures x3entries x2boundaries,274 RAMfallback repeats each,all17 integrated sites/39 unique bytes,4completedmutants; liveCALL/RET/origins,wordOUT memoryeffects,STI andVGA planes; docs/display-start.md"
+  },
+  {
+    "address": 19519,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayStartFirstOutput",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Originaldisplay-startcall/OUT/RET boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19526,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayStartReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Originaldisplay-startcall/OUT/RET boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19527,
@@ -26335,9 +28194,11 @@
     "address": 19789,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4D4D",
-    "aliases": [],
+    "size": 43,
+    "symbol_name": "DrawTextStream",
+    "aliases": [
+      "sub_4D4D"
+    ],
     "callers": [
       17470,
       18202,
@@ -26395,20 +28256,79 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "4D4D..4D77: DF-dependent live DS stream with column/row/style records, CR-separated glyph runs and zero header terminator; actual CALL4D78 and live saved SI/BX/CX; docs/text-stream.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 43
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 43,
+    "c_implementation": "c/text_stream.c",
+    "c_code_ranges": [
+      [
+        19789,
+        19832
+      ]
+    ],
+    "verification_evidence": "tests/text_stream.py:295 fixtures xcore/adapter,all256 style bytes,six pinned record slices,26 caller/455 integrated sites,8 caller edges,5 completed mutants; liveDF/DS/SI/save-frame/returns,per-glyph independent footprints,definedflags/fullRAM/VGA/order,null-bus repeats and guard86 probe; docs/text-stream.md"
+  },
+  {
+    "address": 19813,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TextStreamReadCharacter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original text-stream loop/call/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19824,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TextStreamAfterGlyph",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original text-stream loop/call/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19831,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TextStreamReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original text-stream loop/call/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19832,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4D78",
-    "aliases": [],
+    "size": 74,
+    "symbol_name": "DrawTextGlyph",
+    "aliases": [
+      "sub_4D78"
+    ],
     "callers": [
       19821
     ],
@@ -26433,20 +28353,79 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "4D78..4DC1: space fast return, unchecked 96-byte glyph selector, live DS graphics segment, 16x16/three-plane far8822 call and live POP BP; docs/text-glyph.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 74
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 74,
+    "c_implementation": "c/text_glyph.c",
+    "c_code_ranges": [
+      [
+        19832,
+        19906
+      ]
+    ],
+    "verification_evidence": "tests/text_glyph.py:264 prefix fixtures covering all256 character bytes and null-bus repeats;45 integrated fixtures xcore/adapter,32 caller/696 integrated sites,two caller branch outcomes,4 completed mutants; ordered RAM/VGA/ports/defined flags,independent footprints,live BP/far/near returns; docs/text-glyph.md"
+  },
+  {
+    "address": 19899,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TextGlyphBitmapCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original far renderer call after live PUSH BP"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19904,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TextGlyphAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original POP BP after far renderer return"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19905,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TextGlyphReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original outer near RET including space branch"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19906,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4DC2",
-    "aliases": [],
+    "size": 45,
+    "symbol_name": "CopyDrawingPageToAlternate",
+    "aliases": [
+      "sub_4DC2"
+    ],
     "callers": [
       17479,
       19247,
@@ -26505,20 +28484,95 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained4DC2 planar latch-copy and4DEF fixed-page clear tail contracts; docs/display-pages.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 45
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 45,
+    "c_implementation": "c/display_pages.c",
+    "c_code_ranges": [
+      [
+        19906,
+        19951
+      ]
+    ],
+    "verification_evidence": "tests/display_pages.py:45 fixtures xcore/adapter,21 caller/46 integrated sites,53 unique caller bytes,6 completed mutants; full6D60-byte copies/clears, independentfourplane results,liveorigin/DS/RET,DF/wrap/overlap/provider andmissingbus seams;tests/test_vga_write_mode1.py:4fixture regressions;docs/display-pages.md"
+  },
+  {
+    "address": 19916,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayPageCopyMapMaskOutput",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original display-page copy output/stack/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19927,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayPageCopyModeOutput",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original display-page copy output/stack/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19949,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayPageCopyRestoreDataSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original display-page copy output/stack/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19950,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DisplayPageCopyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original display-page copy output/stack/return boundary"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 19951,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4DEF",
-    "aliases": [],
+    "size": 8,
+    "symbol_name": "ClearFullDrawingPage",
+    "aliases": [
+      "sub_4DEF"
+    ],
     "callers": [
       17397,
       17448,
@@ -26594,12 +28648,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained4DC2 planar latch-copy and4DEF fixed-page clear tail contracts; docs/display-pages.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 71
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 71,
+    "c_implementation": "c/display_pages.c",
+    "c_code_ranges": [
+      [
+        19951,
+        19959
+      ]
+    ],
+    "verification_evidence": "tests/display_pages.py:45 fixtures xcore/adapter,21 caller/46 integrated sites,53 unique caller bytes,6 completed mutants; full6D60-byte copies/clears, independentfourplane results,liveorigin/DS/RET,DF/wrap/overlap/provider andmissingbus seams;tests/test_vga_write_mode1.py:4fixture regressions;docs/display-pages.md"
   },
   {
     "address": 19960,
@@ -26687,6 +28750,22 @@
         20023
       ]
     ]
+  },
+  {
+    "address": 20022,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ClearVgaReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original shared4DF8 clear-tail nearRET"
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 20023,
@@ -27173,9 +29252,11 @@
     "address": 20503,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5017",
-    "aliases": [],
+    "size": 5,
+    "symbol_name": "DrawScreenBackground",
+    "aliases": [
+      "sub_5017"
+    ],
     "callers": [
       17451,
       18173,
@@ -27206,20 +29287,31 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5017 zero-row entry and5019 live-BX entry share7E76 two-column/four-row tile loop; live saved rows/count and relocated8822 calls; docs/background-drawing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 65
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 65,
+    "c_implementation": "c/background_drawing.c",
+    "c_code_ranges": [
+      [
+        20503,
+        20508
+      ]
+    ],
+    "verification_evidence": "tests/background_drawing.py:36 fixtures xcore/adapter,26caller/305integratedsites,3caller edges,6completedmutants; full640x350 and retry-row78,independent per-tile planes,live savedrows/count,actual child far/near returns,DF/wrap/segments/orderedRAM/VGA/flags; docs/background-drawing.md"
   },
   {
     "address": 20505,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5019",
-    "aliases": [],
+    "size": 3,
+    "symbol_name": "DrawScreenBackgroundFromRow",
+    "aliases": [
+      "sub_5019"
+    ],
     "callers": [
       17977
     ],
@@ -27244,12 +29336,21 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5017 zero-row entry and5019 live-BX entry share7E76 two-column/four-row tile loop; live saved rows/count and relocated8822 calls; docs/background-drawing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 63
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 63,
+    "c_implementation": "c/background_drawing.c",
+    "c_code_ranges": [
+      [
+        20505,
+        20508
+      ]
+    ],
+    "verification_evidence": "tests/background_drawing.py:36 fixtures xcore/adapter,26caller/305integratedsites,3caller edges,6completedmutants; full640x350 and retry-row78,independent per-tile planes,live savedrows/count,actual child far/near returns,DF/wrap/segments/orderedRAM/VGA/flags; docs/background-drawing.md"
   },
   {
     "address": 20520,
@@ -28269,9 +30370,11 @@
     "address": 21278,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_531E",
-    "aliases": [],
+    "size": 11,
+    "symbol_name": "TransitionPaletteToSlot1",
+    "aliases": [
+      "sub_531E"
+    ],
     "callers": [
       17445,
       18164,
@@ -28366,12 +30469,25 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Shared live palette transition; docs/palette-transition.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 146
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 146,
+    "c_implementation": "c/palette_transition.c",
+    "c_code_ranges": [
+      [
+        21278,
+        21289
+      ],
+      [
+        21943,
+        22078
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py: 1191 fixtures at core/adapter boundaries, 157 unique caller bytes/82 caller/268 integrated sites, 10 caller/40 integrated edges, 6 completed mutants; independent convergence/output/wait model, full RAM/CPU/phase flags/ordered bus/VGA, live saves and changed child returns; intact code/same CS/TF clear/quiescent IRQ; docs/palette-transition.md"
   },
   {
     "address": 21289,
@@ -28422,9 +30538,11 @@
     "address": 21356,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_536C",
-    "aliases": [],
+    "size": 11,
+    "symbol_name": "TransitionPaletteToSlot2",
+    "aliases": [
+      "sub_536C"
+    ],
     "callers": [
       17488,
       18342,
@@ -28515,12 +30633,25 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Shared live palette transition; docs/palette-transition.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 146
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 146,
+    "c_implementation": "c/palette_transition.c",
+    "c_code_ranges": [
+      [
+        21356,
+        21367
+      ],
+      [
+        21943,
+        22078
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py: 1191 fixtures at core/adapter boundaries, 157 unique caller bytes/82 caller/268 integrated sites, 10 caller/40 integrated edges, 6 completed mutants; independent convergence/output/wait model, full RAM/CPU/phase flags/ordered bus/VGA, live saves and changed child returns; intact code/same CS/TF clear/quiescent IRQ; docs/palette-transition.md"
   },
   {
     "address": 21367,
@@ -29229,9 +31360,11 @@
     "address": 21541,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5425",
-    "aliases": [],
+    "size": 34,
+    "symbol_name": "WriteAttributePalette",
+    "aliases": [
+      "sub_5425"
+    ],
     "callers": [
       21985
     ],
@@ -29254,12 +31387,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned byte-port leaf; live data/stack and unchecked palette indexes; docs/palette-ports.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 34
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 34,
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21541,
+        21575
+      ]
+    ],
+    "verification_evidence": "tests/palette_ports.py:577fixtures xcore/adapter plus2full65536-iterationzeroCLcorecases,61sites/8edges/101unique bytes,6completedmutants; independentportstream/cursor/saves/fullRAMformula,allCH,DF,livecontrol/saves/returns,definedflags/order/RAM/VGA; docs/palette-ports.md"
   },
   {
     "address": 21575,
@@ -29554,9 +31696,11 @@
     "address": 21700,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_54C4",
-    "aliases": [],
+    "size": 67,
+    "symbol_name": "WriteMappedDacPalette",
+    "aliases": [
+      "sub_54C4"
+    ],
     "callers": [
       22052
     ],
@@ -29619,12 +31763,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned byte-port leaf; live data/stack and unchecked palette indexes; docs/palette-ports.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 67
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 67,
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21700,
+        21767
+      ]
+    ],
+    "verification_evidence": "tests/palette_ports.py:577fixtures xcore/adapter plus2full65536-iterationzeroCLcorecases,61sites/8edges/101unique bytes,6completedmutants; independentportstream/cursor/saves/fullRAMformula,allCH,DF,livecontrol/saves/returns,definedflags/order/RAM/VGA; docs/palette-ports.md"
   },
   {
     "address": 21821,
@@ -29742,9 +31895,11 @@
     "address": 21865,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5569",
-    "aliases": [],
+    "size": 77,
+    "symbol_name": "SelectAndStepPaletteRow",
+    "aliases": [
+      "sub_5569"
+    ],
     "callers": [
       21327,
       21343,
@@ -29927,20 +32082,31 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live pointer prefix and tail connection; docs/palette-row-select.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 165
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 165,
+    "c_implementation": "c/palette_row_select.c",
+    "c_code_ranges": [
+      [
+        21865,
+        21942
+      ]
+    ],
+    "verification_evidence": "tests/palette_row_select.py:586fixtures xcore/adapter plus2full65536-iterationzeroCL cores,77newbytes/32caller/148integratedsites,4caller/22integratededges,7completedmutants; independentprefix+row/fullRAM/CPU/phaseflags/order/RAM/VGA,livePUSHDS/POPES/table/RET/status; docs/palette-row-select.md"
   },
   {
     "address": 22078,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_563E",
-    "aliases": [],
+    "size": 46,
+    "symbol_name": "StepPackedPaletteRow",
+    "aliases": [
+      "sub_563E"
+    ],
     "callers": [
       21993
     ],
@@ -29975,20 +32141,95 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live row composition through tested palette channel entries; docs/palette-rows.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 46
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 46,
+    "c_implementation": "c/palette_rows.c",
+    "c_code_ranges": [
+      [
+        22078,
+        22124
+      ]
+    ],
+    "verification_evidence": "tests/palette_rows.py:89fixtures xcore/adapter plus2full65536-iterationzeroCL corecases,47caller/116integratedsites,4caller/18integratededges,88newbytes,6completedmutants; independentsequentialdata/CPUmodel,fullRAM/phaseflags/orderedbus/VGA,livecounter/overlap/nearreturns; docs/palette-rows.md"
+  },
+  {
+    "address": 22094,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedPaletteRowAfterHigh564E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22103,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedPaletteRowAfterMiddle5657",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22112,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedPaletteRowAfterLow5660",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22123,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedPaletteRowReturn566B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
   },
   {
     "address": 22124,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_566C",
-    "aliases": [],
+    "size": 25,
+    "symbol_name": "StepHighPaletteChannel",
+    "aliases": [
+      "sub_566C"
+    ],
     "callers": [
       22091
     ],
@@ -29996,20 +32237,63 @@
       22171
     ],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned channel-step contracts and real wrapper frames; docs/palette-channels.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 25
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 25,
+    "c_implementation": "c/palette_channels.c",
+    "c_code_ranges": [
+      [
+        22124,
+        22149
+      ]
+    ],
+    "verification_evidence": "tests/palette_channels.py:all65536 bytepairs at each of5entries(327680),88core/adapter boundaryfixtures with81nullbusrepeats each,69sites/14edges/144unique bytes,6completedmutants; independentchannel/flagmodel,stickyBP/BL,signedJG,fullRAM/phaseflags/orderedbus/VGA/liveCALLRET; docs/palette-channels.md"
+  },
+  {
+    "address": 22140,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteHighAfterStep567C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22148,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteHighReturn5684",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
   },
   {
     "address": 22149,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5685",
-    "aliases": [],
+    "size": 17,
+    "symbol_name": "StepMiddlePaletteChannel",
+    "aliases": [
+      "sub_5685"
+    ],
     "callers": [
       22100
     ],
@@ -30017,59 +32301,140 @@
       22171
     ],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned channel-step contracts and real wrapper frames; docs/palette-channels.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 17
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 17,
+    "c_implementation": "c/palette_channels.c",
+    "c_code_ranges": [
+      [
+        22149,
+        22166
+      ]
+    ],
+    "verification_evidence": "tests/palette_channels.py:all65536 bytepairs at each of5entries(327680),88core/adapter boundaryfixtures with81nullbusrepeats each,69sites/14edges/144unique bytes,6completedmutants; independentchannel/flagmodel,stickyBP/BL,signedJG,fullRAM/phaseflags/orderedbus/VGA/liveCALLRET; docs/palette-channels.md"
+  },
+  {
+    "address": 22161,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteMiddleAfterStep5691",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22165,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteMiddleReturn5695",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
   },
   {
     "address": 22166,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5696",
-    "aliases": [],
+    "size": 76,
+    "symbol_name": "StepLowPaletteChannel",
+    "aliases": [
+      "sub_5696"
+    ],
     "callers": [
       22109
     ],
     "callees": [],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned channel-step contracts and real wrapper frames; docs/palette-channels.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 76
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 76,
+    "c_implementation": "c/palette_channels.c",
+    "c_code_ranges": [
+      [
+        22166,
+        22242
+      ]
+    ],
+    "verification_evidence": "tests/palette_channels.py:all65536 bytepairs at each of5entries(327680),88core/adapter boundaryfixtures with81nullbusrepeats each,69sites/14edges/144unique bytes,6completedmutants; independentchannel/flagmodel,stickyBP/BL,signedJG,fullRAM/phaseflags/orderedbus/VGA/liveCALLRET; docs/palette-channels.md"
   },
   {
     "address": 22171,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_569B",
-    "aliases": [],
+    "size": 71,
+    "symbol_name": "StepPackedPaletteChannel",
+    "aliases": [
+      "sub_569B"
+    ],
     "callers": [
       22158,
       22137
     ],
     "callees": [],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned channel-step contracts and real wrapper frames; docs/palette-channels.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 71
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 71,
+    "c_implementation": "c/palette_channels.c",
+    "c_code_ranges": [
+      [
+        22171,
+        22242
+      ]
+    ],
+    "verification_evidence": "tests/palette_channels.py:all65536 bytepairs at each of5entries(327680),88core/adapter boundaryfixtures with81nullbusrepeats each,69sites/14edges/144unique bytes,6completedmutants; independentchannel/flagmodel,stickyBP/BL,signedJG,fullRAM/phaseflags/orderedbus/VGA/liveCALLRET; docs/palette-channels.md"
+  },
+  {
+    "address": 22241,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PalettePackedReturn56E1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
   },
   {
     "address": 22242,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_56E2",
-    "aliases": [],
+    "size": 42,
+    "symbol_name": "StepRgbPaletteRow",
+    "aliases": [
+      "sub_56E2"
+    ],
     "callers": [
       22060
     ],
@@ -30150,20 +32515,95 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live row composition through tested palette channel entries; docs/palette-rows.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 42
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 42,
+    "c_implementation": "c/palette_rows.c",
+    "c_code_ranges": [
+      [
+        22242,
+        22284
+      ]
+    ],
+    "verification_evidence": "tests/palette_rows.py:89fixtures xcore/adapter plus2full65536-iterationzeroCL corecases,47caller/116integratedsites,4caller/18integratededges,88newbytes,6completedmutants; independentsequentialdata/CPUmodel,fullRAM/phaseflags/orderedbus/VGA,livecounter/overlap/nearreturns; docs/palette-rows.md"
+  },
+  {
+    "address": 22253,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbPaletteRowAfterFirst56ED",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22264,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbPaletteRowAfterSecond56F8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22275,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbPaletteRowAfterThird5703",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22283,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbPaletteRowReturn570B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned row continuation; docs/palette-rows.md"
+    ],
+    "verification_status": "UNTRANSLATED"
   },
   {
     "address": 22284,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_570C",
-    "aliases": [],
+    "size": 26,
+    "symbol_name": "StepSignedRgbChannel",
+    "aliases": [
+      "sub_570C"
+    ],
     "callers": [
       22250,
       22261,
@@ -30171,12 +32611,53 @@
     ],
     "callees": [],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned channel-step contracts and real wrapper frames; docs/palette-channels.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 26
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 26,
+    "c_implementation": "c/palette_channels.c",
+    "c_code_ranges": [
+      [
+        22284,
+        22310
+      ]
+    ],
+    "verification_evidence": "tests/palette_channels.py:all65536 bytepairs at each of5entries(327680),88core/adapter boundaryfixtures with81nullbusrepeats each,69sites/14edges/144unique bytes,6completedmutants; independentchannel/flagmodel,stickyBP/BL,signedJG,fullRAM/phaseflags/orderedbus/VGA/liveCALLRET; docs/palette-channels.md"
+  },
+  {
+    "address": 22302,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteRgbReturn571E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22309,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteRgbDecrementReturn5725",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned palette channel return boundary; docs/palette-channels.md"
+    ],
+    "verification_status": "UNTRANSLATED"
   },
   {
     "address": 22310,
@@ -44385,6 +46866,98 @@
     "reachable_instruction_bytes": 17
   },
   {
+    "address": 32374,
+    "segment": 0,
+    "kind": "entry",
+    "size": 60,
+    "symbol_name": "DrawScreenBackgroundTiles",
+    "aliases": [
+      "loc_7E76"
+    ],
+    "callers": [],
+    "callees": [
+      34850
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned decoded instruction and shared background drawing contract; docs/background-drawing.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/background_drawing.c",
+    "c_code_ranges": [
+      [
+        32374,
+        32434
+      ]
+    ],
+    "verification_evidence": "tests/background_drawing.py:36 fixtures xcore/adapter,26caller/305integratedsites,3caller edges,6completedmutants; full640x350 and retry-row78,independent per-tile planes,live savedrows/count,actual child far/near returns,DF/wrap/segments/orderedRAM/VGA/flags; docs/background-drawing.md"
+  },
+  {
+    "address": 32383,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "BackgroundRowLoop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned decoded instruction and shared background drawing contract; docs/background-drawing.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 32405,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "BackgroundFirstAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned decoded instruction and shared background drawing contract; docs/background-drawing.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 32426,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "BackgroundSecondAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned decoded instruction and shared background drawing contract; docs/background-drawing.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 32433,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "BackgroundReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned decoded instruction and shared background drawing contract; docs/background-drawing.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
     "address": 32434,
     "segment": 0,
     "kind": "entry",
@@ -52003,6 +54576,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 0,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelViewOriginPixels",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3736 stores wrapped header+18 word plus10;7BCF subtracts it from object X and7A5A/7AAF shift it for display addressing."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 2,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelViewOriginBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "373F stores the preceding biased view word after three SHR AX,1;8130/81AE add the live word to source4A40."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 38,
     "segment": 2473,
     "kind": "data",
@@ -52051,6 +54656,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 68,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelHeaderWord04LowByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "36D0/36D3 read header+04 high then low;36D6 stores only AL. Downstream semantic role unresolved;7DE1 DI0044 belongs to an allocated ES graphics destination, not this DS field."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 71,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelCreationLimit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "36CD stores header+02 low byte;30CC/01E7 compare with created-record counter0043;4013 replaces it with that counter. No host array bound implied."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 86,
     "segment": 2473,
     "kind": "data",
@@ -52063,6 +54700,166 @@
     "confidence": "PROVEN",
     "evidence": [
       "796F reads and updates DS:0056 with wrapped +16 and signed comparison against208"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 100,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelReleaseSettingMinimum",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "36C1 publishes header+00 low byte;4068..407F compares current0067 against this lower adjustment bound."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 103,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelReleaseSetting",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "36C4 publishes the same low byte;4046..407F adjusts it using equality against63 and0064;39D6/4053 derive creation delay0049 with wrapped byte arithmetic."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 106,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+08 low byte is stored by36EB; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 109,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+0A low byte is stored by36F4; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 112,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+0C low byte is stored by36FD; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 115,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+0E low byte is stored by3706; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 118,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+10 low byte is stored by370F; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 121,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+12 low byte is stored by3718; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 124,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+14 low byte is stored by3721; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 127,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCount7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header+16 low byte is stored by372A; action assignment routines test/decrement ordinal counts. Historical skill names and surrounding triple ownership remain unclosed."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52086,6 +54883,22 @@
     "address": 4043,
     "segment": 2473,
     "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelHeaderReleaseSettingWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LoadedLevelRecord+00 source anchor;36B9..3741 reads each BE word as high then low bytes. Ordinary shared canonical memory, not a converted record or allocation boundary; docs/level-header-ownership.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4043,
+    "segment": 2473,
+    "kind": "data",
     "size": 2048,
     "symbol_name": "LoadedLevelRecord",
     "aliases": [],
@@ -52095,6 +54908,86 @@
     "confidence": "PROVEN",
     "evidence": [
       "197D decodes selected LEVEL section here; all80 pinned sections decode to2048 bytes, matched in bounded decoder tests"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4045,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelHeaderCreationLimitWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LoadedLevelRecord+02 source anchor;36B9..3741 reads each BE word as high then low bytes. Ordinary shared canonical memory, not a converted record or allocation boundary; docs/level-header-ownership.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4047,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelHeaderWord04",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LoadedLevelRecord+04 source anchor;36B9..3741 reads each BE word as high then low bytes. Ordinary shared canonical memory, not a converted record or allocation boundary; docs/level-header-ownership.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4049,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelHeaderCountdownWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LoadedLevelRecord+06 source anchor;36B9..3741 reads each BE word as high then low bytes. Ordinary shared canonical memory, not a converted record or allocation boundary; docs/level-header-ownership.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4051,
+    "segment": 2473,
+    "kind": "data",
+    "size": 16,
+    "symbol_name": "LevelHeaderActionCountWords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LoadedLevelRecord+08 source anchor;36B9..3741 reads each BE word as high then low bytes. Ordinary shared canonical memory, not a converted record or allocation boundary; docs/level-header-ownership.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4067,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelHeaderViewOriginWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LoadedLevelRecord+18 source anchor;36B9..3741 reads each BE word as high then low bytes. Ordinary shared canonical memory, not a converted record or allocation boundary; docs/level-header-ownership.md."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52134,6 +55027,22 @@
     "address": 4075,
     "segment": 2473,
     "kind": "data",
+    "size": 2,
+    "symbol_name": "FirstObjectDefinitionX",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4075,
+    "segment": 2473,
+    "kind": "data",
     "size": 256,
     "symbol_name": "LevelObjectDefinitions",
     "aliases": [],
@@ -52143,6 +55052,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "378A/37C2/389F/394F and object drawing consumers use32 big-endian eight-byte definitions atDS0FEB, insideLoadedLevelRecord+32"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4077,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "FirstObjectDefinitionY",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4081,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "FirstObjectDefinitionFlags",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52207,6 +55148,70 @@
     "confidence": "PROVEN",
     "evidence": [
       "378A copies32 wrapped unchecked28-byte ground templates toDS17CB..1B4A;394F/7BB8/7C0A consume live slots; first-word-zero leaves stale bytes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6095,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "FirstObjectGraphicsWidth",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6096,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "FirstObjectGraphicsHeight",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6099,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "FirstObjectGraphicsMaskOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6114,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "FirstObjectGraphicsFrameOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-record field anchor only;repeated8-byte BEdefinitions or28-byte graphics slots keep live canonical memory. 397D suffix loads coordinates/flags as separate BEbytes,dimensions as bytes,and mask/frame words as LE;no struct conversion or validation implied."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52391,6 +55396,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "symbol_name": "MouseServicesDisabledByte",
+    "address": 8051,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startupclear0031 supplieszero;138B request and0F69 failed/skippedmouse initialization setFF.04DC/0EEB andothermouse callers skip services only forFF"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8053,
     "segment": 2473,
     "kind": "data",
@@ -52419,6 +55440,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8056,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "AlternateDrawingOrigin",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4C20 swapswithDrawingOrigin1F76 afterprogrammingit;4C32loads1F78for displaystart;4407/4BFBinitialize6D60 and4609initializeszero"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52551,6 +55588,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8078,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DatCacheRequestedParagraphs",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1EE4 stores first DOS AH48 returnedBX before reusing it as the second allocation request; no decoded read found. Requested paragraphs, not a proof of allocation success."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8080,
     "segment": 2473,
     "kind": "data",
@@ -52631,6 +55684,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8122,
+    "segment": 2473,
+    "kind": "data",
+    "size": 4,
+    "symbol_name": "SavedKeyboardVector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup00050/00053 and1565/1568DOS3509 capture ES:BX; stores00055/59 and156A/6E;1586/158A consume offset/segment for DOS2509"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8126,
     "segment": 2473,
     "kind": "pointer_data",
@@ -52643,6 +55712,54 @@
     "confidence": "PROVEN",
     "evidence": [
       "DOS AH35 AL08 at005D returns ES:BX;0062/0066 save pointer used by far chains1899/4C6C and restore16B7"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8130,
+    "segment": 2473,
+    "kind": "data",
+    "size": 4,
+    "symbol_name": "SavedPrivateVector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0006A..00075 DOS35 with livePrivateVectorNumber captures ES:BX;0FA6/0FAA consume offset/segment forDOS25"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8134,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "PrivateVectorNumber",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "00040 initializes0C;11E7/133F assign74;0006C/0F57/0FA3 read live selector for vector queries/install/restore"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8154,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "DisplayControllerBasePort",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "004FE readsES0040:0063 and00503 storesDX here;0134A/0137C store03D4;1550 adds6 toDL for its byte status poll;4C37 reads word before index0C/0D OUT"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52663,6 +55780,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8161,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "SavedVideoMode",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "00A4 storesAL returned by startupINT10 AH0F;0FF8 reads it beforeXORAH/AH00 INT10"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8162,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "SavedVideoPage",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "00A7 storesBH returned by startupINT10 AH0F;1001 reads it through live returnedDS beforeAH05 INT10"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8164,
     "segment": 2473,
     "kind": "data",
@@ -52675,6 +55824,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "58D2 main graphics source;8238 publishes level graphics segment here"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8174,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "UiGraphicsBufferSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1031 assigns allocated block+2F7E paragraphs;5945/5949 decode into it;4D99/7DD9 add1000 for glyph reads;extent and full resource ownership remain open"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52723,6 +55888,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8359,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelCountdownHighDigit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "36E2 stores low byte of header+06 word plus30;021F..0246 implements ASCII countdown borrow with20A9/20AA. This helper does not initialize the other digits."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "symbol_name": "CleanupExitMessage",
+    "address": 8364,
+    "segment": 2473,
+    "kind": "data",
+    "size": 40,
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "04ED loadsDS:20AC forDOS09 at04F2; stored dollar-terminated generic ExitingLemmings message; provider reads live unchecked canonicalbytes"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -52931,6 +56128,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "19D1 filename oddtable.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9628,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "SavedBiosClockHigh",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup0016 INT1A/AH00 returns CX:DX;001C stores CX;16C7 reads high word through actual popped DS for INT1A/AH01"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9630,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "SavedBiosClockLow",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup0016 INT1A/AH00 returns CX:DX;0018 stores DX;16CB reads low word through actual popped DS for INT1A/AH01"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -53395,6 +56624,602 @@
     "confidence": "PROVEN",
     "evidence": [
       "37C2/3839 compute wrapped SS:0012+416*row+column cell writes; SS also holds stack and VGA mirrors; no stored image bytes,initialization or bounded map extent implied"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21574,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "AttributePaletteReturn5446",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near return after unconditional STI"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 21766,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "MappedDacPaletteReturn5506",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near return after live POP DI"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 21767,
+    "segment": 0,
+    "kind": "data_field",
+    "size": 16,
+    "symbol_name": "MappedDacPaletteIndexes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "54E1/54E9 select unchecked CS bytes from this base; known initial16 bytes only, extent not proven"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8204,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "PaletteBlankingControl",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "1205/1369 storeFF;548D/54B6/54C6/54F8 compare live byte withFF to bypass sequencer blank/unblank"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21204,
+    "segment": 0,
+    "kind": "data_field",
+    "size": 16,
+    "symbol_name": "PackedPalettePointerTable",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "5569/5401/53CA and55B7 use this base for unchecked word selectors; initial8DSoffsets only, tableextentnotclosed"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21220,
+    "segment": 0,
+    "kind": "data_field",
+    "size": 16,
+    "symbol_name": "RgbPalettePointerTable",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "RGB paths read unchecked CSword selectors from this base; initial8DSoffsets only"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8060,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "PaletteDisplayModeWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "5569/5405/53D1/55B7 compare wholewordwith4: equalityRGB otherwisepacked intheseconsumers"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21943,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PaletteTransitionSharedBody",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 21988,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedTransitionAfterOutput55E4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 21996,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedTransitionAfterStep55EC",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22001,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedTransitionAfterWait1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22004,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedTransitionAfterWait2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22007,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedTransitionAfterWait3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22055,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbTransitionAfterOutput5627",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22063,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbTransitionAfterStep562F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22068,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbTransitionAfterWait5634",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22016,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "PackedPaletteTransitionReturn5600",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 22077,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RgbPaletteTransitionReturn563D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned transition continuation; docs/palette-transition.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19259,
+    "segment": 0,
+    "kind": "branch",
+    "size": 5,
+    "symbol_name": "RetryInputReset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4B1C fallthrough clears the live scan-code byte before the frame-free wait; docs/retry-input.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/retry_input.c",
+    "c_code_ranges": [
+      [
+        19259,
+        19280
+      ]
+    ],
+    "verification_evidence": "tests/retry_input.py: all65536 button words,791 fixtures at core/adapter boundaries with767 NULL/empty/read-only/write-only RAM repeats per boundary;7 sites/4 edges/21 unique bytes,7 completed finite mutants,access guard86 and verified no-event NULL deadline. Full RAM/CPU/defined phase flags/ordered bus/VGA;512 original-only INT09 producer-prefix cases add no C coverage. Frame-free stop before4B50; intact wait code/same CS/TF clear/quiescent IRQ; docs/retry-input.md"
+  },
+  {
+    "address": 19264,
+    "segment": 0,
+    "kind": "branch",
+    "size": 16,
+    "symbol_name": "WaitForRetryInput",
+    "aliases": [
+      "loc_4B40"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Six-instruction live button-word / scan-code-byte wait, stop before4B50; docs/retry-input.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/retry_input.c",
+    "c_code_ranges": [
+      [
+        19264,
+        19280
+      ]
+    ],
+    "verification_evidence": "tests/retry_input.py: all65536 button words,791 fixtures at core/adapter boundaries with767 NULL/empty/read-only/write-only RAM repeats per boundary;7 sites/4 edges/21 unique bytes,7 completed finite mutants,access guard86 and verified no-event NULL deadline. Full RAM/CPU/defined phase flags/ordered bus/VGA;512 original-only INT09 producer-prefix cases add no C coverage. Frame-free stop before4B50; intact wait code/same CS/TF clear/quiescent IRQ; docs/retry-input.md"
+  },
+  {
+    "address": 19280,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryInputReady",
+    "aliases": [
+      "loc_4B50"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Both input-wait exit arms continue before the original CALL531E; no RET at this boundary"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 20,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "InputButtonsWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Recovered DS word: keyboard OR/AND171E/172F/1749/1755, full poll writes424D/4269/4355/4382, low3 bits tested4B43. Indexed/physical aliases and UNKNOWN writers remain open; docs/retry-input.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8144,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "KeyboardScanCodeByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "INT09 stores masked make scan code1707, clears on break1736 and special/mapped paths; retry reset4B3B and byte test4B48. Not a queue or boolean; docs/retry-input.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19231,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterSetup",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19234,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterPalette1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19237,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterFirstClear",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19240,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterBackground",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19247,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19250,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterCopy",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19253,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterStatus",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19256,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterDisplayStart",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19259,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterPalette2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19283,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterExitPalette",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19286,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiAfterFinalClear",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 19291,
+    "segment": 0,
+    "kind": "branch",
+    "size": 0,
+    "symbol_name": "RetryUiReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original nearCALL continuation or final RET in4B1C; docs/retry-ui.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 20175,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 49,
+    "symbol_name": "ResourceRetryPromptText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Two pinned column/row/style + CR text records, ending with zero-column terminator; used at4B28; docs/retry-ui.md"
     ],
     "verification_status": "UNRESOLVED"
   }

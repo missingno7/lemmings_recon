@@ -11,8 +11,8 @@ ProgramEntry:
     mov [cs:0x83bd],al ; @00010
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @00014
     int 0x1a ; @00016
-    mov [0x259e],dx ; @00018
-    mov [0x259c],cx ; @0001C
+    mov [SavedBiosClockLow-GameDataImage],dx ; @00018
+    mov [SavedBiosClockHigh-GameDataImage],cx ; @0001C
     mov ah,0x4a ; @00020
     mov bx,0x1911 ; @00022
     int 0x21 ; @00025
@@ -26,23 +26,23 @@ ProgramEntry:
     mov [0x1ff6],ax ; @00034
     call sub_04F9 ; @00037
     mov word [0x1f7c],0xff ; @0003A
-    mov byte [0x1fc6],0xc ; @00040
+    mov byte [PrivateVectorNumber-GameDataImage],0xc ; @00040
     mov byte [0x200f],0xff ; @00045
     call sub_1293 ; @0004A
     call sub_106E ; @0004D
     mov ax,0x3509 ; @00050
     int 0x21 ; @00053
-    mov [0x1fbc],es ; @00055
-    mov [0x1fba],bx ; @00059
+    mov [SavedKeyboardVector-GameDataImage+2],es ; @00055
+    mov [SavedKeyboardVector-GameDataImage],bx ; @00059
     mov ax,0x3508 ; @0005D
     int 0x21 ; @00060
     mov [SavedTimerVector-GameDataImage],bx ; @00062
     mov [SavedTimerVector-GameDataImage+2],es ; @00066
     mov ah,0x35 ; @0006A
-    mov al,[0x1fc6] ; @0006C
+    mov al,[PrivateVectorNumber-GameDataImage] ; @0006C
     int 0x21 ; @0006F
-    mov [0x1fc2],bx ; @00071
-    mov [0x1fc4],es ; @00075
+    mov [SavedPrivateVector-GameDataImage],bx ; @00071
+    mov [SavedPrivateVector-GameDataImage+2],es ; @00075
     mov ax,0x2562 ; @00079
     push ds ; @0007C
     push es ; @0007D
@@ -66,8 +66,8 @@ ProgramEntry:
     mov [0x1fde],al ; @0009D
     mov ah,0xf ; @000A0
     int 0x10 ; @000A2
-    mov [0x1fe1],al ; @000A4
-    mov [0x1fe2],bh ; @000A7
+    mov [SavedVideoMode-GameDataImage],al ; @000A4
+    mov [SavedVideoPage-GameDataImage],bh ; @000A7
     call InitializeSoundDriver ; @000AB
     call sub_1007 ; @000AE
     call InitializeMouseDriverHooks ; @000B1
@@ -105,9 +105,9 @@ loc_00FB:
     mov byte [cs:0x83be],0x0 ; @000FE
     nop ; @00104
 loc_0105:
-    mov ax,[0x1f78] ; @00105
+    mov ax,[AlternateDrawingOrigin-GameDataImage] ; @00105
     xchg [0x1f76],ax ; @00108
-    mov [0x1f78],ax ; @0010C
+    mov [AlternateDrawingOrigin-GameDataImage],ax ; @0010C
     mov ax,[0x28] ; @0010F
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @00112
     mov [0x28],ax ; @00116
@@ -115,7 +115,7 @@ loc_0105:
     jnz loc_0164 ; @0011E
 loc_0120:
     mov byte [0x1fcf],0x0 ; @00120
-    mov dx,[0x1fda] ; @00125
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @00125
     add dl,0x6 ; @00129
 loc_012C:
     in al,dx ; @0012C
@@ -131,7 +131,7 @@ loc_0138:
 loc_013F:
     sub dl,0x6 ; @0013F
     cli ; @00142
-    mov bx,[0x1f78] ; @00143
+    mov bx,[AlternateDrawingOrigin-GameDataImage] ; @00143
     add bx,[DrawingPageByteOffset-GameDataImage] ; @00147
     add bx,byte +0x2 ; @0014B
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @0014E
@@ -171,7 +171,7 @@ loc_0186:
     db 0x3a,0xc1 ; ENCODED: cmp al,cl (NASM chooses a different encoding) ; @0018B
     jng loc_0164 ; @0018D
     mov byte [0x1fcd],0x0 ; @0018F
-    mov byte [0x1fd0],0x0 ; @00194
+    mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @00194
     inc byte [0x1fd3] ; @00199
     call sub_031E ; @0019D
     call sub_4085 ; @001A0
@@ -331,7 +331,7 @@ sub_031E:
 loc_032C:
     call sub_03C1 ; @0032C
     push ax ; @0032F
-    call sub_1550 ; @00330
+    call WaitForDisplayStatusBit3Cycle ; @00330
     call sub_553D ; @00333
     pop ax ; @00336
     test al,0x1 ; @00337
@@ -348,7 +348,7 @@ loc_0342:
 loc_034D:
     call sub_03D7 ; @0034D
     push ax ; @00350
-    call sub_1550 ; @00351
+    call WaitForDisplayStatusBit3Cycle ; @00351
     call sub_553D ; @00354
     pop ax ; @00357
     test al,0x2 ; @00358
@@ -459,8 +459,8 @@ sub_03E7:
     call sub_0FB2 ; @00462
     call sub_52F4 ; @00465
     call sub_15AD ; @00468
-    call sub_36B6 ; @0046B
-    cmp byte [0x1f73],0xff ; @0046E
+    call InitializeLevelFromRecord ; @0046B
+    cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0046E
     jz loc_0480 ; @00473
     mov ax,0x4 ; @00475
     mov cx,0x96 ; @00478
@@ -499,28 +499,40 @@ loc_04BA:
     mov [0x2000],dx ; @004CB
     ret ; @004CF
 loc_04D0:
+; Nonreturning cleanup continuation. Keep each child CALL/actual RET word live.
+; Video-returned DS selects the mouse gate;04EA is also reached by JMP106B.
+; DOS4C terminates; its next numerical IP is not an executable cleanup exit.
 DatFatalTransfer:
     call RestoreTimerState ; @004D0
-    call sub_1582 ; @004D3
-    call sub_0FA0 ; @004D6
-    call sub_0FF8 ; @004D9
-    cmp byte [0x1f73],0xff ; @004DC
-    jz loc_04EA ; @004E1
+CleanupAfterTimer:
+    call RestoreKeyboardVector ; @004D3
+CleanupAfterKeyboard:
+    call RestorePrivateVector ; @004D6
+CleanupAfterPrivate:
+    call RestoreVideoModeAndPage ; @004D9
+CleanupAfterVideo:
+    cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @004DC
+    jz ExitAfterKeyboardRestore ; @004E1
     mov ax,0xc ; @004E3
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004E6
+CleanupMouseInterrupt:
     int 0x33 ; @004E8
-loc_04EA:
-    call sub_1582 ; @004EA
-    mov dx,0x20ac ; @004ED
+ExitAfterKeyboardRestore:
+    call RestoreKeyboardVector ; @004EA
+CleanupAfterFinalKeyboard:
+    mov dx,CleanupExitMessage-GameDataImage ; @004ED
     mov ah,0x9 ; @004F0
+CleanupMessageInterrupt:
     int 0x21 ; @004F2
     mov ax,0x4c00 ; @004F4
+CleanupTerminateInterrupt:
     int 0x21 ; @004F7
 sub_04F9:
+CleanupAfterTerminate:
     mov ax,0x40 ; @004F9
     mov es,ax ; @004FC
     mov dx,[es:0x63] ; @004FE
-    mov [0x1fda],dx ; @00503
+    mov [DisplayControllerBasePort-GameDataImage],dx ; @00503
     add dl,0x6 ; @00507
     mov [0x1fdc],dx ; @0050A
     mov ax,0x2 ; @0050E
@@ -1036,23 +1048,23 @@ sub_0EC2:
     ret ; @00EDE
 loc_0EDF:
     call RestoreTimerState ; @00EDF
-    call sub_1582 ; @00EE2
-    call sub_0FA0 ; @00EE5
-    call sub_0FF8 ; @00EE8
-    cmp byte [0x1f73],0xff ; @00EEB
+    call RestoreKeyboardVector ; @00EE2
+    call RestorePrivateVector ; @00EE5
+    call RestoreVideoModeAndPage ; @00EE8
+    cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @00EEB
     jz loc_0EF9 ; @00EF0
     mov ax,0xc ; @00EF2
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @00EF5
     int 0x33 ; @00EF7
 loc_0EF9:
-    call sub_1582 ; @00EF9
+    call RestoreKeyboardVector ; @00EF9
     mov dx,0x20d4 ; @00EFC
     mov ah,0x9 ; @00EFF
     int 0x21 ; @00F01
     mov ax,0x4c00 ; @00F03
     int 0x21 ; @00F06
 InitializeMouseDriverHooks:
-    cmp byte [0x1f73],0xff ; @00F08
+    cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @00F08
     jz loc_0F64 ; @00F0D
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @00F0F
     int 0x33 ; @00F11
@@ -1083,7 +1095,7 @@ InitializeMouseDriverHooks:
     mov dx,0xf6f ; @00F50
     int 0x33 ; @00F53
     mov ah,0x25 ; @00F55
-    mov al,[0x1fc6] ; @00F57
+    mov al,[PrivateVectorNumber-GameDataImage] ; @00F57
     push ds ; @00F5A
     push cs ; @00F5B
     pop ds ; @00F5C
@@ -1093,7 +1105,7 @@ InitializeMouseDriverHooks:
     ret ; @00F63
 loc_0F64:
     mov byte [0x25a6],0x2 ; @00F64
-    mov byte [0x1f73],0xff ; @00F69
+    mov byte [MouseServicesDisabledByte-GameDataImage],0xff ; @00F69
     ret ; @00F6E
 MouseEventReturn:
     retf ; @00F6F
@@ -1119,20 +1131,25 @@ loc_0F9D:
     pop ax ; @00F9D
     pop ds ; @00F9E
     iret ; @00F9F
-sub_0FA0:
+RestorePrivateVector:
+; CONTRACT: PUSH liveDS before pointer reads; DOS25 with mutable vector byte.
+; ReturnedSS:SP owns the POPDS and nearRET; no cached entryDS restoration.
+; Optional bus/provider and alias domain: docs/vector-restore.md.
     push ds ; @00FA0
     mov ah,0x25 ; @00FA1
-    mov al,[0x1fc6] ; @00FA3
-    mov dx,[0x1fc2] ; @00FA6
-    mov ds,[0x1fc4] ; @00FAA
+    mov al,[PrivateVectorNumber-GameDataImage] ; @00FA3
+    mov dx,[SavedPrivateVector-GameDataImage] ; @00FA6
+    mov ds,[SavedPrivateVector-GameDataImage+2] ; @00FAA
+RestorePrivateVectorInterrupt:
     int 0x21 ; @00FAE
     pop ds ; @00FB0
+RestorePrivateVectorReturn:
     ret ; @00FB1
 sub_0FB2:
     cli ; @00FB2
     mov ax,0x8d ; @00FB3
     int 0x10 ; @00FB6
-    mov dx,[0x1fda] ; @00FB8
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @00FB8
     mov ax,0x1613 ; @00FBC
     out dx,ax ; @00FBF
     sti ; @00FC0
@@ -1146,13 +1163,21 @@ sub_0FB2:
     mov word [DrawingCallbackSlots-GameDataImage+0xe],0x6bdb ; @00FEB
     mov word [DrawingCallbackSlots-GameDataImage+0x10],0x6cfc ; @00FF1
     ret ; @00FF7
-sub_0FF8:
-    mov al,[0x1fe1] ; @00FF8
+RestoreVideoModeAndPage:
+; CONTRACT: read saved mode, AH00 INT10, then AH05 with page from live returnedDS.
+; Neither BIOS call has a synthetic save frame; returned registers/flags stay live.
+; Actual nearRET uses provider-returnedSS:SP. No assumptions about restored DS.
+; Provider and byte-bus domain: docs/video-restore.md.
+    mov al,[SavedVideoMode-GameDataImage] ; @00FF8
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @00FFB
+RestoreVideoModeInterrupt:
     int 0x10 ; @00FFD
+RestoreVideoAfterMode:
     mov ah,0x5 ; @00FFF
-    mov al,[0x1fe2] ; @01001
+    mov al,[SavedVideoPage-GameDataImage] ; @01001
+RestoreVideoPageInterrupt:
     int 0x10 ; @01004
+RestoreVideoReturn:
     ret ; @01006
 sub_1007:
     mov ah,0x48 ; @01007
@@ -1170,7 +1195,7 @@ sub_1007:
     add ax,0x90 ; @01028
     mov [0x1fec],ax ; @0102B
     add ax,0x7c ; @0102E
-    mov [0x1fee],ax ; @01031
+    mov [UiGraphicsBufferSegment-GameDataImage],ax ; @01031
     add ax,0x17f3 ; @01034
     mov [0x1ff2],ax ; @01037
     add ax,0x200 ; @0103A
@@ -1180,7 +1205,7 @@ sub_1007:
 loc_1044:
     push ax ; @01044
     push bx ; @01045
-    call sub_0FF8 ; @01046
+    call RestoreVideoModeAndPage ; @01046
     pop bx ; @01049
     db 0x8b,0xc3 ; ENCODED: mov ax,bx (NASM chooses a different encoding) ; @0104A
     call sub_1228 ; @0104C
@@ -1198,7 +1223,7 @@ loc_1044:
 loc_1067:
     mov ah,0x9 ; @01067
     int 0x21 ; @01069
-    jmp loc_04EA ; @0106B
+    jmp ExitAfterKeyboardRestore ; @0106B
 sub_106E:
     mov ax,0x3 ; @0106E
     int 0x10 ; @01071
@@ -1267,7 +1292,7 @@ loc_10F9:
     db 0x32,0xdb ; ENCODED: xor bl,bl (NASM chooses a different encoding) ; @0110A
     lea di,[0x239f] ; @0110C
 loc_1110:
-    call sub_1550 ; @01110
+    call WaitForDisplayStatusBit3Cycle ; @01110
     push bx ; @01113
     mov ah,0x7 ; @01114
     int 0x21 ; @01116
@@ -1373,7 +1398,7 @@ loc_11DC:
     jmp loc_1110 ; @011DF
 loc_11E2:
     mov byte [0x200a],0xff ; @011E2
-    mov byte [0x1fc6],0x74 ; @011E7
+    mov byte [PrivateVectorNumber-GameDataImage],0x74 ; @011E7
     mov word [0x1fc9],0x3468 ; @011EC
     jmp short sub_1194 ; @011F2
 loc_11F4:
@@ -1521,9 +1546,9 @@ loc_1332:
     jmp short loc_1301 ; @01338
 loc_133A:
     mov byte [0x200a],0xff ; @0133A
-    mov byte [0x1fc6],0x74 ; @0133F
+    mov byte [PrivateVectorNumber-GameDataImage],0x74 ; @0133F
     mov word [0x1fc9],0x3468 ; @01344
-    mov word [0x1fda],0x3d4 ; @0134A
+    mov word [DisplayControllerBasePort-GameDataImage],0x3d4 ; @0134A
     mov word [0x1fdc],0x3da ; @01350
     jmp short loc_1301 ; @01356
 loc_1358:
@@ -1539,11 +1564,11 @@ loc_1370:
     jmp short loc_1301 ; @01375
 loc_1377:
     mov byte [0x200f],0xff ; @01377
-    mov word [0x1fda],0x3d4 ; @0137C
+    mov word [DisplayControllerBasePort-GameDataImage],0x3d4 ; @0137C
     mov word [0x1fdc],0x3da ; @01382
     jmp loc_1301 ; @01388
 loc_138B:
-    mov byte [0x1f73],0xff ; @0138B
+    mov byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0138B
     jmp loc_1301 ; @01390
 loc_1393:
     call sub_13A8 ; @01393
@@ -1764,17 +1789,24 @@ BiosDisplayPairLookup:
     db 0x00,0x00,0x01,0x01,0x02,0x02,0x00,0x00,0x03,0x03,0x03,0x01,0x00,0x00,0x05,0x04 ; @01536
 ; DATA: lookup_table
     db 0x05,0x05,0x00,0x00,0x04,0x03,0x04,0x04,0x04,0x05 ; @01546
-sub_1550:
-    mov dx,[0x1fda] ; @01550
+; CONTRACT: liveDS controller base is read once. ADD DL,6 keeps DH unchanged.
+; IN byte polling waits forbit3set thenbit3clear; no native game timeout.
+; AX highbyte and all other CPUfields remainlive; providers may changeRAM/RET.
+; Logical/bus/finite-provider evidence: docs/display-status.md.
+WaitForDisplayStatusBit3Cycle:
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @01550
     add dl,0x6 ; @01554
 loc_1557:
+DisplayStatusWaitSet:
     in al,dx ; @01557
     test al,0x8 ; @01558
     jz loc_1557 ; @0155A
 loc_155C:
+DisplayStatusWaitClear:
     in al,dx ; @0155C
     test al,0x8 ; @0155D
     jnz loc_155C ; @0155F
+DisplayStatusReturn:
     ret ; @01561
 sub_1562:
     cli ; @01562
@@ -1782,8 +1814,8 @@ sub_1562:
     push es ; @01564
     mov ax,0x3509 ; @01565
     int 0x21 ; @01568
-    mov [0x1fbc],es ; @0156A
-    mov [0x1fba],bx ; @0156E
+    mov [SavedKeyboardVector-GameDataImage+2],es ; @0156A
+    mov [SavedKeyboardVector-GameDataImage],bx ; @0156E
     mov dx,cs ; @01572
     mov ds,dx ; @01574
     mov dx,0x16d4 ; @01576
@@ -1793,13 +1825,17 @@ sub_1562:
     pop ds ; @0157F
     sti ; @01580
     ret ; @01581
-sub_1582:
+RestoreKeyboardVector:
+; CONTRACT: actualPUSHDS may alter saved pointer fields before they are read.
+; DOS2509 returns live general/segment/stack/flags; POPDS consumes returnedSS:SP.
     push ds ; @01582
     mov ax,0x2509 ; @01583
-    mov dx,[0x1fba] ; @01586
-    mov ds,[0x1fbc] ; @0158A
+    mov dx,[SavedKeyboardVector-GameDataImage] ; @01586
+    mov ds,[SavedKeyboardVector-GameDataImage+2] ; @0158A
+RestoreKeyboardVectorInterrupt:
     int 0x21 ; @0158E
     pop ds ; @01590
+RestoreKeyboardVectorReturn:
     ret ; @01591
 ; UNKNOWN: unresolved bytes
     db 0x1e,0x33,0xc0,0x8e,0xd8,0xc7,0x06,0x24,0x00,0xd4,0x16,0x8c,0x0e,0x26,0x00,0xc7 ; @01592
@@ -1846,7 +1882,7 @@ loc_1600:
     ret ; @01601
 sub_1602:
     mov cx,0xffff ; @01602
-    mov dx,[0x1fda] ; @01605
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @01605
     add dl,0x6 ; @01609
 loc_160C:
     in al,dx ; @0160C
@@ -1900,7 +1936,7 @@ InstallGameTimerVector:
     mov dx,0x182 ; @0165A
     int 0x21 ; @0165D
     pop ds ; @0165F
-    mov dx,[0x1fda] ; @01660
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @01660
     add dl,0x6 ; @01664
 loc_1667:
     in al,dx ; @01667
@@ -1942,13 +1978,19 @@ loc_1694:
     db 0xfa,0xb0,0x36,0xe6,0x43,0x8b,0x0e,0xc9,0x1f,0x8a,0xc1,0xe6,0x40,0x8a,0xc5,0xe6 ; @01696
 ; UNKNOWN: unresolved bytes
     db 0x40,0xfb,0xc3 ; @016A6
+; Restore PIT, IVT08, then startup BIOS clock; no IRQ scheduling is inferred.
+; PUSHDS precedes live LES. IVT writes may replace the saved DS/outer RET.
+; STI always enables IF; POPDS then selects both clock reads. BIOS owns returned state.
 RestoreTimerState:
     push ds ; @016A9
     cli ; @016AA
     mov al,0x36 ; @016AB
+TimerRestoreControlPort:
     out 0x43,al ; @016AD
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @016AF
+TimerRestoreCounterLowPort:
     out 0x40,al ; @016B1
+TimerRestoreCounterHighPort:
     out 0x40,al ; @016B3
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @016B5
     les bx,[SavedTimerVector-GameDataImage] ; @016B7
@@ -1957,10 +1999,12 @@ RestoreTimerState:
     mov [0x22],es ; @016C1
     sti ; @016C5
     pop ds ; @016C6
-    mov cx,[0x259c] ; @016C7
-    mov dx,[0x259e] ; @016CB
+    mov cx,[SavedBiosClockHigh-GameDataImage] ; @016C7
+    mov dx,[SavedBiosClockLow-GameDataImage] ; @016CB
     mov ah,0x1 ; @016CF
+TimerRestoreClockInterrupt:
     int 0x1a ; @016D1
+TimerRestoreReturn:
     ret ; @016D3
 KeyboardIrqHandler:
     push ds ; @016D4
@@ -1990,35 +2034,35 @@ loc_16E9:
     and ah,0x7f ; @01700
     test al,0x80 ; @01703
     jnz loc_1736 ; @01705
-    mov [0x1fd0],ah ; @01707
+    mov [KeyboardScanCodeByte-GameDataImage],ah ; @01707
     cmp byte [0x200b],0xff ; @0170B
     jnz loc_175A ; @01710
     cmp ah,0x7d ; @01712
     jnz loc_1723 ; @01715
-    mov byte [0x1fd0],0x0 ; @01717
+    mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @01717
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0171C
-    or word [0x14],byte +0x2 ; @0171E
+    or word [InputButtonsWord-GameDataImage],byte +0x2 ; @0171E
 loc_1723:
     cmp ah,0x7e ; @01723
     jnz loc_1734 ; @01726
-    mov byte [0x1fd0],0x0 ; @01728
+    mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @01728
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0172D
-    or word [0x14],byte +0x1 ; @0172F
+    or word [InputButtonsWord-GameDataImage],byte +0x1 ; @0172F
 loc_1734:
     jmp short loc_175A ; @01734
 loc_1736:
-    mov byte [0x1fd0],0x0 ; @01736
+    mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @01736
     cmp byte [0x200b],0xff ; @0173B
     jnz loc_175A ; @01740
     cmp ah,0x7d ; @01742
     jnz loc_174E ; @01745
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @01747
-    and word [0x14],byte -0x3 ; @01749
+    and word [InputButtonsWord-GameDataImage],byte -0x3 ; @01749
 loc_174E:
     cmp ah,0x7e ; @0174E
     jnz loc_175A ; @01751
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @01753
-    and word [0x14],byte -0x2 ; @01755
+    and word [InputButtonsWord-GameDataImage],byte -0x2 ; @01755
 loc_175A:
     cmp byte [bx],0xff ; @0175A
     jz loc_1763 ; @0175D
@@ -2037,7 +2081,7 @@ loc_176A:
 loc_1774:
     not cx ; @01774
     and [0x1fc7],cx ; @01776
-    mov byte [0x1fd0],0x0 ; @0177A
+    mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @0177A
 loc_177F:
     pop ax ; @0177F
     lea bx,[0xf78] ; @01780
@@ -2099,8 +2143,8 @@ GameTimerIrqHandler:
     jz sub_183E ; @017DB
     call sub_5473 ; @017DD
     cli ; @017E0
-    mov dx,[0x1fda] ; @017E1
-    mov bx,[0x1f78] ; @017E5
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @017E1
+    mov bx,[AlternateDrawingOrigin-GameDataImage] ; @017E5
     add bx,[DrawingPageByteOffset-GameDataImage] ; @017E9
     add bx,byte +0x2 ; @017ED
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @017F0

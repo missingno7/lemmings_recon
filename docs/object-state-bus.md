@@ -27,5 +27,6 @@ A second variant changes the first return to3776: IP alone matches the normal
 end, but only the first CALL has run and the core must still report changed-return.
 Its12 bytes overlap
 the existing RAM span; auxiliary core probes add no physical byte or site coverage.
-The complete36B6 initializer, thirteen live minimap calls, full terrain-stream
-acceptance, native device ownership and IRQ contracts remain open.
+The full36B6 caller and live minimap tail have separate connected gates in
+level-initialize.md and level-finish.md. Complete terrain-stream acceptance,
+wider native device ownership and IRQ contracts remain open.

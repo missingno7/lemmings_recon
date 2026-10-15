@@ -28,8 +28,9 @@ On close success, ES and DS are popped from live saved words and the routine ret
 | Close carry | 21B6 | Saved ES/DS remain; DS is the read destination |
 
 No close is issued after an open/read carry error and no saved frame is unwound
-on the error transfer. The 1949 print/cleanup body remains untranslated. These
-are explicit native result exits with the same oracle IP, registers, flags and
+on the error transfer. The1949 print/cleanup body now has a separately tested
+native core; see file-error.md. The original raw-only API still exposes result
+exits with the same oracle IP, registers, flags and
 stack memory, rather than a host exception or corrected cleanup policy.
 
 ## Verification domain
@@ -52,7 +53,10 @@ The domain is quiescent mapped twenty-bit memory with clear TF, intact instructi
 and active return words, and physically contiguous stack word accesses. Constructed
 read-provider bytes advance with sixteen-bit cursor wrap; this does not establish
 actual DOS behavior across a segment end. Real DOS service behavior, interrupts,
-broader alias closure and the shared fatal cleanup still require integration.
+broader provider ownership and upper caller connections remain open. The new
+optional-bus core and full fatal composer now have a separate87-case gate; see
+resource-raw-full.md. The existing RAM API calls the bus core with NULL and keeps
+its declared DOS AX/flags-only provider contract.
 Only caller code is executed; no game boot or gameplay discovery is used.
 
 Next port higher section-selection and startup callers, file seek/close ownership,

@@ -29,6 +29,11 @@ def report():
             if not s['address']<=start<end<=s['address']+s['size']:
                 raise ValueError('Invalid translated range for '+s['symbol_name'])
             code_bytes.update(range(start,end))
+    decoded_bytes={p for instruction in analysis['instructions']
+                   for p in range(instruction['address'],instruction['address']+instruction['size'])}
+    if code_bytes-decoded_bytes:
+        raise ValueError('Translated C bytes include unresolved/non-instruction bytes: '+
+                         ','.join(f'{p:04X}' for p in sorted(code_bytes-decoded_bytes)))
     m['translated_c_code_bytes']=len(code_bytes)
     d=read_json(BUILD/'differential.json')
     paths={'checksum.c':'c/checksum.c','checksum.h':'c/checksum.h',
@@ -59,6 +64,69 @@ def report():
     if section['image_sha256']!=sha(image):raise ValueError('DAT section differential oracle changed')
     executed.update(section['executed_instruction_addresses'])
     cache=read_json(BUILD/'dat-cache-differential.json')
+    allocation=read_json(BUILD/'cache-allocation-differential.json')
+    video=read_json(BUILD/'video-restore-differential.json')
+    display_status=read_json(BUILD/'display-status-differential.json')
+    display_start=read_json(BUILD/'display-start-differential.json')
+    display_setup=read_json(BUILD/'display-setup-differential.json')
+    text_glyph=read_json(BUILD/'text-glyph-differential.json')
+    text_stream=read_json(BUILD/'text-stream-differential.json')
+    display_pages=read_json(BUILD/'display-pages-differential.json')
+    background=read_json(BUILD/'background-drawing-differential.json')
+    palette_channels=read_json(BUILD/'palette-channels-differential.json')
+    palette_rows=read_json(BUILD/'palette-rows-differential.json')
+    palette_ports=read_json(BUILD/'palette-ports-differential.json')
+    palette_row_select=read_json(BUILD/'palette-row-select-differential.json')
+    palette_transition=read_json(BUILD/'palette-transition-differential.json')
+    retry_input=read_json(BUILD/'retry-input-differential.json')
+    if retry_input.get('access_guard_exit')!=86 or not retry_input.get('null_bus_deadline_verified'):
+        raise ValueError('Retry input guard probes must complete before C coverage')
+    for extra in (display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input):
+        for path,digest in extra['input_hashes'].items():
+            if sha((ROOT/path).read_bytes())!=digest:
+                raise ValueError('Stale display differential report for '+path)
+        if extra['image_sha256']!=sha(image):raise ValueError('Display differential oracle changed')
+        executed.update(extra['executed_instruction_addresses'])
+    vectors=read_json(BUILD/'vector-restore-differential.json')
+    timer=read_json(BUILD/'timer-restore-differential.json')
+    cleanup=read_json(BUILD/'fatal-cleanup-differential.json')
+    file_error=read_json(BUILD/'file-error-differential.json')
+    for path,digest in file_error['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale file error differential report for '+path)
+    if file_error['image_sha256']!=sha(image):
+        raise ValueError('File error differential oracle changed')
+    executed.update(file_error['executed_instruction_addresses'])
+    for path,digest in cleanup['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale fatal cleanup differential report for '+path)
+    if cleanup['image_sha256']!=sha(image):
+        raise ValueError('Fatal cleanup differential oracle changed')
+    executed.update(cleanup['executed_instruction_addresses'])
+    for path,digest in timer['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale timer restoration differential report for '+path)
+    if timer['image_sha256']!=sha(image):
+        raise ValueError('Timer restoration differential oracle changed')
+    executed.update(timer['executed_instruction_addresses'])
+    for path,digest in vectors['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale vector restoration differential report for '+path)
+    if vectors['image_sha256']!=sha(image):
+        raise ValueError('Vector restoration differential oracle changed')
+    executed.update(vectors['executed_instruction_addresses'])
+    for path,digest in video['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale video restoration differential report for '+path)
+    if video['image_sha256']!=sha(image):
+        raise ValueError('Video restoration differential oracle changed')
+    executed.update(video['executed_instruction_addresses'])
+    for path,digest in allocation['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale cache allocation differential report for '+path)
+    if allocation['image_sha256']!=sha(image):
+        raise ValueError('Cache allocation differential oracle changed')
+    executed.update(allocation['executed_instruction_addresses'])
     for path,digest in cache['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale DAT cache differential report for '+path+'; run tools/difftest.py')
@@ -77,6 +145,13 @@ def report():
     if resource['image_sha256']!=sha(image):raise ValueError('DAT resource differential oracle changed')
     executed.update(resource['executed_instruction_addresses'])
     raw=read_json(BUILD/'resource-raw-differential.json')
+    raw_full=read_json(BUILD/'resource-raw-full-differential.json')
+    for path,digest in raw_full['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale raw full differential report for '+path)
+    if raw_full['image_sha256']!=sha(image):
+        raise ValueError('Raw full differential oracle changed')
+    executed.update(raw_full['executed_instruction_addresses'])
     for path,digest in raw['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale raw resource differential report for '+path+'; run tools/difftest.py')
@@ -102,14 +177,22 @@ def report():
     executed.update(setup['executed_instruction_addresses'])
     decimal=read_json(BUILD/'decimal-digits-c-differential.json')
     selection=read_json(BUILD/'resource-select-differential.json')
+    selection_full=read_json(BUILD/'resource-select-full-differential.json')
     objects=read_json(BUILD/'object-graphics-differential.json')
     coordinates=read_json(BUILD/'object-coordinates-differential.json')
     cells=read_json(BUILD/'object-cells-differential.json')
     steel=read_json(BUILD/'steel-cells-differential.json')
     state=read_json(BUILD/'object-state-differential.json')
+    cells_bus=read_json(BUILD/'object-cells-bus-differential.json')
+    steel_bus=read_json(BUILD/'steel-cells-bus-differential.json')
+    coordinates_bus=read_json(BUILD/'object-coordinates-bus-differential.json')
+    state_bus=read_json(BUILD/'object-state-bus-differential.json')
+    finish=read_json(BUILD/'level-finish-differential.json')
+    initialization=read_json(BUILD/'level-initialize-differential.json')
     clear=read_json(BUILD/'vga-clear-differential.json')
     layout=read_json(BUILD/'drawing-layout-differential.json')
     drawing=read_json(BUILD/'level-drawing-differential.json')
+    header=read_json(BUILD/'level-header-differential.json')
     sample=read_json(BUILD/'minimap-sample-differential.json')
     mmrow=read_json(BUILD/'minimap-row-differential.json')
     mmcolumn=read_json(BUILD/'minimap-column-differential.json')
@@ -136,10 +219,19 @@ def report():
     bitmap=read_json(BUILD/'drawing-bitmap-differential.json')
     terrain_inputs=read_json(BUILD/'terrain-inputs-differential.json')
     terrain=read_json(BUILD/'terrain-drawing-differential.json')
+    commands=read_json(BUILD/'terrain-commands-differential.json')
+    streams=read_json(BUILD/'terrain-stream-differential.json')
+    object_draw=read_json(BUILD/'object-drawing-differential.json')
+    redraw=read_json(BUILD/'level-redraw-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
+                        ('object cells bus',cells_bus),('steel cells bus',steel_bus),
+                        ('object coordinates bus',coordinates_bus),('object state bus',state_bus),
+                        ('level finish',finish),
+                        ('level initialization',initialization),
                         ('VGA clear',clear),('drawing layout',layout),('level drawing',drawing),
+                        ('level header',header),
                         ('minimap sample',sample),('minimap row',mmrow),('minimap column',mmcolumn),
                         ('drawing clip',clip),('drawing dirty',dirty),('drawing inputs',inputs),
                         ('drawing dispatch',dispatch),('drawing source',source),('drawing plan',plan),
@@ -151,28 +243,44 @@ def report():
                         ('shifted opaque',shifted_opaque),('shifted masked',shifted_masked),
                         ('shifted protected',shifted_protected),('shifted read mask',shifted_readmask),
                         ('actual bitmap entry',bitmap),('terrain inputs',terrain_inputs),
-                        ('connected terrain drawing',terrain)):
+                        ('connected terrain drawing',terrain),
+                        ('terrain command readers',commands),('terrain streams',streams),
+                        ('object drawing',object_draw),('level redraw',redraw)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
         if extra['image_sha256']!=sha(image):raise ValueError(label+' differential oracle changed')
     executed.update(decimal['instruction_sites'])
     executed.update(selection['executed_instruction_addresses'])
+    for path,digest in selection_full['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale full resource selector differential report for '+path)
+    if selection_full['image_sha256']!=sha(image):raise ValueError('Full resource selector oracle changed')
+    executed.update(selection_full['executed_instruction_addresses'])
     executed.update(objects['instruction_sites'])
     executed.update(coordinates['instruction_sites'])
     executed.update(cells['instruction_sites'])
     executed.update(steel['instruction_sites'])
     executed.update(state['executed_instruction_addresses'])
-    for extra in (clear,layout,drawing,sample,mmrow,mmcolumn):executed.update(extra['executed_instruction_addresses'])
+    for extra in (cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization):
+        executed.update(extra['executed_instruction_addresses'])
+    for extra in (clear,layout,drawing,header,sample,mmrow,mmcolumn):executed.update(extra['executed_instruction_addresses'])
     executed.update(clip['executed_instruction_addresses'])
     executed.update(dirty['instruction_sites'])
     executed.update(inputs['executed_instruction_addresses'])
     for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
-    for extra in (terrain_inputs,terrain):executed.update(extra['executed_instruction_addresses'])
+    for extra in (terrain_inputs,terrain,commands,streams,object_draw,redraw):executed.update(extra['executed_instruction_addresses'])
     reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
-    reports+=terrain_inputs,terrain
+    reports+=terrain_inputs,terrain,commands,streams,object_draw,redraw
+    reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)
+    reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
+    reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
+    decoded_sites={instruction['address'] for instruction in analysis['instructions']}
+    if executed-decoded_sites:
+        raise ValueError('C differential report includes undecoded instruction sites: '+
+                         ','.join(f'{p:04X}' for p in sorted(executed-decoded_sites)))
     m['original_instructions_executed']=len(executed)
     m['unresolved_main_code_candidate_bytes']=sum(r['end']-r['start'] for r in analysis['regions'] if r['classification']=='unresolved' and r['start']<0x9a90)
     m['unresolved_main_code_candidate_runs']=sum(r['classification']=='unresolved' and r['start']<0x9a90 for r in analysis['regions'])
@@ -199,6 +307,13 @@ def report():
     m['interrupts']=verified['interrupts']
     m['dat_io']=verified['dat_io']
     m['decimal_digits_contracts']=verified['decimal_digits_contracts']
+    m['cache_allocation_contracts']=verified['cache_allocation_contracts']
+    m['video_restore_contracts']=verified['video_restore_contracts']
+    m['vector_restore_contracts']=verified['vector_restore_contracts']
+    m['timer_restore_contracts']=verified['timer_restore_contracts']
+    m['fatal_cleanup_contracts']=verified['fatal_cleanup_contracts']
+    m['file_error_contracts']=verified['file_error_contracts']
+    m['resource_raw_full_contracts']=verified['resource_raw_full_contracts']
     state_insns=m['protection']['stream_metrics']['instructions']+m['protection']['int1_instruction_count']
     m['state_specific_decoded_instructions']=state_insns
     combined_bytes=m['byte_exact_asm_bytes']+sum(s['byte_exact_asm_bytes'] for s in m['sound'].values())
@@ -243,15 +358,17 @@ Gate A passes for the main EXE: deterministic static unpack, full byte compariso
 63 independently checked relocations, entry/stack state and input identity. Gate B
 has an exact buildable initial ASM image, but remains open for code/data, indirect
 transfer, external-driver and semantic closure. Gates C/D have the checksum,
-resource/decoder/file/read/cache/leaf, special VGA strip and PC-speaker helper clusters.
-The two checksum, thirteen DAT, raw-resource, RLE, four special VGA strip and
+resource/decoder/file/read/cache/allocation/leaf, special VGA strip and PC-speaker helper clusters.
+The two checksum, thirteen DAT, cache allocation, video/vector/timer restoration, fatal cleanup/file-error printing, raw-resource, RLE, four special VGA strip and
 special graphics setup, decimal helper, resource selection, four object-record
 main routines, the four-call object-state span, VGA clear, drawing-layout setter
-and connected level-drawing/minimap callers, clipping/dirty leaves and the scoped
+and connected level-drawing/minimap callers, the live level-header prefix,
+clipping/dirty leaves and the scoped
 planar preparation/geometry/dispatch/source spans, all six aligned bodies and
-all six shifted bodies, the actual8822 entry and packed terrain caller
+all six shifted bodies, the actual8822 entry, packed terrain caller, two command loops,
+object-drawing suffix and full394F redraw composition
 are TESTED within docs/checksum.md,
-docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/dat-files.md,
+docs/dat.md, docs/dat-io.md, docs/dat-section.md, docs/dat-cache.md, docs/cache-allocation.md, docs/video-restore.md, docs/vector-restore.md, docs/timer-restore.md, docs/fatal-cleanup.md, docs/file-error.md, docs/resource-raw-full.md, docs/dat-files.md,
 docs/dat-load.md, docs/resource-raw.md, docs/resource-rle.md, docs/special-blit.md,
 docs/special-setup.md, docs/decimal-digits.md, docs/resource-select.md and
 docs/object-records.md, docs/interaction-cells.md, docs/vga-clear.md,
@@ -261,7 +378,8 @@ docs/drawing-dispatch.md, docs/drawing-source.md, docs/drawing-plan.md,
 docs/aligned-opaque.md, docs/aligned-masked.md, docs/aligned-protected.md,
 docs/aligned-read-mask.md, docs/aligned-mask-effects.md, docs/shifted-mask-effects.md
 docs/shifted-opaque.md, docs/shifted-masked.md, docs/shifted-protected.md,
-docs/shifted-read-mask.md and docs/drawing-render.md's domains; remaining
+docs/shifted-read-mask.md, docs/drawing-render.md, docs/terrain-stream.md,
+docs/object-drawing.md, docs/level-redraw.md and docs/level-header.md's domains; remaining
 main entry candidates are UNTRANSLATED. CS:8363 reachability remains UNRESOLVED despite
 its complete bounded instruction/branch coverage. Gate E is not started.
 
@@ -641,8 +759,45 @@ Normal return pops live savedSI before the caller's nearRET. Tests retain signed
 SAR-y, ignored selectorbit6, x/control bits, reversal, scratch/stack aliases and
 physical/offset wraps. The actual original RETF is executed with its documented
 read-hook observation, then hooks are restored before caller continuation. IRQ,
-device/producer/allocation ownership and higher terrain loops remain open. See
+device/producer/allocation ownership and wider level callers remain open. See
 terrain-drawing.md; no game was booted and no assets were changed.
+
+The374F/395F terrain command loops now call the native7C67/8822 chain directly.
+{commands['case_count']} prefix cases and24 original MOV-SI probes verify separate
+big-endian byte loads, fullFFFF sentinel, flags and offset/physical wraps.
+{streams['case_count']} full-stream cases include all80 pinned LEVEL streams at
+both entries with the matching GROUND metadata, constructed graphics and the
+visible1664x164 viewport. WholeRAM/register/definedflags/orderedbus/VGA checks
+retain liveDS/SI and changed child returns; each ordinary rendered body also
+gets an independent whole-plane check. Both loops add54 unique original C bytes
+and20 sites. Source allocation, native device/IRQ ownership and the surrounding
+36B6 initialization and broader platform ownership remain open. See terrain-stream.md
+for tested domains and caps.
+
+The397D object suffix now composes the native8822 core in
+{object_draw['case_count']} adapter cases and{object_draw['core_boundary_case_count']}
+additional core-boundary probes. All33 caller sites,all4 caller edges and all6
+aligned body families execute,including all80 pinned LEVEL/GROUND entry states.
+Those suffix fixtures model the preceding378A copy; they do not count that
+copy as executed. Full RAM/register/defined-flag/bus/VGA and independent input/
+plane checks preserve live DS,SI/DI/CX saves,changed near/far returns,bit0 clearing
+and the original65,536-iteration zero-byte-count behavior. Four mutants are
+detected. Its81 translated bytes overlap the full redraw caller below.
+
+RedrawLevel at394F now directly composes initialization,normal terrain or
+special setup,record copying and object drawing. {redraw['case_count']} adapter
+and{redraw['core_boundary_case_count']} core-boundary cases cover all50 caller
+sites,all10 caller edges and{len(redraw['executed_instruction_addresses'])}
+integrated sites;three compiled mutations are detected. Four paired real
+VGASPEC/VGAGR inputs,both fatal transfers,provider stops,live DS and altered
+clear/layout/copy return words retain their explicit boundaries. The126
+translated caller bytes exclude UNKNOWN395E and overlap the27-byte redraw
+terrain loop and81-byte object suffix. These byte ranges and all dependency
+instruction sites are unioned,never summed. Special/DAT/RLE direct-RAM accesses
+remain within the declared ordinary-RAM/intact-internal-return domain;parent
+and bus-aware child events,VGA state,whole RAM and declared DOS effects are
+checked separately. IRQ/timing,retry UI and arbitrary provider/alias behavior
+remain open. See object-drawing.md and level-redraw.md.
 '''
     return m,text
 

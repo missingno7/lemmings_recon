@@ -5,7 +5,9 @@ the native `8822` planar renderer, using the canonical RAM image and one raster
 bus. The suffix contains 81 original bytes and 33 instruction sites; its byte
 SHA-256 is `3a4c387885edd2da6c45f8f1f8e41f5ac348ddb2da63c1f8eec9c62eff8dd989`.
 The preceding `397A` record-copy CALL belongs to the enclosing redraw caller.
-This candidate is verified separately and is not yet added to ledger C coverage.
+The ledger owns `DrawLevelObjects`, its return/loop PCs and first-record field
+anchors. Global C coverage unions this suffix with `RedrawLevel`; publication
+requires fresh complete-stream and dependency reports.
 The static contract remains in [object-drawing-frontier.md](object-drawing-frontier.md).
 
 ## State and memory contract

@@ -56,8 +56,12 @@ all are detected. Dependencies compile without their separate mutations.
 The original comparison is confined to identified routine intervals, with a
 ten-million-instruction budget per case and a 120-second suite process limit.
 DOS providers and the rendering/input retry callee at 4B1C remain declared seams.
-Fatal transfers stop at 1949/04D0 with live frames; those bodies remain unported.
-Instruction bytes and active callee return words must remain intact in this
-caller domain. IRQ delivery is quiescent. Actual DOS/provider behavior, order
+The historical result API stops fatal transfers at 1949/04D0 with live frames
+and requires intact immediate child returns. The new execution API reports the
+actual consumed child target; the full RAM connection directly composes the
+verified printer/cleanup bodies. See resource-select-full.md for its separate
+gate, twelve-field input and both normal return boundaries. Internal DAT callee
+returns and instruction bytes remain intact in this domain. IRQ delivery is
+quiescent. Actual DOS/provider behavior, order
 producer bounds, allocation and the 36B6/378A/394F object/terrain consumers remain
 open. This caller does not complete native startup or the game.

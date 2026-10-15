@@ -11,7 +11,7 @@ import terrain_drawing as piece
 import object_drawing_cases as fixtures
 import drawing_caller_oracle as original_caller
 from bounded_process import run_bounded, temporary_build_directory
-from cbuild import compiler
+from cbuild import build
 from common import ROOT, BUILD, sha, write_json
 from dat_io_c import Regs, MEM
 from unpack import relocated
@@ -49,10 +49,7 @@ class Result(ctypes.Structure):
 
 def library(directory, mutation=0):
     path = Path(directory) / f'object-drawing-{mutation}.dll'
-    run_bounded([compiler(), '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror',
-        '-shared', '-DMUTATION=0', f'-DOBJECT_DRAWING_MUTATION={mutation}',
-        '-I', str(ROOT / 'c'), *[str(ROOT / 'c' / (n + '.c')) for n in SOURCES],
-        '-o', str(path)], timeout=60, memory_mib=256)
+    build(path, mutation, 'object_drawing')
     lib = ctypes.CDLL(str(path))
     lib.lmn_draw_level_objects_adapter.argtypes = [MEM, ctypes.POINTER(Regs),
         ctypes.c_uint16, ctypes.POINTER(piece.common.RasterBus), ctypes.POINTER(piece.Ports)]
