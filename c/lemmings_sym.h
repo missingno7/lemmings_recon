@@ -357,11 +357,11 @@
 #define CS_sub_5CC1 0x5CC1u
 #define CS_sub_5CDD 0x5CDDu
 #define CS_sub_5D66 0x5D66u
-#define CS_sub_5D94 0x5D94u
+#define CS_ConfigureEntityPixelReadback 0x5D94u
 #define CS_PrepareEntityPixelSample 0x5DC6u
 #define CS_sub_5DF8 0x5DF8u
-#define CS_sub_5EBA 0x5EBAu
-#define CS_sub_5F0F 0x5F0Fu
+#define CS_ExchangeThreeEntityPixelBytes 0x5EBAu
+#define CS_DrawEntityStroke 0x5F0Fu
 #define CS_sub_5FAC 0x5FACu
 #define CS_sub_606B 0x606Bu
 #define CS_sub_6141 0x6141u
@@ -642,4 +642,6 @@
 #define CS_RetryUiReturn 0x4B5Bu
 #define SEG09A9_ResourceRetryPromptText 0x4ECFu
 #define SEG09A9_PixelBitMasks 0x547Cu
+#define SEG09A9_EntityPixelRowPitchBytes 0x0004u
+#define SEG09A9_GeneratedGraphicsBufferSegment 0x1FE8u
 #endif

@@ -16,11 +16,12 @@ def compiler():
     raise RuntimeError("GCC not found; set LEMMINGS_CC to gcc.exe")
 
 def build(output=None, mutation=0, cluster="checksum"):
-    if cluster not in ("entity_pixel","entity_pattern","checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","cache_allocation","display_status","display_start","display_setup","display_pages","background_drawing","palette_channels","palette_rows","palette_ports","palette_row_select","palette_transition","retry_input","retry_ui","text_glyph","text_stream","video_restore","vector_restore","timer_restore","fatal_cleanup","file_error","resource_raw_full","resource_select_full","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","level_header","level_finish","level_initialize","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs","drawing_dispatch","drawing_source","drawing_plan","aligned_opaque","drawing_render","aligned_masked","aligned_mask_effects","aligned_protected","aligned_read_mask","shifted_mask_effects","shifted_opaque","shifted_masked","shifted_protected","shifted_read_mask","terrain_drawing","terrain_stream","object_drawing","level_redraw"):
+    if cluster not in ("entity_stroke","entity_vga","entity_pixel","entity_pattern","checksum","pcspeaker","dat","dat_io","dat_section","dat_cache","cache_allocation","display_status","display_start","display_setup","display_pages","background_drawing","palette_channels","palette_rows","palette_ports","palette_row_select","palette_transition","retry_input","retry_ui","text_glyph","text_stream","video_restore","vector_restore","timer_restore","fatal_cleanup","file_error","resource_raw_full","resource_select_full","dat_files","dat_load","resource_raw","resource_rle","special_blit","special_setup","decimal_digits","resource_select","object_graphics","object_coordinates","object_cells","steel_cells","object_state","vga_clear","drawing_layout","level_drawing","level_header","level_finish","level_initialize","minimap_sample","minimap_row","minimap_column","drawing_clip","drawing_dirty","drawing_inputs","drawing_dispatch","drawing_source","drawing_plan","aligned_opaque","drawing_render","aligned_masked","aligned_mask_effects","aligned_protected","aligned_read_mask","shifted_mask_effects","shifted_opaque","shifted_masked","shifted_protected","shifted_read_mask","terrain_drawing","terrain_stream","object_drawing","level_redraw"):
         raise ValueError("Unknown C cluster")
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
     sources=[ROOT/"c"/(cluster+".c")]
+    if cluster=="entity_stroke":sources += [ROOT/"c/entity_pixel.c"]
     if cluster=="retry_ui":sources += [ROOT/"c"/(n+".c") for n in ("display_setup","drawing_layout","palette_transition","palette_ports","palette_rows","palette_channels","display_pages","vga_clear","background_drawing","text_stream","text_glyph","display_status","display_start","retry_input")]
     if cluster=="display_setup":sources += [ROOT/"c/drawing_layout.c"]
     if cluster=="display_pages":sources += [ROOT/"c/vga_clear.c"]
@@ -74,6 +75,7 @@ def build(output=None, mutation=0, cluster="checksum"):
             "steel_cells_bus", "object_coordinates_bus", "level_finish",
             "minimap_column", "minimap_row", "minimap_sample")]
     defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
+    if cluster=="entity_stroke":defines=["-DMUTATION=0","-DSTROKE_MUTATION="+str(mutation)]
     if cluster=="vector_restore":defines=["-DVECTOR_RESTORE_MUTATION="+str(mutation)]
     if cluster=="timer_restore":defines=["-DTIMER_RESTORE_MUTATION="+str(mutation)]
     if cluster=="fatal_cleanup":defines=["-DFATAL_CLEANUP_MUTATION="+str(mutation)]

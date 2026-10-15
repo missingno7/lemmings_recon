@@ -442,9 +442,15 @@ loc_5AAB:
     add si,0x180 ; @05ABB
     pop ds ; @05ABF
     ret ; @05AC0
+; Producer for the live GeneratedGraphicsBufferSegment; 58FE calls after decode.
+; With DF=0 and intact disjoint RAM/save frames: eight10-row*3-byte banks
+; start0000, four13-row banks0780, one22-row bank0C60, ten8-row*2-byte banks0E70.
+; The8shiftpasses yield outputend1370 and sourceend0184. These are producer
+; coordinates, not allocation bounds. 5D66 STOSW changes output direction withDF.
+; Callers/unchecked consumers/initialization obligations: generated-graphics.md.
 sub_5AC1:
     push ds ; @05AC1
-    mov es,[0x1fe8] ; @05AC2
+    mov es,[GeneratedGraphicsBufferSegment-GameDataImage] ; @05AC2
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @05AC6
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05ACA
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05ACC
@@ -804,24 +810,30 @@ loc_5D7F:
     cmp dh,0x8 ; @05D8E
     jnz loc_5D68 ; @05D91
     ret ; @05D93
+; 5D94..5DC5: configure entity pixel readback. Entry flags stay live.
+; SEQ2=0F; GC5=08 (read mode1/write mode0), GC7=08, GC2=08.
+; Each SS mirror store precedes its OUT. AX/ES=A000, DX=03CE.
+; DS row-pitch word0004=D0 is written last; aliases can stale a mirror/RET.
+; Other registers unchanged. Device state not explicitly written remains live.
+ConfigureEntityPixelReadback:
 sub_5D94:
     mov dx,0x3c4 ; @05D94
     mov ax,0xf02 ; @05D97
-    mov [ss:0x8],ax ; @05D9A
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @05D9A
     out dx,ax ; @05D9E
     mov dx,0x3ce ; @05D9F
     mov ax,0x805 ; @05DA2
-    mov [ss:0x0],ax ; @05DA5
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @05DA5
     out dx,ax ; @05DA9
     mov ax,0x807 ; @05DAA
-    mov [ss:0x6],ax ; @05DAD
+    mov [ss:VgaColorCareMirror-RuntimeStackFrame],ax ; @05DAD
     out dx,ax ; @05DB1
     mov ax,0x802 ; @05DB2
-    mov [ss:0x4],ax ; @05DB5
+    mov [ss:VgaColorCompareMirror-RuntimeStackFrame],ax ; @05DB5
     out dx,ax ; @05DB9
     mov ax,0xa000 ; @05DBA
     mov es,ax ; @05DBD
-    mov word [0x4],0xd0 ; @05DBF
+    mov word [EntityPixelRowPitchBytes-GameDataImage],0xd0 ; @05DBF
     ret ; @05DC5
 ; 5DC6..5DF7: prepare a record pixel sample; no VGA reads occur here.
 ; DS:SI+2 gives wrapped Y-10h. Clamp when the subtraction result is negative,
@@ -918,7 +930,7 @@ loc_5E34:
     add si,0xc60 ; @05E73
     db 0x03,0xf3 ; ENCODED: add si,bx (NASM chooses a different encoding) ; @05E77
     push ds ; @05E79
-    mov ds,[0x1fe8] ; @05E7A
+    mov ds,[GeneratedGraphicsBufferSegment-GameDataImage] ; @05E7A
     cli ; @05E7E
 loc_5E7F:
     lodsw ; @05E7F
@@ -952,16 +964,24 @@ loc_5E7F:
     pop si ; @05EB8
 loc_5EB9:
     ret ; @05EB9
+; 5EBA..5F0E: exchange 3 VGA read bytes for original BH/BL/CL masks.
+; GC0=0, GC1=0F, GC3=0 (replace/rotate0) via live SS mirrors, then CLI.
+; Incoming GC mode/SEQ mask/compare/care stay live; reads load VGA latches.
+; Each read precedes its mask mirror/OUT08 and DF-sensitive STOSB.
+; BX returns first/second read bytes; CL third, CH unchanged; AH=AL=last mask.
+; ES=A000, DX=03CE, DI+=3 or-3, flags from XORAX0 plus unconditional STI.
+; RET reads actual SS:SP after all writes, including mirror/VGA aliases.
+ExchangeThreeEntityPixelBytes:
 sub_5EBA:
     mov dx,0x3ce ; @05EBA
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @05EBD
-    mov [ss:0xa],ax ; @05EBF
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @05EBF
     out dx,ax ; @05EC3
     mov ax,0xf01 ; @05EC4
-    mov [ss:0xc],ax ; @05EC7
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @05EC7
     out dx,ax ; @05ECB
     mov ax,0x3 ; @05ECC
-    mov [ss:0x2],ax ; @05ECF
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @05ECF
     out dx,ax ; @05ED3
     mov ax,0xa000 ; @05ED4
     mov es,ax ; @05ED7
@@ -970,7 +990,7 @@ sub_5EBA:
     xchg bh,al ; @05EDD
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @05EDF
     mov al,0x8 ; @05EE1
-    mov [ss:0xe],ax ; @05EE3
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05EE3
     out dx,ax ; @05EE7
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05EE8
     stosb ; @05EEA
@@ -978,7 +998,7 @@ sub_5EBA:
     xchg bl,al ; @05EEE
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @05EF0
     mov al,0x8 ; @05EF2
-    mov [ss:0xe],ax ; @05EF4
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05EF4
     out dx,ax ; @05EF8
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05EF9
     stosb ; @05EFB
@@ -986,12 +1006,22 @@ sub_5EBA:
     xchg cl,al ; @05EFF
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @05F01
     mov al,0x8 ; @05F03
-    mov [ss:0xe],ax ; @05F05
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05F05
     out dx,ax ; @05F09
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05F0A
     stosb ; @05F0C
     sti ; @05F0D
     ret ; @05F0E
+; 5F0F..5FAB: temporary record-coordinate stroke through plane3.
+; CLI; SEQ2=08, GC0=08, GC1=08, GC3=00 via live SS mirrors.
+; PUSH original Y, X; reread X and add +4 field, subtract4 if +27 byte negative.
+; Store temporary X, PUSH it, DEC live Y, CALL5DC6; actualRET may be changed.
+; Restore coordinates from live popped words, not cached record values.
+; Shift BX=00FC/DL=0 by popped temporaryX&7; SHR/RCR/LOOP retain flags.
+; Three read-latch/maskOUT/STOSB writes retain DF and SS/VGA alias order.
+; Tail SEQ2=0F and unconditional STI. Actual outerRET follows all writes.
+; Child bus contract and changed-target boundary: entity-stroke.md.
+DrawEntityStroke:
 sub_5F0F:
     cli ; @05F0F
     mov dx,0x3c4 ; @05F10
@@ -1120,7 +1150,7 @@ loc_600F:
     db 0x2b,0xf0 ; ENCODED: sub si,ax (NASM chooses a different encoding) ; @06023
     db 0x03,0xf3 ; ENCODED: add si,bx (NASM chooses a different encoding) ; @06025
     push ds ; @06027
-    mov ds,[0x1fe8] ; @06028
+    mov ds,[GeneratedGraphicsBufferSegment-GameDataImage] ; @06028
     mov cx,0xa ; @0602C
     cli ; @0602F
 loc_6030:
@@ -1223,7 +1253,7 @@ loc_60E6:
     db 0x03,0xf1 ; ENCODED: add si,cx (NASM chooses a different encoding) ; @060F9
     db 0x03,0xf3 ; ENCODED: add si,bx (NASM chooses a different encoding) ; @060FB
     push ds ; @060FD
-    mov ds,[0x1fe8] ; @060FE
+    mov ds,[GeneratedGraphicsBufferSegment-GameDataImage] ; @060FE
     mov cx,0xd ; @06102
     cli ; @06105
 loc_6106:
@@ -3394,7 +3424,7 @@ loc_70FF:
     push cx ; @07123
     push si ; @07124
     push bx ; @07125
-    mov cx,[0x1fe8] ; @07126
+    mov cx,[GeneratedGraphicsBufferSegment-GameDataImage] ; @07126
     shl dl,1 ; @0712A
     shl dl,1 ; @0712C
     shl dl,1 ; @0712E

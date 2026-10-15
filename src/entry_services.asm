@@ -1189,7 +1189,7 @@ sub_1007:
     add ax,0x1000 ; @01016
     mov [0x1fe6],ax ; @01019
     add ax,0x1d0c ; @0101C
-    mov [0x1fe8],ax ; @0101F
+    mov [GeneratedGraphicsBufferSegment-GameDataImage],ax ; @0101F
     add ax,0x166 ; @01022
     mov [0x1fea],ax ; @01025
     add ax,0x90 ; @01028

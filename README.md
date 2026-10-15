@@ -42,6 +42,9 @@ status and start programming, and the glyph/text-stream producers. See
 The simulation tree now includes the live [interaction-pattern restore](docs/entity-pattern.md)
 and [pixel address/mask preparation](docs/entity-pixel.md) leaves, with original
 wrapping, segment and stack-alias contracts.
+The [VGA pixel setup/exchange](docs/entity-vga.md) and connected
+[entity stroke](docs/entity-stroke.md) now preserve live latch, mask, coordinate
+save-frame and actual child-return behavior through native C calls.
 The complete terrain campaign has scoped acceptance for all 80 pinned LEVEL
 streams at both entries. Aggregate C coverage still requires fresh affected
 reports; see [terrain evidence](docs/terrain-stream.md).

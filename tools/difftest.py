@@ -100,6 +100,9 @@ SUITES = (
     Suite('terrain_stream', 14460, 512),
     Suite('entity_pattern', 180, 384),
     Suite('entity_pixel', 180, 384),
+    Suite('entity_pixel_bus', 180, 384),
+    Suite('entity_vga', 180, 384),
+    Suite('entity_stroke', 180, 384),
 )
 
 

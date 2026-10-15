@@ -34018,9 +34018,11 @@
     "address": 23956,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5D94",
-    "aliases": [],
+    "size": 50,
+    "symbol_name": "ConfigureEntityPixelReadback",
+    "aliases": [
+      "sub_5D94"
+    ],
     "callers": [
       7971
     ],
@@ -34067,12 +34069,15 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5D94..5DC5 programsSEQmapmask0F,GCmode08,GCcare08,GCcompare08 via liveSSmirrors thenDS0004=D0; flagsunchanged; normal1F19 caller; docs/entity-vga.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 50
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 50,
+    "c_implementation": "c/entity_vga.c",
+    "verification_evidence": "tests/entity_vga.py:16 setup fixtures atcore/adapter,50bytes/18sites;liveSSmirror/OUTorder,DS0004stride,flagsunchanged,actualRET/VGAaliases;combined50fixtures57sites5mutants;docs/entity-vga.md"
   },
   {
     "address": 24006,
@@ -34139,7 +34144,7 @@
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 50,
     "c_implementation": "c/entity_pixel.c",
-    "verification_evidence": "tests/entity_pixel.py:39 adapter and39 core-boundary original-vs-C cases,50 bytes/22 sites,two JNS edges,four completed mutants; all8 pinned masks,live DS table,wrapped sign clamp,residual AL,post-PUSH X/table aliases,offset/physical wrap,whole RAM/all registers/defined flags; docs/entity-pixel.md"
+    "verification_evidence": "tests/entity_pixel.py:39 adapter and39 core-boundary original-vs-C cases,50 bytes/22 sites,two JNS edges,four completed mutants; all8 pinned masks,live DS table,wrapped sign clamp,residual AL,post-PUSH X/table aliases,offset/physical wrap,whole RAM/all registers/defined flags; docs/entity-pixel.md; tests/entity_pixel_bus.py:30 core/adapter fixtures,600orderedbus events,2JNSedges,1bus-bypassmutant,null-busABIequality,VGA-backedDS/SS andprovider readsideeffects; same50Cbytes"
   },
   {
     "address": 24056,
@@ -34309,9 +34314,11 @@
     "address": 24250,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5EBA",
-    "aliases": [],
+    "size": 85,
+    "symbol_name": "ExchangeThreeEntityPixelBytes",
+    "aliases": [
+      "sub_5EBA"
+    ],
     "callers": [
       9530,
       9541,
@@ -34416,20 +34423,25 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5EBA..5F0E exchanges3VGAreadbytes intoBH/BL/CL before maskedSTOSB fromoriginalmasks; liveSSmirrors,DF,CLI/unconditionalSTI,actualRET; docs/entity-vga.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 85
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 85,
+    "c_implementation": "c/entity_vga.c",
+    "verification_evidence": "tests/entity_vga.py:34 exchange fixtures atcore/adapter,85bytes/39sites;BH/BL/CLreadback,liveGCmode/SEQmask/latches,DF,unconditionalSTI,actualRET/VGAaliases;combined50fixtures2180events5completedmutants;docs/entity-vga.md"
   },
   {
     "address": 24335,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5F0F",
-    "aliases": [],
+    "size": 157,
+    "symbol_name": "DrawEntityStroke",
+    "aliases": [
+      "sub_5F0F"
+    ],
     "callers": [
       9950
     ],
@@ -34622,12 +34634,15 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5F0F..5FAB computes3-byte mask using temporaryliveDScoordinates and5DC6pixeladdresschild, writesplane3throughliveVGA thenrestoresSEQmask0F; actualchild/outerRET domains; docs/entity-stroke.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 157
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 157,
+    "c_implementation": "c/entity_stroke.c",
+    "verification_evidence": "tests/entity_stroke.py:40 core/adapter fixtures,157callerbytes/67sites plus50byte/22sitechild,89integratedsites8edges,5884events5completedmutants; actualchildCALL/RET andchanged-targetstop,livecoordinateframes,perinstructiondefinedflagsincludingDECentryphase,DF/VGA/provideraliases,8independent24bitmaskplanechecks; docs/entity-stroke.md"
   },
   {
     "address": 24492,
@@ -57248,5 +57263,37 @@
       "5DEE/5DF1/5DF5 and6164/6167/616B constrain index withAND7;6F40/6F43/6F47/6F49 and7054/7058/705B/705D also read indexed masks; imageEF0C..EF13 contains80,40,20,10,08,04,02,01; no immutable runtime guarantee"
     ],
     "verification_status": "STATIC_VERIFIED"
+  },
+  {
+    "address": 4,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "EntityPixelRowPitchBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "5DBF stores00D0;1F19 simulation usesliveDS0004 toadvanceES:DI betweenpixel rows at2076/2082/208E,20E9..2131,2219/222E,23C5/23D3,2541 andothers; incomingDS remainslive; distinctfrom66F4 DrawingPitchBytes"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8168,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GeneratedGraphicsBufferSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "101F storesallocatedAX+1000h+1D0Ch;5AC2 selectsESfromthisword and5AC1fills shifted graphics banks using5CDD/5D66;5E7A/6028/60FE selectDSfromit and7126loadsCX; buffers remainlive/unbounded/aliasable; docs/generated-graphics.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

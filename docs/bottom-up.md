@@ -90,7 +90,12 @@ untranslated. The 5DC6 pixel preparation leaf now adds 50 C bytes/22 sites,
 verified in 39 fixtures at both boundaries with two JNS edges and four completed
 mutants. Its eight-byte bit-mask table is explicitly classified and named;
 post-PUSH X/table aliases, wrapped sign clamp and residual AL remain live.
-See entity-pixel.md. Next establish the 5EBA writer contract and connect 5F0F.
+See entity-pixel.md. The 5D94/5EBA VGA setup/exchange now pass 50 combined
+fixtures at both boundaries, while the bus-aware 5DC6 retains its RAM API.
+The 5F0F stroke directly composes that child through actual return frames in
+40 fixtures, with 89 integrated sites/eight edges and five completed mutants.
+See entity-vga.md and entity-stroke.md. Generated-mask producer ownership,
+the next dependency for 5DF8/5FAC/606B, is recorded in generated-graphics.md.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

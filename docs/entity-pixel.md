@@ -62,3 +62,21 @@ after the worker exits, including failure paths. The retained report at
 build/entity-pixel-differential.json contains its exact input hashes and scope.
 This closes the leaf's ordinary-RAM contract, not parent/device acceptance or
 aggregate whole-game coverage.
+
+The bus-aware core/adapter now route every Y, stack, X, table and return byte
+through the optional raster bus; the original RAM APIs delegate with a null bus.
+The memory order remains Y, PUSH DX, POP DX, X, table, actual RET. SUB/XOR flags
+are visible at the push, only MUL's defined CF/OF at the pop and X read, and
+the final ADD flags at table/return reads. Undefined MUL flags are not compared
+as defined outputs. The bus preserves registers and can change later memory.
+
+`tools/difftest.py entity_pixel_bus` passes 30 fixtures at both boundaries,
+with 600 ordered bus events, all 22 sites, both JNS edges and one completed
+bus-bypass mutant. Null-bus calls preserve the existing ABI. Additional cases
+route DS records/table or SS saves/RET through the independent VGA fixture,
+and provider reads change a future X word, table byte or high RET byte. This
+extends the earlier RAM domain without adding translated bytes. Worker limits
+remain 180 seconds/384 MiB process/640 MiB tree, original calls 100 instructions,
+and bus/device traces 64 events with hard exits 86/87 on exhaustion/error.
+DLL cleanup and fresh input hashes are required for the retained scoped report
+at build/entity-pixel-bus-differential.json. No OUT is introduced by this leaf.

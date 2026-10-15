@@ -38,30 +38,47 @@ stored bytes at EF0C..EF13 are identified as `PixelBitMasks`, preserving the
 surrounding UNKNOWN regions. Live DS table contents, the post-PUSH X read,
 wrapped sign clamp, residual AL and the actual RET remain explicit.
 
-Next establish the device writer at `sub_5EBA` (5EBA..5F0E), then connect
-`sub_5F0F` (5F0F..5FAB) to the native 5DC6 child:
+The 5D94 readback setup and 5EBA three-byte exchange now pass 50 combined
+fixtures at both boundaries, with 57 sites, 2,180 ordered bus events and five
+completed mutants; see entity-vga.md. The live DS row-pitch word and SS mirror
+ownership are named. The 5DC6 child now has an optional bus: 30 additional
+fixtures compare 600 events, with VGA DS/SS aliases, provider changes and one
+bus-bypass mutant; its original RAM API and 50-byte coverage are preserved.
 
-1. For 5EBA, retain VGA latch/read effects, live SS graphics-register mirrors,
-   incoming device mode, byte masks from BH/BL/CL, DF-sensitive STOSB, CLI/STI
-   and actual RET. The two simulation call paths at 2418/251A first use 5DC6
-   for DI but prepare their own masks before calling the writer.
-2. For 5F0F, preserve the live saved coordinates and child CALL/RET frame,
-   returned native address state and subsequent VGA stores. Focus parent
-   cases on handoffs and composed device behavior rather than repeating
-   every child boundary case.
-3. The sibling 6141 helper uses register coordinates and the same live table,
-   with different saves and no sign clamp. Keep it distinct from 5DC6.
-   Work through 2E04/2EC0 and remaining 5D94..6141 dependencies before the
-   1F19 parent, which still has 3,744 decoded bytes/1,255 sites and is
-   untranslated. TESTED child domains do not establish parent readiness.
+The 5F0F..5FAB `DrawEntityStroke` parent now composes the native child through
+actual CALL/RET frames. Forty fixtures at both boundaries cover 89 integrated
+sites, eight edges and 5,884 events, with five completed mutants and eight
+independent mask/plane checks. Changed child targets stop explicitly; coordinate
+restores reread live stack words. Defined flags are checked at each instruction
+phase, including the memory decrement's entry-flag observation. See
+entity-stroke.md. This adds 157 caller bytes; the child's bytes overlap its
+existing translation and are not added again.
+
+Next resolve the generated-mask producer before translating the remaining
+source blitters. The static layout and its DF/save-frame conditions are in
+generated-graphics.md:
+
+1. Translate 5CDD and 5D66, then compose their 5AC1 producer. It reads source
+   0000..0183 and writes 0000..136F only with DF clear and intact disjoint
+   saves/counts. Keep zero/wrapped counts, sequential overlap, source/destination
+   DF asymmetry, all live saves and actual child returns; do not silently cap
+   the original loops. Native fixture callbacks still need hard access bounds.
+2. Connect 5DF8/5FAC/606B to their proven generated-bank inputs, preserving
+   unchecked selectors, clipping, live DS replacement, saved counters, VGA
+   latches and incoming device state. The allocation coordinates and matching
+   normal selectors do not prove usable buffer bounds or arbitrary aliases.
+3. The 6141 sibling address helper still has distinct register inputs, saves
+   and no clamp. The 2E04/2EC0 state/interaction and platform seams also remain.
+   The 1F19 parent still has 3,744 decoded bytes/1,255 sites and is untranslated;
+   scoped TESTED children do not establish complete simulation readiness.
 
 Use fresh dependency views rather than an accumulated historical task list:
 
 ```powershell
 .venv\Scripts\python.exe tools\graph.py 1F19 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 1F19 --bottom-up
-.venv\Scripts\python.exe tools\graph.py 5F0F --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 5F0F --bottom-up
+.venv\Scripts\python.exe tools\graph.py 5AC1 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 5AC1 --bottom-up
 ```
 
 ## Development and acceptance

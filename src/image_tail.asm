@@ -8,6 +8,8 @@ KeyboardScanCodeByte equ GameDataImage+0x1FD0
 ; Header storage roles from the ledger; these aliases do not split canonical memory.
 LevelViewOriginPixels equ GameDataImage+0x0000
 LevelViewOriginBytes equ GameDataImage+0x0002
+EntityPixelRowPitchBytes equ GameDataImage+0x0004
+GeneratedGraphicsBufferSegment equ GameDataImage+0x1fe8
 LevelHeaderWord04LowByte equ GameDataImage+0x0044
 LevelCreationLimit equ GameDataImage+0x0047
 LevelReleaseSettingMinimum equ GameDataImage+0x0064

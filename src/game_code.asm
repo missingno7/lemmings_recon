@@ -5,7 +5,7 @@ sub_1F19:
     jnz loc_1F23 ; @01F1E
     jmp loc_1FFF ; @01F20
 loc_1F23:
-    call sub_5D94 ; @01F23
+    call ConfigureEntityPixelReadback ; @01F23
     mov byte [0x50],0xff ; @01F26
     mov si,0x88 ; @01F2B
     mov al,[0x43] ; @01F2E
@@ -161,17 +161,17 @@ loc_2068:
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02071
     jnz loc_20E9 ; @02073
     inc bp ; @02075
-    add di,[0x4] ; @02076
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02076
     mov al,[es:di] ; @0207A
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0207D
     jnz loc_20D6 ; @0207F
     inc bp ; @02081
-    add di,[0x4] ; @02082
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02082
     mov al,[es:di] ; @02086
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02089
     jnz loc_20D6 ; @0208B
     inc bp ; @0208D
-    add di,[0x4] ; @0208E
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @0208E
     mov al,[es:di] ; @02092
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02095
     jnz loc_20D6 ; @02097
@@ -199,37 +199,37 @@ loc_20E2:
     mov byte [si+0x26],0xff ; @020E2
     jmp loc_1FEB ; @020E6
 loc_20E9:
-    sub di,[0x4] ; @020E9
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @020E9
     mov al,[es:di] ; @020ED
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @020F0
     jz loc_2148 ; @020F2
     dec bp ; @020F4
-    sub di,[0x4] ; @020F5
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @020F5
     mov al,[es:di] ; @020F9
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @020FC
     jz loc_2148 ; @020FE
     dec bp ; @02100
-    sub di,[0x4] ; @02101
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02101
     mov al,[es:di] ; @02105
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02108
     jz loc_2148 ; @0210A
     dec bp ; @0210C
-    sub di,[0x4] ; @0210D
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @0210D
     mov al,[es:di] ; @02111
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02114
     jz loc_2169 ; @02116
     dec bp ; @02118
-    sub di,[0x4] ; @02119
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02119
     mov al,[es:di] ; @0211D
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02120
     jz loc_2169 ; @02122
     dec bp ; @02124
-    sub di,[0x4] ; @02125
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02125
     mov al,[es:di] ; @02129
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0212C
     jz loc_2169 ; @0212E
     dec bp ; @02130
-    sub di,[0x4] ; @02131
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02131
     mov al,[es:di] ; @02135
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02138
     jz loc_2169 ; @0213A
@@ -305,7 +305,7 @@ loc_2202:
     jl loc_2219 ; @02214
     jmp loc_20E2 ; @02216
 loc_2219:
-    add di,[0x4] ; @02219
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02219
     mov al,[es:di] ; @0221D
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02220
     jnz loc_224D ; @02222
@@ -314,7 +314,7 @@ loc_2219:
     jl loc_222E ; @02229
     jmp loc_20E2 ; @0222B
 loc_222E:
-    add di,[0x4] ; @0222E
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @0222E
     mov al,[es:di] ; @02232
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02235
     jnz loc_224D ; @02237
@@ -478,12 +478,12 @@ loc_23B9:
 loc_23BF:
     call PrepareEntityPixelSample ; @023BF
     dec word [si+0x2] ; @023C2
-    sub di,[0x4] ; @023C5
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @023C5
     mov al,[es:di] ; @023C9
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @023CC
     jz loc_23E4 ; @023CE
     dec word [si+0x2] ; @023D0
-    sub di,[0x4] ; @023D3
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @023D3
     mov al,[es:di] ; @023D7
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @023DA
     jz loc_23E4 ; @023DC
@@ -534,7 +534,7 @@ loc_243D:
     db 0x8a,0xca ; ENCODED: mov cl,dl (NASM chooses a different encoding) ; @0243D
     push bx ; @0243F
     push cx ; @02440
-    call sub_5EBA ; @02441
+    call ExchangeThreeEntityPixelBytes ; @02441
     pop ax ; @02444
     pop dx ; @02445
     test dx,bx ; @02446
@@ -625,13 +625,13 @@ loc_2534:
     push cx ; @02537
     push bx ; @02538
     push bp ; @02539
-    call sub_5EBA ; @0253A
+    call ExchangeThreeEntityPixelBytes ; @0253A
     pop bp ; @0253D
     pop bx ; @0253E
     pop cx ; @0253F
     pop di ; @02540
-    add di,[0x4] ; @02541
-    call sub_5EBA ; @02545
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02541
+    call ExchangeThreeEntityPixelBytes ; @02545
     mov byte [si+0x28],0x0 ; @02548
     jmp loc_240F ; @0254C
 loc_254F:
@@ -654,7 +654,7 @@ loc_2560:
     sub [si],ax ; @02574
     call PrepareEntityPixelSample ; @02576
     mov [si],bp ; @02579
-    mov dx,[0x4] ; @0257B
+    mov dx,[EntityPixelRowPitchBytes-GameDataImage] ; @0257B
     shl dx,1 ; @0257F
     shl dx,1 ; @02581
     shl dx,1 ; @02583
@@ -780,7 +780,7 @@ loc_26D7:
     jz loc_26DE ; @026D9
     jmp loc_1FE8 ; @026DB
 loc_26DE:
-    call sub_5F0F ; @026DE
+    call DrawEntityStroke ; @026DE
     jmp loc_1FEB ; @026E1
 loc_26E4:
     mov al,[si+0x27] ; @026E4
@@ -801,13 +801,13 @@ loc_26F7:
     db 0x90 ; @026FF
 loc_2700:
     call PrepareEntityPixelSample ; @02700
-    sub di,[0x4] ; @02703
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02703
     mov al,[es:di] ; @02707
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0270A
     jnz loc_2763 ; @0270C
     add [si],bp ; @0270E
     call PrepareEntityPixelSample ; @02710
-    sub di,[0x4] ; @02713
+    sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02713
     mov al,[es:di] ; @02717
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0271A
     jnz loc_2763 ; @0271C
@@ -821,7 +821,7 @@ loc_2726:
     call PrepareEntityPixelSample ; @0272C
     pop word [si] ; @0272F
     push ax ; @02731
-    mov ax,[0x4] ; @02732
+    mov ax,[EntityPixelRowPitchBytes-GameDataImage] ; @02732
     db 0x2b,0xf8 ; ENCODED: sub di,ax (NASM chooses a different encoding) ; @02735
     shl ax,1 ; @02737
     shl ax,1 ; @02739
@@ -1043,14 +1043,14 @@ loc_293A:
     jmp loc_2A00 ; @02955
 loc_2958:
     inc word [si+0x2] ; @02958
-    add di,[0x4] ; @0295B
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @0295B
     mov al,[es:di] ; @0295F
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02962
     jz loc_2969 ; @02964
     jmp loc_2A00 ; @02966
 loc_2969:
     inc word [si+0x2] ; @02969
-    add di,[0x4] ; @0296C
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @0296C
     mov al,[es:di] ; @02970
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02973
     jz loc_297A ; @02975
@@ -1163,12 +1163,12 @@ loc_2A92:
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02A98
     jnz loc_2AEC ; @02A9A
     inc word [si+0x2] ; @02A9C
-    add di,[0x4] ; @02A9F
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02A9F
     mov al,[es:di] ; @02AA3
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AA6
     jnz loc_2AEC ; @02AA8
     inc word [si+0x2] ; @02AAA
-    add di,[0x4] ; @02AAD
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02AAD
     mov al,[es:di] ; @02AB1
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AB4
     jnz loc_2AEC ; @02AB6
@@ -1182,7 +1182,7 @@ loc_2ABE:
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AC4
     jnz loc_2AEC ; @02AC6
     inc word [si+0x2] ; @02AC8
-    add di,[0x4] ; @02ACB
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02ACB
     mov al,[es:di] ; @02ACF
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AD2
     jnz loc_2AEC ; @02AD4
@@ -1451,14 +1451,14 @@ loc_2D83:
     jmp loc_20D6 ; @02D90
 loc_2D93:
     inc bp ; @02D93
-    add di,[0x4] ; @02D94
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02D94
     mov al,[es:di] ; @02D98
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02D9B
     jz loc_2DA2 ; @02D9D
     jmp loc_20D6 ; @02D9F
 loc_2DA2:
     inc bp ; @02DA2
-    add di,[0x4] ; @02DA3
+    add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02DA3
     mov al,[es:di] ; @02DA7
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02DAA
     jz loc_2DB1 ; @02DAC
