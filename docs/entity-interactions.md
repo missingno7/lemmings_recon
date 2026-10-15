@@ -44,7 +44,9 @@ The exact service sites are INT60 AX0302 at2F8C; INT61 AX0410 at2F9F;
 INT61 AH04 with AL from[DI+1B] at2FF5; INT61 AX0411 at304C; and INT61 AX040D
 at30A3. The existing native INT61 connector can compose the four latter
 paths, retaining unbound vectors and changed IRET targets. The PC-speaker
-INT60 dispatcher at loaded0842:0182 remains untranslated, even though its
-effect leaf has C. Resolve that live mutable dispatch/table and near-return
-handoff before claiming the complete2EC0 composition. See pcspeaker.md and
+INT60 dispatcher at loaded0842:0182 now has scoped C, composing the exact
+LoadEffect/Stop targets through live table, temporary DS, near-return and IRET
+words. Tick and other targets remain explicit bus-domain seams. Next add the
+declared INT60 frame/vector transport, carrying all changed registers and actual
+CS:IP, before translating and claiming the complete2EC0 composition. See pcspeaker.md and
 interrupts.md. Loaded overlays and initial main zero storage remain separate.

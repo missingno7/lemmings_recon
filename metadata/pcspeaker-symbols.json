@@ -263,7 +263,7 @@
     "address": 386,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 46,
     "symbol_name": "pcspeaker_InterruptEntry",
     "aliases": [],
     "callers": [],
@@ -301,9 +301,13 @@
     "reachable_instruction_bytes": 46,
     "confidence": "PROVEN",
     "evidence": [
-      "Main1652 relocated0842 frame and165A offset0182 install INT60;5972 loads MAIN.DAT section5 into this frame"
+      "Main1652 relocated0842 frame and165A offset0182 install INT60;5972 loads MAIN.DAT section5 into this frame",
+      "Bounded pcspeaker_dispatch suite: every AH byte, live temporary/restored DS, table-before-CALL and actual RET/IRET words; eight completed mutants"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/pcspeaker_dispatch.c",
+    "c_core": "lmn_pc_speaker_dispatch_core",
+    "verification_domain": "0182..01AF dispatcher prefix and IRET adapter with quiescent asynchronous IRQs; live RAM/VGA stack and data providers; actual mutable CALL table composes only exact LoadEffect/Stop entries; Tick/other targets and changed child returns are explicit exits; INT60 transport and IRQ timing remain outside scope"
   },
   {
     "address": 432,
@@ -375,8 +379,8 @@
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/pcspeaker.c",
-    "c_core": "lmn_pc_sound_effect_core",
-    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed"
+    "c_core": "lmn_pc_sound_effect_bus_core",
+    "verification_domain": "Near helper with optional byte RAM/VGA bus; live SS return and data/stack aliases, 20-bit physical word wrap, quiescent asynchronous IRQs; no writes to executing code; signed AL, explicit forward copy, post-copy reload and live active-byte DEC"
   },
   {
     "address": 468,
@@ -601,7 +605,55 @@
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/pcspeaker.c",
-    "c_core": "lmn_pc_sound_stop_core",
-    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed"
+    "c_core": "lmn_pc_sound_stop_bus_core",
+    "verification_domain": "Near helper with optional byte RAM/VGA bus; live SS return and data/stack aliases, 20-bit physical word wrap, quiescent asynchronous IRQs; no writes to executing code; XOR AL and live active-byte store; undefined AF excluded"
+  },
+  {
+    "address": 30,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 10,
+    "symbol_name": "pcspeaker_DispatchTable001E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original interrupt dispatcher 0182..01AF: live near-table operand, actual child return and IRET boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 410,
+    "segment": "driver-relative",
+    "kind": "label",
+    "size": null,
+    "symbol_name": "pcspeaker_DispatchCallReturn019A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original interrupt dispatcher 0182..01AF: live near-table operand, actual child return and IRET boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 416,
+    "segment": "driver-relative",
+    "kind": "label",
+    "size": null,
+    "symbol_name": "pcspeaker_DispatchReturn01A0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original interrupt dispatcher 0182..01AF: live near-table operand, actual child return and IRET boundary"
+    ],
+    "verification_status": "STATIC"
   }
 ]

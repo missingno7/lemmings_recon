@@ -135,7 +135,13 @@ Actual saved DS and IRET CS:IP/FLAGS remain live; an unbound vector or changed
 return stops explicitly. Residual AH, field producers, callback slots and
 the post-sound +8/+22 read are documented in entity-countdown.md. The model
 is not hardware INT microcode or IRQ timing verification. Next resolve2EC0's
-SS interaction map, record transitions and five interrupt seams.
+SS interaction map, record transitions and five interrupt seams. Its PC-speaker
+dependency now has a scoped native0182..01AF dispatcher:282 core/adapter
+fixtures,46 new bytes/29 sites/six edges and eight mutants. Effect/Stop bus
+composition has274 additional fixtures/18 sites/two LOOP edges/five mutants.
+Temporary DS and actual table/stack/RET/IRET words stay live; Tick and other
+targets remain explicit exits. Next connect declared INT60 frame/vector
+transport to that dispatcher, then translate2EC0. See pcspeaker.md.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

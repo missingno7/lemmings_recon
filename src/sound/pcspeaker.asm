@@ -55,8 +55,9 @@ pcspeaker_EffectReload:
 pcspeaker_LastPitPeriod:
 ; DATA: runtime_data
     db 0x00,0x00,0x00,0x00 ; @0001A
+pcspeaker_DispatchTable001E:
 ; DATA: lookup_table
-    db 0xd4,0x01,0x4f,0x02,0x00,0x00,0xb0,0x01,0x00,0x00 ; @0001E
+    dw pcspeaker_Tick,pcspeaker_Stop,0,pcspeaker_LoadEffect,0 ; @0001E
 pcspeaker_EffectRecords:
 ; DATA: effect_record_table
     db 0x20,0x03,0x80,0x0c,0x80,0x0c,0x40,0x01,0xc0,0xfe,0x55,0x00,0x0a,0x00,0x01,0x90 ; @00028
@@ -104,6 +105,16 @@ pcspeaker_EffectRecords:
     db 0x70,0x0a,0x90,0xf5,0x55,0x00,0x07,0x00,0x01 ; @00178
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00181
+; INT60 dispatcher contract (0182..01AF), with quiescent asynchronous IRQs:
+; STI precedes live SS saves BX/CX/DX/SI/DI/DS and PUSH CS / POP DS.
+; AH 00..10 doubles original AH for an unchecked word at DS:[001E+BX].
+; CALL reads that live operand before PUSH 019A; header/stack aliases can change it.
+; Only five initial table words are identified: Tick, Stop, zero, LoadEffect, zero.
+; Selectors 05..10 read effect-record bytes. Zero or changed targets are not dead.
+; AH 11..1F reads DS:[original AH-10]; AH 20..FF writes AL to DS:[AH-20].
+; Both leave AH's SUB 10 residue. Raw setters can overwrite the dispatch table.
+; Child RET, six restored words and IRET reread the actual stack; none are cached.
+; DS from the PUSH CS / POP DS pair is live (including device providers), never assumed CS.
 pcspeaker_InterruptEntry:
     sti ; @00182
     push bx ; @00183
@@ -120,6 +131,7 @@ pcspeaker_InterruptEntry:
     ja pcspeaker_loc_01A1 ; @00192
     shl bl,1 ; @00194
     db 0xff,0x97,0x1e,0x00 ; ENCODED: call [bx+0x1e] (NASM selects different opcode/operand width) ; @00196
+pcspeaker_DispatchCallReturn019A:
 pcspeaker_loc_019A:
     pop ds ; @0019A
     pop di ; @0019B
@@ -127,6 +139,7 @@ pcspeaker_loc_019A:
     pop dx ; @0019D
     pop cx ; @0019E
     pop bx ; @0019F
+pcspeaker_DispatchReturn01A0:
     iret ; @001A0
 pcspeaker_loc_01A1:
     sub bl,0x20 ; @001A1
@@ -137,6 +150,10 @@ pcspeaker_loc_01AA:
     db 0x8a,0xdc ; ENCODED: mov bl,ah (NASM selects different opcode/operand width) ; @001AA
     mov al,[bx] ; @001AC
     jmp short pcspeaker_loc_019A ; @001AE
+; Signed AL*15 selects a live forward copy of 15 bytes to DS:000A..0018.
+; Explicit INC ignores DF. Read reload DS:0017 after copying; write DS:0008.
+; DEC DS:0001 rereads its actual byte, preserving address-add carry and recording
+; entry flags on both RMW bus accesses. RET uses the post-body live SS word.
 pcspeaker_LoadEffect:
     mov cx,0xf ; @001B0
     mov bx,0x28 ; @001B3

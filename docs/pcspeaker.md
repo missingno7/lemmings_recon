@@ -54,7 +54,56 @@ has an immediately preceding MOV AX: commands are 00/01/03 and effect IDs are
 evidence for recovered code, not a proof against all mutations, external callers
 or additional transformed code.
 
-The component's interrupt dispatcher remains UNTRANSLATED. Its mutable pointer
-table, zero targets, out-of-table commands and 162 unresolved payload bytes still
-need closure. AdLib/Tandy translation is also open. TESTED helper status does not
-claim completion of the sound subsystem or whole game.
+## Live bus and dispatcher contracts
+
+The effect and stop helpers now also expose optional `LmnRasterBus` cores and
+near-call adapters. The existing APIs use the same implementations with a NULL
+bus. Every data/stack access carries its instruction-entry flags; words access
+the low byte followed by the next physical byte, with 20-bit wrap. The effect
+copy uses explicit INC, so DF does not reverse it. Its reload word is read after
+the copy, DEC rereads the live active byte, and the adapter reads RET after the
+body. Device providers can therefore change the values used by these operations.
+The earlier RAM-only fixtures describe the narrower quiescent domain in which
+the cleared active byte stays zero until DEC.
+
+`c/pcspeaker_dispatch.c` implements the 46-byte interrupt entry at 0182..01AF.
+STI precedes six live register saves and PUSH CS / POP DS. Original AH 00..10
+indexes a live near-pointer table at 001E without a bounds correction. Only its
+first five words are identified; later selectors read effect-record bytes.
+AH 11..1F reads header offsets 01..0F, and AH 20..FF writes offsets 00..DF. Both
+retain the residual AH from SUB AH,10. Raw setters can overwrite the table.
+
+The focused bus suite passes 274 fixtures at both core/adapter boundaries,
+covering 42 helper bytes, 18 sites, both LOOP edges, 20,392 byte events and five
+completed mutants. Its ordinary-RAM cases also check an independent sequential
+copy/reload calculation. The dispatcher suite passes 282 fixtures at both
+boundaries: all 256 AH values plus recovered producer values, live temporary DS,
+all six saved-register providers, mutable tables, actual RET/IRET words, real
+word-boundary wraps and a VGA stack. It covers 46 new bytes/29 sites/six branch
+edges, 18 integrated child sites and 18,270 events, with eight completed mutants.
+Child bytes overlap the previously translated helpers and are not added again.
+The original 335-case RAM/port suite remains a separate regression gate. All
+native workers have process/tree commit limits, deadlines, callback budgets and
+a temporary-DLL lifecycle. Budget or execution failures do not earn mutant credit.
+
+The native dispatcher composes LoadEffect and Stop only when the actual table
+word names their exact entries. Tick and other targets stop with the built CALL
+frame and actual CS:IP as explicit `UNTRANSLATED_CHILD` exits. Tick's existing
+RAM/port proof does not establish the instruction-phase bus contract needed here.
+Undefined AF after XOR/SHL is excluded from flag comparisons; fixture providers
+do not branch on undefined flag bits. A changed child RET stops before the
+restore tail. Normal restores and IRET read
+the live stack words, with fixed FLAGS bits normalized by the register adapter.
+The core boundary is immediately before IRET at 01A0.
+
+CALL reads its target before pushing 019A. An important alias fixture places
+CS=DS=SS=01B0 and entry SP=0032: PUSH CS supplies the table word at 0024, then
+CALL overwrites that word with 019A after capturing target 01B0. Treating the
+stack or table as a separate state copy would change the executed child.
+
+The dispatcher and bus suites use constructed states and quiescent asynchronous
+interrupts. Their acceptance is scoped to the declared entry/body/exit contracts;
+it does not establish hardware bus timing or IRQ scheduling. INT60 frame/vector
+transport must still connect this entry to the main 2EC0 caller. Mutable unknown
+targets, 162 unresolved payload bytes, broader sound playback and timing remain
+open. Helper or dispatcher acceptance does not establish whole-game readiness.

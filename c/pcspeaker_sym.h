@@ -26,4 +26,7 @@
 #define PC_sub_01D4 0x01D4u
 #define PC_Stop 0x024Fu
 #define PC_sub_024F 0x024Fu
+#define PC_DispatchTable001E 0x001Eu
+#define PC_DispatchCallReturn019A 0x019Au
+#define PC_DispatchReturn01A0 0x01A0u
 #endif

@@ -41,6 +41,8 @@ SUITES = (
     Suite('decimal_digits_c', 120, 512),
     Suite('checksum', 120, 512),
     Suite('pcspeaker', 120, 512),
+    Suite('pcspeaker_bus', 180, 384),
+    Suite('pcspeaker_dispatch', 180, 384),
     Suite('dat', 120, 512),
     Suite('dat_io_c', 120, 512),
     Suite('dat_section', 120, 512),

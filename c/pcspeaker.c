@@ -4,6 +4,9 @@
 #ifndef MUTATION
 #define MUTATION 0
 #endif
+#ifndef EFFECT_BUS_MUTATION
+#define EFFECT_BUS_MUTATION 0
+#endif
 
 enum { CF=1, PF=4, AF=16, ZF=64, SF=128, OF=2048 };
 enum { ARITH=CF|PF|AF|ZF|SF|OF, DEFINED=0x0fd7 };
@@ -25,6 +28,45 @@ static void put16(uint8_t *mem, uint16_t seg, uint16_t off, uint16_t value) {
     uint32_t at=physical(seg,off);
     mem[at]=(uint8_t)value;mem[(at+1u)&0xfffffu]=(uint8_t)(value>>8);
 }
+static uint8_t bus_read8(const uint8_t *mem,uint16_t seg,uint16_t off,
+                         uint16_t flags,const LmnRasterBus *bus) {
+    uint32_t at=physical(seg,off);
+    if(bus && bus->read_byte)
+        return bus->read_byte(bus->context,(uint8_t *)(void *)mem,at,flags);
+    return mem[at];
+}
+static void bus_write8(uint8_t *mem,uint16_t seg,uint16_t off,uint8_t value,
+                       uint16_t flags,const LmnRasterBus *bus) {
+    uint32_t at=physical(seg,off);
+    if(bus && bus->write_byte)
+        bus->write_byte(bus->context,mem,at,value,flags);
+    else
+        mem[at]=value;
+}
+static uint16_t bus_read16(const uint8_t *mem,uint16_t seg,uint16_t off,
+                           uint16_t flags,const LmnRasterBus *bus) {
+    uint32_t at=physical(seg,off);
+    uint8_t lo,hi;
+    if(bus && bus->read_byte) {
+        lo=bus->read_byte(bus->context,(uint8_t *)(void *)mem,at,flags);
+        hi=bus->read_byte(bus->context,(uint8_t *)(void *)mem,
+                          (at+1u)&0xfffffu,flags);
+    } else {
+        lo=mem[at];hi=mem[(at+1u)&0xfffffu];
+    }
+    return (uint16_t)(lo|((uint16_t)hi<<8));
+}
+static void bus_write16(uint8_t *mem,uint16_t seg,uint16_t off,uint16_t value,
+                        uint16_t flags,const LmnRasterBus *bus) {
+    uint32_t at=physical(seg,off);
+    if(bus && bus->write_byte) {
+        bus->write_byte(bus->context,mem,at,(uint8_t)value,flags);
+        bus->write_byte(bus->context,mem,(at+1u)&0xfffffu,
+                        (uint8_t)(value>>8),flags);
+    } else {
+        mem[at]=(uint8_t)value;mem[(at+1u)&0xfffffu]=(uint8_t)(value>>8);
+    }
+}
 static uint16_t szp8(uint8_t value) {
     unsigned n,parity=0;
     uint16_t flags=(uint16_t)((value==0 ? ZF:0) | (value&SF));
@@ -40,39 +82,118 @@ static uint8_t rotate_byte(uint8_t value) {
     return (uint8_t)((value>>1)|(value<<7));
 }
 
-LmnPcSoundResult lmn_pc_sound_effect_core(uint8_t *mem, uint16_t ds,
-                                         uint8_t effect, uint16_t initial_dx,
+static uint16_t add16_flags(uint16_t flags,uint16_t left,uint16_t right,
+                            uint16_t result) {
+    uint16_t f=(uint16_t)(flags&(0xffffu^ARITH));
+    unsigned parity=0,n;
+    uint32_t wide=(uint32_t)left+(uint32_t)right;
+    if(wide&0x10000u) f|=CF;
+    if((left^right^result)&0x10u) f|=AF;
+    if(result==0) f|=ZF;
+    if(result&0x8000u) f|=SF;
+    for(n=0;n<8;++n) parity^=(result>>n)&1u;
+    if(!parity) f|=PF;
+    if((~(left^right)&(left^result)&0x8000u)!=0) f|=OF;
+    return f;
+}
+static uint16_t inc16_flags(uint16_t flags,uint16_t value,uint16_t result) {
+    uint16_t f=(uint16_t)(flags&(0xffffu^ARITH));
+    unsigned parity=0,n;
+    f|=(uint16_t)(flags&CF);
+    for(n=0;n<8;++n) parity^=(result>>n)&1u;
+    if(!parity) f|=PF;
+    if((value&0x000fu)==0x000fu) f|=AF;
+    if(result==0) f|=ZF;
+    if(result&0x8000u) f|=SF;
+    if(value==0x7fffu) f|=OF;
+    return f;
+}
+static uint16_t dec16_flags(uint16_t flags,uint16_t value,uint16_t result) {
+    uint16_t f=(uint16_t)(flags&(0xffffu^ARITH));
+    unsigned parity=0,n;
+    f|=(uint16_t)(flags&CF);
+    for(n=0;n<8;++n) parity^=(result>>n)&1u;
+    if(!parity) f|=PF;
+    if((value&0x000fu)==0) f|=AF;
+    if(result==0) f|=ZF;
+    if(result&0x8000u) f|=SF;
+    if(value==0x8000u) f|=OF;
+    return f;
+}
+static uint16_t dec8_flags(uint16_t flags,uint8_t value,uint8_t result) {
+    return (uint16_t)((flags&(0xffffu^ARITH))|(flags&CF)|
+        (value==0x80u ? OF:0)|((value&15u)==0 ? AF:0)|szp8(result));
+}
+
+LmnPcSoundResult lmn_pc_sound_effect_core(uint8_t *mem,uint16_t ds,
+                                         uint8_t effect,uint16_t initial_dx,
                                          uint16_t flags) {
-    /* IMUL CL uses signed AL and 15, followed by an unsigned 16-bit ADD. */
+    return lmn_pc_sound_effect_bus_core(mem,ds,effect,initial_dx,flags,NULL);
+}
+
+LmnPcSoundResult lmn_pc_sound_effect_bus_core(uint8_t *mem,uint16_t ds,
+                                         uint8_t effect,uint16_t initial_dx,
+                                         uint16_t flags,const LmnRasterBus *bus) {
+    /* IMUL CL uses signed AL and 15, then ADD BX,AX sets the first flags. */
     int32_t signed_effect=effect<128u ? (int32_t)effect : (int32_t)effect-256;
 #if MUTATION == 1
     signed_effect=effect;
 #endif
     uint16_t product=(uint16_t)(signed_effect*(int32_t)PC_EffectRecordSize);
-    uint32_t sum=(uint32_t)PC_EffectRecords+product;
-    uint16_t source=(uint16_t)sum,destination=PC_CurrentEffect;
+    uint16_t bx=(uint16_t)(PC_EffectRecords+product);
+    uint16_t cx=PC_EffectRecordSize,si=PC_CurrentEffect;
+    uint16_t current_flags=add16_flags(flags,PC_EffectRecords,product,bx);
+    uint16_t cached_reload=0;
     unsigned n;
     LmnPcSoundResult out;
-    put8(mem,ds,PC_EffectActive,0);
-    /* Read each byte at the moment it is copied; overlapping live data is valid. */
-    for(n=0;n<PC_EffectRecordSize;++n) {
-        uint8_t byte=get8(mem,ds,source);
-        put8(mem,ds,destination,byte);
-        source=(uint16_t)(source+1u);destination=(uint16_t)(destination+1u);
-    }
-    out.ax=get16(mem,ds,PC_EffectReload);
-    put16(mem,ds,PC_PulseCountdown,out.ax);
-    put8(mem,ds,PC_EffectActive,0xff);
-#if MUTATION == 2
-    put8(mem,ds,PC_EffectActive,1);
+
+    /* MOV CX,15 made CH zero; the first live write clears EffectActive. */
+    bus_write8(mem,ds,PC_EffectActive,0,current_flags,bus);
+#if EFFECT_BUS_MUTATION == 2
+    cached_reload=bus_read16(mem,ds,PC_EffectReload,current_flags,bus);
 #endif
-    /* DEC 0 -> FF defines all arithmetic flags except the preserved ADD carry. */
-    out.flags=(uint16_t)((flags&(0xffffu^ARITH))|PF|AF|SF|(sum>0xffffu ? CF:0));
-    out.bx=source;out.cx=0;out.dx=initial_dx;out.si=destination;
+    for(n=0;n<PC_EffectRecordSize;++n) {
+        uint8_t byte=bus_read8(mem,ds,bx,current_flags,bus);
+        bus_write8(mem,ds,si,byte,current_flags,bus);
+        if(EFFECT_BUS_MUTATION == 5 && (current_flags&0x0400u)) {
+            uint16_t old=bx;bx=(uint16_t)(bx-1u);
+            current_flags=dec16_flags(current_flags,old,bx);
+            old=si;si=(uint16_t)(si-1u);
+            current_flags=dec16_flags(current_flags,old,si);
+        } else {
+            uint16_t old=bx;bx=(uint16_t)(bx+1u);
+            current_flags=inc16_flags(current_flags,old,bx);
+            old=si;si=(uint16_t)(si+1u);
+            current_flags=inc16_flags(current_flags,old,si);
+        }
+        cx=(uint16_t)(cx-1u); /* LOOP does not change flags. */
+    }
+    out.ax=cached_reload;
+#if EFFECT_BUS_MUTATION != 2
+    out.ax=bus_read16(mem,ds,PC_EffectReload,current_flags,bus);
+#endif
+    bus_write16(mem,ds,PC_PulseCountdown,out.ax,current_flags,bus);
+    {
+        uint8_t before=bus_read8(mem,ds,PC_EffectActive,current_flags,bus);
+        uint8_t decremented;
+#if EFFECT_BUS_MUTATION == 3
+        before=0;
+#endif
+        decremented=(uint8_t)(before-1u);
+        out.flags=dec8_flags(current_flags,before,decremented);
+#if MUTATION == 2
+        decremented=1;
+#endif
+#if EFFECT_BUS_MUTATION == 1
+        bus_write8(mem,ds,PC_EffectActive,decremented,out.flags,bus);
+#else
+        bus_write8(mem,ds,PC_EffectActive,decremented,current_flags,bus);
+#endif
+    }
+    out.bx=bx;out.cx=cx;out.dx=initial_dx;out.si=si;
     out.defined_flags_mask=DEFINED;
     return out;
 }
-
 LmnPcSoundResult lmn_pc_sound_tick_core(uint8_t *mem, uint16_t ds,
                                        uint16_t initial_ax, uint16_t initial_bx,
                                        uint16_t initial_dx, uint16_t initial_si,
@@ -130,25 +251,67 @@ LmnPcSoundResult lmn_pc_sound_tick_core(uint8_t *mem, uint16_t ds,
     return out;
 }
 
-LmnPcSoundResult lmn_pc_sound_stop_core(uint8_t *mem, uint16_t ds,
-                                       uint16_t initial_ax, uint16_t initial_bx,
-                                       uint16_t initial_cx, uint16_t initial_dx,
-                                       uint16_t initial_si, uint16_t flags) {
+LmnPcSoundResult lmn_pc_sound_stop_core(uint8_t *mem,uint16_t ds,
+                                       uint16_t initial_ax,uint16_t initial_bx,
+                                       uint16_t initial_cx,uint16_t initial_dx,
+                                       uint16_t initial_si,uint16_t flags) {
+    return lmn_pc_sound_stop_bus_core(mem,ds,initial_ax,initial_bx,initial_cx,
+                                     initial_dx,initial_si,flags,NULL);
+}
+LmnPcSoundResult lmn_pc_sound_stop_bus_core(uint8_t *mem,uint16_t ds,
+                                       uint16_t initial_ax,uint16_t initial_bx,
+                                       uint16_t initial_cx,uint16_t initial_dx,
+                                       uint16_t initial_si,uint16_t flags,
+                                       const LmnRasterBus *bus) {
     LmnPcSoundResult out={(uint16_t)(initial_ax&0xff00u),initial_bx,initial_cx,
                          initial_dx,initial_si,logic_flags(flags,0),(uint16_t)(DEFINED&~AF)};
-    put8(mem,ds,PC_EffectActive,0);
+    bus_write8(mem,ds,PC_EffectActive,0,out.flags,bus);
     return out;
 }
-static void finish(uint8_t *mem, LmnRegs *r, LmnPcSoundResult out) {
+static void finish(uint8_t *mem,LmnRegs *r,LmnPcSoundResult out) {
     r->ax=out.ax;r->bx=out.bx;r->cx=out.cx;r->dx=out.dx;r->si=out.si;r->flags=out.flags;
     r->ip=get16(mem,r->ss,r->sp);r->sp=(uint16_t)(r->sp+2u);
 }
-void lmn_pc_sound_effect_adapter(uint8_t *mem, LmnRegs *r) {
-    finish(mem,r,lmn_pc_sound_effect_core(mem,r->ds,(uint8_t)r->ax,r->dx,r->flags));
+static void finish_bus(LmnRegs *r,LmnPcSoundResult out,uint16_t return_ip) {
+    r->ax=out.ax;r->bx=out.bx;r->cx=out.cx;r->dx=out.dx;r->si=out.si;r->flags=out.flags;
+    r->ip=return_ip;r->sp=(uint16_t)(r->sp+2u);
 }
-void lmn_pc_sound_tick_adapter(uint8_t *mem, LmnRegs *r,const LmnPort8 *ports) {
+void lmn_pc_sound_effect_adapter(uint8_t *mem,LmnRegs *r) {
+    lmn_pc_sound_effect_bus_adapter(mem,r,NULL);
+}
+void lmn_pc_sound_effect_bus_adapter(uint8_t *mem,LmnRegs *r,
+                                     const LmnRasterBus *bus) {
+    uint16_t return_ip=0;
+#if EFFECT_BUS_MUTATION == 4
+    return_ip=bus_read16(mem,r->ss,r->sp,r->flags,bus);
+#endif
+    {
+        LmnPcSoundResult out=lmn_pc_sound_effect_bus_core(mem,r->ds,(uint8_t)r->ax,
+                                                          r->dx,r->flags,bus);
+#if EFFECT_BUS_MUTATION != 4
+        return_ip=bus_read16(mem,r->ss,r->sp,out.flags,bus);
+#endif
+        finish_bus(r,out,return_ip);
+    }
+}
+void lmn_pc_sound_tick_adapter(uint8_t *mem,LmnRegs *r,const LmnPort8 *ports) {
     finish(mem,r,lmn_pc_sound_tick_core(mem,r->ds,r->ax,r->bx,r->dx,r->si,r->flags,ports));
 }
-void lmn_pc_sound_stop_adapter(uint8_t *mem, LmnRegs *r) {
-    finish(mem,r,lmn_pc_sound_stop_core(mem,r->ds,r->ax,r->bx,r->cx,r->dx,r->si,r->flags));
+void lmn_pc_sound_stop_adapter(uint8_t *mem,LmnRegs *r) {
+    lmn_pc_sound_stop_bus_adapter(mem,r,NULL);
+}
+void lmn_pc_sound_stop_bus_adapter(uint8_t *mem,LmnRegs *r,
+                                   const LmnRasterBus *bus) {
+    uint16_t return_ip=0;
+#if EFFECT_BUS_MUTATION == 4
+    return_ip=bus_read16(mem,r->ss,r->sp,r->flags,bus);
+#endif
+    {
+        LmnPcSoundResult out=lmn_pc_sound_stop_bus_core(mem,r->ds,r->ax,r->bx,
+            r->cx,r->dx,r->si,r->flags,bus);
+#if EFFECT_BUS_MUTATION != 4
+        return_ip=bus_read16(mem,r->ss,r->sp,out.flags,bus);
+#endif
+        finish_bus(r,out,return_ip);
+    }
 }

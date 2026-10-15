@@ -98,7 +98,8 @@ at core/IRET/untranslated boundaries, with9,240 events and ten completed
 mutants. AH0/1/2 stop at the untranslated update/detect/reset bodies; AH6..FF
 retains the five DEC operations and IRET. AdLib byte0014 stays UNKNOWN.
 See sound-latches.md. This closes the command4 provider's prefix/setter
-behavior, while main INT61 transport, playback and timing remain open.
+behavior; the connected INT61 transport is described below, while playback
+and timing remain open.
 
 The 2E04 countdown transition now composes that command4 path:430 fixtures
 at core/adapter boundaries cover188 new bytes/52 sites/14 edges, with20
@@ -110,11 +111,24 @@ a declared platform model. See entity-countdown.md. The sound adapters also
 now normalize reserved FLAGS bits after original IRET-frame aliases, with
 regression fixtures and a completed raw-FLAGS mutant.
 
+The PC-speaker dependency now has a native dispatcher at0182..01AF:282
+fixtures at core/adapter boundaries cover46 new bytes/29 sites/six edges,
+18 integrated child sites and18,270 events, with eight completed mutants.
+The effect/stop bus gate adds274 fixtures at both boundaries,42 already
+translated helper bytes/18 sites/two LOOP edges,20,392 events and five mutants.
+The mutable table is read before CALL's push; temporary DS, restored registers,
+RET and IRET words remain live. Tick/other targets and changed child returns
+stop explicitly. The separate335-case RAM/port regression also passes.
+See pcspeaker.md. This does not close Tick's wider bus domain or IRQ timing.
+
 Next resolve2EC0, the sole remaining direct untranslated child of1F19:
 486 bytes/162 sites, live SS interaction-map reads, saved words, state/record
 fields and transition tails. Its five interrupt sites retain their service
 boundaries. The static contract is in entity-interactions.md; its INT60 AX0302
-path still needs the live PC-speaker dispatcher/leaf handoff. The1F19 parent remains3,744 decoded bytes/1,255 sites and
+path next needs declared INT60 frame/vector transport connecting the verified
+native dispatcher to the caller, preserving every returned register and changed
+CS:IP. Then translate/recheck the2EC0 parent; do not repeat exhaustive child
+matrices merely to establish the handoff. The1F19 parent remains3,744 decoded bytes/1,255 sites and
 untranslated. Tested children do not establish complete simulation readiness.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
@@ -175,7 +189,7 @@ No extra C coverage is claimed for that composition.
 - Installed IRQ/device contracts, external IRET chains, input producers and
   scheduling: interrupts.md and hardware.md. Bounded polling fixtures do not
   establish live timing or interrupt delivery.
-- AdLib 01EA, Tandy 02BB and PC-speaker 0196 dispatch, unchecked command indexes,
+- AdLib 01EA, Tandy 02BB and PC-speaker 0196 dynamic targets beyond the scoped native entries, unchecked command indexes,
   mutable tables and unresolved payload bytes: sound-drivers.md. Keep all pinned
   executable dependencies in the inventory, including alternative hardware.
 - Source/mask producers, allocation bounds and executable/stack aliases outside

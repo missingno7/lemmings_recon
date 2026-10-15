@@ -1,6 +1,7 @@
 """Original PC-speaker helpers versus portable C, including live-data alias cases."""
 import ctypes
 import random
+import os
 import sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
@@ -11,8 +12,11 @@ from common import ROOT,BUILD,sha,write_json,read_json
 from resources import sound_images
 from unpack import unpack,ASSET,relocated
 from cbuild import build
+from bounded_process import run_bounded,temporary_build_directory
 
 REPORT=BUILD/'pcspeaker-differential.json'
+class DifferentialMismatch(AssertionError):pass
+
 REG_NAMES=('ax','bx','cx','dx','si','di','bp','sp','cs','ds','es','ss','ip','flags')
 class Regs(ctypes.Structure):_fields_=[(n,ctypes.c_uint16) for n in REG_NAMES]
 READ=ctypes.CFUNCTYPE(ctypes.c_uint8,ctypes.c_void_p,ctypes.c_uint16)
@@ -21,7 +25,7 @@ class Ports(ctypes.Structure):_fields_=[('context',ctypes.c_void_p),('read',READ
 IMAGE,META=sound_images()['pcspeaker']
 MAIN,ORACLE=unpack(ASSET.read_bytes())
 LEDGER=read_json(ROOT/'metadata/pcspeaker-symbols.json')
-ROUTINES={r['symbol_name'].removeprefix('pcspeaker_'):r for r in LEDGER if r.get('c_implementation')}
+ROUTINES={r['symbol_name'].removeprefix('pcspeaker_'):r for r in LEDGER if r['symbol_name'] in ('pcspeaker_LoadEffect','pcspeaker_Tick','pcspeaker_Stop')}
 SYMBOLS={r['symbol_name'].removeprefix('pcspeaker_'):r['address'] for r in LEDGER}
 MD=capstone.Cs(capstone.CS_ARCH_X86,capstone.CS_MODE_16);MD.detail=True
 INS={i.address:i for r in ROUTINES.values() for i in MD.disasm(IMAGE[r['address']:r['address']+r['size']],r['address'])}
@@ -36,7 +40,7 @@ def put16(mem,seg,off,value):
     p=at(seg,off);mem[p]=value&255;mem[(p+1)&0xfffff]=(value>>8)&255
 
 def library(mutation=0):
-    path=BUILD/f'pcspeaker-m{mutation}.dll'
+    path=Path(sys.argv[2])/f'pcspeaker-m{mutation}.dll'
     lib=ctypes.CDLL(str(build(path,mutation,'pcspeaker')))
     for kind in ('effect','stop'):
         fn=getattr(lib,'lmn_pc_sound_'+kind+'_adapter');fn.argtypes=[ctypes.POINTER(ctypes.c_uint8),ctypes.POINTER(Regs)]
@@ -73,9 +77,12 @@ def compare(lib,case):
     ports_value=case.get('port',0xa0);c_ports=[];u_ports=[]
     @READ
     def read(context,port):
+        if len(c_ports)>=32:os._exit(86)
         c_ports.append(('in',port,1,ports_value));return ports_value
     @WRITE
-    def write(context,port,value):c_ports.append(('out',port,1,value))
+    def write(context,port,value):
+        if len(c_ports)>=32:os._exit(86)
+        c_ports.append(('out',port,1,value))
     bus=Ports(None,read,write)
     buf=(ctypes.c_uint8*(1<<20)).from_buffer(c_mem)
     fn=getattr(lib,'lmn_pc_sound_'+case['kind']+'_adapter')
@@ -107,14 +114,14 @@ def compare(lib,case):
     if not done:raise AssertionError('Helper did not return within budget')
     for n,reg in REG.items():
         value=u.reg_read(reg)
-        if getattr(c_r,n)!=value:raise AssertionError(f'{case["name"]}: {n} C={getattr(c_r,n):04X} original={value:04X}')
+        if getattr(c_r,n)!=value:raise DifferentialMismatch(f'{case["name"]}: {n} C={getattr(c_r,n):04X} original={value:04X}')
     mask=0xfd7 if case['kind']=='effect' else 0xfc7
-    if (c_r.flags^u.reg_read(x.UC_X86_REG_EFLAGS))&mask:raise AssertionError(f'{case["name"]}: defined flags differ')
+    if (c_r.flags^u.reg_read(x.UC_X86_REG_EFLAGS))&mask:raise DifferentialMismatch(f'{case["name"]}: defined flags differ')
     actual=bytes(u.mem_read(0,1<<20))
     if c_mem!=actual:
         pos=next(i for i,(a,b) in enumerate(zip(c_mem,actual)) if a!=b)
-        raise AssertionError(f'{case["name"]}: memory differs at {pos:05X}')
-    if c_ports!=u_ports:raise AssertionError(f'{case["name"]}: port trace differs {c_ports}/{u_ports}')
+        raise DifferentialMismatch(f'{case["name"]}: memory differs at {pos:05X}')
+    if c_ports!=u_ports:raise DifferentialMismatch(f'{case["name"]}: port trace differs {c_ports}/{u_ports}')
     return sites,edges
 
 def cases():
@@ -154,12 +161,13 @@ def main():
         lib=library(mutation);hit=None
         for case in baseline:
             try:compare(lib,case)
-            except AssertionError:hit=case['name'];break
+            except DifferentialMismatch:hit=case['name'];break
         if hit is None:raise AssertionError(f'Mutation {mutation} survived')
         mutations.append(dict(mutation=mutation,case=hit))
-    paths=('c/pcspeaker.c','c/pcspeaker.h','c/pcspeaker_sym.h','c/regs.h','tools/cbuild.py',
-           'tools/pcspeaker_symtab.py','tools/difftest.py','tests/pcspeaker.py',
-           'metadata/pcspeaker-symbols.json','metadata/sound-oracle.json')
+    paths=('c/pcspeaker.c','c/pcspeaker.h','c/pcspeaker_sym.h','c/regs.h','c/special_blit.h','tools/cbuild.py',
+           'tools/pcspeaker_symtab.py','tools/difftest.py','tools/bounded_process.py','tests/pcspeaker.py',
+           'metadata/pcspeaker-symbols.json','metadata/sound-oracle.json',
+           'tools/common.py','tools/resources.py','tools/unpack.py','src/sound/pcspeaker.asm')
     report=dict(image='pcspeaker',image_sha256=sha(IMAGE),case_count=len(baseline),mutation_count=len(mutations),
                 mutations_detected=mutations,cases=baseline,translated_code_bytes=sum(r['size'] for r in ROUTINES.values()),
                 routines=[dict(name=r['symbol_name'],start=r['address'],end=r['address']+r['size'],
@@ -171,4 +179,9 @@ def main():
     write_json(REPORT,report)
     print(f'PASS PC-speaker C: {len(baseline)} cases, {len(coverage)}/{len(INS)} instruction sites, {len(edges)} branch edges, {len(mutations)} compiled mutations detected')
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if len(sys.argv)==3 and sys.argv[1]=='--worker':main()
+    else:
+        with temporary_build_directory(prefix='pcspeaker-',parent=BUILD) as directory:
+            run_bounded([sys.executable,str(Path(__file__).resolve()),'--worker',str(directory)],
+                        cwd=ROOT,timeout=110,memory_mib=384,check=True)

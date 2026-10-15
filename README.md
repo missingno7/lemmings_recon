@@ -35,7 +35,8 @@ their connected setup span, VGA clear/layout, two drawing callers, three minimap
 routines, two clipping/dirty-cell leaves, their scoped drawing preparation span,
 destination geometry/shared dispatch and four source-row spans,
 all twelve planar drawing bodies and their complete normal-entry connection,
-the packed terrain-piece caller and three PC-speaker helpers.
+the packed terrain-piece caller, three PC-speaker helpers and its scoped native
+interrupt dispatcher.
 Additional scoped cores connect cleanup/resource failure paths, display setup,
 status and start programming, and the glyph/text-stream producers. See
 [bottom-up connections](docs/bottom-up.md) and [text records](docs/text-stream.md).
