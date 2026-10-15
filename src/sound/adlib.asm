@@ -3,6 +3,18 @@
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
 bits 16
 org 0
+adlib_loc_0115 equ adlib_UpdateService
+adlib_loc_00A3 equ adlib_DetectService
+adlib_loc_003A equ adlib_ResetService
+adlib_loc_0022 equ adlib_SetCommand3Latch
+adlib_loc_002A equ adlib_SetCommand4Latch
+adlib_loc_0032 equ adlib_SetCommand5Latch
+; Maintained command contract: C prefix dispatches all AH bytes; AH0/1/2
+; stop at untranslated update/detect/reset entries. AH3/4/5 compose the live
+; stack setter tails; AH6..FF return after five DEC AH operations (AX is live).
+; AND AH,AH defines CF/OF=0, PF/ZF/SF; AH0 AF is undefined. Subsequent DEC
+; defines AF while preserving CF. Returned flags come from actual SS IRET.
+; See docs/sound-latches.md; tested scope is not complete driver playback.
 adlib_InterruptEntry:
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM selects different opcode/operand width) ; @00000
     jnz adlib_loc_0007 ; @00002
@@ -24,29 +36,42 @@ adlib_loc_0015:
     jz adlib_loc_002A ; @0001B
     dec ah ; @0001D
     jz adlib_loc_0032 ; @0001F
+adlib_UnhandledCommandReturn:
     iret ; @00021
-adlib_loc_0022:
+; C core boundary before IRET: PUSH DS/PUSH CS/POP DS selects the actual
+; write segment; final POP DS rereads the live saved word. All SS/data accesses
+; use the optional bus; flags unchanged here. Adapter consumes live IP/CS/FLAGS.
+adlib_SetCommand3Latch:
     push ds ; @00022
     push cs ; @00023
     pop ds ; @00024
-    mov [0xed],al ; @00025
+    mov [adlib_Command3Latch],al ; @00025
     pop ds ; @00028
+adlib_Command3Return:
     iret ; @00029
-adlib_loc_002A:
+; C core boundary before IRET: PUSH DS/PUSH CS/POP DS selects the actual
+; write segment; final POP DS rereads the live saved word. All SS/data accesses
+; use the optional bus; flags unchanged here. Adapter consumes live IP/CS/FLAGS.
+adlib_SetCommand4Latch:
     push ds ; @0002A
     push cs ; @0002B
     pop ds ; @0002C
-    mov [0xf0],al ; @0002D
+    mov [adlib_Command4Latch],al ; @0002D
     pop ds ; @00030
+adlib_Command4Return:
     iret ; @00031
-adlib_loc_0032:
+; C core boundary before IRET: PUSH DS/PUSH CS/POP DS selects the actual
+; write segment; final POP DS rereads the live saved word. All SS/data accesses
+; use the optional bus; flags unchanged here. Adapter consumes live IP/CS/FLAGS.
+adlib_SetCommand5Latch:
     push ds ; @00032
     push cs ; @00033
     pop ds ; @00034
-    mov [0xee],al ; @00035
+    mov [adlib_Command5Latch],al ; @00035
     pop ds ; @00038
+adlib_Command5Return:
     iret ; @00039
-adlib_loc_003A:
+adlib_ResetService:
     push ds ; @0003A
     push ax ; @0003B
     push di ; @0003C
@@ -86,7 +111,7 @@ adlib_loc_005B:
     db 0x92,0x0f,0xb5,0x00,0x88,0x0f,0x93,0x0f,0xb6,0x00,0x89,0x0f,0x94,0x0f,0xb7,0x00 ; @0008D
 ; DATA: lookup_table
     db 0x8a,0x0f,0x95,0x0f,0xb8,0x00 ; @0009D
-adlib_loc_00A3:
+adlib_DetectService:
     push ds ; @000A3
     push cs ; @000A4
     pop ds ; @000A5
@@ -126,10 +151,14 @@ adlib_loc_00E9:
     pop ds ; @000EB
     iret ; @000EC
 ; DATA: static_data
-    db 0x00,0x00 ; @000ED
+adlib_Command3Latch:
+    db 0x00 ; @000ED
+adlib_Command5Latch:
+    db 0x00 ; @000EE
 ; UNKNOWN: unresolved bytes
     db 0x00 ; @000EF
 ; DATA: static_data
+adlib_Command4Latch:
     db 0x00 ; @000F0
 ; DATA: embedded_resource
     db 0x41,0x64,0x4c,0x69,0x62,0x20,0x4d,0x75,0x73,0x69,0x63,0x20,0x62,0x79,0x20,0x53 ; @000F1
@@ -137,7 +166,7 @@ adlib_loc_00E9:
     db 0x6f,0x75,0x6e,0x64,0x20,0x49,0x6d,0x61,0x67,0x65,0x73,0x20,0x28,0x63,0x29,0x20 ; @00101
 ; DATA: embedded_resource
     db 0x31,0x39,0x39,0x31 ; @00111
-adlib_loc_0115:
+adlib_UpdateService:
     push ax ; @00115
     push bx ; @00116
     push cx ; @00117
@@ -642,7 +671,7 @@ adlib_loc_04F1:
 adlib_loc_051B:
     ret ; @0051B
 adlib_sub_051C:
-    mov bl,[0xf0] ; @0051C
+    mov bl,[adlib_Command4Latch] ; @0051C
     db 0x0a,0xdb ; ENCODED: or bl,bl (NASM selects different opcode/operand width) ; @00520
     jz adlib_loc_053C ; @00522
     cmp bl,0x13 ; @00524
@@ -659,7 +688,7 @@ adlib_loc_052F:
 adlib_loc_053C:
     ret ; @0053C
 adlib_loc_053D:
-    mov byte [0xf0],0x0 ; @0053D
+    mov byte [adlib_Command4Latch],0x0 ; @0053D
     mov byte [di+0x10],0x2 ; @00542
     nop ; @00546
     db 0x02,0xdb ; ENCODED: add bl,bl (NASM selects different opcode/operand width) ; @00547

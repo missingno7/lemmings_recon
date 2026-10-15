@@ -3,7 +3,7 @@
     "address": 0,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 25,
     "symbol_name": "tandysnd_InterruptEntry",
     "aliases": [],
     "callers": [],
@@ -124,7 +124,242 @@
     "reachable_instruction_bytes": 176,
     "confidence": "PROVEN",
     "evidence": [
-      "Main0576..057B installs offset0 as INT61"
+      "Main0576..057B installs offset0 as INT61",
+      "Maintained native dispatcher prefix only; update/detect/reset bodies remain untranslated"
+    ],
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        0,
+        25
+      ]
+    ],
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: all256 AH selectors at core/adapter boundaries; update/detect/reset explicit untranslated exits; no playback acceptance"
+  },
+  {
+    "address": 24,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "tandysnd_UnhandledCommandReturn",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 25,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": 8,
+    "symbol_name": "tandysnd_SetCommand3Latch",
+    "aliases": [
+      "tandysnd_loc_0019"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 28,
+        "segment": "default",
+        "displacement": 74,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 8,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 AH=3 branch selects this 8-byte PUSH DS/PUSH CS/POP DS/MOV moffs8,AL/POP DS/IRET tail"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+  },
+  {
+    "address": 32,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "tandysnd_Command3Return",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 33,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": 8,
+    "symbol_name": "tandysnd_SetCommand4Latch",
+    "aliases": [
+      "tandysnd_loc_0021"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 36,
+        "segment": "default",
+        "displacement": 76,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 8,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 AH=4 branch selects this 8-byte PUSH DS/PUSH CS/POP DS/MOV moffs8,AL/POP DS/IRET tail"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+  },
+  {
+    "address": 40,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "tandysnd_Command4Return",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 41,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": 8,
+    "symbol_name": "tandysnd_SetCommand5Latch",
+    "aliases": [
+      "tandysnd_loc_0029"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 44,
+        "segment": "default",
+        "displacement": 75,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 8,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 AH=5 branch selects this 8-byte PUSH DS/PUSH CS/POP DS/MOV moffs8,AL/POP DS/IRET tail"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+  },
+  {
+    "address": 48,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "tandysnd_Command5Return",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 49,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "tandysnd_ResetService",
+    "aliases": [
+      "tandysnd_loc_0031"
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 67,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "tandysnd_DetectService",
+    "aliases": [
+      "tandysnd_loc_0043"
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 74,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_Command3Latch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AH=3 setter at0019 stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 75,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_Command5Latch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AH=5 setter at0029 stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 76,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_Command4Latch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AH=4 setter at0021 stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 114,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "tandysnd_UpdateService",
+    "aliases": [
+      "tandysnd_loc_0072"
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
     "verification_status": "UNTRANSLATED"
   },

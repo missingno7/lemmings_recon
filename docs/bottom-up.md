@@ -123,6 +123,15 @@ The thirteen-row caller's signed-selector seam and broader initialization
 remain open. Fresh 1F19 graphs leave 2E04 and 2EC0 as its two direct untranslated
 children, ahead of the parent. The shared-tail 5CC1 caller remains untranslated.
 
+The sound boundary for 2E04 now has native AdLib/Tandy dispatcher prefixes and
+six latch setters:106 unique bytes/65 sites/27 edges, verified in730 fixtures
+with nine completed mutants. Every AH byte is checked. Update/detect/reset
+remain explicit untranslated exits; command4 uses the actual temporary DS
+and saved IRET words. Do not replace that service with a preserving no-op.
+The static countdown contract records residual AH, field producers, callback
+slot initialization and the post-sound +8/+22 read; see entity-countdown.md
+and sound-latches.md. Next compose the actual INT61 vector/frame with2E04.
+
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native
 suites. Preview limits with `--plan`; use `--all` only for the complete native

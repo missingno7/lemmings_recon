@@ -109,6 +109,13 @@ wrap, guard alternatives, stack wrap and changed external DS. INT62 frame/IRET
 transport and the 587F cursor service are declared boundaries. The tests execute
 29 original handler sites and do not establish BIOS, cursor-rendering or C coverage.
 
+The external INT61 entry prefixes and six command latch setters now have
+scoped C cores and actual IRET adapters; see sound-latches.md. All256 AH
+values are covered for each driver, but AH0/1/2 remain explicit untranslated
+service exits. Main2E04 requests command4 and rereads its record afterward;
+entity-countdown.md records that caller contract. Installing/selecting the
+live INT61 vector and composing its frame with main remain separate work.
+
 Remaining work includes the provider contracts, further vector writes/aliases,
 PC-speaker dispatch/producer closure and the component's unexplained trailing bytes.
 

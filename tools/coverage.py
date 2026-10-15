@@ -334,11 +334,26 @@ def report():
     if pc['image_sha256']!=m['sound']['pcspeaker']['image_sha256']:
         raise ValueError('PC-speaker differential oracle changed')
     m['sound']['pcspeaker']['differential_c_instructions']=len(pc['executed_instruction_addresses'])
-    m['all_images_translated_c_routines']=m['translated_c_routines']+m['sound']['pcspeaker']['c_routines']
-    m['all_images_translated_c_bytes']=m['translated_c_code_bytes']+pc['translated_code_bytes']
-    m['all_images_differential_cases']=m['differential_cases']+pc['case_count']
-    m['all_images_mutations_detected']=m['mutations_detected']+pc['mutation_count']
-    c_executed=len(executed)+len(pc['executed_instruction_addresses'])
+    controls=read_json(BUILD/'sound-latches-differential.json')
+    for path,digest in controls['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale sound control differential report for '+path)
+    if (set(controls['components'])!={'adlib','tandysnd'} or
+            controls['translated_code_bytes']!=sum(
+                s['translated_code_bytes'] for s in controls['components'].values())):
+        raise ValueError('Sound control component coverage is incomplete')
+    for name,component in controls['components'].items():
+        if component['image_sha256']!=m['sound'][name]['image_sha256']:
+            raise ValueError('Sound control oracle changed: '+name)
+        if component['translated_code_bytes']!=m['sound'][name]['c_bytes']:
+            raise ValueError('Sound control C byte scope changed: '+name)
+        m['sound'][name]['differential_c_instructions']=len(component['executed_instruction_addresses'])
+    m['all_images_translated_c_routines']=m['translated_c_routines']+sum(s['c_routines'] for s in m['sound'].values())
+    m['all_images_translated_c_bytes']=m['translated_c_code_bytes']+pc['translated_code_bytes']+controls['translated_code_bytes']
+    m['all_images_differential_cases']=m['differential_cases']+pc['case_count']+controls['case_count']
+    m['all_images_mutations_detected']=m['mutations_detected']+pc['mutation_count']+controls['mutation_count']
+    c_executed=len(executed)+len(pc['executed_instruction_addresses'])+sum(
+        len(s['executed_instruction_addresses']) for s in controls['components'].values())
     m['all_images_original_c_instructions_executed']=c_executed
     m['protection']=verified['protection']
     m['indirect']=verified['indirect']

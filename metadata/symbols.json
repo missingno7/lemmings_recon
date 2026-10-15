@@ -15974,7 +15974,8 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static caller1F45..1F51 and countdown producers2033/31E1 plus record clear30F3..30F8; live field/slot/sound contracts beside ASM and docs/entity-countdown.md. C remains untranslated."
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 188

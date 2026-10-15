@@ -3,6 +3,18 @@
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
 bits 16
 org 0
+tandysnd_loc_0072 equ tandysnd_UpdateService
+tandysnd_loc_0043 equ tandysnd_DetectService
+tandysnd_loc_0031 equ tandysnd_ResetService
+tandysnd_loc_0019 equ tandysnd_SetCommand3Latch
+tandysnd_loc_0021 equ tandysnd_SetCommand4Latch
+tandysnd_loc_0029 equ tandysnd_SetCommand5Latch
+; Maintained command contract: C prefix dispatches all AH bytes; AH0/1/2
+; stop at untranslated update/detect/reset entries. AH3/4/5 compose the live
+; stack setter tails; AH6..FF return after five DEC AH operations (AX is live).
+; AND AH,AH defines CF/OF=0, PF/ZF/SF; AH0 AF is undefined. Subsequent DEC
+; defines AF while preserving CF. Returned flags come from actual SS IRET.
+; See docs/sound-latches.md; tested scope is not complete driver playback.
 tandysnd_InterruptEntry:
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM selects different opcode/operand width) ; @00000
     jz tandysnd_loc_0072 ; @00002
@@ -16,29 +28,42 @@ tandysnd_InterruptEntry:
     jz tandysnd_loc_0021 ; @00012
     dec ah ; @00014
     jz tandysnd_loc_0029 ; @00016
+tandysnd_UnhandledCommandReturn:
     iret ; @00018
-tandysnd_loc_0019:
+; C core boundary before IRET: PUSH DS/PUSH CS/POP DS selects the actual
+; write segment; final POP DS rereads the live saved word. All SS/data accesses
+; use the optional bus; flags unchanged here. Adapter consumes live IP/CS/FLAGS.
+tandysnd_SetCommand3Latch:
     push ds ; @00019
     push cs ; @0001A
     pop ds ; @0001B
-    mov [0x4a],al ; @0001C
+    mov [tandysnd_Command3Latch],al ; @0001C
     pop ds ; @0001F
+tandysnd_Command3Return:
     iret ; @00020
-tandysnd_loc_0021:
+; C core boundary before IRET: PUSH DS/PUSH CS/POP DS selects the actual
+; write segment; final POP DS rereads the live saved word. All SS/data accesses
+; use the optional bus; flags unchanged here. Adapter consumes live IP/CS/FLAGS.
+tandysnd_SetCommand4Latch:
     push ds ; @00021
     push cs ; @00022
     pop ds ; @00023
-    mov [0x4c],al ; @00024
+    mov [tandysnd_Command4Latch],al ; @00024
     pop ds ; @00027
+tandysnd_Command4Return:
     iret ; @00028
-tandysnd_loc_0029:
+; C core boundary before IRET: PUSH DS/PUSH CS/POP DS selects the actual
+; write segment; final POP DS rereads the live saved word. All SS/data accesses
+; use the optional bus; flags unchanged here. Adapter consumes live IP/CS/FLAGS.
+tandysnd_SetCommand5Latch:
     push ds ; @00029
     push cs ; @0002A
     pop ds ; @0002B
-    mov [0x4b],al ; @0002C
+    mov [tandysnd_Command5Latch],al ; @0002C
     pop ds ; @0002F
+tandysnd_Command5Return:
     iret ; @00030
-tandysnd_loc_0031:
+tandysnd_ResetService:
     push ds ; @00031
     push ax ; @00032
     push di ; @00033
@@ -55,7 +80,7 @@ tandysnd_loc_0031:
     pop ax ; @00040
     pop ds ; @00041
     iret ; @00042
-tandysnd_loc_0043:
+tandysnd_DetectService:
     push ds ; @00043
     push cs ; @00044
     pop ds ; @00045
@@ -63,14 +88,19 @@ tandysnd_loc_0043:
     pop ds ; @00048
     iret ; @00049
 ; DATA: static_data
-    db 0x00,0x00,0x00,0x00 ; @0004A
+tandysnd_Command3Latch:
+    db 0x00 ; @0004A
+tandysnd_Command5Latch:
+    db 0x00 ; @0004B
+tandysnd_Command4Latch:
+    db 0x00,0x00 ; @0004C
 ; DATA: embedded_resource
     db 0x54,0x61,0x6e,0x64,0x79,0x20,0x4d,0x75,0x73,0x69,0x63,0x20,0x62,0x79,0x20,0x53 ; @0004E
 ; DATA: embedded_resource
     db 0x6f,0x75,0x6e,0x64,0x20,0x49,0x6d,0x61,0x67,0x65,0x73,0x20,0x28,0x63,0x29,0x20 ; @0005E
 ; DATA: embedded_resource
     db 0x31,0x39,0x39,0x31 ; @0006E
-tandysnd_loc_0072:
+tandysnd_UpdateService:
     push ax ; @00072
     push bx ; @00073
     push cx ; @00074
@@ -839,7 +869,7 @@ tandysnd_loc_0712:
 tandysnd_loc_071A:
     ret ; @0071A
 tandysnd_sub_071B:
-    mov bl,[0x4c] ; @0071B
+    mov bl,[tandysnd_Command4Latch] ; @0071B
     db 0x0a,0xdb ; ENCODED: or bl,bl (NASM selects different opcode/operand width) ; @0071F
     jz tandysnd_loc_0761 ; @00721
     cmp bl,0x13 ; @00723
@@ -854,7 +884,7 @@ tandysnd_loc_0735:
     mov byte [di+0x2d],0x2 ; @0073C
     db 0x02,0xdb ; ENCODED: add bl,bl (NASM selects different opcode/operand width) ; @00740
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM selects different opcode/operand width) ; @00742
-    mov [0x4c],bh ; @00744
+    mov [tandysnd_Command4Latch],bh ; @00744
     mov [di+0x4],bh ; @00748
     mov [di+0x12],bh ; @0074B
     mov [di+0x26],bh ; @0074E

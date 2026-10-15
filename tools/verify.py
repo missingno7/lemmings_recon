@@ -51,6 +51,9 @@ def verify(check_stub=True, *, contracts=False):
     from pcspeaker_symtab import header as pcspeaker_header
     if (ROOT/'c/pcspeaker_sym.h').read_text()!=pcspeaker_header():
         raise ValueError('PC-speaker C symbol header stale')
+    from sound_latch_symtab import header as sound_latch_header
+    if (ROOT/'c/sound_latches_sym.h').read_text()!=sound_latch_header():
+        raise ValueError('Sound latch C symbol header stale')
     if check_stub:
         from check_unpack import check
         for load,poison in ((0x1010,0),(0x1213,0xa5),(0x2345,0x5a)):
@@ -192,6 +195,8 @@ def verify(check_stub=True, *, contracts=False):
          'tools/indirect.py','tests/dispatch.py','metadata/indirect-evidence.json',
          'tools/interrupts.py','tests/interrupts.py','tests/timer_chain.py','metadata/interrupt-evidence.json')]
     inputs.append(ROOT/'tools/pcspeaker_symtab.py')
+    inputs.append(ROOT/'tools/sound_latch_symtab.py')
+    inputs.append(ROOT/'c/sound_latches_sym.h')
     inputs.append(ROOT/'metadata/pcspeaker-producers.json')
     inputs.append(ROOT/'tests/dat_io.py')
     inputs.append(ROOT/'tests/decimal_digits.py')

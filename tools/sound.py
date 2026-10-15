@@ -36,6 +36,12 @@ def analyze_driver(name,image):
     return a
 
 def generate_driver(name,image,a):
+    source=ROOT/f'src/sound/{name}.asm'
+    ledger=ROOT/f'metadata/{name}-symbols.json'
+    if source.exists() and ledger.exists() and any(
+            row.get('c_implementation') for row in read_json(ledger)):
+        raise ValueError('Refusing to overwrite maintained semantic sound ASM: '+
+                         str(source)+'; edit its source and ledger in place')
     text=spellings(a,image)
     probe=['bits 16','org 0']
     for n,r in enumerate(a['instructions']):
@@ -126,6 +132,28 @@ def generate_driver(name,image,a):
     write_json(ROOT/f'metadata/{name}-encodings.json',[
         dict(address=p,bytes=ins[p]['bytes'],instruction=text[p],reason='NASM chooses a different encoding') for p in sorted(exceptions)])
 
+def translated_scope(image,analysis,ledger):
+    """Union maintained C instruction ranges; UNKNOWN never becomes C coverage."""
+    decoded={p for instruction in analysis['instructions']
+             for p in range(instruction['address'],instruction['address']+instruction['size'])}
+    covered=set()
+    translated=[row for row in ledger if row.get('c_implementation')]
+    for row in translated:
+        start,end=row['address'],row['address']+row['size']
+        for a,b in row.get('c_code_ranges',[(start,end)]):
+            if not start<=a<b<=end<=len(image):
+                raise ValueError('Invalid sound C range: '+row['symbol_name'])
+            covered.update(range(a,b))
+    if covered-decoded:
+        raise ValueError('Sound C range includes non-instruction bytes: '+
+                         ','.join(f'{p:04X}' for p in sorted(covered-decoded)))
+    for instruction in analysis['instructions']:
+        span=set(range(instruction['address'],instruction['address']+instruction['size']))
+        if span&covered and not span<=covered:
+            raise ValueError('Sound C range splits an instruction')
+    return len(translated),len(covered)
+
+
 def verify_drivers(generate=False,generate_name=None):
     BUILD.mkdir(exist_ok=True)
     images=sound_images()
@@ -156,10 +184,10 @@ def verify_drivers(generate=False,generate_name=None):
         if out.read_bytes()!=image:
             raise ValueError('Rebuilt sound bytes differ: '+name)
         write_json(BUILD/f'{name}-analysis.json',a)
+        c_routines,c_bytes=translated_scope(image,a,read_json(ROOT/f'metadata/{name}-symbols.json'))
         result[name]=dict(a['metrics'],byte_exact_asm_bytes=len(image),image_sha256=sha(image),
                           encoding_exceptions=len(read_json(ROOT/f'metadata/{name}-encodings.json')),
-                          c_routines=sum(bool(s.get('c_implementation')) for s in read_json(ROOT/f'metadata/{name}-symbols.json')),
-                          c_bytes=sum(s['size'] for s in read_json(ROOT/f'metadata/{name}-symbols.json') if s.get('c_implementation')),
+                          c_routines=c_routines,c_bytes=c_bytes,
                           source_sha256=sha(source.read_bytes()))
         print(f'PASS {name}: {len(image)} ASM bytes exact; {a["metrics"]["decoded_instruction_bytes"]} decoded bytes; {a["metrics"]["unresolved_transfers"]} unresolved transfers')
     write_json(BUILD/'sound-verification.json',result)

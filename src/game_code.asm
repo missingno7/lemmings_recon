@@ -1489,6 +1489,21 @@ loc_2DC4:
     and byte [si+0x24],0x1 ; @02DF9
     and byte [si+0x24],0x7f ; @02DFD
     jmp loc_1FE8 ; @02E01
+; Countdown/transition contract (188 bytes/52 sites), still UNTRANSLATED C.
+; Live DS:SI points at a 2Dh record. DEC byte +20 wraps; its RMW callbacks
+; observe entry flags. Nonzero -> shared AND AL,AL/RET returns AL1/ZF0,
+; retaining incoming AH. Caller1F45 checks +20 before CALL1F4C; do not cache
+; across the CALL save, which may alias the record. Direct zero input wraps FF.
+; Expiry tests +8 &5404: clear -> OR8000 and slot002E, set -> OR2 and slot003C.
+; Layout/cursor/state stores and live callback-slot reads remain in byte order.
+; AND byte +24,1 retains only bit0. Sound gates reread DS2010/25A7; AH4
+; requests AL05/0C at2E5C/2EB0. Native driver prefixes/setters are scoped in
+; sound-latches.md; actual INT frame/vector transport must still be composed.
+; 2EB2 rereads +8 AFTER the sound call; bit2 clears +22. Live DS/SS/record/RET
+; aliases remain observable. Expiry AL0/ZF1 does not generally mean AX0:
+; with no sound AH retains the callback high byte; normal AH4 sound returns AH0.
+; Shared tail2E60 belongs to both non-expiry and mask-clear expiry paths.
+; Full field producers and remaining composition obligations: entity-countdown.md.
 sub_2E04:
     mov al,0x1 ; @02E04
     dec byte [si+0x20] ; @02E06

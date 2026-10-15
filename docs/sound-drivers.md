@@ -67,8 +67,15 @@ tables, music/effect streams, and data. Out-of-image accesses such as Tandy 0629
 write to 5958 require allocation/state analysis; do not add a shadow variable or
 assume the static image length bounds every runtime access.
 
-AdLib/Tandy routines remain untranslated. Byte-exact assembly and matched
-signatures do not establish full code/data or CFG closure.
+Both AdLib/Tandy entry dispatcher prefixes and six command3/4/5 latch setters
+now have scoped native C verification:106 unique bytes,65 sites and27 edges.
+The730 fixtures cover all256 AH values for both drivers, live stack/IRET and
+VGA aliases, with nine completed mutants. AH0/1/2 stop before the untranslated
+update, detection and reset bodies; AH6..FF preserves five DEC AH operations
+and actual IRET. UNKNOWN AdLib0014 remains outside C coverage. See
+sound-latches.md. Playback, port timing, unchecked stream dispatch and broader
+code/data/CFG ownership remain open. Byte-exact assembly and matched
+signatures do not establish complete driver readiness.
 
 Further installation analysis identified MAIN.DAT section 5 as a 758-byte
 PC-speaker component loaded over main zero storage at relative frame 0842. It now

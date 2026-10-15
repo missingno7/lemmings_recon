@@ -91,12 +91,24 @@ ASM module entity_graphics.asm (1,034 bytes), with exact start/end assertions.
 Word generation and neighboring UNKNOWN bytes remain in the prefix. This is
 source ownership with scoped C verification, not complete game acceptance.
 
+Both external INT61 dispatcher prefixes now compose six native latch setters:
+106 unique bytes/65 sites/27 edges across AdLib and Tandy. The 730 fixtures
+cover all256 AH values for both drivers plus setter, alias and VGA domains,
+at core/IRET/untranslated boundaries, with8,376 events and nine completed
+mutants. AH0/1/2 stop at the untranslated update/detect/reset bodies; AH6..FF
+retains the five DEC operations and IRET. AdLib byte0014 stays UNKNOWN.
+See sound-latches.md. This closes the command4 provider's prefix/setter
+behavior, while main INT61 transport, playback and timing remain open.
+
 Next close the two remaining direct untranslated children of 1F19:
 
-1. Resolve the 2E04 countdown/record transition contract (188 bytes/52 sites),
-   including its shared tails, live record flags/writes and callback-slot reads.
-   Preserve DEC/RMW entry flags and the INT61 seams at 2E5C/2EB0; establish
-   the sound/interrupt provider's actual effects before composing the child.
+1. Translate the statically contracted 2E04 countdown/record transition
+   (188 bytes/52 sites), preserving its shared tails, live record/slot/gate
+   reads and residual AH; see entity-countdown.md. Its actual AdLib/Tandy
+   command4 dispatcher/setter boundary now has scoped C verification. Compose
+   INT61 at2E5C/2EB0 through the live vector/frame and actual IRET rather than
+   a preserving no-op; changed targets and missing service paths stay explicit.
+   Preserve DEC/RMW entry flags and the post-interrupt +8/+22 decision.
 2. Then resolve 2EC0 (486 bytes/162 sites), its SS interaction-map reads,
    saved words, record fields and transition tails. The 1F19 parent remains
    3,744 decoded bytes/1,255 sites and untranslated. Tested drawing children

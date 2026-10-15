@@ -3,7 +3,7 @@
     "address": 0,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 34,
     "symbol_name": "adlib_InterruptEntry",
     "aliases": [],
     "callers": [],
@@ -99,7 +99,246 @@
     "reachable_instruction_bytes": 280,
     "confidence": "PROVEN",
     "evidence": [
-      "Main0576..057B installs offset0 as INT61"
+      "Main0576..057B installs offset0 as INT61",
+      "Maintained native dispatcher prefix only; byte14 AdLib NOP remains UNKNOWN and outside C ranges"
+    ],
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        0,
+        20
+      ],
+      [
+        21,
+        34
+      ]
+    ],
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: all256 AH selectors at core/adapter boundaries; update/detect/reset explicit untranslated exits; no playback acceptance"
+  },
+  {
+    "address": 33,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "adlib_UnhandledCommandReturn",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 34,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": 8,
+    "symbol_name": "adlib_SetCommand3Latch",
+    "aliases": [
+      "adlib_loc_0022"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 37,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 8,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 AH=3 branch selects this 8-byte PUSH DS/PUSH CS/POP DS/MOV moffs8,AL/POP DS/IRET tail"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+  },
+  {
+    "address": 41,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "adlib_Command3Return",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 42,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": 8,
+    "symbol_name": "adlib_SetCommand4Latch",
+    "aliases": [
+      "adlib_loc_002A"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 45,
+        "segment": "default",
+        "displacement": 240,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 8,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 AH=4 branch selects this 8-byte PUSH DS/PUSH CS/POP DS/MOV moffs8,AL/POP DS/IRET tail"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+  },
+  {
+    "address": 49,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "adlib_Command4Return",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 50,
+    "segment": "driver-relative",
+    "kind": "entry",
+    "size": 8,
+    "symbol_name": "adlib_SetCommand5Latch",
+    "aliases": [
+      "adlib_loc_0032"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 53,
+        "segment": "default",
+        "displacement": 238,
+        "base": null,
+        "index": null,
+        "size": 1
+      }
+    ],
+    "reachable_instruction_bytes": 8,
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 AH=5 branch selects this 8-byte PUSH DS/PUSH CS/POP DS/MOV moffs8,AL/POP DS/IRET tail"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/sound_latches.c",
+    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+  },
+  {
+    "address": 57,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "adlib_Command5Return",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 58,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "adlib_ResetService",
+    "aliases": [
+      "adlib_loc_003A"
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 163,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "adlib_DetectService",
+    "aliases": [
+      "adlib_loc_00A3"
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+    ],
+    "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 237,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "adlib_Command3Latch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AH=3 setter at0022 stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 238,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "adlib_Command5Latch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AH=5 setter at0032 stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 240,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "adlib_Command4Latch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AH=4 setter at002A stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 277,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "adlib_UpdateService",
+    "aliases": [
+      "adlib_loc_0115"
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
     "verification_status": "UNTRANSLATED"
   },
