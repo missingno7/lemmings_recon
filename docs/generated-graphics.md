@@ -44,9 +44,76 @@ The additional load at 7126 and the final producer group retain open consumer
 ownership; no span is declared dead or unused. Reaching allocation alone does
 not establish that the later resource producer ran or completed.
 
-Next resolve and translate the 5CDD/5D66 generator contracts, connect 5AC1,
-then close the source and save-frame contracts of 5DF8/5FAC/606B. Preserve
+## Native generator contracts
+
+`GenerateWordMaskShifts` (5CDD..5D17, 59 bytes/36 sites) and
+`GenerateByteMaskShifts` (5D66..5D93, 46 bytes/30 sites) have logical C cores
+and register adapters in c/mask_generators.c. Both take live DS:SI source,
+ES:DI destination, BL repetitions and CX rows. They clear DH at entry, save
+DX/BX/SI for each shift pass and save BX/CX again around the repetition loop.
+Every row pushes and pops CX. All of these are actual SS words, including
+the restored source cursor and shift/repetition controls. There is no cached
+copy of a save frame and no artificial loop cap in the native core.
+
+The word generator loads AL/AH in source order, clears DL, then shifts the
+AL/AH/DL bit chain right DH times. It writes AL, AH and DL with three explicit
+INC DI instructions, independently of DF. The byte generator clears AH and
+shifts AL/AH right DH times, then uses DF-sensitive STOSW. LODSW/LODSB follow
+DF in both leaves. Their live restored DH is incremented and compared with
+eight; altered save words can change the number of passes. CX=0 and BL=0
+retain the original wrapping LOOP/DEC behavior. Neither is an empty loop.
+
+`GenerateGraphicsMaskBanks` (5AC1..5B10, 80 bytes/35 sites) composes the
+leaves directly in c/generated_graphics.c. PUSH DS precedes the ES selector
+read, which precedes the source DS selector read. A stack alias or provider
+side effect can therefore change those selectors. Each native child call
+writes the original near return word, and the caller reads that actual word
+after child completion. A changed child target returns an explicit continuation
+without executing the trailing parent instructions. On normal completion the
+live outer CX words control the loops, SI advances by the original literal,
+and POP DS reads the actual saved value. Final flags come from the last ADD
+SI,8; DS restores from its save and ES remains the selected output segment.
+
+Core boundaries stop before the leaves' RET or the parent's normal 5B10 RET.
+Adapters consume the outer return word only at a normal core boundary. Every
+source, destination, selector and stack access uses the same optional raster
+bus; null selects ordinary RAM. Callbacks preserve registers and may change
+later memory/device reads. Word accesses observe the low byte before the high
+byte at physical+1, with 20-bit physical wrap and 16-bit cursor/SP wrap. The
+domain requires intact executing code and TF clear; it does not establish
+device initialization or IRQ scheduling.
+
+The 5CC1 caller shares the 5CDD body by fallthrough after its first child call;
+that caller remains untranslated. The adjacent 5D18..5D65 bytes remain UNKNOWN.
+No classification, allocation bound or whole-game acceptance follows from the
+three scoped translations.
+
+`tools/difftest.py mask_generators generated_graphics` verifies the leaves in
+44 fixtures at both core/adapter boundaries: all 105 bytes/66 sites, 20 branch
+edges and 28,508 ordered callbacks, with five completed mutants. Independent
+bit-chain answers cover both output forms. Finite provider-controlled cases
+exercise zero CX and BL without running enormous wrapped loops or changing
+native semantics.
+
+The producer passes 17 fixtures at both boundaries: 80 additional caller bytes,
+101 integrated sites, 24 expected edges and 592,280 callbacks, with five completed
+mutants. The two untaken repetition edges in this caller's constructed BL=1
+fixtures are covered in the separate leaf suite; they are not declared dead.
+The independent normal-path calculation checks every one of the 1370h output
+bytes. Other cases exercise live selectors/counts, actual changed child and outer
+returns, source/destination overlap, DF and wrapped or VGA-backed accesses.
+The child bytes overlap their existing translations and are not counted twice.
+
+Each worker has a 180-second deadline, 384 MiB process and 640 MiB tree commit
+limits. Original leaf calls are capped at 65,536 instructions and producer calls
+at 120,000; every native call has a hard 65,536-callback limit. Exhaustion exits
+86 and callback errors exit 87; neither counts as a detected mutant. Workers
+exit before temporary DLL directories are removed. Reports retain exact domains
+and input hashes in build/mask-generators-differential.json and
+build/generated-graphics-differential.json. These are local acceptance results;
+the full original/native campaigns remain prerequisites for aggregate acceptance.
+
+Next close the source and save-frame contracts of 5DF8/5FAC/606B. Preserve
 their live DS replacement, saved DS/SI/count words, incoming DF and unchanged
 VGA state. Their fixed-looking initial loops do not rule out larger wrapped
-counts after aliases. This note is static evidence, not a new behavioral or
-C-coverage report.
+counts after aliases.

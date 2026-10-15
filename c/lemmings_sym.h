@@ -350,13 +350,13 @@
 #define CS_sub_5950 0x5950u
 #define CS_sub_597D 0x597Du
 #define CS_sub_59BB 0x59BBu
-#define CS_sub_5AC1 0x5AC1u
+#define CS_GenerateGraphicsMaskBanks 0x5AC1u
 #define CS_sub_5B11 0x5B11u
 #define CS_sub_5BB0 0x5BB0u
 #define CS_sub_5C06 0x5C06u
 #define CS_sub_5CC1 0x5CC1u
-#define CS_sub_5CDD 0x5CDDu
-#define CS_sub_5D66 0x5D66u
+#define CS_GenerateWordMaskShifts 0x5CDDu
+#define CS_GenerateByteMaskShifts 0x5D66u
 #define CS_ConfigureEntityPixelReadback 0x5D94u
 #define CS_PrepareEntityPixelSample 0x5DC6u
 #define CS_sub_5DF8 0x5DF8u

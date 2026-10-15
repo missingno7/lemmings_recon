@@ -94,8 +94,14 @@ See entity-pixel.md. The 5D94/5EBA VGA setup/exchange now pass 50 combined
 fixtures at both boundaries, while the bus-aware 5DC6 retains its RAM API.
 The 5F0F stroke directly composes that child through actual return frames in
 40 fixtures, with 89 integrated sites/eight edges and five completed mutants.
-See entity-vga.md and entity-stroke.md. Generated-mask producer ownership,
-the next dependency for 5DF8/5FAC/606B, is recorded in generated-graphics.md.
+See entity-vga.md and entity-stroke.md. The 5CDD/5D66 generated-mask leaves now
+pass 44 fixtures at both boundaries, all 105 bytes/66 sites, 20 edges and five
+completed mutants. Their 5AC1 producer directly composes the native leaves:
+17 fixtures cover 80 additional bytes/35 sites, 101 integrated sites/24 edges
+and five completed mutants. An independent calculation checks the complete
+1370h bank. Live segment selectors, SS counts/cursors/DH/DS, child/outer returns,
+DF and bus providers remain explicit. See generated-graphics.md; the consumers
+5DF8/5FAC/606B and shared-tail 5CC1 caller remain separate frontiers.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

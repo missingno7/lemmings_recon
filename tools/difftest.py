@@ -103,6 +103,8 @@ SUITES = (
     Suite('entity_pixel_bus', 180, 384),
     Suite('entity_vga', 180, 384),
     Suite('entity_stroke', 180, 384),
+    Suite('mask_generators', 180, 384),
+    Suite('generated_graphics', 180, 384),
 )
 
 

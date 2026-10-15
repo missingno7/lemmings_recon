@@ -54,20 +54,27 @@ phase, including the memory decrement's entry-flag observation. See
 entity-stroke.md. This adds 157 caller bytes; the child's bytes overlap its
 existing translation and are not added again.
 
-Next resolve the generated-mask producer before translating the remaining
-source blitters. The static layout and its DF/save-frame conditions are in
-generated-graphics.md:
+The generated-mask leaves and producer now have scoped native acceptance:
+44 leaf fixtures at both boundaries cover 105 bytes/66 sites and 20 edges,
+with 28,508 events and five completed mutants. Seventeen producer fixtures at
+both boundaries cover 80 additional caller bytes/35 sites, 101 integrated sites
+and 24 edges, with 592,280 events and five completed mutants. The independent
+normal-path calculation verifies all 1370h output bytes from source 0000..0183.
+Live SS saves/counts/cursors/DH/DS, ordered selectors, actual child/outer returns,
+changed-target stops, DF asymmetry, overlap and device providers remain explicit.
+See generated-graphics.md. Child bytes overlap the leaf translations and are
+not added again; this is not aggregate acceptance or full resource/game readiness.
 
-1. Translate 5CDD and 5D66, then compose their 5AC1 producer. It reads source
-   0000..0183 and writes 0000..136F only with DF clear and intact disjoint
-   saves/counts. Keep zero/wrapped counts, sequential overlap, source/destination
-   DF asymmetry, all live saves and actual child returns; do not silently cap
-   the original loops. Native fixture callbacks still need hard access bounds.
-2. Connect 5DF8/5FAC/606B to their proven generated-bank inputs, preserving
+Next close the generated-bank consumers:
+
+1. Connect 5DF8/5FAC/606B to their proven generated-bank inputs, preserving
    unchecked selectors, clipping, live DS replacement, saved counters, VGA
-   latches and incoming device state. The allocation coordinates and matching
-   normal selectors do not prove usable buffer bounds or arbitrary aliases.
-3. The 6141 sibling address helper still has distinct register inputs, saves
+   latches and incoming device state. Start with the independent 5DF8 body;
+   its clipped row/count saves must be understood before simplifying loops.
+   The allocation coordinates and matching normal selectors do not prove usable
+   buffer bounds or arbitrary aliases. The 5CC1 shared-tail caller and adjacent
+   UNKNOWN 5D18..5D65 remain separate frontiers.
+2. The 6141 sibling address helper still has distinct register inputs, saves
    and no clamp. The 2E04/2EC0 state/interaction and platform seams also remain.
    The 1F19 parent still has 3,744 decoded bytes/1,255 sites and is untranslated;
    scoped TESTED children do not establish complete simulation readiness.

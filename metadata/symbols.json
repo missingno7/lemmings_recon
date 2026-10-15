@@ -33473,9 +33473,11 @@
     "address": 23233,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5AC1",
-    "aliases": [],
+    "size": 80,
+    "symbol_name": "GenerateGraphicsMaskBanks",
+    "aliases": [
+      "sub_5AC1"
+    ],
     "callers": [
       22782
     ],
@@ -33501,12 +33503,15 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Direct word/byte mask generator composition; live segment selector reads and SS frames; generated-graphics.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 80
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 80,
+    "c_implementation": "c/generated_graphics.c",
+    "verification_evidence": "tests/generated_graphics.py:17 fixtures at both boundaries;80 caller bytes/35 sites plus105 overlapping child bytes/66 sites,101 integrated sites,24 edges,592280 events,5 completed mutants; ordered selector reads,live outer counts/DS/RET,actual child frames and changed-target stop,DF/overlap/VGA/wrap; independent complete1370h mask bank from source0000..0183; docs/generated-graphics.md"
   },
   {
     "address": 23313,
@@ -33927,9 +33932,11 @@
     "address": 23773,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5CDD",
-    "aliases": [],
+    "size": 59,
+    "symbol_name": "GenerateWordMaskShifts",
+    "aliases": [
+      "sub_5CDD"
+    ],
     "callers": [
       23255,
       23273,
@@ -33971,20 +33978,25 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Eight shifts only with intact live saves: DS LODSW follows DF, three ES writes advance forward; live DH/BL/CX and SS words; generated-graphics.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 59
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 59,
+    "c_implementation": "c/mask_generators.c",
+    "verification_evidence": "tests/mask_generators.py:44 fixtures at both core/adapter boundaries across both leaves;105 bytes/66 sites,20 branch edges,28508 callback events,5 completed mutants; live SS counts/cursors/DH/RET,finite zero-CX/BL providers,DF asymmetry,physical/offset wrap,overlap,VGA and independent bit-chain answers; docs/generated-graphics.md"
   },
   {
     "address": 23910,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5D66",
-    "aliases": [],
+    "size": 46,
+    "symbol_name": "GenerateByteMaskShifts",
+    "aliases": [
+      "sub_5D66"
+    ],
     "callers": [
       23302
     ],
@@ -34007,12 +34019,15 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Eight shifts only with intact live saves: DS LODSB and ES STOSW follow DF; live DH/BL/CX and SS words; generated-graphics.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 46
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 46,
+    "c_implementation": "c/mask_generators.c",
+    "verification_evidence": "tests/mask_generators.py:44 fixtures at both core/adapter boundaries across both leaves;105 bytes/66 sites,20 branch edges,28508 callback events,5 completed mutants; live SS counts/cursors/DH/RET,finite zero-CX/BL providers,DF asymmetry,physical/offset wrap,overlap,VGA and independent bit-chain answers; docs/generated-graphics.md"
   },
   {
     "address": 23956,

@@ -235,6 +235,8 @@ def report():
     entity_pixel_bus=read_json(BUILD/'entity-pixel-bus-differential.json')
     entity_vga=read_json(BUILD/'entity-vga-differential.json')
     entity_stroke=read_json(BUILD/'entity-stroke-differential.json')
+    mask_generators=read_json(BUILD/'mask-generators-differential.json')
+    generated_graphics=read_json(BUILD/'generated-graphics-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -262,7 +264,9 @@ def report():
                         ('entity pixel sample',entity_pixel),
                         ('entity pixel sample bus',entity_pixel_bus),
                         ('entity VGA helpers',entity_vga),
-                        ('entity stroke',entity_stroke)):
+                        ('entity stroke',entity_stroke),
+                        ('mask generators',mask_generators),
+                        ('generated graphics',generated_graphics)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py --all')
@@ -273,6 +277,8 @@ def report():
     executed.update(entity_pixel_bus['executed_instruction_addresses'])
     executed.update(entity_vga['executed_instruction_addresses'])
     executed.update(entity_stroke['executed_instruction_addresses'])
+    executed.update(mask_generators['executed_instruction_addresses'])
+    executed.update(generated_graphics['executed_instruction_addresses'])
     executed.update(selection['executed_instruction_addresses'])
     for path,digest in selection_full['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
@@ -297,7 +303,7 @@ def report():
     reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)
     reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
     reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
-    reports+=(entity_pattern,entity_pixel,entity_pixel_bus,entity_vga,entity_stroke)
+    reports+=(entity_pattern,entity_pixel,entity_pixel_bus,entity_vga,entity_stroke,mask_generators,generated_graphics)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     decoded_sites={instruction['address'] for instruction in analysis['instructions']}

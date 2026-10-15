@@ -228,7 +228,7 @@ LoadMainResourceSections:
     call DecodeDatPreservingSegment ; @058F9
     pop ds ; @058FC
     push bx ; @058FD
-    call sub_5AC1 ; @058FE
+    call GenerateGraphicsMaskBanks ; @058FE
     pop bx ; @05901
     push ds ; @05902
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05903
@@ -448,7 +448,11 @@ loc_5AAB:
 ; The8shiftpasses yield outputend1370 and sourceend0184. These are producer
 ; coordinates, not allocation bounds. 5D66 STOSW changes output direction withDF.
 ; Callers/unchecked consumers/initialization obligations: generated-graphics.md.
+; PUSH DS precedes the two selector reads. Near calls/returns and the outer
+; CX/DS saves are live SS memory; changed child return targets stop C handoff.
+; DS restores from its actual save, ES stays selected, SS/BP unchanged.
 sub_5AC1:
+GenerateGraphicsMaskBanks:
     push ds ; @05AC1
     mov es,[GeneratedGraphicsBufferSegment-GameDataImage] ; @05AC2
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @05AC6
@@ -459,7 +463,7 @@ loc_5AD1:
     push cx ; @05AD1
     mov cx,0xa ; @05AD2
     mov bl,0x1 ; @05AD5
-    call sub_5CDD ; @05AD7
+    call GenerateWordMaskShifts ; @05AD7
     add si,byte +0x14 ; @05ADA
     pop cx ; @05ADD
     loop loc_5AD1 ; @05ADE
@@ -468,20 +472,20 @@ loc_5AE3:
     push cx ; @05AE3
     mov cx,0xd ; @05AE4
     mov bl,0x1 ; @05AE7
-    call sub_5CDD ; @05AE9
+    call GenerateWordMaskShifts ; @05AE9
     add si,byte +0x1a ; @05AEC
     pop cx ; @05AEF
     loop loc_5AE3 ; @05AF0
     mov cx,0x16 ; @05AF2
     mov bl,0x1 ; @05AF5
-    call sub_5CDD ; @05AF7
+    call GenerateWordMaskShifts ; @05AF7
     add si,byte +0x2c ; @05AFA
     mov cx,0xa ; @05AFD
 loc_5B00:
     push cx ; @05B00
     mov cx,0x8 ; @05B01
     mov bl,0x1 ; @05B04
-    call sub_5D66 ; @05B06
+    call GenerateByteMaskShifts ; @05B06
     add si,byte +0x8 ; @05B09
     pop cx ; @05B0C
     loop loc_5B00 ; @05B0D
@@ -717,12 +721,17 @@ sub_5CC1:
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05CC8
     mov cx,0x10 ; @05CCA
     mov bl,0x3 ; @05CCD
-    call sub_5CDD ; @05CCF
+    call GenerateWordMaskShifts ; @05CCF
     mov si,0x531c ; @05CD2
     mov di,0x480 ; @05CD5
     mov bl,0x3 ; @05CD8
     mov cx,0x10 ; @05CDA
+; DS:SI source, ES:DI output, BL repetitions, CX rows; DH starts at zero.
+; LODSW follows DF; three stores use INC DI regardless of DF. All saves and
+; restored loop controls are live SS memory: aliases can change counts/returns.
+; AX/BX/CX/DX/SI/DI/flags are outputs; DS/ES/SS/BP unchanged. No loop caps.
 sub_5CDD:
+GenerateWordMaskShifts:
     db 0x32,0xf6 ; ENCODED: xor dh,dh (NASM chooses a different encoding) ; @05CDD
 loc_5CDF:
     push dx ; @05CDF
@@ -774,7 +783,11 @@ loc_5CF8:
     db 0x47,0x26,0x88,0x25,0x47,0x26,0x88,0x15,0x47,0x5b,0x59,0xe2,0xca,0x59,0x5b,0xfe ; @05D48
 ; UNKNOWN: unresolved bytes
     db 0xcb,0x75,0xc2,0x5e,0x5b,0x5a,0xfe,0xc6,0x80,0xfe,0x08,0x75,0xb5,0xc3 ; @05D58
+; DS:SI source, ES:DI output, BL repetitions, CX rows; DH starts at zero.
+; LODSB and STOSW both follow DF. All SS saves/controls and final RET stay live.
+; AX/BX/CX/DX/SI/DI/flags are outputs; DS/ES/SS/BP unchanged. No loop caps.
 sub_5D66:
+GenerateByteMaskShifts:
     db 0x32,0xf6 ; ENCODED: xor dh,dh (NASM chooses a different encoding) ; @05D66
 loc_5D68:
     push dx ; @05D68
