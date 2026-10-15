@@ -1172,6 +1172,16 @@
     },
     {
       "start": 49202,
+      "end": 61196,
+      "classification": "unresolved"
+    },
+    {
+      "start": 61196,
+      "end": 61204,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 61204,
       "end": 82906,
       "classification": "unresolved"
     }

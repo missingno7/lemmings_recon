@@ -1,7 +1,7 @@
 # Reconstruction completeness
 
 Main-image identity is established. Full static, C and native completion are not.
-Regenerate this report with tools/verify.py, tools/difftest.py, then tools/coverage.py
+Regenerate this report with tools/verify.py --contracts, tools/difftest.py --all, then tools/coverage.py
 --write-doc. No dynamic gameplay coverage is used.
 
 | Metric | Value |

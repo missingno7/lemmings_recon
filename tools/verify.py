@@ -1,6 +1,7 @@
-"""Fail-closed canonical/ASM/relocation gate; never rewrites source or pins."""
+"""Fast exact-image gate; --contracts adds the bounded behavioral campaign."""
 import argparse
 import sys
+import time
 from pathlib import Path
 from common import ROOT, BUILD, read_json, write_json, sha
 from unpack import ASSET, unpack, relocated
@@ -8,8 +9,13 @@ from build import assemble
 from explore import analyze
 import symtab
 
-def verify(check_stub=True):
-    (BUILD/'verification.json').unlink(missing_ok=True)
+def verify(check_stub=True, *, contracts=False):
+    if contracts and not check_stub:
+        raise ValueError('Contract verification requires unpacker checks')
+    # An edit-loop run must neither replace nor delete the full contract report.
+    # Each mode invalidates its own report before doing work, including on failure.
+    report_path = BUILD/('verification.json' if contracts else 'static-verification.json')
+    report_path.unlink(missing_ok=True)
     for row in read_json(ROOT/'metadata/inputs.json')['files']:
         data=(ROOT/row['path']).read_bytes()
         if len(data)!=row['size'] or sha(data)!=row['sha256']:
@@ -57,7 +63,7 @@ def verify(check_stub=True):
     indirect_metrics=verify_indirect()
     from interrupts import verify as verify_interrupts
     interrupt_metrics=verify_interrupts()
-    if check_stub:
+    if contracts:
         import importlib.util
         spec=importlib.util.spec_from_file_location('sound_unpack',ROOT/'tests/sound_unpack.py')
         suite=importlib.util.module_from_spec(spec)
@@ -161,17 +167,19 @@ def verify(check_stub=True):
     metrics['protection']=protection_metrics
     metrics['indirect']=indirect_metrics
     metrics['interrupts']=interrupt_metrics
-    if check_stub:metrics['dat_io']=dat_io_metrics
-    if check_stub:metrics['decimal_digits_contracts']=decimal_metrics
-    if check_stub:metrics['cache_allocation_contracts']=cache_allocation_metrics
-    if check_stub:metrics['video_restore_contracts']=video_restore_metrics
-    if check_stub:metrics['vector_restore_contracts']=vector_restore_metrics
-    if check_stub:metrics['timer_restore_contracts']=timer_restore_metrics
-    if check_stub:metrics['fatal_cleanup_contracts']=cleanup_metrics
-    if check_stub:metrics['file_error_contracts']=file_error_metrics
-    if check_stub:metrics['resource_raw_full_contracts']=raw_full_metrics
-    if check_stub:metrics['display_contracts']=display_metrics
-    metrics['bounded_extractor_checks']=bool(check_stub)
+    if contracts:metrics['dat_io']=dat_io_metrics
+    if contracts:metrics['decimal_digits_contracts']=decimal_metrics
+    if contracts:metrics['cache_allocation_contracts']=cache_allocation_metrics
+    if contracts:metrics['video_restore_contracts']=video_restore_metrics
+    if contracts:metrics['vector_restore_contracts']=vector_restore_metrics
+    if contracts:metrics['timer_restore_contracts']=timer_restore_metrics
+    if contracts:metrics['fatal_cleanup_contracts']=cleanup_metrics
+    if contracts:metrics['file_error_contracts']=file_error_metrics
+    if contracts:metrics['resource_raw_full_contracts']=raw_full_metrics
+    if contracts:metrics['display_contracts']=display_metrics
+    metrics['verification_scope']='contracts' if contracts else 'static'
+    metrics['bounded_unpacker_checks']=bool(check_stub)
+    metrics['bounded_extractor_checks']=bool(contracts)
     inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
         ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
          'metadata/regions.json','metadata/encoding-exceptions.json',
@@ -187,7 +195,7 @@ def verify(check_stub=True):
     inputs.append(ROOT/'metadata/pcspeaker-producers.json')
     inputs.append(ROOT/'tests/dat_io.py')
     inputs.append(ROOT/'tests/decimal_digits.py')
-    if check_stub:
+    if contracts:
         inputs.extend(ROOT/path for path in cache_report['input_sha256'])
         inputs.extend(ROOT/path for path in video_report['input_hashes'])
         inputs.extend(ROOT/path for path in vector_report['input_hashes'])
@@ -200,14 +208,25 @@ def verify(check_stub=True):
             inputs.extend(ROOT/path for path in report['input_hashes'])
     inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
     metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
-    write_json(BUILD/'verification.json',metrics)
+    write_json(report_path,metrics)
     write_json(BUILD/'analysis.json',analysis)
     print(f'PASS {len(actual)} ASM bytes exact; {len(meta["relocations"])} relocations; no masked differences')
     print(f'FRONTIER {metrics["unresolved_byte_runs"]} unresolved byte runs; {metrics["unresolved_transfers"]} unresolved transfers')
+    print(f'PASS {metrics["verification_scope"]} verification; report: {report_path.name}')
     return metrics
 
-if __name__=='__main__':
+def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--skip-stub',action='store_true',help='Fast edit loop only; release gate must include stub checks')
-    a=p.parse_args()
-    verify(not a.skip_stub)
+    modes=p.add_mutually_exclusive_group()
+    modes.add_argument('--contracts',action='store_true',
+        help='Also run the complete original-only behavioral contracts; required before aggregate coverage')
+    modes.add_argument('--skip-stub',action='store_true',
+        help='Static edit-loop check without bounded unpacker execution; not a contract gate')
+    a=p.parse_args(argv)
+    started=time.perf_counter()
+    result=verify(not a.skip_stub,contracts=a.contracts)
+    print(f'Elapsed: {time.perf_counter()-started:.2f}s')
+    return result
+
+if __name__=='__main__':
+    main()

@@ -75,7 +75,8 @@ The disk-check body and the BIOS/DOS services have not been executed by these ch
 The transformation contains no relocation sites and gives the same static CFG at
 loads 1010, 1213 and 2345. tools/protection.py assembles both maintained views,
 checks their complete bytes and named offsets, and checks the pinned derivation
-and CFG. tools/verify.py includes these checks and bounded handler verification.
+and CFG. tools/verify.py checks the exact derived views; --contracts additionally
+runs bounded handler verification.
 Derived view bytes do not increase the canonical reconstructed-byte total. No
 protected routine has been translated to C yet.
 

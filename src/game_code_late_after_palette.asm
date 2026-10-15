@@ -823,6 +823,15 @@ sub_5D94:
     mov es,ax ; @05DBD
     mov word [0x4],0xd0 ; @05DBF
     ret ; @05DC5
+; 5DC6..5DF7: prepare a record pixel sample; no VGA reads occur here.
+; DS:SI+2 gives wrapped Y-10h. Clamp when the subtraction result is negative,
+; rather than comparing signed Y. Low MUL(D0h,row) supplies DI and residual AL.
+; PUSH DX precedes the later DS:SI X read; SS aliases can change X or the mask.
+; ES=A000h; DI=low_product+(X>>3)+4A40h; CX=X>>3 (logical shifts).
+; BX=PixelBitMasks+(X&7); AH is the live DS table byte; AL keeps low product.
+; DX is popped live, SI/BP/DS/SS unchanged. Final flags: ADD BX,547Ch at5DF1.
+; RET consumes the live near word. RAM core contract: entity-pixel.md.
+PrepareEntityPixelSample:
 sub_5DC6:
     mov ax,0xa000 ; @05DC6
     mov es,ax ; @05DC9
@@ -844,7 +853,7 @@ loc_5DD5:
     db 0x03,0xf9 ; ENCODED: add di,cx (NASM chooses a different encoding) ; @05DE8
     add di,0x4a40 ; @05DEA
     and bx,byte +0x7 ; @05DEE
-    add bx,0x547c ; @05DF1
+    add bx,PixelBitMasks-GameDataImage ; @05DF1
     mov ah,[bx] ; @05DF5
     ret ; @05DF7
 sub_5DF8:
@@ -1012,7 +1021,7 @@ loc_5F4E:
     mov [si],ax ; @05F4E
     push ax ; @05F50
     dec word [si+0x2] ; @05F51
-    call sub_5DC6 ; @05F54
+    call PrepareEntityPixelSample ; @05F54
     pop cx ; @05F57
     pop word [si] ; @05F58
     pop word [si+0x2] ; @05F5A
@@ -1267,7 +1276,7 @@ sub_6141:
     db 0x03,0xf9 ; ENCODED: add di,cx (NASM chooses a different encoding) ; @0615E
     add di,0x4a40 ; @06160
     and bx,byte +0x7 ; @06164
-    add bx,0x547c ; @06167
+    add bx,PixelBitMasks-GameDataImage ; @06167
     mov ah,[bx] ; @0616B
     pop cx ; @0616D
     pop bx ; @0616E
@@ -3154,7 +3163,7 @@ loc_6F0D:
     add di,[DrawingOrigin-GameDataImage] ; @06F38
     add di,[DrawingPageByteOffset-GameDataImage] ; @06F3C
     and ax,0x7 ; @06F40
-    lea bx,[0x547c] ; @06F43
+    lea bx,[PixelBitMasks-GameDataImage] ; @06F43
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @06F47
     mov ah,[bx] ; @06F49
     mov al,0x8 ; @06F4B
@@ -3281,7 +3290,7 @@ loc_6FED:
     mov ax,0xa000 ; @0704E
     mov es,ax ; @07051
     pop ax ; @07053
-    lea bx,[0x547c] ; @07054
+    lea bx,[PixelBitMasks-GameDataImage] ; @07054
     and ax,0x7 ; @07058
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @0705B
     mov ah,[bx] ; @0705D

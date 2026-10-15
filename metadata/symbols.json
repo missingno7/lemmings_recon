@@ -15545,9 +15545,11 @@
     "address": 10299,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_283B",
-    "aliases": [],
+    "size": 66,
+    "symbol_name": "CopyEntityPatternToInteractionMap",
+    "aliases": [
+      "sub_283B"
+    ],
     "callers": [
       9091,
       10293
@@ -15667,12 +15669,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "283B..287C copies the live record pattern at DS:SI+16h into the SS interaction map; 3464..34C7 saves those old cells while installing 02/0A/03 rows; record stride2Dh at1FEC; docs/entity-pattern.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 66
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 66,
+    "c_implementation": "c/entity_pattern.c",
+    "verification_evidence": "tests/entity_pattern.py:37 adapter and37 core-boundary original-vs-C cases,66 bytes/37 sites,no branches,four completed mutants; ordinary RAM,wrapped coordinates/logical shifts,DF-sensitive sequential overlap,live saved ES/DI/SI and actualRET,physical/offset wrap,whole RAM/registers/defined flags; docs/entity-pattern.md"
   },
   {
     "address": 11780,
@@ -34073,9 +34078,11 @@
     "address": 24006,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5DC6",
-    "aliases": [],
+    "size": 50,
+    "symbol_name": "PrepareEntityPixelSample",
+    "aliases": [
+      "sub_5DC6"
+    ],
     "callers": [
       8296,
       11651,
@@ -34124,12 +34131,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5DC6..5DF7 prepares ES:A000/DI pixel address and AH mask from live DS:547C+(X&7); residual AL and post-PUSH X read preserved; docs/entity-pixel.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 50
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 50,
+    "c_implementation": "c/entity_pixel.c",
+    "verification_evidence": "tests/entity_pixel.py:39 adapter and39 core-boundary original-vs-C cases,50 bytes/22 sites,two JNS edges,four completed mutants; all8 pinned masks,live DS table,wrapped sign clamp,residual AL,post-PUSH X/table aliases,offset/physical wrap,whole RAM/all registers/defined flags; docs/entity-pixel.md"
   },
   {
     "address": 24056,
@@ -57222,5 +57232,21 @@
       "Two pinned column/row/style + CR text records, ending with zero-column terminator; used at4B28; docs/retry-ui.md"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21628,
+    "segment": 2473,
+    "kind": "lookup_table",
+    "size": 8,
+    "symbol_name": "PixelBitMasks",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "5DEE/5DF1/5DF5 and6164/6167/616B constrain index withAND7;6F40/6F43/6F47/6F49 and7054/7058/705B/705D also read indexed masks; imageEF0C..EF13 contains80,40,20,10,08,04,02,01; no immutable runtime guarantee"
+    ],
+    "verification_status": "STATIC_VERIFIED"
   }
 ]

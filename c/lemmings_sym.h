@@ -183,7 +183,7 @@
 #define CS_DatCacheAllocationBelowThreshold 0x1F13u
 #define CS_DatCacheAllocationDisabledReturn 0x1F18u
 #define CS_sub_1F19 0x1F19u
-#define CS_sub_283B 0x283Bu
+#define CS_CopyEntityPatternToInteractionMap 0x283Bu
 #define CS_sub_2E04 0x2E04u
 #define CS_sub_2EC0 0x2EC0u
 #define CS_sub_30A6 0x30A6u
@@ -358,7 +358,7 @@
 #define CS_sub_5CDD 0x5CDDu
 #define CS_sub_5D66 0x5D66u
 #define CS_sub_5D94 0x5D94u
-#define CS_sub_5DC6 0x5DC6u
+#define CS_PrepareEntityPixelSample 0x5DC6u
 #define CS_sub_5DF8 0x5DF8u
 #define CS_sub_5EBA 0x5EBAu
 #define CS_sub_5F0F 0x5F0Fu
@@ -641,4 +641,5 @@
 #define CS_RetryUiAfterFinalClear 0x4B56u
 #define CS_RetryUiReturn 0x4B5Bu
 #define SEG09A9_ResourceRetryPromptText 0x4ECFu
+#define SEG09A9_PixelBitMasks 0x547Cu
 #endif

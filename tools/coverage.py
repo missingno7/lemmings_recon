@@ -4,19 +4,26 @@ from common import ROOT,BUILD,read_json,write_json,sha
 from explore import analyze
 from unpack import unpack,ASSET,relocated
 
-def report():
-    analysis=analyze()
-    m=dict(analysis['metrics'])
+def contract_verification():
+    """Only a fresh complete contract report can support aggregate coverage."""
     verified=read_json(BUILD/'verification.json')
-    if not verified.get('bounded_extractor_checks'):
-        raise ValueError('Full extractor checks required for coverage; run tools/verify.py without --skip-stub')
+    if (verified.get('verification_scope')!='contracts' or
+            not verified.get('bounded_unpacker_checks') or
+            not verified.get('bounded_extractor_checks')):
+        raise ValueError('Full contract checks required for coverage; run tools/verify.py --contracts')
     for path,digest in verified['verification_inputs'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale static verification for '+path+'; run tools/verify.py')
+            raise ValueError('Stale contract verification for '+path+'; run tools/verify.py --contracts')
+    return verified
+
+def report():
+    verified=contract_verification()
+    analysis=analyze()
+    m=dict(analysis['metrics'])
     image,oracle=unpack(ASSET.read_bytes())
     built=(BUILD/'asm/program.bin').read_bytes()
     if built!=image or verified['canonical_sha256']!=sha(image):
-        raise ValueError('Run tools/verify.py before reporting coverage')
+        raise ValueError('Run tools/verify.py --contracts before reporting coverage')
     for field in ('reconstructed_asm_bytes','byte_exact_asm_bytes'):
         m[field]=verified[field]
     symbols=read_json(ROOT/'metadata/symbols.json')
@@ -41,26 +48,26 @@ def report():
            'checksum.py':'tests/checksum.py','difftest.py':'tools/difftest.py','cbuild.py':'tools/cbuild.py'}
     for name,path in paths.items():
         if d['input_hashes'][name]!=sha((ROOT/path).read_bytes()):
-            raise ValueError('Stale differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale differential report for '+path+'; run tools/difftest.py --all')
     if d['oracle']['relocated_image_sha256']!=sha(relocated(image,oracle['relocations'],int(d['oracle']['load_segment'],16))):
         raise ValueError('Differential oracle identity changed')
     executed={int(x,16) for r in d['routines'] for x in r['executed_instruction_addresses']}
     dat=read_json(BUILD/'dat-differential.json')
     for path,digest in dat['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale DAT differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale DAT differential report for '+path+'; run tools/difftest.py --all')
     if dat['image_sha256']!=sha(image):raise ValueError('DAT differential oracle changed')
     executed.update(dat['executed_instruction_addresses'])
     io=read_json(BUILD/'dat-io-differential.json')
     for path,digest in io['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale DAT read differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale DAT read differential report for '+path+'; run tools/difftest.py --all')
     if io['image_sha256']!=sha(image):raise ValueError('DAT read differential oracle changed')
     executed.update(io['executed_instruction_addresses'])
     section=read_json(BUILD/'dat-section-differential.json')
     for path,digest in section['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale DAT section differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale DAT section differential report for '+path+'; run tools/difftest.py --all')
     if section['image_sha256']!=sha(image):raise ValueError('DAT section differential oracle changed')
     executed.update(section['executed_instruction_addresses'])
     cache=read_json(BUILD/'dat-cache-differential.json')
@@ -129,19 +136,19 @@ def report():
     executed.update(allocation['executed_instruction_addresses'])
     for path,digest in cache['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale DAT cache differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale DAT cache differential report for '+path+'; run tools/difftest.py --all')
     if cache['image_sha256']!=sha(image):raise ValueError('DAT cache differential oracle changed')
     executed.update(cache['executed_instruction_addresses'])
     files=read_json(BUILD/'dat-files-differential.json')
     for path,digest in files['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale DAT file differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale DAT file differential report for '+path+'; run tools/difftest.py --all')
     if files['image_sha256']!=sha(image):raise ValueError('DAT file differential oracle changed')
     executed.update(files['executed_instruction_addresses'])
     resource=read_json(BUILD/'dat-load-differential.json')
     for path,digest in resource['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale DAT resource differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale DAT resource differential report for '+path+'; run tools/difftest.py --all')
     if resource['image_sha256']!=sha(image):raise ValueError('DAT resource differential oracle changed')
     executed.update(resource['executed_instruction_addresses'])
     raw=read_json(BUILD/'resource-raw-differential.json')
@@ -154,25 +161,25 @@ def report():
     executed.update(raw_full['executed_instruction_addresses'])
     for path,digest in raw['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale raw resource differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale raw resource differential report for '+path+'; run tools/difftest.py --all')
     if raw['image_sha256']!=sha(image):raise ValueError('Raw resource differential oracle changed')
     executed.update(raw['executed_instruction_addresses'])
     rle=read_json(BUILD/'resource-rle-differential.json')
     for path,digest in rle['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale resource RLE differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale resource RLE differential report for '+path+'; run tools/difftest.py --all')
     if rle['image_sha256']!=sha(image):raise ValueError('Resource RLE differential oracle changed')
     executed.update(rle['executed_instruction_addresses'])
     blit=read_json(BUILD/'special-blit-differential.json')
     for path,digest in blit['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale special VGA blit differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale special VGA blit differential report for '+path+'; run tools/difftest.py --all')
     if blit['image_sha256']!=sha(image):raise ValueError('Special VGA blit differential oracle changed')
     executed.update(blit['executed_instruction_addresses'])
     setup=read_json(BUILD/'special-setup-differential.json')
     for path,digest in setup['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale special graphics setup differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale special graphics setup differential report for '+path+'; run tools/difftest.py --all')
     if setup['image_sha256']!=sha(image):raise ValueError('Special graphics setup differential oracle changed')
     executed.update(setup['executed_instruction_addresses'])
     decimal=read_json(BUILD/'decimal-digits-c-differential.json')
@@ -223,6 +230,8 @@ def report():
     streams=read_json(BUILD/'terrain-stream-differential.json')
     object_draw=read_json(BUILD/'object-drawing-differential.json')
     redraw=read_json(BUILD/'level-redraw-differential.json')
+    entity_pattern=read_json(BUILD/'entity-pattern-differential.json')
+    entity_pixel=read_json(BUILD/'entity-pixel-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
@@ -245,12 +254,16 @@ def report():
                         ('actual bitmap entry',bitmap),('terrain inputs',terrain_inputs),
                         ('connected terrain drawing',terrain),
                         ('terrain command readers',commands),('terrain streams',streams),
-                        ('object drawing',object_draw),('level redraw',redraw)):
+                        ('object drawing',object_draw),('level redraw',redraw),
+                        ('entity interaction pattern',entity_pattern),
+                        ('entity pixel sample',entity_pixel)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
-                raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py')
+                raise ValueError('Stale '+label+' differential report for '+path+'; run tools/difftest.py --all')
         if extra['image_sha256']!=sha(image):raise ValueError(label+' differential oracle changed')
     executed.update(decimal['instruction_sites'])
+    executed.update(entity_pattern['executed_instruction_addresses'])
+    executed.update(entity_pixel['executed_instruction_addresses'])
     executed.update(selection['executed_instruction_addresses'])
     for path,digest in selection_full['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
@@ -275,6 +288,7 @@ def report():
     reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)
     reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
     reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
+    reports+=(entity_pattern,entity_pixel)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     decoded_sites={instruction['address'] for instruction in analysis['instructions']}
@@ -292,7 +306,7 @@ def report():
     pc=read_json(BUILD/'pcspeaker-differential.json')
     for path,digest in pc['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
-            raise ValueError('Stale PC-speaker differential report for '+path+'; run tools/difftest.py')
+            raise ValueError('Stale PC-speaker differential report for '+path+'; run tools/difftest.py --all')
     if pc['image_sha256']!=m['sound']['pcspeaker']['image_sha256']:
         raise ValueError('PC-speaker differential oracle changed')
     m['sound']['pcspeaker']['differential_c_instructions']=len(pc['executed_instruction_addresses'])
@@ -324,7 +338,7 @@ def report():
     text=f'''# Reconstruction completeness
 
 Main-image identity is established. Full static, C and native completion are not.
-Regenerate this report with tools/verify.py, tools/difftest.py, then tools/coverage.py
+Regenerate this report with tools/verify.py --contracts, tools/difftest.py --all, then tools/coverage.py
 --write-doc. No dynamic gameplay coverage is used.
 
 | Metric | Value |

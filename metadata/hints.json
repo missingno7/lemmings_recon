@@ -124,6 +124,12 @@
       "end": 34582,
       "class": "runtime_executable_overlay_storage",
       "evidence": "5972 decodes MAIN.DAT section5 (758 bytes) here;165D installs frame0842 offset0182 as INT60. Stored bytes remain canonical zeros."
+    },
+    {
+      "start": 61196,
+      "end": 61204,
+      "class": "lookup_table",
+      "evidence": "DS:547C byte table indexed byAND7 at5DEE/6164 and6F40/7058, read5DF5/616B/6F49/705D; image80,40,20,10,08,04,02,01; identifies only these8 storedbytes,not immutable live DS or adjacent extent"
     }
   ],
   "runtime_frontiers": [

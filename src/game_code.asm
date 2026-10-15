@@ -155,7 +155,7 @@ loc_205F:
     jl loc_2068 ; @02063
     jmp loc_2142 ; @02065
 loc_2068:
-    call sub_5DC6 ; @02068
+    call PrepareEntityPixelSample ; @02068
     mov bp,[si+0x2] ; @0206B
     mov al,[es:di] ; @0206E
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02071
@@ -295,7 +295,7 @@ loc_21B0:
     and byte [si+0x24],0x1 ; @021FB
     jmp loc_1FE8 ; @021FF
 loc_2202:
-    call sub_5DC6 ; @02202
+    call PrepareEntityPixelSample ; @02202
     mov bp,[si+0x2] ; @02205
     mov al,[es:di] ; @02208
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0220B
@@ -445,7 +445,7 @@ loc_2379:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02382
 loc_2383:
-    call sub_283B ; @02383
+    call CopyEntityPatternToInteractionMap ; @02383
 loc_2386:
     mov ax,[si] ; @02386
     mov bx,[si+0x2] ; @02388
@@ -476,7 +476,7 @@ loc_23B9:
     call sub_5DF8 ; @023B9
     jmp loc_1FEB ; @023BC
 loc_23BF:
-    call sub_5DC6 ; @023BF
+    call PrepareEntityPixelSample ; @023BF
     dec word [si+0x2] ; @023C2
     sub di,[0x4] ; @023C5
     mov al,[es:di] ; @023C9
@@ -513,7 +513,7 @@ loc_240F:
     mov ax,[si+0x4] ; @02411
     add [si],ax ; @02414
     push word [si] ; @02416
-    call sub_5DC6 ; @02418
+    call PrepareEntityPixelSample ; @02418
     mov [si],bp ; @0241B
     inc word [si+0x2] ; @0241D
     pop cx ; @02420
@@ -607,7 +607,7 @@ loc_250C:
     mov ax,[si+0x4] ; @02511
     add [si],ax ; @02514
     sub word [si+0x2],byte +0x2 ; @02516
-    call sub_5DC6 ; @0251A
+    call PrepareEntityPixelSample ; @0251A
     mov cx,[si] ; @0251D
     pop word [si+0x2] ; @0251F
     pop word [si] ; @02522
@@ -652,7 +652,7 @@ loc_2560:
     mov al,[si+0x27] ; @02570
     cbw ; @02573
     sub [si],ax ; @02574
-    call sub_5DC6 ; @02576
+    call PrepareEntityPixelSample ; @02576
     mov [si],bp ; @02579
     mov dx,[0x4] ; @0257B
     shl dx,1 ; @0257F
@@ -691,7 +691,7 @@ loc_25E1:
     sub word [si+0x2],byte +0x7 ; @025E4
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @025E8
     sub [si+0x2],ax ; @025EA
-    call sub_5DC6 ; @025ED
+    call PrepareEntityPixelSample ; @025ED
     mov [si+0x2],bp ; @025F0
     mov al,[es:di] ; @025F3
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @025F6
@@ -800,13 +800,13 @@ loc_26F7:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @026FF
 loc_2700:
-    call sub_5DC6 ; @02700
+    call PrepareEntityPixelSample ; @02700
     sub di,[0x4] ; @02703
     mov al,[es:di] ; @02707
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0270A
     jnz loc_2763 ; @0270C
     add [si],bp ; @0270E
-    call sub_5DC6 ; @02710
+    call PrepareEntityPixelSample ; @02710
     sub di,[0x4] ; @02713
     mov al,[es:di] ; @02717
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0271A
@@ -818,7 +818,7 @@ loc_2726:
     push word [si] ; @02726
     add [si],bp ; @02728
     add [si],bp ; @0272A
-    call sub_5DC6 ; @0272C
+    call PrepareEntityPixelSample ; @0272C
     pop word [si] ; @0272F
     push ax ; @02731
     mov ax,[0x4] ; @02732
@@ -882,7 +882,7 @@ loc_27A5:
 loc_27E8:
     inc byte [si+0x28] ; @027E8
     and byte [si+0x28],0xf ; @027EB
-    call sub_5DC6 ; @027EF
+    call PrepareEntityPixelSample ; @027EF
     mov al,[es:di] ; @027F2
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @027F5
     jz loc_27FC ; @027F7
@@ -901,8 +901,19 @@ loc_27FC:
     mov [si+0x14],ax ; @0282A
     mov byte [si+0x2a],0x0 ; @0282D
     and byte [si+0x24],0x1 ; @02831
-    call sub_283B ; @02835
+    call CopyEntityPatternToInteractionMap ; @02835
     jmp loc_1FEB ; @02838
+; 283B..287C: copy the live record pattern back to the interaction map.
+; DS:SI words +0/+2 feed wrapped (x-4)>>2 and (y-6-10h)>>2;
+; MUL keeps its low word, map offset = 0012h + qx + 01A0h*qy.
+; Producer 3464..34C7 saves old cells at record+16h while installing
+; 02/0A/03 rows. Records advance 2Dh at 1FEC; no shadow pattern exists.
+; PUSH/POP use live SS:SP: map writes may change restored ES/DI/SI/RET.
+; Three MOVSW/MOVSB pairs retain DF and sequential overlap. Each literal
+; 019Dh adjustment follows a pair; DF=1 is not a reversed 9-byte copy.
+; AX=low product, BX=map offset, DX=live restored save; CX/BP/DS/SS unchanged.
+; Last defined arithmetic flags are ADD DI,019Dh at 2873. See entity-pattern.md.
+CopyEntityPatternToInteractionMap:
 sub_283B:
     mov ax,[si] ; @0283B
     mov bx,[si+0x2] ; @0283D
@@ -1025,7 +1036,7 @@ loc_293A:
     jl loc_29C1 ; @02943
     cmp word [si],0x680 ; @02945
     jnl loc_29C1 ; @02949
-    call sub_5DC6 ; @0294B
+    call PrepareEntityPixelSample ; @0294B
     mov al,[es:di] ; @0294E
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02951
     jz loc_2958 ; @02953
@@ -1147,7 +1158,7 @@ loc_2A6D:
     add [si+0x2],ax ; @02A8C
     jmp loc_2B28 ; @02A8F
 loc_2A92:
-    call sub_5DC6 ; @02A92
+    call PrepareEntityPixelSample ; @02A92
     mov al,[es:di] ; @02A95
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02A98
     jnz loc_2AEC ; @02A9A
@@ -1166,7 +1177,7 @@ loc_2A92:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02ABD
 loc_2ABE:
-    call sub_5DC6 ; @02ABE
+    call PrepareEntityPixelSample ; @02ABE
     mov al,[es:di] ; @02AC1
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AC4
     jnz loc_2AEC ; @02AC6
@@ -1180,7 +1191,7 @@ loc_2ABE:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02ADB
 loc_2ADC:
-    call sub_5DC6 ; @02ADC
+    call PrepareEntityPixelSample ; @02ADC
     mov al,[es:di] ; @02ADF
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AE2
     jnz loc_2AEC ; @02AE4
@@ -1259,7 +1270,7 @@ loc_2B87:
     jl loc_2B90 ; @02B8B
     jmp loc_2CBB ; @02B8D
 loc_2B90:
-    call sub_5DC6 ; @02B90
+    call PrepareEntityPixelSample ; @02B90
     mov al,[es:di] ; @02B93
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02B96
     jz loc_2B9D ; @02B98
@@ -1314,7 +1325,7 @@ loc_2C1B:
     jl loc_2C28 ; @02C23
     jmp loc_20E2 ; @02C25
 loc_2C28:
-    call sub_5DC6 ; @02C28
+    call PrepareEntityPixelSample ; @02C28
     mov al,[es:di] ; @02C2B
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02C2E
     jnz loc_2C76 ; @02C30
@@ -1432,7 +1443,7 @@ loc_2D78:
     cmp byte [0x4b],0xff ; @02D7C
     jnz loc_2D83 ; @02D81
 loc_2D83:
-    call sub_5DC6 ; @02D83
+    call PrepareEntityPixelSample ; @02D83
     mov bp,[si+0x2] ; @02D86
     mov al,[es:di] ; @02D89
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02D8C
@@ -2088,6 +2099,10 @@ loc_3422:
     mov [si+0x14],ax ; @03459
     mov byte [si+0x2a],0x0 ; @0345C
     and byte [si+0x24],0x1 ; @03460
+; Save replaced interaction cells in this live record. BX is the candidate
+; SS map offset checked at 3348..341F; ES becomes DS for STOSB below.
+; DF=0 saves nine bytes at +16h..+1Eh; DF=1 decrements only the destination
+; while explicit INC SI still scans map rows forwards. Restore is 283B.
     push si ; @03464
     push ds ; @03465
     pop es ; @03466

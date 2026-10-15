@@ -59,7 +59,8 @@ declared child domains. Its126 C bytes exclude UNKNOWN395E and overlap the
 27-byte terrain loop and81-byte suffix; coverage unions these bytes and all
 shared instruction sites. The36B6 initializer now composes its header, selection,
 object state and live minimap handoffs in36 bounded cases; see level-initialize.md.
-Broader field/provider/IRQ ownership and complete terrain acceptance remain open.
+Broader field/provider/IRQ ownership remains open. The complete terrain stream
+has scoped acceptance documented in terrain-stream.md.
 
 The ledger now names these record fields, buffers, filenames and selector digits.
 They are aliases in canonical memory. No converted records or shadow state were
@@ -78,6 +79,28 @@ the original maximum read request, not an allocation boundary. Longer/shorter
 providers may affect adjacent state; neither ASM nor C adds a corrected limit.
 
 ## Dependency-driven working loop
+
+The normal simulation tree now has its first maintained native leaf at
+283B..287C, `CopyEntityPatternToInteractionMap`. The producer at 3464..34C7
+saves the old interaction cells in the live 2Dh record before installing
+02/0A/03 rows. The leaf restores through DF-sensitive word/byte strings and
+live SS saves; 37 fixtures at both core/adapter boundaries cover all 37 sites
+with four completed mutants. See entity-pattern.md. The 1F19 parent remains
+untranslated. The 5DC6 pixel preparation leaf now adds 50 C bytes/22 sites,
+verified in 39 fixtures at both boundaries with two JNS edges and four completed
+mutants. Its eight-byte bit-mask table is explicitly classified and named;
+post-PUSH X/table aliases, wrapped sign clamp and residual AL remain live.
+See entity-pixel.md. Next establish the 5EBA writer contract and connect 5F0F.
+
+Keep the edit loop small: the default `tools/verify.py` checks exact identity and
+ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native
+suites. Preview limits with `--plan`; use `--all` only for the complete native
+campaign. Focused execution does not promote global coverage. The complete original-only
+campaign is `tools/verify.py --contracts`; aggregate coverage still requires
+that report and fresh native evidence. A parent needs focused contract-handoff
+and composed cases; exhaustive child matrices remain in the child suite unless
+new parent behavior warrants repeating them. Preserve every declared live
+segment, flag, stack and device effect. Narrower caller domains require proof.
 
 ```powershell
 .venv\Scripts\python.exe tools\graph.py LoadSelectedLevelResources --tree --depth 3

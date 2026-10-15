@@ -562,9 +562,9 @@ def compare_event_traces(c_trace, o_trace, name):
         mask = o_trace.mask_bytes[offset] | (o_trace.mask_bytes[offset + 1] << 8)
         c_flags = c_trace.flag_bytes[offset] | (c_trace.flag_bytes[offset + 1] << 8)
         o_flags = o_trace.flag_bytes[offset] | (o_trace.flag_bytes[offset + 1] << 8)
-        require(((c_flags ^ o_flags) & mask) == 0,
-                f'{name}: bus flags differ at event {n}: '
-                f'C={c_flags:04x}/ASM={o_flags:04x}, mask={mask:04x}')
+        if (c_flags ^ o_flags) & mask:
+            require(False, f'{name}: bus flags differ at event {n}: '
+                    f'C={c_flags:04x}/ASM={o_flags:04x}, mask={mask:04x}')
 
 
 def independent_planes(initial_planes, memory, regs, case, flags):

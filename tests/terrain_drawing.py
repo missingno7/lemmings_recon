@@ -219,6 +219,34 @@ def byte_ports(device):
     return Ports(None,out,inp)
 
 
+def instruction_state_reader(machine):
+    """Reuse buffers for the pinned Unicorn scalar-register batch ABI.
+
+    The Python public batch wrapper rebuilds its ctypes arrays on every call.
+    Its existing low-level binding calls uc_reg_read_batch with uint64 buffers
+    for these three ordinary registers. Keep all three observations per site;
+    check the binding against public reads before using it in the oracle.
+    """
+    ids = (ctypes.c_int * 3)(oracle.REG['cs'], oracle.REG['ip'], x.UC_X86_REG_EFLAGS)
+    values = (ctypes.c_uint64 * 3)()
+    pointers = (ctypes.c_void_p * 3)(*(ctypes.addressof(values) + n * 8 for n in range(3)))
+    count = ctypes.c_int(3)
+    try:
+        native_read = machine._do_reg_read_batch
+    except AttributeError as error:
+        raise common.VerificationFailure('Pinned Unicorn register-batch binding unavailable') from error
+
+    def read():
+        status = native_read(ids, pointers, count)
+        if status:
+            raise common.VerificationFailure(f'Unicorn register-batch read failed: {status}')
+        return tuple(values)
+
+    if read() != tuple(machine.reg_read(register) for register in ids):
+        raise common.VerificationFailure('Unicorn register-batch ABI disagrees with public reads')
+    return read
+
+
 def original(case,device,regs,flags,stop_before_outer=False,*,continuations=(),
              observe=None):
     u=Uc(UC_ARCH_X86,UC_MODE_16)
@@ -226,6 +254,8 @@ def original(case,device,regs,flags,stop_before_outer=False,*,continuations=(),
     u.mem_write(0,bytes(device.memory)*2)
     for n,reg in oracle.REG.items():u.reg_write(reg,regs[n])
     u.reg_write(x.UC_X86_REG_EFLAGS,flags)
+    instruction_state = instruction_state_reader(u)
+    instruction_info = {off: (ins.mnemonic, ins.size) for off, ins in INS.items()}
     seen,edges=set(),set()
     previous=None
     last=None
@@ -250,8 +280,7 @@ def original(case,device,regs,flags,stop_before_outer=False,*,continuations=(),
     def code(uc,pc,_size,_):
         nonlocal previous,last,mask,event_flags,steps,pending_near,pause,boundary
         nonlocal child_entry,body_entry,body_memory,body_planes,body_address
-        cs=uc.reg_read(oracle.REG['cs'])
-        off=uc.reg_read(oracle.REG['ip'])
+        cs,off,current_flags=instruction_state()
         if last is not None:
             mask=render._defined_mask(last,mask)
         if pending_near is not None:
@@ -271,14 +300,14 @@ def original(case,device,regs,flags,stop_before_outer=False,*,continuations=(),
             fail(f'{case["name"]}: original escaped at{cs:04x}:{off:04x};last={last},previous={previous},frames={frames}');return
         if stop_before_outer and off==0x7cbb:
             boundary=('ready-return',cs,off);uc.emu_stop();return
-        ins=INS[off]
-        event_flags=uc.reg_read(x.UC_X86_REG_EFLAGS)
+        mnemonic,size=instruction_info[off]
+        event_flags=current_flags
         if observe is not None:
             observe(off,uc,device)
         steps+=1
         if steps>MAX_STEPS:fail('original step budget exhausted');return
         seen.add(off)
-        previous=off;last=ins.mnemonic
+        previous=off;last=mnemonic
         if off==0x8822:
             child_entry={n:uc.reg_read(r) for n,r in oracle.REG.items()}
             child_entry['flags']=event_flags
@@ -290,11 +319,11 @@ def original(case,device,regs,flags,stop_before_outer=False,*,continuations=(),
             body_planes=[bytearray(p) for p in device.vga.planes]
         if off==0x7cb5:
             frames.append((regs['cs'],0x7cba))
-        elif ins.mnemonic=='call':
-            frames.append((cs,off+ins.size))
-        elif ins.mnemonic=='retf':
+        elif mnemonic=='call':
+            frames.append((cs,off+size))
+        elif mnemonic=='retf':
             pause=(cs,off,event_flags);uc.emu_stop()
-        elif ins.mnemonic=='ret':
+        elif mnemonic=='ret':
             pending_near=frames[-1] if frames else False
 
     def read(uc,_access,address,size,_value,_):

@@ -1,5 +1,13 @@
 # Terrain command streams
 
+The complete bounded gate now passes 192 cases: all 80 pinned LEVEL streams at
+both entries plus 32 constructed cases, with 32 auxiliary core comparisons and
+two completed mutation witnesses. Its recorded cases cover 1,383 integrated
+instruction sites and 195 edges, compare 358,815,156 bus events and perform
+23,324 independent body-plane checks. The fresh report is
+`build/terrain-stream-differential.json`; acceptance remains tied to its exact
+input hashes and the domain below. This does not promote aggregate game coverage.
+
 ## Static boundary
 
 `DrawLevelTerrainStream` begins at `374F` and `RedrawLevelTerrainStream` begins
@@ -146,6 +154,15 @@ gets an independent whole-plane expectation before its original far return.
 The final report is written only after every case and mutation passes and all
 input hashes remain unchanged. Prefix evidence and a partial campaign do not
 constitute a fresh full-stream coverage report.
+
+The oracle still reads live CS, IP and flags at every instruction. Its pinned
+Unicorn register-batch binding reuses three scalar buffers rather than rebuilding
+Python register wrappers for each read. Each oracle call first checks this ABI
+against the public register API; an unavailable binding, API error or disagreement
+fails verification. Static mnemonics, sizes and RETF membership are cached; no
+instruction sites, event flags, bus accesses or independent plane checks are
+sampled or omitted. `tests/test_oracle_registers.py` checks changed live register
+values, flags and failing bindings separately from translated-code coverage.
 
 Incoming branches into a stop-before continuation are observed edges; the
 destination is not an executed instruction site. The four original-only

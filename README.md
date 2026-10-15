@@ -39,8 +39,12 @@ the packed terrain-piece caller and three PC-speaker helpers.
 Additional scoped cores connect cleanup/resource failure paths, display setup,
 status and start programming, and the glyph/text-stream producers. See
 [bottom-up connections](docs/bottom-up.md) and [text records](docs/text-stream.md).
-Aggregate C coverage remains unpromoted until the complete terrain campaign and
-affected differential reports receive fresh acceptance.
+The simulation tree now includes the live [interaction-pattern restore](docs/entity-pattern.md)
+and [pixel address/mask preparation](docs/entity-pixel.md) leaves, with original
+wrapping, segment and stack-alias contracts.
+The complete terrain campaign has scoped acceptance for all 80 pinned LEVEL
+streams at both entries. Aggregate C coverage still requires fresh affected
+reports; see [terrain evidence](docs/terrain-stream.md).
 The DAT suite preserves wrapping counts and live stack aliases; see [DAT C](docs/dat.md).
 The sound suite compares registers, full memory, flags and port traces;
 see [PC-speaker C](docs/pcspeaker.md).
@@ -152,18 +156,38 @@ the lock deliberately rather than bypassing it.
 ```powershell
 .venv\Scripts\python.exe tools\unpack.py
 .venv\Scripts\python.exe tools\verify.py
+.venv\Scripts\python.exe tools\verify.py --contracts
 .venv\Scripts\python.exe tools\sound.py
 .venv\Scripts\python.exe tools\protection.py
 .venv\Scripts\python.exe tools\indirect.py
 .venv\Scripts\python.exe tools\interrupts.py
 .venv\Scripts\python.exe -m unittest discover -s tests -p 'test_*.py'
-.venv\Scripts\python.exe tools\difftest.py
+.venv\Scripts\python.exe tools\difftest.py drawing_clip display_status --plan
+.venv\Scripts\python.exe tools\difftest.py drawing_clip display_status
+.venv\Scripts\python.exe tools\difftest.py --all
 .venv\Scripts\python.exe tools\coverage.py
 .venv\Scripts\python.exe tools\where.py InitializeCodeChecksum --disasm 16
 .venv\Scripts\python.exe tools\graph.py InitializeCodeChecksum
 .venv\Scripts\python.exe tools\graph.py LoadSelectedLevelResources --tree --depth 3
 .venv\Scripts\python.exe tools\graph.py LoadSelectedLevelResources --bottom-up
 ```
+
+For routine edits, run `tools/verify.py` and the affected bounded tests. The
+default gate checks pinned inputs/tools, exact ASM for all four components,
+relocations, symbols, static inventories and the bounded unpacker. It writes
+`build/static-verification.json`. The longer `--contracts` campaign also runs
+the original-only behavioral suites and writes `build/verification.json`;
+aggregate coverage requires this full report and fresh native reports. A static
+run preserves the full report, whose hashes must still match before acceptance.
+The existing `--skip-stub` option omits unpacker execution for a static edit check
+and cannot be combined with `--contracts`.
+
+Use `tools/difftest.py SUITE [SUITE ...]` for affected native checks. `--list`
+shows all suites and bounds; `--plan` previews a selection without execution.
+The complete native campaign requires `--all`. An empty or invalid selection
+fails before launching workers. Selected suites retain their existing deadlines,
+process-tree memory limits and fail-fast behavior. A selected run is evidence
+only for those suites; it does not accept the complete campaign.
 
 On this machine the Windows Store python alias is unusable. A local .venv was created
 using the available Codex Python 3.12 runtime and populated with pinned Capstone and

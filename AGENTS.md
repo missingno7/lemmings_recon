@@ -14,6 +14,14 @@ The symbol ledger owns names and offsets. Preserve original wrap, flags, segment
 effects, self modification, shared tails and bugs. No shadow game-state copies.
 Run tools/verify.py and relevant tests after changes. Coverage of bytes, translated
 code and executed instructions are separate. Never claim unresolved code is dead.
+The default verifier is the fast identity/ASM/relocation gate. Run
+tools/verify.py --contracts for the full original-only behavioral campaign before
+aggregate coverage acceptance, or when its shared contracts change. Use the
+affected bounded native suites with tools/difftest.py SUITE [SUITE ...] during
+development; --plan previews limits and --list lists suites. The complete native
+campaign requires tools/difftest.py --all; do not restart the whole
+campaign merely to refresh an unrelated edit. A retained report is accepted only
+when its scope and input hashes match; file preservation does not renew evidence.
 Run native differential suites through tools/difftest.py or the run_bounded helper
 in tools/bounded_process.py with a timeout and Windows process-tree commit limit. Keep native
 callback traces bounded; ctypes callback exceptions cannot stop a C loop.

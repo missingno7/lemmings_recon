@@ -24,6 +24,7 @@ LOCAL = {i.address:i for lo,hi in RANGES
 piece.INS.update(LOCAL)
 piece.BRANCHES.update(p for p,i in LOCAL.items()
     if i.group(piece.capstone.CS_GRP_JUMP))
+RETF_SITES = {p for p,i in piece.INS.items() if i.mnemonic == 'retf'}
 piece.MAX_STEPS = 20_000_000
 # At most 32 MiB of flag/mask bytes per trace. VGA order is streamed, never
 # retained as a Python tuple per access. The enclosing job remains the ceiling.
@@ -218,7 +219,7 @@ def compare(lib,case,core=False):
             piece.bitmap.configure(piece.FAMILIES[off])
             pending=piece.render._independent_planes(device.vga.planes,
                 device.memory,entry,game_ds)
-        elif piece.INS[off].mnemonic=='retf' and pending is not None:
+        elif off in RETF_SITES and pending is not None:
             common.require(pending==device.vga.planes,
                 f'{case["name"]}:piece{piece_count}: independent planes differ')
             independent_count+=1;pending=None
