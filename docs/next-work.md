@@ -166,17 +166,32 @@ transforms without adding C bytes. The combined416 new bytes preserve overlaps;
 see entity-simulation.md. The original-instruction oracle now composes explicit
 parent spans/RET/stop contracts in one traced CPU with the existing INT engine.
 
-Next port23BF..23F2, state mask0008:52 bytes/18 sites. Preserve actual5DC6
-return23C2, live DEC word+02 and pitch/pixel probes, the clear-path AND+08/reset
-+28/INC BP, and direct2148 height/interaction continuation without an extra
-frame. Then port2350..23BE, state0002:110 known bytes/45 sites excluding
-UNKNOWN2382. It has optional INT60 AX030C (return2379), optional283B call
-(return2386), unchecked live SS nibble lookup and5DF8 call(return23BC).
-PC index3 selects the already scoped LoadEffect through its live table.
-Retain all actual return frames and explicit unbound/changed child seams;
-no table extent or UNKNOWN reachability is inferred. The parent1F19 still
-has eleven direct CALL children with scoped C; broader state initialization,
-IRQ timing and the full record/scan composition remain open.
+State0008 at23BF..23F2 now passes18 core/adapter fixtures:52 new caller bytes,
+18 sites/all6 jump edges,1,976 events and eight completed mutants. State0002 at
+2350..23BE passes35 core/adapter fixtures:110 known caller bytes/45 sites/all20
+edges,8,772 events and eight mutants. The two scopes add162 unique caller bytes;
+UNKNOWN2382 stays unresolved and excluded. State0008 retains actual5DC6 return
+23C2 and direct2148 finish; state0002 composes native INT60 AX030C, optional
+283B, live SS nibble selection and full5DF8 mask drawing. Its sound gate requests
+INT60 only when DS2010 differs from FF and DS25A7 bit0 is set. Both live child
+RET and PC dispatch/IRET seams remain explicit. See entity-simulation.md.
+
+The283B child now has an optional bus verified in28 core/adapter fixtures,
+37 sites,2,632 events and four completed mutants; its37-fixture ordinary-RAM
+regression also passes. Live PUSH SS/POP ES, saved words, actual RET, DF,
+VGA source/destination aliases and instruction-phase FLAGS flow through the
+bus. This extends its existing66-byte scope and adds no translated bytes.
+
+Next port state0010 at23F3..254E:348 bytes/127 sites, with the sole known
+external entry from1F9D. The+28==11 special path samples/exchanges pixels and
+joins240F after resetting+28; the ordinary modulo16 path enters240F at0/8.
+254C is a backward join, not a cycle through the special path. Preserve both
+CX&7 mask-shift LOOPs, five actual CALL/RET frames to5DC6/5EBA, live stack and
+record restores, unchecked SS nibble reads, ordered transitions/callback reads,
+optional INT61 AX040A return24D0 and direct20E2/1FE8/1FEB tails. All direct
+children have scoped C; whole-state composition is the next uncertainty.
+The1F19 parent's eleven direct CALL children retain platform/fatal seams;
+broader state initialization, IRQ timing and record/scan composition stay open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

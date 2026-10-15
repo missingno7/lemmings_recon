@@ -20,7 +20,8 @@ import pcspeaker_dispatch as pc_dispatch
 import sound_latches as sound
 from minimap_vga import MinimapVga, VGA_BASE, VGA_END
 from unicorn import Uc, UcError, UC_ARCH_X86, UC_MODE_16
-from unicorn import UC_HOOK_CODE, UC_HOOK_INTR, UC_HOOK_MEM_READ, UC_HOOK_MEM_WRITE
+from unicorn import UC_HOOK_CODE, UC_HOOK_INTR, UC_HOOK_MEM_READ, UC_HOOK_MEM_WRITE, UC_HOOK_INSN
+from unicorn.x86_const import UC_X86_INS_OUT
 
 SIZE, MASK, FLAGS = sound.SIZE, sound.MASK, sound.FLAGS
 CF, AF, IF = 0x0001, 0x0010, 0x0200
@@ -276,6 +277,8 @@ def setup(case):
 
 
 class Access:
+    event_limit = MAX_BUS_EVENTS
+
     def __init__(self, case, memory, regs, device):
         self.case, self.memory, self.regs, self.device = case, memory, regs, device
         self.events = []
@@ -324,7 +327,7 @@ class Access:
                 self.used.add('sound')
 
     def access(self, kind, address, flags, mask=FLAGS, value=None):
-        if len(self.events) >= MAX_BUS_EVENTS:
+        if len(self.events) >= self.event_limit:
             raise OracleFailure('entity-interactions bus callback budget exhausted')
         address &= MASK
         self._provider(kind, address)
@@ -353,6 +356,8 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
     Sites/edges retain ('main', ...) tags so callers can filter owned ranges.
     The optional access object may flush deferred provider effects in its
     instruction_complete() method, after the actual CPU instruction finishes.
+    A declared word-port domain supplies out_word(port, value, flags, mask);
+    otherwise OUT fails. Access subclasses may set their own bounded event_limit.
     Defaults preserve the standalone 2EC0 pre-RET/actual-RET boundaries.
     """
     oracle_require(instruction_limit > 0, 'original instruction limit must be positive')
@@ -537,10 +542,21 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
             access.access('write', address + delta, current_flags, current_mask,
                           (value >> (delta * 8)) & 0xFF)
 
+    def on_out(u, port, size, value, _):
+        output = getattr(access, 'out_word', None)
+        if size != 2 or output is None:
+            fail(u, 'unexpected original OUT outside declared word-port domain')
+            return
+        try:
+            output(port, value, current_flags, current_mask)
+        except Exception as error:
+            fail(u, 'original OUT provider failed: ' + str(error))
+
     cpu.hook_add(UC_HOOK_CODE, code)
     cpu.hook_add(UC_HOOK_INTR, interrupt)
     cpu.hook_add(UC_HOOK_MEM_READ, on_read)
     cpu.hook_add(UC_HOOK_MEM_WRITE, on_write)
+    cpu.hook_add(UC_HOOK_INSN, on_out, None, 1, 0, UC_X86_INS_OUT)
     try:
         cpu.emu_start(physical(regs['cs'], regs['ip']), 0, count=instruction_limit)
     except UcError as error:

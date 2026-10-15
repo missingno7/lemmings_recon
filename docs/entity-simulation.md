@@ -197,10 +197,64 @@ INT clears IF/TF without defining arithmetic flags that were already undefined.
 This avoids duplicating INT/driver transport between parent harnesses. It does
 not introduce a game interpreter or replace original execution with C results.
 
-Next connect the52-byte/18-site state0008 at23BF..23F2 through5DC6 and2148.
-Then connect state0002 at2350..23BE:110 known code bytes/45 sites, optional
-INT60 command030C, live PC effect dispatch, optional283B pattern restoration,
-unchecked SS table lookup and5DF8 mask drawing. Byte2382 remains UNKNOWN and
-excluded; neither the JMP over it nor this ordering proves it dead. Actual
-CALL/RET and INT/IRET words, table extents, initialization and IRQ timing remain
-explicit obligations.
+## State0008 and state0002
+
+State0008 at23BF..23F2 owns52 bytes/18 sites. Its actual5DC6 CALL returns at
+23C2 before the first memory DEC of Y. Each of up to two upward probes rereads
+DS:0004, replaces AL from ES:DI and ANDs AL,AH. A clear probe clears bit0008,
+resets+28, and uses live Y+1 in BP; two occupied probes use live Y. Both paths
+JMP2148 without adding a frame. Entry FLAGS reach the memory DEC/AND writes;
+those instructions define their results only after the write phase.
+
+State0002 at2350..23BE owns110 known bytes/45 sites. UNKNOWN2382 is excluded
+from its C ranges and remains unresolved. The full-byte INC/write of+28 leads
+to20E2 when AL equals34. Otherwise DEC AL preserves its residual value; only
+zero enters the first-frame work. Live DS:2010 other than FF and DS:25A7 bit0
+request AX030C INT60, whose actual IRET must return CS:2379. The live PC table
+selects its scoped LoadEffect child; unbound vectors, untranslated table targets
+and changed child/IRET targets stop explicitly. Returned registers and segments
+feed every later record access.
+
+TEST word+08,0100 selects the actual283B CALL with return2386. Its optional bus
+preserves device access and live saved DX/ES/DI/SI; only after its actual RET
+does the parent reread X/Y. Wrapped SUB/SHR/MUL arithmetic and live SS saves
+select the unchecked SS interaction nibble. Nibbles9 and5 skip drawing; others
+CALL5DF8 with return23BC. The full drawing path preserves its setup OUTs,
+source/latch/mirror/pixel order, CLI/STI, live saved DS/SI and defined FLAGS.
+Even an early clipped child changes registers and performs setup OUTs. Normal
+state0002 paths JMP1FEB; no interaction CALL or parent POP ES is invented.
+
+`tests/entity_state8.py` passes18 fixtures at logical-core/JMP-adapter
+boundaries:52 new caller bytes/18 sites/all6 jump edges,1,976 ordered events
+and eight completed mutants. It checks actual pixel and interaction returns,
+first/second occupied and clear paths, signed height clamping, live pitch/mask,
+stack/record/word-wrap aliases and VGA reads. Child byte ranges are not added
+again. Each worker retains180 seconds/384 MiB process/640 MiB tree limits;
+original calls have1,200 instructions and1,024 ordered events as hard bounds.
+
+`tests/entity_state2.py` passes35 fixtures at both boundaries:110 new caller
+bytes/45 sites/all20 jump edges,8,772 ordered events and eight completed
+mutants. It includes independent complete-plane expectations for full drawing,
+clipping boundaries, DF, pattern-to-mask handoff, both skip nibbles, all scoped
+PC dispatch seams, live returned DS/SI, saved DX and changed pattern/mask returns.
+The full drawing body and viewport are not shortened. Its hard bounds are
+2,400 original instructions/8,192 events per call and180 seconds/384 MiB process/
+640 MiB tree per worker. Callback exhaustion/errors fail verification rather
+than crediting a mutant. Shared original execution now permits an explicitly
+declared word-OUT provider and per-access-class event cap; existing defaults
+and undeclared-OUT rejection remain intact.
+
+Together these two parent scopes add162 unique caller bytes/63 sites. The
+pattern bus extension adds no bytes to its existing66-byte translation. This
+is scoped acceptance; full original/native campaigns with matching input hashes
+remain required before aggregate coverage acceptance.
+
+These contracts leave table extents, state initialization, IRQ timing and whole
+simulation readiness open. The next state0010 body is23F3..254E,348 bytes/
+127 sites. Its special+28==11 path temporarily adjusts X/Y, samples a pixel,
+performs two three-byte exchanges and joins240F after resetting+28. The ordinary
+path advances+28 modulo16 and enters240F only at0/8. Two CX&7 mask-shift loops,
+five actual child CALL frames, live stack/record aliases and optional AX040A
+INT61 must flow into the existing finish/interactions tails. A backward join
+at254C is not a repeated pass through the special path. No known interior
+cross-entry currently splits this state into separately owned handlers.

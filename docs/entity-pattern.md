@@ -40,12 +40,55 @@ flags come from the second ADD DI,019Dh at 2873; control flags are preserved.
 Offsets and SP wrap at 16 bits; a word's high byte uses physical address+1,
 with 20-bit physical wrapping, rather than rewrapping its segment offset.
 
+## Optional raster-bus contract
+
+The bus-aware core applies the same boundary operation to each physical byte
+transfer. Each present `LmnRasterBus` read or write callback receives its byte
+transfer in instruction order, with a 20-bit physical address and the FLAGS
+value visible at that instruction. Word transfers are low byte then high byte;
+the high byte is at `(physical + 1) & 0FFFFFh`. SP, SI and DI still wrap
+independently as 16-bit offsets before segment translation. A missing read or
+write callback falls back to the canonical 1 MiB RAM image; a present callback
+owns that byte transfer, with no second RAM access by the core. The routine
+does no port I/O. There is no shadow RAM: bus-side changes to the canonical
+image are seen by subsequent core reads, including stack pops and the final
+return-word read.
+
+The coordinate and saved-register pushes, temporary `PUSH SS`/`POP ES`, and
+the final `POP ES/DI/SI` all use live SS-backed memory. The `POP ES` read is
+the value used for all three rows, so a provider that changes the pushed word
+before the pop can change the destination segment. Each `MOVSW` reads its full
+source word before writing either destination byte; `MOVSB` follows it, and
+later rows observe earlier writes. DF determines the SI and DI step for both
+string instructions, while the literal `ADD DI,019Dh` adjustments remain
+forward additions.
+
+Bus callbacks observe FLAGS at the corresponding original instruction phase.
+The entry coordinate reads see entry flags. The two initial pushes see the
+flags after the four `SHR` instructions update their defined arithmetic bits.
+The `MUL` leaves undefined arithmetic bits opaque and updates CF/OF; subsequent
+stack accesses see those flags until the two BX additions replace arithmetic
+status. The temporary segment pushes and `POP ES` see the second BX-add flags.
+`ADD SI,16h` then defines arithmetic status before the first string transfer.
+A row's `MOVSW` and `MOVSB` transfers see the flags current at those string
+instructions; between rows, each `ADD DI,019Dh` updates arithmetic status for
+the next row. The final stack pops and adapter return-word read see the final
+ADD flags. Push, pop, string and return operations do not themselves change
+FLAGS; control flags are preserved by the arithmetic instructions.
+
+The logical bus core still stops before RET. Its adapter reads the return word
+from the live SS:SP after row writes and final register pops, then advances SP
+by two. The legacy RAM core and adapter use the same logical path with no bus,
+so their ordinary RAM boundary remains available.
+
 `c/entity_pattern.c` keeps coordinates and saved cells in the canonical memory
-image and exposes a logical core plus an oracle register adapter. Its declared
-domain is ordinary RAM, intact executing code and quiescent interrupts with TF
-clear. Device memory, provider side effects, executing-code aliases and complete
-parent reachability are outside this leaf's C acceptance. No new code/data
-classification or whole-game acceptance follows from translating it.
+image and exposes a logical core plus a register adapter. The no-bus entrypoints
+retain the ordinary-RAM domain, with intact executing code and quiescent
+interrupts with TF clear. The bus-aware entrypoints provide the routing contract
+above; device behavior comes from the supplied bus and is not defined by this
+leaf. This note does not establish executing-code alias support or complete
+parent reachability. No new code/data classification or whole-game acceptance
+follows from translating it.
 
 The focused `tools/difftest.py entity_pattern` gate passes 37 fixtures at both
 boundaries, comparing all registers, final defined flags and the complete 1 MiB
@@ -63,3 +106,13 @@ and cannot count as mutant detection. DLLs live in an owned temporary directory
 removed after the worker exits, including failed runs. Evidence is retained in
 build/entity-pattern-differential.json with input hashes; acceptance is scoped
 to this RAM leaf, separately from aggregate coverage and parent readiness.
+
+
+The optional-bus gate `tools/difftest.py entity_pattern_bus` passes 28 fixtures
+at both boundaries, all 37 sites, 2,632 ordered events and four completed
+mutants. It checks complete RAM, registers, defined flags at each callback,
+VGA source/destination/overlap state, live provider changes to saved DX and the
+SS-to-ES word, and live return words. NULL-bus equality checks retain the old
+RAM API. Each call has a 100-instruction/96-event cap, enforced native callback
+exits, and the same 180-second/384-MiB worker limit. This extends the existing
+66-byte translation's device contract; it adds no new translated bytes.

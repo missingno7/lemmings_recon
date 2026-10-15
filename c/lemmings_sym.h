@@ -678,4 +678,10 @@
 #define CS_AdvanceEntityState4000 0x2340u
 #define CS_EntityState1000AfterPixelCall 0x2316u
 #define SEG09A9_EntityCompletionCounter 0x0046u
+#define CS_AdvanceEntityState0008 0x23BFu
+#define CS_AdvanceEntityState0002 0x2350u
+#define CS_EntityState0008AfterPixelCall 0x23C2u
+#define CS_EntityState0002AfterSound 0x2379u
+#define CS_EntityState0002AfterPatternCall 0x2386u
+#define CS_EntityState0002AfterMaskCall 0x23BCu
 #endif

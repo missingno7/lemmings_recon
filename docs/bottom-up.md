@@ -159,9 +159,16 @@ sites/18 edges in23 core/adapter fixtures with eight mutants; a separate1,024
 original-only prefix matrix covers their byte transforms. See entity-simulation.md.
 The shared original-instruction oracle now accepts explicit parent spans and
 RET/stop contracts, retaining one live defined-FLAGS mask and the existing
-INT/driver transport. Next connect23BF state0008, then2350 state0002 with2382
-still UNKNOWN and excluded. The remaining states and live1FEB iteration/scan
-parent retain their initialization, table, platform and IRQ obligations.
+INT/driver transport. State0008 now adds52 bytes/18 sites/all6 edges in18
+core/adapter fixtures with eight mutants; state0002 adds110 known bytes/45
+sites/all20 edges in35 fixtures with eight mutants. Their actual pixel, pattern,
+mask and PC frames retain live DS/ES/SS/FLAGS. The283B optional bus passes28
+additional fixtures/four mutants and extends the existing66-byte translation.
+UNKNOWN2382 remains unresolved and excluded. Next compose the348-byte/127-site
+state0010 body23F3..254E, including its special path's backward join at254C,
+two bounded mask-shift loops and actual5DC6/5EBA/INT61 handoffs. The remaining
+states and live1FEB iteration/scan parent retain their initialization, table,
+platform and IRQ obligations.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

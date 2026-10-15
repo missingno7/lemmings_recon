@@ -477,7 +477,15 @@ loc_2340:
     jmp loc_20E2 ; @0234A
 loc_234D:
     jmp loc_1FEB ; @0234D
+AdvanceEntityState0002:
 loc_2350:
+; State0002: INC the full +28 byte; equality34 marks inactive via20E2.
+; Only the old zero value enters the first-frame work. Optional INT60 AX030C
+; returns all live registers/segments before TEST [SI+8],0100 and CALL283B.
+; After actual pattern RET, reread live DS:SI coordinates; SS owns the nibble
+; map. Values9/5 skip drawing; other nibbles CALL5DF8 with its live bus effects.
+; Actual child return words select continuation. No outer RET or interaction
+; CALL is added here; normal exits JMP1FEB. UNKNOWN2382 remains unresolved.
     mov al,[si+0x28] ; @02350
     inc al ; @02353
     mov [si+0x28],al ; @02355
@@ -495,6 +503,7 @@ loc_2366:
     jz loc_2379 ; @02372
     mov ax,0x30c ; @02374
     int 0x60 ; @02377
+EntityState0002AfterSound:
 loc_2379:
     test word [si+0x8],0x100 ; @02379
     jnz loc_2383 ; @0237E
@@ -503,6 +512,7 @@ loc_2379:
     db 0x90 ; @02382
 loc_2383:
     call CopyEntityPatternToInteractionMap ; @02383
+EntityState0002AfterPatternCall:
 loc_2386:
     mov ax,[si] ; @02386
     mov bx,[si+0x2] ; @02388
@@ -531,9 +541,17 @@ loc_23B2:
     jmp loc_1FEB ; @023B6
 loc_23B9:
     call DrawClippedEntityMask ; @023B9
+EntityState0002AfterMaskCall:
     jmp loc_1FEB ; @023BC
+AdvanceEntityState0008:
 loc_23BF:
+; State0008: actual CALL5DC6/RET23C2, then up to two upward probes.
+; Each memory DEC sees entry FLAGS; each SUB rereads live DS0004 pitch.
+; MOV AL replaces the old low byte before AND AL,AH. A clear sample resets
+; state bit0008 and +28, then uses live Y+1; two set samples use live Y.
+; Both paths JMP2148 with BP and the flowing DS/ES/SS/FLAGS, without a frame.
     call PrepareEntityPixelSample ; @023BF
+EntityState0008AfterPixelCall:
     dec word [si+0x2] ; @023C2
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @023C5
     mov al,[es:di] ; @023C9
@@ -966,6 +984,8 @@ loc_27FC:
 ; Producer 3464..34C7 saves old cells at record+16h while installing
 ; 02/0A/03 rows. Records advance 2Dh at 1FEC; no shadow pattern exists.
 ; PUSH/POP use live SS:SP: map writes may change restored ES/DI/SI/RET.
+; Optional bus accesses retain instruction-phase FLAGS and live PUSH SS/POP ES;
+; the destination segment is the popped value, including provider changes.
 ; Three MOVSW/MOVSB pairs retain DF and sequential overlap. Each literal
 ; 019Dh adjustment follows a pair; DF=1 is not a reversed 9-byte copy.
 ; AX=low product, BX=map offset, DX=live restored save; CX/BP/DS/SS unchanged.

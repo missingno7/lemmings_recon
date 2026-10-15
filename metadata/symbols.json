@@ -15678,7 +15678,7 @@
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 66,
     "c_implementation": "c/entity_pattern.c",
-    "verification_evidence": "tests/entity_pattern.py:37 adapter and37 core-boundary original-vs-C cases,66 bytes/37 sites,no branches,four completed mutants; ordinary RAM,wrapped coordinates/logical shifts,DF-sensitive sequential overlap,live saved ES/DI/SI and actualRET,physical/offset wrap,whole RAM/registers/defined flags; docs/entity-pattern.md"
+    "verification_evidence": "tests/entity_pattern.py:37 adapter and37 core-boundary original-vs-C cases,66 bytes/37 sites,no branches,four completed mutants; ordinary RAM,wrapped coordinates/logical shifts,DF-sensitive sequential overlap,live saved ES/DI/SI and actualRET,physical/offset wrap,whole RAM/registers/defined flags; docs/entity-pattern.md Optional-bus core/adapter:tests/entity_pattern_bus.py28 fixtures,37 sites,2,632 events,4 completed mutants;NULL-bus API equality,live SS-to-ES/provider/RET and VGA/DF/flag phases. No additional C bytes;build/entity-pattern-bus-differential.json."
   },
   {
     "address": 11780,
@@ -58020,6 +58020,133 @@
     "confidence": "PROVEN",
     "evidence": [
       "2335 increments live byte before marking state2000 slot inactive;3ACE..3AEF uses its wrapped100x value over0047 for display; startup clears it; aliases and wider gameplay meaning remain open. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9151,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 52,
+    "symbol_name": "AdvanceEntityState0008",
+    "aliases": [
+      "loc_23BF"
+    ],
+    "callers": [],
+    "callees": [
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match state0008 entry at1F95; two live upward probes feed direct2148 height/interactions tail. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state8.c",
+    "c_core": "lmn_entity_state8_core",
+    "c_code_ranges": [
+      [
+        9151,
+        9203
+      ]
+    ],
+    "verification_evidence": "tests/entity_state8.py:18 fixtures at logical-core/JMP-adapter boundaries;52 bytes/18 sites/all6 jump edges;1,976 events;8 completed mutants;actual pixel and interaction RETs;live pitch, DS/ES/SS aliases and defined FLAGS. build/entity-state8-differential.json; scoped domain, not full simulation acceptance."
+  },
+  {
+    "address": 9040,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 111,
+    "symbol_name": "AdvanceEntityState0002",
+    "aliases": [
+      "loc_2350"
+    ],
+    "callers": [],
+    "callees": [
+      10299,
+      24056
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match state0002 entry from1F6D; full-byte cadence, optional native INT60 command030C, pattern copy and mask drawing with live SS nibble ownership. UNKNOWN2382 remains unresolved and excluded. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state2.c",
+    "c_core": "lmn_entity_state2_core",
+    "c_code_ranges": [
+      [
+        9040,
+        9090
+      ],
+      [
+        9091,
+        9151
+      ]
+    ],
+    "verification_evidence": "tests/entity_state2.py:35 logical-core/JMP-adapter fixtures;110 known caller bytes/45 sites/all20 jump edges;8,772 events;8 completed mutants;actual PC INT/IRET, pattern/mask CALL/RET, full mask drawing and live segment/provider/stack aliases. build/entity-state2-differential.json; scoped domain, not full simulation acceptance."
+  },
+  {
+    "address": 9154,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0008AfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual original child return continuation; changed live frame target stops before caller resumes. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9081,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0002AfterSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual original child return continuation; changed live frame target stops before caller resumes. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9094,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0002AfterPatternCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual original child return continuation; changed live frame target stops before caller resumes. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9148,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0002AfterMaskCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual original child return continuation; changed live frame target stops before caller resumes. docs/entity-simulation.md"
     ],
     "verification_status": "UNRESOLVED"
   }
