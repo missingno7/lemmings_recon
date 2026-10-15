@@ -302,7 +302,14 @@ loc_2179:
     mov byte [si+0x2a],0xff ; @021A5
     mov byte [si+0x29],0x8 ; @021A9
     jmp loc_1FE8 ; @021AD
+AdvanceEntityState0004:
 loc_21B0:
+; State0004 JMP entry from1F7D; owns21B0..22DE (303 bytes/87 sites).
+; +28 modulo4; +23<=10 and +25==0 are unsigned byte decisions.
+; Real CALL5DC6 returns2205. Sample exhaustion uses signed BP versus B4;
+; the first two20E2 exits skip the Y store, unlike the third exhaustion.
+; Occupied sample stores Y before unsigned +23<=3C transition selection.
+; Live callback/pitch/gate reads and optional INT61 frame remain explicit.
     mov al,[si+0x28] ; @021B0
     inc al ; @021B3
     and al,0x3 ; @021B5
@@ -327,6 +334,8 @@ loc_21B0:
     jmp loc_1FE8 ; @021FF
 loc_2202:
     call PrepareEntityPixelSample ; @02202
+EntityState0004AfterPixelCall:
+; Actual near RET target; shared20E2/1FE8 JMPs acquire no extra frames.
     mov bp,[si+0x2] ; @02205
     mov al,[es:di] ; @02208
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0220B
@@ -380,7 +389,9 @@ loc_224D:
     jz loc_22A0 ; @02299
     mov ax,0x408 ; @0229B
     int 0x61 ; @0229E
+EntityState0004AfterSound:
 loc_22A0:
+; Only a matching live INT61 CS:IP resumes here; DS/AX/FLAGS flow onward.
     jmp loc_1FE8 ; @022A0
 loc_22A3:
     mov word [si+0x8],0x0 ; @022A3
@@ -397,7 +408,9 @@ loc_22A3:
     mov byte [si+0x2a],0x0 ; @022D4
     and byte [si+0x24],0x1 ; @022D8
     jmp loc_1FE8 ; @022DC
+AdvanceEntityState0001:
 loc_22DF:
+; State0001 JMP entry: +28 modulo16; zero marks +26 inline, then1FEB.
     mov al,[si+0x28] ; @022DF
     inc al ; @022E2
     and al,0xf ; @022E4
@@ -407,7 +420,12 @@ loc_22DF:
 loc_22EE:
     mov byte [si+0x26],0xff ; @022EE
     jmp loc_1FEB ; @022F2
+AdvanceEntityState1000:
 loc_22F5:
+; State1000: +28 modulo16; zero JMP20E2. Otherwise PUSH signed +27,
+; scale AX by8, sample at live X+offset/Y through actual CALL6141/RET2316.
+; Then POP BX from live SS (not a cached delta), test pixel and conditionally
+; ADD live X,BX with entry FLAGS on RMW writes. Continue1FEB; no local RET.
     mov al,[si+0x28] ; @022F5
     inc al ; @022F8
     and al,0xf ; @022FA
@@ -423,6 +441,8 @@ loc_22F5:
     db 0x03,0xc8 ; ENCODED: add cx,ax (NASM chooses a different encoding) ; @0230E
     mov bx,[si+0x2] ; @02310
     call PrepareCoordinatePixelSample ; @02313
+EntityState1000AfterPixelCall:
+; Original caller's signed-delta save is consumed only after actual child RET.
     pop bx ; @02316
     mov al,[es:di] ; @02317
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0231A
@@ -432,7 +452,10 @@ loc_2320:
     jmp loc_1FEB ; @02320
 loc_2323:
     jmp loc_20E2 ; @02323
+AdvanceEntityState2000:
 loc_2326:
+; State2000: +28 modulo8; zero INCs live DS0046 before marking +26 inline.
+; The byte INC preserves CF; its resulting FLAGS reach the mark and1FEB.
     mov al,[si+0x28] ; @02326
     inc al ; @02329
     and al,0x7 ; @0232B
@@ -440,10 +463,13 @@ loc_2326:
     jz loc_2335 ; @02330
     jmp loc_1FEB ; @02332
 loc_2335:
-    inc byte [0x46] ; @02335
+    inc byte [EntityCompletionCounter-GameDataImage] ; @02335
     mov byte [si+0x26],0xff ; @02339
     jmp loc_1FEB ; @0233D
+AdvanceEntityState4000:
 loc_2340:
+; State4000: memory INC +28, then fresh AL read and CMP0E; no modulo mask.
+; RMW writes observe entry FLAGS. Equality JMPs20E2; otherwise1FEB.
     inc byte [si+0x28] ; @02340
     mov al,[si+0x28] ; @02343
     cmp al,0xe ; @02346

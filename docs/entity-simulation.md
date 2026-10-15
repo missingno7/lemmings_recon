@@ -15,6 +15,7 @@ host state or establish bounds for unchecked record accesses.
 | 002B | EntityUpdateGate | Exact `==FF` tests at1F19,30A6,3150,3944,3F52,3FEF,4032;4028 XORs FF |
 | 0042 | EntitySlotsRemaining | 1F31 copies0043;1FEF decrements this live byte after each slot |
 | 0043 | EntitySlotBound | 30CF selects `0088+[0043]*2D`;314B increments;1F2E loads the pass bound |
+| 0046 | EntityCompletionCounter | 2335 increments before marking a state2000 slot;3ACE derives its displayed ratio over0047 |
 | 004B | EntityScanRequest | 400B writes FF;1FF8 enables scan;203C clears on cursor equality |
 | 004C | EntityScanCursor | 2005/2008 tests against0043;2026/2037 increments; no explicit reset at400B/203C |
 | 0050 | EntityWorkGuard | 1F26/3670 set FF;1FFF/2041/3678 clear;3157 tests exact FF |
@@ -116,6 +117,90 @@ credit. Input hashes must match the retained reports; file preservation does not
 refresh evidence. No game boot or native timing claim is involved.
 
 This is scoped verification, not full original/native campaign acceptance.
-Next translate21B0..22DE while retaining the distinct direct20E2 inactive exit,
-real5DC6 return2205 and optional INT61 return22A0. Continue other state blocks
-and the live iteration/scan parent with all platform and changed-target seams.
+The following five entries continue that bottom-up composition. The live
+iteration/scan parent and remaining states retain their platform and
+changed-target seams.
+
+## State0004 and neighboring cadence entries
+
+The21B0 entry owns303 bytes/87 sites through22DE. Parent1F7D selects it after
+earlier-priority masks. Its+28 cadence is modulo4. The unsigned+23<=10 test,
+or a zero+25 byte, selects the actual5DC6 CALL at2202 (return2205). Otherwise
+the ordered21C6..21FB stores select state0400 and live callback DS:003A.
+
+After pixel setup, BP is read from live+02. An empty first sample increments
+BP, checks signed BP<B4, then advances DI by live DS:0004. The second empty
+sample repeats that threshold and step. Either early threshold failure JMPs
+20E2 without storing Y. A third empty sample increments BP and byte+23 by3,
+stores Y, then checks signed BP>=B4. An occupied sample stores Y first and
+uses unsigned+23<=3C to choose the22A3 state-zero transition versus the2256
+state-one transition. Callback words at DS:002E and all later fields remain
+live. The state-one branch tests DS:2010 exactly FF and DS:25A7&3 before
+AX=0408 INT61. Only matching CS:22A0 continues to1FE8; other service/return
+seams stay explicit. No branch POPs the parent's saved ES or performs a RET.
+
+The separate cadence entries own113 bytes/45 sites and18 direct jump edges:
+
+| Entry | State mask | Span | Observed behavior |
+|---|---|---|---|
+| 22DF | 0001 | 22DF..22F4 | +28 modulo16; zero marks+26=FF inline |
+| 22F5 | 1000 | 22F5..2325 | +28 modulo16; zero JMPs20E2; other values probe a displaced pixel |
+| 2326 | 2000 | 2326..233F | +28 modulo8; zero INCs DS:0046 then marks+26 inline |
+| 2340 | 4000 | 2340..234F | Memory INC+28, fresh AL read, equality with0E selects20E2 |
+
+The displaced probe sign-extends+27, PUSHes AX, doubles AX three times and adds
+it to live X in CX. Live Y supplies BX to6141. The actual CALL at2313 pushes
+2316. Only after consuming its actual return word does POP BX consume the
+original signed-delta save. The coordinate child also restores its own BX/CX/DX
+from live SS words and sets ES=A000. A clear masked pixel adds the popped BX
+to live X; an occupied pixel skips that addition. Both paths continue1FEB.
+SS/DS aliases may change saves, source fields, masks and returned values.
+
+The0046 name records the increment and the3ACE..3AEF ratio calculation; it does
+not establish historical state names, an array extent or a global byte domain.
+Startup zeroing and these direct references do not exclude aliases or UNKNOWN
+writers. The four entrypoints have no known direct interior cross-entries;
+their parent dispatch JMPs are1F8D,1FD5,1FDD,1FE5. The next handler at2350 is
+outside these scopes.
+
+`tests/entity_state4.py` passes36 fixtures at both logical-core/JMP-adapter
+boundaries:303 new caller bytes/87 sites/all29 jump edges,151 integrated main
+sites,16 sites in each pinned external driver,3,910 ordered events and eight
+completed mutants. It covers all three probe outcomes, early inactive exits
+without Y stores, byte+23 wrap, signed heights versus unsigned field tests,
+live pitch/callbacks/stack/record aliases, normal AdLib/Tandy command0408,
+unbound vectors/bindings and changed pixel/IRET targets. AH is fixed04 at229E;
+the bound dispatcher path is supported, while wider driver commands retain
+their existing untranslated seams. Constructed entry FLAGS use7FD5|2 with TF
+clear; saved frame bytes remain live and unrestricted.
+
+`tests/entity_cadence.py` passes23 fixtures at both boundaries:113 new bytes/
+45 sites/all18 jump edges,23 integrated coordinate-child sites,654 ordered
+events and eight completed mutants. These include signed displacement scaling,
+actual6141 RET followed by the live POP BX, post-INC fresh reread, counter wrap
+and store order, DF, RAM/VGA samples and physical/offset aliases. Another1,024
+original-only prefixes execute all256 input bytes at each entry, comparing+28,
+AL/AH and ZF with independent formulas. Each prefix executes four instructions
+(three for2340) and stops before its conditional branch. This is separate from
+the native fixture count and adds no C bytes.
+
+The two scopes add416 unique bytes/132 sites; shared helpers are counted once.
+Both workers retain180-second/384-MiB process/640-MiB tree caps. State0004 has
+a2,000-instruction/1,024-event limit; cadence has256 instructions/512 events.
+Unicorn hook cycles are collected during the prefix matrix, and worker/temp-DLL
+cleanup remains mandatory after every outcome.
+
+The state0004 oracle uses the existing independent original-instruction engine
+with explicit main instruction spans, RET expectations, stop offsets and access
+providers. It executes original bytes with one flowing defined-FLAGS mask;
+INT clears IF/TF without defining arithmetic flags that were already undefined.
+This avoids duplicating INT/driver transport between parent harnesses. It does
+not introduce a game interpreter or replace original execution with C results.
+
+Next connect the52-byte/18-site state0008 at23BF..23F2 through5DC6 and2148.
+Then connect state0002 at2350..23BE:110 known code bytes/45 sites, optional
+INT60 command030C, live PC effect dispatch, optional283B pattern restoration,
+unchecked SS table lookup and5DF8 mask drawing. Byte2382 remains UNKNOWN and
+excluded; neither the JMP over it nor this ordering proves it dead. Actual
+CALL/RET and INT/IRET words, table extents, initialization and IRQ timing remain
+explicit obligations.

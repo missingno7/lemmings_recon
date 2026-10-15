@@ -152,8 +152,16 @@ JMP tails pass24 fixtures/55 unique bytes/18 sites/eight edges/six mutants.
 Their zero-state2047 parent passes37 fixtures/309 additional bytes/104 sites/
 33 owned edges/eight mutants, including actual5DC6 and interaction CALL/RETs.
 The combined364 new bytes retain overlap, segment, stack and device contracts.
-Next connect21B0..22DE, then the remaining states and live1FEB iteration/scan
-parent. Its direct20E2 exit skips the Y store; optional INT61 remains explicit.
+State0004 at21B0 now adds303 bytes/87 sites/29 edges in36 core/adapter fixtures
+with eight mutants; its early20E2 exits skip the Y store, while real5DC6 and
+INT61 frames remain live. Four neighboring cadence entries add113 bytes/45
+sites/18 edges in23 core/adapter fixtures with eight mutants; a separate1,024
+original-only prefix matrix covers their byte transforms. See entity-simulation.md.
+The shared original-instruction oracle now accepts explicit parent spans and
+RET/stop contracts, retaining one live defined-FLAGS mask and the existing
+INT/driver transport. Next connect23BF state0008, then2350 state0002 with2382
+still UNKNOWN and excluded. The remaining states and live1FEB iteration/scan
+parent retain their initialization, table, platform and IRQ obligations.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

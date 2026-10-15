@@ -669,4 +669,13 @@
 #define SEG09A9_EntityWorkGuard 0x0050u
 #define SEG09A9_EntityRecordsBase 0x0088u
 #define CS_EntityZeroStateAfterPixelCall 0x206Bu
+#define CS_AdvanceEntityState0004 0x21B0u
+#define CS_EntityState0004AfterPixelCall 0x2205u
+#define CS_EntityState0004AfterSound 0x22A0u
+#define CS_AdvanceEntityState0001 0x22DFu
+#define CS_AdvanceEntityState1000 0x22F5u
+#define CS_AdvanceEntityState2000 0x2326u
+#define CS_AdvanceEntityState4000 0x2340u
+#define CS_EntityState1000AfterPixelCall 0x2316u
+#define SEG09A9_EntityCompletionCounter 0x0046u
 #endif

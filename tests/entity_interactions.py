@@ -154,7 +154,9 @@ def flags_after(ins, previous_mask):
         return (previous_mask & ~ARITH) | 0x0801
     if mnemonic in ('sti', 'cli'):
         return previous_mask | IF
-    if mnemonic in ('int', 'iret'):
+    if mnemonic == 'int':
+        return previous_mask | 0x0300
+    if mnemonic == 'iret':
         return FLAGS
     return previous_mask
 
@@ -340,14 +342,31 @@ class Access:
         return value & 0xFF
 
 
-def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
+def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
+             main_instructions=None, main_ret_continuations=None,
+             stop_offsets=None, access_factory=Access,
+             instruction_limit=MAX_INSTRUCTIONS):
+    """Execute identified original instructions, including optional parent spans.
+
+    Parent RET entries map address -> (expected IP, changed-return status).
+    Matching returns continue; stop_offsets maps main IP -> success/seam status.
+    Sites/edges retain ('main', ...) tags so callers can filter owned ranges.
+    The optional access object may flush deferred provider effects in its
+    instruction_complete() method, after the actual CPU instruction finishes.
+    Defaults preserve the standalone 2EC0 pre-RET/actual-RET boundaries.
+    """
+    oracle_require(instruction_limit > 0, 'original instruction limit must be positive')
+    main_code = MAIN_INS if main_instructions is None else main_instructions
+    main_rets = {address for address, ins in main_code.items() if ins.mnemonic == 'ret'}
+    return_contracts = {} if main_ret_continuations is None else main_ret_continuations
+    stops = {} if stop_offsets is None else stop_offsets
     cpu = Uc(UC_ARCH_X86, UC_MODE_16)
     cpu.mem_map(0, SIZE * 2)
     cpu.mem_write(0, bytes(memory))
     cpu.mem_write(SIZE, bytes(memory))
     for name, value in regs.items():
         cpu.reg_write(REG_IDS[name], value)
-    access = Access(case, memory, regs, device)
+    access = access_factory(case, memory, regs, device)
 
     def mirror(address, value):
         cpu.mem_write(address, bytes((value,)))
@@ -431,12 +450,13 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
             interrupt_returns.append(('sound', cs, resume_ip))
         u.reg_write(REG_IDS['cs'], target_cs)
         u.reg_write(REG_IDS['ip'], target_ip)
-        current_mask = FLAGS
+        # INT defines cleared IF/TF; it does not define undefined arithmetic bits.
+        current_mask |= 0x0300
 
     def code(u, _address, _size, _):
         nonlocal previous, current_flags, current_mask, steps
         steps += 1
-        if steps > MAX_INSTRUCTIONS:
+        if steps > instruction_limit:
             fail(u, 'original instruction-hook budget exhausted')
             return
         cs = u.reg_read(REG_IDS['cs']) & 0xFFFF
@@ -446,9 +466,18 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
             if prev_ins.group(capstone.CS_GRP_JUMP):
                 edges.add((source, prev_off, off))
             current_mask = flags_after(prev_ins, current_mask)
+            complete = getattr(access, 'instruction_complete', None)
+            if complete is not None:
+                complete()
             if source == 'main' and prev_ins.mnemonic == 'ret':
-                stop(u, 0)
-                return
+                if prev_off in return_contracts:
+                    expected_ip, changed_status = return_contracts[prev_off]
+                    if cs != regs['cs'] or off != expected_ip:
+                        stop(u, changed_status)
+                        return
+                else:
+                    stop(u, 0)
+                    return
             if source == 'pc-child' and prev_ins.mnemonic == 'ret':
                 expected = child_returns.pop() if child_returns else None
                 if expected is None or cs != expected[0] or off != expected[1]:
@@ -467,11 +496,14 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
                     return
 
         current_flags = u.reg_read(REG_IDS['flags']) & 0xFFFF
-        if cs == regs['cs'] and off in MAIN_INS:
-            if core and off in MAIN_RETS:
+        if cs == regs['cs'] and off in stops:
+            stop(u, stops[off])
+            return
+        if cs == regs['cs'] and off in main_code:
+            if core and off in main_rets:
                 stop(u, 0)
                 return
-            ins, source = MAIN_INS[off], 'main'
+            ins, source = main_code[off], 'main'
         elif cs == PC_SEG and off in pc_dispatch.PARENT_INS:
             ins, source = pc_dispatch.PARENT_INS[off], 'pc'
         elif cs == PC_SEG and off in pc_dispatch.CHILD_INS:
@@ -510,7 +542,7 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
     cpu.hook_add(UC_HOOK_MEM_READ, on_read)
     cpu.hook_add(UC_HOOK_MEM_WRITE, on_write)
     try:
-        cpu.emu_start(physical(regs['cs'], regs['ip']), 0, count=MAX_INSTRUCTIONS)
+        cpu.emu_start(physical(regs['cs'], regs['ip']), 0, count=instruction_limit)
     except UcError as error:
         raise OracleFailure(case['name'] + ': bounded original execution failed') from error
     oracle_require(stopped and failure is None,
@@ -520,6 +552,7 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS):
                    case['name'] + ': original RAM mirror diverged')
     return dict(memory=bytes(memory), regs=state, device=device,
                 events=access.events, used=access.used, status=status,
+                continuation=state['ip'],
                 sites=sites, edges=edges, call_targets=call_targets,
                 flag_mask=current_mask, steps=steps,
                 boundary='core-ret' if core else 'adapter-ret')

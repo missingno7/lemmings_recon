@@ -154,18 +154,29 @@ shared-tail sound seams retain their own gate. Together these two new scopes own
 364unique bytes; child and overlapping suffix bytes are not counted again.
 This is scoped acceptance, not aggregate game or native-device readiness.
 
-Next,21B0..22DE is the state leaf:303bytes/87sites, entered by
-first-match state mask0004. It increments+28 modulo4, uses unsigned byte tests
-on raw+23/+25, then up to three pixel samples with signed B4 height checks.
-Its real5DC6 CALL returns at2205; exhausted first/second thresholds jump20E2
-without storing Y. A late occupied sample uses unsigned+23<=3C to choose its
-transition. The optional AX0408 INT61 at229E returns at22A0 before1FE8. Preserve
-live DS0004 pitch, callback slots002E/003A, sound gates2010/25A7, the actual
-CALL/INT frames and direct1FE8 versus20E2 exits. Those children already have
-scoped C; broader state meaning, IRQ timing and the whole1F19 parent remain open.
-Fresh tree/bottom-up views still show1F19 as the untranslated parent with all
-eleven direct CALL children scoped native. Tested children do not establish
-complete simulation readiness.
+State0004 at21B0..22DE now passes36 core/adapter fixtures:303 new caller bytes,
+87 sites/all29 jump edges,151 integrated main sites,16 sites per AdLib/Tandy
+prefix,3,910 ordered events and eight completed mutants. Its unsigned raw+23/
++25 gates, signed heights, all three probes, early inactive exits without Y
+stores, live callback/pitch/gate reads and actual pixel/INT61 frames remain
+explicit. Four cadence entries22DF/22F5/2326/2340 pass23 core/adapter fixtures:
+113 new bytes/45 sites/all18 edges,23 coordinate-child sites,654 events and
+eight mutants. Another1,024 original-only prefixes verify the four byte
+transforms without adding C bytes. The combined416 new bytes preserve overlaps;
+see entity-simulation.md. The original-instruction oracle now composes explicit
+parent spans/RET/stop contracts in one traced CPU with the existing INT engine.
+
+Next port23BF..23F2, state mask0008:52 bytes/18 sites. Preserve actual5DC6
+return23C2, live DEC word+02 and pitch/pixel probes, the clear-path AND+08/reset
++28/INC BP, and direct2148 height/interaction continuation without an extra
+frame. Then port2350..23BE, state0002:110 known bytes/45 sites excluding
+UNKNOWN2382. It has optional INT60 AX030C (return2379), optional283B call
+(return2386), unchecked live SS nibble lookup and5DF8 call(return23BC).
+PC index3 selects the already scoped LoadEffect through its live table.
+Retain all actual return frames and explicit unbound/changed child seams;
+no table extent or UNKNOWN reachability is inferred. The parent1F19 still
+has eleven direct CALL children with scoped C; broader state initialization,
+IRQ timing and the full record/scan composition remain open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

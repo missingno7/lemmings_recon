@@ -15,6 +15,7 @@ EntityPixelRowPitchBytes equ GameDataImage+0x0004
 EntityUpdateGate equ GameDataImage+0x002B
 EntitySlotsRemaining equ GameDataImage+0x0042
 EntitySlotBound equ GameDataImage+0x0043
+EntityCompletionCounter equ GameDataImage+0x0046
 EntityScanRequest equ GameDataImage+0x004B
 EntityScanCursor equ GameDataImage+0x004C
 EntityWorkGuard equ GameDataImage+0x0050

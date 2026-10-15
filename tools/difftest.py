@@ -47,6 +47,8 @@ SUITES = (
     Suite('entity_interactions', 180, 384),
     Suite('entity_finish', 180, 384),
     Suite('entity_zero_state', 180, 384),
+    Suite('entity_state4', 180, 384),
+    Suite('entity_cadence', 180, 384),
     Suite('dat', 120, 512),
     Suite('dat_io_c', 120, 512),
     Suite('dat_section', 120, 512),

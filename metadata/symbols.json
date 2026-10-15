@@ -57829,5 +57829,198 @@
       "Actual near-CALL return word from2068; changed live SS target stops before zero-state continuation. docs/entity-simulation.md"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8624,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 303,
+    "symbol_name": "AdvanceEntityState0004",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match bit0004 entry from1F7D; three pixel samples with unsigned record-byte gates, signed height exits and optional INT61; shared1FE8/20E2 tails. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state4.c",
+    "c_core": "lmn_entity_state4_core",
+    "c_code_ranges": [
+      [
+        8624,
+        8927
+      ]
+    ],
+    "verification_evidence": "tests/entity_state4.py:36 core/adapter fixtures,303 new caller bytes/87 sites/all29 jump edges,3910 ordered events,8 completed mutants; unsigned field thresholds, signed heights, all three probes with early inactive exits skipping Y stores, live pitch/callback/gate/record/SS aliases, actual pixel and interaction CALL/RET plus native INT61 AdLib/Tandy command0408 and changed/unbound exits. docs/entity-simulation.md"
+  },
+  {
+    "address": 8709,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0004AfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near CALL return word from2202; consume live SS word and stop on changed target. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8864,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0004AfterSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "INT61 at229E resumes22A0 only for matching live CS:IP; original JMP1FE8 has no new frame. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8927,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 22,
+    "symbol_name": "AdvanceEntityState0001",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original animation-cadence state JMP entry; expiry versus live1FEB iteration, shared20E2 mark and coordinate child frames retained. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_cadence.c",
+    "c_core": "lmn_entity_cadence_core",
+    "c_code_ranges": [
+      [
+        8927,
+        8949
+      ]
+    ],
+    "verification_evidence": "tests/entity_cadence.py:23 core/adapter fixtures across four entries,113 unique new bytes/45 sites/all18 jump edges,23 integrated coordinate-child sites,654 ordered events,8 completed mutants;1024 separately bounded original-only cadence prefixes over all256 byte values; actual6141 CALL/RET then live POPBX, signed scaling, fresh post-INC byte read, counter wrap/order, DF and RAM/VGA/physical aliases. docs/entity-simulation.md"
+  },
+  {
+    "address": 8949,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 49,
+    "symbol_name": "AdvanceEntityState1000",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24897
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original animation-cadence state JMP entry; expiry versus live1FEB iteration, shared20E2 mark and coordinate child frames retained. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_cadence.c",
+    "c_core": "lmn_entity_cadence_core",
+    "c_code_ranges": [
+      [
+        8949,
+        8998
+      ]
+    ],
+    "verification_evidence": "tests/entity_cadence.py:23 core/adapter fixtures across four entries,113 unique new bytes/45 sites/all18 jump edges,23 integrated coordinate-child sites,654 ordered events,8 completed mutants;1024 separately bounded original-only cadence prefixes over all256 byte values; actual6141 CALL/RET then live POPBX, signed scaling, fresh post-INC byte read, counter wrap/order, DF and RAM/VGA/physical aliases. docs/entity-simulation.md"
+  },
+  {
+    "address": 8998,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 26,
+    "symbol_name": "AdvanceEntityState2000",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original animation-cadence state JMP entry; expiry versus live1FEB iteration, shared20E2 mark and coordinate child frames retained. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_cadence.c",
+    "c_core": "lmn_entity_cadence_core",
+    "c_code_ranges": [
+      [
+        8998,
+        9024
+      ]
+    ],
+    "verification_evidence": "tests/entity_cadence.py:23 core/adapter fixtures across four entries,113 unique new bytes/45 sites/all18 jump edges,23 integrated coordinate-child sites,654 ordered events,8 completed mutants;1024 separately bounded original-only cadence prefixes over all256 byte values; actual6141 CALL/RET then live POPBX, signed scaling, fresh post-INC byte read, counter wrap/order, DF and RAM/VGA/physical aliases. docs/entity-simulation.md"
+  },
+  {
+    "address": 9024,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 16,
+    "symbol_name": "AdvanceEntityState4000",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original animation-cadence state JMP entry; expiry versus live1FEB iteration, shared20E2 mark and coordinate child frames retained. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_cadence.c",
+    "c_core": "lmn_entity_cadence_core",
+    "c_code_ranges": [
+      [
+        9024,
+        9040
+      ]
+    ],
+    "verification_evidence": "tests/entity_cadence.py:23 core/adapter fixtures across four entries,113 unique new bytes/45 sites/all18 jump edges,23 integrated coordinate-child sites,654 ordered events,8 completed mutants;1024 separately bounded original-only cadence prefixes over all256 byte values; actual6141 CALL/RET then live POPBX, signed scaling, fresh post-INC byte read, counter wrap/order, DF and RAM/VGA/physical aliases. docs/entity-simulation.md"
+  },
+  {
+    "address": 8982,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState1000AfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near CALL return word from2313; POP BX at2316 consumes the earlier signed-delta save from live SS. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 70,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityCompletionCounter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "2335 increments live byte before marking state2000 slot inactive;3ACE..3AEF uses its wrapped100x value over0047 for display; startup clears it; aliases and wider gameplay meaning remain open. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

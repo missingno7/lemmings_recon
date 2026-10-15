@@ -156,7 +156,7 @@ sub_39CE:
 sub_3AC8:
     call UpdateMinimapColumn ; @03AC8
     call sub_7A5A ; @03ACB
-    mov al,[0x46] ; @03ACE
+    mov al,[EntityCompletionCounter-GameDataImage] ; @03ACE
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @03AD1
     shl ax,1 ; @03AD3
     shl ax,1 ; @03AD5
