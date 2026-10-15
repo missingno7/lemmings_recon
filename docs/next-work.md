@@ -72,32 +72,49 @@ handoff independently checks all 528 bytes in its source bank. Early clipping
 retains IF; drawing sets IF after live count/clip/DX/DS/SI saves, ordered source,
 latch/mirror/port/pixel accesses and DF-sensitive strings. See entity-mask.md.
 
-Next translate the remaining generated-bank consumers:
+The ten/thirteen-row consumers now pass 67 core/adapter fixtures: 405 bytes,
+187 sites, ten edges, 33,308 events, nine compiled mutants and 41 independent
+plane checks, including two native producer handoffs. The ten-row entry keeps
+BP and rereads X/+4 after saving SI; the thirteen-row entry returns BP=sum&7
+and applies its signed +27h adjustment when +28h equals two. Their unchecked
+selectors, actual base/DX/DS/SI/RET saves and live VGA/DF behavior remain explicit.
+The signed thirteen-row caller still admits 130 AX values; its state invariant
+remains open. See entity-mask.md.
 
-1. The 5FAC/606B siblings now have maintained static contracts and names:
-   `DrawTenRowEntityMask` (191 bytes/88 sites) and `DrawThirteenRowEntityMask`
-   (214 bytes/99 sites). Translate the ten-row entry, then the thirteen-row
-   entry, retaining their live base/DX/DS/SI saves and source/latch ordering.
-   The latter clobbers BP and adjusts its coordinate sum when record byte
-   +28h equals two. Its caller's signed JL admits 130 AX values for arbitrary
-   record contents; only the intended subset 0..1 matches the ordinary layout.
-   Keep the unchecked callee and that open state invariant. No C bytes are
-   claimed for either sibling. Allocation bounds and the 5CC1 shared-tail
-   caller/UNKNOWN 5D18..5D65 remain separate frontiers.
-2. The 6141 sibling address helper still has distinct register inputs, saves
-   and no clamp. The 2E04/2EC0 state/interaction and platform seams also remain.
-   The 1F19 parent still has 3,744 decoded bytes/1,255 sites and is untranslated;
-   scoped TESTED children do not establish complete simulation readiness.
+The 6141 coordinate helper also passes 34 core/adapter fixtures: 47 bytes/23
+sites, no edges, 952 events and four completed mutants. It receives BX=Y/CX=X,
+keeps the original no-clamp behavior and residual AL, and restores actual SS
+BX/CX/DX words after the DS mask read. See coordinate-pixel.md.
+
+These nine identified helpers now form the maintained 05D66..0616F physical
+ASM module entity_graphics.asm (1,034 bytes), with exact start/end assertions.
+Word generation and neighboring UNKNOWN bytes remain in the prefix. This is
+source ownership with scoped C verification, not complete game acceptance.
+
+Next close the two remaining direct untranslated children of 1F19:
+
+1. Resolve the 2E04 countdown/record transition contract (188 bytes/52 sites),
+   including its shared tails, live record flags/writes and callback-slot reads.
+   Preserve DEC/RMW entry flags and the INT61 seams at 2E5C/2EB0; establish
+   the sound/interrupt provider's actual effects before composing the child.
+2. Then resolve 2EC0 (486 bytes/162 sites), its SS interaction-map reads,
+   saved words, record fields and transition tails. The 1F19 parent remains
+   3,744 decoded bytes/1,255 sites and untranslated. Tested drawing children
+   retain their device/IRQ domains and do not prove complete simulation readiness.
+
+Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
+separate frontiers. Full original/native campaigns and matching inputs remain
+required before aggregate acceptance.
 
 Use fresh dependency views rather than an accumulated historical task list:
 
 ```powershell
 .venv\Scripts\python.exe tools\graph.py 1F19 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 1F19 --bottom-up
-.venv\Scripts\python.exe tools\graph.py 5FAC --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 5FAC --bottom-up
-.venv\Scripts\python.exe tools\graph.py 606B --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 606B --bottom-up
+.venv\Scripts\python.exe tools\graph.py 2E04 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 2E04 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 2EC0 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 2EC0 --bottom-up
 ```
 
 ## Development and acceptance

@@ -391,7 +391,7 @@ loc_22F5:
     mov cx,[si] ; @0230C
     db 0x03,0xc8 ; ENCODED: add cx,ax (NASM chooses a different encoding) ; @0230E
     mov bx,[si+0x2] ; @02310
-    call sub_6141 ; @02313
+    call PrepareCoordinatePixelSample ; @02313
     pop bx ; @02316
     mov al,[es:di] ; @02317
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0231A
@@ -987,28 +987,28 @@ loc_28AE:
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @028BE
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @028C0
     db 0x03,0xc8 ; ENCODED: add cx,ax (NASM chooses a different encoding) ; @028C2
-    call sub_6141 ; @028C4
+    call PrepareCoordinatePixelSample ; @028C4
     mov al,[es:di] ; @028C7
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028CA
     jz loc_28D1 ; @028CC
     jmp loc_1FEB ; @028CE
 loc_28D1:
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @028D1
-    call sub_6141 ; @028D3
+    call PrepareCoordinatePixelSample ; @028D3
     mov al,[es:di] ; @028D6
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028D9
     jz loc_28E0 ; @028DB
     jmp loc_1FEB ; @028DD
 loc_28E0:
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @028E0
-    call sub_6141 ; @028E2
+    call PrepareCoordinatePixelSample ; @028E2
     mov al,[es:di] ; @028E5
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028E8
     jz loc_28EF ; @028EA
     jmp loc_1FEB ; @028EC
 loc_28EF:
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @028EF
-    call sub_6141 ; @028F1
+    call PrepareCoordinatePixelSample ; @028F1
     mov al,[es:di] ; @028F4
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028F7
     jz loc_28FE ; @028F9

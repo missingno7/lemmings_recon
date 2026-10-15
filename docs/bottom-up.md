@@ -22,7 +22,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 03944..052D3 | game_code_late.asm | Mixed ownership remains provisional |
 | 052D4..0563D | palette_frontends.asm | Palette pointers, writers and transition callers; ownership/frontier contracts remain explicit |
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
-| 05726..0796E | game_code_late_after_palette.asm | Mixed ownership remains provisional |
+| 05726..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
+| 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
+| 06170..0796E | game_code_late_after_entities.asm | Mixed ownership remains provisional |
 | 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
 | 07A5A..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
@@ -30,6 +32,12 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 083BF..08821 | code_tail.asm | Overlay storage, layout setter and unresolved spans |
 | 08822..09A8F | planar_drawing.asm | Planar renderer, dispatch, row preparation and clip/dirty leaves |
 | 09A90..143D9 | image_tail.asm | Data frame; UNKNOWN may contain executable code |
+
+The contiguous 05D66..0616F span groups nine identified mask and pixel helpers
+in entity_graphics.asm, with exact start/end assertions and unchanged emission
+lines. The earlier word generator and neighboring UNKNOWN bytes remain in the
+resource-side prefix. This is physical source ownership, not a historical
+linker boundary or an assertion about complete simulation/device readiness.
 
 Shared tails can cross files. All encoding exceptions, UNKNOWN markers and
 classifications remain unchanged. The bootstrap generator refuses to overwrite
@@ -105,9 +113,15 @@ consumer now passes 43 core/adapter fixtures, all 194 bytes/91 sites and seven
 edges, with six completed mutants, 17 independent plane checks and an actual
 native producer handoff. Its live clipped count, saves, DF/latch ordering and
 early IF/drawing STI distinction remain explicit. The ten/thirteen-row sibling
-contracts are now beside the ASM and in entity-mask.md, including clobbered BP
-and the thirteen-row caller's signed-selector seam. They and the shared-tail
-5CC1 caller remain untranslated.
+entries now pass 67 fixtures at both boundaries, 405 bytes/187 sites, ten
+edges and nine compiled mutants, with 41 independent plane checks and two
+producer handoffs. The 6141 register-input coordinate helper passes another
+34 fixtures at both boundaries, 47 bytes/23 sites and four mutants; its Y
+subtraction has no clamp. See entity-mask.md and coordinate-pixel.md. All nine
+identified helpers in entity_graphics.asm now have scoped C implementations.
+The thirteen-row caller's signed-selector seam and broader initialization
+remain open. Fresh 1F19 graphs leave 2E04 and 2EC0 as its two direct untranslated
+children, ahead of the parent. The shared-tail 5CC1 caller remains untranslated.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

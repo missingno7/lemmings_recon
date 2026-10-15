@@ -1,4 +1,4 @@
-# Clipped generated entity mask
+# Generated entity mask drawing
 
 `DrawClippedEntityMask` at 5DF8..5EB9 is a closed 194-byte/91-site leaf called
 at 23B9 in the 1F19 simulation body. It draws from the 22-row generated bank
@@ -92,11 +92,11 @@ worker. Temporary DLL directories are removed after worker exit. The scoped
 report build/entity-mask-differential.json records current input hashes;
 complete original/native campaigns remain necessary for aggregate acceptance.
 
-## Static sibling contracts
+## Ten- and thirteen-row contracts
 
 `DrawTenRowEntityMask` at 5FAC..606A (191 bytes/88 sites) and
-`DrawThirteenRowEntityMask` at 606B..6140 (214 bytes/99 sites) remain
-untranslated. Both inline the same source-word/two masks/source-byte/third-mask
+`DrawThirteenRowEntityMask` at 606B..6140 (214 bytes/99 sites) have logical C cores and register adapters in
+c/entity_mask_rows.c. Both inline the same source-word/two masks/source-byte/third-mask
 sequence, DF behavior and fixed forward CDh row adjustment. Both select DS
 after PUSH DS, retain live SS base/DX/DS/SI/RET words, preserve incoming VGA
 state except GC0/1/3/8, and end with unconditional STI. Neither clips.
@@ -129,3 +129,32 @@ or FF80h..FFFEh, in addition to 0000h/0001h for new AL=1/2. A bounded record
 state would require separate initialization/state-transition proof. These
 unchecked values must not be rejected, clamped or masked in the later C port.
 The broader meanings of record bytes +27h/+28h remain unproven by these leaves.
+
+The native sibling cores share their row-drawing implementation while the
+frontends retain their distinct instruction phases and live reads. The call's
+unchecked selection supplies AX. Its alignment_index supplies BP: the ten-row
+entry preserves it, while the thirteen-row entry returns the masked sum.
+Their core boundaries are before RET at 606A and 6140; adapters consume the
+actual near word after the live DS/SI restores. Neither core adds an input
+range check or inherits the clipped entry's Y behavior.
+
+`tools/difftest.py entity_mask_rows` passes 67 fixtures at both boundaries:
+405 bytes/187 sites, ten branch edges and 33,308 ordered events. Nine compiled
+mutants complete and differ, with separate cached-base witnesses for both
+frontends. Forty-one independent plane checks cover both DF directions and
+incoming map/read/write state. Two native producer handoffs independently
+check the selected 240-byte and 312-byte banks; the latter also spans physical
+FFFFFh/00000h. All eight alignment shifts, signed record byte boundaries,
+arbitrary AX values, post-PUSH selector and record changes, BP preservation
+versus clobber, live base/DX/DS/SI/RET, and record/stack wrapping are exercised.
+
+SS-backed VGA saves are tested with actual VGA outputs and map mask zero,
+plus an explicit no-op port provider for arbitrary popped DX values. The
+latter is a constructed port boundary, not a claim that every port is VGA.
+Every source, stack, selector, mirror, latch, port and pixel event remains
+ordered. Workers use 180 seconds, 384 MiB process/640 MiB tree commit, 1,400
+original instructions and 2,048 callback/device events per consumer call.
+Guard exits 86/87 are failures, never mutant witnesses; DLL directories are
+removed after worker exit. The current scope and input hashes are retained in
+build/entity-mask-rows-differential.json. These results do not close the
+simulation parent, IRQ/device initialization or aggregate campaign.

@@ -364,7 +364,7 @@
 #define CS_DrawEntityStroke 0x5F0Fu
 #define CS_DrawTenRowEntityMask 0x5FACu
 #define CS_DrawThirteenRowEntityMask 0x606Bu
-#define CS_sub_6141 0x6141u
+#define CS_PrepareCoordinatePixelSample 0x6141u
 #define CS_sub_6170 0x6170u
 #define CS_sub_64D9 0x64D9u
 #define CS_sub_65D8 0x65D8u

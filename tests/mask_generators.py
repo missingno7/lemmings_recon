@@ -720,7 +720,7 @@ def input_hashes():
     paths = (
         'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
         'docs/bottom-up.md', 'docs/generated-graphics.md',
-        'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
+        'src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
         'metadata/regions.json', 'metadata/inputs.json',
         'src/game_code_late_after_palette.asm', 'c/mask_generators.c',
         'c/mask_generators.h', 'c/special_blit.h', 'c/lemmings_sym.h',

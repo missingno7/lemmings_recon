@@ -410,7 +410,7 @@ def check_independent_examples(case, initial_memory, initial_regs, expected_memo
 
 def input_hashes():
     paths = (
-        'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
+        'src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
         'metadata/regions.json', 'metadata/inputs.json',
         'c/entity_pixel.c', 'c/entity_pixel.h', 'c/lemmings_sym.h', 'c/regs.h',
         'tests/entity_pixel.py', 'tests/dat_io.py', 'tests/dat_io_c.py',

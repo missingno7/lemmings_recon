@@ -34855,13 +34855,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
       "5FAC..606A: live saved240*AX base plus03C0 whenrecord27==FF and30*((X+record4)&7),10rows; caller28A1maskedselectorAX0..3,calleeunchecked; DS/SI/DX saves andVGA/DF remainlive; docs/entity-mask.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 191
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 191,
+    "c_implementation": "c/entity_mask_rows.c",
+    "verification_evidence": "tests/entity_mask_rows.py:67 fixtures at both core/adapter boundaries across ten/thirteen-row leaves,405 bytes/187 sites,10 edges,33308 ordered events,9 completed mutants plus2 live-base witnesses,41 independent plane checks,2 native producer handoffs; liveSS base/DX/DS/SI/RET,ten record rereads,uncheckedAX,DF/VGA/memorywrap; docs/entity-mask.md"
   },
   {
     "address": 24683,
@@ -35054,21 +35056,25 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
       "606B..6140: live saved312*AX+0780 base plus0270 whenrecord27==FF and39*(sum&7),13rows; record28==2 incrementsY/addssignedrecord27 toX; BPclobbered; signedcaller2B58doesnotproveAX0..1; docs/entity-mask.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 214
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 214,
+    "c_implementation": "c/entity_mask_rows.c",
+    "verification_evidence": "tests/entity_mask_rows.py:67 core/adapter fixtures across both leaves,405 bytes/187 sites,10 edges,33308 events,9 completed mutants,41 independent plane checks,2 producer handoffs; state28==2/signed27,BPclobber,uncheckedAXincludingcallerhighrange,liveSS/VGA/DF/wordwrap; docs/entity-mask.md"
   },
   {
     "address": 24897,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6141",
-    "aliases": [],
+    "size": 47,
+    "symbol_name": "PrepareCoordinatePixelSample",
+    "aliases": [
+      "sub_6141"
+    ],
     "callers": [
       10436,
       10451,
@@ -35087,12 +35093,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "6141..616F: BX=Y,CX=X coordinate pixel address withoutclamp; liveSS BX/CX/DX saves,DS PixelBitMasks read,ALresidualproduct; docs/coordinate-pixel.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 47
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 47,
+    "c_implementation": "c/coordinate_pixel.c",
+    "verification_evidence": "tests/coordinate_pixel.py:34 fixtures at both core/adapter boundaries,47 bytes/23 sites,no branch edges,952 events,4 completed mutants; no wrapped-Yclamp,liveSS BX/CX/DX/RET,DS PixelBitMasks/provider/VGA/wordwrap,residualAL,nullbusABI; docs/coordinate-pixel.md"
   },
   {
     "address": 24944,

@@ -300,7 +300,7 @@ def input_hashes():
         'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
         'docs/bottom-up.md', 'docs/generated-graphics.md',
         'docs/entity-vga.md', 'docs/entity-mask.md',
-        'src/game_code_late_after_palette.asm', 'assets/vgalemmi.exe',
+        'src/game_code_late_after_palette.asm', 'src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe',
         'metadata/symbols.json', 'metadata/inputs.json', 'metadata/oracle.json',
         'c/entity_mask.c', 'c/entity_mask.h', 'c/generated_graphics.c',
         'c/generated_graphics.h', 'c/mask_generators.c', 'c/mask_generators.h',

@@ -81,7 +81,7 @@ INPUT_PATHS = (
     'tests/dat_io.py', 'tests/dat_io_c.py', 'tools/bounded_process.py',
     'tools/cbuild.py', 'tools/common.py', 'tools/difftest.py',
     'tools/coverage.py', 'tools/unpack.py', 'metadata/symbols.json',
-    'metadata/inputs.json', 'metadata/oracle.json', 'assets/vgalemmi.exe',
+    'metadata/inputs.json', 'metadata/oracle.json', 'src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe',
 )
 
 

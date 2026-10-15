@@ -120,8 +120,10 @@ native-producer handoff retain the 0C60..0E70 bank contract. The live clipped
 count, DS/SI/DX/clip saves, source/destination DF behavior, incoming VGA state,
 early IF preservation and drawing-only STI remain explicit.
 
-Next translate the 5FAC/606B siblings using the static contracts beside the ASM
-and in entity-mask.md. Keep their live DS replacement, saved base/DX/DS/SI words,
-record rereads and incoming device state. The thirteen-row entry clobbers BP;
-its signed caller branch admits 130 AX values for arbitrary record contents,
-so the intended 0..1 layout match does not prove a valid-state invariant.
+The 5FAC/606B consumers now pass 67 core/adapter fixtures: 405 bytes/187 sites,
+ten branch edges, 33,308 events and nine completed mutants, with 41 independent
+plane checks and two native producer handoffs. Their live base/DX/DS/SI saves,
+record reads, unchecked selectors, BP difference and incoming VGA state remain
+explicit in entity-mask.md. The thirteen-row caller still admits 130 AX values
+for arbitrary record contents; native translation preserves that open state
+invariant instead of narrowing it to the intended 0..1 layout subset.

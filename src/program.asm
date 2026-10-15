@@ -18,6 +18,10 @@ times -(($-$$) != 0x563e) db 0 ; module end assertion
 %include "palette_steps.asm"
 times -(($-$$) != 0x5726) db 0 ; module end assertion
 %include "game_code_late_after_palette.asm"
+times -(($-$$) != 0x5d66) db 0 ; module end assertion
+%include "entity_graphics.asm"
+times -(($-$$) != 0x6170) db 0 ; module end assertion
+%include "game_code_late_after_entities.asm"
 times -(($-$$) != 0x796f) db 0 ; module end assertion
 %include "minimap.asm"
 times -(($-$$) != 0x7a5a) db 0 ; module end assertion

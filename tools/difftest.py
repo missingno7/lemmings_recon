@@ -106,6 +106,8 @@ SUITES = (
     Suite('mask_generators', 180, 384),
     Suite('generated_graphics', 180, 384),
     Suite('entity_mask', 180, 384),
+    Suite('entity_mask_rows', 180, 384),
+    Suite('coordinate_pixel', 180, 384),
 )
 
 

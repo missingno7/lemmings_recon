@@ -532,7 +532,7 @@ def compare_null_bus(native, case):
 
 
 def worker(directory):
-    paths = ('assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
+    paths = ('src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
              'metadata/regions.json', 'metadata/inputs.json', 'c/entity_pixel.c',
              'c/entity_pixel.h', 'c/special_blit.h', 'c/lemmings_sym.h',
              'c/regs.h', 'tests/entity_pixel.py', 'tests/entity_pixel_bus.py',
