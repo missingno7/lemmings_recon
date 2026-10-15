@@ -96,7 +96,7 @@ The 197D caller now composes that leaf and native file/decoder/raw cores directl
 Live saved order/counter/DS words, unchecked closes, in-place decoding and paired
 original resources are verified; see resource-select.md for fatal/platform seams.
 The 378A graphics-record copy and 389F coordinate collector are also native,
-with 131/159 cases and the live-copy/default-coordinate quirks documented in
+with 265/159 comparisons and the live-copy/default-coordinate quirks documented in
 object-records.md. The 37C2/3839 SS cell writers are also native, verified in
 123/386 cases. Their four-call 376A setup span passes 105 integrated cases with
 explicit normal/changed-return boundaries; see interaction-cells.md. Close the
@@ -106,6 +106,13 @@ uncertainty that would force guessing, document its live segment/flag contract,
 verify exact ASM, and translate with logical parameters and direct native calls.
 Keep register adapters at the oracle boundary. Recheck parents when dependencies
 connect, using bounded original comparisons and independent data/device checks.
+
+The graphics-copy gate includes131 null-bus and134 raster-bus comparisons of
+the same56-byte span. Its bus-aware core preserves original access/flag order,
+live PUSH/POP/RET and independent VGA plane/readback effects. This supplies the
+copy dependency for the statically mapped397A..39CD object-drawing suffix;
+the suffix and the complete394F parent remain untranslated. See
+object-graphics-bus.md and object-drawing-frontier.md.
 
 The pass exposed a static extractor gap: zero initial bits are legal. The original
 CH increment/decrement causes immediate backward refill, while the seeded last

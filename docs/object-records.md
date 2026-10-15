@@ -98,13 +98,23 @@ are confined to their oracle adapters. The graphics core keeps its original live
 stack saves; the coordinate core has no internal calls or stack saves. No asset
 snapshots, interpreter or persistent shadow records are part of either core.
 
-The graphics suite has 131 cases, covering all 56 original bytes, 26 instruction
+The graphics suite has 265 comparisons: 131 null-bus cases and 134 raster-bus
+cases, covering the same 56 original bytes, 26 instruction
 sites and four branch edges. All 32 single-active positions, both DF directions,
 out-of-table types, wrapped product/source cursors, stale inactive slots, live
 source/output overlap and overwritten saved SI/CX/DI are included. A controlled
 counter alias terminates after two iterations and also overwrites the active
 return word. Another saved-DI alias independently checks final sign/overflow
 flags. The 80 supplied LEVEL sections use their matching ground inputs.
+
+The raster-bus backend independently executes the pinned ASM and compares
+ordered byte accesses and instruction-boundary flags as well as RAM/registers.
+It includes device-backed source/destination and SS stack readback: POP ES can
+read a different value from the preceding PUSH DS, and the original RET reads
+the provider's live return word. The bus suite passes 49,740 accesses and three
+additional mutation checks. It uses the established four-plane VGA fixture and
+independent copied-byte expectations; see object-graphics-bus.md for the finite
+domain and the explicit Unicorn REP/AF instrumentation diagnostic.
 
 The coordinate suite has 159 cases, covering all 165 original bytes, 63 instruction
 sites and 12 branch edges. Counts 0..32, every single-match position, full-word
@@ -117,13 +127,19 @@ a producer bound. Constructed cases retain the zero and greater-than-four paths.
 Both suites compare full 1 MiB RAM, all boundary registers and defined final
 flags. Only AF on the collector's zero-match AND path is excluded as undefined.
 IF/DF, stack offsets 0/1/FFFF, physical address wrap and post-write live RET aliases
-are covered. Six compiled mutations detect clearing stale slots, clamping type
+are covered. Six distinct compiled mutations detect clearing stale slots, clamping type
 lookup, forcing forward DF copies, repairing the default bug, clamping match
-counts and rejecting zero X. C11 compilation treats warnings as errors.
+counts and rejecting zero X. The three graphics faults are also rechecked
+through the raster bus, for nine mutation checks across these two clusters.
+C11 compilation treats warnings as errors.
 
 Original execution is limited to the identified routine bytes, with budgets of
 100,000 instructions per graphics case and 2,000 per coordinate case. The runner
-caps each suite process at 120 seconds. TF is clear and asynchronous IRQ delivery
+caps the graphics runner at 180 seconds and the coordinate suite at 120 seconds.
+Graphics workers have a 512 MiB process/768 MiB tree commit ceiling and owned
+temporary DLL directories. The bus worker hard-exits on callback/budget failure;
+these failures and original execution exhaustion cannot count as mutant hits.
+TF is clear and asynchronous IRQ delivery
 is quiescent. Saved-data and controlled return aliases remain live; arbitrary
 instruction-byte self modification and unbounded saved-counter corruption are
 outside these finite fixture domains. No original game was booted.

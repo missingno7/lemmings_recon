@@ -14,6 +14,7 @@ import dat_io as oracle
 from dat_io_c import Regs,MEM
 from common import ROOT,BUILD,read_json,write_json,sha
 from cbuild import build
+from bounded_process import run_bounded, temporary_build_directory
 from resources import section_spans,decode_section
 from unpack import ASSET,unpack,relocated
 
@@ -33,6 +34,7 @@ EDGES|={(pc,pc+i.size) for pc,i in INS.items() if pc in BRANCHES}
 MEMORY_SIZE=1<<20
 MEMORY_MASK=MEMORY_SIZE-1
 LOADS=(0x1010,0x1213,0x2345)
+LIBRARY_DIRECTORY=BUILD
 
 
 def physical(segment,offset):
@@ -177,7 +179,7 @@ def expected_copy_region(mem,case,regs,flags):
 
 
 def library(mutation=0):
-    lib=ctypes.CDLL(str(build(BUILD/f'object-graphics-m{mutation}.dll',mutation,'object_graphics')))
+    lib=ctypes.CDLL(str(build(LIBRARY_DIRECTORY/f'object-graphics-m{mutation}.dll',mutation,'object_graphics')))
     lib.lmn_copy_object_graphics_adapter.argtypes=[MEM,ctypes.POINTER(Regs)]
     lib.lmn_copy_object_graphics_adapter.restype=None
     return lib
@@ -208,7 +210,7 @@ def run_case(lib,case,collect_coverage=False):
         if previous==RET:
             done=True;uc.emu_stop();return
         if uc.reg_read(oracle.REG['cs'])!=regs['cs'] or off not in INS:
-            raise AssertionError(f"{case['name']}: original escaped at {off:04x}")
+            raise RuntimeError(f"{case['name']}: original escaped at {off:04x}")
         sites.add(off);previous=off
     def a20_read(uc,access,address,size,value,_):
         for n in range(size):
@@ -224,13 +226,13 @@ def run_case(lib,case,collect_coverage=False):
             else:
                 uc.mem_write(current+MEMORY_SIZE,byte)
     def intr(uc,number,_):
-        raise AssertionError(f"{case['name']}: unexpected interrupt {number}")
+        raise RuntimeError(f"{case['name']}: unexpected interrupt {number}")
     u.hook_add(UC_HOOK_CODE,code)
     u.hook_add(UC_HOOK_MEM_READ,a20_read)
     u.hook_add(UC_HOOK_MEM_WRITE,a20_write)
     u.hook_add(UC_HOOK_INTR,intr)
     u.emu_start(physical(regs['cs'],ENTRY),0,count=100000)
-    if not done:raise AssertionError(f"{case['name']}: routine exceeded bounded execution")
+    if not done:raise RuntimeError(f"{case['name']}: routine exceeded bounded execution")
 
     original_regs={name:u.reg_read(reg) for name,reg in oracle.REG.items()}
     original_flags=u.reg_read(x.UC_X86_REG_EFLAGS)
@@ -308,7 +310,31 @@ def main():
                 types=[value for _,value in case.get('definitions',())],
                 stack_alias=bool(case.get('stack_alias')),physical_wrap=bool(case.get('physical_wrap')))
         public_cases.append(row)
-    write_json(report,dict(image='main',image_sha256=sha(IMAGE),case_count=len(baseline),
+    # This cluster has two independently executed backends. Keep their cases
+    # distinct, while unioning the same original instruction/byte interval.
+    run_bounded([sys.executable,str(Path(__file__).with_name('object_graphics_bus.py'))],
+                cwd=ROOT,timeout=180)
+    bus_report=read_json(BUILD/'object-graphics-bus-differential.json')
+    if bus_report['image_sha256']!=sha(IMAGE):
+        raise RuntimeError('Object graphics bus report image changed')
+    input_hashes={path:sha((ROOT/path).read_bytes()) for path in paths}
+    for path,expected_hash in bus_report['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=expected_hash:
+            raise RuntimeError(f'Stale object graphics bus report: {path}')
+        if path in input_hashes and input_hashes[path]!=expected_hash:
+            raise RuntimeError(f'Object graphics input changed: {path}')
+        input_hashes[path]=expected_hash
+    bus_sites=set(bus_report['original_observed_instruction_sites'])
+    bus_edges={tuple(edge) for edge in bus_report['original_observed_branch_edges']}
+    if bus_sites!=set(INS) or bus_edges!=EDGES or not bus_report['original_ret_executed']:
+        raise RuntimeError('Object graphics bus original coverage incomplete')
+    sites|=bus_sites;edges|=bus_edges
+    public_cases=[dict(row,backend='null-bus') for row in public_cases]
+    public_cases.extend(dict(row,backend='raster-bus') for row in bus_report['cases'])
+    mutations=[dict(row,backend='null-bus') for row in mutations]+[
+        dict(row,backend='raster-bus') for row in bus_report['mutations_detected']]
+    write_json(report,dict(image='main',image_sha256=sha(IMAGE),case_count=len(public_cases),
+        ram_case_count=len(baseline),bus_case_count=bus_report['case_count'],
         mutation_count=len(mutations),mutations_detected=mutations,cases=public_cases,
         translated_code_bytes=sum(i.size for i in INS.values()),instruction_sites=sorted(sites),
         branch_edges=sorted(edges),routine=dict(name=ROUTINE['symbol_name'],start=ENTRY,end=END),
@@ -317,9 +343,18 @@ def main():
             live_source_output_alias=True,saved_si_cx_di_and_return_alias=True,
             stack_offsets=[0,1,0xffff],physical_20_bit_wrap=True,real_level_sections=80,
             paired_ground_assets=sorted(set(case['ground_asset'] for case in baseline if case.get('real')))),
-        input_hashes={path:sha((ROOT/path).read_bytes()) for path in paths},
-        domain='Original bounded CS:378A..37C1 and C11 core; direct DS/ES memory, unchecked BE type multiplication, stale inactive slots, incoming DF, live SS saves/RET aliases, 16-bit offsets, 20-bit physical memory, paired real LEVEL/GROUND sections'))
-    print(f'PASS object graphics C: {len(baseline)} cases, {len(sites)} instruction sites, {len(edges)} branch edges; 3 compiled mutations detected')
+        input_hashes=input_hashes,
+        domain='Original bounded CS:378A..37C1 and C11 core; null-bus and ordered raster-bus access, VGA stack/source/destination, unchecked BE type multiplication, stale inactive slots, incoming DF, live SS saves/RET aliases, 16-bit offsets, 20-bit physical memory, paired real LEVEL/GROUND sections'))
+    print(f'PASS object graphics C: {len(public_cases)} cases ({len(baseline)} null-bus/{bus_report["case_count"]} raster-bus), {len(sites)} instruction sites, {len(edges)} branch edges; {len(mutations)} compiled mutation checks detected')
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if len(sys.argv)==3 and sys.argv[1]=='--worker':
+        LIBRARY_DIRECTORY=Path(sys.argv[2]);main()
+    elif len(sys.argv)==1:
+        BUILD.mkdir(exist_ok=True)
+        (BUILD/'object-graphics-differential.json').unlink(missing_ok=True)
+        with temporary_build_directory(prefix='object-graphics-',parent=BUILD) as directory:
+            run_bounded([sys.executable,str(Path(__file__).resolve()),'--worker',directory],
+                        cwd=ROOT,timeout=180)
+    else:raise SystemExit('Unexpected object_graphics arguments')

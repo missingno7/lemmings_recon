@@ -2,6 +2,7 @@
 #define LEMMINGS_OBJECT_GRAPHICS_H
 #include <stdint.h>
 #include "regs.h"
+#include "special_blit.h"
 
 typedef struct LmnObjectGraphicsResult {
     uint16_t value;
@@ -16,6 +17,11 @@ typedef struct LmnObjectGraphicsResult {
 LmnObjectGraphicsResult lmn_copy_object_graphics_core(uint8_t *mem,
     uint16_t data_segment, uint16_t stack_segment, uint16_t stack_offset,
     uint16_t product_high, uint16_t flags);
+LmnObjectGraphicsResult lmn_copy_object_graphics_bus_core(uint8_t *mem,
+    uint16_t data_segment, uint16_t stack_segment, uint16_t stack_offset,
+    uint16_t product_high, uint16_t flags, const LmnRasterBus *bus);
 void lmn_copy_object_graphics_adapter(uint8_t *mem, LmnRegs *r);
+void lmn_copy_object_graphics_bus_adapter(uint8_t *mem, LmnRegs *r,
+    const LmnRasterBus *bus);
 
 #endif

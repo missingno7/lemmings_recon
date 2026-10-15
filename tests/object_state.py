@@ -9,6 +9,7 @@ from unicorn import Uc,UC_ARCH_X86,UC_MODE_16,UC_HOOK_CODE,UC_HOOK_MEM_READ,UC_H
 from unicorn import x86_const as x
 from common import ROOT,BUILD,read_json,write_json,sha
 from cbuild import build
+from bounded_process import run_bounded, temporary_build_directory
 from resources import section_spans,decode_section
 from unpack import ASSET,unpack,relocated
 import dat_io as oracle
@@ -24,6 +25,7 @@ RETS={pc for pc,i in INS.items() if i.mnemonic=='ret'}
 BRANCHES={pc for pc,i in INS.items() if i.group(capstone.CS_GRP_JUMP) or i.mnemonic.startswith('loop')}
 EDGES={(pc,i.operands[0].imm&65535) for pc,i in INS.items() if pc in BRANCHES}
 EDGES|={(pc,pc+i.size) for pc,i in INS.items() if pc in BRANCHES and i.mnemonic!='jmp'}
+LIBRARY_DIRECTORY=BUILD
 
 def field(name):return SYMS[name]['address']
 def at(segment,offset):return ((segment<<4)+(offset&65535))&0xfffff
@@ -157,7 +159,7 @@ def independent_objects(mem,regs,flags):
     return expected,touched,len(coordinates)
 
 def library(mutation=0):
-    lib=ctypes.CDLL(str(build(BUILD/f'object-state-m{mutation}.dll',mutation,'object_state')))
+    lib=ctypes.CDLL(str(build(LIBRARY_DIRECTORY/f'object-state-m{mutation}.dll',mutation,'object_state')))
     lib.lmn_prepare_level_object_state_adapter.argtypes=[MEM,ctypes.POINTER(Regs)]
     lib.lmn_prepare_level_object_state_adapter.restype=None;return lib
 
@@ -177,7 +179,7 @@ def compare(lib,case):
             continuation=None
         if previous in BRANCHES:edges.add((previous,off))
         if off==END:done=True;uc.emu_stop();return
-        if uc.reg_read(oracle.REG['cs'])!=regs['cs'] or off not in INS:raise AssertionError(f'{case["name"]}: escaped span at{off:04x}')
+        if uc.reg_read(oracle.REG['cs'])!=regs['cs'] or off not in INS:raise RuntimeError(f'{case["name"]}: escaped span at{off:04x}')
         if off in LOCAL:continuation=off+3;phase=off
         seen.add(off);previous=off
     def read(uc,access,address,size,value,_):
@@ -190,7 +192,7 @@ def compare(lib,case):
             uc.mem_write(other,bytes(((value>>(8*i))&255,)))
     u.hook_add(UC_HOOK_CODE,code);u.hook_add(UC_HOOK_MEM_READ,read);u.hook_add(UC_HOOK_MEM_WRITE,write)
     u.emu_start(at(regs['cs'],ENTRY),0,count=3000000)
-    if not done:raise AssertionError('Object-state span exceeded instruction budget')
+    if not done:raise RuntimeError('Object-state span exceeded instruction budget')
     for name,reg in oracle.REG.items():
         if u.reg_read(reg)!=getattr(r,name):raise AssertionError(f'{case["name"]}: {name} C={getattr(r,name):04x}/original={u.reg_read(reg):04x}')
     mask=0xfd7
@@ -230,11 +232,20 @@ def main():
         else:raise AssertionError(f'Object-state mutant{mutation} survived')
     paths=tuple('c/'+name for name in ('object_state.c','object_state.h','object_graphics.c','object_graphics.h','steel_cells.c','steel_cells.h','object_cells.c','object_cells.h','object_coordinates.c','object_coordinates.h','regs.h','lemmings_sym.h'))
     paths+=('tests/object_state.py','tests/object_graphics.py','tests/steel_cells.py','tests/object_cells.py','tests/object_coordinates.py','tests/dat_io.py','tests/dat_io_c.py',
-        'tools/cbuild.py','tools/difftest.py','tools/unpack.py','tools/resources.py','metadata/symbols.json','metadata/inputs.json')+tuple(sorted(assets))
+        'tools/cbuild.py','tools/difftest.py','tools/bounded_process.py','tools/unpack.py','tools/resources.py','metadata/symbols.json','metadata/inputs.json')+tuple(sorted(assets))
     public=[{k:v for k,v in c.items() if k!='record'} for c in baseline]
     write_json(report,dict(image='main',image_sha256=sha(IMAGE),case_count=len(baseline),mutation_count=3,cases=public,mutations_detected=mutants,
         executed_instruction_addresses=sorted(seen),caller_instruction_addresses=sorted(LOCAL),branch_edges=sorted(edges),translated_code_bytes=12,
         input_hashes={p:sha((ROOT/p).read_bytes()) for p in paths},
         domain='Four native leaf calls at376A..3775; explicit3776 boundary or changed near-return target; intact executing code; quiescent IRQ; live SS stack/cells; all80 realLEVEL/GROUND pairs'))
     print(f'PASS object state C: {len(baseline)} cases,{len(LOCAL)} span sites,{len(seen)} integrated sites,{len(edges)} integrated edges;3 compiled mutants detected')
-if __name__=='__main__':main()
+if __name__=='__main__':
+    if len(sys.argv)==3 and sys.argv[1]=='--worker':
+        LIBRARY_DIRECTORY=Path(sys.argv[2]);main()
+    elif len(sys.argv)==1:
+        BUILD.mkdir(exist_ok=True)
+        (BUILD/'object-state-differential.json').unlink(missing_ok=True)
+        with temporary_build_directory(prefix='object-state-',parent=BUILD) as directory:
+            run_bounded([sys.executable,str(Path(__file__).resolve()),'--worker',directory],
+                        cwd=ROOT,timeout=120)
+    else:raise SystemExit('Unexpected object_state arguments')
