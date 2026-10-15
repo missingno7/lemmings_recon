@@ -113,7 +113,15 @@ and input hashes in build/mask-generators-differential.json and
 build/generated-graphics-differential.json. These are local acceptance results;
 the full original/native campaigns remain prerequisites for aggregate acceptance.
 
-Next close the source and save-frame contracts of 5DF8/5FAC/606B. Preserve
-their live DS replacement, saved DS/SI/count words, incoming DF and unchanged
-VGA state. Their fixed-looking initial loops do not rule out larger wrapped
-counts after aliases.
+The 5DF8 consumer now has scoped native acceptance in entity-mask.md: 43
+fixtures at both boundaries cover all 194 bytes/91 sites, seven branch edges
+and six completed mutants. Seventeen independent plane checks and an actual
+native-producer handoff retain the 0C60..0E70 bank contract. The live clipped
+count, DS/SI/DX/clip saves, source/destination DF behavior, incoming VGA state,
+early IF preservation and drawing-only STI remain explicit.
+
+Next translate the 5FAC/606B siblings using the static contracts beside the ASM
+and in entity-mask.md. Keep their live DS replacement, saved base/DX/DS/SI words,
+record rereads and incoming device state. The thirteen-row entry clobbers BP;
+its signed caller branch admits 130 AX values for arbitrary record contents,
+so the intended 0..1 layout match does not prove a valid-state invariant.

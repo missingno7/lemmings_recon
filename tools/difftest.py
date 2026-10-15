@@ -105,6 +105,7 @@ SUITES = (
     Suite('entity_stroke', 180, 384),
     Suite('mask_generators', 180, 384),
     Suite('generated_graphics', 180, 384),
+    Suite('entity_mask', 180, 384),
 )
 
 

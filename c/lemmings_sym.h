@@ -359,11 +359,11 @@
 #define CS_GenerateByteMaskShifts 0x5D66u
 #define CS_ConfigureEntityPixelReadback 0x5D94u
 #define CS_PrepareEntityPixelSample 0x5DC6u
-#define CS_sub_5DF8 0x5DF8u
+#define CS_DrawClippedEntityMask 0x5DF8u
 #define CS_ExchangeThreeEntityPixelBytes 0x5EBAu
 #define CS_DrawEntityStroke 0x5F0Fu
-#define CS_sub_5FAC 0x5FACu
-#define CS_sub_606B 0x606Bu
+#define CS_DrawTenRowEntityMask 0x5FACu
+#define CS_DrawThirteenRowEntityMask 0x606Bu
 #define CS_sub_6141 0x6141u
 #define CS_sub_6170 0x6170u
 #define CS_sub_64D9 0x64D9u

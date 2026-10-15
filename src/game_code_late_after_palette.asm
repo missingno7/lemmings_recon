@@ -881,16 +881,28 @@ loc_5DD5:
     add bx,PixelBitMasks-GameDataImage ; @05DF1
     mov ah,[bx] ; @05DF5
     ret ; @05DF7
+; 5DF8..5EB9: draw generated 22-row/three-byte mask, top clip only.
+; Wrapped (Y-1Eh) sign controls clipping; unsigned NEG result>21 returns early.
+; Early return leaves IF unchanged. Drawing CLI is followed by unconditional STI.
+; DS source = live GeneratedGraphicsBufferSegment after PUSH DS; source cursor
+; 0C60h+66*((X-8)&7)+3*live popped clip word, all arithmetic wraps16 bits.
+; DS record X is read twice, after different SS saves. CX/clip/DX/DS/SI/RET
+; restore actual SS words. Zero popped CX still enters LOOP and wraps.
+; Every source/ES:A000 latch read, SS mirror/OUT08, and DF STOSB stays ordered.
+; Incoming mode/map/compare/care/SEQ state stays live; output port is popped DX.
+; Source LODSW/LODSB follow DF; DI adds CDh after each three-byte row.
+; No bottom clip or selector/count bounds. Full contract: docs/entity-mask.md.
 sub_5DF8:
+DrawClippedEntityMask:
     mov dx,0x3ce ; @05DF8
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @05DFB
-    mov [ss:0xa],ax ; @05DFD
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @05DFD
     out dx,ax ; @05E01
     mov ax,0xf01 ; @05E02
-    mov [ss:0xc],ax ; @05E05
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @05E05
     out dx,ax ; @05E09
     mov ax,0x3 ; @05E0A
-    mov [ss:0x2],ax ; @05E0D
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @05E0D
     out dx,ax ; @05E11
     mov ax,0xa000 ; @05E12
     mov es,ax ; @05E15
@@ -951,14 +963,14 @@ loc_5E7F:
     mov ah,[es:di] ; @05E82
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @05E85
     mov al,0x8 ; @05E87
-    mov [ss:0xe],ax ; @05E89
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05E89
     out dx,ax ; @05E8D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05E8E
     stosb ; @05E90
     mov ah,[es:di] ; @05E91
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @05E94
     mov al,0x8 ; @05E96
-    mov [ss:0xe],ax ; @05E98
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05E98
     out dx,ax ; @05E9C
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05E9D
     stosb ; @05E9F
@@ -966,7 +978,7 @@ loc_5E7F:
     mov ah,[es:di] ; @05EA1
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @05EA4
     mov al,0x8 ; @05EA6
-    mov [ss:0xe],ax ; @05EA8
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05EA8
     out dx,ax ; @05EAC
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05EAD
     stosb ; @05EAF
@@ -1106,7 +1118,17 @@ loc_5F6D:
     out dx,ax ; @05FA9
     sti ; @05FAA
     ret ; @05FAB
+; 5FAC..606A: unchecked incoming AX -> wrapped240*AX saved in live SS word.
+; POP BX may change base; +03C0h iff live record[27h]==FFh.
+; Mask = base+30*((reread X+record[4])&7), 10 three-byte rows, no clip.
+; Destination low(D0h*(Y+record[6]-10h))+((X+record[4])>>3)+4A40h.
+; PUSH SI precedes record rereads; PUSH DS precedes live selector read1FE8.
+; Source/ES stores follow DF, ADD DI,CDh stays forward; latch/mirror/OUT order
+; and incoming VGA state stay live. STI then actual POP DS/SI/RET; BP unchanged.
+; Caller28A1 masks its selector into AX0..3; this is not a callee bound.
+; Static contract only; C remains untranslated. See docs/entity-mask.md.
 sub_5FAC:
+DrawTenRowEntityMask:
     shl ax,1 ; @05FAC
     shl ax,1 ; @05FAE
     shl ax,1 ; @05FB0
@@ -1120,13 +1142,13 @@ sub_5FAC:
     push ax ; @05FC0
     mov dx,0x3ce ; @05FC1
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @05FC4
-    mov [ss:0xa],ax ; @05FC6
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @05FC6
     out dx,ax ; @05FCA
     mov ax,0xf01 ; @05FCB
-    mov [ss:0xc],ax ; @05FCE
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @05FCE
     out dx,ax ; @05FD2
     mov ax,0x3 ; @05FD3
-    mov [ss:0x2],ax ; @05FD6
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @05FD6
     out dx,ax ; @05FDA
     mov ax,0xa000 ; @05FDB
     mov es,ax ; @05FDE
@@ -1172,14 +1194,14 @@ loc_6030:
     mov ah,[es:di] ; @06033
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @06036
     mov al,0x8 ; @06038
-    mov [ss:0xe],ax ; @0603A
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0603A
     out dx,ax ; @0603E
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @0603F
     stosb ; @06041
     mov ah,[es:di] ; @06042
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @06045
     mov al,0x8 ; @06047
-    mov [ss:0xe],ax ; @06049
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @06049
     out dx,ax ; @0604D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @0604E
     stosb ; @06050
@@ -1187,7 +1209,7 @@ loc_6030:
     mov ah,[es:di] ; @06052
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @06055
     mov al,0x8 ; @06057
-    mov [ss:0xe],ax ; @06059
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @06059
     out dx,ax ; @0605D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @0605E
     stosb ; @06060
@@ -1197,7 +1219,17 @@ loc_6030:
     pop ds ; @06068
     pop si ; @06069
     ret ; @0606A
+; 606B..6140: unchecked AX -> wrapped312*AX+0780h saved in live SS word.
+; POP BX may change base; +0270h iff record[27h]==FFh; then39*(sum&7).
+; sum startsX; if record[28h]==2, INC localY and add CBW(record[27h]) tosum;
+; add record[4], store BP=sum before logicalSHR3. BP returns(sum&7), not saved.
+; Destination low(D0h*(adjustedY+record[6]-10h))+(sum>>3)+4A40h.
+; 13 three-byte rows, no clip; live DX/DS/SI/RET saves and VGA/DF ordering
+; match the ten-row sibling. The signed JL at2B58 admits other AX values;
+; intended AX0..1 is not a proven caller-state invariant or a callee bound.
+; Static contract only; C remains untranslated. See docs/entity-mask.md.
 sub_606B:
+DrawThirteenRowEntityMask:
     shl ax,1 ; @0606B
     shl ax,1 ; @0606D
     shl ax,1 ; @0606F
@@ -1215,13 +1247,13 @@ sub_606B:
     push ax ; @06088
     mov dx,0x3ce ; @06089
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0608C
-    mov [ss:0xa],ax ; @0608E
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @0608E
     out dx,ax ; @06092
     mov ax,0xf01 ; @06093
-    mov [ss:0xc],ax ; @06096
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @06096
     out dx,ax ; @0609A
     mov ax,0x3 ; @0609B
-    mov [ss:0x2],ax ; @0609E
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @0609E
     out dx,ax ; @060A2
     mov ax,0xa000 ; @060A3
     mov es,ax ; @060A6
@@ -1275,14 +1307,14 @@ loc_6106:
     mov ah,[es:di] ; @06109
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @0610C
     mov al,0x8 ; @0610E
-    mov [ss:0xe],ax ; @06110
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @06110
     out dx,ax ; @06114
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06115
     stosb ; @06117
     mov ah,[es:di] ; @06118
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @0611B
     mov al,0x8 ; @0611D
-    mov [ss:0xe],ax ; @0611F
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0611F
     out dx,ax ; @06123
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06124
     stosb ; @06126
@@ -1290,7 +1322,7 @@ loc_6106:
     mov ah,[es:di] ; @06128
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @0612B
     mov al,0x8 ; @0612D
-    mov [ss:0xe],ax ; @0612F
+    mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0612F
     out dx,ax ; @06133
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06134
     stosb ; @06136

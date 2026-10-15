@@ -100,8 +100,14 @@ completed mutants. Their 5AC1 producer directly composes the native leaves:
 17 fixtures cover 80 additional bytes/35 sites, 101 integrated sites/24 edges
 and five completed mutants. An independent calculation checks the complete
 1370h bank. Live segment selectors, SS counts/cursors/DH/DS, child/outer returns,
-DF and bus providers remain explicit. See generated-graphics.md; the consumers
-5DF8/5FAC/606B and shared-tail 5CC1 caller remain separate frontiers.
+DF and bus providers remain explicit. See generated-graphics.md. The 5DF8
+consumer now passes 43 core/adapter fixtures, all 194 bytes/91 sites and seven
+edges, with six completed mutants, 17 independent plane checks and an actual
+native producer handoff. Its live clipped count, saves, DF/latch ordering and
+early IF/drawing STI distinction remain explicit. The ten/thirteen-row sibling
+contracts are now beside the ASM and in entity-mask.md, including clobbered BP
+and the thirteen-row caller's signed-selector seam. They and the shared-tail
+5CC1 caller remain untranslated.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

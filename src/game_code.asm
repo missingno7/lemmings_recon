@@ -473,7 +473,7 @@ loc_23B2:
     jnz loc_23B9 ; @023B4
     jmp loc_1FEB ; @023B6
 loc_23B9:
-    call sub_5DF8 ; @023B9
+    call DrawClippedEntityMask ; @023B9
     jmp loc_1FEB ; @023BC
 loc_23BF:
     call PrepareEntityPixelSample ; @023BF
@@ -971,7 +971,7 @@ loc_2897:
 loc_289E:
     sub al,0x2 ; @0289E
     cbw ; @028A0
-    call sub_5FAC ; @028A1
+    call DrawTenRowEntityMask ; @028A1
     mov al,[si+0x28] ; @028A4
     cmp al,0x5 ; @028A7
     jz loc_28AE ; @028A9
@@ -1247,7 +1247,7 @@ loc_2B58:
 loc_2B5D:
     dec al ; @02B5D
     cbw ; @02B5F
-    call sub_606B ; @02B60
+    call DrawThirteenRowEntityMask ; @02B60
     jmp loc_1FEB ; @02B63
 loc_2B66:
     mov al,[si+0x27] ; @02B66

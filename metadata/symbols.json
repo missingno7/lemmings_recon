@@ -34165,9 +34165,11 @@
     "address": 24056,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5DF8",
-    "aliases": [],
+    "size": 194,
+    "symbol_name": "DrawClippedEntityMask",
+    "aliases": [
+      "sub_5DF8"
+    ],
     "callers": [
       9145
     ],
@@ -34318,12 +34320,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5DF8..5EB9 draws three-byte generated mask rows from bank0C60+66*((X-8)&7)+3*topclip; wrapped Y-1E sign/unsigned clip,live SS saves and VGA state; docs/entity-mask.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 194
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 194,
+    "c_implementation": "c/entity_mask.c",
+    "verification_evidence": "tests/entity_mask.py:43 fixtures at core/adapter boundaries,194 bytes/91 sites,7 branch edges,31608 ordered events,6 completed mutants,17 independent mask/plane checks; actualC producer handoff with528 independently checked bankbytes; wrapped clipping/earlyIF vsSTI,liveSS counts/clip/DX/DS/SI/RET,selector/post-PUSH aliases,DF/VGA modes/map/physicalwordwrap; docs/entity-mask.md"
   },
   {
     "address": 24250,
@@ -34663,9 +34668,11 @@
     "address": 24492,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5FAC",
-    "aliases": [],
+    "size": 191,
+    "symbol_name": "DrawTenRowEntityMask",
+    "aliases": [
+      "sub_5FAC"
+    ],
     "callers": [
       10401
     ],
@@ -34850,7 +34857,8 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "5FAC..606A: live saved240*AX base plus03C0 whenrecord27==FF and30*((X+record4)&7),10rows; caller28A1maskedselectorAX0..3,calleeunchecked; DS/SI/DX saves andVGA/DF remainlive; docs/entity-mask.md"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 191
@@ -34859,9 +34867,11 @@
     "address": 24683,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_606B",
-    "aliases": [],
+    "size": 214,
+    "symbol_name": "DrawThirteenRowEntityMask",
+    "aliases": [
+      "sub_606B"
+    ],
     "callers": [
       11104
     ],
@@ -35046,7 +35056,8 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "606B..6140: live saved312*AX+0780 base plus0270 whenrecord27==FF and39*(sum&7),13rows; record28==2 incrementsY/addssignedrecord27 toX; BPclobbered; signedcaller2B58doesnotproveAX0..1; docs/entity-mask.md"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 214

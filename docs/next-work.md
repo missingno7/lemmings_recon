@@ -65,15 +65,25 @@ changed-target stops, DF asymmetry, overlap and device providers remain explicit
 See generated-graphics.md. Child bytes overlap the leaf translations and are
 not added again; this is not aggregate acceptance or full resource/game readiness.
 
-Next close the generated-bank consumers:
+The 5DF8 `DrawClippedEntityMask` consumer now passes 43 fixtures at both
+boundaries: 194 bytes/91 sites, seven branch edges, 31,608 events and six
+completed mutants, plus 17 independent plane checks. An actual native producer
+handoff independently checks all 528 bytes in its source bank. Early clipping
+retains IF; drawing sets IF after live count/clip/DX/DS/SI saves, ordered source,
+latch/mirror/port/pixel accesses and DF-sensitive strings. See entity-mask.md.
 
-1. Connect 5DF8/5FAC/606B to their proven generated-bank inputs, preserving
-   unchecked selectors, clipping, live DS replacement, saved counters, VGA
-   latches and incoming device state. Start with the independent 5DF8 body;
-   its clipped row/count saves must be understood before simplifying loops.
-   The allocation coordinates and matching normal selectors do not prove usable
-   buffer bounds or arbitrary aliases. The 5CC1 shared-tail caller and adjacent
-   UNKNOWN 5D18..5D65 remain separate frontiers.
+Next translate the remaining generated-bank consumers:
+
+1. The 5FAC/606B siblings now have maintained static contracts and names:
+   `DrawTenRowEntityMask` (191 bytes/88 sites) and `DrawThirteenRowEntityMask`
+   (214 bytes/99 sites). Translate the ten-row entry, then the thirteen-row
+   entry, retaining their live base/DX/DS/SI saves and source/latch ordering.
+   The latter clobbers BP and adjusts its coordinate sum when record byte
+   +28h equals two. Its caller's signed JL admits 130 AX values for arbitrary
+   record contents; only the intended subset 0..1 matches the ordinary layout.
+   Keep the unchecked callee and that open state invariant. No C bytes are
+   claimed for either sibling. Allocation bounds and the 5CC1 shared-tail
+   caller/UNKNOWN 5D18..5D65 remain separate frontiers.
 2. The 6141 sibling address helper still has distinct register inputs, saves
    and no clamp. The 2E04/2EC0 state/interaction and platform seams also remain.
    The 1F19 parent still has 3,744 decoded bytes/1,255 sites and is untranslated;
@@ -84,8 +94,10 @@ Use fresh dependency views rather than an accumulated historical task list:
 ```powershell
 .venv\Scripts\python.exe tools\graph.py 1F19 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 1F19 --bottom-up
-.venv\Scripts\python.exe tools\graph.py 5AC1 --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 5AC1 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 5FAC --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 5FAC --bottom-up
+.venv\Scripts\python.exe tools\graph.py 606B --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 606B --bottom-up
 ```
 
 ## Development and acceptance
