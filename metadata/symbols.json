@@ -15683,9 +15683,11 @@
     "address": 11780,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_2E04",
-    "aliases": [],
+    "size": 188,
+    "symbol_name": "AdvanceEntityCountdown",
+    "aliases": [
+      "sub_2E04"
+    ],
     "callers": [
       8012
     ],
@@ -15972,13 +15974,15 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
       "Static caller1F45..1F51 and countdown producers2033/31E1 plus record clear30F3..30F8; live field/slot/sound contracts beside ASM and docs/entity-countdown.md. C remains untranslated."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 188
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 188,
+    "c_implementation": "c/entity_countdown.c",
+    "verification_evidence": "tests/entity_countdown.py:430 fixtures at core/adapter boundaries,20 auxiliary INT61 calls;188 parent bytes/52 sites/14 edges;8 countdown+6 completed interrupt mutants. Actual native driver cores; frame/IVT is an explicit platform boundary; changed targets/unbound vectors stop. docs/entity-countdown.md"
   },
   {
     "address": 11968,
@@ -57331,5 +57335,105 @@
       "101F storesallocatedAX+1000h+1D0Ch;5AC2 selectsESfromthisword and5AC1fills shifted graphics banks using5CDD/5D66;5E7A/6028/60FE selectDSfromit and7126loadsCX; buffers remainlive/unbounded/aliasable; docs/generated-graphics.md"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11870,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "EntityCountdownSoundReturn",
+    "aliases": [
+      "loc_2E5E"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact2E04 native boundary/INT61 continuation;docs/entity-countdown.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 11874,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "EntityCountdownReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact2E04 native boundary/INT61 continuation;docs/entity-countdown.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 11954,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "EntityCountdownMaskedSoundReturn",
+    "aliases": [
+      "loc_2EB2"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact2E04 native boundary/INT61 continuation;docs/entity-countdown.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 11967,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "EntityCountdownMaskedReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact2E04 native boundary/INT61 continuation;docs/entity-countdown.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8208,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "ExternalSoundDriverEnabled",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "InitializeSoundDriver writes2010=00/FF and25A7=01/03 at05A4..0606;2E4B/2E52 and2E9F/2EA6 read these live gates; masks are preserved, not a boolean normalization"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9639,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "SoundOptionBits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "InitializeSoundDriver writes2010=00/FF and25A7=01/03 at05A4..0606;2E4B/2E52 and2E9F/2EA6 read these live gates; masks are preserved, not a boolean normalization"
+    ],
+    "verification_status": "STATIC"
   }
 ]

@@ -184,7 +184,7 @@
 #define CS_DatCacheAllocationDisabledReturn 0x1F18u
 #define CS_sub_1F19 0x1F19u
 #define CS_CopyEntityPatternToInteractionMap 0x283Bu
-#define CS_sub_2E04 0x2E04u
+#define CS_AdvanceEntityCountdown 0x2E04u
 #define CS_sub_2EC0 0x2EC0u
 #define CS_sub_30A6 0x30A6u
 #define CS_sub_3150 0x3150u
@@ -644,4 +644,10 @@
 #define SEG09A9_PixelBitMasks 0x547Cu
 #define SEG09A9_EntityPixelRowPitchBytes 0x0004u
 #define SEG09A9_GeneratedGraphicsBufferSegment 0x1FE8u
+#define CS_EntityCountdownSoundReturn 0x2E5Eu
+#define CS_EntityCountdownReturn 0x2E62u
+#define CS_EntityCountdownMaskedSoundReturn 0x2EB2u
+#define CS_EntityCountdownMaskedReturn 0x2EBFu
+#define SEG09A9_ExternalSoundDriverEnabled 0x2010u
+#define SEG09A9_SoundOptionBits 0x25A7u
 #endif

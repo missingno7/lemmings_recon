@@ -11,6 +11,17 @@ import sound
 
 
 class SoundScopeTests(unittest.TestCase):
+    def test_operand_reference_must_match_its_actual_instruction(self):
+        operand=dict(segment='default',displacement=0xF0,base=None,index=None,size=1)
+        analysis={'instructions':[dict(address=0x2D,data_references=[operand])]}
+        sound.validate_data_references(analysis,[dict(symbol_name='setter',
+            data_references=[dict(instruction=0x2D,**operand)])])
+        for reference in (dict(instruction=0x30,**operand),
+                          dict(instruction=0x2D,**(operand|dict(displacement=0xEE)))):
+            with self.subTest(reference=reference),self.assertRaises(ValueError):
+                sound.validate_data_references(analysis,[dict(symbol_name='setter',
+                    data_references=[reference])])
+
     def test_shared_ranges_count_bytes_once(self):
         analysis={'instructions':[dict(address=0,size=2),dict(address=3,size=2)]}
         rows=[dict(address=0,size=5,symbol_name='prefix',c_implementation='c.c',

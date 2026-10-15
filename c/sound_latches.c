@@ -128,7 +128,14 @@ static LmnSoundIretFrame read_iret_frame(uint8_t *memory,uint16_t ss,
     LmnSoundIretFrame frame;
     frame.ip=iret_pop(memory,ss,&stack_offset,access_flags,bus);
     frame.cs=iret_pop(memory,ss,&stack_offset,access_flags,bus);
+    /* The represented FLAGS word has bit1 fixed at one and bits3/5/15
+       reserved at zero, including when the saved frame was overwritten. */
+#if SOUND_LATCH_MUTATION == 10
     frame.flags=iret_pop(memory,ss,&stack_offset,access_flags,bus);
+#else
+    frame.flags=(uint16_t)((iret_pop(memory,ss,&stack_offset,access_flags,bus)
+                            &0x7fd5u)|2u);
+#endif
     frame.stack_offset=stack_offset;
     return frame;
 }

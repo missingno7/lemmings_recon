@@ -113,8 +113,9 @@ The external INT61 entry prefixes and six command latch setters now have
 scoped C cores and actual IRET adapters; see sound-latches.md. All256 AH
 values are covered for each driver, but AH0/1/2 remain explicit untranslated
 service exits. Main2E04 requests command4 and rereads its record afterward;
-entity-countdown.md records that caller contract. Installing/selecting the
-live INT61 vector and composing its frame with main remain separate work.
+entity-countdown.md records the composed native caller and its declared INT
+frame/vector model. Unbound targets and altered IRET returns remain explicit
+exits. Driver installation, mutable code and asynchronous IRQ timing remain open.
 
 Remaining work includes the provider contracts, further vector writes/aliases,
 PC-speaker dispatch/producer closure and the component's unexplained trailing bytes.

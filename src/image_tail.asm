@@ -1,3 +1,5 @@
+ExternalSoundDriverEnabled equ GameDataImage+0x2010
+SoundOptionBits equ GameDataImage+0x25A7
 ResourceRetryPromptText equ GameDataImage+0x4ECF
 UiGraphicsBufferSegment equ GameDataImage+0x1FEE
 AlternateDrawingOrigin equ GameDataImage+0x1F78

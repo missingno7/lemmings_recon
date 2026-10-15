@@ -154,6 +154,18 @@ def translated_scope(image,analysis,ledger):
     return len(translated),len(covered)
 
 
+def validate_data_references(analysis,ledger):
+    """Ledger operand addresses must still name the decoded instruction's operand."""
+    instructions={row['address']:row for row in analysis['instructions']}
+    for symbol in ledger:
+        for ref in symbol.get('data_references',[]):
+            instruction=instructions.get(ref['instruction'])
+            operand={key:value for key,value in ref.items() if key!='instruction'}
+            if instruction is None or operand not in instruction.get('data_references',[]):
+                raise ValueError('Stale sound operand reference: '+symbol['symbol_name']+
+                                 f' at{ref["instruction"]:04X}')
+
+
 def verify_drivers(generate=False,generate_name=None):
     BUILD.mkdir(exist_ok=True)
     images=sound_images()
@@ -169,6 +181,7 @@ def verify_drivers(generate=False,generate_name=None):
         if meta!=pins[name]:
             raise ValueError('Sound oracle identity mismatch: '+name)
         a=analyze_driver(name,image)
+        validate_data_references(a,read_json(ROOT/f'metadata/{name}-symbols.json'))
         if dict(regions=a['regions'],overlays=a['overlays'])!=read_json(ROOT/f'metadata/{name}-regions.json'):
             raise ValueError('Sound region inventory stale: '+name)
         source=ROOT/f'src/sound/{name}.asm'

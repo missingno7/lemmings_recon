@@ -10,6 +10,10 @@ The setter cores stop before IRET. DS is selected by the actual temporary
 stack POP, and restored by a second live POP, rather than cached entry values.
 Before IRET, the setter bodies preserve arithmetic flags and IF/DF.
 AX/BX/CX/DX/SI/DI/BP/ES/SS stay unchanged throughout.
+IRET applies the saved FLAGS word with bit1 fixed at one and reserved
+bits3/5/15 zero in the represented real-mode CPU. AL05/00 latch/frame aliases
+and a saved FCAA word check this normalization against original IRET; a compiled
+regression mutant preserves the formerly incorrect raw word.
 The adapters read IP, CS and FLAGS sequentially from the live SS frame and
 advance SP by six modulo 65536. Each word starts at its 16-bit offset; its
 second byte is the next physical byte with 20-bit wrap. Optional raster bus
@@ -32,12 +36,12 @@ remain untranslated.
 
 The native campaign is `tools/difftest.py sound_latches`. Its report is
 build/sound-latches-differential.json and is valid only for its recorded hashes.
-It compares 730 fixtures at core and IRET/untranslated boundaries: 126 focused
-setter fixtures, all 256 AH selectors for both drivers, 90 live-stack/bus
+It compares 766 fixtures at core and IRET/untranslated boundaries: 144 focused
+setter fixtures, all 256 AH selectors for both drivers, 108 live-stack/bus
 dispatcher connections and an exact AX0405 request for each driver. The AH4
 selector fixtures already use AX040C. All 106 bytes/65 sites and 27 branch
 edges are covered,
-with 8,376 ordered byte events and nine completed mutation witnesses. Six
+with 9,240 ordered byte events and ten completed mutation witnesses. Six
 additional original-prefix-to-native-setter handoffs retain their own boundary.
 RAM/null-bus repeats, independent ordinary stack/latch and dispatcher arithmetic
 expectations, full canonical RAM/register/defined-flag comparison, actual IRET,

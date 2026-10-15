@@ -1891,7 +1891,7 @@ loc_4A2E:
     cmp byte [0x1f73],0xff ; @04A34
     jz loc_4A3F ; @04A39
     cmp al,0x31 ; @04A3B
-    jz loc_4ABD ; @04A3D
+    jz short loc_4ABD ; original +126-byte branch; prevent -O0 forward-pass widening ; @04A3D
 loc_4A3F:
     cmp al,0x32 ; @04A3F
     jz loc_4A4E ; @04A41

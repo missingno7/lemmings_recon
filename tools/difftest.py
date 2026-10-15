@@ -109,6 +109,7 @@ SUITES = (
     Suite('entity_mask_rows', 180, 384),
     Suite('coordinate_pixel', 180, 384),
     Suite('sound_latches', 180, 384),
+    Suite('entity_countdown', 180, 384),
 )
 
 

@@ -157,7 +157,7 @@
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/sound_latches.c",
-    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+    "verification_evidence": "tests/sound_latches.py: 144 leaf fixtures and622 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and10 completed mutants"
   },
   {
     "address": 41,
@@ -200,7 +200,7 @@
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/sound_latches.c",
-    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+    "verification_evidence": "tests/sound_latches.py: 144 leaf fixtures and622 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and10 completed mutants"
   },
   {
     "address": 49,
@@ -243,7 +243,7 @@
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/sound_latches.c",
-    "verification_evidence": "tests/sound_latches.py: 126 leaf fixtures and604 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and9 completed mutants"
+    "verification_evidence": "tests/sound_latches.py: 144 leaf fixtures and622 dispatcher fixtures at core+IRET/seam boundaries; live segment saves, stack/latch aliases, VGA, all selectors and10 completed mutants"
   },
   {
     "address": 57,

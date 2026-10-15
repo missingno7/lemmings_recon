@@ -1,3 +1,6 @@
+sub_2E04 equ AdvanceEntityCountdown
+loc_2E5E equ EntityCountdownSoundReturn
+loc_2EB2 equ EntityCountdownMaskedSoundReturn
 ; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
 sub_1F19:
@@ -22,7 +25,7 @@ loc_1F45:
     mov al,[si+0x20] ; @01F45
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01F48
     jz loc_1F54 ; @01F4A
-    call sub_2E04 ; @01F4C
+    call AdvanceEntityCountdown ; @01F4C
     jnz loc_1F54 ; @01F4F
     jmp loc_1FEB ; @01F51
 loc_1F54:
@@ -343,9 +346,9 @@ loc_224D:
     mov [si+0x14],ax ; @02282
     mov byte [si+0x2a],0x0 ; @02285
     and byte [si+0x24],0x1 ; @02289
-    cmp byte [0x2010],0xff ; @0228D
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0228D
     jnz loc_22A0 ; @02292
-    test byte [0x25a7],0x3 ; @02294
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02294
     jz loc_22A0 ; @02299
     mov ax,0x408 ; @0229B
     int 0x61 ; @0229E
@@ -432,9 +435,9 @@ loc_235F:
     jz loc_2366 ; @02361
     jmp loc_1FEB ; @02363
 loc_2366:
-    cmp byte [0x2010],0xff ; @02366
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02366
     jz loc_2379 ; @0236B
-    test byte [0x25a7],0x1 ; @0236D
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @0236D
     jz loc_2379 ; @02372
     mov ax,0x30c ; @02374
     int 0x60 ; @02377
@@ -580,9 +583,9 @@ loc_2491:
     jz loc_24BD ; @024B8
     jmp loc_1FE8 ; @024BA
 loc_24BD:
-    cmp byte [0x2010],0xff ; @024BD
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @024BD
     jnz loc_24D0 ; @024C2
-    test byte [0x25a7],0x3 ; @024C4
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @024C4
     jz loc_24D0 ; @024C9
     mov ax,0x40a ; @024CB
     int 0x61 ; @024CE
@@ -759,16 +762,16 @@ loc_26A2:
     ja loc_26D7 ; @026AB
     push ax ; @026AD
     push es ; @026AE
-    cmp byte [0x2010],0xff ; @026AF
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @026AF
     jz loc_26C2 ; @026B4
-    test byte [0x25a7],0x1 ; @026B6
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @026B6
     jz loc_26C2 ; @026BB
     mov ax,0x313 ; @026BD
     int 0x60 ; @026C0
 loc_26C2:
-    cmp byte [0x2010],0xff ; @026C2
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @026C2
     jnz loc_26D5 ; @026C7
-    test byte [0x25a7],0x3 ; @026C9
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @026C9
     jz loc_26D5 ; @026CE
     mov ax,0x412 ; @026D0
     int 0x61 ; @026D3
@@ -1133,9 +1136,9 @@ loc_2A4A:
 loc_2A54:
     jmp loc_1FE8 ; @02A54
 loc_2A57:
-    cmp byte [0x2010],0xff ; @02A57
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02A57
     jnz loc_2A6A ; @02A5C
-    test byte [0x25a7],0x3 ; @02A5E
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02A5E
     jz loc_2A6A ; @02A63
     mov ax,0x40a ; @02A65
     int 0x61 ; @02A68
@@ -1397,9 +1400,9 @@ loc_2CBB:
     and byte [si+0x24],0x1 ; @02CF3
     jmp loc_1FE8 ; @02CF7
 loc_2CFA:
-    cmp byte [0x2010],0xff ; @02CFA
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02CFA
     jnz loc_2D0D ; @02CFF
-    test byte [0x25a7],0x3 ; @02D01
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02D01
     jz loc_2D0D ; @02D06
     mov ax,0x40a ; @02D08
     int 0x61 ; @02D0B
@@ -1425,9 +1428,9 @@ loc_2D0F:
     mov byte [si+0x2a],0x0 ; @02D4B
     mov byte [si+0x22],0xf ; @02D4F
     and byte [si+0x24],0x1 ; @02D53
-    cmp byte [0x2010],0xff ; @02D57
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02D57
     jnz loc_2D6A ; @02D5C
-    test byte [0x25a7],0x3 ; @02D5E
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02D5E
     jz loc_2D6A ; @02D63
     mov ax,0x40c ; @02D65
     int 0x61 ; @02D68
@@ -1489,7 +1492,7 @@ loc_2DC4:
     and byte [si+0x24],0x1 ; @02DF9
     and byte [si+0x24],0x7f ; @02DFD
     jmp loc_1FE8 ; @02E01
-; Countdown/transition contract (188 bytes/52 sites), still UNTRANSLATED C.
+; Countdown/transition contract (188 bytes/52 sites), scoped TESTED C.
 ; Live DS:SI points at a 2Dh record. DEC byte +20 wraps; its RMW callbacks
 ; observe entry flags. Nonzero -> shared AND AL,AL/RET returns AL1/ZF0,
 ; retaining incoming AH. Caller1F45 checks +20 before CALL1F4C; do not cache
@@ -1498,13 +1501,15 @@ loc_2DC4:
 ; Layout/cursor/state stores and live callback-slot reads remain in byte order.
 ; AND byte +24,1 retains only bit0. Sound gates reread DS2010/25A7; AH4
 ; requests AL05/0C at2E5C/2EB0. Native driver prefixes/setters are scoped in
-; sound-latches.md; actual INT frame/vector transport must still be composed.
+; sound-latches.md. C models the declared live INT frame/vector boundary;
+; unbound vectors and changed IRET targets stop at their actual CS:IP.
 ; 2EB2 rereads +8 AFTER the sound call; bit2 clears +22. Live DS/SS/record/RET
 ; aliases remain observable. Expiry AL0/ZF1 does not generally mean AX0:
 ; with no sound AH retains the callback high byte; normal AH4 sound returns AH0.
 ; Shared tail2E60 belongs to both non-expiry and mask-clear expiry paths.
-; Full field producers and remaining composition obligations: entity-countdown.md.
-sub_2E04:
+; Verified430 core/adapter fixtures +20 auxiliary INT calls,14 completed mutants.
+; Field producers and platform/code-alias limits: entity-countdown.md.
+AdvanceEntityCountdown:
     mov al,0x1 ; @02E04
     dec byte [si+0x20] ; @02E06
     jnz loc_2E60 ; @02E09
@@ -1523,16 +1528,17 @@ sub_2E04:
     mov [si+0x14],ax ; @02E40
     mov byte [si+0x2a],0x0 ; @02E43
     and byte [si+0x24],0x1 ; @02E47
-    cmp byte [0x2010],0xff ; @02E4B
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02E4B
     jnz loc_2E5E ; @02E50
-    test byte [0x25a7],0x3 ; @02E52
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02E52
     jz loc_2E5E ; @02E57
     mov ax,0x405 ; @02E59
     int 0x61 ; @02E5C
-loc_2E5E:
+EntityCountdownSoundReturn:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @02E5E
 loc_2E60:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02E60
+EntityCountdownReturn:
     ret ; @02E62
 loc_2E63:
     or word [si+0x8],byte +0x2 ; @02E63
@@ -1549,18 +1555,19 @@ loc_2E63:
     mov byte [si+0x2a],0x0 ; @02E93
     mov byte [si+0x22],0xf ; @02E97
     and byte [si+0x24],0x1 ; @02E9B
-    cmp byte [0x2010],0xff ; @02E9F
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02E9F
     jnz loc_2EB2 ; @02EA4
-    test byte [0x25a7],0x3 ; @02EA6
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02EA6
     jz loc_2EB2 ; @02EAB
     mov ax,0x40c ; @02EAD
     int 0x61 ; @02EB0
-loc_2EB2:
+EntityCountdownMaskedSoundReturn:
     test word [si+0x8],0x4 ; @02EB2
     jz loc_2EBD ; @02EB7
     mov byte [si+0x22],0x0 ; @02EB9
 loc_2EBD:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @02EBD
+EntityCountdownMaskedReturn:
     ret ; @02EBF
 sub_2EC0:
     mov ax,[si] ; @02EC0
@@ -1640,16 +1647,16 @@ loc_2F3B:
     mov [si+0x14],ax ; @02F70
     mov byte [si+0x2a],0xff ; @02F73
     and byte [si+0x24],0x1 ; @02F77
-    cmp byte [0x2010],0xff ; @02F7B
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02F7B
     jz loc_2F8E ; @02F80
-    test byte [0x25a7],0x1 ; @02F82
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @02F82
     jz loc_2F8E ; @02F87
     mov ax,0x302 ; @02F89
     int 0x60 ; @02F8C
 loc_2F8E:
-    cmp byte [0x2010],0xff ; @02F8E
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02F8E
     jnz loc_2FA1 ; @02F93
-    test byte [0x25a7],0x3 ; @02F95
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02F95
     jz loc_2FA1 ; @02F9A
     mov ax,0x410 ; @02F9C
     int 0x61 ; @02F9F
@@ -1678,11 +1685,11 @@ loc_2FB6:
 loc_2FCE:
     or word [di],byte +0x2 ; @02FCE
     mov byte [si+0x26],0xff ; @02FD1
-    cmp byte [0x2010],0xff ; @02FD5
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02FD5
     jz loc_2FDF ; @02FDA
     jmp loc_2F3A ; @02FDC
 loc_2FDF:
-    test byte [0x25a7],0x3 ; @02FDF
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @02FDF
     jnz loc_2FE9 ; @02FE4
     jmp loc_2F3A ; @02FE6
 loc_2FE9:
@@ -1712,9 +1719,9 @@ loc_3002:
     mov [si+0x14],ax ; @03030
     mov byte [si+0x2a],0x0 ; @03033
     and byte [si+0x24],0x1 ; @03037
-    cmp byte [0x2010],0xff ; @0303B
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0303B
     jnz loc_304E ; @03040
-    test byte [0x25a7],0x3 ; @03042
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @03042
     jz loc_304E ; @03047
     mov ax,0x411 ; @03049
     int 0x61 ; @0304C
@@ -1738,9 +1745,9 @@ loc_3059:
     mov [si+0x14],ax ; @03087
     mov byte [si+0x2a],0xff ; @0308A
     and byte [si+0x24],0x1 ; @0308E
-    cmp byte [0x2010],0xff ; @03092
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @03092
     jnz loc_30A5 ; @03097
-    test byte [0x25a7],0x3 ; @03099
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @03099
     jz loc_30A5 ; @0309E
     mov ax,0x40d ; @030A0
     int 0x61 ; @030A3
@@ -1877,16 +1884,16 @@ loc_31C4:
     mov byte [0x72],0x0 ; @031DC
     mov byte [si+0x20],0x4f ; @031E1
 loc_31E5:
-    cmp byte [0x2010],0xff ; @031E5
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @031E5
     jz loc_31F8 ; @031EA
-    test byte [0x25a7],0x1 ; @031EC
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @031EC
     jz loc_31F8 ; @031F1
     mov ax,0x313 ; @031F3
     int 0x60 ; @031F6
 loc_31F8:
-    cmp byte [0x2010],0xff ; @031F8
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @031F8
     jnz loc_320B ; @031FD
-    test byte [0x25a7],0x3 ; @031FF
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @031FF
     jz loc_320B ; @03204
     mov ax,0x404 ; @03206
     int 0x61 ; @03209
@@ -1932,9 +1939,9 @@ loc_3271:
 loc_3285:
     jmp short loc_320C ; @03285
 loc_3287:
-    cmp byte [0x2010],0xff ; @03287
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @03287
     jnz loc_329A ; @0328C
-    test byte [0x25a7],0x3 ; @0328E
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @0328E
     jz loc_329A ; @03293
     mov ax,0x412 ; @03295
     int 0x61 ; @03298

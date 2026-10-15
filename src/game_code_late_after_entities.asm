@@ -1844,7 +1844,7 @@ loc_6EEB:
     xchg al,ah ; @06EEB
     cbw ; @06EED
     db 0x03,0xd0 ; ENCODED: add dx,ax (NASM chooses a different encoding) ; @06EEE
-    js loc_6F71 ; @06EF0
+    js short loc_6F71 ; original +127-byte branch; preserve short encoding at its limit ; @06EF0
     cmp bp,0x150 ; @06EF2
     jnl loc_6F71 ; @06EF6
     cmp dx,0xa0 ; @06EF8

@@ -87,6 +87,9 @@ def cases():
                          ('latch-return-ip', dict(ss=0x3000, sp=latch)),
                          ('latch-return-cs', dict(ss=0x3000, sp=latch - 2)),
                          ('latch-return-flags', dict(ss=0x3000, sp=latch - 4)),
+                         ('latch-return-flags-low-05', dict(ss=0x3000, sp=latch - 4, value=5)),
+                         ('latch-return-flags-low-00', dict(ss=0x3000, sp=latch - 4, value=0)),
+                         ('iret-reserved-flags', dict(iret_flags=0xFCAA)),
                          ('live-temporary-segment', dict(effect='temporary-ds')),
                          ('live-saved-and-iret', dict(effect='after-store')),
                          ('live-iret-flags', dict(effect='iret-flags')),
@@ -111,7 +114,7 @@ def setup(case):
     image = IMAGES[case['driver']][0]
     for offset, value in enumerate(image[:0x3A]):
         memory[physical(regs['cs'], offset)] = value
-    for delta, value in ((0, 0xE123), (2, 0x1240), (4, 0x0AD7)):
+    for delta, value in ((0, 0xE123), (2, 0x1240), (4, case.get('iret_flags',0x0AD7))):
         word(memory, physical(regs['ss'], regs['sp'] + delta), value)
     device = None
     if case.get('vga'):
@@ -313,7 +316,7 @@ def compare_control(native, case, core=False, null=False):
     require(actual['exit_kind'] == expected['exit_kind'], case['name'] + ': exit kind differs')
     require(actual['memory'] == expected['memory'], case['name'] + ': control memory differs')
     for n in NAMES:
-        mask = FLAGS if n == 'flags' else 0xFFFF
+        mask = 0xFFFF
         # AH0 stops after AND: AF is undefined. Every other command has DEC.
         if n == 'flags' and case['command'] == 0:
             mask &= ~0x10
@@ -350,7 +353,7 @@ def compare(native, case, core=False, dispatch=False, null=False):
     actual = native.run(case, bytearray(memory), actual_regs, copy.deepcopy(device), core, null)
     require(expected['memory'] == actual['memory'], case['name'] + ': full memory differs')
     for n in NAMES:
-        mask = FLAGS if n == 'flags' else 0xFFFF
+        mask = 0xFFFF
         require((expected['regs'][n] & mask) == (actual['regs'][n] & mask),
                 f'{case["name"]}: {n} differs {expected["regs"][n]:04x}/{actual["regs"][n]:04x}')
     if not null:
@@ -434,7 +437,8 @@ def worker(directory):
         gc.collect()
     witnesses = [(1, 'latch-saved-ds-low', True), (2, 'live-temporary-segment', True),
                  (3, 'value-0c', True), (4, 'live-saved-and-iret', False),
-                 (5, 'value-0c', True), (6, 'live-saved-and-iret', False)]
+                 (5, 'value-0c', True), (6, 'live-saved-and-iret', False),
+                 (10, 'latch-return-flags-low-05', False)]
     mutations = []
     for mutation, variant, core in witnesses:
         mutant = Native(directory, mutation)

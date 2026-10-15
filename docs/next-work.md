@@ -92,27 +92,30 @@ Word generation and neighboring UNKNOWN bytes remain in the prefix. This is
 source ownership with scoped C verification, not complete game acceptance.
 
 Both external INT61 dispatcher prefixes now compose six native latch setters:
-106 unique bytes/65 sites/27 edges across AdLib and Tandy. The 730 fixtures
+106 unique bytes/65 sites/27 edges across AdLib and Tandy. The 766 fixtures
 cover all256 AH values for both drivers plus setter, alias and VGA domains,
-at core/IRET/untranslated boundaries, with8,376 events and nine completed
+at core/IRET/untranslated boundaries, with9,240 events and ten completed
 mutants. AH0/1/2 stop at the untranslated update/detect/reset bodies; AH6..FF
 retains the five DEC operations and IRET. AdLib byte0014 stays UNKNOWN.
 See sound-latches.md. This closes the command4 provider's prefix/setter
 behavior, while main INT61 transport, playback and timing remain open.
 
-Next close the two remaining direct untranslated children of 1F19:
+The 2E04 countdown transition now composes that command4 path:430 fixtures
+at core/adapter boundaries cover188 new bytes/52 sites/14 edges, with20
+auxiliary interrupt calls and14 completed mutants. It preserves direct-zero
+wrap, residual AH, live record/slot/gate accesses, RMW flags, actual DS/FLAGS
+restores and the post-sound +8/+22 decision. Unbound vectors and changed
+interrupt returns stop at their actual CS:IP; INT frame/IVT transport remains
+a declared platform model. See entity-countdown.md. The sound adapters also
+now normalize reserved FLAGS bits after original IRET-frame aliases, with
+regression fixtures and a completed raw-FLAGS mutant.
 
-1. Translate the statically contracted 2E04 countdown/record transition
-   (188 bytes/52 sites), preserving its shared tails, live record/slot/gate
-   reads and residual AH; see entity-countdown.md. Its actual AdLib/Tandy
-   command4 dispatcher/setter boundary now has scoped C verification. Compose
-   INT61 at2E5C/2EB0 through the live vector/frame and actual IRET rather than
-   a preserving no-op; changed targets and missing service paths stay explicit.
-   Preserve DEC/RMW entry flags and the post-interrupt +8/+22 decision.
-2. Then resolve 2EC0 (486 bytes/162 sites), its SS interaction-map reads,
-   saved words, record fields and transition tails. The 1F19 parent remains
-   3,744 decoded bytes/1,255 sites and untranslated. Tested drawing children
-   retain their device/IRQ domains and do not prove complete simulation readiness.
+Next resolve2EC0, the sole remaining direct untranslated child of1F19:
+486 bytes/162 sites, live SS interaction-map reads, saved words, state/record
+fields and transition tails. Its five interrupt sites retain their service
+boundaries. The static contract is in entity-interactions.md; its INT60 AX0302
+path still needs the live PC-speaker dispatcher/leaf handoff. The1F19 parent remains3,744 decoded bytes/1,255 sites and
+untranslated. Tested children do not establish complete simulation readiness.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

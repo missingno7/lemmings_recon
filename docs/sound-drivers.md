@@ -69,8 +69,8 @@ assume the static image length bounds every runtime access.
 
 Both AdLib/Tandy entry dispatcher prefixes and six command3/4/5 latch setters
 now have scoped native C verification:106 unique bytes,65 sites and27 edges.
-The730 fixtures cover all256 AH values for both drivers, live stack/IRET and
-VGA aliases, with nine completed mutants. AH0/1/2 stop before the untranslated
+The766 fixtures cover all256 AH values for both drivers, live stack/IRET and
+VGA aliases, with ten completed mutants. AH0/1/2 stop before the untranslated
 update, detection and reset bodies; AH6..FF preserves five DEC AH operations
 and actual IRET. UNKNOWN AdLib0014 remains outside C coverage. See
 sound-latches.md. Playback, port timing, unchecked stream dispatch and broader
