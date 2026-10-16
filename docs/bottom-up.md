@@ -193,11 +193,20 @@ existing C scopes; byte/site accounting unions them.
 Preserve actual setup/countdown returns, live ES saves/DS counter, cached state
 priority and scan candidate RET203B leaving guard/request intact. Only the taken
 1FE3-to1FE8 edge is locally infeasible under the frozen nonzero AX/mask union;
-shared1FE8 remains executed through state JMPs. Next port the audited170-byte
-CreateEntityRecordIfDue leaf30A6,including bound50h clearing its coordinate source before reads.
-Resolve3150's action/latch/record and interrupt contracts next. See
-entity-simulation.md and next-work.md. Initialization,unchecked table extents,
-platform and IRQ obligations remain explicit.
+shared1FE8 remains executed through state JMPs.
+CreateEntityRecordIfDue30A6 now passes273 core/actualRET-adapter fixtures:
+170 bytes/54 sites/all13 outcomes,50,262 events and eight completed mutants.
+The equality limit,bound50h coordinate-source clear,byte MUL,late callback and
+live final bound remain explicit. The31E5/3287 feedback tails add59 unique bytes
+in68 core/actualRET-adapter fixtures,all20 sites/12 outcomes,3,786 events and
+eight mutants,with native INT60/61 children and live returned-DS gates.
+The01B0/01B3 prefix connects creation and update through their actual CALL/RET
+frames in17 core/adapter fixtures:6 caller bytes/two sites,5,708 events and five
+mutants. It stops01B6 before3944,without claiming the whole main loop.
+Next translate selector actions2/3/4 against the tested shared feedback tail,
+then connect3150's latch/dispatch prefix and remaining actions. See
+entity-actions.md,entity-simulation.md and next-work.md. Initialization,unchecked
+table extents,platform and IRQ obligations remain explicit.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

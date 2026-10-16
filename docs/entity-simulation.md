@@ -582,3 +582,56 @@ seconds/384 MiB process/640 MiB Windows tree. See
 local infeasible-edge accounting and child statuses. This scoped composed
 entry does not establish actual game scheduling, IRQ/device timing, unchecked
 record/table extents or aggregate original/native campaign acceptance.
+
+## Record creation producer
+
+CreateEntityRecordIfDue at30A6..314F owns170 known bytes/54 sites/13 outcomes,
+including LOOP's two edges and the actual outer RET. Gate002B must differ
+fromFF and EntityCreationGate0055 must equalFF. Byte DEC0048 wraps; only
+zero reads EntityCreationReload0049 and stores it back before reading limit
+0047 and bound0043. Equality is the only creation limit: bound greater than
+limit still creates. The initial bound loaded into AH remains frozen through
+coordinate selection and byte MUL CL; DX is unchanged by this byte multiply.
+Only the final INC0043 rereads the current memory value.
+
+BX=0E98+4*(bound&3),SI=0088+45*bound. The45 stores at DS:DI use explicit
+INC DI and LOOP, independently of DF. Coordinates are fetched afterward;
+bound50h makes the record begin at0E98 and clears all four source pairs
+before the X/Y reads. Neither caching coordinates nor clamping a large bound
+preserves this behavior. The two coordinate reads/stores, ordered transition,
+late callback002E read, separate+24 RMWs and live final bound INC remain
+observable through canonical memory and the optional bus. Globals48/49/55
+are named in the ledger;39D1/39E6 initialize countdown/reload and0394/0447
+write the creation gate. No host allocation extent or permanent value range
+follows from those producer paths.
+
+
+The native creation gate passes273 fixtures at logical-core/actual-RET-adapter
+boundaries:all256 raw bound bytes,170 known bytes/54 sites/all13 outcomes,
+50,262 ordered events and eight completed mutants. An independent record model
+checks the complete memory result and ordered45-byte clear/field stores.
+Providers distinguish cached AH selection from late live bound increments and
+exercise reload/limit timing,DF,word wrapping and an overwritten real RET.
+Limits are1,024 instructions/1,024 events per call and180 seconds/384 MiB
+process/640 MiB Windows tree. See `build/entity-create-differential.json`.
+This producer remains scoped constructed-state evidence, not a global array
+bound or complete scheduling contract.
+
+## Creation-to-update prefix
+
+The actual caller slice01B0..01B5 CALLs30A6 then1F19,using live SS return
+words01B3 and01B6. It has six known bytes/two CALL sites and stops at01B6
+before the untranslated3944 CALL. It has no outer RET and does not establish
+the main loop or complete tick. Creation's bound wrap and newly written record
+must flow directly to the update core in canonical memory. Changed actual
+child returns stop before any destination executes; nested update boundaries
+retain their live registers/segments/stack and raw dependency diagnostics.
+
+The two-call prefix passes17 fixtures at both core and adapter boundaries:
+6 caller bytes/two sites,5,708 ordered events and five completed mutants.
+New-record same-pass advancement,all creation gates,boundFF wrap,bound50h
+coordinate-source alias,changed actual creation/update returns,nested unbound
+sound forwarding,sound-returned DS,physical stack wrap,DF and defined FLAGS
+are checked against bounded original execution. Child matrices stay in their
+leaf suites. The limits are12,000 original instructions/8,192 bus events per
+call,240 seconds and384 MiB process/640 MiB tree commit per worker.

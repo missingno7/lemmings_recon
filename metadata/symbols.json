@@ -16609,7 +16609,7 @@
     "address": 12454,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 170,
     "symbol_name": "CreateEntityRecordIfDue",
     "aliases": [
       "sub_30A6"
@@ -16861,12 +16861,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 170
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 170,
+    "c_implementation": "c/entity_create.c",
+    "c_core": "lmn_create_entity_record_core",
+    "c_code_ranges": [
+      [
+        12454,
+        12624
+      ]
+    ],
+    "verification_evidence": "tests/entity_create.py:273 core/actualRET-adapter fixtures,all256 raw bounds,170 known bytes/54 sites/all13 jump outcomes,50262 ordered events,8 completed mutants. Cached AH selection,45 forward clears before coordinate reads,bound50h alias,byte MUL DX preservation,late callback/live final bound and SS return words verified; no array extent or wider scheduling claim."
   },
   {
     "address": 12624,
@@ -59113,6 +59122,324 @@
     "confidence": "PROVEN",
     "evidence": [
       "Outer1F19 actual CALL/RET/scan boundary; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 72,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityCreationCountdown",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39D1 initializes14;30BA byteDEC wraps and only zero reloads from live0049 before limit comparison. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 73,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityCreationReload",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39E6 and4063 store the original release-setting arithmetic result;30C3 reads on countdown expiry; no host rate domain inferred. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 85,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityCreationGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0394 writesFF;0447 writesAL afterXOR;30B0 requires exactFF before decrementing0048. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12623,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityCreationReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "All five gates and creation tail return here; core preRET vs live SS adapter. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12773,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 39,
+    "symbol_name": "RequestEntityActionFeedback",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared3150 action tail with explicit INT60/61 and live nearRET boundaries; docs/entity-actions.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_action_sound.c",
+    "c_core": "lmn_entity_action_sound_core",
+    "c_code_ranges": [
+      [
+        12773,
+        12812
+      ]
+    ],
+    "verification_evidence": "tests/entity_action_sound.py:68 combined core/actualRET-adapter fixtures,59 unique bytes/20 sites/all12 jump outcomes,3786 events,8 completed mutants. Entry0 dual31E5 / entry1 external3287. Opposite enabled gates,fresh returned-DS gate,full PC roles,partial external roles,unbound/untranslated/changed-child/IRET stops,DF,VGA and live SS returns remain explicit."
+  },
+  {
+    "address": 12792,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityActionAfterPcFeedback",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared3150 action tail with explicit INT60/61 and live nearRET boundaries; docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12811,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityActionFeedbackReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared3150 action tail with explicit INT60/61 and live nearRET boundaries; docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12935,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 20,
+    "symbol_name": "RequestEntityActionService0412",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared3150 action tail with explicit INT60/61 and live nearRET boundaries; docs/entity-actions.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_action_sound.c",
+    "c_core": "lmn_entity_action_sound_core",
+    "c_code_ranges": [
+      [
+        12935,
+        12955
+      ]
+    ],
+    "verification_evidence": "tests/entity_action_sound.py:68 combined core/actualRET-adapter fixtures,59 unique bytes/20 sites/all12 jump outcomes,3786 events,8 completed mutants. Entry0 dual31E5 / entry1 external3287. Opposite enabled gates,fresh returned-DS gate,full PC roles,partial external roles,unbound/untranslated/changed-child/IRET stops,DF,VGA and live SS returns remain explicit."
+  },
+  {
+    "address": 12954,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityActionService0412Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared3150 action tail with explicit INT60/61 and live nearRET boundaries; docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 88,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntitySelectedRecordOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3DC6/3DDA write the selected live SI;317C reads it. Selection geometry and wider validity remain scoped. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 90,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityAlternateRecordOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3D9C writes a candidate SI;3278/3329/354A/3626 replace live SI from this word before retesting eligibility. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 95,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityAlternateSlotIndex",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3D05 initializesFF;3D99 writes wrapped0043-CL.3150 fallback paths require!=FF. No maximum or sentinel-free index domain is proven. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 97,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityActionPressLatch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3170 exactFF gate;3177 setsFF before selector dispatch;31BE clears only after earlier gates pass and input bit0 is clear. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 99,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityCandidateCount",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3CF6 clears;3DA1 byteINC counts candidate hits;3161 requiresnonzero. No Boolean or global range is established. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 130,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityActionSelector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0422 initializes2;3F66 and40BC..40DF update;3150 signed dispatch handles2..9 with ordinal action counts. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 432,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 6,
+    "symbol_name": "CreateAndAdvanceEntityRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      12454,
+      7961
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Two actual nearCALLs at01B0/01B3; scoped prefix stops01B6 before3944. No outerRET or whole main-loop readiness implied. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_batch.c",
+    "c_core": "lmn_entity_batch_core",
+    "c_code_ranges": [
+      [
+        432,
+        438
+      ]
+    ],
+    "verification_evidence": "tests/entity_batch.py:17 core/adapter fixtures,6 caller bytes/two actual CALL sites,5708 ordered events,5 completed mutants. Creation then update shares live registers,DS/ES/SS and memory; boundFF wrap,bound50 coordinate-clear alias,new record same-pass advance,actual changed CALL returns and nested unbound sound status verified. Stops01B6 before untranslated3944; no whole main-loop or scheduling claim."
+  },
+  {
+    "address": 435,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityBatchAfterCreateCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Two actual nearCALLs at01B0/01B3; scoped prefix stops01B6 before3944. No outerRET or whole main-loop readiness implied. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 438,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityBatchNextCaller",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Two actual nearCALLs at01B0/01B3; scoped prefix stops01B6 before3944. No outerRET or whole main-loop readiness implied. docs/entity-simulation.md"
     ],
     "verification_status": "UNRESOLVED"
   }

@@ -84,7 +84,7 @@ LevelObjectsReturn:
     ret ; @039CD
 sub_39CE:
     call sub_75EF ; @039CE
-    mov byte [0x48],0x14 ; @039D1
+    mov byte [EntityCreationCountdown-GameDataImage],0x14 ; @039D1
     mov al,0x63 ; @039D6
     sub al,[0x67] ; @039D8
     shr al,1 ; @039DC
@@ -92,7 +92,7 @@ sub_39CE:
     add al,0x35 ; @039E0
     neg al ; @039E2
     add al,0x39 ; @039E4
-    mov [0x49],al ; @039E6
+    mov [EntityCreationReload-GameDataImage],al ; @039E6
     mov byte [0x66],0x0 ; @039E9
     mov byte [0x69],0x0 ; @039EE
     mov byte [0x72],0x0 ; @039F3
@@ -121,28 +121,28 @@ sub_39CE:
     mov ah,[0x67] ; @03A60
     mov al,0x1 ; @03A64
     call sub_762A ; @03A66
-    mov ah,[0x70] ; @03A69
+    mov ah,[LevelActionCount2-GameDataImage] ; @03A69
     mov al,0x4 ; @03A6D
     call sub_762A ; @03A6F
-    mov ah,[0x7f] ; @03A72
+    mov ah,[LevelActionCount7-GameDataImage] ; @03A72
     mov al,0x9 ; @03A76
     call sub_762A ; @03A78
-    mov ah,[0x6a] ; @03A7B
+    mov ah,[LevelActionCount0-GameDataImage] ; @03A7B
     mov al,0x2 ; @03A7F
     call sub_762A ; @03A81
-    mov ah,[0x76] ; @03A84
+    mov ah,[LevelActionCount4-GameDataImage] ; @03A84
     mov al,0x6 ; @03A88
     call sub_762A ; @03A8A
-    mov ah,[0x73] ; @03A8D
+    mov ah,[LevelActionCount3-GameDataImage] ; @03A8D
     mov al,0x5 ; @03A91
     call sub_762A ; @03A93
-    mov ah,[0x79] ; @03A96
+    mov ah,[LevelActionCount5-GameDataImage] ; @03A96
     mov al,0x7 ; @03A9A
     call sub_762A ; @03A9C
-    mov ah,[0x6d] ; @03A9F
+    mov ah,[LevelActionCount1-GameDataImage] ; @03A9F
     mov al,0x3 ; @03AA3
     call sub_762A ; @03AA5
-    mov ah,[0x7c] ; @03AA8
+    mov ah,[LevelActionCount6-GameDataImage] ; @03AA8
     mov al,0x8 ; @03AAC
     call sub_762A ; @03AAE
     mov al,[0x45] ; @03AB1
@@ -150,7 +150,7 @@ sub_39CE:
     call sub_4B68 ; @03AB7
     mov si,0x209d ; @03ABA
     mov byte [si-0x1],0x20 ; @03ABD
-    mov al,[0x82] ; @03AC1
+    mov al,[EntityActionSelector-GameDataImage] ; @03AC1
     call sub_780D ; @03AC4
     ret ; @03AC7
 sub_3AC8:
@@ -167,7 +167,7 @@ sub_3AC8:
     db 0x03,0xc8 ; ENCODED: add cx,ax (NASM chooses a different encoding) ; @03ADF
     shl ax,1 ; @03AE1
     db 0x03,0xc1 ; ENCODED: add ax,cx (NASM chooses a different encoding) ; @03AE3
-    mov cl,[0x47] ; @03AE5
+    mov cl,[LevelCreationLimit-GameDataImage] ; @03AE5
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @03AE9
     jz loc_3AEF ; @03AEB
     div cl ; @03AED
@@ -200,16 +200,16 @@ loc_3B21:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @03B21
     mov si,0x2083 ; @03B23
     call sub_417B ; @03B26
-    mov ah,[0x82] ; @03B29
+    mov ah,[EntityActionSelector-GameDataImage] ; @03B29
     cmp [0x83],ah ; @03B2D
     jz loc_3B57 ; @03B31
-    mov al,[0x82] ; @03B33
+    mov al,[EntityActionSelector-GameDataImage] ; @03B33
     call sub_780D ; @03B36
     mov al,[0x83] ; @03B39
     call sub_789E ; @03B3C
     cmp byte [0x84],0x2 ; @03B3F
     jnz loc_3B53 ; @03B44
-    mov ah,[0x82] ; @03B46
+    mov ah,[EntityActionSelector-GameDataImage] ; @03B46
     mov [0x83],ah ; @03B4A
     mov byte [0x84],0xff ; @03B4E
 loc_3B53:
@@ -245,7 +245,7 @@ loc_3B9C:
     mov al,0x1 ; @03BA0
     call sub_762A ; @03BA2
 loc_3BA5:
-    mov ah,[0x70] ; @03BA5
+    mov ah,[LevelActionCount2-GameDataImage] ; @03BA5
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BA9
     jz loc_3BB3 ; @03BAB
     cmp [0x71],ah ; @03BAD
@@ -260,7 +260,7 @@ loc_3BC3:
     mov al,0x4 ; @03BC7
     call sub_762A ; @03BC9
 loc_3BCC:
-    mov ah,[0x7f] ; @03BCC
+    mov ah,[LevelActionCount7-GameDataImage] ; @03BCC
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BD0
     jz loc_3BDA ; @03BD2
     cmp [0x80],ah ; @03BD4
@@ -275,7 +275,7 @@ loc_3BEA:
     mov al,0x9 ; @03BEE
     call sub_762A ; @03BF0
 loc_3BF3:
-    mov ah,[0x6a] ; @03BF3
+    mov ah,[LevelActionCount0-GameDataImage] ; @03BF3
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BF7
     jz loc_3C01 ; @03BF9
     cmp [0x6b],ah ; @03BFB
@@ -290,7 +290,7 @@ loc_3C11:
     mov al,0x2 ; @03C15
     call sub_762A ; @03C17
 loc_3C1A:
-    mov ah,[0x76] ; @03C1A
+    mov ah,[LevelActionCount4-GameDataImage] ; @03C1A
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C1E
     jz loc_3C28 ; @03C20
     cmp [0x77],ah ; @03C22
@@ -305,7 +305,7 @@ loc_3C38:
     mov al,0x6 ; @03C3C
     call sub_762A ; @03C3E
 loc_3C41:
-    mov ah,[0x73] ; @03C41
+    mov ah,[LevelActionCount3-GameDataImage] ; @03C41
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C45
     jz loc_3C4F ; @03C47
     cmp [0x74],ah ; @03C49
@@ -320,7 +320,7 @@ loc_3C5F:
     mov al,0x5 ; @03C63
     call sub_762A ; @03C65
 loc_3C68:
-    mov ah,[0x79] ; @03C68
+    mov ah,[LevelActionCount5-GameDataImage] ; @03C68
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C6C
     jz loc_3C76 ; @03C6E
     cmp [0x7a],ah ; @03C70
@@ -335,7 +335,7 @@ loc_3C86:
     mov al,0x7 ; @03C8A
     call sub_762A ; @03C8C
 loc_3C8F:
-    mov ah,[0x6d] ; @03C8F
+    mov ah,[LevelActionCount1-GameDataImage] ; @03C8F
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C93
     jz loc_3C9D ; @03C95
     cmp [0x6e],ah ; @03C97
@@ -350,7 +350,7 @@ loc_3CAD:
     mov al,0x3 ; @03CB1
     call sub_762A ; @03CB3
 loc_3CB6:
-    mov ah,[0x7c] ; @03CB6
+    mov ah,[LevelActionCount6-GameDataImage] ; @03CB6
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03CBA
     jz loc_3CC4 ; @03CBC
     cmp [0x7d],ah ; @03CBE
@@ -379,10 +379,10 @@ loc_3CEE:
     inc si ; @03CF1
     dec ah ; @03CF2
     jnz loc_3CEE ; @03CF4
-    mov byte [0x63],0x0 ; @03CF6
+    mov byte [EntityCandidateCount-GameDataImage],0x0 ; @03CF6
     mov byte [0x5e],0xff ; @03CFB
     mov byte [0x60],0xff ; @03D00
-    mov byte [0x5f],0xff ; @03D05
+    mov byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03D05
     mov ax,[0x0] ; @03D0A
     sub ax,0x10 ; @03D0D
     add ax,[0x10] ; @03D10
@@ -464,11 +464,11 @@ loc_3D86:
 loc_3D94:
     mov al,[0x43] ; @03D94
     db 0x2a,0xc1 ; ENCODED: sub al,cl (NASM chooses a different encoding) ; @03D97
-    mov [0x5f],al ; @03D99
-    mov [0x5a],si ; @03D9C
+    mov [EntityAlternateSlotIndex-GameDataImage],al ; @03D99
+    mov [EntityAlternateRecordOffset-GameDataImage],si ; @03D9C
 loc_3DA0:
     pop ax ; @03DA0
-    inc byte [0x63] ; @03DA1
+    inc byte [EntityCandidateCount-GameDataImage] ; @03DA1
 loc_3DA5:
     add si,byte +0x2d ; @03DA5
     dec cl ; @03DA8
@@ -480,10 +480,10 @@ loc_3DAF:
     test ax,0x2 ; @03DB7
     jz loc_3DCC ; @03DBA
 loc_3DBC:
-    mov al,[0x5f] ; @03DBC
-    mov si,[0x5a] ; @03DBF
+    mov al,[EntityAlternateSlotIndex-GameDataImage] ; @03DBC
+    mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03DBF
     mov [0x5e],al ; @03DC3
-    mov [0x58],si ; @03DC6
+    mov [EntitySelectedRecordOffset-GameDataImage],si ; @03DC6
     jmp short loc_3DDE ; @03DCA
 loc_3DCC:
     mov al,[0x60] ; @03DCC
@@ -491,7 +491,7 @@ loc_3DCC:
     jz loc_3DBC ; @03DD1
     mov si,[0x5c] ; @03DD3
     mov [0x5e],al ; @03DD7
-    mov [0x58],si ; @03DDA
+    mov [EntitySelectedRecordOffset-GameDataImage],si ; @03DDA
 loc_3DDE:
     cmp byte [0x5e],0xff ; @03DDE
     jnz loc_3DE8 ; @03DE3
@@ -501,9 +501,9 @@ loc_3DDE:
 loc_3DE8:
     mov byte [0x1a],0xff ; @03DE8
     mov si,0x208b ; @03DED
-    mov al,[0x63] ; @03DF0
+    mov al,[EntityCandidateCount-GameDataImage] ; @03DF0
     call sub_4B68 ; @03DF3
-    mov si,[0x58] ; @03DF6
+    mov si,[EntitySelectedRecordOffset-GameDataImage] ; @03DF6
     mov bx,0x48db ; @03DFA
     mov al,[si+0x24] ; @03DFD
     test al,0x80 ; @03E00
@@ -677,7 +677,7 @@ loc_3F5C:
     jz loc_3F66 ; @03F61
     jmp loc_3FE9 ; @03F63
 loc_3F66:
-    mov [0x82],al ; @03F66
+    mov [EntityActionSelector-GameDataImage],al ; @03F66
     cmp byte [0x2010],0xff ; @03F69
     jnz loc_3F7C ; @03F6E
     test byte [0x25a7],0x3 ; @03F70
@@ -749,7 +749,7 @@ loc_3FEF:
     jg loc_3FEE ; @04009
     mov byte [0x4b],0xff ; @0400B
     mov al,[0x43] ; @04010
-    mov [0x47],al ; @04013
+    mov [LevelCreationLimit-GameDataImage],al ; @04013
     jmp short loc_3FEE ; @04016
 loc_4018:
     mov al,[0x52] ; @04018
@@ -785,7 +785,7 @@ loc_4053:
     add al,0x35 ; @0405D
     neg al ; @0405F
     add al,0x39 ; @04061
-    mov [0x49],al ; @04063
+    mov [EntityCreationReload-GameDataImage],al ; @04063
     jmp short loc_3FE9 ; @04066
 loc_4068:
     mov bl,[0x64] ; @04068
@@ -832,19 +832,19 @@ loc_40B4:
 loc_40B5:
     cmp byte [0x84],0x0 ; @040B5
     jnz loc_40CC ; @040BA
-    dec byte [0x82] ; @040BC
-    cmp byte [0x82],0x1 ; @040C0
+    dec byte [EntityActionSelector-GameDataImage] ; @040BC
+    cmp byte [EntityActionSelector-GameDataImage],0x1 ; @040C0
     jnz loc_40CC ; @040C5
-    mov byte [0x82],0x9 ; @040C7
+    mov byte [EntityActionSelector-GameDataImage],0x9 ; @040C7
 loc_40CC:
     ret ; @040CC
 loc_40CD:
     cmp byte [0x84],0x0 ; @040CD
     jnz loc_40CC ; @040D2
-    inc byte [0x82] ; @040D4
-    cmp byte [0x82],0xa ; @040D8
+    inc byte [EntityActionSelector-GameDataImage] ; @040D4
+    cmp byte [EntityActionSelector-GameDataImage],0xa ; @040D8
     jnz loc_40CC ; @040DD
-    mov byte [0x82],0x2 ; @040DF
+    mov byte [EntityActionSelector-GameDataImage],0x2 ; @040DF
     ret ; @040E4
 loc_40E5:
     mov ax,[0x0] ; @040E5

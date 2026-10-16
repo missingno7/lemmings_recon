@@ -1976,18 +1976,18 @@ CreateEntityRecordIfDue:
     jnz loc_30B0 ; @030AB
     jmp loc_314F ; @030AD
 loc_30B0:
-    cmp byte [0x55],0xff ; @030B0
+    cmp byte [EntityCreationGate-GameDataImage],0xff ; @030B0
     jz loc_30BA ; @030B5
     jmp loc_314F ; @030B7
 loc_30BA:
-    dec byte [0x48] ; @030BA
+    dec byte [EntityCreationCountdown-GameDataImage] ; @030BA
     jz loc_30C3 ; @030BE
     jmp loc_314F ; @030C0
 loc_30C3:
-    mov al,[0x49] ; @030C3
-    mov [0x48],al ; @030C6
+    mov al,[EntityCreationReload-GameDataImage] ; @030C3
+    mov [EntityCreationCountdown-GameDataImage],al ; @030C6
     mov si,EntityRecordsBase-GameDataImage ; @030C9
-    mov al,[0x47] ; @030CC
+    mov al,[LevelCreationLimit-GameDataImage] ; @030CC
     mov ah,[EntitySlotBound-GameDataImage] ; @030CF
     db 0x3a,0xc4 ; ENCODED: cmp al,ah (NASM chooses a different encoding) ; @030D3
     jz loc_314F ; @030D5
@@ -2029,9 +2029,16 @@ loc_30F3:
     mov byte [si+0x2a],0x0 ; @03143
     and byte [si+0x24],0x1 ; @03147
     inc byte [EntitySlotBound-GameDataImage] ; @0314B
+EntityCreationReturn:
 loc_314F:
     ret ; @0314F
 sub_3150:
+; Action ownership:docs/entity-actions.md.1,221 known bytes/402 sites;
+;31 UNKNOWN bytes remain unresolved. Gate002B/work guard0050/candidate0063
+; failures leave the press latch untouched. Input bit0 clear reaches31BE;
+; otherwise latchFF suppresses, then3177 setsFF before signed selector tests.
+; Selected SI and fallback SI are live DS words; counts remain ordinal0..7.
+; Native shared feedback tails31E5/3287 retain real INT/RET and segment seams.
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @03150
     jz loc_31BD ; @03155
     cmp byte [EntityWorkGuard-GameDataImage],0xff ; @03157
@@ -2040,16 +2047,16 @@ sub_3150:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03160
 loc_3161:
-    cmp byte [0x63],0x0 ; @03161
+    cmp byte [EntityCandidateCount-GameDataImage],0x0 ; @03161
     jz loc_31BD ; @03166
     mov ax,[InputButtonsWord-GameDataImage] ; @03168
     and ax,0x1 ; @0316B
     jz loc_31BE ; @0316E
-    cmp byte [0x61],0xff ; @03170
+    cmp byte [EntityActionPressLatch-GameDataImage],0xff ; @03170
     jz loc_31BD ; @03175
-    mov byte [0x61],0xff ; @03177
-    mov si,[0x58] ; @0317C
-    mov al,[0x82] ; @03180
+    mov byte [EntityActionPressLatch-GameDataImage],0xff ; @03177
+    mov si,[EntitySelectedRecordOffset-GameDataImage] ; @0317C
+    mov al,[EntityActionSelector-GameDataImage] ; @03180
     cmp al,0x2 ; @03183
     jl loc_31BD ; @03185
     jnz loc_318C ; @03187
@@ -2089,18 +2096,24 @@ loc_31B6:
 loc_31BD:
     ret ; @031BD
 loc_31BE:
-    mov byte [0x61],0x0 ; @031BE
+    mov byte [EntityActionPressLatch-GameDataImage],0x0 ; @031BE
     ret ; @031C3
 loc_31C4:
-    cmp byte [0x70],0x0 ; @031C4
+    cmp byte [LevelActionCount2-GameDataImage],0x0 ; @031C4
     jz loc_320C ; @031C9
     cmp byte [si+0x20],0x0 ; @031CB
     jnz loc_320C ; @031CF
     test word [si+0x8],0xc003 ; @031D1
     jnz loc_320C ; @031D6
-    dec byte [0x70] ; @031D8
+    dec byte [LevelActionCount2-GameDataImage] ; @031D8
     mov byte [0x72],0x0 ; @031DC
     mov byte [si+0x20],0x4f ; @031E1
+RequestEntityActionFeedback:
+; Shared JMP/fallthrough entry,39 bytes/13 sites. No new nearCALL frame.
+; PC gate is enabled!=FF/options&1; INT60 AX0313 returns31F8 with all live
+; register/segment/stack/FLAGS effects. The second gate rereads returned DS
+; and requires enabled==FF/options&3 before INT61 AX0404,return320B.
+; Core stops before the actual nearRET; outer return word stays live SS:SP.
 loc_31E5:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @031E5
     jz loc_31F8 ; @031EA
@@ -2108,6 +2121,7 @@ loc_31E5:
     jz loc_31F8 ; @031F1
     mov ax,0x313 ; @031F3
     int 0x60 ; @031F6
+EntityActionAfterPcFeedback:
 loc_31F8:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @031F8
     jnz loc_320B ; @031FD
@@ -2115,12 +2129,13 @@ loc_31F8:
     jz loc_320B ; @03204
     mov ax,0x404 ; @03206
     int 0x61 ; @03209
+EntityActionFeedbackReturn:
 loc_320B:
     ret ; @0320B
 loc_320C:
     ret ; @0320C
 loc_320D:
-    cmp byte [0x7f],0x0 ; @0320D
+    cmp byte [LevelActionCount7-GameDataImage],0x0 ; @0320D
     jz loc_3285 ; @03212
     mov al,[si+0x2c] ; @03214
     and al,0xf ; @03217
@@ -2129,7 +2144,7 @@ loc_320D:
     test word [si+0x8],0xf57f ; @0321D
     jnz loc_3271 ; @03222
 loc_3224:
-    dec byte [0x7f] ; @03224
+    dec byte [LevelActionCount7-GameDataImage] ; @03224
     mov byte [0x81],0x0 ; @03228
     and word [si+0x8],0xf57f ; @0322D
     or word [si+0x8],byte +0x10 ; @03232
@@ -2146,16 +2161,19 @@ loc_3224:
     mov byte [si+0x1f],0x8 ; @03262
     mov byte [si+0x2a],0xff ; @03266
     and byte [si+0x24],0x1 ; @0326A
-    jmp loc_31E5 ; @0326E
+    jmp RequestEntityActionFeedback ; @0326E
 loc_3271:
-    cmp byte [0x5f],0xff ; @03271
+    cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03271
     jz loc_3285 ; @03276
-    mov si,[0x5a] ; @03278
+    mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03278
     test word [si+0x8],0xf57f ; @0327C
     jnz loc_3285 ; @03281
     jmp short loc_3224 ; @03283
 loc_3285:
     jmp short loc_320C ; @03285
+RequestEntityActionService0412:
+; Shared JMP entry,20 bytes/7 sites. Enabled==FF/options&3 requests INT61
+; AX0412 through actual continuation329A. No nearCALL frame is introduced.
 loc_3287:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @03287
     jnz loc_329A ; @0328C
@@ -2163,22 +2181,23 @@ loc_3287:
     jz loc_329A ; @03293
     mov ax,0x412 ; @03295
     int 0x61 ; @03298
+EntityActionService0412Return:
 loc_329A:
     ret ; @0329A
 loc_329B:
-    cmp byte [0x6a],0x0 ; @0329B
+    cmp byte [LevelActionCount0-GameDataImage],0x0 ; @0329B
     jz loc_32BA ; @032A0
     test byte [si+0x24],0x1 ; @032A2
     jnz loc_32BA ; @032A6
     test word [si+0x8],0x103 ; @032A8
     jnz loc_32BA ; @032AD
-    dec byte [0x6a] ; @032AF
+    dec byte [LevelActionCount0-GameDataImage] ; @032AF
     mov byte [si+0x24],0x1 ; @032B3
-    jmp loc_31E5 ; @032B7
+    jmp RequestEntityActionFeedback ; @032B7
 loc_32BA:
     jmp loc_320C ; @032BA
 loc_32BD:
-    cmp byte [0x76],0x0 ; @032BD
+    cmp byte [LevelActionCount4-GameDataImage],0x0 ; @032BD
     jz loc_331F ; @032C2
     mov ax,[si+0x2] ; @032C4
     add ax,[si+0x6] ; @032C7
@@ -2187,7 +2206,7 @@ loc_32BD:
     test word [si+0x8],0xf5ef ; @032CF
     jnz loc_3322 ; @032D4
 loc_32D6:
-    dec byte [0x76] ; @032D6
+    dec byte [LevelActionCount4-GameDataImage] ; @032D6
     mov byte [0x78],0x0 ; @032DA
     mov word [si+0x8],0x80 ; @032DF
     mov word [si+0x4],0xfff8 ; @032E4
@@ -2203,18 +2222,18 @@ loc_32D6:
     mov byte [si+0x2a],0xff ; @03311
     mov [si+0x14],ax ; @03315
     and byte [si+0x24],0x1 ; @03318
-    jmp loc_31E5 ; @0331C
+    jmp RequestEntityActionFeedback ; @0331C
 loc_331F:
     jmp loc_320C ; @0331F
 loc_3322:
-    cmp byte [0x5f],0xff ; @03322
+    cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03322
     jz loc_331F ; @03327
-    mov si,[0x5a] ; @03329
+    mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03329
     test word [si+0x8],0xf5ef ; @0332D
     jnz loc_331F ; @03332
     jmp short loc_32D6 ; @03334
 loc_3336:
-    cmp byte [0x73],0x0 ; @03336
+    cmp byte [LevelActionCount3-GameDataImage],0x0 ; @03336
     jz loc_3345 ; @0333B
     mov ax,[si+0x8] ; @0333D
     and ax,0xf56f ; @03340
@@ -2324,7 +2343,7 @@ loc_341B:
     jnz loc_3422 ; @0341D
     jmp loc_34CB ; @0341F
 loc_3422:
-    dec byte [0x73] ; @03422
+    dec byte [LevelActionCount3-GameDataImage] ; @03422
     mov byte [0x75],0x0 ; @03426
     mov word [si+0x8],0x100 ; @0342B
     mov byte [si+0x28],0x0 ; @03430
@@ -2388,11 +2407,11 @@ loc_3422:
     inc si ; @034C5
     stosb ; @034C6
     pop si ; @034C7
-    jmp loc_31E5 ; @034C8
+    jmp RequestEntityActionFeedback ; @034C8
 loc_34CB:
     jmp loc_320C ; @034CB
 loc_34CE:
-    cmp byte [0x79],0x0 ; @034CE
+    cmp byte [LevelActionCount5-GameDataImage],0x0 ; @034CE
     jz loc_3540 ; @034D3
     test word [si+0x8],0xf76f ; @034D5
     jnz loc_3543 ; @034DA
@@ -2408,9 +2427,9 @@ loc_34EB:
     jz loc_3540 ; @034ED
     cmp al,0x9 ; @034EF
     jnz loc_34F6 ; @034F1
-    jmp loc_3287 ; @034F3
+    jmp RequestEntityActionService0412 ; @034F3
 loc_34F6:
-    dec byte [0x79] ; @034F6
+    dec byte [LevelActionCount5-GameDataImage] ; @034F6
     mov byte [0x7b],0x0 ; @034FA
     and word [si+0x8],0xf56f ; @034FF
     or word [si+0x8],0x200 ; @03504
@@ -2426,27 +2445,27 @@ loc_34F6:
     mov ax,[DrawingCallbackSlots-GameDataImage+0x6] ; @03533
     mov [si+0x14],ax ; @03536
     and byte [si+0x24],0x1 ; @03539
-    jmp loc_31E5 ; @0353D
+    jmp RequestEntityActionFeedback ; @0353D
 loc_3540:
     jmp loc_320C ; @03540
 loc_3543:
-    cmp byte [0x5f],0xff ; @03543
+    cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03543
     jz loc_3540 ; @03548
-    mov si,[0x5a] ; @0354A
+    mov si,[EntityAlternateRecordOffset-GameDataImage] ; @0354A
     test word [si+0x8],0xf76f ; @0354E
     jnz loc_3540 ; @03553
     jmp short loc_34DC ; @03555
 loc_3557:
-    cmp byte [0x6d],0x0 ; @03557
+    cmp byte [LevelActionCount1-GameDataImage],0x0 ; @03557
     jz loc_357B ; @0355C
     cmp byte [si+0x25],0x0 ; @0355E
     jnz loc_357B ; @03562
     test word [si+0x8],0x103 ; @03564
     jnz loc_357B ; @03569
     mov byte [si+0x25],0xff ; @0356B
-    dec byte [0x6d] ; @0356F
+    dec byte [LevelActionCount1-GameDataImage] ; @0356F
     mov byte [0x6f],0x0 ; @03573
-    jmp loc_31E5 ; @03578
+    jmp RequestEntityActionFeedback ; @03578
 loc_357B:
     jmp loc_320C ; @0357B
 ; UNKNOWN: unresolved bytes
@@ -2454,7 +2473,7 @@ loc_357B:
 ; UNKNOWN: unresolved bytes
     db 0xec,0xf7,0x44,0x08,0x03,0x01,0x75,0xe5,0xeb,0xd3 ; @0358E
 loc_3598:
-    cmp byte [0x7c],0x0 ; @03598
+    cmp byte [LevelActionCount6-GameDataImage],0x0 ; @03598
     jnz loc_35A2 ; @0359D
     jmp short loc_361C ; @0359F
 ; UNKNOWN: unresolved bytes
@@ -2481,9 +2500,9 @@ loc_35C4:
     jz loc_361C ; @035C6
     cmp al,0x9 ; @035C8
     jnz loc_35CF ; @035CA
-    jmp loc_3287 ; @035CC
+    jmp RequestEntityActionService0412 ; @035CC
 loc_35CF:
-    dec byte [0x7c] ; @035CF
+    dec byte [LevelActionCount6-GameDataImage] ; @035CF
     mov byte [0x7e],0x0 ; @035D3
     and word [si+0x8],0xfd6f ; @035D8
     or word [si+0x8],0x800 ; @035DD
@@ -2500,13 +2519,13 @@ loc_35CF:
     mov byte [si+0x2a],0xff ; @0360E
     and byte [si+0x24],0x1 ; @03612
     inc word [si+0x2] ; @03616
-    jmp loc_31E5 ; @03619
+    jmp RequestEntityActionFeedback ; @03619
 loc_361C:
     jmp loc_320C ; @0361C
 loc_361F:
-    cmp byte [0x5f],0xff ; @0361F
+    cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @0361F
     jz loc_361C ; @03624
-    mov si,[0x5a] ; @03626
+    mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03626
     test word [si+0x8],0xfd6f ; @0362A
     jnz loc_361C ; @0362F
     jmp loc_35AC ; @03631

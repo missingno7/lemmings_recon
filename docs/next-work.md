@@ -236,16 +236,33 @@ infeasible because the frozen nonzero AX has passed tests covering all16 bits.
 State JMPs still execute the shared1FE8 CALL. No UNKNOWN or shared tail is
 classified as dead. The three actual outer RET sites remain2004/203B/2046.
 
-Next port CreateEntityRecordIfDue at30A6..314F:
-170 known bytes/54 sites/13 jump outcomes, no CALLs or services. Its equality
-limit is not an upper-bound clamp. At bound50h the cleared45-byte record
-starts at coordinate base0E98 and overwrites those coordinates before their
-later reads. Preserve that alias, live0048/0049 countdown and0043 increment,
-late callback and all ordered stores. Then resolve3150's latch/selected and
-alternate record pointers/action counts/SS map and INT60/61 ownership before
-translating its1,221 known bytes/402 sites. Its31 UNKNOWN bytes stay unresolved.
-The parent and its eleven CALL children retain platform/IRQ/changed-target
-seams; broader initialization and actual game scheduling remain open.
+CreateEntityRecordIfDue at30A6..314F now passes273 core/actualRET-adapter
+fixtures:170 known bytes/54 sites/all13 jump outcomes,50,262 ordered events
+and eight completed mutants. Its equality limit is not an upper-bound clamp.
+At bound50h the45-byte clear overwrites the coordinate source before its reads;
+byte MUL preserves DX, the callback read is late and the final bound INC is live.
+
+The31E5/3287 action-feedback tails now pass68 core/actualRET-adapter fixtures:
+59 unique bytes/20 sites/all12 outcomes,3,786 events and eight completed mutants.
+PC and external enabled gates differ, and the external gate rereads the returned
+DS. Native INT60/61 children retain their unbound/untranslated/changed-target
+boundaries. See entity-actions.md for the3150 static ownership audit.
+
+The actual01B0/01B3 caller prefix now composes creation and update in17
+core/adapter fixtures:6 additional bytes/two CALL sites,5,708 events and five
+completed mutants. It observes both actual near-return words, forwards nested
+child boundaries and stops01B6 before untranslated CALL3944. New records advance
+in the same pass; the boundFF wrap can instead make the update bound zero.
+This is not a complete main-loop or timing contract. See entity-simulation.md.
+
+Next translate the independently bounded selector actions2,3 and4 at329B,
+3557 and31C4, sharing the tested31E5 feedback tail and320C failure RET.
+Preserve live count eligibility,record fields,ordered RMWs and jump/fallthrough
+entry without inventing a CALL frame. Then connect the3150 latch/dispatch prefix
+and remaining actions,including selector5's SS interaction-map producer at3464.
+Its31 UNKNOWN bytes stay unresolved. The parent and its eleven CALL children
+retain platform/IRQ/changed-target seams; broader initialization and actual game
+scheduling remain open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

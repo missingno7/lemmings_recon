@@ -179,8 +179,14 @@ loc_0186:
     call sub_80FD ; @001A7
     call sub_7900 ; @001AA
     call sub_3150 ; @001AD
+CreateAndAdvanceEntityRecords:
+; Scoped two-CALL prefix:actual returns01B3/01B6 remain live SS words.
+; Newly created canonical record is consumed immediately by1F19; its byte
+; bound wrap is original. Stop01B6 before3944,not an outerRET or full tick.
     call CreateEntityRecordIfDue ; @001B0
+EntityBatchAfterCreateCall:
     call AdvanceEntityRecords ; @001B3
+EntityBatchNextCaller:
     call sub_3944 ; @001B6
     call sub_7BB8 ; @001B9
     call sub_3634 ; @001BC
@@ -202,7 +208,7 @@ loc_01DF:
     loop loc_01DC ; @001E5
 loc_01E7:
     mov al,[0x43] ; @001E7
-    cmp al,[0x47] ; @001EA
+    cmp al,[LevelCreationLimit-GameDataImage] ; @001EA
     jnz loc_01FA ; @001EE
     mov al,[0x45] ; @001F0
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @001F3
@@ -381,7 +387,7 @@ loc_0380:
 loc_0393:
     ret ; @00393
 loc_0394:
-    mov byte [0x55],0xff ; @00394
+    mov byte [EntityCreationGate-GameDataImage],0xff ; @00394
     cmp byte [0x2010],0xff ; @00399
     jnz loc_03AC ; @0039E
     test byte [0x25a7],0x3 ; @003A0
@@ -427,13 +433,13 @@ sub_03E7:
     mov byte [0x1a],0x0 ; @003F3
     mov word [0x10],0x96 ; @003F8
     mov word [0x12],0x64 ; @003FE
-    mov byte [0x47],0xc8 ; @00404
+    mov byte [LevelCreationLimit-GameDataImage],0xc8 ; @00404
     mov byte [0x4a],0x0 ; @00409
     mov byte [0x20a9],0x30 ; @0040E
     mov byte [0x20aa],0x30 ; @00413
     mov byte [0x85],0x11 ; @00418
     mov byte [0x86],0x11 ; @0041D
-    mov byte [0x82],0x2 ; @00422
+    mov byte [EntityActionSelector-GameDataImage],0x2 ; @00422
     mov byte [0x83],0x3 ; @00427
     mov byte [0x4d],0x50 ; @0042C
     mov byte [0x4e],0x1 ; @00431
@@ -443,7 +449,7 @@ sub_03E7:
     mov [0x4f],al ; @0043E
     mov [DrawingDirtyCellsEnabledByte-GameDataImage],al ; @00441
     mov [0x52],al ; @00444
-    mov [0x55],al ; @00447
+    mov [EntityCreationGate-GameDataImage],al ; @00447
     push ss ; @0044A
     pop es ; @0044B
     mov di,0x12 ; @0044C

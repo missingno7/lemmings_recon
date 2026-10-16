@@ -732,4 +732,22 @@
 #define CS_EntityUpdateOrdinaryReturn 0x2004u
 #define CS_EntityUpdateScanCandidateReturn 0x203Bu
 #define CS_EntityUpdateScanExhaustedReturn 0x2046u
+#define SEG09A9_EntityCreationCountdown 0x0048u
+#define SEG09A9_EntityCreationReload 0x0049u
+#define SEG09A9_EntityCreationGate 0x0055u
+#define CS_EntityCreationReturn 0x314Fu
+#define CS_RequestEntityActionFeedback 0x31E5u
+#define CS_EntityActionAfterPcFeedback 0x31F8u
+#define CS_EntityActionFeedbackReturn 0x320Bu
+#define CS_RequestEntityActionService0412 0x3287u
+#define CS_EntityActionService0412Return 0x329Au
+#define SEG09A9_EntitySelectedRecordOffset 0x0058u
+#define SEG09A9_EntityAlternateRecordOffset 0x005Au
+#define SEG09A9_EntityAlternateSlotIndex 0x005Fu
+#define SEG09A9_EntityActionPressLatch 0x0061u
+#define SEG09A9_EntityCandidateCount 0x0063u
+#define SEG09A9_EntityActionSelector 0x0082u
+#define CS_CreateAndAdvanceEntityRecords 0x01B0u
+#define CS_EntityBatchAfterCreateCall 0x01B3u
+#define CS_EntityBatchNextCaller 0x01B6u
 #endif
