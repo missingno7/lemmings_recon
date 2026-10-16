@@ -368,9 +368,9 @@
 #define CS_DrawEntityAlignedSprite 0x6170u
 #define CS_DrawEntityShiftedSprite12 0x64D9u
 #define CS_DrawEntityShiftedSprite13 0x65D8u
-#define CS_sub_66D7 0x66D7u
-#define CS_sub_6817 0x6817u
-#define CS_sub_6957 0x6957u
+#define CS_DrawEntityShiftedSprite3Plane10 0x66D7u
+#define CS_DrawEntityShiftedSprite3Plane13 0x6817u
+#define CS_DrawEntityShiftedSprite3Plane14 0x6957u
 #define CS_sub_69AA 0x69AAu
 #define CS_sub_69B6 0x69B6u
 #define CS_sub_69FD 0x69FDu
@@ -380,13 +380,13 @@
 #define CS_sub_6A71 0x6A71u
 #define CS_sub_6A79 0x6A79u
 #define CS_sub_6A95 0x6A95u
-#define CS_sub_6A97 0x6A97u
-#define CS_sub_6BDB 0x6BDBu
+#define CS_DrawEntityShiftedSprite3Plane16 0x6A97u
+#define CS_DrawEntityWideSprite32 0x6BDBu
 #define CS_sub_6C7A 0x6C7Au
 #define CS_sub_6C7C 0x6C7Cu
 #define CS_sub_6CC7 0x6CC7u
 #define CS_sub_6CFA 0x6CFAu
-#define CS_sub_6CFC 0x6CFCu
+#define CS_DrawEntityShiftedSprite4Plane14 0x6CFCu
 #define CS_DrawEntityPointCloud 0x6E83u
 #define CS_DrawEntityTwoByteStrip 0x6F7Bu
 #define CS_DrawEntityMinimapPixel 0x6FE2u
@@ -851,4 +851,10 @@
 #define CS_EntityShiftedSprite12Return 0x65D7u
 #define CS_EntityShiftedSprite13Return 0x66D6u
 #define SEG09A9_EntitySpriteBufferSegment 0x1FE6u
+#define CS_EntitySprite3Plane10Return 0x6816u
+#define CS_EntitySprite3Plane13Return 0x6956u
+#define CS_EntitySprite3Plane14Return 0x6A96u
+#define CS_EntitySprite3Plane16Return 0x6BDAu
+#define CS_EntityWideSprite32Return 0x6CFBu
+#define CS_EntitySprite4Plane14Return 0x6E82u
 #endif

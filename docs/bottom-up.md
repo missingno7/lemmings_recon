@@ -37,7 +37,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
 | 06170..064D8 | entity_sprite_aligned.asm | Ten literal masked/OR sprite rows, forward masks, DF strings and live DS/RET |
 | 064D9..066D6 | entity_sprite_shifted.asm | Independent12/13-row callbacks, unchecked shifts, live first-pass saves and OR plane |
-| 066D7..06E82 | game_code_late_after_entities.asm | Remaining sprite callbacks; mixed ownership remains provisional |
+| 066D7..06BDA | entity_sprite_planes.asm | Three-plane narrow callbacks; BP/AX row counters and live phase DI saves |
+| 06BDB..06CFB | entity_sprite_wide.asm | Three-plane five-byte rows, live CX counts and OUT-before-mirror initial setup |
+| 06CFC..06E82 | entity_sprite_four_planes.asm | Four-plane fourteen-row narrow callback; live AX counts and three DI restores |
 | 06E83..06F7A | entity_points.asm | Point-cloud leaf, live point/color tables and nested SS saves; table ownership remains UNKNOWN |
 | 06F7B..06FE1 | entity_strip.asm | Two-byte strip with incoming CX source segment, DF strings and actual popped LOOP count |
 | 06FE2..0706E | entity_minimap.asm | Signed entity minimap pixel guards, live saved X/table and VGA effects |
@@ -637,4 +639,19 @@ output supplies eight aligned and two shifted data handoffs; those producers
 remain untranslated and their sites/transactions are recorded separately.
 The512 original-only prefix probes verify all256 shifted counts at both entries.
 See entity-sprites.md and the matching-input reports for exact native domains.
-Next trace66D7 and the remaining five callback leaves before706F/715B and3634.
+That checkpoint selected66D7 and its five remaining siblings before706F/715B.
+
+The six remaining callbacks now add 1,964 unique main C bytes, taking the
+ledger union to 22,669. Five narrow callbacks share the semantic shifted-row
+helpers while preserving distinct BP/AX counters and three/four plane frames.
+The five-byte wide callback retains its different OUT/mirror order, live CX
+counts, DEC/JZ versus LOOP, and 27h pitch. Their 144 core/adapter comparisons
+cover 985 sites/103 branch outcomes with 20 completed mutants. Five independently
+checked 5BB0 banks and all eight checked 5C06 banks feed unchanged RAM handoffs;
+producer bytes/sites/transactions remain separate from the consumer C union.
+Another 1,280 original-only shift-prefix probes check all 256 CL values at each
+narrow entry, saved SI and defined FLAGS. See entity-sprites.md for scopes.
+Next connect 706F's known child domains while keeping the 715B changed-target
+boundary explicit, then the enclosing 3634 loop. Initial callback slots do not
+close arbitrary live targets, and finite fixture evidence does not close IRQ,
+provider, allocation or complete gameplay domains.

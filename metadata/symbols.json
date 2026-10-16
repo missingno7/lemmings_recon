@@ -37646,9 +37646,11 @@
     "address": 26327,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_66D7",
-    "aliases": [],
+    "size": 320,
+    "symbol_name": "DrawEntityShiftedSprite3Plane10",
+    "aliases": [
+      "sub_66D7"
+    ],
     "callers": [
       29019
     ],
@@ -37935,20 +37937,32 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact isolated sprite callback; live source DS, SS saves/counters, VGA plane phases and actual near RET; docs/entity-sprites.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 320
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 320,
+    "c_core": "lmn_draw_entity_sprite_3plane_10_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        26327,
+        26647
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_planes.py: 3plane10 11 fixtures/22 core and actual-RET comparisons, 320 bytes/all 159 sites/all 18 outcomes. Combined five-entry scope:44 fixtures/88 comparisons,838 sites/96 outcomes,68400 byte-bus events,32400 independent plane-byte checks,10 completed mutants. Original-only1280 prefix probes cover all256 CL values/profile, with saved SI and defined FLAGS, separately from C coverage. Five original5BB0 producers independently verify 80/104/112/128/140-byte banks used unchanged at normal0..7 shifts. Actual BP/AX row counters and DI/DS/RET saves, DF strings/literal29h pitch, physical word-high wrap, ordered VGA mask/OR phases remain explicit. Finite VGA-stack witness uses BP; ordinary-stack providers cover AX restoration. Intact-code/TF-clear bounded device domain. docs/entity-sprites.md"
   },
   {
     "address": 26647,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6817",
-    "aliases": [],
+    "size": 320,
+    "symbol_name": "DrawEntityShiftedSprite3Plane13",
+    "aliases": [
+      "sub_6817"
+    ],
     "callers": [
       29019
     ],
@@ -38235,20 +38249,32 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact isolated sprite callback; live source DS, SS saves/counters, VGA plane phases and actual near RET; docs/entity-sprites.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 320
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 320,
+    "c_core": "lmn_draw_entity_sprite_3plane_13_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        26647,
+        26967
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_planes.py: 3plane13 10 fixtures/20 core and actual-RET comparisons, 320 bytes/all 159 sites/all 18 outcomes. Combined five-entry scope:44 fixtures/88 comparisons,838 sites/96 outcomes,68400 byte-bus events,32400 independent plane-byte checks,10 completed mutants. Original-only1280 prefix probes cover all256 CL values/profile, with saved SI and defined FLAGS, separately from C coverage. Five original5BB0 producers independently verify 80/104/112/128/140-byte banks used unchanged at normal0..7 shifts. Actual BP/AX row counters and DI/DS/RET saves, DF strings/literal29h pitch, physical word-high wrap, ordered VGA mask/OR phases remain explicit. Finite VGA-stack witness uses BP; ordinary-stack providers cover AX restoration. Intact-code/TF-clear bounded device domain. docs/entity-sprites.md"
   },
   {
     "address": 26967,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6957",
-    "aliases": [],
+    "size": 320,
+    "symbol_name": "DrawEntityShiftedSprite3Plane14",
+    "aliases": [
+      "sub_6957"
+    ],
     "callers": [
       29019
     ],
@@ -38535,12 +38561,22 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact isolated sprite callback; live source DS, SS saves/counters, VGA plane phases and actual near RET; docs/entity-sprites.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 320
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 320,
+    "c_core": "lmn_draw_entity_sprite_3plane_14_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        26967,
+        27287
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_planes.py: 3plane14 7 fixtures/14 core and actual-RET comparisons, 320 bytes/all 159 sites/all 18 outcomes. Combined five-entry scope:44 fixtures/88 comparisons,838 sites/96 outcomes,68400 byte-bus events,32400 independent plane-byte checks,10 completed mutants. Original-only1280 prefix probes cover all256 CL values/profile, with saved SI and defined FLAGS, separately from C coverage. Five original5BB0 producers independently verify 80/104/112/128/140-byte banks used unchanged at normal0..7 shifts. Actual BP/AX row counters and DI/DS/RET saves, DF strings/literal29h pitch, physical word-high wrap, ordered VGA mask/OR phases remain explicit. Finite VGA-stack witness uses BP; ordinary-stack providers cover AX restoration. Intact-code/TF-clear bounded device domain. docs/entity-sprites.md"
   },
   {
     "address": 27050,
@@ -39755,9 +39791,11 @@
     "address": 27287,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6A97",
-    "aliases": [],
+    "size": 324,
+    "symbol_name": "DrawEntityShiftedSprite3Plane16",
+    "aliases": [
+      "sub_6A97"
+    ],
     "callers": [
       29019
     ],
@@ -40044,20 +40082,32 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact isolated sprite callback; live source DS, SS saves/counters, VGA plane phases and actual near RET; docs/entity-sprites.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 324
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 324,
+    "c_core": "lmn_draw_entity_sprite_3plane_16_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        27287,
+        27611
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_planes.py: 3plane16 8 fixtures/16 core and actual-RET comparisons, 324 bytes/all 163 sites/all 18 outcomes. Combined five-entry scope:44 fixtures/88 comparisons,838 sites/96 outcomes,68400 byte-bus events,32400 independent plane-byte checks,10 completed mutants. Original-only1280 prefix probes cover all256 CL values/profile, with saved SI and defined FLAGS, separately from C coverage. Five original5BB0 producers independently verify 80/104/112/128/140-byte banks used unchanged at normal0..7 shifts. Actual BP/AX row counters and DI/DS/RET saves, DF strings/literal29h pitch, physical word-high wrap, ordered VGA mask/OR phases remain explicit. Finite VGA-stack witness uses BP; ordinary-stack providers cover AX restoration. Intact-code/TF-clear bounded device domain. docs/entity-sprites.md"
   },
   {
     "address": 27611,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6BDB",
-    "aliases": [],
+    "size": 289,
+    "symbol_name": "DrawEntityWideSprite32",
+    "aliases": [
+      "sub_6BDB"
+    ],
     "callers": [
       29019
     ],
@@ -40520,12 +40570,22 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact isolated sprite callback; live source DS, SS saves/counters, VGA plane phases and actual near RET; docs/entity-sprites.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 289
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 289,
+    "c_core": "lmn_draw_entity_wide_sprite32_core",
+    "c_implementation": "c/entity_sprite_wide.c",
+    "c_code_ranges": [
+      [
+        27611,
+        27900
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_wide.py:28 fixtures/56 core and actual-RET comparisons,289 bytes/all147 sites/all7 outcomes,135170 byte-bus events,103800 independent plane-byte checks,10 completed mutants. Eight unchanged640-byte banks from one independently verified original5C06 producer (5120 bytes,80 sites,38916 steps,13153 memory transactions); producer coverage excluded from native/C consumer totals. Initial OUT-before-mirror setup, later mirror-before-OUT, five-byte DF rows/literal27h pitch, live CX frames/DEC/LOOP, DS from incomingCX, physical word-high wrap, VGA source/stack aliases and actual DS/RET remain explicit. VGA-stack rows32/1/1 and changed-count rows1/32/32 are asserted. Intact-code/TF-clear bounded device domain. docs/entity-sprites.md"
   },
   {
     "address": 27770,
@@ -41378,9 +41438,11 @@
     "address": 27900,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6CFC",
-    "aliases": [],
+    "size": 391,
+    "symbol_name": "DrawEntityShiftedSprite4Plane14",
+    "aliases": [
+      "sub_6CFC"
+    ],
     "callers": [
       29019
     ],
@@ -41731,12 +41793,22 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact isolated sprite callback; live source DS, SS saves/counters, VGA plane phases and actual near RET; docs/entity-sprites.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 391
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 391,
+    "c_core": "lmn_draw_entity_sprite_4plane_14_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        27900,
+        28291
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_planes.py: 4plane14 8 fixtures/16 core and actual-RET comparisons, 391 bytes/all 198 sites/all 24 outcomes. Combined five-entry scope:44 fixtures/88 comparisons,838 sites/96 outcomes,68400 byte-bus events,32400 independent plane-byte checks,10 completed mutants. Original-only1280 prefix probes cover all256 CL values/profile, with saved SI and defined FLAGS, separately from C coverage. Five original5BB0 producers independently verify 80/104/112/128/140-byte banks used unchanged at normal0..7 shifts. Actual BP/AX row counters and DI/DS/RET saves, DF strings/literal29h pitch, physical word-high wrap, ordered VGA mask/OR phases remain explicit. Finite VGA-stack witness uses BP; ordinary-stack providers cover AX restoration. Intact-code/TF-clear bounded device domain. docs/entity-sprites.md"
   },
   {
     "address": 28291,
@@ -61551,5 +61623,101 @@
       "1019 publishes allocation result+1000h modulo16bits;59BC producer ES;7112 source segment plus computed BP. No allocation bound or immutability claim"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26646,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySprite3Plane10Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 26966,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySprite3Plane13Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 27286,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySprite3Plane14Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 27610,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySprite3Plane16Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 27899,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityWideSprite32Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 28290,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySprite4Plane14Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
   }
 ]

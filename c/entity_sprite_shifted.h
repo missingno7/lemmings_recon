@@ -23,6 +23,11 @@ typedef struct LmnEntityShiftedSpriteResult {
     uint16_t continuation,status;
 } LmnEntityShiftedSpriteResult;
 
+/* The five narrow sibling callbacks use the same live register roles and
+   result shape as the 12/13-row shifted entries. */
+typedef LmnEntityShiftedSpriteCall LmnEntitySpritePlanesCall;
+typedef LmnEntityShiftedSpriteResult LmnEntitySpritePlanesResult;
+
 /* Each core executes its independent 12- or 13-row body through the live
    POP DS and stops immediately before that entry's near RET. */
 LmnEntityShiftedSpriteResult lmn_draw_entity_shifted_sprite12_core(
@@ -36,6 +41,33 @@ LmnEntityShiftedSpriteResult lmn_draw_entity_shifted_sprite13_core(
 uint16_t lmn_draw_entity_shifted_sprite12_adapter(
     uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
 uint16_t lmn_draw_entity_shifted_sprite13_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
+
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_10_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus);
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_13_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus);
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_14_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus);
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_16_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus);
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_4plane_14_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus);
+
+uint16_t lmn_draw_entity_sprite_3plane_10_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
+uint16_t lmn_draw_entity_sprite_3plane_13_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
+uint16_t lmn_draw_entity_sprite_3plane_14_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
+uint16_t lmn_draw_entity_sprite_3plane_16_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
+uint16_t lmn_draw_entity_sprite_4plane_14_adapter(
     uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus);
 
 #endif

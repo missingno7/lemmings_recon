@@ -1,5 +1,14 @@
 ; Maintained suffix after entity_minimap.asm; physical order unchanged.
 times -(($-$$) != 0x706f) db 0 ; module start assertion
+; CONTRACT: live DS:DI entity record; +00/+04 form wrapped X for visibility,
+; +02/+06 form signed-clamped Y. +28 plus optional +29 selects the frame;
+; +27==1 suppresses that add, +2A==FF suppresses eight-way alignment scaling.
+; Full MUL by +10 yields paragraph/cursor parts; +0C/1FE6 supply source CX,
+; +0A supplies SI and +12 supplies BX. These uses do not prove record bounds.
+; Visibility miss bypasses both children. +20 gates only the optional strip.
+; +14 is PUSHed at70F0, then reread from live SS at7159 before CALL AX715B.
+; Real7155/715D child returns, saved DI and outer RET remain live; the known
+; initialized callback slots do not close changed targets or provider aliases.
 DrawObjectSprite:
     push di ; @0706F
     mov bx,[di] ; @07070

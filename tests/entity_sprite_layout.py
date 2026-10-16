@@ -1,4 +1,4 @@
-"""Original-only bounded witnesses for the 5B11/5BB0 sprite-bank producers.
+"""Original-only bounded witnesses for the 5B11/5BB0/5C06 sprite producers.
 
 The helper runs only the identified producer entry from the exact relocated main
 image.  It returns the resulting RAM and separates producer coverage from any
@@ -37,9 +37,12 @@ STACK_SEGMENT = 0x5000
 ENTRY_SP = 0xF000
 RETURN_TARGET = 0xF000
 INSTRUCTION_LIMIT = 20_000
+INSTRUCTION_LIMIT_5C06 = 80_000
+EVENT_LIMIT_5C06 = 25_000
 
 ENTRY_5B11, END_5B11 = 0x5B11, 0x5BB0
 ENTRY_5BB0, END_5BB0 = 0x5BB0, 0x5C06
+ENTRY_5C06, END_5C06 = 0x5C06, 0x5CC1
 DX_5B11 = 0x020A
 DX_5BB0_12 = 0x020C
 DX_5BB0_13 = 0x020D
@@ -47,7 +50,7 @@ DX_5BB0_13 = 0x020D
 IMAGE, ORACLE = unpack(ASSET.read_bytes())
 MD = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_16)
 MD.detail = True
-WORKER_SECONDS, PROCESS_MIB = 60, 384
+WORKER_SECONDS, PROCESS_MIB = 120, 384
 
 
 class ProducerFailure(AssertionError):
@@ -116,13 +119,14 @@ class Access:
 
     event_limit = 10_000
 
-    def __init__(self):
+    def __init__(self, event_limit=None):
         self.events = []
         self.failure = None
+        self.limit = self.event_limit if event_limit is None else event_limit
 
     def hook(self, cpu, access, address, size, value, _user_data):
-        if len(self.events) >= self.event_limit:
-            self.failure = f'data access event budget {self.event_limit} exhausted'
+        if len(self.events) >= self.limit:
+            self.failure = f'data access event budget {self.limit} exhausted'
             cpu.emu_stop()
             return
         if access == UC_MEM_READ:
@@ -205,6 +209,29 @@ def expected_5bb0(source, dx):
     return source + bytes(mask)
 
 
+def expected_5c06(source):
+    """Independent 40-bit right-shift and three-plane OR model for 5C06."""
+    require(len(source) == 3 * 32 * 4,
+            '5C06 expected model requires exactly three 32-row four-byte planes')
+    banks = []
+    for shift in range(8):
+        planes = []
+        for plane_index in range(3):
+            plane = bytearray()
+            for row in range(32):
+                source_index = (plane_index * 32 + row) * 4
+                chain = int.from_bytes(source[source_index:source_index + 4] + b'\0',
+                                       'big')
+                plane.extend((chain >> shift).to_bytes(5, 'big'))
+            planes.append(bytes(plane))
+        mask = bytearray(32 * 5)
+        for plane in planes:
+            for index, value in enumerate(plane):
+                mask[index] |= value
+        banks.append(b''.join(planes) + bytes(mask))
+    return tuple(banks)
+
+
 def _run_original(entry, end, dx, source, *, seed):
     """Run one original leaf with actual SS return memory and hard local bounds."""
     instructions = _instruction_map(entry, end)
@@ -221,8 +248,18 @@ def _run_original(entry, end, dx, source, *, seed):
     source_address = physical(SOURCE_SEGMENT, SOURCE_OFFSET)
     memory[source_address:source_address + len(source)] = source
     destination_address = physical(DESTINATION_SEGMENT, DESTINATION_OFFSET)
-    maximum_output = 24 * (dx & 0xFF) * (((dx >> 8) & 0xFF) + 1) \
-        if entry == ENTRY_5B11 else 2 * (dx & 0xFF) * (((dx >> 8) & 0xFF) + 1)
+    if entry == ENTRY_5B11:
+        # 24 already includes eight three-byte shift banks.
+        maximum_output = 24 * (dx & 0xFF) * (((dx >> 8) & 0xFF) + 1)
+        instruction_limit, event_limit = INSTRUCTION_LIMIT, Access.event_limit
+    elif entry == ENTRY_5BB0:
+        maximum_output = 2 * (dx & 0xFF) * (((dx >> 8) & 0xFF) + 1)
+        instruction_limit, event_limit = INSTRUCTION_LIMIT, Access.event_limit
+    elif entry == ENTRY_5C06:
+        maximum_output = 8 * 32 * 5 * (3 + 1)
+        instruction_limit, event_limit = INSTRUCTION_LIMIT_5C06, EVENT_LIMIT_5C06
+    else:
+        raise ProducerFailure(f'unsupported producer entry {entry:04X}')
     require(destination_address + maximum_output < MEMORY_SIZE,
             'constructed destination wraps the one-MiB RAM fixture')
     stack_address = physical(STACK_SEGMENT, ENTRY_SP)
@@ -242,7 +279,7 @@ def _run_original(entry, end, dx, source, *, seed):
     for name, value in initial.items():
         cpu.reg_write(_REGISTERS[name], value)
 
-    access = Access()
+    access = Access(event_limit)
     visited, edge_set = set(), set()
     steps = 0
     previous_ip = None
@@ -277,20 +314,20 @@ def _run_original(entry, end, dx, source, *, seed):
         visited.add(ip)
         previous_ip = ip
         steps += 1
-        if steps > INSTRUCTION_LIMIT:
-            hook_failure = f'{entry:04X}: instruction budget {INSTRUCTION_LIMIT} exhausted'
+        if steps > instruction_limit:
+            hook_failure = f'{entry:04X}: instruction budget {instruction_limit} exhausted'
             machine.emu_stop()
 
     cpu.hook_add(UC_HOOK_CODE, code_hook)
     cpu.hook_add(UC_HOOK_MEM_READ | UC_HOOK_MEM_WRITE, access.hook)
-    cpu.emu_start(physical(LOAD_SEGMENT, entry), 0, count=INSTRUCTION_LIMIT)
+    cpu.emu_start(physical(LOAD_SEGMENT, entry), 0, count=instruction_limit)
     require(access.failure is None,
             f'{entry:04X}: {access.failure or "data access trace failed"}')
     require(hook_failure is None, hook_failure or 'original instruction hook failed')
     require(stopped, f'{entry:04X}: original leaf did not reach its bounded RET target')
-    require(steps <= INSTRUCTION_LIMIT,
-            f'{entry:04X}: original instruction budget exhausted')
-    require(len(access.events) <= Access.event_limit,
+    require(steps <= instruction_limit,
+            f'{entry:04X}: original instruction budget {instruction_limit} exhausted')
+    require(len(access.events) <= event_limit,
             f'{entry:04X}: original data access budget exhausted')
 
     final_registers = {name: cpu.reg_read(register) & 0xFFFF
@@ -375,11 +412,42 @@ def produce_5bb0(dx=DX_5BB0_12, seed=0x5BB0):
                            steps, events, len(events))
 
 
+def produce_5c06(seed=0x5C06):
+    """Produce and independently validate all eight normal 5C06 shift banks."""
+    source = _source_bytes(3 * 32 * 2, seed)
+    expected_banks = expected_5c06(source)
+    output_expected = b''.join(expected_banks)
+    # DX is overwritten from the four source bytes before the original uses it.
+    entry_dx = 0xD75A
+    memory, output, registers, sites, edges, steps, events = _run_original(
+        ENTRY_5C06, END_5C06, entry_dx, source, seed=seed)
+    require(output == output_expected,
+            '5C06 actual producer output differs from independent eight-shift model')
+    bank_length = len(expected_banks[0])
+    plane_length = 3 * 32 * 5
+    banks = tuple(DataBank(index=index, shift=index,
+                           output_offset=index * bank_length,
+                           output_length=bank_length,
+                           plane_offset=index * bank_length,
+                           plane_length=plane_length,
+                           plane_count=3, plane_stride=32 * 5,
+                           mask_offset=index * bank_length + plane_length,
+                           mask_length=32 * 5)
+                  for index in range(8))
+    require(len(output) == 0x1400,
+            f'5C06 expected eight 640-byte banks, got {len(output)} bytes')
+    return ProducerWitness(ENTRY_5C06, entry_dx, SOURCE_SEGMENT, SOURCE_OFFSET,
+                           source, DESTINATION_SEGMENT, DESTINATION_OFFSET,
+                           output, banks, memory, registers, sites, edges,
+                           steps, events, len(events))
+
+
 def original_only():
     """Run bounded producer-only validation; no C code or consumer is invoked."""
     witnesses = (produce_5b11(),
                  produce_5bb0(DX_5BB0_12, 0x5BB012),
-                 produce_5bb0(DX_5BB0_13, 0x5BB013))
+                 produce_5bb0(DX_5BB0_13, 0x5BB013),
+                 produce_5c06())
     for witness in witnesses:
         print(f'PASS original sprite producer {witness.entry:04X} '
               f'DX={witness.dx:04X}: {len(witness.output_bytes)} bytes, '

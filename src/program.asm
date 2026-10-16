@@ -42,7 +42,9 @@ times -(($-$$) != 0x5d66) db 0 ; module end assertion
 times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "entity_sprite_aligned.asm"
 %include "entity_sprite_shifted.asm"
-%include "game_code_late_after_entities.asm"
+%include "entity_sprite_planes.asm"
+%include "entity_sprite_wide.asm"
+%include "entity_sprite_four_planes.asm"
 %include "entity_points.asm"
 %include "entity_strip.asm"
 %include "entity_minimap.asm"

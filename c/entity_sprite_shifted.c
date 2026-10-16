@@ -5,6 +5,9 @@
 #ifndef ENTITY_SPRITE_SHIFTED_MUTATION
 #define ENTITY_SPRITE_SHIFTED_MUTATION 0
 #endif
+#ifndef ENTITY_SPRITE_PLANES_MUTATION
+#define ENTITY_SPRITE_PLANES_MUTATION 0
+#endif
 
 enum {
     MEMORY_MASK=0xfffffu,
@@ -19,7 +22,13 @@ typedef struct ShiftedSpriteState {
     uint16_t ax,bx,cx,dx,si,di,bp;
     uint16_t cs,ds,es,ss,sp,flags;
     uint16_t continuation,status;
+    uint16_t mutation_bx;
+    unsigned planes_entry,mutation;
 } ShiftedSpriteState;
+
+static int mutation_is(const ShiftedSpriteState *s,unsigned id) {
+    return s->mutation==id;
+}
 
 static uint32_t physical(uint16_t segment,uint16_t offset) {
     return ((((uint32_t)segment<<4)+offset)&MEMORY_MASK);
@@ -150,30 +159,23 @@ static void set_ch(ShiftedSpriteState *s,uint8_t value) {
 
 static void lodsw(ShiftedSpriteState *s) {
     s->ax=read16(s,s->ds,s->si);
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 1
-    s->si=(uint16_t)(s->si+2u);
-#else
-    s->si=(uint16_t)(s->si+((s->flags&DF)?(uint16_t)-2:2u));
-#endif
+    if(mutation_is(s,1u))
+        s->si=(uint16_t)(s->si+2u);
+    else
+        s->si=(uint16_t)(s->si+((s->flags&DF)?(uint16_t)-2:2u));
 }
 
 static void stosb(ShiftedSpriteState *s) {
     write8(s,s->es,s->di,(uint8_t)s->ax);
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 2
-    s->di=(uint16_t)(s->di+1u);
-#else
-    s->di=(uint16_t)(s->di+((s->flags&DF)?(uint16_t)-1:1u));
-#endif
+    if(mutation_is(s,2u))
+        s->di=(uint16_t)(s->di+1u);
+    else
+        s->di=(uint16_t)(s->di+((s->flags&DF)?(uint16_t)-1:1u));
 }
 
 static void read_unused_vga(ShiftedSpriteState *s,unsigned phase) {
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 6
-    if(phase==1u)return;
-#elif ENTITY_SPRITE_SHIFTED_MUTATION == 7
-    if(phase==2u)return;
-#else
-    (void)phase;
-#endif
+    if((!s->planes_entry&&mutation_is(s,6u)&&phase==1u)||
+       (!s->planes_entry&&mutation_is(s,7u)&&phase==2u))return;
     (void)read8(s,s->es,s->di);
 }
 
@@ -191,7 +193,7 @@ static LmnEntityShiftedSpriteResult result_of(const ShiftedSpriteState *s) {
 
 static void initialize(ShiftedSpriteState *s,uint8_t *memory,
     const LmnEntityShiftedSpriteCall *call,const LmnRasterBus *bus,
-    unsigned rows) {
+    uint16_t continuation,int planes_entry) {
     s->memory=memory;s->bus=bus;
     s->ax=call->value;s->bx=call->map_cursor;s->cx=call->count;
     s->dx=call->auxiliary_value;s->si=call->record_cursor;
@@ -199,9 +201,12 @@ static void initialize(ShiftedSpriteState *s,uint8_t *memory,
     s->cs=call->code_segment;s->ds=call->data_segment;
     s->es=call->extra_segment;s->ss=call->stack_segment;
     s->sp=call->stack_offset;s->flags=call->flags;
-    s->continuation=rows==12u?CS_EntityShiftedSprite12Return:
-                                   CS_EntityShiftedSprite13Return;
+    s->continuation=continuation;
     s->status=LMN_ENTITY_SHIFTED_SPRITE_READY;
+    s->planes_entry=(unsigned)planes_entry;
+    s->mutation=planes_entry?(unsigned)ENTITY_SPRITE_PLANES_MUTATION:
+                             (unsigned)ENTITY_SPRITE_SHIFTED_MUTATION;
+    s->mutation_bx=0u;
 }
 
 static void initial_vga_setup(ShiftedSpriteState *s) {
@@ -217,52 +222,46 @@ static void initial_vga_setup(ShiftedSpriteState *s) {
 
 /* This deliberately spells the two-pass shifts as the original instruction
    sequences.  CH is the live loop counter; the incoming low byte is unchecked. */
-static void shifted_first_pass(ShiftedSpriteState *s,unsigned rows) {
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 5
+static void shifted_first_pass(ShiftedSpriteState *s,unsigned rows,
+                               unsigned counter_ax) {
     uint16_t cached_mask=0u;
     unsigned have_cached_mask=0u;
-#endif
-    s->bp=(uint16_t)rows;
+    uint16_t cached_counter=(uint16_t)rows;
+    if(counter_ax)s->ax=(uint16_t)rows;
+    else s->bp=(uint16_t)rows;
     do {
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 8
-        uint16_t pushed_bx;
-#endif
         uint8_t shifts;
-        push(s,s->bp);                                 /* PUSH BP */
+        push(s,counter_ax?s->ax:s->bp);                 /* PUSH BP or AX */
         lodsw(s);                                      /* LODSW */
         push(s,s->si);                                 /* PUSH SI */
         s->ax=(uint16_t)((s->ax<<8)|(s->ax>>8));       /* XCHG AL,AH */
         s->si=s->ax;                                  /* MOV SI,AX */
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 5
-        if(!have_cached_mask) {
+        if(mutation_is(s,5u)) {
+            if(!have_cached_mask) {
             s->ax=read16(s,s->ds,s->bx);              /* MOV AX,[BX] */
             cached_mask=s->ax;have_cached_mask=1u;
+            } else {
+                s->ax=cached_mask;                    /* mutation: stale mask */
+            }
         } else {
-            s->ax=cached_mask;                        /* mutation: stale mask */
+            s->ax=read16(s,s->ds,s->bx);              /* MOV AX,[BX] */
         }
-#else
-        s->ax=read16(s,s->ds,s->bx);                  /* MOV AX,[BX] */
-#endif
         {
             uint16_t before=s->bx;
             s->bx=(uint16_t)(s->bx+2u);
             s->flags=add16_flags(s->flags,before,2u); /* ADD BX,2 */
         }
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 8
-        pushed_bx=s->bx;
-#endif
+        s->mutation_bx=s->bx;
         s->ax=(uint16_t)((s->ax<<8)|(s->ax>>8));      /* XCHG AL,AH */
         s->bp=s->ax;                                  /* MOV BP,AX */
         set_ch(s,(uint8_t)s->cx);                     /* MOV CH,CL */
         s->ax=0u;s->flags=logic_flags(s->flags,0u,16u); /* XOR AX,AX */
         s->flags=logic_flags(s->flags,(uint8_t)(s->cx>>8),8u); /* AND CH,CH */
         shifts=(uint8_t)(s->cx>>8);
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 4
-        if(shifts>7u) {
+        if(mutation_is(s,4u)&&shifts>7u) {
             shifts=7u;set_ch(s,shifts);
             s->flags=logic_flags(s->flags,shifts,8u);
         }
-#endif
         while(shifts!=0u) {
             uint8_t al,ah,old_ch;
             s->flags=shr16_flags(s->flags,s->si,&s->si);
@@ -282,11 +281,9 @@ static void shifted_first_pass(ShiftedSpriteState *s,unsigned rows) {
         s->ax=(uint16_t)((s->ax&0xff00u)|0x08u);      /* MOV AL,8 */
         set_ah(s,(uint8_t)(s->bx>>8));                /* MOV AH,BH */
         output(s,SEG143E_VgaBitMaskMirror);
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 9
+        if(mutation_is(s,9u)) {
         /* Mutation omits only this CLI; the live read remains. */
-#else
-        s->flags=(uint16_t)(s->flags&~IF);             /* CLI */
-#endif
+        } else s->flags=(uint16_t)(s->flags&~IF);     /* CLI */
         read_unused_vga(s,1u);                         /* MOV AL,[ES:DI] */
         set_al(s,(uint8_t)(s->cx>>8));                /* MOV AL,CH */
         stosb(s);
@@ -315,17 +312,31 @@ static void shifted_first_pass(ShiftedSpriteState *s,unsigned rows) {
         }
         s->cx=pop(s);                                  /* POP CX */
         s->bx=pop(s);                                  /* POP BX */
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 8
-        s->bx=pushed_bx;
-#endif
+        if(!s->planes_entry&&mutation_is(s,8u))s->bx=s->mutation_bx;
         s->si=pop(s);                                  /* POP SI */
-        s->bp=pop(s);                                  /* POP BP */
-        {
-            uint16_t before=s->bp;
-            s->bp=(uint16_t)(s->bp-1u);
-            s->flags=dec16_flags(s->flags,before);     /* DEC BP */
+        if(counter_ax) {
+            if(s->planes_entry&&mutation_is(s,6u)) {
+                uint16_t before=cached_counter;
+                s->ax=cached_counter;
+                (void)pop(s);                           /* consume live POP AX */
+                s->ax=(uint16_t)(s->ax-1u);
+                cached_counter=s->ax;
+                s->flags=dec16_flags(s->flags,before); /* DEC AX */
+            } else {
+                uint16_t before=pop(s);                 /* POP AX */
+                s->ax=before;
+                s->ax=(uint16_t)(s->ax-1u);
+                s->flags=dec16_flags(s->flags,before); /* DEC AX */
+            }
+        } else {
+            s->bp=pop(s);                               /* POP BP */
+            {
+                uint16_t before=s->bp;
+                s->bp=(uint16_t)(s->bp-1u);
+                s->flags=dec16_flags(s->flags,before); /* DEC BP */
+            }
         }
-    } while(s->bp!=0u);
+    } while(counter_ax?s->ax!=0u:s->bp!=0u);
 }
 
 static void second_vga_setup(ShiftedSpriteState *s) {
@@ -336,10 +347,25 @@ static void second_vga_setup(ShiftedSpriteState *s) {
     s->ax=0x0202u;output(s,SEG143E_VgaMapMaskMirror);
 }
 
-static void shifted_second_pass(ShiftedSpriteState *s,unsigned rows) {
-    s->bp=(uint16_t)rows;
+static void select_plane(ShiftedSpriteState *s,uint8_t plane_mask) {
+    s->dx=0x03c4u;                                    /* MOV DX,3C4 */
+    s->ax=(uint16_t)(((uint16_t)plane_mask<<8)|0x02u);
+    output(s,SEG143E_VgaMapMaskMirror);
+}
+
+static void restore_destination(ShiftedSpriteState *s) {
+    uint16_t restored=pop(s);                         /* POP DI */
+    if(!(s->planes_entry&&mutation_is(s,7u)))s->di=restored;
+}
+
+static void shifted_or_pass(ShiftedSpriteState *s,unsigned rows,
+                            unsigned counter_ax) {
+    uint16_t cached_counter=(uint16_t)rows;
+    if(counter_ax)s->ax=(uint16_t)rows;
+    else s->bp=(uint16_t)rows;
     do {
         uint8_t shifts;
+        if(counter_ax)push(s,s->ax);                   /* PUSH AX */
         lodsw(s);                                      /* LODSW */
         s->ax=(uint16_t)((s->ax<<8)|(s->ax>>8));       /* XCHG AL,AH */
         s->bx=s->ax;                                  /* MOV BX,AX */
@@ -348,12 +374,10 @@ static void shifted_second_pass(ShiftedSpriteState *s,unsigned rows) {
         s->flags=logic_flags(s->flags,0u,8u);
         s->flags=logic_flags(s->flags,(uint8_t)(s->cx>>8),8u); /* AND CH,CH */
         shifts=(uint8_t)(s->cx>>8);
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 4
-        if(shifts>7u) {
+        if(mutation_is(s,4u)&&shifts>7u) {
             shifts=7u;set_ch(s,shifts);
             s->flags=logic_flags(s->flags,shifts,8u);
         }
-#endif
         while(shifts!=0u) {
             uint8_t al,old_ch;
             s->flags=shr16_flags(s->flags,s->bx,&s->bx);
@@ -379,56 +403,109 @@ static void shifted_second_pass(ShiftedSpriteState *s,unsigned rows) {
             s->di=(uint16_t)(s->di+0x29u);
             s->flags=add16_flags(s->flags,before,0x29u); /* ADD DI,29 */
         }
-        {
+        if(counter_ax) {
+            if(s->planes_entry&&mutation_is(s,6u)) {
+                uint16_t before=cached_counter;
+                (void)pop(s);                           /* consume live POP AX */
+                s->ax=cached_counter;
+                s->ax=(uint16_t)(s->ax-1u);
+                cached_counter=s->ax;
+                s->flags=dec16_flags(s->flags,before); /* DEC AX */
+            } else {
+                uint16_t before=pop(s);                 /* POP AX */
+                s->ax=before;
+                s->ax=(uint16_t)(s->ax-1u);
+                s->flags=dec16_flags(s->flags,before); /* DEC AX */
+            }
+        } else {
             uint16_t before=s->bp;
             s->bp=(uint16_t)(s->bp-1u);
             s->flags=dec16_flags(s->flags,before);     /* DEC BP */
         }
-    } while(s->bp!=0u);
+    } while(counter_ax?s->ax!=0u:s->bp!=0u);
 }
 
 static LmnEntityShiftedSpriteResult draw(uint8_t *memory,
     const LmnEntityShiftedSpriteCall *call,const LmnRasterBus *bus,
-    unsigned rows) {
+    unsigned rows,unsigned planes,unsigned counter_ax,
+    uint16_t continuation,int planes_entry) {
     ShiftedSpriteState s;
-    initialize(&s,memory,call,bus,rows);
+    initialize(&s,memory,call,bus,continuation,planes_entry);
     push(&s,s.ds);                                     /* PUSH DS */
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 3
-    s.ds=call->data_segment;
-#else
-    s.ds=s.cx;                                         /* MOV DS,CX */
-#endif
+    if(mutation_is(&s,3u))s.ds=call->data_segment;
+    else s.ds=s.cx;                                    /* MOV DS,CX */
     {
         uint16_t old_dx=s.dx,old_cx=s.cx;
         s.dx=old_cx;s.cx=old_dx;                       /* XCHG DX,CX */
     }
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 4
-    if((uint8_t)s.cx>7u)s.cx=(uint16_t)((s.cx&0xff00u)|7u);
-#endif
+    if(mutation_is(&s,4u)&&(uint8_t)s.cx>7u)
+        s.cx=(uint16_t)((s.cx&0xff00u)|7u);
     initial_vga_setup(&s);
     push(&s,s.di);                                     /* PUSH DI */
-    shifted_first_pass(&s,rows);
-    s.di=pop(&s);                                      /* POP DI */
+    shifted_first_pass(&s,rows,counter_ax);
+    restore_destination(&s);                           /* POP DI */
+    if(planes>=3u)push(&s,s.di);                       /* PUSH DI */
     second_vga_setup(&s);
-    shifted_second_pass(&s,rows);
-#if ENTITY_SPRITE_SHIFTED_MUTATION == 10
-    /* Deliberately leave the live saved DS word on the stack. */
-#else
-    s.ds=pop(&s);                                      /* POP DS */
-#endif
+    shifted_or_pass(&s,rows,counter_ax);
+    if(planes>=3u) {
+        restore_destination(&s);                       /* POP DI */
+        if(planes>=4u)push(&s,s.di);                  /* PUSH DI */
+        select_plane(&s,mutation_is(&s,8u)?0x02u:0x04u);
+        shifted_or_pass(&s,rows,counter_ax);
+    }
+    if(planes>=4u) {
+        restore_destination(&s);                       /* POP DI */
+        select_plane(&s,mutation_is(&s,8u)?0x02u:0x08u);
+        shifted_or_pass(&s,rows,counter_ax);
+    }
+    if(mutation_is(&s,10u)) {
+        /* Deliberately leave the live saved DS word on the stack. */
+    } else s.ds=pop(&s);                               /* POP DS */
     return result_of(&s);
 }
 
 LmnEntityShiftedSpriteResult lmn_draw_entity_shifted_sprite12_core(
     uint8_t *memory,const LmnEntityShiftedSpriteCall *call,
     const LmnRasterBus *bus) {
-    return draw(memory,call,bus,12u);
+    return draw(memory,call,bus,12u,2u,0u,
+                CS_EntityShiftedSprite12Return,0);
 }
 
 LmnEntityShiftedSpriteResult lmn_draw_entity_shifted_sprite13_core(
     uint8_t *memory,const LmnEntityShiftedSpriteCall *call,
     const LmnRasterBus *bus) {
-    return draw(memory,call,bus,13u);
+    return draw(memory,call,bus,13u,2u,0u,
+                CS_EntityShiftedSprite13Return,0);
+}
+
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_10_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus) {
+    return draw(memory,call,bus,10u,3u,0u,CS_EntitySprite3Plane10Return,1);
+}
+
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_13_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus) {
+    return draw(memory,call,bus,13u,3u,0u,CS_EntitySprite3Plane13Return,1);
+}
+
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_14_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus) {
+    return draw(memory,call,bus,14u,3u,0u,CS_EntitySprite3Plane14Return,1);
+}
+
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_3plane_16_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus) {
+    return draw(memory,call,bus,16u,3u,1u,CS_EntitySprite3Plane16Return,1);
+}
+
+LmnEntitySpritePlanesResult lmn_draw_entity_sprite_4plane_14_core(
+    uint8_t *memory,const LmnEntitySpritePlanesCall *call,
+    const LmnRasterBus *bus) {
+    return draw(memory,call,bus,14u,4u,1u,CS_EntitySprite4Plane14Return,1);
 }
 
 static void apply_result(LmnRegs *r,const LmnEntityShiftedSpriteResult *out) {
@@ -455,12 +532,14 @@ static uint16_t read_return(uint8_t *memory,uint16_t ss,uint16_t sp,
 }
 
 static uint16_t adapt(uint8_t *memory,LmnRegs *r,const LmnRasterBus *bus,
-                      unsigned rows) {
+    unsigned rows,unsigned planes,unsigned counter_ax,
+    uint16_t continuation,int planes_entry) {
     LmnEntityShiftedSpriteCall call={
         r->ax,r->bx,r->cx,r->dx,r->si,r->di,r->bp,
         r->cs,r->ds,r->es,r->ss,r->sp,r->flags
     };
-    LmnEntityShiftedSpriteResult out=draw(memory,&call,bus,rows);
+    LmnEntityShiftedSpriteResult out=draw(memory,&call,bus,rows,planes,
+                                           counter_ax,continuation,planes_entry);
     apply_result(r,&out);
     if(out.status==LMN_ENTITY_SHIFTED_SPRITE_READY) {
         r->ip=read_return(memory,r->ss,r->sp,r->flags,bus);
@@ -471,10 +550,42 @@ static uint16_t adapt(uint8_t *memory,LmnRegs *r,const LmnRasterBus *bus,
 
 uint16_t lmn_draw_entity_shifted_sprite12_adapter(
     uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
-    return adapt(memory,registers,bus,12u);
+    return adapt(memory,registers,bus,12u,2u,0u,
+                 CS_EntityShiftedSprite12Return,0);
 }
 
 uint16_t lmn_draw_entity_shifted_sprite13_adapter(
     uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
-    return adapt(memory,registers,bus,13u);
+    return adapt(memory,registers,bus,13u,2u,0u,
+                 CS_EntityShiftedSprite13Return,0);
+}
+
+uint16_t lmn_draw_entity_sprite_3plane_10_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
+    return adapt(memory,registers,bus,10u,3u,0u,
+                 CS_EntitySprite3Plane10Return,1);
+}
+
+uint16_t lmn_draw_entity_sprite_3plane_13_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
+    return adapt(memory,registers,bus,13u,3u,0u,
+                 CS_EntitySprite3Plane13Return,1);
+}
+
+uint16_t lmn_draw_entity_sprite_3plane_14_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
+    return adapt(memory,registers,bus,14u,3u,0u,
+                 CS_EntitySprite3Plane14Return,1);
+}
+
+uint16_t lmn_draw_entity_sprite_3plane_16_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
+    return adapt(memory,registers,bus,16u,3u,1u,
+                 CS_EntitySprite3Plane16Return,1);
+}
+
+uint16_t lmn_draw_entity_sprite_4plane_14_adapter(
+    uint8_t *memory,LmnRegs *registers,const LmnRasterBus *bus) {
+    return adapt(memory,registers,bus,14u,4u,1u,
+                 CS_EntitySprite4Plane14Return,1);
 }

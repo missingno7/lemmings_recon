@@ -1,6 +1,12 @@
-; Sprite callback suffix66D7..6E82; physical order unchanged.
+; Maintained sprite callbacks 66D7..6BDA; physical order unchanged.
+
 times -(($-$$) != 0x66d7) db 0 ; module start assertion
-sub_66D7:
+; CONTRACT: source DS=incoming CX; incoming DL is unchecked CL shift.
+; Three-plane callbacks use live SS DI saves between masked and OR passes.
+; First three entries count in BP; sixteen-row entry PUSHes/POPs AX per row.
+; Mask/data SHR/RCR spills, all256 shift counts, DF strings and +29h pitch
+; retain flags, SS aliases, ordered VGA latch/port/mirror phases and POP DS/RET.
+DrawEntityShiftedSprite3Plane10:
     push ds ; @066D7
     mov ds,cx ; @066D8
     xchg dx,cx ; @066DA
@@ -168,8 +174,9 @@ loc_67F9:
     dec bp ; @06812
     jnz loc_67E4 ; @06813
     pop ds ; @06815
+EntitySprite3Plane10Return:
     ret ; @06816
-sub_6817:
+DrawEntityShiftedSprite3Plane13:
     push ds ; @06817
     mov ds,cx ; @06818
     xchg dx,cx ; @0681A
@@ -337,8 +344,9 @@ loc_6939:
     dec bp ; @06952
     jnz loc_6924 ; @06953
     pop ds ; @06955
+EntitySprite3Plane13Return:
     ret ; @06956
-sub_6957:
+DrawEntityShiftedSprite3Plane14:
     push ds ; @06957
     mov ds,cx ; @06958
     xchg dx,cx ; @0695A
@@ -509,8 +517,9 @@ sub_6A79:
     jnz loc_6A64 ; @06A93
 sub_6A95:
     pop ds ; @06A95
+EntitySprite3Plane14Return:
     ret ; @06A96
-sub_6A97:
+DrawEntityShiftedSprite3Plane16:
     push ds ; @06A97
     mov ds,cx ; @06A98
     xchg dx,cx ; @06A9A
@@ -682,371 +691,6 @@ loc_6BBC:
     dec ax ; @06BD6
     jnz loc_6BA6 ; @06BD7
     pop ds ; @06BD9
+EntitySprite3Plane16Return:
     ret ; @06BDA
-sub_6BDB:
-    push ds ; @06BDB
-    mov dx,0x3c4 ; @06BDC
-    mov ax,0xf02 ; @06BDF
-    out dx,ax ; @06BE2
-    mov [ss:0x8],ax ; @06BE3
-    mov dx,0x3ce ; @06BE7
-    db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @06BEA
-    out dx,ax ; @06BEC
-    mov [ss:0xa],ax ; @06BED
-    mov ax,0xe01 ; @06BF1
-    out dx,ax ; @06BF4
-    mov [ss:0xc],ax ; @06BF5
-    mov ax,0x5 ; @06BF9
-    out dx,ax ; @06BFC
-    mov [ss:0x0],ax ; @06BFD
-    mov ax,0x3 ; @06C01
-    out dx,ax ; @06C04
-    mov [ss:0x2],ax ; @06C05
-    mov ds,cx ; @06C09
-    mov cx,0xa000 ; @06C0B
-    mov es,cx ; @06C0E
-    db 0x8b,0xef ; ENCODED: mov bp,di (NASM chooses a different encoding) ; @06C10
-    mov cx,0x20 ; @06C12
-loc_6C15:
-    push cx ; @06C15
-    mov cx,[bx] ; @06C16
-    inc bx ; @06C18
-    inc bx ; @06C19
-    mov al,0x8 ; @06C1A
-    db 0x8a,0xe1 ; ENCODED: mov ah,cl (NASM chooses a different encoding) ; @06C1C
-    mov [ss:0xe],ax ; @06C1E
-    out dx,ax ; @06C22
-    cli ; @06C23
-    mov al,[es:di] ; @06C24
-    lodsw ; @06C27
-    stosb ; @06C28
-    sti ; @06C29
-    xchg ch,ah ; @06C2A
-    mov al,0x8 ; @06C2C
-    mov [ss:0xe],ax ; @06C2E
-    out dx,ax ; @06C32
-    cli ; @06C33
-    mov al,[es:di] ; @06C34
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @06C37
-    stosb ; @06C39
-    sti ; @06C3A
-    mov cx,[bx] ; @06C3B
-    inc bx ; @06C3D
-    inc bx ; @06C3E
-    mov al,0x8 ; @06C3F
-    db 0x8a,0xe1 ; ENCODED: mov ah,cl (NASM chooses a different encoding) ; @06C41
-    mov [ss:0xe],ax ; @06C43
-    out dx,ax ; @06C47
-    cli ; @06C48
-    mov al,[es:di] ; @06C49
-    lodsw ; @06C4C
-    stosb ; @06C4D
-    sti ; @06C4E
-    xchg ch,ah ; @06C4F
-    mov al,0x8 ; @06C51
-    mov [ss:0xe],ax ; @06C53
-    out dx,ax ; @06C57
-    cli ; @06C58
-    mov al,[es:di] ; @06C59
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @06C5C
-    stosb ; @06C5E
-    sti ; @06C5F
-    mov cl,[bx] ; @06C60
-    inc bx ; @06C62
-    mov al,0x8 ; @06C63
-    db 0x8a,0xe1 ; ENCODED: mov ah,cl (NASM chooses a different encoding) ; @06C65
-    mov [ss:0xe],ax ; @06C67
-    out dx,ax ; @06C6B
-    cli ; @06C6C
-    mov al,[es:di] ; @06C6D
-    lodsb ; @06C70
-    stosb ; @06C71
-    sti ; @06C72
-    add di,byte +0x27 ; @06C73
-    pop cx ; @06C76
-    dec cx ; @06C77
-    jz sub_6C7C ; @06C78
-sub_6C7A:
-    jmp short loc_6C15 ; @06C7A
-sub_6C7C:
-    db 0x8b,0xfd ; ENCODED: mov di,bp (NASM chooses a different encoding) ; @06C7C
-    mov ax,0x1 ; @06C7E
-    mov [ss:0xc],ax ; @06C81
-    out dx,ax ; @06C85
-    mov ax,0x1003 ; @06C86
-    mov [ss:0x2],ax ; @06C89
-    out dx,ax ; @06C8D
-    mov ax,0xff08 ; @06C8E
-    mov [ss:0xe],ax ; @06C91
-    out dx,ax ; @06C95
-    mov dl,0xc4 ; @06C96
-    mov ax,0x202 ; @06C98
-    mov [ss:0x8],ax ; @06C9B
-    out dx,ax ; @06C9F
-    mov cx,0x20 ; @06CA0
-loc_6CA3:
-    push cx ; @06CA3
-    cli ; @06CA4
-    mov al,[es:di] ; @06CA5
-    lodsw ; @06CA8
-    stosb ; @06CA9
-    mov al,[es:di] ; @06CAA
-    db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06CAD
-    stosb ; @06CAF
-    mov al,[es:di] ; @06CB0
-    lodsw ; @06CB3
-    stosb ; @06CB4
-    mov al,[es:di] ; @06CB5
-    db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06CB8
-    stosb ; @06CBA
-    mov al,[es:di] ; @06CBB
-    lodsb ; @06CBE
-    stosb ; @06CBF
-    sti ; @06CC0
-    add di,byte +0x27 ; @06CC1
-    pop cx ; @06CC4
-    loop loc_6CA3 ; @06CC5
-sub_6CC7:
-    db 0x8b,0xfd ; ENCODED: mov di,bp (NASM chooses a different encoding) ; @06CC7
-    mov dl,0xc4 ; @06CC9
-    mov ax,0x402 ; @06CCB
-    mov [ss:0x8],ax ; @06CCE
-    out dx,ax ; @06CD2
-    mov cx,0x20 ; @06CD3
-loc_6CD6:
-    push cx ; @06CD6
-    cli ; @06CD7
-    mov al,[es:di] ; @06CD8
-    lodsw ; @06CDB
-    stosb ; @06CDC
-    mov al,[es:di] ; @06CDD
-    db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06CE0
-    stosb ; @06CE2
-    mov al,[es:di] ; @06CE3
-    lodsw ; @06CE6
-    stosb ; @06CE7
-    mov al,[es:di] ; @06CE8
-    db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06CEB
-    stosb ; @06CED
-    mov al,[es:di] ; @06CEE
-    lodsb ; @06CF1
-    stosb ; @06CF2
-    sti ; @06CF3
-    add di,byte +0x27 ; @06CF4
-    pop cx ; @06CF7
-    loop loc_6CD6 ; @06CF8
-sub_6CFA:
-    pop ds ; @06CFA
-    ret ; @06CFB
-sub_6CFC:
-    push ds ; @06CFC
-    mov ds,cx ; @06CFD
-    xchg dx,cx ; @06CFF
-    mov dx,0x3c4 ; @06D01
-    mov ax,0xf02 ; @06D04
-    mov [ss:0x8],ax ; @06D07
-    out dx,ax ; @06D0B
-    mov dx,0x3ce ; @06D0C
-    db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @06D0F
-    mov [ss:0xa],ax ; @06D11
-    out dx,ax ; @06D15
-    mov ax,0xe01 ; @06D16
-    mov [ss:0xc],ax ; @06D19
-    out dx,ax ; @06D1D
-    mov ax,0x5 ; @06D1E
-    mov [ss:0x0],ax ; @06D21
-    out dx,ax ; @06D25
-    mov ax,0x3 ; @06D26
-    mov [ss:0x2],ax ; @06D29
-    out dx,ax ; @06D2D
-    mov ax,0xa000 ; @06D2E
-    mov es,ax ; @06D31
-    push di ; @06D33
-    mov ax,0xe ; @06D34
-loc_6D37:
-    push ax ; @06D37
-    lodsw ; @06D38
-    push si ; @06D39
-    xchg al,ah ; @06D3A
-    db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM chooses a different encoding) ; @06D3C
-    mov ax,[bx] ; @06D3E
-    add bx,byte +0x2 ; @06D40
-    xchg al,ah ; @06D43
-    db 0x8b,0xe8 ; ENCODED: mov bp,ax (NASM chooses a different encoding) ; @06D45
-    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @06D47
-    db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @06D49
-    db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @06D4B
-    jz loc_6D5B ; @06D4D
-loc_6D4F:
-    shr si,1 ; @06D4F
-    rcr al,1 ; @06D51
-    shr bp,1 ; @06D53
-    rcr ah,1 ; @06D55
-    dec ch ; @06D57
-    jnz loc_6D4F ; @06D59
-loc_6D5B:
-    push bx ; @06D5B
-    push cx ; @06D5C
-    db 0x8b,0xdd ; ENCODED: mov bx,bp (NASM chooses a different encoding) ; @06D5D
-    db 0x8b,0xce ; ENCODED: mov cx,si (NASM chooses a different encoding) ; @06D5F
-    db 0x8b,0xe8 ; ENCODED: mov bp,ax (NASM chooses a different encoding) ; @06D61
-    mov al,0x8 ; @06D63
-    db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @06D65
-    mov [ss:0xe],ax ; @06D67
-    out dx,ax ; @06D6B
-    cli ; @06D6C
-    mov al,[es:di] ; @06D6D
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @06D70
-    stosb ; @06D72
-    sti ; @06D73
-    mov al,0x8 ; @06D74
-    db 0x8a,0xe3 ; ENCODED: mov ah,bl (NASM chooses a different encoding) ; @06D76
-    mov [ss:0xe],ax ; @06D78
-    out dx,ax ; @06D7C
-    cli ; @06D7D
-    mov al,[es:di] ; @06D7E
-    db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @06D81
-    stosb ; @06D83
-    sti ; @06D84
-    db 0x8b,0xdd ; ENCODED: mov bx,bp (NASM chooses a different encoding) ; @06D85
-    mov al,0x8 ; @06D87
-    db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @06D89
-    mov [ss:0xe],ax ; @06D8B
-    out dx,ax ; @06D8F
-    cli ; @06D90
-    mov al,[es:di] ; @06D91
-    db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @06D94
-    stosb ; @06D96
-    sti ; @06D97
-    add di,byte +0x29 ; @06D98
-    pop cx ; @06D9B
-    pop bx ; @06D9C
-    pop si ; @06D9D
-    pop ax ; @06D9E
-    dec ax ; @06D9F
-    jnz loc_6D37 ; @06DA0
-    pop di ; @06DA2
-    push di ; @06DA3
-    mov ax,0x1 ; @06DA4
-    mov [ss:0xc],ax ; @06DA7
-    out dx,ax ; @06DAB
-    mov ax,0x1003 ; @06DAC
-    mov [ss:0x2],ax ; @06DAF
-    out dx,ax ; @06DB3
-    mov ax,0xff08 ; @06DB4
-    mov [ss:0xe],ax ; @06DB7
-    out dx,ax ; @06DBB
-    mov dl,0xc4 ; @06DBC
-    mov ax,0x202 ; @06DBE
-    mov [ss:0x8],ax ; @06DC1
-    out dx,ax ; @06DC5
-    mov ax,0xe ; @06DC6
-loc_6DC9:
-    push ax ; @06DC9
-    lodsw ; @06DCA
-    xchg al,ah ; @06DCB
-    db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @06DCD
-    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @06DCF
-    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @06DD1
-    db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @06DD3
-    jz loc_6DDF ; @06DD5
-loc_6DD7:
-    shr bx,1 ; @06DD7
-    rcr al,1 ; @06DD9
-    dec ch ; @06DDB
-    jnz loc_6DD7 ; @06DDD
-loc_6DDF:
-    db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @06DDF
-    cli ; @06DE1
-    mov al,[es:di] ; @06DE2
-    db 0x8a,0xc7 ; ENCODED: mov al,bh (NASM chooses a different encoding) ; @06DE5
-    stosb ; @06DE7
-    mov al,[es:di] ; @06DE8
-    db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @06DEB
-    stosb ; @06DED
-    mov al,[es:di] ; @06DEE
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @06DF1
-    stosb ; @06DF3
-    sti ; @06DF4
-    add di,byte +0x29 ; @06DF5
-    pop ax ; @06DF8
-    dec ax ; @06DF9
-    jnz loc_6DC9 ; @06DFA
-    pop di ; @06DFC
-    push di ; @06DFD
-    mov dx,0x3c4 ; @06DFE
-    mov ax,0x402 ; @06E01
-    mov [ss:0x8],ax ; @06E04
-    out dx,ax ; @06E08
-    mov ax,0xe ; @06E09
-loc_6E0C:
-    push ax ; @06E0C
-    lodsw ; @06E0D
-    xchg al,ah ; @06E0E
-    db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @06E10
-    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @06E12
-    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @06E14
-    db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @06E16
-    jz loc_6E22 ; @06E18
-loc_6E1A:
-    shr bx,1 ; @06E1A
-    rcr al,1 ; @06E1C
-    dec ch ; @06E1E
-    jnz loc_6E1A ; @06E20
-loc_6E22:
-    db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @06E22
-    cli ; @06E24
-    mov al,[es:di] ; @06E25
-    db 0x8a,0xc7 ; ENCODED: mov al,bh (NASM chooses a different encoding) ; @06E28
-    stosb ; @06E2A
-    mov al,[es:di] ; @06E2B
-    db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @06E2E
-    stosb ; @06E30
-    mov al,[es:di] ; @06E31
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @06E34
-    stosb ; @06E36
-    sti ; @06E37
-    add di,byte +0x29 ; @06E38
-    pop ax ; @06E3B
-    dec ax ; @06E3C
-    jnz loc_6E0C ; @06E3D
-    pop di ; @06E3F
-    mov dx,0x3c4 ; @06E40
-    mov ax,0x802 ; @06E43
-    mov [ss:0x8],ax ; @06E46
-    out dx,ax ; @06E4A
-    mov ax,0xe ; @06E4B
-loc_6E4E:
-    push ax ; @06E4E
-    lodsw ; @06E4F
-    xchg al,ah ; @06E50
-    db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @06E52
-    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @06E54
-    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @06E56
-    db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @06E58
-    jz loc_6E64 ; @06E5A
-loc_6E5C:
-    shr bx,1 ; @06E5C
-    rcr al,1 ; @06E5E
-    dec ch ; @06E60
-    jnz loc_6E5C ; @06E62
-loc_6E64:
-    db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @06E64
-    cli ; @06E66
-    mov al,[es:di] ; @06E67
-    db 0x8a,0xc7 ; ENCODED: mov al,bh (NASM chooses a different encoding) ; @06E6A
-    stosb ; @06E6C
-    mov al,[es:di] ; @06E6D
-    db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @06E70
-    stosb ; @06E72
-    mov al,[es:di] ; @06E73
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @06E76
-    stosb ; @06E78
-    sti ; @06E79
-    add di,byte +0x29 ; @06E7A
-    pop ax ; @06E7D
-    dec ax ; @06E7E
-    jnz loc_6E4E ; @06E7F
-    pop ds ; @06E81
-    ret ; @06E82
-times -(($-$$) != 0x6e83) db 0 ; module end assertion
+times -(($-$$) != 0x6bdb) db 0 ; module end assertion
