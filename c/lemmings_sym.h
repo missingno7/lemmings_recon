@@ -344,7 +344,7 @@
 #define CS_PaletteRgbDecrementReturn5725 0x5725u
 #define CS_MarkEntityDrawingDirty 0x5726u
 #define CS_CopyResourcePlanesToVga 0x57D1u
-#define CS_sub_5827 0x5827u
+#define CS_UpdateFixedWordPattern 0x5827u
 #define CS_sub_587F 0x587Fu
 #define CS_LoadMainResourceSections 0x58D2u
 #define CS_sub_5950 0x5950u
@@ -392,8 +392,8 @@
 #define CS_DrawEntityMinimapPixel 0x6FE2u
 #define CS_DrawObjectSprite 0x706Fu
 #define CS_EntitySpriteRestoreDI 0x715Du
-#define CS_sub_715F 0x715Fu
-#define CS_sub_7218 0x7218u
+#define CS_CopyFixedPatternVgaSpans 0x715Fu
+#define CS_DrawFixedWordPattern 0x7218u
 #define CS_CopyStatusRegionToBothDrawingOrigins 0x75EFu
 #define CS_CopyStatusRegionToVga 0x7602u
 #define CS_DrawStatusCount 0x762Au
@@ -895,4 +895,14 @@
 #define CS_MainResourceSectionsReturn 0x59BAu
 #define CS_MainResourceSoundSegmentOperand5968 0x5968u
 #define SEG09A9_ConfigurationOption200E 0x200Eu
+#define SEG09A9_FixedPatternVgaOffset0008 0x0008u
+#define SEG09A9_FixedPatternVgaOffset000A 0x000Au
+#define SEG09A9_FixedPatternVgaOffset000C 0x000Cu
+#define SEG09A9_FixedPatternVgaOffset000E 0x000Eu
+#define SEG09A9_PointerX 0x0010u
+#define SEG09A9_PointerY 0x0012u
+#define SEG09A9_FixedPatternOffsetBias1FE0 0x1FE0u
+#define CS_FixedPatternCopyReturn 0x71C9u
+#define CS_FixedPatternDrawReturn 0x75EEu
+#define CS_FixedPatternUpdateReturn 0x587Eu
 #endif

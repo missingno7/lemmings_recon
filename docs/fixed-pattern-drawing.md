@@ -1,10 +1,11 @@
 # Fixed-pattern drawing frontier
 
-This is a static contract note for `sub_5827` and its two direct children,
-`sub_715F` and `sub_7218`. It preserves numeric state and VGA operation order
-without assigning game meaning to the source groups or data fields. All three
-entries remain `UNTRANSLATED`; this note records no C implementation, native
-test, or acceptance result.
+This records the machine contracts for `UpdateFixedWordPattern` and its two
+direct children, `CopyFixedPatternVgaSpans` and `DrawFixedWordPattern`. Their
+logical C cores and adapters now have focused native acceptance. Names record
+the proven copy/draw roles and pointer/offset provenance; the visual meaning of
+the source groups remains open. This is scoped machine-contract verification,
+not complete game or interrupt acceptance.
 
 ## Static boundaries and call graph
 
@@ -12,28 +13,28 @@ Fresh graph views show this direct tree:
 
 ```text
 caller @00161 or @0183B
-  sub_5827 entry @05827
-    CALL sub_715F @05827
-    CALL sub_7218 @05866
-  RET sub_5827 @0587E
+  UpdateFixedWordPattern entry @05827
+    CALL CopyFixedPatternVgaSpans @05827
+    CALL DrawFixedWordPattern @05866
+  RET UpdateFixedWordPattern @0587E
 ```
 
 | Entry | Inclusive bytes | Ledger reachable bytes / sites | Return boundary |
 |---|---:|---:|---:|
-| `sub_5827` | `5827..587E` | 88 / 33 | `RET @587E` |
-| `sub_715F` | `715F..71C9` | 107 / 48 | `RET @71C9` |
-| `sub_7218` | `7218..75EE` | 983 / 556 | `RET @75EE` |
+| `UpdateFixedWordPattern` | `5827..587E` | 88 / 33 | `RET @587E` |
+| `CopyFixedPatternVgaSpans` | `715F..71C9` | 107 / 48 | `RET @71C9` |
+| `DrawFixedWordPattern` | `7218..75EE` | 983 / 556 | `RET @75EE` |
 
-The ledger records `sub_5827` callers at `0161` and `183B`, and only `sub_5827`
-as caller of each child. Neither child has outgoing calls. `sub_715F` is followed
+The ledger records `UpdateFixedWordPattern` callers at `0161` and `183B`, and only `UpdateFixedWordPattern`
+as caller of each child. Neither child has outgoing calls. `CopyFixedPatternVgaSpans` is followed
 by the unresolved byte span `71CA..7217`; that gap remains `UNKNOWN`. There is
 no shared return tail: each entry consumes its own actual near-call return word.
-`sub_715F` has two 16-iteration `LOOP` bodies; `sub_7218` has no row loop or
+`CopyFixedPatternVgaSpans` has two 16-iteration `LOOP` bodies; `DrawFixedWordPattern` has no row loop or
 conditional branch, only two literal 16-row sequences.
 
-## Caller `sub_5827`
+## Caller `UpdateFixedWordPattern`
 
-The first instruction is the real `CALL sub_715F` at `5827`, whose return word
+The first instruction is the real `CALL CopyFixedPatternVgaSpans` at `5827`, whose return word
 points to `582A`. After that child returns, the caller computes:
 
 ```text
@@ -46,7 +47,7 @@ DI = word DS:[000Ch]
 
 Only exact equality with `FFh` takes the `ADD SI,480h` at `5854`; all other
 values retain the first half. It then executes `PUSH DS @5861`, loads DS from
-`GeneratedWordPatternBufferSegment` at DS:`1FEA`, and calls `sub_7218 @5866`.
+`GeneratedWordPatternBufferSegment` at DS:`1FEA`, and calls `DrawFixedWordPattern @5866`.
 That call's actual return word points to `5869`, where `POP DS` restores the
 original DS. The caller swaps the words at DS:`000C`/DS:`000E` and
 DS:`0008`/DS:`000A`, then consumes its own actual caller return word at
@@ -60,14 +61,14 @@ the consumer reads 30h bytes through SI, 30h through BX=`SI+60h`, then another
 numeric offsets have no established higher-level meaning here.
 
 The caller's live stack effects are two actual CALL return words and the one
-`PUSH DS`/`POP DS` pair. It does not save BP. `sub_715F` enables interrupts
-before the caller's arithmetic; `sub_7218` disables them at entry and enables
-them before returning. Thus `sub_5827` returns with IF set, irrespective of its
+`PUSH DS`/`POP DS` pair. It does not save BP. `CopyFixedPatternVgaSpans` enables interrupts
+before the caller's arithmetic; `DrawFixedWordPattern` disables them at entry and enables
+them before returning. Thus `UpdateFixedWordPattern` returns with IF set, irrespective of its
 entry IF. DF remains live throughout. The child's final flags survive the
 caller's post-call MOV/XCHG sequence because those instructions do not change
 FLAGS.
 
-## `sub_715F`: two VRAM string-copy passes
+## `CopyFixedPatternVgaSpans`: two VRAM string-copy passes
 
 At entry, `MOV BP,DS` at `715F` retains the entry DS value in BP, then `CLI`
 executes. The routine writes `0F02h` to sequencer port `3C4h` and `0105h` to
@@ -138,7 +139,7 @@ code, and data remain possible. With intact normal control
 flow, the final flags come from the last row's `ADD SI,29h @71C1`; LOOP, STI,
 MOV, and RET do not replace them. Other general registers are live/clobbered.
 
-## `sub_7218`: two literal 16-row VGA passes
+## `DrawFixedWordPattern`: two literal 16-row VGA passes
 
 The routine starts with CLI and writes these register/value pairs in order:
 
@@ -242,18 +243,66 @@ with the original three groups of 16 words per window. The generated buffer
 selector at DS:`1FEA` is named `GeneratedWordPatternBufferSegment`; successful
 allocation and the normal 900h-byte output partition are arithmetic/source
 facts, not proof of general bounds, lifetime, or non-aliasing. The 5D18..5D65
-region remains `UNKNOWN`. No classifications or ledger names are changed here.
+region remains `UNKNOWN`. The ledger now owns the copy/draw entry names,
+PointerX/Y, four FixedPatternVgaOffset slots and the neutral bias-byte name.
+No byte classification changes with those names.
 
-The smallest independently bounded next C API is `sub_715F`: two 16-row
-string-copy passes, one actual RET, live DS inputs and output, live VGA
-register/latch behavior, DF-sensitive strings, and the internal stack alias
-through PUSH ES/POP DS. `sub_7218` is also a call-free leaf but spans 556
-instruction sites and requires the exact ordered VGA/memory interactions above.
-Neither leaf has a normalized or callee-saved register contract; a translation
-must retain actual segments, flags, stack words, and memory/device ordering.
+Both leaves now retain the actual segments, flags, stack words and memory/device
+ordering above. Their APIs in c/fixed_pattern_copy.h and c/fixed_pattern_draw.h
+carry thirteen live roles and stop before their actual RETs; adapters consume
+the live outer word. The c/fixed_pattern_update.h parent composes both child
+cores through real SS frames. READY=0 stops before 587E; CHANGED_CHILD_RETURN=1
+preserves the actual target and direct child entry, before any following parent
+restore, selector read or pair swap. Only READY consumes the outer RET.
 
 Unresolved ownership includes the semantic meanings of source groups, the
 selected bank's visual meaning, byte 1FE0, allocation lifetime and aliases,
 and any runtime constraints on DF or the VGA device state. The offset-pair and
 pointer-coordinate provenance above does not prove those wider invariants.
 No UNKNOWN span is treated as dead or reclassified by this note.
+
+## Focused native acceptance
+
+The three registered suites run under 420-second and 384-MiB process limits,
+with bounded callback traces and fail-stop native callbacks. Guard, memory and
+timeout failures are never mutation evidence. Both original-only and native
+reports match their final consumed-input hashes.
+
+| Suite / entry | New C bytes | Fixtures / boundaries | Executed sites / branch outcomes | Compared bus events | Completed mutants |
+|---|---:|---:|---:|---:|---:|
+| fixed_pattern_copy / 715F | 107 | 21 / 42 | 48 / 4 | 9,156 | 10 |
+| fixed_pattern_draw / 7218 | 983 | 36 / 72 | 556 / 0 | 28,368 | 10 |
+| fixed_pattern_update / 5827 | 88 | 43 / 86 | 637 integrated / 6 | 53,900 | 10 |
+
+The parent has 33 own sites and two own branch outcomes. Its 637 sites include
+both children, so these domains are unioned rather than added again. This adds
+1,178 unique main C bytes, taking the ledger union from 24,039 to 25,217.
+The 715F..75EE physical module is now fixed_pattern_drawing.asm, with unchanged
+emission order and the 78-byte UNKNOWN71CA..7217 gap retained.
+
+The copy campaign includes 5,376 independent plane-byte checks. Live word
+providers are applied after the original PUSH completes; assertions confirm
+the provided quotient is read at POP DX and all 48 second-pass reads use the
+provided DS=3600. Cases cover DF/IF, coordinate and address wrapping, overlap,
+VGA DS/SS and the live outer word.
+
+The literal renderer has 10,560 independent plane-byte checks, including the
+second pass's OR operation and explicit setup/pass-boundary/latch ordering.
+The native fixed-word producer is separately compared at both boundaries:
+2,304 output bytes and 4,608 independent output-byte checks. Its output is
+retained as a whole canonical RAM fixture, then supplies both banks' eight
+90h-byte slices to 16 consumer cases/32 comparisons. Those repeated boundary
+comparisons consume 4,608 source bytes and check 7,680 plane bytes. This is
+producer-output fixture coverage, not a complete startup-to-draw runtime path.
+
+The parent covers all eight alignments and selection00/01/FF, live saved DS,
+both changed child returns, actual outer RET, coordinate/segment wrapping and
+independent pair-swap equations. A real SS=A000 case retains the hardware-induced
+changed child return instead of assuming an ordinary stack. Its C children
+operate on the parent's same canonical RAM object with flowing returned roles.
+
+Progress prose and the raw ledger do not renew behavioral evidence. The exact
+ASM/relocation gate independently pins current names, offsets and bytes; older
+unrelated reports remain historical when their input hashes no longer match.
+Next read vga-mirror-restore.md for 587F's separate fixed-frame/live-SS contract
+and the original initialization overwrite at 0549.

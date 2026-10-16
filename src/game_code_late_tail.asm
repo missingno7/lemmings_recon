@@ -707,6 +707,6 @@ sub_81CC:
     mov bx,0xa0 ; @0821F
     mov dx,[DrawingOrigin-GameDataImage] ; @08222
     call 0x0:SetDrawingLayout ; @08226
-    mov word [0x8],0xd2c0 ; @0822B
-    mov word [0xa],0xd2f0 ; @08231
+    mov word [FixedPatternVgaOffset0008-GameDataImage],0xd2c0 ; @0822B
+    mov word [FixedPatternVgaOffset000A-GameDataImage],0xd2f0 ; @08231
     ret ; @08237

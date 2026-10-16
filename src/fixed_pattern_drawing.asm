@@ -1,6 +1,15 @@
-; Maintained suffix after entity_sprite_dispatch.asm; physical order unchanged.
+; Fixed-pattern VGA copy/draw leaves and intervening UNKNOWN bytes.
+; Physical order and classifications remain unchanged.
 times -(($-$$) != 0x715f) db 0 ; module start assertion
-sub_715F:
+CopyFixedPatternVgaSpans:
+; CONTRACT: BP retains entry DS; CLI before literal mode1/map-mask OUTs.
+; Read [000E] then [000A] from live DS; first16 rows copy3 bytes withinA000
+; with ADD DI,29. Restore DS=BP before byte1FE0+word10, word-wrap then3 SHR.
+; PUSH DX/POP DX around full MUL rereads live SS. Write [000C] before [0008].
+; PUSH ES/POP DS also rereads actual SS, not a normalized A000 constant.
+; Second16 rows copy3 bytes then ADD SI,29. DF remains live; STI forces IF.
+; DS restored from BP; ES remains A000; core before actual RET71C9.
+; docs/fixed-pattern-drawing.md records producers and pair swaps.
     mov bp,ds ; @0715F
     cli ; @07161
     mov dx,0x3c4 ; @07162
@@ -9,8 +18,8 @@ sub_715F:
     mov dx,0x3ce ; @07169
     mov ax,0x105 ; @0716C
     out dx,ax ; @0716F
-    mov di,[0xe] ; @07170
-    mov si,[0xa] ; @07174
+    mov di,[FixedPatternVgaOffset000E-GameDataImage] ; @07170
+    mov si,[FixedPatternVgaOffset000A-GameDataImage] ; @07174
     mov dx,0xa000 ; @07178
     mov es,dx ; @0717B
     mov ds,dx ; @0717D
@@ -22,13 +31,13 @@ loc_7182:
     add di,byte +0x29 ; @07185
     loop loc_7182 ; @07188
     mov ds,bp ; @0718A
-    mov dl,[0x1fe0] ; @0718C
+    mov dl,[FixedPatternOffsetBias1FE0-GameDataImage] ; @0718C
     db 0x32,0xf6 ; ENCODED: xor dh,dh (NASM chooses a different encoding) ; @07190
-    add dx,[0x10] ; @07192
+    add dx,[PointerX-GameDataImage] ; @07192
     shr dx,1 ; @07196
     shr dx,1 ; @07198
     shr dx,1 ; @0719A
-    mov si,[0x12] ; @0719C
+    mov si,[PointerY-GameDataImage] ; @0719C
     push dx ; @071A0
     db 0x8b,0xc6 ; ENCODED: mov ax,si (NASM chooses a different encoding) ; @071A1
     mov si,0x2c ; @071A3
@@ -37,8 +46,8 @@ loc_7182:
     pop dx ; @071AA
     db 0x03,0xf2 ; ENCODED: add si,dx (NASM chooses a different encoding) ; @071AB
     add si,[AlternateDrawingOrigin-GameDataImage] ; @071AD
-    mov [0xc],si ; @071B1
-    mov di,[0x8] ; @071B5
+    mov [FixedPatternVgaOffset000C-GameDataImage],si ; @071B1
+    mov di,[FixedPatternVgaOffset0008-GameDataImage] ; @071B5
     push es ; @071B9
     pop ds ; @071BA
     mov cx,0x10 ; @071BB
@@ -50,6 +59,7 @@ loc_71BE:
     loop loc_71BE ; @071C4
     sti ; @071C6
     mov ds,bp ; @071C7
+FixedPatternCopyReturn:
     ret ; @071C9
 ; UNKNOWN: unresolved bytes
     db 0x8c,0xdd,0xfa,0xba,0xc4,0x03,0xb8,0x02,0x0f,0xef,0xba,0xce,0x03,0xb8,0x05,0x01 ; @071CA
@@ -61,7 +71,14 @@ loc_71BE:
     db 0x89,0x36,0x0c,0x00,0x8b,0x3e,0x08,0x00,0xba,0x00,0xa0,0x8e,0xc2,0x8e,0xda,0xb9 ; @071FA
 ; UNKNOWN: unresolved bytes
     db 0x10,0x00,0xa4,0xa4,0xa4,0x83,0xc6,0x29,0xe2,0xf8,0xfb,0x8e,0xdd,0xc3 ; @0720A
-sub_7218:
+DrawFixedWordPattern:
+; CONTRACT: two literal16-row passes; no CX loop counter or local CLD.
+; First pass reads3 control bytes via explicit BX increments and3 data bytes
+; via DF-sensitive SI strings; each GC8 OUT precedes latch read then STOSB.
+; Second pass resets DI=entry DI, installs literal GC/SEQ state, then reads
+; latches before each of3 STOSB per row. ADD DI,29 remains positive with DF.
+; DS/SS unchanged; ES=A000, BP=entry DI, STI forces IF before actual RET75EE.
+; Live sources, masks, ports, flags and outer RET are not cached.
     cli ; @07218
     mov dx,0x3c4 ; @07219
     mov ax,0xf02 ; @0721C
@@ -617,5 +634,6 @@ sub_7218:
     stosb ; @075E9
     add di,byte +0x29 ; @075EA
     sti ; @075ED
+FixedPatternDrawReturn:
     ret ; @075EE
 times -(($-$$) != 0x75ef) db 0 ; module end assertion

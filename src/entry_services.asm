@@ -146,7 +146,7 @@ loc_015C:
     in al,dx ; @0015C
     test al,0x8 ; @0015D
     jz loc_015C ; @0015F
-    call sub_5827 ; @00161
+    call UpdateFixedWordPattern ; @00161
 loc_0164:
     mov cx,[0x1ffe] ; @00164
     mov dx,[0x2000] ; @00168
@@ -431,8 +431,8 @@ sub_03E7:
     mov word [0x0],0x218 ; @003E7
     mov word [0x2],0x43 ; @003ED
     mov byte [0x1a],0x0 ; @003F3
-    mov word [0x10],0x96 ; @003F8
-    mov word [0x12],0x64 ; @003FE
+    mov word [PointerX-GameDataImage],0x96 ; @003F8
+    mov word [PointerY-GameDataImage],0x64 ; @003FE
     mov byte [LevelCreationLimit-GameDataImage],0xc8 ; @00404
     mov byte [0x4a],0x0 ; @00409
     mov byte [0x20a9],0x30 ; @0040E
@@ -2209,7 +2209,7 @@ loc_1835:
 loc_1837:
     sti ; @01837
     call sub_553D ; @01838
-    call sub_5827 ; @0183B
+    call UpdateFixedWordPattern ; @0183B
 sub_183E:
     db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0183E
     call sub_418C ; @01840

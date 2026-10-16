@@ -147,7 +147,7 @@ loc_4275:
     jng loc_427E ; @04279
     mov cx,0x148 ; @0427B
 loc_427E:
-    mov [0x10],cx ; @0427E
+    mov [PointerX-GameDataImage],cx ; @0427E
     cmp dx,byte +0x8 ; @04282
     jnl loc_428A ; @04285
     mov dx,0x8 ; @04287
@@ -156,7 +156,7 @@ loc_428A:
     jng loc_4293 ; @0428E
     mov dx,0xc8 ; @04290
 loc_4293:
-    mov [0x12],dx ; @04293
+    mov [PointerY-GameDataImage],dx ; @04293
     pop dx ; @04297
     pop cx ; @04298
     pop bx ; @04299

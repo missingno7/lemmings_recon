@@ -2,24 +2,27 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 24,039 bytes, adding 233 unique
-bytes with no removals. `LoadMainResourceSections` at 58D2..59BA now composes
-the native DAT and graphics cores through actual SS frames. Its 14 fixtures/28
-pre-RET and actual-RET comparisons cover all 101 parent sites and both branch
-outcomes, with ten completed mutants. The exercised original composition has
-800 instruction sites and 147 branch outcomes; child domains remain scoped.
-Seven full pinned fixtures verify their complete section stream and all 337
-section-zero sprite calls. See main-resource-sections.md.
+The main-image translated-code ledger union is 25,217 bytes, adding 1,178 unique
+bytes with no removals. The fixed-pattern drawing chain now composes native
+715F and 7218 leaves through the actual SS frames in 5827. The three focused
+suites pass 100 fixtures/200 boundaries and 30 completed mutants. The parent
+covers its 33 sites/two outcomes and all 637 integrated sites/six outcomes.
+Child bytes and sites are unioned once. See fixed-pattern-drawing.md.
 
-The campaign executes each original fixture once, totaling 47,410,976
-instructions and 3,788,588 raster events, retaining both boundaries. The
-7,577,160 compared raster events and 276 DOS events are boundary sums, not
-unique execution.
-Live DS/BX restores, changed top and nested child returns, the actual outer RET,
-late CS:5968 operand changes, relocated loading, exact-FF gate, fatal1949/04D0
-and bounded retry recovery all pass. DAT internals retain their direct-RAM
-domain and the untranslated 4B1C retry-service seam. The worker uses packed
-traces, 1,500-second/512-MiB limits and fail-stop native callback guards.
+The copy leaf passes 21 fixtures/42 boundaries, all 48 sites/four LOOP outcomes,
+9,156 events and 5,376 independent plane-byte checks. Its live PUSH DX/POP DX
+and PUSH ES/POP DS witnesses assert the effective saved word and source segment.
+The literal renderer passes 36 fixtures/72 boundaries, all 556 sites/no branches,
+28,368 events and 10,560 independent plane-byte checks. Native producer output
+supplies both banks' eight slices as canonical RAM fixtures; producer and
+consumer counts remain separate from startup/runtime composition.
+
+The 5827 parent passes 43 fixtures/86 boundaries and 53,900 events, including
+all alignments and selection 00/01/FF, DF/IF, coordinate/segment wrapping,
+actual child and outer returns, saved DS, live selector reads and pair swaps.
+The genuine SS=A000 hardware-changed child return remains a stop. Every suite
+uses 420-second/384-MiB worker limits, bounded traces and fail-stop callbacks;
+budget exhaustion never counts as mutant detection.
 
 The static 1FEA selector audit accounts for startup clearing and allocation,
 all direct selector references, two 96-byte source tables, a 0900h-byte normal
@@ -29,17 +32,19 @@ open. Static extraction also accounts for all seven MAIN.DAT section extents;
 section 1 exactly fills the 0184h-byte mask source, while sections 3/4 have adjacent
 normal destinations. Their higher-level consumer semantics remain separate.
 
-Next translate the 715F..71C9 leaf (107 bytes/48 sites), then the literal
-7218..75EE renderer (983 bytes/556 sites), then compose their 5827..587E caller
-(88 bytes/33 sites). Read fixed-pattern-drawing.md and fresh graph views first.
-Preserve the two actual internal word saves in 715F, MUL's DX:AX and defined
-flags, both DF-sensitive VGA copy passes, live DS/ES/SS and forced IF on return.
-The 7218 leaf requires literal ordered mask/latch/source/port traffic.
-The 5827 caller uses 0090h-byte slices, exact EntitySelectionPresent==FF,
-and two live offset-pair swaps. Audit ledger names/contracts before C changes.
-Static producers establish four rotating VGA slots and pointer X/Y inputs;
-byte1FE0, selected-bank meaning, lifetime and aliases remain open. UNKNOWN
-71CA..7217 remains unresolved. Child bytes are counted once.
+The physical 715F..75EE module is now fixed_pattern_drawing.asm. Four rotating
+VGA slots, PointerX/Y and the neutral bias byte are ledger-owned, with named
+producer stores and contracts beside the ASM. UNKNOWN71CA..7217 is unchanged;
+byte 1FE0's writer/meaning, selected-bank meaning, lifetime and aliases remain open.
+
+Next translate 587F..58D1 (83 bytes/38 sites), then its mirror initialization
+producer 04F9..054D (85 bytes/25 sites), before composing interrupt callers.
+Read vga-mirror-restore.md and fresh graph views first. The current CS:5884
+operand selects a fixed relocated 143E mirror frame, distinct from live SS.
+Preserve nine ordered mirror reads/OUTs, saved CX, entry ES, actual RET and IF.
+Startup literally overwrites SS:0010 with FF08 at 0549 and leaves SS:000E
+uninitialized; retain that quirk. Mouse INT62, timer chaining and asynchronous
+IRQ behavior remain explicit platform/frame frontiers.
 
 These focused reports pin their consumed code, models, tools, assets and generated
 header. Progress prose and the raw symbol ledger are outside their behavioral

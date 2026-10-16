@@ -54,10 +54,14 @@ loc_580E:
     jnz loc_57FE ; @05824
 VgaPlaneCopyReturn:
     ret ; @05826
-sub_5827:
-    call sub_715F ; @05827
-    mov bx,[0x10] ; @0582A
-    mov cl,[0x1fe0] ; @0582E
+UpdateFixedWordPattern:
+; CONTRACT: actual CALL frames715F then7218; stop on changed child returns.
+; Live pointer+bias alignment selects a0090h-byte bank slice, plus0480h only
+; when EntitySelectionPresent is exactlyFF. Keep actual PUSH/POP DS and both
+; live word-pair swaps. Child STI means finalIF=1; DF remains unchanged.
+    call CopyFixedPatternVgaSpans ; @05827
+    mov bx,[PointerX-GameDataImage] ; @0582A
+    mov cl,[FixedPatternOffsetBias1FE0-GameDataImage] ; @0582E
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @05832
     db 0x03,0xd9 ; ENCODED: add bx,cx (NASM chooses a different encoding) ; @05834
     and bl,0x7 ; @05836
@@ -71,23 +75,24 @@ sub_5827:
     shl bx,1 ; @05847
     shl bx,1 ; @05849
     db 0x03,0xf3 ; ENCODED: add si,bx (NASM chooses a different encoding) ; @0584B
-    cmp byte [0x1a],0xff ; @0584D
+    cmp byte [EntitySelectionPresent-GameDataImage],0xff ; @0584D
     jnz loc_5858 ; @05852
     add si,0x480 ; @05854
 loc_5858:
     db 0x8b,0xde ; ENCODED: mov bx,si (NASM chooses a different encoding) ; @05858
     add bx,byte +0x60 ; @0585A
-    mov di,[0xc] ; @0585D
+    mov di,[FixedPatternVgaOffset000C-GameDataImage] ; @0585D
     push ds ; @05861
     mov ds,[GeneratedWordPatternBufferSegment-GameDataImage] ; @05862
-    call sub_7218 ; @05866
+    call DrawFixedWordPattern ; @05866
     pop ds ; @05869
-    mov ax,[0xc] ; @0586A
-    xchg [0xe],ax ; @0586D
-    mov [0xc],ax ; @05871
-    mov ax,[0x8] ; @05874
-    xchg [0xa],ax ; @05877
-    mov [0x8],ax ; @0587B
+    mov ax,[FixedPatternVgaOffset000C-GameDataImage] ; @0586A
+    xchg [FixedPatternVgaOffset000E-GameDataImage],ax ; @0586D
+    mov [FixedPatternVgaOffset000C-GameDataImage],ax ; @05871
+    mov ax,[FixedPatternVgaOffset0008-GameDataImage] ; @05874
+    xchg [FixedPatternVgaOffset000A-GameDataImage],ax ; @05877
+    mov [FixedPatternVgaOffset0008-GameDataImage],ax ; @0587B
+FixedPatternUpdateReturn:
     ret ; @0587E
 sub_587F:
     cli ; @0587F

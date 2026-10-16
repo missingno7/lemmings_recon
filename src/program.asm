@@ -53,7 +53,7 @@ times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "entity_strip.asm"
 %include "entity_minimap.asm"
 %include "entity_sprite_dispatch.asm"
-%include "game_code_after_entity_minimap.asm"
+%include "fixed_pattern_drawing.asm"
 times -(($-$$) != 0x75ef) db 0 ; module end assertion
 %include "status_copy.asm"
 times -(($-$$) != 0x762a) db 0 ; module end assertion

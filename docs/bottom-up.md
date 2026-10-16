@@ -46,7 +46,7 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 06F7B..06FE1 | entity_strip.asm | Two-byte strip with incoming CX source segment, DF strings and actual popped LOOP count |
 | 06FE2..0706E | entity_minimap.asm | Signed entity minimap pixel guards, live saved X/table and VGA effects |
 | 0706F..0715E | entity_sprite_dispatch.asm | Live entity descriptor arithmetic, optional strip and dynamic callback; unresolved715B retained |
-| 0715F..075EE | game_code_after_entity_minimap.asm | Display suffix; mixed ownership and UNKNOWN preserved |
+| 0715F..075EE | fixed_pattern_drawing.asm | VGA span copies and literal word-pattern passes; UNKNOWN71CA..7217 preserved |
 | 075EF..07629 | status_copy.asm | Full DF-sensitive status-region copy, live DS and single-CALL/fallthrough wrapper |
 | 0762A..0780C | status_glyphs.asm | Count and character glyph contracts; five UNKNOWN bytes preserved |
 | 0780D..078FF | status_icons.asm | Status outline and restoration; signed selector and live VGA frames |
@@ -763,3 +763,27 @@ the live PUSH DX/POP DX around MUL, PUSH ES/POP DS, DF/IF and VGA ordering,
 144-byte slice choice and rotating VGA slots. Pointer-coordinate producers and
 the EntitySelectionPresent cross-use are identified; byte1FE0 and wider alias,
 allocation and visual semantics remain open. UNKNOWN71CA..7217 stays unresolved.
+
+The fixed-pattern chain now adds 1,178 unique main C bytes, taking the union
+to 25,217. Its 715F copy leaf passes 21 fixtures/42 boundaries, all 48 sites/four
+LOOP outcomes, 9,156 ordered events, 5,376 independent plane-byte checks and ten
+completed mutants. Its 7218 renderer passes 36 fixtures/72 boundaries, all 556
+sites/no branches, 28,368 events, 10,560 independent plane bytes and ten mutants.
+The native word producer's complete 0900h-byte output supplies 16 bank/shift
+consumer fixtures through canonical RAM snapshots, with separate producer,
+consumed-byte and plane-check counts. This is not full startup composition.
+
+The 5827 parent passes 43 fixtures/86 boundaries, 33 own sites/two own outcomes
+and 637 integrated sites/six outcomes, 53,900 events and ten completed mutants.
+It shares canonical RAM with both children, retains changed child/outer words,
+the real SS=A000 hardware-return quirk, saved DS, exact-FF selection and live pair
+swaps. DF/IF, full MUL, wrapped coordinates and ordered VGA traffic remain
+explicit. All suites use 420-second/384-MiB workers and bounded fail-stop traces.
+See fixed-pattern-drawing.md. The physical 1,168-byte fixed_pattern_drawing.asm
+module retains all 78 UNKNOWN bytes between the leaves and exact assertions.
+
+Next audit/translate 587F's fixed relocated mirror-frame restore and 04F9's
+initialization producer. Their fixed ES frame is distinct from live SS, despite
+normal startup making them equal. The literal 0549 store overwrites SS:0010
+instead of initializing SS:000E. Caller INT62/IRQ/chaining seams remain open;
+see vga-mirror-restore.md. No broader interrupt/game acceptance is implied.

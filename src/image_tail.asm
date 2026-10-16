@@ -5746,3 +5746,12 @@ EntityRecordFrameAddend equ EntityRecordsBase+0x29
 EntityRecordAlignmentGate equ EntityRecordsBase+0x2A
 
 EntityRecordDrawingSkipGate equ GameDataImage+0x00ae ; live first-record drawing gate, not a complete record schema
+
+; Fixed-pattern copy/draw slots; pair roles rotate through actual5827 swaps.
+FixedPatternVgaOffset0008 equ GameDataImage+0x0008
+FixedPatternVgaOffset000A equ GameDataImage+0x000A
+FixedPatternVgaOffset000C equ GameDataImage+0x000C
+FixedPatternVgaOffset000E equ GameDataImage+0x000E
+PointerX equ GameDataImage+0x0010
+PointerY equ GameDataImage+0x0012
+FixedPatternOffsetBias1FE0 equ GameDataImage+0x1fe0
