@@ -27,7 +27,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
 | 03E6F..0410E | game_code_late_after_selection.asm | Input callers; mixed ownership remains provisional |
 | 0410F..0414E | view_visibility.asm | Shared visibility producer with live DS/ES, relocated marker segment and existing caller frame |
-| 0414F..04B5B | game_code_after_view_visibility.asm | Input/display suffix; physical order and UNKNOWN preserved |
+| 0414F..04333 | game_code_after_view_visibility.asm | Input dispatch and display tail |
+| 04334..043CD | port201_input.asm | Port-201 wrappers and measurement; two UNKNOWN bytes retained |
+| 043CE..04B5B | input_menu_and_retry.asm | Input/menu and retry suffix; physical order and UNKNOWN preserved |
 | 04B5C..04BE6 | decimal_fields.asm | Percent wrapper, shared variable-width decimal fields and fixed three-digit helper |
 | 04BE7..052D3 | game_code_late_after_decimal.asm | Display setup, timer and palette callers; mixed ownership remains provisional |
 | 052D4..0563D | palette_frontends.asm | Palette pointers, writers and transition callers; ownership/frontier contracts remain explicit |
@@ -839,3 +841,17 @@ Next close 18B2, then known dependencies of 3E6F/418C before the shared 183E tim
 tail. The 42A5 frontier, unknown bytes after 18B6, prefix polling/platform seams
 and asynchronous execution remain open. The timer-frontier.md split prevents
 double-counting its overlapping prefix/tail domains.
+
+The EOI/port-201 cluster now adds 157 unique known C bytes, taking the main
+ledger union to 25,590. Its 51 fixtures/102 comparisons cover all 75 sites and
+eight edges, 3,444,790 original instructions and 328,314 ordered events, with
+ten completed mutation detections. The physical port201_input.asm module keeps
+its two UNKNOWN bytes; its 152 known bytes compose the two wrappers and their
+measurement child. The input/menu suffix remains separate in physical order.
+
+The contract preserves live DS:0051 after IN, CALL and outer-RET aliases,
+DL-only gating, signed halves of wrapped counters, high-only copies and the
+zero-byte XOR AH flags. Providers remain finite constructed inputs, with no
+hardware timing or IRQ claim. See port-io.md for the scoped 23-input report and
+worker limits. Next close 4252's mouse seam and 3E6F's shared-field ownership,
+then compose the understood 418C paths while retaining indirect 42A5 explicitly.

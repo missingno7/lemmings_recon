@@ -7633,9 +7633,11 @@
     "address": 6322,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_18B2",
-    "aliases": [],
+    "size": 5,
+    "symbol_name": "SendMasterPicEoi",
+    "aliases": [
+      "sub_18B2"
+    ],
     "callers": [
       6048,
       6286,
@@ -7645,10 +7647,20 @@
     "data_references": [],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact port I/O leaf/wrapper boundaries; live mask, stack, flag and callback contracts in docs/port-io.md",
+      "Bounded original/native port_io suite: 51 fixtures/102 core-adapter comparisons, 157 unique known bytes/75 sites/8 edges, 3444790 original instructions and 328314 ordered events; 10 completed mutants. Finite providers, live mask/stack aliases, signed wrapped halves, actual returns and missing-provider stops; docs/port-io.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 5
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 5,
+    "c_implementation": "c/port_io.c",
+    "c_core": "lmn_send_master_pic_eoi_core",
+    "c_code_ranges": [
+      [
+        6322,
+        6327
+      ]
+    ]
   },
   {
     "address": 6392,
@@ -23613,9 +23625,11 @@
     "address": 17204,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4334",
-    "aliases": [],
+    "size": 37,
+    "symbol_name": "PollPort201ButtonsLow",
+    "aliases": [
+      "sub_4334"
+    ],
     "callers": [
       19056,
       17061
@@ -23643,18 +23657,30 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact port I/O leaf/wrapper boundaries; live mask, stack, flag and callback contracts in docs/port-io.md",
+      "Bounded original/native port_io suite: 51 fixtures/102 core-adapter comparisons, 157 unique known bytes/75 sites/8 edges, 3444790 original instructions and 328314 ordered events; 10 completed mutants. Finite providers, live mask/stack aliases, signed wrapped halves, actual returns and missing-provider stops; docs/port-io.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 37
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 37,
+    "c_implementation": "c/port_io.c",
+    "c_core": "lmn_poll_port201_buttons_low_core",
+    "c_code_ranges": [
+      [
+        17204,
+        17241
+      ]
+    ]
   },
   {
     "address": 17241,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4359",
-    "aliases": [],
+    "size": 45,
+    "symbol_name": "PollPort201ButtonsHigh",
+    "aliases": [
+      "sub_4359"
+    ],
     "callers": [
       19080,
       17061
@@ -23682,18 +23708,30 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact port I/O leaf/wrapper boundaries; live mask, stack, flag and callback contracts in docs/port-io.md",
+      "Bounded original/native port_io suite: 51 fixtures/102 core-adapter comparisons, 157 unique known bytes/75 sites/8 edges, 3444790 original instructions and 328314 ordered events; 10 completed mutants. Finite providers, live mask/stack aliases, signed wrapped halves, actual returns and missing-provider stops; docs/port-io.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 45
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 45,
+    "c_implementation": "c/port_io.c",
+    "c_core": "lmn_poll_port201_buttons_high_core",
+    "c_code_ranges": [
+      [
+        17241,
+        17286
+      ]
+    ]
   },
   {
     "address": 17286,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4386",
-    "aliases": [],
+    "size": 72,
+    "symbol_name": "MeasurePort201Axes",
+    "aliases": [
+      "sub_4386"
+    ],
     "callers": [
       17214,
       17251
@@ -23711,10 +23749,28 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact port I/O leaf/wrapper boundaries; live mask, stack, flag and callback contracts in docs/port-io.md",
+      "Bounded original/native port_io suite: 51 fixtures/102 core-adapter comparisons, 157 unique known bytes/75 sites/8 edges, 3444790 original instructions and 328314 ordered events; 10 completed mutants. Finite providers, live mask/stack aliases, signed wrapped halves, actual returns and missing-provider stops; docs/port-io.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 70
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 70,
+    "c_implementation": "c/port_io.c",
+    "c_core": "lmn_measure_port201_axes_core",
+    "c_code_ranges": [
+      [
+        17286,
+        17301
+      ],
+      [
+        17302,
+        17304
+      ],
+      [
+        17305,
+        17358
+      ]
+    ]
   },
   {
     "address": 17358,
@@ -62881,6 +62937,262 @@
     "confidence": "PROVEN",
     "evidence": [
       "Exact bridge INT62, actual child CALL/RET or outer IRET boundary; docs/mouse-irq-bridge.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6324,
+    "segment": 0,
+    "kind": "label",
+    "size": 2,
+    "symbol_name": "MasterPicEoiOut18B4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6326,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "MasterPicEoiReturn18B6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17217,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201LowAfterAxes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17254,
+    "segment": 0,
+    "kind": "label",
+    "size": 2,
+    "symbol_name": "Port201HighAfterAxes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17221,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201LowInput4345",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17262,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201HighInput436E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17240,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201LowReturn4358",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17285,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201HighReturn4385",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17298,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201PulseOut4392",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17305,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201SampleIn4399",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17357,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "Port201MeasureReturn43CD",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact OUT/IN, actual child return or core/outer RET boundary; docs/port-io.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 81,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "Port201MaskByte0051",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup clear DS0000..2011;4334/4359 write03/0C before gate;439A rereads after every IN; stack aliases stay live"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9638,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "InputModeByte25A6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "418C selects0 mouse/1 indirect callback/other accelerated keyboard;0F64 fallback2;4A6D/4A85/4AB5/4ABD writers"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9634,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "InputAxisBaselineX25A2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4A73/4A8B callback BX calibration stores;42B0 subtracts from live returned BX before PointerX update"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9636,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "InputAxisBaselineY25A4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4A77/4A8F callback CX calibration stores;42B4 subtracts from live returned CX before PointerY update"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8197,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "InputAxisScaleSelector2005",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4AAF stores option digit1..4;42B8 unchecked byte chooses literal asymmetric X/Y SAR tails; other byte values take default"
     ],
     "verification_status": "STATIC"
   }

@@ -70,7 +70,7 @@ MenuTimerIrqHandler:
     and al,0x3 ; @04C59
     mov [0x1fe3],al ; @04C5B
     jnz loc_4C66 ; @04C5E
-    call sub_18B2 ; @04C60
+    call SendMasterPicEoi ; @04C60
     jmp short loc_4C70 ; @04C63
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04C65

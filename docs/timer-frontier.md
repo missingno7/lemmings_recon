@@ -40,8 +40,10 @@ controls the stores to 1FCF and 1FCD before saved DS is popped. Returned ES
 is later replaced by the live saved ES word. Carry returned SS:SP, memory,
 registers and FLAGS through both boundaries, including changed-target stops.
 
-After the mouse bridge, the dependency order is: 18B2; understood children
-of 3E6F and 418C; the 183E shared tail with explicit INT60/61, mirror-restorer
+The mouse bridge, 18B2 EOI leaf and 4334/4359/4386 port-201 cluster now have
+scoped C acceptance. Next establish 4252's mouse-provider contract and 3E6F's
+shared state before composing 418C's understood paths; then the 183E shared
+tail with explicit INT60/61, mirror-restorer
 and saved-INT08 provider seams; prefix dependencies 5473/553D; the prefix
 using the tested 5827 child; then full-handler composition. The unresolved
 indirect/far frontier at 42A5 stays explicit. Existing timer_chain.py cases

@@ -2,8 +2,9 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 25,433 bytes, adding the 48
-unique bytes of MouseIrqBridge (0F70..0F9F). Its C11 core and actual outer-IRET
+The main-image translated-code ledger union is 25,590 bytes after the EOI and
+port-201 cluster described below. The preceding MouseIrqBridge checkpoint added
+48 unique bytes (0F70..0F9F). Its C11 core and actual outer-IRET
 adapter compose the tested 587F mirror restorer through a real near CALL/RET.
 The INT62 provider contract carries full registers, canonical RAM and live
 frames; external instructions and asynchronous IRQ/debug delivery remain open.
@@ -26,20 +27,38 @@ the complement of the literal stored 0F9C; it is retained as a changed-target
 stop. The suite also covers relocation, a late code operand, gate providers,
 counter flags/wrap, moved stacks, physical/EA wrap and reserved IRET flag bits.
 
-Next close the 18B2 EOI leaf (5 bytes/3 sites), then understood children of 3E6F
-and 418C before composing the 183E shared timer tail at explicit INT60/61 and
+The EOI and port-201 cluster now adds 157 unique known bytes, taking the main
+translated-code ledger union to 25,590. Its 51 fixtures/102 comparisons cover
+all 75 sites and eight edges, with 3,444,790 original instructions, 328,314
+ordered events and ten completed mutation detections. The original/native
+report pins 23 consumed inputs and retains the two UNKNOWN port-module bytes.
+See port-io.md for finite-provider and stack/flag contracts. The earlier mouse
+report remains evidence only for its recorded inputs after header/runner edits.
+
+Next establish the 4252 mouse-provider contract and the neutral shared fields
+of 3E6F, then compose 418C's understood input paths before the 183E shared timer
+tail at explicit INT60/61 and
 saved-INT08 seams. Keep the 42A5 indirect/far frontier and UNKNOWN18B7..18F7
 unresolved. Prefix dependencies 5473/553D, tested 5827 and finite status-port
 inputs precede full 17C7 handler composition. The 119-byte prefix and 116-byte
 tail overlap the 235-byte handler; count shared bytes/sites once. See
 timer-frontier.md for frame, shared-state and checksum-window contracts.
 
-The matching focused reports pin 24 consumed code/model/tool/asset/header paths.
-Raw ledger status and progress prose are outside behavioral scope; the exact
+The mouse checkpoint report pins 24 consumed code/model/tool/asset/header paths;
+the new port-I/O report pins 23. Raw ledger status and progress prose are outside
+behavioral scope; the exact
 gate independently pins current ASM/ledger/header identity. Older unrelated
 campaigns remain historical until their recorded inputs match. Full original
 contracts and a matching complete native campaign remain necessary for
 aggregate acceptance; SDL3 follows the core.
+
+Static review bounds 3E6F to [3E6F,4085): 530 known bytes/195 sites, four
+UNKNOWN bytes, 44 conditional sites, and one near child, the tested 410F view
+map producer. Its INT61/INT60 sites at 3F7A/3F8D retain returned segment and
+frame effects. Name and trace the still-neutral DS bytes 0052, 0053, 0062,
+1FD3 and 1FD4 before translating their decisions. Returned DS feeds later
+gates; the narrower existing INT61 result is not a full interrupt contract.
+The neighboring 4085 entry is separate, not a child of this routine.
 
 ## Retained terrain campaign
 

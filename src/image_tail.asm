@@ -5760,3 +5760,9 @@ DisplayStatusPort1FDC equ GameDataImage+0x1fdc
 PrivateIrqCounter2002 equ GameDataImage+0x2002
 PrivateIrqCounter2003 equ GameDataImage+0x2003
 MouseIrqMirrorGate83BE equ ChecksumCursor+3
+
+Port201MaskByte0051 equ GameDataImage+0x0051
+InputModeByte25A6 equ GameDataImage+0x25a6
+InputAxisBaselineX25A2 equ GameDataImage+0x25a2
+InputAxisBaselineY25A4 equ GameDataImage+0x25a4
+InputAxisScaleSelector2005 equ GameDataImage+0x2005

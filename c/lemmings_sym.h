@@ -90,7 +90,7 @@
 #define CS_sub_1893 0x1893u
 #define CS_ChecksumWindowEnd 0x1899u
 #define CS_sub_189D 0x189Du
-#define CS_sub_18B2 0x18B2u
+#define CS_SendMasterPicEoi 0x18B2u
 #define CS_CriticalErrorHandler 0x18F8u
 #define CS_ReadRawResourceFile 0x1916u
 #define CS_RawResourceReturn 0x1939u
@@ -239,9 +239,9 @@
 #define CS_DrawStatusText 0x417Bu
 #define CS_sub_418C 0x418Cu
 #define CS_PollMousePosition 0x4252u
-#define CS_sub_4334 0x4334u
-#define CS_sub_4359 0x4359u
-#define CS_sub_4386 0x4386u
+#define CS_PollPort201ButtonsLow 0x4334u
+#define CS_PollPort201ButtonsHigh 0x4359u
+#define CS_MeasurePort201Axes 0x4386u
 #define CS_sub_43CE 0x43CEu
 #define CS_sub_43F2 0x43F2u
 #define CS_sub_4566 0x4566u
@@ -918,4 +918,20 @@
 #define CS_MouseIrqRestoreCall 0x0F99u
 #define CS_MouseIrqRestoreReturn 0x0F9Cu
 #define CS_MouseIrqOuterIret 0x0F9Fu
+#define CS_MasterPicEoiOut18B4 0x18B4u
+#define CS_MasterPicEoiReturn18B6 0x18B6u
+#define CS_Port201LowAfterAxes 0x4341u
+#define CS_Port201HighAfterAxes 0x4366u
+#define CS_Port201LowInput4345 0x4345u
+#define CS_Port201HighInput436E 0x436Eu
+#define CS_Port201LowReturn4358 0x4358u
+#define CS_Port201HighReturn4385 0x4385u
+#define CS_Port201PulseOut4392 0x4392u
+#define CS_Port201SampleIn4399 0x4399u
+#define CS_Port201MeasureReturn43CD 0x43CDu
+#define SEG09A9_Port201MaskByte0051 0x0051u
+#define SEG09A9_InputModeByte25A6 0x25A6u
+#define SEG09A9_InputAxisBaselineX25A2 0x25A2u
+#define SEG09A9_InputAxisBaselineY25A4 0x25A4u
+#define SEG09A9_InputAxisScaleSelector2005 0x2005u
 #endif

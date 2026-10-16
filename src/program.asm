@@ -26,6 +26,8 @@ times -(($-$$) != 0x3e6f) db 0 ; module end assertion
 %include "game_code_late_after_selection.asm"
 %include "view_visibility.asm"
 %include "game_code_after_view_visibility.asm"
+%include "port201_input.asm"
+%include "input_menu_and_retry.asm"
 times -(($-$$) != 0x4b5c) db 0 ; module end assertion
 %include "decimal_fields.asm"
 times -(($-$$) != 0x4be7) db 0 ; module end assertion

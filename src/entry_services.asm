@@ -1116,7 +1116,7 @@ InitializeMouseDriverHooks:
     pop ds ; @00F62
     ret ; @00F63
 loc_0F64:
-    mov byte [0x25a6],0x2 ; @00F64
+    mov byte [InputModeByte25A6-GameDataImage],0x2 ; @00F64
     mov byte [MouseServicesDisabledByte-GameDataImage],0xff ; @00F69
     ret ; @00F6E
 MouseEventReturn:
@@ -2122,7 +2122,7 @@ loc_177F:
 loc_179E:
     mov [bx],cl ; @0179E
 loc_17A0:
-    call sub_18B2 ; @017A0
+    call SendMasterPicEoi ; @017A0
     mov al,[0x200a] ; @017A3
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @017A6
     jz loc_17AF ; @017A8
@@ -2264,7 +2264,7 @@ loc_1881:
     mov [0x1fe3],al ; @01889
     jz sub_1893 ; @0188C
 sub_188E:
-    call sub_18B2 ; @0188E
+    call SendMasterPicEoi ; @0188E
     jmp short sub_189D ; @01891
 sub_1893:
     mov ax,0x189d ; @01893
@@ -2288,9 +2288,13 @@ sub_189D:
     pop ds ; @018AF
     pop ax ; @018B0
     iret ; @018B1
-sub_18B2:
+SendMasterPicEoi:
+; MOV AL,20; byte OUT20 preserves AH/FLAGS, then actual live near RET.
+; docs/port-io.md; no IRQ/PIC scheduling or hardware status is invented.
     mov al,0x20 ; @018B2
+MasterPicEoiOut18B4:
     out 0x20,al ; @018B4
+MasterPicEoiReturn18B6:
     ret ; @018B6
 ; UNKNOWN: unresolved bytes
     db 0xb0,0x0b,0xe6,0x20,0xeb,0x00,0xeb,0x00,0xeb,0x00,0xe4,0x20,0xeb,0x00,0xeb,0x00 ; @018B7
