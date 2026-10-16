@@ -6973,9 +6973,11 @@
     "address": 6206,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_183E",
-    "aliases": [],
+    "size": 116,
+    "symbol_name": "GameTimerTail183E",
+    "aliases": [
+      "sub_183E"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -7081,12 +7083,22 @@
         "size": 4
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Known timer subentry183E..18B2:49sites/116bytes; existing saved registers and hardware IRET frame; scoped provider and child boundaries in docs/timer-frontier.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 116
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 116,
+    "c_implementation": "c/timer_tail.c",
+    "c_core": "lmn_game_timer_tail_core",
+    "c_code_ranges": [
+      [
+        6206,
+        6322
+      ]
+    ],
+    "verification_evidence": "tests/timer_tail.py:48 fixtures/96 original-native comparisons,116 own bytes/49 sites/15 direct outcomes;1374-byte connected native domain,443 integrated executed sites/101 jump outcomes,11712 original instructions,8634 events (616 declared interrupt transport,264 provider accesses/50 calls),5 completed mutants. Actual input/commands/mirror/EOI CALL/RET, full returned DS/SS:SP, synthetic saved-INT08 and hardware IRET frames, phase/parity wraps, late vector, nested unsupported/provider/changed-return stops, independent saved-frame and canonical field checks. Prefix119 bytes/60sites and asynchronous timing remain open. docs/timer-frontier.md"
   },
   {
     "address": 6222,
@@ -7195,8 +7207,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1861",
-    "aliases": [],
+    "symbol_name": "GameTimerAfterInt601861",
+    "aliases": [
+      "sub_1861"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -7269,7 +7283,7 @@
         "size": 4
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
@@ -7542,8 +7556,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1893",
-    "aliases": [],
+    "symbol_name": "GameTimerChain1893",
+    "aliases": [
+      "sub_1893"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -7572,7 +7588,7 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
@@ -7600,8 +7616,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_189D",
-    "aliases": [],
+    "symbol_name": "GameTimerChainReturn189D",
+    "aliases": [
+      "sub_189D"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -7622,7 +7640,7 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
@@ -63645,6 +63663,201 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 28,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "TimerCadenceCounter001C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Byte INC1843 then parity184A gates INT60; no time unit inferred",
+      "Startup REP STOSB0031 clears DS0000..2011; no inferred time unit"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8163,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "TimerChainPhase1FE3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Byte INC1885/AND3/STORE1889; zero chains saved INT08, other phases send EOI",
+      "Shared menu timer4C54/4C5B uses opposite phase for chaining; startup REP0031 clears field"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8141,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "TimerForegroundCounter1FCD",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Byte INC18A3 through live returnedDS; foreground reads0186/01DC/01DF and clears018F",
+      "Startup REP STOSB0031 clears DS0000..2011; no inferred time unit"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6211,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterInput1843",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6239,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerInt60185F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6258,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerInt611872",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6260,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterInt611874",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6263,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterCommands1877",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6273,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterMirrors1881",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6289,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterEoi1891",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6297,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerFarChain1899",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6321,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerOuterIret18B1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
     ],
     "verification_status": "STATIC"
   }

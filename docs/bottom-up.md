@@ -14,7 +14,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 
 | Inclusive image range | Source | Ownership status |
 |---|---|---|
-| 00000..01915 | entry_services.asm | Entry/service frame; protected views remain separate |
+| 00000..017C6 | entry_services.asm | Entry/service frame; protected views remain separate |
+| 017C7..018B1 | game_timer.asm | Untranslated prefix, connected native tail, two live return frames and checksum overlap |
+| 018B2..01915 | entry_services_after_timer.asm | EOI leaf, critical error handler and UNKNOWN spans |
 | 01916..01F18 | resources.asm | Raw files, selection, special setup and DAT/cache cluster; allocation candidate has unresolved reachability |
 | 01F19..0314F | game_code.asm | Simulation-state and creation contracts; native domains remain scoped |
 | 03150..03633 | entity_actions.asm | Action dispatch, eight selectors and shared sound/RET tails; UNKNOWN preserved |
@@ -876,3 +878,12 @@ INT33 and INT60/61 now share native interrupt transport and the common verifier;
 the relocated4137 operand remains live at its original execution phase. UNKNOWN
 bytes and opaque service bodies remain open. Next compose183E with those scoped
 children and the saved-INT08 seam; see input-commands.md and next-work.md.
+
+The timer-tail checkpoint now connects that seam and those children in1,374 known
+bytes. Its116 new C bytes take the main ledger union to26,660. The48 fixtures/96
+comparisons cover all49 own sites/15 direct outcomes,443 integrated sites/101
+outcomes and five completed mutants. The shared verifier executes the actual far
+JMP and hardware IRET while separating opaque-service return transport. Returned
+DS/SS:SP, actual saved words and both frames stay canonical. The119-byte prefix
+and asynchronous scheduling remain open; next investigate5473/553D before full
+handler composition. See timer-frontier.md for field initialization and limits.

@@ -1,3 +1,6 @@
+TimerCadenceCounter001C equ GameDataImage+0x001C
+TimerChainPhase1FE3 equ GameDataImage+0x1FE3
+TimerForegroundCounter1FCD equ GameDataImage+0x1FCD
 ConfigurationOption200E equ GameDataImage+0x200E
 EntitySpriteBufferSegment equ GameDataImage+0x1FE6
 GeneratedWordPatternBufferSegment equ GameDataImage+0x1FEA

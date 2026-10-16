@@ -46,10 +46,54 @@ paths now have focused acceptance through the shared verifier. The 3E6F command
 parent now composes the visibility child with proved shared-state ownership;
 INT33 and INT60/61 callers reuse interrupt_service.c's full-register transport.
 See input-commands.md for the scoped 594-byte domain and remaining sound seams.
-Next compose the 183E shared tail with explicit INT60/61, mirror-restorer
-and saved-INT08 provider seams; prefix dependencies 5473/553D; the prefix
-using the tested 5827 child; then full-handler composition. The unresolved
+The connected tail below supplies the INT60/61, mirror-restorer and saved-INT08
+provider composition. Prefix dependencies 5473/553D, finite status-port input
+and full-handler composition using the tested 5827 child remain. The unresolved
 indirect/far frontier at 42A5 stays explicit. Existing timer_chain.py cases
 cover the external return seam, not the full handler or asynchronous IRQs.
 The narrower INT61 result and timer_restore cleanup helper do not supply
 this handler's full returned segment/frame contract.
+
+## Connected tail acceptance
+
+GameTimerTail183E is implemented in c/timer_tail.c. The physical module
+src/game_timer.asm preserves the untranslated prefix and the tail in order;
+entry_services_after_timer.asm owns the following EOI/critical-error suffix.
+No checksum bytes or UNKNOWN classifications changed.
+
+| Canonical DS field | Ownership and initialization |
+|---|---|
+| 001C TimerCadenceCounter001C | Startup clear at0031; INC1843 and a distinct read1847, then bit0 gates INT60. No time unit inferred. |
+| 1FE3 TimerChainPhase1FE3 | Startup clear; game read1882/write1889 and menu read4C54/write4C5B. Both increment modulo4, with opposite chain phases. |
+| 1FCD TimerForegroundCounter1FCD | Startup clear, foreground reset018F and reads0186/01DC/01DF; increment18A3 through returned DS. Separate from CS:1FCD code. |
+
+The tail entry inherits ten saved words (FLAGS,DI,SI,BP,BX,DX,CX,ES,DS,AX),
+followed by the three hardware-return words. The core consumes the ten saved
+words and stops before18B1; the adapter executes the actual hardware return.
+The chain at1893 adds its own FLAGS/CS/189D words. Its far JMP reads IP then CS
+in the bounded original observation; the fixture provider returns before IRET.
+Returned SS:SP owns both subsequent frame consumption and the local saved words.
+Returned DS owns1FCF/1FCD until the actual POP DS; no entry segment is substituted.
+Unknown input callbacks and child/provider failures propagate with separate
+parent, child and service status, without executing an unexplained destination.
+
+tests/timer_tail.py passes48 fixtures/96 comparisons, all49 tail sites/15 direct
+outcomes, and five completed mutation detections. The connected domain contains
+1,374 known bytes; this campaign executes443 integrated sites/101 jump outcomes
+and11,712 original instructions, comparing8,634 events. It separates616 declared
+interrupt-return/INT transport events and264 provider accesses across50 calls.
+Independent checks cover saved register order, outer targets and flags, live
+frame extent, modulo phase and returned-DS stores. Constructed cases include
+relocation, stack/word wrap, late vector writes, nested unsupported targets,
+changed child returns, sound-returned DS, VGA restoration and actual visibility.
+
+Logical AF is architecturally undefined. The pinned Unicorn execution clears it;
+the native tail retains that concrete zero when PUSHF stores FLAGS in canonical
+RAM. Defined flag comparisons still distinguish undefined AF, and saved memory
+is compared without masking. This is an explicit oracle convention, not proof of
+the unspecified bit on every historical CPU.
+
+Only116 new bytes join the C ledger, now26,660 main-image bytes; previously
+translated children are unioned once. The full handler's119-byte prefix remains
+untranslated, along with opaque external ISR bodies and asynchronous delivery.
+Next close5473/553D and finite status-port input, then connect17C7 to this tail.

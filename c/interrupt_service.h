@@ -28,6 +28,16 @@ enum LmnInterruptStatus {
     LMN_INTERRUPT_CHANGED_IRET = 3
 };
 
+/* Consume a live IRET frame using returned SS:SP and preinstruction FLAGS. */
+void lmn_interrupt_return(uint8_t *memory, LmnRegs *registers,
+    const LmnRasterBus *bus);
+
+/* Invoke a bound pre-IRET provider at the current CS:IP, then consume its live
+   frame. Used after an actual far chain as well as software INT transport. */
+LmnInterruptResult lmn_interrupt_invoke(uint8_t *memory, LmnRegs *registers,
+    uint16_t return_cs, uint16_t resume_ip,
+    const LmnInterruptService *service, const LmnRasterBus *bus);
+
 /* Dispatch an actual software interrupt using the live IVT and stack frame.
    interrupt_number is the unsigned INT vector (for example, 0x33). */
 LmnInterruptResult lmn_interrupt_service(uint8_t *memory, LmnRegs *registers,

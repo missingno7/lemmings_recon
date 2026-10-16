@@ -5,11 +5,17 @@ supported entries/returns, finite providers and independent expectations. They d
 not implement another CPU runner, memory bus, ctypes callback guard or full-state
 comparator. tests/port_io.py is the first migrated consumer; tests/input_poll.py
 and tests/ui_commands.py use the same engine for the connected input subsystem.
+tests/timer_tail.py composes those domains through the same engine.
 
 OriginalMachine runs exact loaded instructions in Unicorn and checks each reached
 instruction against the pinned relocated image. It rejects undeclared code writes
 and transfers outside the supplied domain. Near RET executes against actual live
 SS:SP; child continuations and core/adapter boundaries are declared by the suite.
+Declared outer IRET boundaries also execute the original instruction in adapter
+mode. A declared far chain must be a decoded far JMP: the runner executes that
+instruction, retaining its actual pointer reads and target, then invokes the
+bound fixture provider before consuming its returned IRET frame. The provider's
+return is not recorded as a direct original jump edge. Opcode guards stay exact.
 Instruction and phase limits fail the campaign. Pausing before an unsupported
 CALL or missing port provider does not claim execution of that instruction.
 
@@ -34,6 +40,10 @@ The native interrupt_service.c transport is shared by the INT33 mouse caller
 and INT60/61 command callers. Their provider descriptors carry full returned
 registers, including DS/ES/SS:SP. This consolidates frame mechanics without
 claiming the opaque service bodies or asynchronous IRQ delivery are translated.
+The timer's saved-INT08 chain reuses the same bound-provider/IRET consumer after
+its own literal synthetic-frame writes and far-pointer reads; its outer hardware
+IRET uses that consumer without imposing the synthetic return target. Word OUT
+is accepted only when the fixture supplies its word-port contract.
 
 BusAccess supplies one canonical RAM image, VGA aliases and bounded ordered
 observations. NativeCallbacks turns callback errors into immediate worker failure;

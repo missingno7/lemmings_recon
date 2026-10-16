@@ -166,11 +166,11 @@ loc_0179:
 loc_0183:
     call InstallGameTimerVector ; @00183
 loc_0186:
-    mov al,[0x1fcd] ; @00186
+    mov al,[TimerForegroundCounter1FCD-GameDataImage] ; @00186
     mov cl,0x4 ; @00189
     db 0x3a,0xc1 ; ENCODED: cmp al,cl (NASM chooses a different encoding) ; @0018B
     jng loc_0164 ; @0018D
-    mov byte [0x1fcd],0x0 ; @0018F
+    mov byte [TimerForegroundCounter1FCD-GameDataImage],0x0 ; @0018F
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @00194
     inc byte [ForegroundCounter1FD3-GameDataImage] ; @00199
     call sub_031E ; @0019D
@@ -201,9 +201,9 @@ loc_01D2:
     jnz loc_01E7 ; @001D7
     mov cx,0x2 ; @001D9
 loc_01DC:
-    mov al,[0x1fcd] ; @001DC
+    mov al,[TimerForegroundCounter1FCD-GameDataImage] ; @001DC
 loc_01DF:
-    cmp [0x1fcd],al ; @001DF
+    cmp [TimerForegroundCounter1FCD-GameDataImage],al ; @001DF
     jz loc_01DF ; @001E3
     loop loc_01DC ; @001E5
 loc_01E7:
@@ -2149,171 +2149,4 @@ loc_17C0:
     test al,0x2 ; @017C2
     loopne loc_17C0 ; @017C4
     ret ; @017C6
-GameTimerIrqHandler:
-    push ax ; @017C7
-    push ds ; @017C8
-    push es ; @017C9
-    push cx ; @017CA
-    push dx ; @017CB
-    push bx ; @017CC
-    push bp ; @017CD
-    push si ; @017CE
-    push di ; @017CF
-    pushf ; @017D0
-    mov ax,0x9a9 ; @017D1
-    mov ds,ax ; @017D4
-    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @017D6
-    jz sub_183E ; @017DB
-    call sub_5473 ; @017DD
-    cli ; @017E0
-    mov dx,[DisplayControllerBasePort-GameDataImage] ; @017E1
-    mov bx,[AlternateDrawingOrigin-GameDataImage] ; @017E5
-    add bx,[DrawingPageByteOffset-GameDataImage] ; @017E9
-    add bx,byte +0x2 ; @017ED
-    db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @017F0
-    mov al,0xc ; @017F2
-    out dx,ax ; @017F4
-    db 0x8a,0xe3 ; ENCODED: mov ah,bl (NASM chooses a different encoding) ; @017F5
-    inc al ; @017F7
-    out dx,ax ; @017F9
-    add dl,0x6 ; @017FA
-    sti ; @017FD
-loc_17FE:
-    in al,dx ; @017FE
-    jmp short loc_1801 ; @017FF
-loc_1801:
-    jmp short loc_1803 ; @01801
-loc_1803:
-    jmp short loc_1805 ; @01803
-loc_1805:
-    test al,0x8 ; @01805
-    jz loc_17FE ; @01807
-loc_1809:
-    in al,dx ; @01809
-    jmp short loc_180C ; @0180A
-loc_180C:
-    jmp short loc_180E ; @0180C
-loc_180E:
-    jmp short loc_1810 ; @0180E
-loc_1810:
-    test al,0x8 ; @01810
-    jnz loc_1809 ; @01812
-    cli ; @01814
-    mov cx,[0x1fc9] ; @01815
-    mov al,0x36 ; @01819
-    out 0x43,al ; @0181B
-    jmp short loc_181F ; @0181D
-loc_181F:
-    jmp short loc_1821 ; @0181F
-loc_1821:
-    jmp short loc_1823 ; @01821
-loc_1823:
-    db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @01823
-    out 0x40,al ; @01825
-    jmp short loc_1829 ; @01827
-loc_1829:
-    jmp short loc_182B ; @01829
-loc_182B:
-    jmp short loc_182D ; @0182B
-loc_182D:
-    db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @0182D
-    out 0x40,al ; @0182F
-    jmp short loc_1833 ; @01831
-loc_1833:
-    jmp short loc_1835 ; @01833
-loc_1835:
-    jmp short loc_1837 ; @01835
-loc_1837:
-    sti ; @01837
-    call sub_553D ; @01838
-    call UpdateFixedWordPattern ; @0183B
-sub_183E:
-    db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0183E
-    call PollInputState418C ; @01840
-    inc byte [0x1c] ; @01843
-    mov al,[0x1c] ; @01847
-    and al,0x1 ; @0184A
-    jz sub_1861 ; @0184C
-sub_184E:
-    cmp byte [0x2010],0xff ; @0184E
-    jz sub_1861 ; @01853
-    test byte [0x25a7],0x1 ; @01855
-    jz sub_1861 ; @0185A
-    mov ax,0x0 ; @0185C
-    int 0x60 ; @0185F
-sub_1861:
-    cmp byte [0x2010],0xff ; @01861
-    jnz loc_1874 ; @01866
-sub_1868:
-    test byte [0x25a7],0x3 ; @01868
-    jz loc_1874 ; @0186D
-sub_186F:
-    mov ax,0x0 ; @0186F
-    int 0x61 ; @01872
-loc_1874:
-    call ProcessInputCommands3E6F ; @01874
-    cmp byte [PrivateIrqCounter2002-GameDataImage],0x0 ; @01877
-    jnz loc_1881 ; @0187C
-sub_187E:
-    call RestoreVgaRegisterMirrors ; @0187E
-loc_1881:
-    cli ; @01881
-    mov al,[0x1fe3] ; @01882
-    inc al ; @01885
-    and al,0x3 ; @01887
-    mov [0x1fe3],al ; @01889
-    jz sub_1893 ; @0188C
-sub_188E:
-    call SendMasterPicEoi ; @0188E
-    jmp short sub_189D ; @01891
-sub_1893:
-    mov ax,0x189d ; @01893
-    pushf ; @01896
-    push cs ; @01897
-    push ax ; @01898
-ChecksumWindowEnd:
-    jmp far [SavedTimerVector-GameDataImage] ; @01899
-sub_189D:
-    sti ; @0189D
-    mov byte [TimerChainFlag1FCF-GameDataImage],0xff ; @0189E
-    inc byte [0x1fcd] ; @018A3
-    popf ; @018A7
-    pop di ; @018A8
-    pop si ; @018A9
-    pop bp ; @018AA
-    pop bx ; @018AB
-    pop dx ; @018AC
-    pop cx ; @018AD
-    pop es ; @018AE
-    pop ds ; @018AF
-    pop ax ; @018B0
-    iret ; @018B1
-SendMasterPicEoi:
-; MOV AL,20; byte OUT20 preserves AH/FLAGS, then actual live near RET.
-; docs/port-io.md; no IRQ/PIC scheduling or hardware status is invented.
-    mov al,0x20 ; @018B2
-MasterPicEoiOut18B4:
-    out 0x20,al ; @018B4
-MasterPicEoiReturn18B6:
-    ret ; @018B6
-; UNKNOWN: unresolved bytes
-    db 0xb0,0x0b,0xe6,0x20,0xeb,0x00,0xeb,0x00,0xeb,0x00,0xe4,0x20,0xeb,0x00,0xeb,0x00 ; @018B7
-; UNKNOWN: unresolved bytes
-    db 0xeb,0x00,0xa8,0x7f,0x75,0x20,0xb0,0x20,0xe6,0xa0,0xeb,0x00,0xeb,0x00,0xeb,0x00 ; @018C7
-; UNKNOWN: unresolved bytes
-    db 0xb0,0x0b,0xe6,0xa0,0xeb,0x00,0xeb,0x00,0xeb,0x00,0xe4,0xa0,0xeb,0x00,0xeb,0x00 ; @018D7
-; UNKNOWN: unresolved bytes
-    db 0xeb,0x00,0x0a,0xc0,0x75,0x0a,0xb0,0x20,0xe6,0x20,0xeb,0x00,0xeb,0x00,0xeb,0x00 ; @018E7
-; UNKNOWN: unresolved bytes
-    db 0xc3 ; @018F7
-CriticalErrorHandler:
-    sti ; @018F8
-    push ds ; @018F9
-    mov ax,0x9a9 ; @018FA
-    mov ds,ax ; @018FD
-    mov byte [DatCriticalErrorFlag-GameDataImage],0xff ; @018FF
-    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01904
-    pop ds ; @01906
-    iret ; @01907
-; UNKNOWN: unresolved bytes
-    db 0x80,0x3e,0xde,0x1f,0xf8,0x74,0x06,0xba,0xf2,0x03,0xb0,0x03,0xee,0xc3 ; @01908
+times -(($-$$) != 0x17c7) db 0

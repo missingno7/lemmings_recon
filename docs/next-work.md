@@ -2,7 +2,16 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 26,544 bytes. Input commands at
+The main-image translated-code ledger union is 26,660 bytes. The timer tail at
+183E adds 116 known C bytes and connects the input, command, visibility, VGA
+mirror and EOI children in a 1,374-byte domain. Its 48 fixtures/96 comparisons
+cover all 49 tail sites/15 direct outcomes and detect five completed mutants.
+The integrated run executes 443 sites/101 outcomes and 11,712 instructions,
+comparing 8,634 events (616 declared IRET/INT transport and 264 provider accesses
+across 50 calls). Prefix, opaque ISR bodies and asynchronous timing remain open.
+See timer-frontier.md for the two live return frames and shared phase ownership.
+
+Input commands at
 3E6F add 530 known C bytes and compose the tested 64-byte visibility child.
 The campaign passes 65 fixtures/130 comparisons, all 220 reachable sites and
 121 feasible direct jump outcomes, with five completed mutants. Two known
@@ -28,13 +37,11 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Compose the 183E timer tail with the tested command, input, mirror and EOI
-   children and explicit INT60/61 and saved-INT08 provider seams. Preserve its live stack and
-   checksum overlap. The 119-byte prefix and 116-byte tail overlap the 235-byte
-   full handler: count shared bytes/sites once. See timer-frontier.md.
-2. Close prefix dependencies 5473/553D, finite status-port input and the tested
-   5827 fixed-pattern child, then compose the 17C7 full handler.
-3. Connect startup/resource/level/frame coordination, complete the remaining
+1. Close prefix dependencies 5473/553D, finite status-port input and the tested
+   5827 fixed-pattern child, then compose the 17C7 full handler with the accepted
+   tail. The 119-byte prefix and 116-byte tail overlap the 235-byte full handler:
+   count shared bytes/sites once. Preserve the checksum overlap and saved frames.
+2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 
 The destination is portable C11 directly from the exact ASM oracle, with one

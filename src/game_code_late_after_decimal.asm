@@ -65,10 +65,10 @@ MenuTimerIrqHandler:
     push ds ; @04C4E
     mov ax,0x9a9 ; @04C4F
     mov ds,ax ; @04C52
-    mov al,[0x1fe3] ; @04C54
+    mov al,[TimerChainPhase1FE3-GameDataImage] ; @04C54
     inc al ; @04C57
     and al,0x3 ; @04C59
-    mov [0x1fe3],al ; @04C5B
+    mov [TimerChainPhase1FE3-GameDataImage],al ; @04C5B
     jnz loc_4C66 ; @04C5E
     call SendMasterPicEoi ; @04C60
     jmp short loc_4C70 ; @04C63

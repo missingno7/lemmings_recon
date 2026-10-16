@@ -2,6 +2,8 @@ bits 16
 org 0
 ChecksumWindow equ $$ + 0x188F ; overlay inside instruction
 %include "entry_services.asm"
+%include "game_timer.asm"
+%include "entry_services_after_timer.asm"
 times -(($-$$) != 0x1916) db 0 ; module end assertion
 %include "resources.asm"
 times -(($-$$) != 0x1f19) db 0 ; module end assertion
