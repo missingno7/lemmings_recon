@@ -189,7 +189,7 @@ EntityBatchAfterCreateCall:
 EntityBatchNextCaller:
     call AdvanceLevelObjectAnimations ; @001B6
     call DrawLevelObjectGraphics ; @001B9
-    call sub_3634 ; @001BC
+    call DrawEntityRecords ; @001BC
     call SelectEntityCandidate ; @001BF
     call UpdateStatusDisplay ; @001C2
     call DispatchEntityAction ; @001C5

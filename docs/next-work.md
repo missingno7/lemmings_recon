@@ -2,41 +2,38 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 22,909 bytes. The latest scoped
-acceptance connects DrawObjectSprite at 706F..715E to all nine initialized
-sprite callbacks and the optional strip through their actual CALL/RET words.
-Its 45 fixtures at both APIs compare 63,950 ordered byte-bus events, covering
-all 113 parent sites and 15 branch outcomes, with ten completed mutants.
-The integrated domain contains 3,690 bytes/1,875 sites/144 branch outcomes;
-only the parent's 240 bytes are new to the union.
+The main-image translated-code ledger union is 22,998 bytes. The latest scoped
+acceptance connects DrawEntityRecords at3634 to minimap, dirty marking, points,
+and sprite dispatch through actual CALL/RET frames, then JMPs into the existing
+decimal writer without adding a frame. It adds89 body bytes/35 sites; UNKNOWN
+366F remains unresolved and the existing86-byte decimal tail is counted once.
 
-The preceding acceptance added six callbacks at 66D7/6817/6957/6A97/6BDB/6CFC:
-1,964 unique bytes, 985 sites, 103 branch outcomes, 144 core/actual-RET
-comparisons and 20 completed mutants. Their two reports compare 203,570 ordered
-events and 136,200 independent plane-byte writes. Another 1,280 original-only
-prefix probes cover all 256 unchecked shift counts at each narrow entry.
+Its37 fixtures/74 core and actual-RET comparisons cover all35 body sites and
+all12 branch edges, with53,510 ordered byte-bus events and ten completed mutants.
+The integrated static domain is4,425 bytes/2,191 sites; this campaign executes
+2,002 sites and127 edges. These executed counts are distinct from static or
+translated coverage. The zero bound preserves stale count/output; constructed
+255-record cases retain actual aliases; live SS saves control DI/CX and LOOP.
+Returned DS owns the guard clear and decimal count, with child stops retained.
+See entity-drawing.md and the matching-input reports.
 
-Five original 5BB0 producers independently verify 80/104/112/128/140-byte banks
-used unchanged by the new narrow consumers. One original 5C06 producer verifies
-all 5,120 bytes of eight wide banks, used unchanged at both consumer APIs.
-Producer transactions/sites stay separate and their code remains untranslated.
-The earlier aligned and two-plane callbacks are rechecked after the shared C
-factorization and helper changes. See entity-sprites.md for exact report scopes.
+The preceding sprite parent and nine callbacks retain their known/unknown
+715B target boundary and changed-return contracts. Their original producer
+handoffs remain separate from native translated bytes; see
+entity-sprite-dispatch.md and entity-sprites.md. Unrelated retained campaigns
+are historical until their exact inputs and scopes match again.
 
-The parent gate also feeds unchanged banks from original 5B11/5BB0/5C06 runs
-through the actual record arithmetic. Closed-form coordinate/cursor checks
-stop before CALL AX. Provider fixtures change the saved selector, callback,
-DS, DI and child return words; unknown callbacks stop before 715B without a
-child push, and changed returns stop before assumed restores. See
-entity-sprite-dispatch.md. Initial slots do not close the live target domain.
-
-Next connect the enclosing 3634 record loop: 89 known body bytes/35 sites,
-with UNKNOWN 366F excluded. Fresh dependency views include the shared decimal
-tail in its larger reachable extent. Preserve zero-bound early RET, signed
-frame selection for the point path, the live EntityWorkGuard at DS:0050,
-returned DS/ES and outer saved DI/CX. The final 368A JMP to
-WriteDecimalByteField adds no frame; its RET consumes the caller's original
-word. Keep provider/IRQ seams and the 706F changed-target statuses explicit.
+Next translate the independently audited5BB0..5C05 producer leaf:86 bytes/
+45 sites, no child calls. Its ordinary layout copies DH planes of DL words
+then appends DL OR-mask words. Preserve zero-byte do-while counts as256,
+DF-sensitive MOVSW/STOSW with forward mask reads, live ES readback and SS
+CX/SI/RET words, and signed DI<10h segment folding. The fold path replaces CX
+with the previous ES. Explicit byte operand ES:(SI+1) wraps its offset, whereas
+a word transfer's high byte follows its physical low address. Existing
+producer witnesses establish ordinary nonzero/disjoint banks only; they do
+not establish the zero-count, overlap, DF or stack-alias domains. Then translate
+the sibling5B11/5C06 producers and connect their59BB caller after its remaining
+contracts and dependencies are verified.
 
 This is focused acceptance. Full campaigns and matching inputs remain necessary
 for aggregate acceptance, and SDL3 follows the portable core.

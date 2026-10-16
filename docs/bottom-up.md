@@ -18,7 +18,7 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 01916..01F18 | resources.asm | Raw files, selection, special setup and DAT/cache cluster; allocation candidate has unresolved reachability |
 | 01F19..0314F | game_code.asm | Simulation-state and creation contracts; native domains remain scoped |
 | 03150..03633 | entity_actions.asm | Action dispatch, eight selectors and shared sound/RET tails; UNKNOWN preserved |
-| 03634..0368D | entity_drawing_calls.asm | Untranslated draw-call loop and provider/IRQ seams |
+| 03634..0368D | entity_drawing_calls.asm | Live record loop, child frames and decimal JMP tail; UNKNOWN 366F and provider/IRQ seams retained |
 | 0368E..03789 | level_initialize.asm | Drawing initialization, live clear tail, header and level-state caller |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
 | 03944..039CD | game_code_late.asm | Object-animation gate and redraw caller; UNKNOWN preserved |
@@ -666,3 +666,13 @@ Live selector/callback/DS/DI/return-word changes and the physical FFFFF-to-zero
 word boundary remain explicit. See entity-sprite-dispatch.md and the matching
 report inputs. Next connect the 3634 record loop and its frame-free decimal
 tail, preserving UNKNOWN 366F and the live DS:0050 guard.
+
+The 3634 loop now adds 89 unique main C bytes, taking the union to 22,998.
+Its existing 86-byte decimal tail is composed without a synthetic frame.
+The 37 fixtures/74 comparisons cover all 35 body sites and 12 branch edges,
+with 53,510 ordered events and ten completed mutants. The integrated domain
+contains 4,425 bytes/2,191 static sites; this scope executes 2,002 sites and
+127 edges. Live saved DI/CX, returned DS, the guard and outer caller word
+remain authoritative. UNKNOWN 366F is excluded. See entity-drawing.md.
+Next audit-to-C acceptance is the 5BB0 copy/OR-mask producer, whose normal
+bank witnesses do not establish zero-count, DF, overlap or stack-alias behavior.

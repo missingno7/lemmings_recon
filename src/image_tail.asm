@@ -5739,3 +5739,5 @@ EntityRecordFrameAddGate equ EntityRecordsBase+0x27
 EntityRecordFrameSelector equ EntityRecordsBase+0x28
 EntityRecordFrameAddend equ EntityRecordsBase+0x29
 EntityRecordAlignmentGate equ EntityRecordsBase+0x2A
+
+EntityRecordDrawingSkipGate equ GameDataImage+0x00ae ; live first-record drawing gate, not a complete record schema

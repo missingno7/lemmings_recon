@@ -490,6 +490,17 @@ loc_5B97:
     and di,byte +0xf ; @05BAC
 loc_5BAF:
     ret ; @05BAF
+; CONTRACT: copy DH planes of DL words from live DS:SI to ES:DI, then append
+; DL OR-mask words read back from live ES with pitch 2*DL. This is the ordinary
+; nonzero, DF-clear, disjoint-bank layout, not a bound on unchecked inputs.
+; CH decrement loops are do-while: zero DH or DL gives 256 iterations. REP's
+; zero CX still copies zero words. MOVSW/STOSW follow DF; mask SI adds stay
+; forward. Mask bytes use separate ES:SI and ES:(SI+1) operands, so the second
+; offset wraps at 16 bits, unlike the physical high byte of a word transfer.
+; All CX/SI saves and RET are live SS words. Signed DI<10h skips folding;
+; otherwise ES+=DI>>4 and DI&=0Fh, with CX replaced by the previous ES.
+; Existing producer witnesses cover ordinary banks only; aliases/zero counts
+; and segment/DF quirks require their own bounded native verification.
 sub_5BB0:
     push si ; @05BB0
     db 0x8b,0xef ; ENCODED: mov bp,di (NASM chooses a different encoding) ; @05BB1

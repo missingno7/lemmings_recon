@@ -188,8 +188,8 @@
 #define CS_ApplyEntityCellInteractions 0x2EC0u
 #define CS_CreateEntityRecordIfDue 0x30A6u
 #define CS_DispatchEntityAction 0x3150u
-#define CS_sub_3634 0x3634u
-#define CS_sub_3678 0x3678u
+#define CS_DrawEntityRecords 0x3634u
+#define CS_EntityDrawingSpriteResume 0x3678u
 #define CS_InitializeLevelDrawing 0x368Eu
 #define CS_LevelDrawingAfterClear 0x3697u
 #define CS_LevelDrawingAfterLayout 0x36A5u
@@ -874,4 +874,13 @@
 #define SEG09A9_EntityRecordFrameSelector 0x00B0u
 #define SEG09A9_EntityRecordFrameAddend 0x00B1u
 #define SEG09A9_EntityRecordAlignmentGate 0x00B2u
+#define CS_EntityDrawingLoop 0x3645u
+#define CS_EntityDrawingAfterMinimap 0x3654u
+#define CS_EntityDrawingAfterDirty 0x3657u
+#define CS_EntityDrawingAfterPoints 0x366Cu
+#define CS_EntityDrawingRestoreRecord 0x367Du
+#define CS_EntityDrawingDecimalTail 0x3684u
+#define CS_EntityDrawingDecimalJump 0x368Au
+#define CS_EntityDrawingEarlyReturn 0x368Du
+#define SEG09A9_EntityRecordDrawingSkipGate 0x00AEu
 #endif

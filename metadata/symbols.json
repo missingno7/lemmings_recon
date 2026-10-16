@@ -18350,9 +18350,11 @@
     "address": 13876,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3634",
-    "aliases": [],
+    "size": 90,
+    "symbol_name": "DrawEntityRecords",
+    "aliases": [
+      "sub_3634"
+    ],
     "callers": [
       444
     ],
@@ -18510,18 +18512,38 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained 3634 drawing loop:89 known body bytes/35 sites, UNKNOWN366F excluded. Four live child CALLs and frame-free decimal JMP368A. docs/entity-drawing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 175
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 175,
+    "c_implementation": "c/entity_drawing.c",
+    "c_core": "lmn_draw_entity_records_core",
+    "c_code_ranges": [
+      [
+        13876,
+        13935
+      ],
+      [
+        13936,
+        13966
+      ],
+      [
+        19304,
+        19390
+      ]
+    ],
+    "verification_evidence": "tests/entity_drawing.py:37 fixtures/74 core and actualRET comparisons,89 new body bytes/all35 body sites/all12 branch edges,53510 ordered byte-bus events,10 completed mutants. Existing86-byte decimal tail adds no new bytes; integrated static domain4425 bytes/2191 sites,2002 executed sites/127 observed edges. Exact zero-bound stale count,255 skipped/active bounds, byte wrap/ASCII, signed selector, actual child/outer RETs, live DI/CX/DS and guard, known then unknown callback, changed nested strip/callback returns and frame-free decimal tail. UNKNOWN366F, live target and provider/IRQ seams retained. docs/entity-drawing.md"
   },
   {
     "address": 13944,
     "segment": 0,
-    "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3678",
-    "aliases": [],
+    "kind": "continuation",
+    "size": 5,
+    "symbol_name": "EntityDrawingSpriteResume",
+    "aliases": [
+      "sub_3678"
+    ],
     "callers": [],
     "callees": [
       22310,
@@ -18659,11 +18681,12 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Actual return continuation of CALL706F at3675; clears live DS:0050. No independent static direct caller is established. docs/entity-drawing.md"
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "STATIC",
     "reachable_instruction_bytes": 157
   },
   {
@@ -62003,6 +62026,150 @@
     "confidence": "high",
     "evidence": [
       "First45-byte entity-record anchor only, base0088+2A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 13893,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingLoop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13908,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingAfterMinimap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13911,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingAfterDirty",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13932,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingAfterPoints",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13949,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingRestoreRecord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13956,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingDecimalTail",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13962,
+    "segment": 0,
+    "kind": "jump_site",
+    "size": 3,
+    "symbol_name": "EntityDrawingDecimalJump",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 13965,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityDrawingEarlyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Exact continuation in maintained3634 loop; no independent entry contract. docs/entity-drawing.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 174,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordDrawingSkipGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "First2Dh record anchor0088+26;3634 skips drawing only when the live byte equalsFF. No complete schema/lifetime/extent claim. docs/entity-drawing.md"
     ],
     "verification_status": "UNRESOLVED"
   }
