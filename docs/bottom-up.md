@@ -816,3 +816,26 @@ provider seam. The gate at CS:83BE has a direct zero writer at00FE; neither gate
 edge is discarded. Neutral counters2002/2003 retain returned-DS accesses. The
 following timer order and overlapping119/116-byte prefix/tail are recorded in
 timer-frontier.md; UNKNOWN18B7..18F7, indirect42A5 and IRQ timing remain open.
+
+
+MouseIrqBridge now adds 48 unique main C bytes, taking the ledger union to 25,433.
+Its 35 fixtures/70 core-adapter comparisons cover all 20 parent sites/four JNZ
+outcomes, 44 actual mirror calls and two direct same-RAM initializer handoffs.
+The 83-site union separates 20 parent/38 child/25 producer sites; the 2,869 original
+instructions include 50 producer instructions. Bridge accesses separate 2,988
+identified-body, 1,072 declared INT62 transport and 184 provider events, with 52
+initializer events reported separately. Ten completed mutants pass detection.
+
+The typed external service stops before IRET and can return full DS/ES/SS/SP/
+FLAGS and canonical-memory effects. Real nested/outer frames, current IVT,
+returned counter frame, live saved words and changed-target stops are retained.
+The constructed VGA-stack case reads the complement of the stored 0F9C child
+return after mirror restoration; F063 remains a stop. This does not execute an
+external ISR or establish IRQ/debug timing. Reusing the tested mirror oracle
+keeps the new report closure to 24 paths; no shared oracle semantics changed.
+See mouse-irq-bridge.md for limits, exact scope and the declared vector read order.
+
+Next close 18B2, then known dependencies of 3E6F/418C before the shared 183E timer
+tail. The 42A5 frontier, unknown bytes after 18B6, prefix polling/platform seams
+and asynchronous execution remain open. The timer-frontier.md split prevents
+double-counting its overlapping prefix/tail domains.

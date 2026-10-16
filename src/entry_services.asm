@@ -1134,7 +1134,9 @@ MouseIrqDataFrameOperand0F73 equ $+1
     mov ds,ax ; @00F75
     inc byte [PrivateIrqCounter2002-GameDataImage] ; @00F77
     inc byte [PrivateIrqCounter2003-GameDataImage] ; @00F7B
+MouseIrqInt62:
     int 0x62 ; @00F7F
+MouseIrqInt62Return:
     dec byte [PrivateIrqCounter2003-GameDataImage] ; @00F81
     dec byte [PrivateIrqCounter2002-GameDataImage] ; @00F85
     mov al,[cs:MouseIrqMirrorGate83BE] ; @00F89
@@ -1143,11 +1145,14 @@ MouseIrqDataFrameOperand0F73 equ $+1
     cmp byte [PrivateIrqCounter2002-GameDataImage],0x0 ; @00F91
     jnz loc_0F9D ; @00F96
     push dx ; @00F98
+MouseIrqRestoreCall:
     call RestoreVgaRegisterMirrors ; @00F99
+MouseIrqRestoreReturn:
     pop dx ; @00F9C
 loc_0F9D:
     pop ax ; @00F9D
     pop ds ; @00F9E
+MouseIrqOuterIret:
     iret ; @00F9F
 RestorePrivateVector:
 ; CONTRACT: PUSH liveDS before pointer reads; DOS25 with mutable vector byte.

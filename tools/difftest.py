@@ -18,6 +18,7 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('mouse_irq_bridge', 420, 384),
     Suite('vga_mirrors', 420, 384),
     Suite('fixed_pattern_copy', 420, 384),
     Suite('fixed_pattern_draw', 420, 384),

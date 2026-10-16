@@ -1,8 +1,10 @@
 # Mouse private IRQ bridge
 
 `MouseIrqBridge` occupies 0F70..0F9F: 48 bytes, 20 instruction sites and
-four outcomes at two conditional branches. This is a static contract; its
-external INT62 and asynchronous interrupt behavior are not a verified C domain.
+four outcomes at two conditional branches. Its maintained C11 core and outer
+IRET adapter are in c/mouse_irq_bridge.c. They compose the native mirror child
+at a declared external INT62 provider seam. External handler instructions and
+asynchronous interrupt behavior remain outside this C domain.
 
 Startup selects private vector 0C at 0040, captures its old ES:BX through DOS35
 at 006A..0075, and installs that pointer as vector 62 through DOS25 at 0081.
@@ -29,7 +31,7 @@ restorer preserves entry ES and unconditionally sets IF; the bridge does not
 save ES around INT62. POP AX, POP DS and IRET also use live returned SS:SP.
 Final IRET restores IP, CS and FLAGS from actual memory, without restoring ES.
 
-A future C composition needs an opaque external INT62 provider with full
+The C composition uses an opaque external INT62 provider with full
 LmnRegs, canonical RAM and an explicit frame contract. Software INT pushes
 FLAGS, CS and return IP 0F81 on the current stack, clears IF/TF and samples the
 current IVT target after these writes. A normal provider IRET consumes the
@@ -39,8 +41,47 @@ known handler body or normalize the stack to its entry values. The existing
 pcspeaker interrupt frame model is a closer starting point than the narrower
 sound interrupt result, which omits returned ES/SS.
 
-`tests/interrupts.py` has original-only bridge fixtures with a stubbed INT62
-and 587F. Their historical evidence does not establish native composition,
-returned-stack/ES contracts, actual IVT dispatch, IRQ scheduling or gameplay.
-The next parent work should compose the verified mirror leaf at this declared
-provider/frame seam and retain the STI/RET interrupt window explicitly.
+The provider API binds a callback to one exact current CS:IP target. Missing
+or mismatching bindings stop after the frame/vector accesses with the live
+target state. The callback returns zero immediately before its external IRET;
+the bridge then consumes the actual frame through returned SS:SP. A nonzero
+return preserves the full callback state and service status without IRET.
+Changed nested IRET and child RET targets stop before further bridge cleanup.
+The core stops before the outer IRET; its adapter consumes the actual outer
+IP/CS/FLAGS words only on READY. IRET FLAGS use `(word & 7FD5h) | 2` as in the
+existing PC-speaker model. This transport declares CS-before-IP IVT reads
+after frame writes; it does not establish historical CPU bus-cycle order.
+
+## Scoped verification
+
+tests/mouse_irq_bridge.py passes 35 constructed fixtures at both boundaries:
+70 bridge comparisons, all 20 parent sites/four JNZ outcomes, 44 actual native
+mirror calls, and two direct initializer comparisons sharing the same runtime
+RAM/device with the bridge. Site accounting separates 20 parent, 38 mirror and
+25 initializer sites (83 unique total); the 48 parent bytes are added once.
+The original instruction count is 2,869, including 50 initializer instructions.
+
+The bridge comparisons cover 4,244 ordered accesses: 2,988 identified-body
+accesses, 1,072 declared INT62 transport accesses and 184 constructed provider
+accesses. Initialization adds 52 separately compared accesses. Provider and
+transport effects earn no external original instruction coverage. Independent
+assertions predict all nested/saved/outer frame words, service-entry registers,
+byte INC flags and the post-write IVT read order. Ten numeric C mutants are
+detected only after their native calls complete.
+
+Profiles cover three relocations, a late MOV operand, both gates and byte wrap,
+provider-written gate/flags, returned DS/ES/SS/SP, changed saved AX/DS, actual
+child/outer words, reserved IRET flags, effective and physical wrap, and VGA
+stack aliasing. The VGA case writes the literal child return 0F9C into all
+planes; the restored read-mode-one comparison against zero makes the CPU read
+its complement F063. The original and C both stop at that changed child target,
+before POP DX. This is preserved device behavior, not a corrected stack value.
+
+Workers have 420-second/384-MiB process-tree limits and bounded instruction/bus
+traces. Native callbacks fail-stop; budget/fault/timeout failures earn no mutant
+credit. Owned DLL directories are removed after workers exit. The matching
+reports pin 24 consumed input paths, including the reused mirror oracle and C
+child. The exact gate separately pins ledger/header/ASM identity. These results
+close the declared bridge composition; external body, IRQ/debug delivery,
+scheduling and gameplay acceptance remain open. The older interrupts.py suite
+still supplies its distinct original-only stubbed-handler regression coverage.

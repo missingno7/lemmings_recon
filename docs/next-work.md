@@ -2,43 +2,40 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 25,385 bytes, adding the 168
-unique bytes of InitializeVgaRegisterMirrors (04F9..054D) and
-RestoreVgaRegisterMirrors (587F..58D1). Their C11 cores and actual near-RET
-adapters share c/vga_mirrors.c; the preceding fixed-pattern checkpoint is
-recorded in fixed-pattern-drawing.md.
+The main-image translated-code ledger union is 25,433 bytes, adding the 48
+unique bytes of MouseIrqBridge (0F70..0F9F). Its C11 core and actual outer-IRET
+adapter compose the tested 587F mirror restorer through a real near CALL/RET.
+The INT62 provider contract carries full registers, canonical RAM and live
+frames; external instructions and asynchronous IRQ/debug delivery remain open.
+See mouse-irq-bridge.md and vga-mirror-restore.md.
 
-The paired original/native suite passes 30 single fixtures at both boundaries
-plus two direct RAM-sharing initializer-to-restorer chains: 64 compared phases,
-all 63 unique sites/no branches, 2,064 original instructions and 1,870 ordered
-bus events. Ten mutants complete and are detected. An independent original ADD
-truth table checks all DL bytes under three flag patterns (768 checks).
-The exact stack/code alias receives a separate native-only 31-event witness:
-Unicorn cannot commit that PUSH into its own translated page, so this witness
-earns no original instruction coverage. No replacement PUSH interpreter is used.
+The focused original/native suite passes 35 fixtures at both boundaries:
+70 bridge comparisons, all 20 parent sites/four JNZ outcomes, 44 actual native
+mirror calls and two direct native initializer handoffs. The 83 integrated sites
+separate 20 parent/38 mirror/25 initializer sites; child bytes are unioned once.
+The 2,869 original instructions include 50 initializer instructions. Bridge event
+comparisons separate 2,988 identified-body, 1,072 declared transport and 184
+constructed provider accesses (4,244 total); initialization adds 52 accesses.
+Ten mutants complete and are detected; budget exhaustion earns no credit.
 
-The tests preserve the fixed relocated CS:5884 segment separately from live SS,
-the late operand read after PUSH, nine ordered words/OUTs, actual CX/ES/RET,
-IF/DF, BIOS 0040:0063, byte-only DL+6 and the literal duplicate SS:0010 store.
-SS:000E remains untouched. VGA and wrap aliases remain canonical RAM/device
-accesses. See vga-mirror-restore.md for contracts, limits and exact scope.
+The current IVT binding is sampled after the actual software-INT frame writes.
+Returned DS/ES/SS/SP/FLAGS and actual saved/return words flow through both IRETs.
+Unbound services, provider stops and changed nested/child targets stop explicitly.
+The VGA-stack profile independently proves a read-mode-one child return F063,
+the complement of the literal stored 0F9C; it is retained as a changed-target
+stop. The suite also covers relocation, a late code operand, gate providers,
+counter flags/wrap, moved stacks, physical/EA wrap and reserved IRET flag bits.
 
-Next compose MouseIrqBridge (0F70..0F9F, 48 bytes/20 sites/four branch outcomes)
-with the accepted restore leaf. Its INT62 forwards to the old selected private
-vector installed during startup. Model actual INT/IRET frames and current IVT
-binding, full returned DS/ES/SS/SP/FLAGS, actual child/outer returns and explicit
-changed-target stops. The bridge counters DS:2002/2003 and CS:83BE gate are
-ledger-owned; the zero writer at 00FE is explicit. See mouse-irq-bridge.md.
+Next close the 18B2 EOI leaf (5 bytes/3 sites), then understood children of 3E6F
+and 418C before composing the 183E shared timer tail at explicit INT60/61 and
+saved-INT08 seams. Keep the 42A5 indirect/far frontier and UNKNOWN18B7..18F7
+unresolved. Prefix dependencies 5473/553D, tested 5827 and finite status-port
+inputs precede full 17C7 handler composition. The 119-byte prefix and 116-byte
+tail overlap the 235-byte handler; count shared bytes/sites once. See
+timer-frontier.md for frame, shared-state and checksum-window contracts.
 
-After the mouse bridge, close the 18B2 EOI leaf, understood children of 3E6F
-and 418C, then the 183E shared timer tail at explicit INT60/61 and saved-INT08
-seams. The 42A5 indirect/far frontier and UNKNOWN18B7..18F7 stay unresolved.
-The timer prefix depends on 5473/553D, tested 5827 and finite status-port inputs;
-compose the full handler only after those dependencies. The 183E tail overlaps
-the 17C7 handler and is unioned once. See timer-frontier.md.
-
-Focused reports pin their 21 consumed code/model/tool/asset/header inputs.
-Progress prose and raw ledger status are outside behavioral scope; the exact
+The matching focused reports pin 24 consumed code/model/tool/asset/header paths.
+Raw ledger status and progress prose are outside behavioral scope; the exact
 gate independently pins current ASM/ledger/header identity. Older unrelated
 campaigns remain historical until their recorded inputs match. Full original
 contracts and a matching complete native campaign remain necessary for

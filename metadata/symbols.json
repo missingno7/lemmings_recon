@@ -4441,10 +4441,19 @@
     "evidence": [
       "Signature-matched legacy entry lead",
       "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped",
-      "0F70..0F9F: 48 bytes/20 sites; external INT62 from saved selected private vector, live returned DS/ES/SS/SP; docs/mouse-irq-bridge.md"
+      "0F70..0F9F: 48 bytes/20 sites; external INT62 from saved selected private vector, live returned DS/ES/SS/SP; docs/mouse-irq-bridge.md",
+      "48 parent bytes/20 sites/4 JNZ outcomes;35 fixtures/70 core-adapter comparisons;44 actual native mirror calls and2 direct initializer handoffs.83 integrated sites,2869 original instructions,4244 bridge events (2988 body,1072 declared INT62 transport,184 provider) plus52 initializer events;10 completed mutants. Full returned DS/ES/SS/SP/FLAGS, live IVT/frame and changed-target stops; docs/mouse-irq-bridge.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 48
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 48,
+    "c_implementation": "c/mouse_irq_bridge.c",
+    "c_core": "lmn_mouse_irq_bridge_core",
+    "c_code_ranges": [
+      [
+        3952,
+        4000
+      ]
+    ]
   },
   {
     "address": 4000,
@@ -62794,5 +62803,85 @@
     ],
     "verification_status": "STATIC",
     "confidence": "PROVEN"
+  },
+  {
+    "address": 3967,
+    "segment": 0,
+    "kind": "label",
+    "size": 2,
+    "symbol_name": "MouseIrqInt62",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact bridge INT62, actual child CALL/RET or outer IRET boundary; docs/mouse-irq-bridge.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 3969,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "MouseIrqInt62Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact bridge INT62, actual child CALL/RET or outer IRET boundary; docs/mouse-irq-bridge.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 3993,
+    "segment": 0,
+    "kind": "label",
+    "size": 3,
+    "symbol_name": "MouseIrqRestoreCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact bridge INT62, actual child CALL/RET or outer IRET boundary; docs/mouse-irq-bridge.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 3996,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "MouseIrqRestoreReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact bridge INT62, actual child CALL/RET or outer IRET boundary; docs/mouse-irq-bridge.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 3999,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "MouseIrqOuterIret",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact bridge INT62, actual child CALL/RET or outer IRET boundary; docs/mouse-irq-bridge.md"
+    ],
+    "verification_status": "STATIC"
   }
 ]

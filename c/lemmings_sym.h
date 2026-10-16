@@ -913,4 +913,9 @@
 #define SEG09A9_PrivateIrqCounter2003 0x2003u
 #define CS_MouseIrqMirrorGate83BE 0x83BEu
 #define CS_MouseIrqDataFrameOperand0F73 0x0F73u
+#define CS_MouseIrqInt62 0x0F7Fu
+#define CS_MouseIrqInt62Return 0x0F81u
+#define CS_MouseIrqRestoreCall 0x0F99u
+#define CS_MouseIrqRestoreReturn 0x0F9Cu
+#define CS_MouseIrqOuterIret 0x0F9Fu
 #endif
