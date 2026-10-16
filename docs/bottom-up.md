@@ -203,10 +203,24 @@ eight mutants,with native INT60/61 children and live returned-DS gates.
 The01B0/01B3 prefix connects creation and update through their actual CALL/RET
 frames in17 core/adapter fixtures:6 caller bytes/two sites,5,708 events and five
 mutants. It stops01B6 before3944,without claiming the whole main loop.
-Next translate selector actions2/3/4 against the tested shared feedback tail,
-then connect3150's latch/dispatch prefix and remaining actions. See
-entity-actions.md,entity-simulation.md and next-work.md. Initialization,unchecked
-table extents,platform and IRQ obligations remain explicit.
+The basic2/3/4 actions now add107 known bytes/31 sites in39 core/adapter
+fixtures,with18 conditional outcomes plus4 directJMPs,1,122 events and seven
+mutants. The3150 prefix adds113 known bytes/43 sites in279 core/adapter
+fixtures,all256 raw selector bytes/all28 conditional outcomes,6,964 events
+and six mutants. It composes basic actions and shared feedback without adding
+frames; remaining action entries are explicit untranslated boundaries.
+Next translate the audited534-byte selectors6/7/9/8 cluster,then selector5's
+408-byte SS interaction-map producer and full3150 composition. Preserve
+different alternate-record join points,early0412 services,selector7's differing
+eligibility/transition masks,live segments and all31 UNKNOWN bytes. See
+entity-actions.md and next-work.md. Initialization,unchecked table extents,
+platform and IRQ obligations remain explicit.
+
+Translated byte accounting validates explicit C domains against complete decoded
+instructions in the image. Shared tails may precede or follow the physical entry
+prefix; entry+size is not a bound on a logical shared body. Partial instructions,
+unresolved bytes and image overflow remain errors,with focused regression tests.
+This static ledger union does not renew behavioral reports or aggregate acceptance.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

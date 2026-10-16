@@ -178,7 +178,7 @@ loc_0186:
     inc byte [0x52] ; @001A3
     call sub_80FD ; @001A7
     call sub_7900 ; @001AA
-    call sub_3150 ; @001AD
+    call DispatchEntityAction ; @001AD
 CreateAndAdvanceEntityRecords:
 ; Scoped two-CALL prefix:actual returns01B3/01B6 remain live SS words.
 ; Newly created canonical record is consumed immediately by1F19; its byte
@@ -192,7 +192,7 @@ EntityBatchNextCaller:
     call sub_3634 ; @001BC
     call sub_3CDE ; @001BF
     call sub_3AC8 ; @001C2
-    call sub_3150 ; @001C5
+    call DispatchEntityAction ; @001C5
     cmp byte [0x4f],0xff ; @001C8
     jnz loc_01D2 ; @001CD
     jmp loc_02C3 ; @001CF

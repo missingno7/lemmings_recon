@@ -2032,6 +2032,7 @@ loc_30F3:
 EntityCreationReturn:
 loc_314F:
     ret ; @0314F
+DispatchEntityAction:
 sub_3150:
 ; Action ownership:docs/entity-actions.md.1,221 known bytes/402 sites;
 ;31 UNKNOWN bytes remain unresolved. Gate002B/work guard0050/candidate0063
@@ -2043,7 +2044,7 @@ sub_3150:
     jz loc_31BD ; @03155
     cmp byte [EntityWorkGuard-GameDataImage],0xff ; @03157
     jnz loc_3161 ; @0315C
-    jmp short loc_31BD ; @0315E
+    jmp short EntityActionDispatchReturn ; @0315E
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03160
 loc_3161:
@@ -2060,44 +2061,50 @@ loc_3161:
     cmp al,0x2 ; @03183
     jl loc_31BD ; @03185
     jnz loc_318C ; @03187
-    jmp loc_329B ; @03189
+    jmp ApplyEntityAction2 ; @03189
 loc_318C:
     cmp al,0x3 ; @0318C
     jnz loc_3193 ; @0318E
-    jmp loc_3557 ; @03190
+    jmp ApplyEntityAction3 ; @03190
 loc_3193:
     cmp al,0x4 ; @03193
     jnz loc_319A ; @03195
-    jmp short loc_31C4 ; @03197
+    jmp short ApplyEntityAction4 ; @03197
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03199
 loc_319A:
     cmp al,0x5 ; @0319A
     jnz loc_31A1 ; @0319C
-    jmp loc_3336 ; @0319E
+    jmp ApplyEntityAction5 ; @0319E
 loc_31A1:
     cmp al,0x6 ; @031A1
     jnz loc_31A8 ; @031A3
-    jmp loc_32BD ; @031A5
+    jmp ApplyEntityAction6 ; @031A5
 loc_31A8:
     cmp al,0x7 ; @031A8
     jnz loc_31AF ; @031AA
-    jmp loc_34CE ; @031AC
+    jmp ApplyEntityAction7 ; @031AC
 loc_31AF:
     cmp al,0x8 ; @031AF
     jnz loc_31B6 ; @031B1
-    jmp loc_3598 ; @031B3
+    jmp ApplyEntityAction8 ; @031B3
 loc_31B6:
     cmp al,0x9 ; @031B6
     jnz loc_31BD ; @031B8
-    jmp short loc_320D ; @031BA
+    jmp short ApplyEntityAction9 ; @031BA
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @031BC
+EntityActionDispatchReturn:
 loc_31BD:
     ret ; @031BD
 loc_31BE:
     mov byte [EntityActionPressLatch-GameDataImage],0x0 ; @031BE
+EntityActionReleasedReturn:
     ret ; @031C3
+ApplyEntityAction4:
+; Selector4,33 bytes/9 sites/6 outcomes. Live count70,+20==0 and maskC003
+; gate. DEC70,clear refresh counter72,then store+20=4F in that order.
+; Field/global aliasing is permitted; fallthrough31E5 adds no CALL frame.
 loc_31C4:
     cmp byte [LevelActionCount2-GameDataImage],0x0 ; @031C4
     jz loc_320C ; @031C9
@@ -2106,7 +2113,7 @@ loc_31C4:
     test word [si+0x8],0xc003 ; @031D1
     jnz loc_320C ; @031D6
     dec byte [LevelActionCount2-GameDataImage] ; @031D8
-    mov byte [0x72],0x0 ; @031DC
+    mov byte [LevelActionCountRefreshCounter2-GameDataImage],0x0 ; @031DC
     mov byte [si+0x20],0x4f ; @031E1
 RequestEntityActionFeedback:
 ; Shared JMP/fallthrough entry,39 bytes/13 sites. No new nearCALL frame.
@@ -2132,8 +2139,11 @@ loc_31F8:
 EntityActionFeedbackReturn:
 loc_320B:
     ret ; @0320B
+EntityActionFailureReturn:
+; Shared actual nearRET,one byte. All failed action entries retain live SS:SP.
 loc_320C:
     ret ; @0320C
+ApplyEntityAction9:
 loc_320D:
     cmp byte [LevelActionCount7-GameDataImage],0x0 ; @0320D
     jz loc_3285 ; @03212
@@ -2145,7 +2155,7 @@ loc_320D:
     jnz loc_3271 ; @03222
 loc_3224:
     dec byte [LevelActionCount7-GameDataImage] ; @03224
-    mov byte [0x81],0x0 ; @03228
+    mov byte [LevelActionCountRefreshCounter7-GameDataImage],0x0 ; @03228
     and word [si+0x8],0xf57f ; @0322D
     or word [si+0x8],byte +0x10 ; @03232
     mov word [si+0xa],0x0 ; @03236
@@ -2170,7 +2180,7 @@ loc_3271:
     jnz loc_3285 ; @03281
     jmp short loc_3224 ; @03283
 loc_3285:
-    jmp short loc_320C ; @03285
+    jmp short EntityActionFailureReturn ; @03285
 RequestEntityActionService0412:
 ; Shared JMP entry,20 bytes/7 sites. Enabled==FF/options&3 requests INT61
 ; AX0412 through actual continuation329A. No nearCALL frame is introduced.
@@ -2184,6 +2194,10 @@ loc_3287:
 EntityActionService0412Return:
 loc_329A:
     ret ; @0329A
+ApplyEntityAction2:
+; Selector2,34 bytes/10 sites/6 outcomes. Live count6A,flag+24 bit0 and
+; state+08 mask0103 gate. DEC6A then replace ALL+24 bits with01; no reset6C.
+; JMP31E5 shares the existing outer near-return word; failure JMP320C.
 loc_329B:
     cmp byte [LevelActionCount0-GameDataImage],0x0 ; @0329B
     jz loc_32BA ; @032A0
@@ -2195,7 +2209,8 @@ loc_329B:
     mov byte [si+0x24],0x1 ; @032B3
     jmp RequestEntityActionFeedback ; @032B7
 loc_32BA:
-    jmp loc_320C ; @032BA
+    jmp EntityActionFailureReturn ; @032BA
+ApplyEntityAction6:
 loc_32BD:
     cmp byte [LevelActionCount4-GameDataImage],0x0 ; @032BD
     jz loc_331F ; @032C2
@@ -2207,7 +2222,7 @@ loc_32BD:
     jnz loc_3322 ; @032D4
 loc_32D6:
     dec byte [LevelActionCount4-GameDataImage] ; @032D6
-    mov byte [0x78],0x0 ; @032DA
+    mov byte [LevelActionCountRefreshCounter4-GameDataImage],0x0 ; @032DA
     mov word [si+0x8],0x80 ; @032DF
     mov word [si+0x4],0xfff8 ; @032E4
     mov word [si+0x6],0xfff3 ; @032E9
@@ -2224,7 +2239,7 @@ loc_32D6:
     and byte [si+0x24],0x1 ; @03318
     jmp RequestEntityActionFeedback ; @0331C
 loc_331F:
-    jmp loc_320C ; @0331F
+    jmp EntityActionFailureReturn ; @0331F
 loc_3322:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03322
     jz loc_331F ; @03327
@@ -2232,6 +2247,7 @@ loc_3322:
     test word [si+0x8],0xf5ef ; @0332D
     jnz loc_331F ; @03332
     jmp short loc_32D6 ; @03334
+ApplyEntityAction5:
 loc_3336:
     cmp byte [LevelActionCount3-GameDataImage],0x0 ; @03336
     jz loc_3345 ; @0333B
@@ -2239,7 +2255,7 @@ loc_3336:
     and ax,0xf56f ; @03340
     jz loc_3348 ; @03343
 loc_3345:
-    jmp loc_320C ; @03345
+    jmp EntityActionFailureReturn ; @03345
 loc_3348:
     mov ax,[si] ; @03348
     mov bx,[si+0x2] ; @0334A
@@ -2344,7 +2360,7 @@ loc_341B:
     jmp loc_34CB ; @0341F
 loc_3422:
     dec byte [LevelActionCount3-GameDataImage] ; @03422
-    mov byte [0x75],0x0 ; @03426
+    mov byte [LevelActionCountRefreshCounter3-GameDataImage],0x0 ; @03426
     mov word [si+0x8],0x100 ; @0342B
     mov byte [si+0x28],0x0 ; @03430
     mov word [si+0xa],0x8 ; @03434
@@ -2409,7 +2425,8 @@ loc_3422:
     pop si ; @034C7
     jmp RequestEntityActionFeedback ; @034C8
 loc_34CB:
-    jmp loc_320C ; @034CB
+    jmp EntityActionFailureReturn ; @034CB
+ApplyEntityAction7:
 loc_34CE:
     cmp byte [LevelActionCount5-GameDataImage],0x0 ; @034CE
     jz loc_3540 ; @034D3
@@ -2430,7 +2447,7 @@ loc_34EB:
     jmp RequestEntityActionService0412 ; @034F3
 loc_34F6:
     dec byte [LevelActionCount5-GameDataImage] ; @034F6
-    mov byte [0x7b],0x0 ; @034FA
+    mov byte [LevelActionCountRefreshCounter5-GameDataImage],0x0 ; @034FA
     and word [si+0x8],0xf56f ; @034FF
     or word [si+0x8],0x200 ; @03504
     mov word [si+0x4],0xfff8 ; @03509
@@ -2447,7 +2464,7 @@ loc_34F6:
     and byte [si+0x24],0x1 ; @03539
     jmp RequestEntityActionFeedback ; @0353D
 loc_3540:
-    jmp loc_320C ; @03540
+    jmp EntityActionFailureReturn ; @03540
 loc_3543:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03543
     jz loc_3540 ; @03548
@@ -2455,6 +2472,10 @@ loc_3543:
     test word [si+0x8],0xf76f ; @0354E
     jnz loc_3540 ; @03553
     jmp short loc_34DC ; @03555
+ApplyEntityAction3:
+; Selector3,39 bytes/11 sites/6 outcomes. Live count6D,+25==0 and mask0103
+; gate. Store+25=FF BEFORE fresh DEC6D,then reset refresh counter6F.
+; If+25 aliases6D this store changes DEC input. JMP31E5 adds no CALL frame.
 loc_3557:
     cmp byte [LevelActionCount1-GameDataImage],0x0 ; @03557
     jz loc_357B ; @0355C
@@ -2464,14 +2485,15 @@ loc_3557:
     jnz loc_357B ; @03569
     mov byte [si+0x25],0xff ; @0356B
     dec byte [LevelActionCount1-GameDataImage] ; @0356F
-    mov byte [0x6f],0x0 ; @03573
+    mov byte [LevelActionCountRefreshCounter1-GameDataImage],0x0 ; @03573
     jmp RequestEntityActionFeedback ; @03578
 loc_357B:
-    jmp loc_320C ; @0357B
+    jmp EntityActionFailureReturn ; @0357B
 ; UNKNOWN: unresolved bytes
     db 0x80,0x3e,0x5f,0x00,0xff,0x74,0xf6,0x8b,0x36,0x5a,0x00,0x80,0x7c,0x25,0x00,0x75 ; @0357E
 ; UNKNOWN: unresolved bytes
     db 0xec,0xf7,0x44,0x08,0x03,0x01,0x75,0xe5,0xeb,0xd3 ; @0358E
+ApplyEntityAction8:
 loc_3598:
     cmp byte [LevelActionCount6-GameDataImage],0x0 ; @03598
     jnz loc_35A2 ; @0359D
@@ -2503,7 +2525,7 @@ loc_35C4:
     jmp RequestEntityActionService0412 ; @035CC
 loc_35CF:
     dec byte [LevelActionCount6-GameDataImage] ; @035CF
-    mov byte [0x7e],0x0 ; @035D3
+    mov byte [LevelActionCountRefreshCounter6-GameDataImage],0x0 ; @035D3
     and word [si+0x8],0xfd6f ; @035D8
     or word [si+0x8],0x800 ; @035DD
     mov word [si+0x4],0xfff8 ; @035E2
@@ -2521,7 +2543,7 @@ loc_35CF:
     inc word [si+0x2] ; @03616
     jmp RequestEntityActionFeedback ; @03619
 loc_361C:
-    jmp loc_320C ; @0361C
+    jmp EntityActionFailureReturn ; @0361C
 loc_361F:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @0361F
     jz loc_361C ; @03624

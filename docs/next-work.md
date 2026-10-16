@@ -255,14 +255,28 @@ child boundaries and stops01B6 before untranslated CALL3944. New records advance
 in the same pass; the boundFF wrap can instead make the update bound zero.
 This is not a complete main-loop or timing contract. See entity-simulation.md.
 
-Next translate the independently bounded selector actions2,3 and4 at329B,
-3557 and31C4, sharing the tested31E5 feedback tail and320C failure RET.
-Preserve live count eligibility,record fields,ordered RMWs and jump/fallthrough
-entry without inventing a CALL frame. Then connect the3150 latch/dispatch prefix
-and remaining actions,including selector5's SS interaction-map producer at3464.
-Its31 UNKNOWN bytes stay unresolved. The parent and its eleven CALL children
-retain platform/IRQ/changed-target seams; broader initialization and actual game
-scheduling remain open.
+The selector2/3/4 cluster now passes39 core/actualRET-adapter fixtures:
+107 unique bytes/31 sites,18 conditional outcomes plus4 directJMP edges,
+1,122 events and seven completed mutants. The3150 dispatch prefix adds113
+known bytes/43 sites/all28 conditional outcomes in279 core/adapter fixtures,
+including all256 selector bytes,6,964 events and six completed mutants.
+Latch/gate order,signed JL and sequential CMP flags,whole-byte marker stores,
+live count/refresh aliases and the original outer return are retained.
+Native selectors2/3/4 compose their tested feedback without a CALL frame;
+selectors5/6/7/8/9 remain explicit untranslated entry stops. This accepts the
+prefix domain,not all1,221 known action bytes. See entity-actions.md.
+
+Next translate the audited selectors6/7/9/8 together,retaining independently
+selectable entries and shared native feedback/failure tails:534 known bytes.
+The alternate record joins are different:selector6 bypasses the original sum
+gate,selector9 bypasses the original nibble/count gates,and7/8 rejoin their
+active-record nibble checks. Selector7's eligibility F76F differs from its
+transition AND F56F. Early nibble9 services7/8 consume no count. Preserve late
+callback reads,ordered fields,RMW flags and raw returned segments. Then port
+selector5's408-byte SS interaction-map checks/transition/nine-cell producer,
+connect all dispatch entries and verify the complete3150 action composition.
+Its31 UNKNOWN bytes stay unresolved. Broader initialization,record/table
+extents,actual game scheduling and platform/IRQ/changed-target seams remain open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

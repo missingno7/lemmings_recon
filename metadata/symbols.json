@@ -16881,9 +16881,11 @@
     "address": 12624,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3150",
-    "aliases": [],
+    "size": 116,
+    "symbol_name": "DispatchEntityAction",
+    "aliases": [
+      "sub_3150"
+    ],
     "callers": [
       429,
       453
@@ -18317,10 +18319,32 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Scoped prefix3150..31C3 has113 known bytes/43 sites/28 outcomes; UNKNOWN3160/3199/31BC excluded. Full reachable action graph remains1221 known bytes, not implied by prefix size. docs/entity-actions.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 1221
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 1221,
+    "c_implementation": "c/entity_action_dispatch.c",
+    "c_core": "lmn_entity_action_dispatch_core",
+    "c_code_ranges": [
+      [
+        12624,
+        12640
+      ],
+      [
+        12641,
+        12697
+      ],
+      [
+        12698,
+        12732
+      ],
+      [
+        12733,
+        12740
+      ]
+    ],
+    "verification_evidence": "tests/entity_action_dispatch.py:279 core/actualRET-adapter fixtures including all256 selector bytes,113 own known bytes/43 sites/all28 conditional outcomes,6964 ordered events,6 completed mutants. Gates preserve latch,release clears it,arming storesFF before live pointer/selector loads,signedJL/sequentialCMPflags and actual SS/VGA returns retained. Native basic2/3/4 and feedback compose without CALL frames;5/6/7/8/9 stop explicitly at their untranslated entries. UNKNOWN3160/3199/31BC and all remaining action bodies are excluded from this C prefix scope; not full3150 acceptance."
   },
   {
     "address": 13876,
@@ -59442,5 +59466,473 @@
       "Two actual nearCALLs at01B0/01B3; scoped prefix stops01B6 before3944. No outerRET or whole main-loop readiness implied. docs/entity-simulation.md"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12740,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 33,
+    "symbol_name": "ApplyEntityAction4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_basic.c",
+    "c_core": "lmn_entity_actions_basic_core",
+    "c_code_ranges": [
+      [
+        12740,
+        12773
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_basic.py:39 combined core/actualRET-adapter fixtures,107 unique bytes/31 sites,18 conditional outcomes plus4 directJMPs,1122 ordered events,7 completed mutants. Ordered selector3 marker-before-liveDEC,selector4 refresh-clear-before-marker,selector2 whole-byte replacement without refresh reset,record/global aliases,DEC overflow,PC/AdLib/Tandy feedback,unbound/changedIRET/returnedDS and live SS/VGA returns verified. Shared feedback bytes overlap their separate tested scope."
+  },
+  {
+    "address": 12955,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 34,
+    "symbol_name": "ApplyEntityAction2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_basic.c",
+    "c_core": "lmn_entity_actions_basic_core",
+    "c_code_ranges": [
+      [
+        12955,
+        12989
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_basic.py:39 combined core/actualRET-adapter fixtures,107 unique bytes/31 sites,18 conditional outcomes plus4 directJMPs,1122 ordered events,7 completed mutants. Ordered selector3 marker-before-liveDEC,selector4 refresh-clear-before-marker,selector2 whole-byte replacement without refresh reset,record/global aliases,DEC overflow,PC/AdLib/Tandy feedback,unbound/changedIRET/returnedDS and live SS/VGA returns verified. Shared feedback bytes overlap their separate tested scope."
+  },
+  {
+    "address": 13655,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 39,
+    "symbol_name": "ApplyEntityAction3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_basic.c",
+    "c_core": "lmn_entity_actions_basic_core",
+    "c_code_ranges": [
+      [
+        13655,
+        13694
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_basic.py:39 combined core/actualRET-adapter fixtures,107 unique bytes/31 sites,18 conditional outcomes plus4 directJMPs,1122 ordered events,7 completed mutants. Ordered selector3 marker-before-liveDEC,selector4 refresh-clear-before-marker,selector2 whole-byte replacement without refresh reset,record/global aliases,DEC overflow,PC/AdLib/Tandy feedback,unbound/changedIRET/returnedDS and live SS/VGA returns verified. Shared feedback bytes overlap their separate tested scope."
+  },
+  {
+    "address": 12812,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "EntityActionFailureReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_basic.c",
+    "c_core": "lmn_entity_actions_basic_core",
+    "c_code_ranges": [
+      [
+        12812,
+        12813
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_basic.py:39 combined core/actualRET-adapter fixtures,107 unique bytes/31 sites,18 conditional outcomes plus4 directJMPs,1122 ordered events,7 completed mutants. Ordered selector3 marker-before-liveDEC,selector4 refresh-clear-before-marker,selector2 whole-byte replacement without refresh reset,record/global aliases,DEC overflow,PC/AdLib/Tandy feedback,unbound/changedIRET/returnedDS and live SS/VGA returns verified. Shared feedback bytes overlap their separate tested scope."
+  },
+  {
+    "address": 12733,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "EntityActionDispatchReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12739,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 1,
+    "symbol_name": "EntityActionReleasedReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 13110,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "ApplyEntityAction5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12989,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "ApplyEntityAction6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 13518,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "ApplyEntityAction7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 13720,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "ApplyEntityAction8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 12813,
+    "segment": 0,
+    "kind": "continuation",
+    "size": null,
+    "symbol_name": "ApplyEntityAction9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 107,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 108,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 110,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 111,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 113,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 114,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 116,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 117,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 119,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 120,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 122,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 123,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 125,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 126,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 128,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountDisplaySnapshot7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 129,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelActionCountRefreshCounter7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
+    ],
+    "verification_status": "STATIC"
   }
 ]

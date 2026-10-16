@@ -16,6 +16,42 @@ def contract_verification():
             raise ValueError('Stale contract verification for '+path+'; run tools/verify.py --contracts')
     return verified
 
+def translated_code_bytes(symbols,instructions,image_size):
+    """Union complete decoded instructions across explicit, possibly shared tails.
+
+    A ledger entry's size may describe only its physical entry prefix. Its C
+    domain can include a noncontiguous shared tail before or after that prefix.
+    The decoded image, rather than entry+size, owns those instruction bounds.
+    """
+    bounds=[(row['address'],row['address']+row['size']) for row in instructions]
+    starts={start for start,_ in bounds}
+    ends={end for _,end in bounds}
+    decoded={p for row in instructions
+             for p in range(row['address'],row['address']+row['size'])}
+    covered=set()
+    for symbol in symbols:
+        if not symbol.get('c_implementation'):continue
+        name=symbol['symbol_name']
+        ranges=symbol.get('c_code_ranges')
+        if ranges is None:
+            size=symbol.get('size')
+            if not isinstance(size,int) or size<=0:
+                raise ValueError('Missing translated extent for '+name)
+            ranges=[(symbol['address'],symbol['address']+size)]
+        for start,end in ranges:
+            if not 0<=start<end<=image_size:
+                raise ValueError('Translated range outside image for '+name)
+            if start not in starts or end not in ends:
+                raise ValueError('Partial instruction in translated range for '+name)
+            span=set(range(start,end))
+            if span-decoded:
+                raise ValueError('Unresolved/non-instruction translated bytes for '+name)
+            complete={p for a,b in bounds if start<=a<b<=end for p in range(a,b)}
+            if span-complete:
+                raise ValueError('Partial instruction in translated range for '+name)
+            covered.update(span)
+    return covered
+
 def report():
     verified=contract_verification()
     analysis=analyze()
@@ -29,18 +65,7 @@ def report():
     symbols=read_json(ROOT/'metadata/symbols.json')
     translated=[s for s in symbols if s.get('c_implementation')]
     m['translated_c_routines']=len(translated)
-    code_bytes=set()
-    for s in translated:
-        ranges=s.get('c_code_ranges',[(s['address'],s['address']+s['size'])])
-        for start,end in ranges:
-            if not s['address']<=start<end<=s['address']+s['size']:
-                raise ValueError('Invalid translated range for '+s['symbol_name'])
-            code_bytes.update(range(start,end))
-    decoded_bytes={p for instruction in analysis['instructions']
-                   for p in range(instruction['address'],instruction['address']+instruction['size'])}
-    if code_bytes-decoded_bytes:
-        raise ValueError('Translated C bytes include unresolved/non-instruction bytes: '+
-                         ','.join(f'{p:04X}' for p in sorted(code_bytes-decoded_bytes)))
+    code_bytes=translated_code_bytes(symbols,analysis['instructions'],len(image))
     m['translated_c_code_bytes']=len(code_bytes)
     d=read_json(BUILD/'differential.json')
     paths={'checksum.c':'c/checksum.c','checksum.h':'c/checksum.h',
@@ -260,6 +285,8 @@ def report():
     entity_update=read_json(BUILD/'entity-update-differential.json')
     entity_create=read_json(BUILD/'entity-create-differential.json')
     entity_action_sound=read_json(BUILD/'entity-action-sound-differential.json')
+    entity_actions_basic=read_json(BUILD/'entity-actions-basic-differential.json')
+    entity_action_dispatch=read_json(BUILD/'entity-action-dispatch-differential.json')
     entity_batch=read_json(BUILD/'entity-batch-differential.json')
     entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
@@ -315,6 +342,8 @@ def report():
                         ('entity record update',entity_update),
                         ('entity record creation',entity_create),
                         ('entity action feedback',entity_action_sound),
+                        ('entity basic actions',entity_actions_basic),
+                        ('entity action dispatch prefix',entity_action_dispatch),
                         ('entity creation/update prefix',entity_batch),
                         ('entity pattern bus',entity_pattern_bus)):
         for path,digest in extra['input_hashes'].items():
@@ -338,7 +367,7 @@ def report():
     executed.update(entity_zero_state['executed_instruction_addresses'])
     executed.update(entity_state4['executed_instruction_addresses'])
     executed.update(entity_cadence['executed_instruction_addresses'])
-    for extra in (entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_batch,entity_pattern_bus):
+    for extra in (entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_actions_basic,entity_action_dispatch,entity_batch,entity_pattern_bus):
         executed.update(extra['executed_instruction_addresses'])
     executed.update(selection['executed_instruction_addresses'])
     for path,digest in selection_full['input_hashes'].items():
@@ -365,7 +394,7 @@ def report():
     reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
     reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
     reports+=(entity_pattern,entity_pixel,entity_pixel_bus,entity_vga,entity_stroke,mask_generators,generated_graphics,entity_mask,entity_mask_rows,coordinate_pixel,entity_countdown)
-    reports+=(entity_interactions,entity_finish,entity_zero_state,entity_state4,entity_cadence,entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_batch,entity_pattern_bus)
+    reports+=(entity_interactions,entity_finish,entity_zero_state,entity_state4,entity_cadence,entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_actions_basic,entity_action_dispatch,entity_batch,entity_pattern_bus)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     decoded_sites={instruction['address'] for instruction in analysis['instructions']}

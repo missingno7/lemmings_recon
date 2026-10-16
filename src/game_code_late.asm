@@ -95,25 +95,25 @@ sub_39CE:
     mov [EntityCreationReload-GameDataImage],al ; @039E6
     mov byte [0x66],0x0 ; @039E9
     mov byte [0x69],0x0 ; @039EE
-    mov byte [0x72],0x0 ; @039F3
-    mov byte [0x81],0x0 ; @039F8
-    mov byte [0x6c],0x0 ; @039FD
-    mov byte [0x78],0x0 ; @03A02
-    mov byte [0x75],0x0 ; @03A07
-    mov byte [0x7b],0x0 ; @03A0C
-    mov byte [0x6f],0x0 ; @03A11
-    mov byte [0x7e],0x0 ; @03A16
+    mov byte [LevelActionCountRefreshCounter2-GameDataImage],0x0 ; @039F3
+    mov byte [LevelActionCountRefreshCounter7-GameDataImage],0x0 ; @039F8
+    mov byte [LevelActionCountRefreshCounter0-GameDataImage],0x0 ; @039FD
+    mov byte [LevelActionCountRefreshCounter4-GameDataImage],0x0 ; @03A02
+    mov byte [LevelActionCountRefreshCounter3-GameDataImage],0x0 ; @03A07
+    mov byte [LevelActionCountRefreshCounter5-GameDataImage],0x0 ; @03A0C
+    mov byte [LevelActionCountRefreshCounter1-GameDataImage],0x0 ; @03A11
+    mov byte [LevelActionCountRefreshCounter6-GameDataImage],0x0 ; @03A16
     mov byte [0x84],0x0 ; @03A1B
     mov byte [0x65],0xff ; @03A20
     mov byte [0x68],0xff ; @03A25
-    mov byte [0x71],0xff ; @03A2A
-    mov byte [0x80],0xff ; @03A2F
-    mov byte [0x6b],0xff ; @03A34
-    mov byte [0x77],0xff ; @03A39
-    mov byte [0x74],0xff ; @03A3E
-    mov byte [0x7a],0xff ; @03A43
-    mov byte [0x6e],0xff ; @03A48
-    mov byte [0x7d],0xff ; @03A4D
+    mov byte [LevelActionCountDisplaySnapshot2-GameDataImage],0xff ; @03A2A
+    mov byte [LevelActionCountDisplaySnapshot7-GameDataImage],0xff ; @03A2F
+    mov byte [LevelActionCountDisplaySnapshot0-GameDataImage],0xff ; @03A34
+    mov byte [LevelActionCountDisplaySnapshot4-GameDataImage],0xff ; @03A39
+    mov byte [LevelActionCountDisplaySnapshot3-GameDataImage],0xff ; @03A3E
+    mov byte [LevelActionCountDisplaySnapshot5-GameDataImage],0xff ; @03A43
+    mov byte [LevelActionCountDisplaySnapshot1-GameDataImage],0xff ; @03A48
+    mov byte [LevelActionCountDisplaySnapshot6-GameDataImage],0xff ; @03A4D
     mov byte [0x83],0x3 ; @03A52
     mov ah,[0x64] ; @03A57
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @03A5B
@@ -248,120 +248,120 @@ loc_3BA5:
     mov ah,[LevelActionCount2-GameDataImage] ; @03BA5
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BA9
     jz loc_3BB3 ; @03BAB
-    cmp [0x71],ah ; @03BAD
+    cmp [LevelActionCountDisplaySnapshot2-GameDataImage],ah ; @03BAD
     jz loc_3BCC ; @03BB1
 loc_3BB3:
-    cmp byte [0x72],0x2 ; @03BB3
+    cmp byte [LevelActionCountRefreshCounter2-GameDataImage],0x2 ; @03BB3
     jnz loc_3BC3 ; @03BB8
-    mov [0x71],ah ; @03BBA
-    mov byte [0x72],0xff ; @03BBE
+    mov [LevelActionCountDisplaySnapshot2-GameDataImage],ah ; @03BBA
+    mov byte [LevelActionCountRefreshCounter2-GameDataImage],0xff ; @03BBE
 loc_3BC3:
-    inc byte [0x72] ; @03BC3
+    inc byte [LevelActionCountRefreshCounter2-GameDataImage] ; @03BC3
     mov al,0x4 ; @03BC7
     call sub_762A ; @03BC9
 loc_3BCC:
     mov ah,[LevelActionCount7-GameDataImage] ; @03BCC
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BD0
     jz loc_3BDA ; @03BD2
-    cmp [0x80],ah ; @03BD4
+    cmp [LevelActionCountDisplaySnapshot7-GameDataImage],ah ; @03BD4
     jz loc_3BF3 ; @03BD8
 loc_3BDA:
-    cmp byte [0x81],0x2 ; @03BDA
+    cmp byte [LevelActionCountRefreshCounter7-GameDataImage],0x2 ; @03BDA
     jnz loc_3BEA ; @03BDF
-    mov [0x80],ah ; @03BE1
-    mov byte [0x81],0xff ; @03BE5
+    mov [LevelActionCountDisplaySnapshot7-GameDataImage],ah ; @03BE1
+    mov byte [LevelActionCountRefreshCounter7-GameDataImage],0xff ; @03BE5
 loc_3BEA:
-    inc byte [0x81] ; @03BEA
+    inc byte [LevelActionCountRefreshCounter7-GameDataImage] ; @03BEA
     mov al,0x9 ; @03BEE
     call sub_762A ; @03BF0
 loc_3BF3:
     mov ah,[LevelActionCount0-GameDataImage] ; @03BF3
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BF7
     jz loc_3C01 ; @03BF9
-    cmp [0x6b],ah ; @03BFB
+    cmp [LevelActionCountDisplaySnapshot0-GameDataImage],ah ; @03BFB
     jz loc_3C1A ; @03BFF
 loc_3C01:
-    cmp byte [0x6c],0x2 ; @03C01
+    cmp byte [LevelActionCountRefreshCounter0-GameDataImage],0x2 ; @03C01
     jnz loc_3C11 ; @03C06
-    mov [0x6b],ah ; @03C08
-    mov byte [0x6c],0xff ; @03C0C
+    mov [LevelActionCountDisplaySnapshot0-GameDataImage],ah ; @03C08
+    mov byte [LevelActionCountRefreshCounter0-GameDataImage],0xff ; @03C0C
 loc_3C11:
-    inc byte [0x6c] ; @03C11
+    inc byte [LevelActionCountRefreshCounter0-GameDataImage] ; @03C11
     mov al,0x2 ; @03C15
     call sub_762A ; @03C17
 loc_3C1A:
     mov ah,[LevelActionCount4-GameDataImage] ; @03C1A
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C1E
     jz loc_3C28 ; @03C20
-    cmp [0x77],ah ; @03C22
+    cmp [LevelActionCountDisplaySnapshot4-GameDataImage],ah ; @03C22
     jz loc_3C41 ; @03C26
 loc_3C28:
-    cmp byte [0x78],0x2 ; @03C28
+    cmp byte [LevelActionCountRefreshCounter4-GameDataImage],0x2 ; @03C28
     jnz loc_3C38 ; @03C2D
-    mov [0x77],ah ; @03C2F
-    mov byte [0x78],0xff ; @03C33
+    mov [LevelActionCountDisplaySnapshot4-GameDataImage],ah ; @03C2F
+    mov byte [LevelActionCountRefreshCounter4-GameDataImage],0xff ; @03C33
 loc_3C38:
-    inc byte [0x78] ; @03C38
+    inc byte [LevelActionCountRefreshCounter4-GameDataImage] ; @03C38
     mov al,0x6 ; @03C3C
     call sub_762A ; @03C3E
 loc_3C41:
     mov ah,[LevelActionCount3-GameDataImage] ; @03C41
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C45
     jz loc_3C4F ; @03C47
-    cmp [0x74],ah ; @03C49
+    cmp [LevelActionCountDisplaySnapshot3-GameDataImage],ah ; @03C49
     jz loc_3C68 ; @03C4D
 loc_3C4F:
-    cmp byte [0x75],0x2 ; @03C4F
+    cmp byte [LevelActionCountRefreshCounter3-GameDataImage],0x2 ; @03C4F
     jnz loc_3C5F ; @03C54
-    mov [0x74],ah ; @03C56
-    mov byte [0x75],0xff ; @03C5A
+    mov [LevelActionCountDisplaySnapshot3-GameDataImage],ah ; @03C56
+    mov byte [LevelActionCountRefreshCounter3-GameDataImage],0xff ; @03C5A
 loc_3C5F:
-    inc byte [0x75] ; @03C5F
+    inc byte [LevelActionCountRefreshCounter3-GameDataImage] ; @03C5F
     mov al,0x5 ; @03C63
     call sub_762A ; @03C65
 loc_3C68:
     mov ah,[LevelActionCount5-GameDataImage] ; @03C68
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C6C
     jz loc_3C76 ; @03C6E
-    cmp [0x7a],ah ; @03C70
+    cmp [LevelActionCountDisplaySnapshot5-GameDataImage],ah ; @03C70
     jz loc_3C8F ; @03C74
 loc_3C76:
-    cmp byte [0x7b],0x2 ; @03C76
+    cmp byte [LevelActionCountRefreshCounter5-GameDataImage],0x2 ; @03C76
     jnz loc_3C86 ; @03C7B
-    mov [0x7a],ah ; @03C7D
-    mov byte [0x7b],0xff ; @03C81
+    mov [LevelActionCountDisplaySnapshot5-GameDataImage],ah ; @03C7D
+    mov byte [LevelActionCountRefreshCounter5-GameDataImage],0xff ; @03C81
 loc_3C86:
-    inc byte [0x7b] ; @03C86
+    inc byte [LevelActionCountRefreshCounter5-GameDataImage] ; @03C86
     mov al,0x7 ; @03C8A
     call sub_762A ; @03C8C
 loc_3C8F:
     mov ah,[LevelActionCount1-GameDataImage] ; @03C8F
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C93
     jz loc_3C9D ; @03C95
-    cmp [0x6e],ah ; @03C97
+    cmp [LevelActionCountDisplaySnapshot1-GameDataImage],ah ; @03C97
     jz loc_3CB6 ; @03C9B
 loc_3C9D:
-    cmp byte [0x6f],0x2 ; @03C9D
+    cmp byte [LevelActionCountRefreshCounter1-GameDataImage],0x2 ; @03C9D
     jnz loc_3CAD ; @03CA2
-    mov [0x6e],ah ; @03CA4
-    mov byte [0x6f],0xff ; @03CA8
+    mov [LevelActionCountDisplaySnapshot1-GameDataImage],ah ; @03CA4
+    mov byte [LevelActionCountRefreshCounter1-GameDataImage],0xff ; @03CA8
 loc_3CAD:
-    inc byte [0x6f] ; @03CAD
+    inc byte [LevelActionCountRefreshCounter1-GameDataImage] ; @03CAD
     mov al,0x3 ; @03CB1
     call sub_762A ; @03CB3
 loc_3CB6:
     mov ah,[LevelActionCount6-GameDataImage] ; @03CB6
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03CBA
     jz loc_3CC4 ; @03CBC
-    cmp [0x7d],ah ; @03CBE
+    cmp [LevelActionCountDisplaySnapshot6-GameDataImage],ah ; @03CBE
     jz loc_3CDD ; @03CC2
 loc_3CC4:
-    cmp byte [0x7e],0x2 ; @03CC4
+    cmp byte [LevelActionCountRefreshCounter6-GameDataImage],0x2 ; @03CC4
     jnz loc_3CD4 ; @03CC9
-    mov [0x7d],ah ; @03CCB
-    mov byte [0x7e],0xff ; @03CCF
+    mov [LevelActionCountDisplaySnapshot6-GameDataImage],ah ; @03CCB
+    mov byte [LevelActionCountRefreshCounter6-GameDataImage],0xff ; @03CCF
 loc_3CD4:
-    inc byte [0x7e] ; @03CD4
+    inc byte [LevelActionCountRefreshCounter6-GameDataImage] ; @03CD4
     mov al,0x8 ; @03CD8
     call sub_762A ; @03CDA
 loc_3CDD:

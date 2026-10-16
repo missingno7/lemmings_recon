@@ -85,3 +85,118 @@ original instructions/2,048 events per call and180 seconds/384 MiB process/
 640 MiB Windows tree. See `build/entity-action-sound-differential.json` for
 exact hashes and per-case paths. The remainder of3150 and broader input,
 record-validity and IRQ/device scheduling contracts remain open.
+
+## Small selector actions and dispatch prefix
+
+The independently understood actions own107 unique known bytes/31 sites
+and18 conditional outcomes:selector2[329B,32BD),selector3[3557,357E),
+selector4[31C4,31E5) and shared RET320C. Only their dispatch JMPs enter the
+three bodies; other actions also reach320C. Success reaches31E5 without a
+near CALL,so its native composition must retain the existing SS:SP return.
+
+Selector2 requires count006A!=0,record+24 bit0 clear and +08&0103 clear.
+It decrements the live count and replaces the whole +24 byte with01.
+Unlike the other consuming action paths,it does not reset refresh counter006C.
+Selector3 requires count006D!=0,+25==0 and +08&0103 clear; it stores+25=FF
+before decrementing the live count,then clears006F. This order is observable
+when the record field aliases the count. Selector4 requires count0070!=0,
++20==0 and +08&C003 clear; it decrements0070,clears0072,then stores+20=4F.
+Record/global overlap,wrap and the separate memory RMW flags remain explicit.
+
+The named dispatch prefix[3150,31C4) has113 known bytes/43 sites/28 outcomes,
+excluding UNKNOWN3160,3199 and31BC. Its own physical ledger size covers only
+that prefix; the complete reachable3150 action graph still has1221 known
+bytes. Ordinary returns are31BD and31C3. The native prefix connects
+selectors2/3/4 directly and stops at the exact untranslated entries for
+selectors5/6/7/8/9. A scoped prefix does not establish those action bodies or
+the complete3150 caller. All256 selector bytes retain signed JL behavior and
+the sequential CMP flags,including ordinary31BD returns for80..FF and0A..7F.
+The latch is set before both pointer and selector reads,even for invalid values.
+
+The eight ordinal action-count triples now have ledger-owned names for their
+low count,display snapshot and refresh counter. At39CE snapshots initializeFF
+and counters0. The repeated3BA5..3CDD paths skip a nonzero count equal to its
+snapshot; otherwise they compare the counter to2,update the snapshot and set
+the counterFF only on equality,then byte-INC it before calling762A. That
+callee uses AL as the two-byte display slot and AH for decimal digits drawn
+through VGA. Action successes reset the corresponding counter as recorded
+above; no bounded range or general scheduling invariant follows from this.
+The names describe live fields; they do not resolve stored UNKNOWN bytes.
+
+The remaining five action bodies own942 known bytes before shared tails:
+
+| Selector | Physical body | Known bytes | Next dependency |
+|---|---|---:|---|
+|6|32BD..3335|121|Fresh alternate-record eligibility and ordered transition|
+|7|34CE..3556|137|0412 early feedback and alternate-record fallback|
+|9|320D..3286|122|Nibble exclusion and alternate-record fallback|
+|8|3598..3633|154|Direction/nibble exclusions,0412 path;UNKNOWN35A1/35AB excluded|
+|5|3336..34CD|408|SS interaction-map checks,ordered transition and nine-cell producer|
+
+These are static boundaries,not executed or translated coverage. Their common
+INT/RET contracts remain those of the already verified feedback tails.
+
+## Remaining transition and alternate-pointer contracts
+
+Selectors6/7/9/8 have32/39/33/46 instruction sites and13/18/13/22 owned
+branch outcomes respectively,including unconditional JMPs. Their local bodies
+contain no CALL or stack/segment change. All local operands use live DS; SI
+may be replaced by the fresh alternate pointer when005F!=FF. Shared feedback
+and actual RETs keep their own segment/stack seams.
+
+Selector6 first requires count0076!=0 and the unsigned wrapped sum
+word[SI+2]+word[SI+6]>10. Eligibility mask isF5EF. Only a mask failure selects
+alternate SI and rechecks that mask; it does not repeat count or sum gates.
+The32D6 transition decrements0076,clears0078,sets state+08=0080 and writes the
+ordered fields. It reads callback slot+8 before setting+2A=FF and storing the
+callback+14,then ANDs+24 with1 before JMP31E5.
+
+Selector7 uses count0079 and eligibility maskF76F. Alternate selection rejoins
+34DC before the active record's+2B low-nibble checks. It rejects nibble7 when
++27==1,otherwise8. Nibble9 reaches3287's0412 service before consuming a count
+or modifying the record. Normal transition34F6 decrements0079,clears007B,
+ANDs state withF56F then ORs0200. After ordered fields and+2A=FF,it reads
+callback slot+6,stores+14 and ANDs+24 with1 before JMP31E5. The eligibility
+and transition masks deliberately differ.
+
+Selector9 checks count007F and selected+2C low nibble!=9 before eligibility
+maskF57F. A mask-failure alternate record joins3224 after just its mask test:
+it bypasses the original count and nibble checks. Transition decrements007F,
+clears0081,ANDs stateF57F then ORs0010,and writes ordered fields. Callback
+slot+0A is read and stored before+1F=8,+2A=FF and+24 AND1,then JMP31E5.
+
+Selector8 uses count007C and maskFD6F; alternate selection rejoins35AC before
++2C low nibble!=9 and the same direction/nibble tests as selector7. Nibble9
+at+2B reaches3287 before count consumption. Transition decrements007C,clears
+007E,ANDs stateFD6F then ORs0800,and writes ordered fields. It reads callback
+slot+8 and stores+14 before+2A=FF,+24 AND1 and a final word INC[SI+2],then
+JMP31E5. UNKNOWN35A1/35AB remain excluded; known jumps target35A2/35AC.
+All four failure paths reach320C. These are static contracts pending native
+translation; no historical action names or record/table extents are inferred.
+
+## Scoped native acceptance
+
+The selector2/3/4 cluster passes39 fixtures at core/actual-RET-adapter
+boundaries:107 own bytes/31 sites,all18 conditional outcomes plus four direct
+JMP edges,1,122 ordered events and seven completed mutants. Independent memory
+projections check eligibility and ordered stores,including whole-byte +24
+replacement without a refresh reset,marker/count and refresh/marker aliases.
+The count80 cases expose signed DEC overflow before feedback overwrites flags.
+PC,AdLib,Tandy,unbound vectors,changed IRET,returned DS,DF,physical stack-word
+wrap and a VGA-backed outer return are compared through native feedback.
+Limits are1,024 original instructions/2,048 events per call and180 seconds/
+384 MiB process/640 MiB Windows tree. See
+`build/entity-actions-basic-differential.json` for exact input hashes.
+
+The dispatch prefix passes279 fixtures at both boundaries,including all256
+raw selector bytes:113 own known bytes/43 sites/all28 conditional outcomes,
+6,964 ordered events and six completed mutants. Independent gate/latch/AX/SI
+and event-order checks precede native comparison. A latch-write provider changes
+the selected pointer and selector before their later reads. Native basic actions
+and feedback retain raw child diagnostics and actual outer returns; supported
+paths include unbound/changed PC returns and returned DS. Other selectors stop
+at their exact untranslated action entries. The512-instruction/4,096-event
+per-call budgets and240-second/384 MiB process/640 MiB tree limits are hard.
+See `build/entity-action-dispatch-differential.json`. Shared child bytes are
+counted once; these scopes add220 unique known bytes,not the whole3150 body.
+All31 UNKNOWN bytes and broader input/record/IRQ timing contracts remain open.
