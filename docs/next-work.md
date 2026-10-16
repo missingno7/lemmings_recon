@@ -193,17 +193,29 @@ Actual CALL-specific return contracts reject another valid caller continuation,
 and the original oracle records LOOP edges from actual CPU transitions.
 See entity-simulation.md for live mask,callback,segment and flag contracts.
 
-Next port state0080 at2693..27E7:337 known bytes/115 sites/44 jump outcomes.
-The four one-byte holes26A1/26F6/26FF/2762 remain UNKNOWN and excluded. Only
-known external entry is1FB5; no known interior cross-entry splits the body.
-Preserve modulo16 cadence,phaseA's unchecked+21<=3 gates and live PUSH AX/ES,
-INT60 AX0313 return26C2,then fresh DS2010/DS25A7 gates for INT61 AX0412
-return26D5,followed by actual POP ES/AX. Phase9 CALLs5F0F(return26E1), whose
-nested5DC6 return is5F57. The zero phase has three direct5DC6 returns2703/
-2713/272F,signed X/height tests,live pitch and a wrapped+21 decrement after
-two clear samples. Transitions read callback002E late and JMP2148; other exits
-JMP1FE8/1FEB. All direct children retain their scoped native contracts.
-Record+21=0C at32F2 is one observed producer,not a proven whole-field domain.
+States0080/0100 now add420 unique caller bytes/137 sites/48 actual owned jump
+outcomes. State0080 passes50 core/adapter fixtures:337 bytes/115 sites/all44
+outcomes,8,796 ordered events and eight completed mutants. The four one-byte
+holes26A1/26F6/26FF/2762 remain UNKNOWN and excluded. Its opposite sound gates,
+PC-returned DS,actual AX/ES saves,direct/nested pixel/stroke returns,wrapped+21
+decrement,late callback and signed third-probe transition remain explicit.
+State0100 passes19 fixtures:83 bytes/22 sites/all4 outcomes,2,726 events and
+six mutants. It retains separate INC/AND memory RMWs,actual5DC6/283B frames,
+live pixel-produced ES and the final1FEB JMP. Child/tail bytes overlap existing
+translations and are not added again. See entity-simulation.md. Record+21=0C
+at32F2 remains one observed producer,not a proven whole-field domain.
+
+Next port state0200 at287D..2A6C:496 known bytes/169 sites/59 owned jump
+outcomes (20 conditional branches plus19 unconditional jumps). The sole known
+external direct entry is1FC5; no known interior cross-entry or UNKNOWN hole
+splits the body. Preserve separate memory INC/AND cadence,5FAC return28A4 and
+the following raw+28==5 reread,four6141 returns28C7/28D6/28E5/28F4,5DC6
+return294E,fresh pitch and ordered Y increments. The unchecked SS map nibble
+follows actual AX/DX pushes and pops; nibble9 can request INT61 AX040A with
+return2A6A before NEG+27,including live returned DS. Transitions read callback
+002E late. Direct exits JMP1FE8/1FEB without an added frame; all direct children
+retain scoped native contracts. The following0400 handler starts2A6D and is a
+separate frontier.
 The1F19 parent's eleven direct CALL children retain platform/fatal seams;
 broader initialization,IRQ timing and record/scan composition stay open.
 

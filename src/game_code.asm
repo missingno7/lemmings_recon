@@ -83,15 +83,15 @@ loc_1FA8:
 loc_1FB0:
     test ax,0x80 ; @01FB0
     jz loc_1FB8 ; @01FB3
-    jmp loc_2693 ; @01FB5
+    jmp AdvanceEntityState0080 ; @01FB5
 loc_1FB8:
     test ax,0x100 ; @01FB8
     jz loc_1FC0 ; @01FBB
-    jmp loc_27E8 ; @01FBD
+    jmp AdvanceEntityState0100 ; @01FBD
 loc_1FC0:
     test ax,0x200 ; @01FC0
     jz loc_1FC8 ; @01FC3
-    jmp loc_287D ; @01FC5
+    jmp AdvanceEntityState0200 ; @01FC5
 loc_1FC8:
     test ax,0x800 ; @01FC8
     jz loc_1FD0 ; @01FCB
@@ -850,6 +850,14 @@ loc_2654:
     and byte [si+0x24],0x1 ; @02689
     mov bp,[si+0x2] ; @0268D
     jmp loc_2148 ; @02690
+; State0080 from1FB5; known2693..27E7 bytes exclude four UNKNOWN singletons.
+; PhaseA reads unsigned +21<=3, saves actual AX/ES, requests PC0313 then
+; rereads the live DS gates for external0412. Both POPs use returned SS:SP.
+; Phase9 CALLs5F0F. Zero phase uses three5DC6 frames, fresh pitch and live
+; X/AX saves; +21 DEC wraps. Third clear/in-bounds Y+height<=0A transitions
+; without NEG; failed samples/bounds NEG memory+27 with entry FLAGS observed.
+; Ordered transitions read callback002E late and JMP2148 without a CALL frame.
+AdvanceEntityState0080:
 loc_2693:
     mov al,[si+0x28] ; @02693
     inc al ; @02696
@@ -873,6 +881,7 @@ loc_26A2:
     jz loc_26C2 ; @026BB
     mov ax,0x313 ; @026BD
     int 0x60 ; @026C0
+EntityState0080AfterPcSound:
 loc_26C2:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @026C2
     jnz loc_26D5 ; @026C7
@@ -880,6 +889,7 @@ loc_26C2:
     jz loc_26D5 ; @026CE
     mov ax,0x412 ; @026D0
     int 0x61 ; @026D3
+EntityState0080AfterExternalSound:
 loc_26D5:
     pop es ; @026D5
     pop ax ; @026D6
@@ -889,6 +899,7 @@ loc_26D7:
     jmp loc_1FE8 ; @026DB
 loc_26DE:
     call DrawEntityStroke ; @026DE
+EntityState0080AfterStrokeCall:
     jmp loc_1FEB ; @026E1
 loc_26E4:
     mov al,[si+0x27] ; @026E4
@@ -909,12 +920,14 @@ loc_26F7:
     db 0x90 ; @026FF
 loc_2700:
     call PrepareEntityPixelSample ; @02700
+EntityState0080AfterFirstPixelCall:
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02703
     mov al,[es:di] ; @02707
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0270A
     jnz loc_2763 ; @0270C
     add [si],bp ; @0270E
     call PrepareEntityPixelSample ; @02710
+EntityState0080AfterSecondPixelCall:
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02713
     mov al,[es:di] ; @02717
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0271A
@@ -927,6 +940,7 @@ loc_2726:
     add [si],bp ; @02728
     add [si],bp ; @0272A
     call PrepareEntityPixelSample ; @0272C
+EntityState0080AfterThirdPixelCall:
     pop word [si] ; @0272F
     push ax ; @02731
     mov ax,[EntityPixelRowPitchBytes-GameDataImage] ; @02732
@@ -987,10 +1001,17 @@ loc_27A5:
     or byte [si+0x24],0x80 ; @027DE
     mov bp,[si+0x2] ; @027E2
     jmp loc_2148 ; @027E5
+; State0100 from1FBD. INC/AND are separate live memory RMWs. The actual
+; pixel RET27F2 precedes the ES sample; clear samples perform ordered record
+; writes and a late callback002E read, then actual pattern CALL/RET2838.
+; Pattern restores DS/SS-backed saves through its own contract. Both exits
+; JMP1FEB; this state does not run2148 or the interaction tail.
+AdvanceEntityState0100:
 loc_27E8:
     inc byte [si+0x28] ; @027E8
     and byte [si+0x28],0xf ; @027EB
     call PrepareEntityPixelSample ; @027EF
+EntityState0100AfterPixelCall:
     mov al,[es:di] ; @027F2
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @027F5
     jz loc_27FC ; @027F7
@@ -1010,6 +1031,7 @@ loc_27FC:
     mov byte [si+0x2a],0x0 ; @0282D
     and byte [si+0x24],0x1 ; @02831
     call CopyEntityPatternToInteractionMap ; @02835
+EntityState0100AfterPatternCall:
     jmp loc_1FEB ; @02838
 ; 283B..287C: copy the live record pattern back to the interaction map.
 ; DS:SI words +0/+2 feed wrapped (x-4)>>2 and (y-6-10h)>>2;
@@ -1062,6 +1084,14 @@ sub_283B:
     pop di ; @0287A
     pop si ; @0287B
     ret ; @0287C
+; State0200 from1FC5, known287D..2A6C with no interior external direct entry.
+; Separate memory cadence RMWs precede the raw phase rereads. Four coordinate
+; CALLs preserve their actual restored CX/BX/DX; later probes use fresh pitch.
+; The unchecked SS map nibble is read after actual AX/DX saves and restores.
+; INT61 AX040A returns2A6A before NEG+27; its live DS effects flow onward.
+; Transition callback002E is read late. Shared1FE8/1FEB exits are JMPs.
+; This following frontier has static contracts only; see entity-simulation.md.
+AdvanceEntityState0200:
 loc_287D:
     inc byte [si+0x28] ; @0287D
     and byte [si+0x28],0x1f ; @02880

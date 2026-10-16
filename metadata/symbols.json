@@ -58357,5 +58357,225 @@
       ]
     ],
     "verification_evidence": "tests/entity_state40.py:25 logical-core/JMP-adapter fixtures;92 bytes/26 sites/all7 jump outcomes;2,160 ordered events;8 completed mutants;live callback aliases,post-transition height clamp,actual interaction frame,DF/VGA/stack/word wrapping. build/entity-state40-differential.json; scoped domain, not full simulation acceptance."
+  },
+  {
+    "address": 9875,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 341,
+    "symbol_name": "AdvanceEntityState0080",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006,
+      24335
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state80.c",
+    "c_core": "lmn_entity_state80_core",
+    "c_code_ranges": [
+      [
+        9875,
+        9889
+      ],
+      [
+        9890,
+        9974
+      ],
+      [
+        9975,
+        9983
+      ],
+      [
+        9984,
+        10082
+      ],
+      [
+        10083,
+        10216
+      ]
+    ],
+    "verification_evidence": "tests/entity_state80.py:50 logical-core/JMP-adapter fixtures;337 known bytes/115 sites/all44 actual owned jump outcomes;254 integrated main sites;8,796 ordered events;8 completed mutants;two independent VGA fixture replays;opposite sound gates,live AX/ES/DS/SS,wrapped counter,three probes,actual direct/nested CALL and IRET stops,late callback/pitch and RMW flag phases. UNKNOWN26A1/26F6/26FF/2762 remain excluded. build/entity-state80-differential.json;scoped domain,not complete simulation acceptance."
+  },
+  {
+    "address": 9922,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0080AfterPcSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9941,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0080AfterExternalSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9953,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0080AfterStrokeCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9987,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0080AfterFirstPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10003,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0080AfterSecondPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10031,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0080AfterThirdPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10216,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 83,
+    "symbol_name": "AdvanceEntityState0100",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006,
+      10299
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state100.c",
+    "c_core": "lmn_entity_state100_core",
+    "c_code_ranges": [
+      [
+        10216,
+        10299
+      ]
+    ],
+    "verification_evidence": "tests/entity_state100.py:19 logical-core/JMP-adapter fixtures;83 bytes/22 sites/all4 actual owned jump outcomes;80 integrated main sites;2,726 ordered events;6 completed mutants;separate INC/AND memory rereads,actual pixel/pattern CALL-specific RETs,callback aliases,live ES,DF/overlap/VGA/stack and word wrapping. build/entity-state100-differential.json;scoped domain,not complete simulation acceptance."
+  },
+  {
+    "address": 10226,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0100AfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10296,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0100AfterPatternCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State-bit dispatch and actual child/interrupt continuations; live segment, stack and ordered record contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10365,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 496,
+    "symbol_name": "AdvanceEntityState0200",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24492,
+      24897,
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match mask0200 dispatch from1FC5;exact287D..2A6C boundary,169sites/59jumpoutcomes,six actual calls,INT61 return2A6A,live SS map nibble and late callback. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

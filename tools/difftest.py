@@ -55,6 +55,8 @@ SUITES = (
     Suite('entity_state10', 180, 384),
     Suite('entity_state20', 180, 384),
     Suite('entity_state40', 180, 384),
+    Suite('entity_state80', 180, 384),
+    Suite('entity_state100', 180, 384),
     Suite('dat', 120, 512),
     Suite('dat_io_c', 120, 512),
     Suite('dat_section', 120, 512),

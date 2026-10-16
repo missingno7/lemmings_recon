@@ -172,9 +172,18 @@ CALL-specific CS:IP returns when a helper serves several callers. State0010's
 pixel exchanges and INT61 restored DS remain live; state0020 preserves its
 unsigned threshold and register NEG write phase; state0040 retains the late
 callback and post-transition signed clamp. See entity-simulation.md.
-Next compose state0080 at2693..27E7:337 known bytes/115 sites,with four UNKNOWN
-holes preserved. Its pixel/stroke,dual sound transport,live AX/ES frames,+21
-counter and late callback transitions are the next composition uncertainty.
+State0080 now passes50 core/adapter fixtures:337 known caller bytes/115 sites/
+all44 actual owned outcomes,8,796 events and eight completed mutants. Four
+UNKNOWN holes remain excluded. Its pixel/stroke,dual sound transport,live AX/ES
+frames,wrapped+21 counter and late callback transitions compose the tested
+children. State0100 passes19 fixtures:83 caller bytes/22 sites/all4 outcomes,
+2,726 events and six mutants,retaining separate cadence memory RMWs and actual
+pixel/pattern frames. These add420 unique bytes; see entity-simulation.md.
+Next compose state0200 at287D..2A6C:496 known bytes/169 sites/59 jump outcomes,
+with no known interior direct cross-entry or UNKNOWN hole. Its six mask/pixel
+CALLs and INT61 prefix already have scoped C domains. Preserve the post-mask
+phase reread,four coordinate returns,live pitch,Y increments,unchecked SS map
+nibble,late callback and returned DS before NEG+27. The caller remains unported.
 The remaining states and live1FEB iteration/scan parent retain initialization,
 table,platform and IRQ obligations.
 

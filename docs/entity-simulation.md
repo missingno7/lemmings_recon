@@ -329,9 +329,73 @@ events per call and180 seconds/384 MiB process/640 MiB tree per worker.
 The three new scopes add672 unique caller bytes/227 sites and53 observed jump
 outcomes. Child and shared-tail bytes are counted once. This is scoped native
 acceptance, separate from full-game readiness or aggregate coverage acceptance.
-The next state0080 body is2693..27E7:337 known code bytes/115 sites and44 jump
-outcomes, with UNKNOWN holes26A1/26F6/26FF/2762 explicitly excluded. It has
-three direct5DC6 calls, a5F0F stroke call with its own pixel child, optional
-INT60 AX0313 and INT61 AX0412, live AX/ES saves and ordered second-gate rereads.
-Record+21 is decremented only after two clear samples; zero wraps to FF. The
-32F2 store of0C is one observed producer, not complete ownership or bounds.
+
+## States0080 and0100
+
+The0080 body is2693..27E7:337 known code bytes/115 sites and44 jump outcomes.
+UNKNOWN holes26A1/26F6/26FF/2762 remain unresolved and excluded. Its sole known
+external incoming edge is1FB5 to2693. Cadence increments AL modulo16 before
+writing+28. PhaseA replaces AL with the unchecked record byte+21 and admits
+unsigned values0..3 to the sound gates. Actual PUSH AX/PUSH ES precede optional
+INT60 AX0313(return26C2); the returned registers and segments flow into fresh
+DS:2010/DS:25A7 gates for optional INT61 AX0412(return26D5). POP ES/POP AX read
+the returned SS:SP. Thus stack aliases can select AL9 after the sound path,
+even though the earlier+21 comparison admitted only0..3. Phase9 calls5F0F
+through return26E1, including its own nested5DC6 return5F57.
+
+Zero cadence sign-extends+27, updates X/Y, saves velocity in BP and uses signed
+X bounds10<X<680. The first two5DC6 calls return2703/2713 and sample a fresh
+DS:0004 pitch above their pixel address. Only two clear samples decrement+21;
+zero wraps to FF, while a result of zero takes the27A5 transition. The32F2
+store of0C is one observed producer, not complete field ownership or bounds.
+The third sample saves live X, adds BP twice and CALLs5DC6(return272F), then
+restores X through actual SS memory. A saved AX surrounds a fresh pitch read
+and three SHLs: the total subtraction is nine pitches. Failed samples or X
+bounds NEG memory+27 before the2766 transition. With a clear third sample and
+valid X, signed Y+height<=0A reaches2766 without NEG; a larger sum JMPs1FE8.
+Both transitions read callback002E after earlier stores, load BP from live Y
+and JMP2148 without adding a frame. Other exits retain1FE8/1FEB contracts.
+
+The0100 body at27E8..283A owns83 known bytes/22 sites/four jump outcomes, with
+sole known external edge1FBD to27E8. INC byte+28 and AND byte+28,0F are separate
+memory RMW instructions: their accesses observe incoming FLAGS and the AND
+rereads live memory. The actual5DC6 return27F2 precedes MOV AL,[ES:DI]/AND AL,AH.
+A nonzero sample JMPs1FEB. A clear sample performs the ordered zero-state
+stores and late callback002E read, then CALLs283B through actual return2838.
+The pattern child retains live DS/SS saves, popped ES/DI/SI and DF-sensitive
+string order. This handler has no2148 height update or interaction-tail call;
+its normal exits both JMP1FEB.
+
+The0080 native gate passes50 fixtures at both logical-core/JMP-adapter
+boundaries:337 new caller bytes/115 sites/all44 actual owned jump outcomes,
+254 integrated main sites,8,796 ordered events and eight completed mutants.
+Two VGA fixtures also replay the register/latch/plane effects independently.
+Fixtures retain opposite sound-gate polarities, PC-returned DS and live saved
+AX/ES, changed IRET and direct/nested CALL returns, the wrapped zero counter,
+three distinct probes, post-third-call live X restores, late callback and pitch
+providers, signed limits and memory NEG's entry-FLAGS write. Per-call limits
+are4,096 original instructions/4,096 events; worker bounds are180 seconds,
+384 MiB process and640 MiB Windows process tree. See
+`build/entity-state80-differential.json` for exact hashes and case boundaries.
+
+The0100 gate passes19 fixtures at both boundaries:83 new bytes/22 sites/all4
+actual owned outcomes,80 integrated main sites,2,726 events and six completed
+mutants. A provider changes cadence after INC and proves AND rereads it; other
+fixtures cover DF, sequential overlap, callback aliasing, RAM/VGA observations,
+live pixel-produced ES, a naturally overwritten pattern RET and changed returns
+to another valid caller continuation. Per-call limits are2,048 instructions/
+1,024 events, with the same180-second/384-MiB process/640-MiB tree bounds. See
+`build/entity-state100-differential.json`. Together these two scopes add420
+unique caller bytes/137 sites/48 actual owned outcomes. Children and shared
+tails overlap existing translations and are not added again. These are scoped
+native results; the full1F19 parent and aggregate game acceptance remain open.
+
+The following0200 frontier at287D..2A6C owns496 known bytes/169 sites, with
+20 conditional and19 unconditional jumps:59 owned outcomes including conditional
+fallthroughs. Its sole known external direct edge is1FC5 to287D; no interior
+cross-entry or UNKNOWN hole is currently known. It CALLs5FAC(return28A4),6141
+four times(28C7/28D6/28E5/28F4) and5DC6(return294E). INT61 AX040A returns2A6A
+and flows into29C1, including returned DS. The2A00 nibble calculation reads
+unchecked SS:[BX] only after live AX/DX pushes and pops. Its children have
+scoped native contracts, while the0200 caller remains untranslated. The separate
+0400 handler begins2A6D and precedes0200 in dispatch priority.
