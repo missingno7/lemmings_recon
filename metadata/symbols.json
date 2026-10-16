@@ -33802,9 +33802,11 @@
     "address": 23313,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5B11",
-    "aliases": [],
+    "size": 159,
+    "symbol_name": "GenerateThreeByteSpriteBanks",
+    "aliases": [
+      "sub_5B11"
+    ],
     "callers": [
       22991,
       23039,
@@ -33906,10 +33908,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact 5B11..5BAF leaf: 74 sites; eight ordinary 24-bit shifts and live ES OR masks, actual nested SS counts/cursors/DX, byte EA wrapping, DF-independent operations and signed destination fold. docs/sprite-shift-banks.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 159
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 159,
+    "c_implementation": "c/sprite_shift_banks.c",
+    "c_core": "lmn_generate_sprite_shift_banks3_core",
+    "c_code_ranges": [
+      [
+        23313,
+        23472
+      ]
+    ],
+    "verification_evidence": "tests/sprite_shift_banks.py: 40 fixtures/80 core and actual RET comparisons; 159 bytes/all 74 sites/all 17 branch outcomes, 236282 ordered events, 56016 independent output-byte checks, 10 completed mutants. Full eight-bank single-zero DH/DL cases, DF independence, full CL=255 shift and outer CL wrap, VGA stack, byte EA and stack physical wrap, signed fold, actual CX/SI/DX saves and RET, overlap and VGA. Actual native producer hands all eight unchanged 90-byte banks into native aligned drawing in 9 phase comparisons; consumer sites/events separate, not execution of 59BB. docs/sprite-shift-banks.md"
   },
   {
     "address": 23472,
@@ -33995,9 +34007,11 @@
     "address": 23558,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5C06",
-    "aliases": [],
+    "size": 187,
+    "symbol_name": "GenerateFiveByteSpriteBanks",
+    "aliases": [
+      "sub_5C06"
+    ],
     "callers": [
       23224
     ],
@@ -34158,10 +34172,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact 5C06..5CC0 leaf: 80 sites; eight ordinary 40-bit shift banks, three 32-row planes plus OR mask, actual saved DI consumed as mask SI, live nested SS counts/cursors, byte EA wrapping and signed destination fold. docs/sprite-wide-banks.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 187
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 187,
+    "c_implementation": "c/sprite_wide_banks.c",
+    "c_core": "lmn_generate_sprite_shift_banks5_core",
+    "c_code_ranges": [
+      [
+        23558,
+        23745
+      ]
+    ],
+    "verification_evidence": "tests/sprite_wide_banks.py: 33 fixtures/66 core and actual RET comparisons; 187 bytes/all 80 sites/all 17 branch outcomes, 913554 ordered events, 20480 independent output-byte checks, 10 completed mutants. Full eight-bank 40-bit equations, live saved DI consumed as mask SI, actual CX/SI saves and RET, CL=255, byte EA/physical wrap, signed fold, overlap and VGA DS/ES/SS. One native producer and eight wide-consumer calls compare 9 phases through the same RAM object, with unchanged full 5120-byte output; consumer 289 bytes/147 sites/7 edges/20000 events remain separate, not execution of 59BB. docs/sprite-wide-banks.md"
   },
   {
     "address": 23745,
@@ -62198,6 +62222,38 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Actual nearRET of5BB0 copy/OR-mask leaf. docs/sprite-bank.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 23471,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "ThreeByteSpriteBanksReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual near RET of 5B11 shifted three-byte bank generator. docs/sprite-shift-banks.md"
+    ],
+    "verification_status": "STATIC",
+    "data_references": []
+  },
+  {
+    "address": 23744,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "FiveByteSpriteBanksReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual near RET of 5C06 five-byte bank generator. docs/sprite-wide-banks.md"
     ],
     "verification_status": "STATIC"
   }

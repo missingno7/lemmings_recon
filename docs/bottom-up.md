@@ -33,7 +33,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 052D4..0563D | palette_frontends.asm | Palette pointers, writers and transition callers; ownership/frontier contracts remain explicit |
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
 | 05726..057D0 | entity_dirty.asm | Unchecked visibility gate and live SS dirty rows; actual saved CX/SI and post-store bounds |
-| 057D1..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
+| 057D1..05B10 | game_code_late_after_palette.asm | Resource/generator callers; mixed ownership and UNKNOWN preserved |
+| 05B11..05CC0 | sprite_banks.asm | Three exact sprite-bank leaves; live SS counts/cursors, byte operands and signed folds |
+| 05CC1..05D65 | game_code_after_sprite_banks.asm | Word-mask generator prefix and unresolved suffix |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
 | 06170..064D8 | entity_sprite_aligned.asm | Ten literal masked/OR sprite rows, forward masks, DF strings and live DS/RET |
 | 064D9..066D6 | entity_sprite_shifted.asm | Independent12/13-row callbacks, unchecked shifts, live first-pass saves and OR plane |
@@ -685,3 +687,19 @@ retain unchanged banks; their sites/events remain separate. Full zero counters,
 DF/overlap, live saves/RET, signed fold and byte-EA versus word-physical wrap
 remain explicit. See sprite-bank.md. Next translate the 5B11/5C06 sibling leaves
 before the 59BB caller; ordinary producer witnesses do not close alias domains.
+
+The two shifted sprite-bank leaves now add 346 unique main C bytes, taking
+its union to 23,430. The 5B11 leaf passes 40 fixtures/80 boundaries, all 74 sites
+and 17 outcomes, 236,282 ordered events, 56,016 independent byte checks and
+ten completed mutants. The 5C06 leaf passes 33 fixtures/66 boundaries, all 80
+sites and 17 outcomes, 913,554 events, 20,480 independent byte checks and ten
+mutants. Live saved DI becomes mask SI in the wide leaf; saved counts/cursors,
+full 255-bit shifts, byte EA wrap, DF independence and signed folds remain explicit.
+
+Both native producers feed all eight unchanged banks into native callbacks in
+nine phases per chain, through the same RAM object. Their 720/5,120 bank bytes
+and consumer sites/events are kept separate from producer acceptance. The three
+leaves now occupy the exact 432-byte sprite_banks.asm physical module, with
+start/end assertions and unchanged emission/classification. See sprite-shift-banks.md
+and sprite-wide-banks.md. Next connect their 59BB caller; full resource/provider,
+allocation, timing and gameplay domains remain open.

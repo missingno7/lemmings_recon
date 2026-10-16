@@ -37,6 +37,10 @@ times -(($-$$) != 0x563e) db 0 ; module end assertion
 times -(($-$$) != 0x5726) db 0 ; module end assertion
 %include "entity_dirty.asm"
 %include "game_code_late_after_palette.asm"
+times -(($-$$) != 0x5b11) db 0 ; module end assertion
+%include "sprite_banks.asm"
+times -(($-$$) != 0x5cc1) db 0 ; module end assertion
+%include "game_code_after_sprite_banks.asm"
 times -(($-$$) != 0x5d66) db 0 ; module end assertion
 %include "entity_graphics.asm"
 times -(($-$$) != 0x6170) db 0 ; module end assertion

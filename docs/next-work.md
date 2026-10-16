@@ -2,36 +2,42 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 23,084 bytes. The latest scoped
-acceptance adds CopySpritePlanesAndAppendMask at 5BB0..5C05: 86 bytes/45 sites,
-35 fixtures/70 core and actual-RET comparisons, all eight branch outcomes,
-287,970 ordered bus events and ten completed mutants. Independent equations
-check 4,544 output bytes. Zero DX completes 65,536 inner OR iterations at both
-boundaries, with bounded traces; zero dimensions are not zero work.
+The main-image translated-code ledger union is 23,430 bytes. The two shifted
+sprite-bank leaves now add 346 unique C bytes: GenerateThreeByteSpriteBanks
+at 5B11..5BAF (159 bytes/74 sites) and GenerateFiveByteSpriteBanks at
+5C06..5CC0 (187/80). Their 40 and 33 fixtures cover 80 and 66 core/actual-RET
+comparisons, all 17 branch outcomes in each leaf and ten completed mutants
+each. They compare 236,282 and 913,554 ordered events; separate equations
+check 56,016 and 20,480 output bytes. See sprite-shift-banks.md and
+sprite-wide-banks.md for exact domains and report inputs.
 
-Five native producer/consumer data handoffs compare ten phases using unchanged
-80/104/112/128/140-byte banks at shifts 0/1/7/3/5. Returned DS/ES/FLAGS and the
-constructed child frames stay live. Their consumer events/sites are separate;
-this is not execution of 59BB. See sprite-bank.md and the matching-input reports.
+Both native producers feed all eight of their unchanged banks into native
+drawing callbacks through the same RAM object: 720 and 5,120 bytes, with nine
+phase comparisons per producer/consumer chain. Returned DS/ES/FLAGS and actual
+constructed CALL words remain live. Consumer sites/events stay separate from
+producer acceptance. These handoffs do not execute the 59BB caller.
 
-The preceding 3634 entity loop remains connected to minimap, dirty marking,
-points, sprites and the frame-free decimal tail; UNKNOWN 366F and child stops
-remain explicit. Earlier sprite and terrain reports establish only their
-recorded scopes/inputs. Unrelated retained campaigns are historical until
-matching inputs are refreshed; this checkpoint is not aggregate acceptance.
+The three leaves at 5B11..5CC0 now occupy sprite_banks.asm (432 bytes), between
+exact boundary assertions. Byte order, classifications and UNKNOWN remain
+unchanged. The existing 5BB0 copy/mask leaf retains its scoped zero-count,
+DF/overlap, live-save and bus contracts; its affected native suite is rechecked
+with the current source layout. The 3634 drawing loop remains connected to
+its minimap, dirty, point, sprite and frame-free decimal tails; UNKNOWN 366F
+and child seams remain explicit.
 
-Next translate the sibling 5B11 leaf (159 bytes/74 sites), then 5C06 (187/80),
-before connecting their 59BB caller. Both fresh dependency views identify
-no child calls. Existing original-only witnesses establish ordinary banks:
-5B11 forms eight three-byte shifted banks, 5C06 eight five-byte wide banks.
-Preserve actual live SS counts/cursors/segments and literal byte operand order,
-DF asymmetry, zero counters and segment folding. Audit full contracts before
-reusing the ordinary output models; do not infer disjoint storage or cache
-restored values from those models. The maintained 5BB0 contract records the
-related byte EA/word physical-wrap distinction and returned CX quirk.
+Next connect the 59BB transform (262 bytes/114 sites) to the three native leaves.
+Fresh dependency views now identify no untranslated child calls. Preserve the
+initial PUSH DS before selector reads, flowing child ES/DI/FLAGS, each actual
+near CALL/RET, live outer CX saves/LOOP counts and actual final POP DS/RET.
+Use the ordinary source/output arithmetic in entity-sprites.md: source end
+5270h, output end 194B8h. Verify the complete normal transform and independent
+bank layout, then exercise changed child returns, selector/save aliases and
+DF-sensitive 5BB0 paths. Do not replace the source, bank or saved state with
+converted copies, or infer allocation/lifetime bounds from nominal dimensions.
 
-This is focused acceptance. Full campaigns and matching inputs remain necessary
-for aggregate acceptance, and SDL3 follows the portable core.
+This is focused acceptance. Earlier unrelated campaigns remain historical
+until their recorded inputs match. Full contracts and matching complete native
+campaign inputs remain necessary for aggregate acceptance; SDL3 follows the core.
 
 ## Retained terrain campaign
 

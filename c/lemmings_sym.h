@@ -351,9 +351,9 @@
 #define CS_sub_597D 0x597Du
 #define CS_sub_59BB 0x59BBu
 #define CS_GenerateGraphicsMaskBanks 0x5AC1u
-#define CS_sub_5B11 0x5B11u
+#define CS_GenerateThreeByteSpriteBanks 0x5B11u
 #define CS_CopySpritePlanesAndAppendMask 0x5BB0u
-#define CS_sub_5C06 0x5C06u
+#define CS_GenerateFiveByteSpriteBanks 0x5C06u
 #define CS_sub_5CC1 0x5CC1u
 #define CS_GenerateWordMaskShifts 0x5CDDu
 #define CS_GenerateByteMaskShifts 0x5D66u
@@ -884,4 +884,6 @@
 #define CS_EntityDrawingEarlyReturn 0x368Du
 #define SEG09A9_EntityRecordDrawingSkipGate 0x00AEu
 #define CS_SpriteBankReturn 0x5C05u
+#define CS_ThreeByteSpriteBanksReturn 0x5BAFu
+#define CS_FiveByteSpriteBanksReturn 0x5CC0u
 #endif
