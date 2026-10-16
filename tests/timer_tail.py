@@ -166,19 +166,24 @@ class Access(poll.Access):
 
 
 class Machine(base.OriginalMachine):
-    def __init__(self,c,memory,r,device,core):
+    def __init__(self,c,memory,r,device,core,*,instructions=None,access=None,
+                 before_extra=None,returns_extra=None,changed_extra=None,mutable_extra=()):
         self.child_status=0;self.callback_target=None
-        access=Access(c,memory,r,device)
+        if access is None:access=Access(c,memory,r,device)
         def before(machine,ins):
+            if before_extra and before_extra(machine,ins):return True
             if poll._before(machine,ins):
                 machine.child_status=machine.status;machine.status=5;return True
-            missing=(ins.mnemonic=='out' and c.get('missing_out')) or (ins.mnemonic=='in' and c.get('missing_in'))
+            missing=(ins.mnemonic=='out' and ins.operands[-1].size==1 and c.get('missing_out')) or (ins.mnemonic=='in' and c.get('missing_in'))
             if missing:
                 machine.child_status=1 if ins.address==0x18B4 else 5
                 machine.service_status=0 if ins.address==0x18B4 else 1
                 machine.stop(5);return True
             return False
         def changed(machine,off):
+            if changed_extra:
+                outcome=changed_extra(machine,off)
+                if outcome is not None:return outcome
             if off==0x43CD:machine.child_status=5;return (5,2)
             if off in (0x4358,0x4385,0x414E) or (off==0x42A0 and c['mode']==1):
                 machine.child_status=4;return (5,0)
@@ -194,10 +199,11 @@ class Machine(base.OriginalMachine):
                  0x4358:{0x42A7},0x4385:{0x42A7},0x43CD:{0x4341,0x4366},
                  0x3FE8:{0x1877},0x3FEE:{0x1877},0x414E:{0x3FE1},
                  0x58D1:{0x1881},0x18B6:{0x1891}}
-        super().__init__(c,memory,r,device,core,instructions=INS,access=access,
+        returns.update(returns_extra or {})
+        super().__init__(c,memory,r,device,core,instructions=INS if instructions is None else instructions,access=access,
             outer_returns={0x18B1},child_returns=returns,max_steps=MAX_STEPS,
             changed_return_status=changed,before=before,interrupt=interrupt,
-            mutable_operands=((0x4137,2),(0x5884,2)),
+            mutable_operands=((0x4137,2),(0x5884,2))+tuple(mutable_extra),
             far_calls={0x1899:(0x189D,BINDINGS['chain'],provider('chain',c))})
     def run(self):
         out=super().run()
@@ -207,16 +213,18 @@ class Machine(base.OriginalMachine):
 
 
 class Native:
-    def __init__(self,directory,mutation=0):
-        self.library=ct.CDLL(str(build(Path(directory)/f'timer-{mutation}.dll',mutation,'timer_tail')))
+    def __init__(self,directory,mutation=0,*,cluster='timer_tail',function_prefix='lmn_game_timer_tail',access_type=Access):
+        self.access_type=access_type
+        self.library=ct.CDLL(str(build(Path(directory)/f'timer-{mutation}.dll',mutation,cluster)))
         self.functions={}
         for core in (True,False):
-            fn=getattr(self.library,'lmn_game_timer_tail_'+('core' if core else 'adapter'))
+            fn=getattr(self.library,function_prefix+'_'+('core' if core else 'adapter'))
             fn.argtypes=[base.MEM,ct.POINTER(base.Regs)]+[ct.POINTER(base.InterruptService)]*4+[ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
             fn.restype=Result;self.functions[core]=fn
     def run(self,c,memory,r,device,core):
-        memory=bytearray(memory);access=Access(c,memory,dict(r),copy.deepcopy(device))
+        memory=bytearray(memory);access=self.access_type(c,memory,dict(r),copy.deepcopy(device))
         cb=base.NativeCallbacks(access,missing_in=c.get('missing_in',False),missing_out=c.get('missing_out',False))
+        if c.get('missing_word_out'):cb.bus.out_word=base.OUT()
         keep=[];ptrs=[]
         for name in ('mouse','int60','int61','chain'):
             body=provider(name,c)

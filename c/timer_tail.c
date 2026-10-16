@@ -1,11 +1,16 @@
 #include "timer_tail.h"
 
 #include "lemmings_sym.h"
+#include "fixed_pattern_update.h"
+#include "palette_ports.h"
 #include "ui_commands.h"
 #include "vga_mirrors.h"
 
 #ifndef TIMER_TAIL_MUTATION
 #define TIMER_TAIL_MUTATION 0
+#endif
+#ifndef GAME_TIMER_MUTATION
+#define GAME_TIMER_MUTATION 0
 #endif
 
 enum {
@@ -176,6 +181,49 @@ static uint8_t inc8(TimerTailState *s, uint8_t before) {
     return result;
 }
 
+static uint16_t szp16(uint16_t value) {
+    uint16_t flags = szp8((uint8_t)value);
+    if (value == 0u)
+        flags |= ZF;
+    else
+        flags &= (uint16_t)~ZF;
+    if (value & 0x8000u)
+        flags |= SF;
+    else
+        flags &= (uint16_t)~SF;
+    return flags;
+}
+
+static uint16_t add16(TimerTailState *s, uint16_t left, uint16_t right) {
+    uint32_t sum = (uint32_t)left + (uint32_t)right;
+    uint16_t result = (uint16_t)sum;
+    uint16_t flags = (uint16_t)(s->r.flags & (uint16_t)~ARITH);
+    flags |= szp16(result);
+    if (sum > 0xffffu)
+        flags |= CF;
+    if ((left ^ right ^ result) & 0x0010u)
+        flags |= AF;
+    if (((uint16_t)~(left ^ right) & (left ^ result) & 0x8000u) != 0u)
+        flags |= OF;
+    s->r.flags = flags;
+    return result;
+}
+
+static uint8_t add8(TimerTailState *s, uint8_t left, uint8_t right) {
+    uint16_t sum = (uint16_t)left + right;
+    uint8_t result = (uint8_t)sum;
+    uint16_t flags = (uint16_t)(s->r.flags & (uint16_t)~ARITH);
+    flags |= szp8(result);
+    if (sum > 0xffu)
+        flags |= CF;
+    if ((left ^ right ^ result) & 0x10u)
+        flags |= AF;
+    if (((uint8_t)~(left ^ right) & (left ^ result) & 0x80u) != 0u)
+        flags |= OF;
+    s->r.flags = flags;
+    return result;
+}
+
 static uint8_t inc_memory8(TimerTailState *s, uint16_t segment,
                            uint16_t offset) {
     uint16_t access_flags = s->r.flags;
@@ -193,6 +241,30 @@ static LmnTimerTailResult result_of(const TimerTailState *s) {
     result.child_status = s->child_status;
     result.service_status = s->service_status;
     return result;
+}
+
+static TimerTailState state_from_registers(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *int60, const LmnInterruptService *int61,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    TimerTailState s;
+    s.memory = memory;
+    s.mouse = mouse;
+    s.int60 = int60;
+    s.int61 = int61;
+    s.saved_int08 = saved_int08;
+    s.ports = ports;
+    s.bus = bus;
+    s.r = *registers;
+    s.entry_cs = registers->cs;
+    s.entry_ds = registers->ds;
+    s.entry_ss = registers->ss;
+    s.status = LMN_TIMER_TAIL_READY;
+    s.child_status = 0u;
+    s.service_status = 0u;
+    s.saved_chain_returned = 0u;
+    return s;
 }
 
 static int child_result(TimerTailState *s, uint16_t child_status,
@@ -350,24 +422,9 @@ LmnTimerTailResult lmn_game_timer_tail_core(uint8_t *memory,
     const LmnInterruptService *int60, const LmnInterruptService *int61,
     const LmnInterruptService *saved_int08,
     const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
-    TimerTailState s;
+    TimerTailState s = state_from_registers(memory, registers, mouse,
+        int60, int61, saved_int08, ports, bus);
     uint8_t value;
-
-    s.memory = memory;
-    s.mouse = mouse;
-    s.int60 = int60;
-    s.int61 = int61;
-    s.saved_int08 = saved_int08;
-    s.ports = ports;
-    s.bus = bus;
-    s.r = *registers;
-    s.entry_cs = registers->cs;
-    s.entry_ds = registers->ds;
-    s.entry_ss = registers->ss;
-    s.status = LMN_TIMER_TAIL_READY;
-    s.child_status = 0u;
-    s.service_status = 0u;
-    s.saved_chain_returned = 0u;
 
     s.r.ip = CS_GameTimerTail183E;
     /* Encoded XOR DL,DL @183E preserves DH and leaves AF undefined. */
@@ -449,6 +506,289 @@ after_mirrors:
 
     finish_local_tail(&s);
     return result_of(&s);
+}
+
+static int full_child_result(TimerTailState *s, uint16_t child_status,
+                             uint16_t service_status,
+                             uint16_t continuation) {
+    if (child_status != 0u) {
+        s->status = LMN_TIMER_TAIL_CHILD_STOP;
+        s->child_status = child_status;
+        s->service_status = service_status;
+        return 0;
+    }
+    if (s->r.cs != s->entry_cs || s->r.ip != continuation) {
+#if GAME_TIMER_MUTATION == 5
+        /* Mutant discards the actual palette/pattern CALL return target. */
+        s->r.cs = s->entry_cs;
+        s->r.ip = continuation;
+#else
+        s->status = LMN_TIMER_TAIL_CHANGED_CHILD_RETURN;
+        return 0;
+#endif
+    }
+    return 1;
+}
+
+static int timer_palette_call(TimerTailState *s,
+    LmnTimerPaletteEntry entry, uint16_t entry_ip, uint16_t return_ip) {
+    LmnTimerPaletteResult child;
+    push16(s, return_ip);
+    s->r.ip = entry_ip;
+    child = lmn_timer_palette_adapter(s->memory, &s->r, entry,
+                                     s->ports, s->bus);
+    s->r = child.registers;
+
+    if (child.status == LMN_TIMER_PALETTE_MISSING_INPUT) {
+        s->status = LMN_TIMER_TAIL_CHILD_STOP;
+        s->child_status = child.status;
+        return 0;
+    }
+    if (child.status == LMN_TIMER_PALETTE_MISSING_OUTPUT) {
+        s->status = LMN_TIMER_TAIL_CHILD_STOP;
+        s->child_status = child.status;
+        return 0;
+    }
+    if (child.status == LMN_TIMER_PALETTE_CHANGED_CHILD_RETURN) {
+#if GAME_TIMER_MUTATION == 5
+        /* Ignore the changed nested palette RET; then consume this CALL's word. */
+        s->r.ip = pop16_from(s, s->r.ss);
+        return full_child_result(s, 0u, 0u, return_ip);
+#else
+        s->status = LMN_TIMER_TAIL_CHILD_STOP;
+        s->child_status = child.status;
+        return 0;
+#endif
+    }
+    if (child.status != LMN_TIMER_PALETTE_READY) {
+        s->status = LMN_TIMER_TAIL_CHILD_STOP;
+        s->child_status = child.status;
+        return 0;
+    }
+    return full_child_result(s, 0u, 0u, return_ip);
+}
+
+static int fixed_pattern_call(TimerTailState *s) {
+    uint16_t child_status;
+    push16(s, CS_GameTimerTail183E);                         /* CALL 5827 returns 183E */
+    s->r.ip = CS_UpdateFixedWordPattern;
+    child_status = lmn_update_fixed_word_pattern_adapter(s->memory,
+                                                          &s->r, s->bus);
+    if (child_status == LMN_FIXED_PATTERN_UPDATE_CHANGED_CHILD_RETURN) {
+#if GAME_TIMER_MUTATION == 5
+        /* Ignore the changed nested pattern RET and consume this CALL's word. */
+        s->r.ip = pop16_from(s, s->r.ss);
+        return full_child_result(s, 0u, 0u, CS_GameTimerTail183E);
+#else
+        s->status = LMN_TIMER_TAIL_CHILD_STOP;
+        s->child_status = child_status;
+        return 0;
+#endif
+    }
+    return full_child_result(s, child_status, 0u, CS_GameTimerTail183E);
+}
+
+#if GAME_TIMER_MUTATION != 1
+static uint16_t read_code_word(const TimerTailState *s, uint16_t offset) {
+    uint32_t address = physical(s->r.cs, offset);
+    uint8_t low = s->memory[address];
+    uint8_t high = s->memory[(address + 1u) & MEMORY_MASK];
+    return (uint16_t)(low | ((uint16_t)high << 8));
+}
+#endif
+
+static int timer_word_out(TimerTailState *s, uint16_t port,
+                          uint16_t value, uint16_t instruction_ip) {
+    s->r.ip = instruction_ip;
+    if (!s->bus || !s->bus->out_word) {
+        s->status = LMN_GAME_TIMER_MISSING_PORT_OUTPUT;
+        return 0;
+    }
+    s->bus->out_word(s->bus->context, port, value, s->r.flags);
+    return 1;
+}
+
+static int timer_byte_out(TimerTailState *s, uint16_t port,
+                          uint8_t value, uint16_t instruction_ip) {
+    s->r.ip = instruction_ip;
+    if (!s->ports || !s->ports->out_byte) {
+        s->status = LMN_GAME_TIMER_MISSING_PORT_OUTPUT;
+        return 0;
+    }
+    s->ports->out_byte(s->ports->context, s->memory, port, value,
+                       s->r.flags);
+    return 1;
+}
+
+static int timer_byte_in(TimerTailState *s, uint16_t instruction_ip) {
+    uint8_t value;
+    s->r.ip = instruction_ip;
+    if (!s->ports || !s->ports->in_byte) {
+        s->status = LMN_GAME_TIMER_MISSING_BYTE_INPUT;
+        return 0;
+    }
+    value = s->ports->in_byte(s->ports->context, s->memory, s->r.dx,
+                              s->r.flags);
+    s->r.ax = (uint16_t)((s->r.ax & 0xff00u) | value);
+    return 1;
+}
+
+static int game_timer_prefix(TimerTailState *s) {
+    uint8_t value;
+    uint16_t crtc_value;
+#if GAME_TIMER_MUTATION == 3
+    uint16_t cached_pit_reload;
+#endif
+
+    /* Preserve the ten actual handler saves in original push order. */
+    s->r.ip = 0x17c7u; push16(s, s->r.ax);
+    s->r.ip = 0x17c8u; push16(s, s->r.ds);
+    s->r.ip = 0x17c9u; push16(s, s->r.es);
+    s->r.ip = 0x17cau; push16(s, s->r.cx);
+    s->r.ip = 0x17cbu; push16(s, s->r.dx);
+    s->r.ip = 0x17ccu; push16(s, s->r.bx);
+    s->r.ip = 0x17cdu; push16(s, s->r.bp);
+    s->r.ip = 0x17ceu; push16(s, s->r.si);
+    s->r.ip = 0x17cfu; push16(s, s->r.di);
+    s->r.ip = 0x17d0u; push16(s, s->r.flags);
+
+    /* MOV AX,imm16 at 17D1 reads its operand from the canonical CS image. */
+    s->r.ip = 0x17d1u;
+#if GAME_TIMER_MUTATION == 1
+    s->r.ax = s->entry_ds;
+#else
+    s->r.ax = read_code_word(s, CS_GameTimerDataSegmentOperand17D2);
+#endif
+    s->r.ds = s->r.ax;
+
+    s->r.ip = 0x17d6u;
+    value = read8(s, s->r.ds, SEG09A9_ConfigurationOption200E);
+    cmp8(s, value, 0xffu);
+    if ((s->r.flags & ZF) != 0u) {
+        s->r.ip = CS_GameTimerTail183E;
+        return 1;
+    }
+
+    if (!timer_palette_call(s, LMN_TIMER_PALETTE_ENTRY_BEFORE,
+                            CS_UpdateTimerPaletteBefore5473,
+                            CS_GameTimerAfterPaletteBefore17E0))
+        return 0;
+
+    s->r.ip = 0x17e0u;
+    s->r.flags = (uint16_t)(s->r.flags & (uint16_t)~IF); /* CLI @17E0 */
+    s->r.ip = 0x17e1u;
+    s->r.dx = read16(s, s->r.ds, SEG09A9_DisplayControllerBasePort);
+    s->r.ip = 0x17e5u;
+    s->r.bx = read16(s, s->r.ds, SEG09A9_AlternateDrawingOrigin);
+    s->r.ip = 0x17e9u;
+    crtc_value = read16(s, s->r.ds, SEG09A9_DrawingPageByteOffset);
+    s->r.bx = add16(s, s->r.bx, crtc_value);
+    s->r.ip = 0x17edu;
+    s->r.bx = add16(s, s->r.bx, 2u);
+
+    /* MOV AH,BH; MOV AL,0C; OUT DX,AX. */
+    s->r.ax = (uint16_t)((s->r.ax & 0x00ffu) | (s->r.bx & 0xff00u));
+    s->r.ax = (uint16_t)((s->r.ax & 0xff00u) | 0x0cu);
+    if (!timer_word_out(s, s->r.dx, s->r.ax, 0x17f4u))
+        return 0;
+    /* MOV AH,BL; INC AL; OUT DX,AX. */
+    s->r.ax = (uint16_t)((s->r.ax & 0x00ffu) |
+                         ((s->r.bx & 0x00ffu) << 8));
+    value = inc8(s, (uint8_t)s->r.ax);
+    s->r.ax = (uint16_t)((s->r.ax & 0xff00u) | value);
+    if (!timer_word_out(s, s->r.dx, s->r.ax, 0x17f9u))
+        return 0;
+
+    /* ADD DL,6 leaves DH intact; mutation2 widens the addition to DX. */
+    s->r.ip = 0x17fau;
+    if (GAME_TIMER_MUTATION == 2) {
+        s->r.dx = add16(s, s->r.dx, 6u);
+    } else {
+        value = add8(s, (uint8_t)s->r.dx, 6u);
+        s->r.dx = (uint16_t)((s->r.dx & 0xff00u) | value);
+    }
+    s->r.flags = (uint16_t)(s->r.flags | IF);  /* STI @17FD */
+
+#if GAME_TIMER_MUTATION == 3
+    cached_pit_reload = read16(s, s->r.ds, SEG09A9_TimerPitReload1FC9);
+#endif
+    /* IN/three short jumps/TEST/JZ. The callback owns the finite bound. */
+    for (;;) {
+        if (!timer_byte_in(s, 0x17feu))
+            return 0;
+        s->r.ip = 0x1805u;
+        logic8(s, (uint8_t)((uint8_t)s->r.ax & 0x08u));
+        if ((s->r.flags & ZF) == 0u)
+            break;
+    }
+    /* The second literal loop waits for bit 3 to clear. */
+    for (;;) {
+        if (!timer_byte_in(s, 0x1809u))
+            return 0;
+        s->r.ip = 0x1810u;
+        logic8(s, (uint8_t)((uint8_t)s->r.ax & 0x08u));
+        if ((s->r.flags & ZF) != 0u)
+            break;
+    }
+
+    s->r.ip = 0x1814u;
+#if GAME_TIMER_MUTATION != 4
+    s->r.flags = (uint16_t)(s->r.flags & (uint16_t)~IF); /* CLI @1814 */
+#endif
+    s->r.ip = 0x1815u;
+#if GAME_TIMER_MUTATION == 3
+    s->r.cx = cached_pit_reload;
+#else
+    s->r.cx = read16(s, s->r.ds, SEG09A9_TimerPitReload1FC9);
+#endif
+    s->r.ax = (uint16_t)((s->r.ax & 0xff00u) | 0x36u);
+    if (!timer_byte_out(s, 0x43u, (uint8_t)s->r.ax, 0x181bu))
+        return 0;
+    s->r.ax = (uint16_t)((s->r.ax & 0xff00u) | (uint8_t)s->r.cx);
+    if (!timer_byte_out(s, 0x40u, (uint8_t)s->r.ax, 0x1825u))
+        return 0;
+    s->r.ax = (uint16_t)((s->r.ax & 0xff00u) | (uint8_t)(s->r.cx >> 8));
+    if (!timer_byte_out(s, 0x40u, (uint8_t)s->r.ax, 0x182fu))
+        return 0;
+
+    s->r.flags = (uint16_t)(s->r.flags | IF);  /* STI @1837 */
+    if (!timer_palette_call(s, LMN_TIMER_PALETTE_ENTRY_AFTER,
+                            CS_UpdateTimerPaletteAfter553D,
+                            CS_GameTimerAfterPaletteAfter183B))
+        return 0;
+    if (!fixed_pattern_call(s))
+        return 0;
+    s->r.ip = CS_GameTimerTail183E;
+    return 1;
+}
+
+LmnTimerTailResult lmn_game_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *int60, const LmnInterruptService *int61,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    TimerTailState s = state_from_registers(memory, registers, mouse,
+        int60, int61, saved_int08, ports, bus);
+    LmnTimerTailResult result;
+
+    s.r.ip = CS_GameTimerIrqHandler;
+    if (!game_timer_prefix(&s))
+        return result_of(&s);
+    result = lmn_game_timer_tail_core(memory, &s.r, mouse, int60, int61,
+                                      saved_int08, ports, bus);
+    return result;
+}
+
+LmnTimerTailResult lmn_game_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *int60, const LmnInterruptService *int61,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    LmnTimerTailResult result = lmn_game_timer_core(memory, registers,
+        mouse, int60, int61, saved_int08, ports, bus);
+    if (result.status == LMN_TIMER_TAIL_READY)
+        lmn_interrupt_return(memory, &result.registers, bus);
+    return result;
 }
 
 LmnTimerTailResult lmn_game_timer_tail_adapter(uint8_t *memory,

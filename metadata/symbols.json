@@ -6966,8 +6966,17 @@
       "Signature-matched legacy entry lead",
       "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 235
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 235,
+    "c_implementation": "c/timer_tail.c",
+    "c_core": "lmn_game_timer_core",
+    "c_code_ranges": [
+      [
+        6087,
+        6322
+      ]
+    ],
+    "verification_evidence": "tests/game_timer.py:93 fixtures/186 original-native comparisons,235 own bytes/109 sites/36 direct outcomes;119 new bytes,2840-byte connected domain,1223 integrated sites/150 outcomes,92618 original instructions,72572 events (640 declared interrupt transport,520 provider accesses/54 calls),5 completed mutants. Actual ten saves and hardware frame, live relocated17D2 operand, exactFF gate, CRTC/PIT packets and finite status polling, actual native palette/pattern/input/command/mirror children and changed-return/provider stops. Runtime bank initialization, unknown callbacks, opaque ISR bodies and asynchronous IRQ timing remain open. docs/timer-frontier.md"
   },
   {
     "address": 6206,
@@ -63978,6 +63987,70 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Observed DS source operand in timer palette paths; no private copy, sole owner, allocation extent or complete initialization is inferred"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6098,
+    "segment": 0,
+    "kind": "operand",
+    "size": 2,
+    "symbol_name": "GameTimerDataSegmentOperand17D2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Complete relocated IMM16 at17D1 after ten actual saves; live code operand separate from raster data accesses; docs/timer-frontier.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6112,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterPaletteBefore17E0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual5473 near return after CALL17DD; preserve changed target"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 6203,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerAfterPaletteAfter183B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual553D near return after CALL1838; CALL5827 then falls through183E"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8137,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "TimerPitReload1FC9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Startup clear; config11EC/1344=3468, parsed BX139A, calibration15B4/15F4/15FD; read live1815 after status polling. Zero and all words remain unchecked; docs/timer-frontier.md"
     ],
     "verification_status": "STATIC"
   }

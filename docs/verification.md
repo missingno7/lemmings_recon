@@ -51,6 +51,14 @@ The timer's saved-INT08 chain reuses the same bound-provider/IRET consumer after
 its own literal synthetic-frame writes and far-pointer reads; its outer hardware
 IRET uses that consumer without imposing the synthetic return target. Word OUT
 is accepted only when the fixture supplies its word-port contract.
+Byte OUT and word OUT have separate provider availability: missing byte output
+does not disable the raster bus's word output. Full timer composition exercises
+that distinction at the CRTC word writes and later PIT byte writes. The full
+entry reuses timer_tail.py's declared service/frame boundaries and native binding
+with extra prefix/palette/pattern policies, rather than adding another engine.
+The fixed-pattern child introduces unsigned MUL to this shared domain. Its CF/OF
+are defined; SF/ZF/AF/PF are excluded until later instructions define them again.
+Instruction execution and canonical saved bytes remain unmodified.
 
 BusAccess supplies one canonical RAM image, VGA aliases and bounded ordered
 observations. NativeCallbacks turns callback errors into immediate worker failure;
@@ -74,3 +82,10 @@ Do not remove real dependencies to avoid invalidation. Focused acceptance is not
 aggregate acceptance: tools/verify.py --contracts and a matching complete native
 campaign remain the aggregate gates. The architecture and native smoke-test
 completion bar are documented in architecture.md.
+
+The legacy video-restore and allocation original contracts no longer pin
+docs/next-work.md: neither reads that progress document, and video-restore's
+inherited hash set previously invalidated palette transition workers on a
+progress correction. Their actual fixture, contract, executable, source and
+tool inputs remain pinned. Regenerate affected reports after this manifest
+change; existing reports are not renewed by preserving or editing hashes.

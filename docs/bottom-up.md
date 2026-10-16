@@ -902,3 +902,19 @@ returns remain canonical; no palette shadow state is added. Fresh17C7 tree and
 bottom-up views leave only its119-byte prefix before connected full-handler
 acceptance, retaining the tested5827 domain and input/ISR platform seams.
 See next-work.md and palette-pointer-frontier.md for those limits.
+
+The next milestone connects the full17C7 handler using that same machinery.
+Its119 new prefix bytes bring the main ledger union to26,914; the235-byte
+handler includes the already counted116-byte tail. Actual register saves,
+relocated DS operand, CRTC word output, byte-only status-port adjustment, finite
+polling, PIT output and palette/pattern CALL frames now reach the tested tail.
+The2,840-byte connected domain passes93 fixtures/186 comparisons,109 own sites/
+36 outcomes and five completed mutants; integrated coverage is1,223 sites/150
+outcomes. Native memory, frames, returned segments and hardware IRET stay live.
+
+The shared verifier now separates word/byte output availability and tracks MUL's
+undefined arithmetic flags for the fixed-pattern child. The full-entry suite
+reuses the narrower tail's fixture/service and native bindings; it adds no CPU,
+bus or comparison engine. The tail regression preserves its original accounting.
+Next connect the54-byte menu timer and timer installers as one IRQ lifecycle,
+retaining the unknown callback/provider/timing seams. See next-work.md.

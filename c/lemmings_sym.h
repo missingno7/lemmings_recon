@@ -976,4 +976,8 @@
 #define SEG09A9_TimerPaletteSource2638 0x2638u
 #define SEG09A9_TimerPaletteSource2650 0x2650u
 #define SEG09A9_TimerPaletteSource2668 0x2668u
+#define CS_GameTimerDataSegmentOperand17D2 0x17D2u
+#define CS_GameTimerAfterPaletteBefore17E0 0x17E0u
+#define CS_GameTimerAfterPaletteAfter183B 0x183Bu
+#define SEG09A9_TimerPitReload1FC9 0x1FC9u
 #endif

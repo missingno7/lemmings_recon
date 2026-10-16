@@ -2,7 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 26,795 bytes. The timer palette
+The main-image translated-code ledger union is26,914 bytes. The full17C7 timer
+now connects2,840 known bytes through the actual palette, fixed-pattern, input,
+command, mirror and interrupt-return paths. Its93 fixtures/186 comparisons cover
+all109 timer sites/36 direct outcomes and detect five completed mutants. The
+integrated run executes1,223 sites/150 outcomes and92,618 original instructions,
+comparing72,572 events (640 declared interrupt transport and520 provider accesses
+across54 calls). Only119 prefix bytes are new; the116-byte tail counts once.
+Opaque ISR bodies, unknown callback domains, generated-bank initialization and
+asynchronous timing remain open. See timer-frontier.md.
+
+The preceding timer palette
 callers5473/553D and sequential DAC leaf548C add135 bytes in a169-byte domain,
 including the previously tested34-byte attribute child. The shared-verifier
 campaign passes67 fixtures/132 comparisons, all81 sites/20 outcomes and five
@@ -16,7 +26,8 @@ mirror and EOI children in a 1,374-byte domain. Its 48 fixtures/96 comparisons
 cover all 49 tail sites/15 direct outcomes and detect five completed mutants.
 The integrated run executes 443 sites/101 outcomes and 11,712 instructions,
 comparing 8,634 events (616 declared IRET/INT transport and 264 provider accesses
-across 50 calls). Prefix, opaque ISR bodies and asynchronous timing remain open.
+across 50 calls). Its prefix is now composed above; opaque ISR bodies and
+asynchronous timing remain open.
 See timer-frontier.md for the two live return frames and shared phase ownership.
 
 Input commands at
@@ -46,10 +57,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Compose the119-byte17C7 prefix with the accepted5473/553D palette cluster,
-   finite status-port input, tested5827 fixed-pattern child and accepted
-   tail. The119-byte prefix and116-byte tail overlap the235-byte full handler:
-   count shared bytes/sites once. Preserve the checksum overlap and saved frames.
+1. Connect the54-byte4C47 menu timer to the same input/EOI and saved-vector
+   contracts, then its19-byte5028 installer and82-byte1644 game-timer installer.
+   Audit actual save frames, opposite modulo-four chain phase, live vector writes,
+   PIT bytes and setup/cleanup ownership. Then close the16D4 keyboard producer,
+   its17B4 port helper and1562 installer. Reuse the shared verifier and interrupt
+   transport; retain42A5 and UNKNOWN4C65.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

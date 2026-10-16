@@ -6,6 +6,18 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 from graph import body,dependency_order,routine_views
 
 class GraphTests(unittest.TestCase):
+    def test_explicit_native_ranges_do_not_require_a_physical_entry_size(self):
+        analysis=dict(instructions=[dict(address=0,mnemonic='nop',size=1),
+                                    dict(address=1,mnemonic='ret',size=1)],
+                      edges=[dict(source=0,target=1,kind='fallthrough')],
+                      unresolved=[],routines=[0])
+        entry=dict(address=0,segment=0,kind='entry',size=None,symbol_name='SharedParent',
+                   verification_status='TESTED',c_implementation='fixture.c',c_code_ranges=[[0,2]])
+        self.assertEqual(routine_views(analysis,[entry])[0]['sites'],{0,1})
+        del entry['c_code_ranges']
+        with self.assertRaisesRegex(ValueError,'Missing native extent'):
+            routine_views(analysis,[entry])
+
     def test_native_continuation_has_a_scope_without_closing_its_parent(self):
         analysis=dict(instructions=[dict(address=p,mnemonic=m,size=n) for p,m,n in
             ((0,'nop',1),(1,'call',3),(4,'nop',1),(5,'ret',1),(8,'ret',1))],

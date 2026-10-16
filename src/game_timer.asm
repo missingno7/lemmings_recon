@@ -3,7 +3,10 @@
 ; Children consume actual CALL frames; chain1899 consumes its synthetic IRET frame.
 ; ReturnedDS owns1FCF/1FCD before POPDS; outer IRET remains independent.
 ; The ten checksum bytes188F..1898 retain their overlapping code/data meaning.
-; Prefix17C7..183D remains untranslated; docs/timer-frontier.md.
+; Prefix contract: actual saves precede live relocated17D2; exactFF gate200E.
+; Alternate origin+page+2 wraps16; two wordCRTC packets; ADD DL6 wraps8.
+; STI exposes both status polls; CLI then live1FC9 programs36/low/high PIT.
+; Actual palette/pattern returns17E0/183B/183E; docs/timer-frontier.md.
 times -(($-$$) != 0x17c7) db 0
 GameTimerIrqHandler:
     push ax ; @017C7
@@ -16,11 +19,13 @@ GameTimerIrqHandler:
     push si ; @017CE
     push di ; @017CF
     pushf ; @017D0
+GameTimerDataSegmentOperand17D2 equ $+1
     mov ax,0x9a9 ; @017D1
     mov ds,ax ; @017D4
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @017D6
     jz GameTimerTail183E ; @017DB
     call UpdateTimerPaletteBefore5473 ; @017DD
+GameTimerAfterPaletteBefore17E0:
     cli ; @017E0
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @017E1
     mov bx,[AlternateDrawingOrigin-GameDataImage] ; @017E5
@@ -55,7 +60,7 @@ loc_1810:
     test al,0x8 ; @01810
     jnz loc_1809 ; @01812
     cli ; @01814
-    mov cx,[0x1fc9] ; @01815
+    mov cx,[TimerPitReload1FC9-GameDataImage] ; @01815
     mov al,0x36 ; @01819
     out 0x43,al ; @0181B
     jmp short loc_181F ; @0181D
@@ -82,6 +87,7 @@ loc_1835:
 loc_1837:
     sti ; @01837
     call UpdateTimerPaletteAfter553D ; @01838
+GameTimerAfterPaletteAfter183B:
     call UpdateFixedWordPattern ; @0183B
 GameTimerTail183E:
     db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0183E

@@ -301,6 +301,7 @@ class OriginalMachine:
             elif old.mnemonic in ('add','sub','cmp','neg','popf'):self.mask=FLAGS
             elif old.mnemonic in ('inc','dec'):self.mask|=0x8D4
             elif old.mnemonic=='ror':self.mask|=0x801
+            elif old.mnemonic=='mul':self.mask=(self.mask&~0xD4)|0x801
         expected=bytearray(self.loaded[off:off+ins.size])
         if off in self.mutable_operands:
             start,width=self.mutable_operands[off]
@@ -319,7 +320,8 @@ class OriginalMachine:
             self.previous=None;self.pending=True;u.emu_stop();return
         if self.before and self.before(self,ins):return
         if ins.mnemonic in ('in','out'):
-            missing=self.c.get('missing_in') if ins.mnemonic=='in' else self.c.get('missing_out')
+            missing=(self.c.get('missing_in') if ins.mnemonic=='in' else
+                     self.c.get('missing_out' if ins.operands[-1].size==1 else 'missing_word_out'))
             if missing:
                 self.service_status=self.c.get('missing_service_status',0)
                 self.stop(self.c.get('missing_port_status',1));return

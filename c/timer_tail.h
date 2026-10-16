@@ -18,7 +18,9 @@ enum LmnTimerTailStatus {
     LMN_TIMER_TAIL_EXTERNAL_STOP = 2,
     LMN_TIMER_TAIL_CHANGED_INTERRUPT_RETURN = 3,
     LMN_TIMER_TAIL_CHANGED_CHILD_RETURN = 4,
-    LMN_TIMER_TAIL_CHILD_STOP = 5
+    LMN_TIMER_TAIL_CHILD_STOP = 5,
+    LMN_GAME_TIMER_MISSING_BYTE_INPUT = 6,
+    LMN_GAME_TIMER_MISSING_PORT_OUTPUT = 7
 };
 
 /* The caller supplies the live timer frame already present at 183E:
@@ -33,6 +35,27 @@ LmnTimerTailResult lmn_game_timer_tail_core(
     const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
 
 LmnTimerTailResult lmn_game_timer_tail_adapter(
+    uint8_t *memory, const LmnRegs *registers,
+    const LmnInputPollService *mouse,
+    const LmnInterruptService *int60,
+    const LmnInterruptService *int61,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
+/* Full handler entry at 17C7, including its ten live PUSH saves. The actual
+   hardware IP/CS/FLAGS frame is already at SS:SP. registers.flags supplies live
+   architectural entry FLAGS (reserved bits normalized, bit1 set, TF clear);
+   a hardware IRQ normally also cleared IF. Constructed IF-set calls are a
+   separate synchronous test domain. Uses the shared tail's service seams. */
+LmnTimerTailResult lmn_game_timer_core(
+    uint8_t *memory, const LmnRegs *registers,
+    const LmnInputPollService *mouse,
+    const LmnInterruptService *int60,
+    const LmnInterruptService *int61,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
+LmnTimerTailResult lmn_game_timer_adapter(
     uint8_t *memory, const LmnRegs *registers,
     const LmnInputPollService *mouse,
     const LmnInterruptService *int60,

@@ -1,3 +1,4 @@
+TimerPitReload1FC9 equ GameDataImage+0x1FC9
 TimerPaletteSource2638 equ GameDataImage+0x2638
 TimerPaletteSource2650 equ GameDataImage+0x2650
 TimerPaletteSource2668 equ GameDataImage+0x2668

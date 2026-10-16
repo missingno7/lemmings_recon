@@ -49,7 +49,13 @@ def routine_views(analysis,ledger):
         row=symbols.get(entry,dict(symbol_name=f'entry_{entry:04X}',verification_status='UNRESOLVED'))
         allowed=None
         if row.get('c_implementation'):
-            allowed={p for a,b in row.get('c_code_ranges',[(entry,entry+row['size'])]) for p in range(a,b)}
+            ranges=row.get('c_code_ranges')
+            if ranges is None:
+                size=row.get('size')
+                if not isinstance(size,int) or size<=0:
+                    raise ValueError('Missing native extent for '+row['symbol_name'])
+                ranges=[(entry,entry+size)]
+            allowed={p for a,b in ranges for p in range(a,b)}
         views[entry]=body(entry,instructions,outgoing,frontiers,allowed)|dict(symbol=row,callers=callers.get(entry,set()))
     return views
 

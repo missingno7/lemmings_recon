@@ -352,8 +352,9 @@ def compare(native, case):
 
 
 def input_hashes(native=False):
+    # Progress prose is not consumed by the fixture or its contract.
     paths = {'tests/video_restore.py', 'tools/verify.py', 'tools/bounded_process.py',
-             'docs/video-restore.md', 'docs/executable.md', 'docs/next-work.md',
+             'docs/video-restore.md', 'docs/executable.md',
              'assets/vgalemmi.exe', 'metadata/oracle.json', 'metadata/symbols.json',
              'metadata/hints.json', 'metadata/regions.json', 'metadata/inputs.json',
              'metadata/toolchain-lock.json'}
