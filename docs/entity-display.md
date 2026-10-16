@@ -144,9 +144,10 @@ Indexed stores, copies and aliases prevent this from closing the whole target
 set. The nine graph leaves total3,347 bytes/1,715 sites. Their source segment
 comes from CX=live DS1FE6 plus the computed BP; SI and BX are source cursors,
 DI is the destination, and DX receives saved alignment. The strip instead uses
-GeneratedGraphicsBufferSegment1FE8. Trace source allocation/record descriptors
-and SS/segment effects before translating the6170 callback; it has the most
-direct producers. These static targets do not resolve every715B execution.
+GeneratedGraphicsBufferSegment1FE8. Source allocation/record descriptors and the
+6170/64D9/65D8 native contracts are now documented in entity-sprites.md. The
+remaining six callback leaves and the broader source/IRQ domains stay open.
+These static targets do not resolve every715B execution.
 
 ## Scoped verification
 

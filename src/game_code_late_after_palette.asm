@@ -229,7 +229,7 @@ loc_59BA:
     ret ; @059BA
 sub_59BB:
     push ds ; @059BB
-    mov es,[0x1fe6] ; @059BC
+    mov es,[EntitySpriteBufferSegment-GameDataImage] ; @059BC
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @059C0
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @059C4
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @059C6

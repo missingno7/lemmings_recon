@@ -1193,7 +1193,7 @@ sub_1007:
     mov [0x1fe4],ax ; @01010
     mov [0x1ff0],ax ; @01013
     add ax,0x1000 ; @01016
-    mov [0x1fe6],ax ; @01019
+    mov [EntitySpriteBufferSegment-GameDataImage],ax ; @01019
     add ax,0x1d0c ; @0101C
     mov [GeneratedGraphicsBufferSegment-GameDataImage],ax ; @0101F
     add ax,0x166 ; @01022

@@ -1,3 +1,4 @@
+EntitySpriteBufferSegment equ GameDataImage+0x1FE6
 EntityPointCount equ GameDataImage+0x004D
 EntityPointColors equ GameDataImage+0x2778
 EntityPointFrames equ GameDataImage+0x2788

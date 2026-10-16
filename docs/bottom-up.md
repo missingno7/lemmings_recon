@@ -35,7 +35,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 05726..057D0 | entity_dirty.asm | Unchecked visibility gate and live SS dirty rows; actual saved CX/SI and post-store bounds |
 | 057D1..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
-| 06170..06E82 | game_code_late_after_entities.asm | Sprite drawing; mixed ownership remains provisional |
+| 06170..064D8 | entity_sprite_aligned.asm | Ten literal masked/OR sprite rows, forward masks, DF strings and live DS/RET |
+| 064D9..066D6 | entity_sprite_shifted.asm | Independent12/13-row callbacks, unchecked shifts, live first-pass saves and OR plane |
+| 066D7..06E82 | game_code_late_after_entities.asm | Remaining sprite callbacks; mixed ownership remains provisional |
 | 06E83..06F7A | entity_points.asm | Point-cloud leaf, live point/color tables and nested SS saves; table ownership remains UNKNOWN |
 | 06F7B..06FE1 | entity_strip.asm | Two-byte strip with incoming CX source segment, DF strings and actual popped LOOP count |
 | 06FE2..0706E | entity_minimap.asm | Signed entity minimap pixel guards, live saved X/table and VGA effects |
@@ -625,5 +627,14 @@ UNKNOWN ownership and no new bounds or immutability claim. Reports are
 build/entity-points-differential.json and build/entity-strip-differential.json;
 only matching scopes/input hashes establish these focused results. This does
 not refresh aggregate campaigns or establish whole-game acceptance.
-Continue with6170 source/descriptor ownership and its callback leaf before
-the wider706F/715B sprite-dispatch domain. See next-work.md.
+That checkpoint selected6170 source/descriptor ownership; the acceptance below
+records its callback and the two shifted siblings before the wider706F/715B domain.
+
+The aligned6170 and shifted64D9/65D8 callbacks add 1,383 unique main C bytes,
+taking the ledger union to20,705. Their84/132 core/adapter comparisons cover
+730 sites and24 jump outcomes with20 completed mutants. Original5B11/5BB0
+output supplies eight aligned and two shifted data handoffs; those producers
+remain untranslated and their sites/transactions are recorded separately.
+The512 original-only prefix probes verify all256 shifted counts at both entries.
+See entity-sprites.md and the matching-input reports for exact native domains.
+Next trace66D7 and the remaining five callback leaves before706F/715B and3634.

@@ -365,9 +365,9 @@
 #define CS_DrawTenRowEntityMask 0x5FACu
 #define CS_DrawThirteenRowEntityMask 0x606Bu
 #define CS_PrepareCoordinatePixelSample 0x6141u
-#define CS_sub_6170 0x6170u
-#define CS_sub_64D9 0x64D9u
-#define CS_sub_65D8 0x65D8u
+#define CS_DrawEntityAlignedSprite 0x6170u
+#define CS_DrawEntityShiftedSprite12 0x64D9u
+#define CS_DrawEntityShiftedSprite13 0x65D8u
 #define CS_sub_66D7 0x66D7u
 #define CS_sub_6817 0x6817u
 #define CS_sub_6957 0x6957u
@@ -847,4 +847,8 @@
 #define SEG09A9_EntityPointCount 0x004Du
 #define SEG09A9_EntityPointColors 0x2778u
 #define SEG09A9_EntityPointFrames 0x2788u
+#define CS_EntityAlignedSpriteReturn 0x64D8u
+#define CS_EntityShiftedSprite12Return 0x65D7u
+#define CS_EntityShiftedSprite13Return 0x66D6u
+#define SEG09A9_EntitySpriteBufferSegment 0x1FE6u
 #endif

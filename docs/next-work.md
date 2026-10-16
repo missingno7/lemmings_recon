@@ -2,6 +2,30 @@
 
 ## Current checkpoint
 
+The main-image translated-code ledger union is 20,705 bytes. The latest scoped
+acceptance adds the 6170 aligned sprite and 64D9/65D8 shifted sprite callbacks:
+1,383 unique bytes, 730 sites, 216 core/actual-RET comparisons and 20 completed
+mutants. The two native reports compare 101,980 ordered byte-bus events and
+39,360 independent plane-byte writes. The original-only shift matrix covers all
+256 counts at both shifted entries, separately from the native comparisons.
+
+Original 5B11/5BB0 producers independently verify 720/72/78-byte source banks
+used unchanged by ten consumer handoffs. Their transactions/sites stay separate
+and their code remains untranslated. See entity-sprites.md for layouts, live
+segments/stack effects, the static 59BB cursor calculation and report scopes.
+
+Fresh 706F dependency views select the six remaining callbacks, beginning at
+66D7 (320 bytes/159 sites). Trace its bitplane/row descriptor inputs and live
+saves before translating it; 6817/6957/6A97/6BDB/6CFC follow. These six leaves
+own 1,964 known bytes. The parent still has the open CALL AX domain at715B,
+the actual saved target/DI words, and the optional7152->7155 strip handoff.
+Complete those dependencies before connecting the enclosing3634 record loop.
+
+This is focused acceptance. Full campaigns and matching inputs remain necessary
+for aggregate acceptance, and SDL3 follows the portable core.
+
+## Retained terrain campaign
+
 The last complete terrain campaign passed: `tests/terrain_stream.py` verifies 192
 cases, including all 80 pinned LEVEL streams at both entries, 32 auxiliary
 core-boundary comparisons and two completed mutation witnesses. The report has
@@ -376,7 +400,7 @@ build/entity-points-differential.json and build/entity-strip-differential.json;
 only matching scopes/input hashes establish these focused results. This does
 not refresh aggregate campaigns or establish whole-game acceptance.
 
-Fresh3634 dependency views now select the nine sprite callback leaves before
+That checkpoint selected the nine sprite callback leaves before
 DrawObjectSprite706F..715E and the enclosing record loop. Start with6170
 (873 bytes/478 sites,22 observed direct record+14 producers), tracing the
 DS1FE6 source allocation and live descriptor fields first. The known table
@@ -384,7 +408,8 @@ contains nine initialized slots, but copies/indexed stores and aliases leave
 the715B CALL AX domain open. Its target is the real SS word saved at70F0,
 not a late reread of record+14. Preserve helper7152->7155, callback715B->715D,
 the shared saved-DI/RET suffix and returned DS/ES/SS. See entity-display.md
-for targets, ownership, and source/count quirks.
+for targets, ownership, and source/count quirks. The current checkpoint above
+records the subsequent three callback ports and next six dependencies.
 
 StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now

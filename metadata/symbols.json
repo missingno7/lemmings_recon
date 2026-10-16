@@ -35369,9 +35369,11 @@
     "address": 24944,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6170",
-    "aliases": [],
+    "size": 873,
+    "symbol_name": "DrawEntityAlignedSprite",
+    "aliases": [
+      "sub_6170"
+    ],
     "callers": [
       29019
     ],
@@ -37134,16 +37136,27 @@
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 873
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 873,
+    "c_core": "lmn_draw_entity_aligned_sprite_core",
+    "c_implementation": "c/entity_sprite_aligned.c",
+    "c_code_ranges": [
+      [
+        24944,
+        25817
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_aligned.py: 42 entry fixtures/84 core and actualRET comparisons, 873 bytes/all478 sites/all0 outcomes. Combined aligned scope:27888 byte-bus events,20160 plane-byte checks,10 completedmutants. Eight unchanged90-byte banks from one independently verified original5B11 producer (720bytes,74sites,7608steps,2065memorytransactions) feed bothAPIs; originalproducer coverage/transactions excluded fromC/nativeconsumer totals. Live DS from incomingCX and finalPOPDS, physical20bit word-highwrap, DF strings/literal29h pitch, live masks/saves/RET, ordered VGA OR/mirror/CLI/STI phases. Intactcode/TFclear boundeddevice domain. docs/entity-sprites.md"
   },
   {
     "address": 25817,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_64D9",
-    "aliases": [],
+    "size": 255,
+    "symbol_name": "DrawEntityShiftedSprite12",
+    "aliases": [
+      "sub_64D9"
+    ],
     "callers": [
       29019
     ],
@@ -37370,16 +37383,27 @@
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 255
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 255,
+    "c_core": "lmn_draw_entity_shifted_sprite12_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        25817,
+        26072
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_shifted.py: 33 entry fixtures/66 core and actualRET comparisons, 255 bytes/all126 sites/all12 outcomes. Combined shifted scope:66entryfixtures/132comparisons,74092 byte-bus events,19200 plane-byte checks,10completedmutants. Original-only512prefixprobes verify all256 shiftcounts atbothentries (separate report). Two original5BB0 producers supply unchanged72/78byte banks;the5BB0producer remains untranslated. Live DS from incomingCX and finalPOPDS, physical20bit word-highwrap, DF strings/literal29h pitch, live masks/saves/RET, ordered VGA OR/mirror/CLI/STI phases. Intactcode/TFclear boundeddevice domain. docs/entity-sprites.md"
   },
   {
     "address": 26072,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_65D8",
-    "aliases": [],
+    "size": 255,
+    "symbol_name": "DrawEntityShiftedSprite13",
+    "aliases": [
+      "sub_65D8"
+    ],
     "callers": [
       29019
     ],
@@ -37606,8 +37630,17 @@
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 255
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 255,
+    "c_core": "lmn_draw_entity_shifted_sprite13_core",
+    "c_implementation": "c/entity_sprite_shifted.c",
+    "c_code_ranges": [
+      [
+        26072,
+        26327
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_shifted.py: 33 entry fixtures/66 core and actualRET comparisons, 255 bytes/all126 sites/all12 outcomes. Combined shifted scope:66entryfixtures/132comparisons,74092 byte-bus events,19200 plane-byte checks,10completedmutants. Original-only512prefixprobes verify all256 shiftcounts atbothentries (separate report). Two original5BB0 producers supply unchanged72/78byte banks;the5BB0producer remains untranslated. Live DS from incomingCX and finalPOPDS, physical20bit word-highwrap, DF strings/literal29h pitch, live masks/saves/RET, ordered VGA OR/mirror/CLI/STI phases. Intactcode/TFclear boundeddevice domain. docs/entity-sprites.md"
   },
   {
     "address": 26327,
@@ -61454,5 +61487,69 @@
       "6E8C base plus byte(selector-1)*A0; low signed X/high signed Y, low80 skips. Total extent UNKNOWN"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 25816,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityAlignedSpriteReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 26071,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityShiftedSprite12Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 26326,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityShiftedSprite13Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after live POP DS; logical core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8166,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "EntitySpriteBufferSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "1019 publishes allocation result+1000h modulo16bits;59BC producer ES;7112 source segment plus computed BP. No allocation bound or immutability claim"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

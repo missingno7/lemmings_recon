@@ -78,7 +78,7 @@ loc_70FF:
     pop ax ; @0710B
     db 0x03,0xfa ; ENCODED: add di,dx (NASM chooses a different encoding) ; @0710C
     add di,[DrawingOrigin-GameDataImage] ; @0710E
-    mov cx,[0x1fe6] ; @07112
+    mov cx,[EntitySpriteBufferSegment-GameDataImage] ; @07112
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @07116
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @07118
     jz loc_7159 ; @0711A
