@@ -47,8 +47,9 @@ parent now composes the visibility child with proved shared-state ownership;
 INT33 and INT60/61 callers reuse interrupt_service.c's full-register transport.
 See input-commands.md for the scoped 594-byte domain and remaining sound seams.
 The connected tail below supplies the INT60/61, mirror-restorer and saved-INT08
-provider composition. Prefix dependencies 5473/553D, finite status-port input
-and full-handler composition using the tested 5827 child remain. The unresolved
+provider composition. Prefix dependencies5473/553D now have scoped native
+acceptance below. Finite status-port input and full-handler composition using
+the tested5827 child remain. The unresolved
 indirect/far frontier at 42A5 stays explicit. Existing timer_chain.py cases
 cover the external return seam, not the full handler or asynchronous IRQs.
 The narrower INT61 result and timer_restore cleanup helper do not supply
@@ -96,4 +97,12 @@ the unspecified bit on every historical CPU.
 Only116 new bytes join the C ledger, now26,660 main-image bytes; previously
 translated children are unioned once. The full handler's119-byte prefix remains
 untranslated, along with opaque external ISR bodies and asynchronous delivery.
-Next close5473/553D and finite status-port input, then connect17C7 to this tail.
+The subsequent palette checkpoint adds135 bytes, taking the ledger to26,795.
+5473/553D now compose the56-byte sequential DAC leaf548C and existing34-byte
+attribute leaf5425. tests/palette_timer.py passes132 comparisons, all81 sites/
+20 outcomes and five completed mutants. The shared169-byte domain preserves
+live source/control reads, DF, unchecked CH/zero CL, unconditional STI and the
+actual5555 child return. Source2638/2650 shares a transition-written RGB range;
+2668 is another live source. Initialization/allocation remains partly unknown.
+See palette-pointer-frontier.md. Next connect the119-byte17C7 prefix to those
+children, finite status-port providers, tested5827 and this tail.

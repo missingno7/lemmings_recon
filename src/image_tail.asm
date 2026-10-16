@@ -1,3 +1,6 @@
+TimerPaletteSource2638 equ GameDataImage+0x2638
+TimerPaletteSource2650 equ GameDataImage+0x2650
+TimerPaletteSource2668 equ GameDataImage+0x2668
 TimerCadenceCounter001C equ GameDataImage+0x001C
 TimerChainPhase1FE3 equ GameDataImage+0x1FE3
 TimerForegroundCounter1FCD equ GameDataImage+0x1FCD

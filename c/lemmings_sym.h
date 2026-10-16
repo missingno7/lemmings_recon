@@ -315,10 +315,10 @@
 #define CS_sub_53FE 0x53FEu
 #define CS_WriteAttributePalette 0x5425u
 #define CS_sub_5447 0x5447u
-#define CS_sub_5473 0x5473u
-#define CS_sub_548C 0x548Cu
+#define CS_UpdateTimerPaletteBefore5473 0x5473u
+#define CS_WriteSequentialDacPalette 0x548Cu
 #define CS_WriteMappedDacPalette 0x54C4u
-#define CS_sub_553D 0x553Du
+#define CS_UpdateTimerPaletteAfter553D 0x553Du
 #define CS_SelectAndStepPaletteRow 0x5569u
 #define CS_StepPackedPaletteRow 0x563Eu
 #define CS_PackedPaletteRowAfterHigh564E 0x564Eu
@@ -971,4 +971,9 @@
 #define CS_GameTimerAfterEoi1891 0x1891u
 #define CS_GameTimerFarChain1899 0x1899u
 #define CS_GameTimerOuterIret18B1 0x18B1u
+#define CS_SequentialDacPaletteReturn54C3 0x54C3u
+#define CS_TimerPaletteAfterFirstDac5555 0x5555u
+#define SEG09A9_TimerPaletteSource2638 0x2638u
+#define SEG09A9_TimerPaletteSource2650 0x2650u
+#define SEG09A9_TimerPaletteSource2668 0x2668u
 #endif

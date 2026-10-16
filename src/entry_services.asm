@@ -338,7 +338,7 @@ loc_032C:
     call sub_03C1 ; @0032C
     push ax ; @0032F
     call WaitForDisplayStatusBit3Cycle ; @00330
-    call sub_553D ; @00333
+    call UpdateTimerPaletteAfter553D ; @00333
     pop ax ; @00336
     test al,0x1 ; @00337
     jnz loc_032C ; @00339
@@ -355,7 +355,7 @@ loc_034D:
     call sub_03D7 ; @0034D
     push ax ; @00350
     call WaitForDisplayStatusBit3Cycle ; @00351
-    call sub_553D ; @00354
+    call UpdateTimerPaletteAfter553D ; @00354
     pop ax ; @00357
     test al,0x2 ; @00358
     jnz loc_034D ; @0035A

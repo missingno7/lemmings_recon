@@ -19,9 +19,9 @@ loc_5309:
     lea si,[RgbPalettePointerTable] ; @05309
     mov si,[cs:si+0x2] ; @0530D
     mov cx,0x8 ; @05311
-    call sub_548C ; @05314
+    call WriteSequentialDacPalette ; @05314
     mov cx,0x1008 ; @05317
-    jmp sub_548C ; @0531A
+    jmp WriteSequentialDacPalette ; @0531A
 ; UNKNOWN: unresolved bytes
     db 0xc3 ; @0531D
 TransitionPaletteToSlot1:
@@ -191,17 +191,17 @@ sub_5447:
 loc_5456:
     lea si,[0x2608] ; @05456
     mov cx,0x8 ; @0545A
-    call sub_548C ; @0545D
+    call WriteSequentialDacPalette ; @0545D
     lea si,[0x2608] ; @05460
     mov cx,0x1008 ; @05464
-    jmp short sub_548C ; @05467
+    jmp short WriteSequentialDacPalette ; @05467
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @05469
 loc_546A:
     lea si,[0x2608] ; @0546A
     mov cx,0x10 ; @0546E
     jmp short WriteAttributePalette ; @05471
-sub_5473:
+UpdateTimerPaletteBefore5473:
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x4 ; @05473
     jz loc_5485 ; @05478
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x2 ; @0547A
@@ -210,9 +210,13 @@ sub_5473:
 loc_5484:
     ret ; @05484
 loc_5485:
-    lea si,[0x2668] ; @05485
+    lea si,[TimerPaletteSource2668-GameDataImage] ; @05485
     mov cx,0x1008 ; @05489
-sub_548C:
+; 548C writes one DAC index, then three DF-sensitive source bytes per color.
+; CH is unchecked; CL=0 executes65536 colors. No DI save and no mapped index table.
+; Both DS200C tests remain independent; control flips can unbalance the live stack.
+; Timer callers use canonical sources2638/2650/2668; producer bounds remain open.
+WriteSequentialDacPalette:
     cli ; @0548C
     cmp byte [PaletteBlankingControl-GameDataImage],0xff ; @0548D
     jz loc_54A1 ; @05492
@@ -249,6 +253,7 @@ loc_54AC:
     out dx,al ; @054C1
 loc_54C2:
     sti ; @054C2
+SequentialDacPaletteReturn54C3:
     ret ; @054C3
 ; 54C4: CH unchecked CS5507 byte index, CL count (zero ->65536).
 ; DS:SI RGB triples follow DF; CS:DI indexes advance forward. PUSH DI precedes CLI.
@@ -307,10 +312,10 @@ MappedDacPaletteIndexes:
 ; UNKNOWN: unresolved bytes
     db 0xee,0x8a,0xc7,0xee,0x5a,0xec,0xb2,0xc0,0xb0,0x20,0xee,0xc3 ; @05527
 loc_5533:
-    lea si,[0x2668] ; @05533
+    lea si,[TimerPaletteSource2668-GameDataImage] ; @05533
     mov cx,0x808 ; @05537
     jmp WriteAttributePalette ; @0553A
-sub_553D:
+UpdateTimerPaletteAfter553D:
     mov ax,[PaletteDisplayModeWord-GameDataImage] ; @0553D
     cmp ax,0x4 ; @05540
     jz loc_554B ; @05543
@@ -318,14 +323,15 @@ sub_553D:
     jz loc_555F ; @05548
     ret ; @0554A
 loc_554B:
-    lea si,[0x2638] ; @0554B
+    lea si,[TimerPaletteSource2638-GameDataImage] ; @0554B
     mov cx,0x8 ; @0554F
-    call sub_548C ; @05552
-    lea si,[0x2650] ; @05555
+    call WriteSequentialDacPalette ; @05552
+TimerPaletteAfterFirstDac5555:
+    lea si,[TimerPaletteSource2650-GameDataImage] ; @05555
     mov cx,0x1008 ; @05559
-    jmp sub_548C ; @0555C
+    jmp WriteSequentialDacPalette ; @0555C
 loc_555F:
-    lea si,[0x2638] ; @0555F
+    lea si,[TimerPaletteSource2638-GameDataImage] ; @0555F
     mov cx,0x10 ; @05563
     jmp WriteAttributePalette ; @05566
 ; 5569: full DS modeword==4 selects RGB, all other words select packed.

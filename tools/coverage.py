@@ -108,12 +108,13 @@ def report():
     palette_channels=read_json(BUILD/'palette-channels-differential.json')
     palette_rows=read_json(BUILD/'palette-rows-differential.json')
     palette_ports=read_json(BUILD/'palette-ports-differential.json')
+    palette_timer=read_json(BUILD/'palette-timer-differential.json')
     palette_row_select=read_json(BUILD/'palette-row-select-differential.json')
     palette_transition=read_json(BUILD/'palette-transition-differential.json')
     retry_input=read_json(BUILD/'retry-input-differential.json')
     if retry_input.get('access_guard_exit')!=86 or not retry_input.get('null_bus_deadline_verified'):
         raise ValueError('Retry input guard probes must complete before C coverage')
-    for extra in (display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input):
+    for extra in (display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_timer,palette_row_select,palette_transition,retry_input):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
                 raise ValueError('Stale display differential report for '+path)
@@ -485,7 +486,7 @@ def report():
     reports+=decimal_field,entity_select,entity_select_actions
     reports+=terrain_inputs,terrain,commands,streams,object_draw,redraw
     reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)
-    reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
+    reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_timer,palette_row_select,palette_transition,retry_input)
     reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
     reports+=(entity_pattern,entity_pixel,entity_pixel_bus,entity_vga,entity_stroke,mask_generators,generated_graphics,entity_mask,entity_mask_rows,coordinate_pixel,entity_countdown)
     reports+=(entity_interactions,entity_finish,entity_zero_state,entity_state4,entity_cadence,entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_actions_basic,entity_actions_advanced,entity_action_map,entity_action_dispatch,entity_batch,entity_pattern_bus)

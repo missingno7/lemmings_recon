@@ -1,7 +1,8 @@
 # Palette byte-port writers
 
-The pinned leaves `WriteAttributePalette` at5425..5446 (34bytes/21sites) and
-`WriteMappedDacPalette` at54C4..5506 (67bytes/40sites) have no callees. Their
+The pinned leaves `WriteAttributePalette` at5425..5446 (34bytes/21sites),
+`WriteMappedDacPalette` at54C4..5506 (67bytes/40sites), and the newly connected
+`WriteSequentialDacPalette` at548C..54C3 (56bytes/34sites) have no callees. Their
 canonical state is the original memory image plus transient CPU fields. The C
 core stops before each actual nearRET; its adapter consumes the live word only
 for a ready result. Missing IN/OUT providers stop before that instruction,
@@ -33,14 +34,29 @@ control between reads can therefore cause previously unpushed words to be
 consumed or saved words to remain on the stack. After unconditional STI it pops
 the actual DI. The C preserves that imbalance, including its effect on outerRET.
 
+548C uses the same live blanking/save protocol but does not save DI or read the
+CS:5507 mapping table. It emits the unchecked CH once to3C8, clears CH, and sends
+three DF-sensitive LODSB bytes to3C9 per full-word LOOP iteration. AH increments
+as a byte after each triple. CL=0 therefore runs65536 iterations. Its second
+control read can likewise unbalance actual saved AX/DX and the inherited RET.
+STI is unconditional. The C uses the existing port/memory/flag helpers.
+
+The timer prefixes5473 and553D compose that leaf with5425. Before mode selection
+at5473 rereads the whole DS:1F7C word for its second comparison. After553D loads
+the word once into AX. Mode4's first actual CALL548C pushes5555, and its returned
+word must equal5555 before setting up the second tail jump. A changed word stops
+at that actual destination. Other tail jumps inherit the caller's RET frame.
+Only exact modes2/4 select output. Buffer roles and remaining initialization
+uncertainty are documented in palette-pointer-frontier.md and beside the ASM.
+
 `PaletteBlankingControl` names DS:200C's observed role, not an IRQ synchronization
 guarantee. The `MappedDacPaletteIndexes` base atCS:5507 has sixteen apparent
 bytes `00 01 02 03 04 05 14 07 38 39 3A 3B 3C 3D 3E 3F`. Initial CH and iteration
 count are unchecked. Reads can continue into adjacent code or UNKNOWN bytes,
 with DI wrapping at16bits. Those classifications remain unchanged and this
 base/size does not establish a valid table domain. CS52D4/52E4 palette pointer
-producers, source-buffer ownership, 531E/536C transitions and4B40 input/IRQ
-ownership remain separate work.
+producers and531E/536C transitions have separate scoped contracts; complete
+source initialization/allocation and4B40 input/IRQ ownership remain open.
 
 `tests/palette_ports.py` requires577 fixtures at both boundaries, two full
 zero-count core cases, all61 sites/eight branch outcomes and six completed
@@ -60,6 +76,18 @@ timeouts, compiler errors and oracle errors never count as mutant detections.
 Parent-owned DLL directories are removed after worker exit. Six compiled mutants
 exercise byte versus word ADD, DF, control caching, saved DI, unconditional STI
 and incorrectly masked indexes.
+
+tests/palette_timer.py uses tests/verification.py for the135 new bytes plus the
+34-byte attribute child. Its67 fixtures/132 core-adapter comparisons include two
+full65536-iteration core-only cases, all81 sites/20 outcomes,1,058,829 original
+instructions and793,470 ordered events. Five completed mutants exercise DF,
+fresh control reads, unchecked CH, unconditional STI and actual child RET.
+Independent packet/cursor/register formulas complement canonical RAM and ordered
+access comparisons. Missing ports, relocation, live saves/source/return, control
+flips and mode changes during a child stay explicit. Each worker is bounded by
+420seconds/384MiB,1,000,000 instructions and450,000 events. Exhaustion fails the
+campaign and cannot earn mutant credit. This report is separate from the older
+attribute/mapped-writer regression; translated shared bytes are counted once.
 
 These are byte-port provider contracts. No hardware palette/register model,
 device timing, IRQ scheduling, hardware segment-limit behavior or complete caller

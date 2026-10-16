@@ -31952,9 +31952,11 @@
     "address": 21619,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5473",
-    "aliases": [],
+    "size": 25,
+    "symbol_name": "UpdateTimerPaletteBefore5473",
+    "aliases": [
+      "sub_5473"
+    ],
     "callers": [
       6109
     ],
@@ -32049,20 +32051,36 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Static timer-palette consumer/port contract in docs/palette-pointer-frontier.md; original data and actual stack words remain live"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 125
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 125,
+    "c_implementation": "c/palette_ports.c",
+    "c_core": "lmn_timer_palette_core",
+    "c_code_ranges": [
+      [
+        21619,
+        21644
+      ],
+      [
+        21811,
+        21821
+      ]
+    ],
+    "verification_evidence": "tests/palette_timer.py:67 fixtures/132 original-native core-adapter comparisons,169 connected bytes/81 sites/20 outcomes including LOOP;135 new bytes,5 completed mutants. Whole-word mode selection, live canonical source/control/stack effects, actual5555 child return, full65536-iteration zeroCL in both directions, unchecked CH, unconditional STI, relocation and missing-port stops. Original-only and native scope agree; docs/palette-ports.md and docs/palette-pointer-frontier.md. Initialization/allocation and asynchronous timing remain open."
   },
   {
     "address": 21644,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_548C",
-    "aliases": [],
+    "size": 56,
+    "symbol_name": "WriteSequentialDacPalette",
+    "aliases": [
+      "sub_548C"
+    ],
     "callers": [
       21597,
       21842,
@@ -32113,10 +32131,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static timer-palette consumer/port contract in docs/palette-pointer-frontier.md; original data and actual stack words remain live"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 56
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 56,
+    "c_implementation": "c/palette_ports.c",
+    "c_core": "lmn_timer_palette_core",
+    "c_code_ranges": [
+      [
+        21644,
+        21700
+      ]
+    ],
+    "verification_evidence": "tests/palette_timer.py:67 fixtures/132 original-native core-adapter comparisons,169 connected bytes/81 sites/20 outcomes including LOOP;135 new bytes,5 completed mutants. Whole-word mode selection, live canonical source/control/stack effects, actual5555 child return, full65536-iteration zeroCL in both directions, unchecked CH, unconditional STI, relocation and missing-port stops. Original-only and native scope agree; docs/palette-ports.md and docs/palette-pointer-frontier.md. Initialization/allocation and asynchronous timing remain open."
   },
   {
     "address": 21700,
@@ -32209,9 +32237,11 @@
     "address": 21821,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_553D",
-    "aliases": [],
+    "size": 44,
+    "symbol_name": "UpdateTimerPaletteAfter553D",
+    "aliases": [
+      "sub_553D"
+    ],
     "callers": [
       819,
       852,
@@ -32312,10 +32342,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static timer-palette consumer/port contract in docs/palette-pointer-frontier.md; original data and actual stack words remain live"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 134
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 134,
+    "c_implementation": "c/palette_ports.c",
+    "c_core": "lmn_timer_palette_core",
+    "c_code_ranges": [
+      [
+        21821,
+        21865
+      ]
+    ],
+    "verification_evidence": "tests/palette_timer.py:67 fixtures/132 original-native core-adapter comparisons,169 connected bytes/81 sites/20 outcomes including LOOP;135 new bytes,5 completed mutants. Whole-word mode selection, live canonical source/control/stack effects, actual5555 child return, full65536-iteration zeroCL in both directions, unchecked CH, unconditional STI, relocation and missing-port stops. Original-only and native scope agree; docs/palette-ports.md and docs/palette-pointer-frontier.md. Initialization/allocation and asynchronous timing remain open."
   },
   {
     "address": 21865,
@@ -63858,6 +63898,86 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Literal timer child/interrupt/IRET boundary; preserves actual frames and changed-target stops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21699,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SequentialDacPaletteReturn54C3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Literal direct DAC RET after unconditional STI; current SS:SP remains live"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21845,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TimerPaletteAfterFirstDac5555",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual CALL548C at5552 pushes5555; parent continues only after literal child return"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9784,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "TimerPaletteSource2638",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Observed DS source operand in timer palette paths; no private copy, sole owner, allocation extent or complete initialization is inferred"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9808,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "TimerPaletteSource2650",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Observed DS source operand in timer palette paths; no private copy, sole owner, allocation extent or complete initialization is inferred"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9832,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "TimerPaletteSource2668",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Observed DS source operand in timer palette paths; no private copy, sole owner, allocation extent or complete initialization is inferred"
     ],
     "verification_status": "STATIC"
   }

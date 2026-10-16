@@ -4,6 +4,9 @@
 #ifndef PALETTE_PORTS_MUTATION
 #define PALETTE_PORTS_MUTATION 0
 #endif
+#ifndef PALETTE_TIMER_MUTATION
+#define PALETTE_TIMER_MUTATION 0
+#endif
 
 enum { CF = 0x0001, PF = 0x0004, AF = 0x0010, ZF = 0x0040,
        SF = 0x0080, IF = 0x0200, DF = 0x0400, OF = 0x0800,
@@ -107,6 +110,16 @@ static uint8_t sub8_flags(uint16_t *flags, uint8_t left, uint8_t right) {
         szp8(value) | (left < right ? CF : 0u) |
         (((left ^ right ^ value) & 0x10u) ? AF : 0u) |
         (((left ^ right) & (left ^ value) & 0x80u) ? OF : 0u));
+    return value;
+}
+
+static uint16_t sub16_flags(uint16_t *flags, uint16_t left,
+                            uint16_t right) {
+    uint16_t value = (uint16_t)(left - right);
+    *flags = (uint16_t)((*flags & (uint16_t)~ARITHMETIC_FLAGS) |
+        szp16(value) | (left < right ? CF : 0u) |
+        (((left ^ right ^ value) & 0x0010u) ? AF : 0u) |
+        (((left ^ right) & (left ^ value) & 0x8000u) ? OF : 0u));
     return value;
 }
 
@@ -425,6 +438,140 @@ static LmnPalettePortsResult write_mapped_dac_palette(
                   LMN_PALETTE_PORTS_READY);
 }
 
+/* 548C advances the DAC index sequentially. Unlike the mapped writer above,
+   it has no DI table walk or outer DI save. */
+static uint8_t lodsb_direct(uint8_t *memory, const LmnRasterBus *bus,
+                            LmnPalettePortsState *state) {
+    uint8_t value = read_byte(memory, bus,
+        physical(state->data_segment, state->source_cursor), state->flags);
+#if PALETTE_TIMER_MUTATION == 1
+    state->source_cursor = (uint16_t)(state->source_cursor + 1u);
+#else
+    state->source_cursor = (uint16_t)(state->source_cursor +
+        ((state->flags & DF) ? (uint16_t)-1 : 1u));
+#endif
+    state->value = (uint16_t)((state->value & 0xff00u) | value);
+    return value;
+}
+
+static void sti_direct(LmnPalettePortsState *state, uint16_t incoming_if) {
+#if PALETTE_TIMER_MUTATION == 4
+    state->flags = (uint16_t)((state->flags & (uint16_t)~IF) | incoming_if);
+#else
+    (void)incoming_if;
+    state->flags |= IF;
+#endif
+}
+
+static LmnPalettePortsResult write_direct_dac_palette(
+    uint8_t *memory, LmnPalettePortsState *state,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus,
+    uint16_t incoming_if) {
+    uint8_t initial_control;
+    uint8_t control;
+    uint8_t value;
+
+    /* CLI; CMP byte [DS:200C],FF. This first read is always live. */
+    cli(state);
+    initial_control = read_control(memory, state, bus);
+    (void)sub8_flags(&state->flags, initial_control, 0xffu);
+
+    if (initial_control != 0xffu) {
+        /* MOV DX,3C4; MOV AL,1; OUT; INC DX; IN; OR AL,20; OUT. */
+        state->argument = 0x03c4u;
+        state->value = (uint16_t)((state->value & 0xff00u) | 0x01u);
+        if (!has_output(ports))
+            return missing_output(state, 0x5499u);
+        ports->out_byte(ports->context, memory, state->argument,
+                        (uint8_t)state->value, state->flags);
+
+        state->argument = inc16(state, state->argument);
+        if (!has_input(ports))
+            return missing_input(state, 0x549bu);
+        state->value = (uint16_t)((state->value & 0xff00u) |
+            ports->in_byte(ports->context, memory, state->argument,
+                           state->flags));
+
+        value = (uint8_t)((uint8_t)state->value | 0x20u);
+        logic8_flags(&state->flags, value);
+        state->value = (uint16_t)((state->value & 0xff00u) | value);
+        if (!has_output(ports))
+            return missing_output(state, 0x549eu);
+        ports->out_byte(ports->context, memory, state->argument,
+                        (uint8_t)state->value, state->flags);
+        push_word(memory, bus, state, state->value);
+        push_word(memory, bus, state, state->argument);
+    }
+
+    /* MOV DX,3C8; MOV AL,CH; XOR CH,CH; OUT; MOV AH,AL; INC DX. */
+    state->argument = 0x03c8u;
+#if PALETTE_TIMER_MUTATION == 3
+    state->value = (uint16_t)((state->value & 0xff00u) |
+        (uint8_t)((state->count >> 8) & 0x0fu));
+#else
+    state->value = (uint16_t)((state->value & 0xff00u) |
+                              (uint8_t)(state->count >> 8));
+#endif
+    state->count &= 0x00ffu;
+    logic8_flags(&state->flags, 0u);
+    if (!has_output(ports))
+        return missing_output(state, 0x54a8u);
+    ports->out_byte(ports->context, memory, state->argument,
+                    (uint8_t)state->value, state->flags);
+    state->value = (uint16_t)(((uint16_t)(uint8_t)state->value << 8) |
+                              (uint8_t)state->value);
+    state->argument = inc16(state, state->argument);
+
+    /* LOOP is a do/while count: CL=0 runs a full 65,536 iterations. */
+    do {
+        (void)lodsb_direct(memory, bus, state);
+        if (!has_output(ports))
+            return missing_output(state, 0x54adu);
+        ports->out_byte(ports->context, memory, state->argument,
+                        (uint8_t)state->value, state->flags);
+
+        (void)lodsb_direct(memory, bus, state);
+        if (!has_output(ports))
+            return missing_output(state, 0x54afu);
+        ports->out_byte(ports->context, memory, state->argument,
+                        (uint8_t)state->value, state->flags);
+
+        (void)lodsb_direct(memory, bus, state);
+        if (!has_output(ports))
+            return missing_output(state, 0x54b1u);
+        ports->out_byte(ports->context, memory, state->argument,
+                        (uint8_t)state->value, state->flags);
+
+        value = inc8(state, (uint8_t)(state->value >> 8));
+        state->value = (uint16_t)((state->value & 0x00ffu) |
+                                  ((uint16_t)value << 8));
+        state->count = (uint16_t)(state->count - 1u);
+    } while (state->count != 0u);
+
+#if PALETTE_TIMER_MUTATION == 2
+    control = initial_control;
+#else
+    control = read_control(memory, state, bus);
+#endif
+    (void)sub8_flags(&state->flags, control, 0xffu);
+    if (control != 0xffu) {
+        /* The live control byte chooses whether these actual words are popped. */
+        state->argument = pop_word(memory, bus, state);
+        state->value = pop_word(memory, bus, state);
+        value = (uint8_t)((uint8_t)state->value & 0xdfu);
+        logic8_flags(&state->flags, value);
+        state->value = (uint16_t)((state->value & 0xff00u) | value);
+        if (!has_output(ports))
+            return missing_output(state, 0x54c1u);
+        ports->out_byte(ports->context, memory, state->argument,
+                        (uint8_t)state->value, state->flags);
+    }
+
+    sti_direct(state, incoming_if);
+    return result(state, CS_SequentialDacPaletteReturn54C3,
+                  LMN_PALETTE_PORTS_READY);
+}
+
 static LmnPalettePortsState state_from_registers(const LmnRegs *registers) {
     LmnPalettePortsState state = {
         registers->ax, registers->bx, registers->cx, registers->dx,
@@ -460,6 +607,9 @@ LmnPalettePortsResult lmn_write_palette_ports_core(uint8_t *memory,
     if (entry == LMN_PALETTE_PORTS_ENTRY_MAPPED_DAC)
         return write_mapped_dac_palette(memory, code_segment, &state, ports,
                                         bus, incoming_if);
+    if (entry == LMN_PALETTE_PORTS_ENTRY_DIRECT_DAC)
+        return write_direct_dac_palette(memory, &state, ports, bus,
+                                        incoming_if);
     return write_attribute_palette(memory, &state, ports, bus, incoming_if);
 }
 
@@ -483,4 +633,123 @@ void lmn_write_palette_ports_adapter(uint8_t *memory, LmnRegs *registers,
         registers->sp = (uint16_t)(registers->sp + 2u);
         registers->ip = (uint16_t)(low | ((uint16_t)high << 8));
     }
+}
+
+static LmnTimerPaletteResult timer_result(const LmnRegs *input,
+    const LmnPalettePortsState *state, uint16_t continuation,
+    uint16_t status) {
+    LmnTimerPaletteResult out = { *input, status };
+    apply_state(&out.registers, state);
+    out.registers.ip = continuation;
+    return out;
+}
+
+static LmnTimerPaletteResult timer_child(uint8_t *memory,
+    const LmnRegs *input, const LmnPalettePortsState *state,
+    LmnPalettePortsEntry entry, const LmnRasterBytePorts *ports,
+    const LmnRasterBus *bus) {
+    LmnPalettePortsResult child = lmn_write_palette_ports_core(memory,
+        input->cs, state, entry, ports, bus);
+    return timer_result(input, &child.state, child.continuation,
+                        (uint16_t)child.status);
+}
+
+LmnTimerPaletteResult lmn_timer_palette_core(uint8_t *memory,
+    const LmnRegs *registers, LmnTimerPaletteEntry entry,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    LmnPalettePortsState state = state_from_registers(registers);
+
+    if (entry == LMN_TIMER_PALETTE_ENTRY_DIRECT)
+        return timer_child(memory, registers, &state,
+            LMN_PALETTE_PORTS_ENTRY_DIRECT_DAC, ports, bus);
+
+    if (entry == LMN_TIMER_PALETTE_ENTRY_BEFORE) {
+        uint16_t mode = read_word(memory, bus, state.data_segment,
+            SEG09A9_PaletteDisplayModeWord, state.flags);
+        (void)sub16_flags(&state.flags, mode, 4u);
+        if (mode == 4u) {
+            state.source_cursor = SEG09A9_TimerPaletteSource2668;
+            state.count = 0x1008u;
+            return timer_child(memory, registers, &state,
+                LMN_PALETTE_PORTS_ENTRY_DIRECT_DAC, ports, bus);
+        }
+
+        /* The second CMP rereads the word at DS:1F7C. */
+        mode = read_word(memory, bus, state.data_segment,
+            SEG09A9_PaletteDisplayModeWord, state.flags);
+        (void)sub16_flags(&state.flags, mode, 2u);
+        if (mode == 2u) {
+            state.source_cursor = SEG09A9_TimerPaletteSource2668;
+            state.count = 0x0808u;
+            return timer_child(memory, registers, &state,
+                LMN_PALETTE_PORTS_ENTRY_ATTRIBUTE, ports, bus);
+        }
+
+        /* The prefix's own RET is at 5484. */
+        return timer_result(registers, &state, 0x5484u,
+                            LMN_TIMER_PALETTE_READY);
+    }
+
+    /* MOV AX,[DS:1F7C]; CMP AX,4; CMP AX,2. */
+    state.value = read_word(memory, bus, state.data_segment,
+        SEG09A9_PaletteDisplayModeWord, state.flags);
+    (void)sub16_flags(&state.flags, state.value, 4u);
+    if (state.value == 4u) {
+        LmnPalettePortsResult child;
+        uint16_t returned_ip;
+
+        state.source_cursor = SEG09A9_TimerPaletteSource2638;
+        state.count = 0x0008u;
+        /* CALL 548C pushes the real continuation at 5555. */
+        push_word(memory, bus, &state, CS_TimerPaletteAfterFirstDac5555);
+        child = lmn_write_palette_ports_core(memory, registers->cs, &state,
+            LMN_PALETTE_PORTS_ENTRY_DIRECT_DAC, ports, bus);
+        if (child.status != LMN_PALETTE_PORTS_READY)
+            return timer_result(registers, &child.state, child.continuation,
+                                (uint16_t)child.status);
+
+        state = child.state;
+        returned_ip = pop_word(memory, bus, &state);
+        if (returned_ip != CS_TimerPaletteAfterFirstDac5555 &&
+            PALETTE_TIMER_MUTATION != 5)
+            return timer_result(registers, &state, returned_ip,
+                                LMN_TIMER_PALETTE_CHANGED_CHILD_RETURN);
+
+        /* Continue at the instruction following the real child CALL. */
+        state.source_cursor = SEG09A9_TimerPaletteSource2650;
+        state.count = 0x1008u;
+        return timer_child(memory, registers, &state,
+            LMN_PALETTE_PORTS_ENTRY_DIRECT_DAC, ports, bus);
+    }
+
+    (void)sub16_flags(&state.flags, state.value, 2u);
+    if (state.value == 2u) {
+        state.source_cursor = SEG09A9_TimerPaletteSource2638;
+        state.count = 0x0010u;
+        return timer_child(memory, registers, &state,
+            LMN_PALETTE_PORTS_ENTRY_ATTRIBUTE, ports, bus);
+    }
+
+    /* Unsupported modes execute the prefix's own RET at 554A. */
+    return timer_result(registers, &state, 0x554au,
+                        LMN_TIMER_PALETTE_READY);
+}
+
+LmnTimerPaletteResult lmn_timer_palette_adapter(uint8_t *memory,
+    const LmnRegs *registers, LmnTimerPaletteEntry entry,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    LmnTimerPaletteResult out = lmn_timer_palette_core(memory, registers,
+        entry, ports, bus);
+
+    if (out.status != LMN_TIMER_PALETTE_READY)
+        return out;
+
+    /* Only the active leaf/prefix RET is consumed; child CALL RETs are owned
+       by the core before it continues through the caller's instructions. */
+    {
+        LmnPalettePortsState state = state_from_registers(&out.registers);
+        out.registers.ip = pop_word(memory, bus, &state);
+        apply_state(&out.registers, &state);
+    }
+    return out;
 }

@@ -50,9 +50,41 @@ returns can alias data/provider writes. Finishing restores the actualDI/SI/CX/ES
 words. A marker says whether a component differed at entry to a step, so reaching
 the target on a step still requests another output/step pass.
 
-The unrelated548C..54C3 DAC writer advances the hardware DAC index rather than
-reading CS5507 for each row. It remains untranslated and is needed by52F4 and
-other palette setup callers. Do not substitute54C4 for it. Broader native device
-models, pointer initialization, palette-buffer ownership and4B40 input/IRQ wait
-remain open, as do full terrain acceptance and stale-report refresh before any
-aggregate C coverage promotion.
+The 548C..54C3 sequential DAC writer and timer callers5473/553D now have scoped
+native acceptance in tests/palette_timer.py. They reuse c/palette_ports.c and
+the shared verifier, including the actual5555 child return. The169-byte domain
+unions135 new bytes with the34-byte attribute leaf; all81 sites/20 branch
+outcomes pass132 comparisons and five completed mutants. See palette-ports.md.
+Other setup callers, including52F4, remain separate parent work.
+
+## Canonical source ownership
+
+DS:2638,2650 and2668 initially map to UNKNOWN static bytes at image offsets
+C0C8,C0E0 andC0F8. Their stored zeros remain UNKNOWN. Startup's DS:0000..2011
+clear does not reach them. The neutral ledger names TimerPaletteSource2638,
+TimerPaletteSource2650 and TimerPaletteSource2668 describe observed source
+roles without asserting allocation extents or complete initialization.
+
+The row composers write back through the source DS:SI selected by BL; BH selects
+the target. With the initial pointer tables,531E/536C modify slot0 at2638 toward
+slots1/2 for16 iterations. RGB writes cover2638..2667, so2650 is the second half
+of that same range. sub_5329 composes0-to-1 then7-to-1, both16 iterations.
+sub_534B composes0-to-6 then7-to-4 for16/8 iterations from caller03CE, or0-to-3
+then7-to-2 for16/16 from0467. These are observed loop extents, not validated
+allocation bounds. Live table mutations can select other locations.
+
+Before the timer display update,5473 selects mode4 RGB source2668 for eight
+entries at DAC index10h, or mode2 packed source2668 for eight entries at index8.
+Other whole-word modes return. Afterward,553D selects mode4 RGB sources2638 then
+2650 for eight entries each, at indexes0 and10h; mode2 sends16 packed entries
+from2638 at index0. These consumers read the same canonical storage that the
+transition rows modify. No converted palette copy is introduced. The existing
+row/selector/transition fixtures include synthetic and pinned-table DS:09A9
+cases, but do not establish the entire runtime producer/initialization chain.
+
+DS:200C PaletteBlankingControl is initially zero at image BA9C and is within the
+startup clear. Direct writes at1205/1369 storeFF;1099 reads it. Both DAC writers
+reread it around output, at548D/54B6 and54C6/54F8 respectively. Live provider
+changes verify those separate reads without proving IRQ synchronization.
+Broader device models, pointer initialization, source allocation and4B40 input/
+IRQ ownership remain open, as do aggregate acceptance and stale-report refresh.

@@ -887,3 +887,18 @@ JMP and hardware IRET while separating opaque-service return transport. Returned
 DS/SS:SP, actual saved words and both frames stay canonical. The119-byte prefix
 and asynchronous scheduling remain open; next investigate5473/553D before full
 handler composition. See timer-frontier.md for field initialization and limits.
+
+The palette timer checkpoint closes5473/553D with548C and the existing5425 leaf.
+Its135 new bytes bring the main C ledger union to26,795. The169-byte connected
+domain passes67 fixtures/132 comparisons, all81 sites/20 branch outcomes and
+five completed mutants through tests/verification.py. LOOP outcomes now join
+the shared branch accounting; original instruction execution is unchanged.
+Two full zero-count loops remain bounded under384MiB, with cleanup on failure.
+
+The ownership audit connects transition writes at2638 to both timer RGB halves
+2638/2650 and identifies2668 as slot7's live source. Initial UNKNOWN zeros do
+not prove initialization or allocations. Actual stack/control reads and tail
+returns remain canonical; no palette shadow state is added. Fresh17C7 tree and
+bottom-up views leave only its119-byte prefix before connected full-handler
+acceptance, retaining the tested5827 domain and input/ISR platform seams.
+See next-work.md and palette-pointer-frontier.md for those limits.

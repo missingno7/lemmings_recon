@@ -51,11 +51,15 @@ def check(condition,message):
 def require(condition,message):
     if not condition:raise Mismatch(message)
 
+def is_branch(ins):
+    return ins.group(capstone.CS_GRP_JUMP) or ins.mnemonic.startswith('loop')
+
+
 def direct_jump_edges(instructions, *, external_transfers=()):
     """Static outcomes of known direct branches; does not prove feasibility."""
     edges=set()
     for address,ins in instructions.items():
-        if not ins.group(capstone.CS_GRP_JUMP):continue
+        if not is_branch(ins):continue
         if address in external_transfers:continue
         check(ins.operands[0].type==capstone.x86_const.X86_OP_IMM,
               'indirect branch requires an explicit target-domain contract')
@@ -292,7 +296,7 @@ class OriginalMachine:
         ins=self.instructions[off]
         if self.previous:
             old=self.previous
-            if old.group(capstone.CS_GRP_JUMP):self.edges.add((old.address,off))
+            if is_branch(old):self.edges.add((old.address,off))
             if old.mnemonic in ('xor','and','or','test','shr','sar','shl'):self.mask=FLAGS&~0x10
             elif old.mnemonic in ('add','sub','cmp','neg','popf'):self.mask=FLAGS
             elif old.mnemonic in ('inc','dec'):self.mask|=0x8D4

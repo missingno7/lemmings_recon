@@ -6,6 +6,8 @@ not implement another CPU runner, memory bus, ctypes callback guard or full-stat
 comparator. tests/port_io.py is the first migrated consumer; tests/input_poll.py
 and tests/ui_commands.py use the same engine for the connected input subsystem.
 tests/timer_tail.py composes those domains through the same engine.
+tests/palette_timer.py reuses it for the sequential DAC leaf and both timer
+palette callers, with finite byte-port providers and independent packet checks.
 
 OriginalMachine runs exact loaded instructions in Unicorn and checks each reached
 instruction against the pinned relocated image. It rejects undeclared code writes
@@ -18,6 +20,11 @@ bound fixture provider before consuming its returned IRET frame. The provider's
 return is not recorded as a direct original jump edge. Opcode guards stay exact.
 Instruction and phase limits fail the campaign. Pausing before an unsupported
 CALL or missing port provider does not claim execution of that instruction.
+
+Direct branch coverage includes decoded LOOP instructions as well as Capstone's
+jump group: Capstone tags LOOP separately. The palette campaign accounts for
+both loop outcomes through the same executed-edge observer. This corrects
+coverage accounting without replacing or changing original instruction execution.
 
 An explicitly declared mutable code operand must match a complete decoded
 immediate, with its source/producer contract documented beside ASM and in the

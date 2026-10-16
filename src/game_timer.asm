@@ -20,7 +20,7 @@ GameTimerIrqHandler:
     mov ds,ax ; @017D4
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @017D6
     jz GameTimerTail183E ; @017DB
-    call sub_5473 ; @017DD
+    call UpdateTimerPaletteBefore5473 ; @017DD
     cli ; @017E0
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @017E1
     mov bx,[AlternateDrawingOrigin-GameDataImage] ; @017E5
@@ -81,7 +81,7 @@ loc_1835:
     jmp short loc_1837 ; @01835
 loc_1837:
     sti ; @01837
-    call sub_553D ; @01838
+    call UpdateTimerPaletteAfter553D ; @01838
     call UpdateFixedWordPattern ; @0183B
 GameTimerTail183E:
     db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0183E
