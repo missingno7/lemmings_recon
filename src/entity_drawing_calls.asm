@@ -23,7 +23,7 @@ loc_3645:
     jl loc_3670 ; @03664
     push di ; @03666
     xchg si,di ; @03667
-    call sub_6E83 ; @03669
+    call DrawEntityPointCloud ; @03669
     pop di ; @0366C
     jmp short loc_367D ; @0366D
 ; UNKNOWN: unresolved bytes

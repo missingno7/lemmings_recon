@@ -441,7 +441,7 @@ sub_03E7:
     mov byte [0x86],0x11 ; @0041D
     mov byte [EntityActionSelector-GameDataImage],0x2 ; @00422
     mov byte [StatusIconDisplaySnapshot-GameDataImage],0x3 ; @00427
-    mov byte [0x4d],0x50 ; @0042C
+    mov byte [EntityPointCount-GameDataImage],0x50 ; @0042C
     mov byte [0x4e],0x1 ; @00431
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00436
     mov [0x1fd4],al ; @00438

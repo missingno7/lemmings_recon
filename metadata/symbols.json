@@ -41709,9 +41709,11 @@
     "address": 28291,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6E83",
-    "aliases": [],
+    "size": 248,
+    "symbol_name": "DrawEntityPointCloud",
+    "aliases": [
+      "sub_6E83"
+    ],
     "callers": [
       13929
     ],
@@ -41898,16 +41900,27 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 248
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 248,
+    "c_implementation": "c/entity_points.c",
+    "c_core": "lmn_draw_entity_point_cloud_core",
+    "c_code_ranges": [
+      [
+        28291,
+        28539
+      ]
+    ],
+    "verification_evidence": "tests/entity_points.py: DrawEntityPointCloud passes 31 fixtures/62 core and actual RET comparisons: 248 bytes/all 110 sites/all 17 jump outcomes, 292,396 ordered bus events and 10 completed mutants. Four null-bus repeats; complete65536-iteration zero-count scans, signed/wrapped deltas, live point/color/mask/page/count providers, SS dirty-before-POP aliases, actual RET, RAM/VGA DS/SS and physical20-bit word wrap. Independent dirty/pixel projections are separate from full RAM/register/defined-FLAGS/native bus comparisons. docs/entity-display.md"
   },
   {
     "address": 28539,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6F7B",
-    "aliases": [],
+    "size": 103,
+    "symbol_name": "DrawEntityTwoByteStrip",
+    "aliases": [
+      "sub_6F7B"
+    ],
     "callers": [
       29010
     ],
@@ -42014,8 +42027,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 103
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 103,
+    "c_implementation": "c/entity_strip.c",
+    "c_core": "lmn_draw_entity_two_byte_strip_core",
+    "c_code_ranges": [
+      [
+        28539,
+        28642
+      ]
+    ],
+    "verification_evidence": "tests/entity_strip.py: DrawEntityTwoByteStrip passes 26 fixtures/52 core and actual RET comparisons: 103 bytes/all 47 sites/all 2 jump outcomes, 6,928 ordered bus events and 8 completed mutants. Independent ordered full RAM/roles/defined-FLAGS and VGA plane equations, incoming CX source DS, DF row strides44/40, finite altered savedCX including9-row expansion, mirror/DS/RET aliases and physical20-bit word wrap. STI before actual POP DS/RET. docs/entity-display.md"
   },
   {
     "address": 28642,
@@ -61352,5 +61374,85 @@
       "81E4 initializes45D3,81F2 selects an SS marker,820C/820F/8213 exchanges it with0026;010F..0116 also exchanges them.4143 selects a marker through the relocated stack operand."
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 28538,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityPointCloudReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after count wraps to zero; core boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 28641,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntityTwoByteStripReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual near RET after STI and live POP DS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 77,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "EntityPointCount",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "042C initializes50h;6ECC reads once into CL, CH zero; zero count wraps65536"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 10104,
+    "segment": 2473,
+    "kind": "data_base",
+    "size": 0,
+    "symbol_name": "EntityPointColors",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "6F5B/6F5F reads live byte at base+(CX&0F);16-byte access window, UNKNOWN ownership retained"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 10120,
+    "segment": 2473,
+    "kind": "data_base",
+    "size": 0,
+    "symbol_name": "EntityPointFrames",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "6E8C base plus byte(selector-1)*A0; low signed X/high signed Y, low80 skips. Total extent UNKNOWN"
+    ],
+    "verification_status": "STATIC"
   }
 ]

@@ -1,3 +1,6 @@
+EntityPointCount equ GameDataImage+0x004D
+EntityPointColors equ GameDataImage+0x2778
+EntityPointFrames equ GameDataImage+0x2788
 ViewVisibilityMapBase equ GameDataImage+0x0EA8
 AlternateDrawingDirtyCellMapOffset equ GameDataImage+0x0028
 EntityDrawingPassCount equ GameDataImage+0x0045

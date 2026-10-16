@@ -387,8 +387,8 @@
 #define CS_sub_6CC7 0x6CC7u
 #define CS_sub_6CFA 0x6CFAu
 #define CS_sub_6CFC 0x6CFCu
-#define CS_sub_6E83 0x6E83u
-#define CS_sub_6F7B 0x6F7Bu
+#define CS_DrawEntityPointCloud 0x6E83u
+#define CS_DrawEntityTwoByteStrip 0x6F7Bu
 #define CS_DrawEntityMinimapPixel 0x6FE2u
 #define CS_DrawObjectSprite 0x706Fu
 #define CS_sub_715D 0x715Du
@@ -842,4 +842,9 @@
 #define CS_ViewVisibilityStackSegmentOperand 0x4137u
 #define SEG09A9_ViewVisibilityMapBase 0x0EA8u
 #define SEG09A9_AlternateDrawingDirtyCellMapOffset 0x0028u
+#define CS_EntityPointCloudReturn 0x6F7Au
+#define CS_EntityTwoByteStripReturn 0x6FE1u
+#define SEG09A9_EntityPointCount 0x004Du
+#define SEG09A9_EntityPointColors 0x2778u
+#define SEG09A9_EntityPointFrames 0x2788u
 #endif

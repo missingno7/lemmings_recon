@@ -35,7 +35,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 05726..057D0 | entity_dirty.asm | Unchecked visibility gate and live SS dirty rows; actual saved CX/SI and post-store bounds |
 | 057D1..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
-| 06170..06FE1 | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 06170..06E82 | game_code_late_after_entities.asm | Sprite drawing; mixed ownership remains provisional |
+| 06E83..06F7A | entity_points.asm | Point-cloud leaf, live point/color tables and nested SS saves; table ownership remains UNKNOWN |
+| 06F7B..06FE1 | entity_strip.asm | Two-byte strip with incoming CX source segment, DF strings and actual popped LOOP count |
 | 06FE2..0706E | entity_minimap.asm | Signed entity minimap pixel guards, live saved X/table and VGA effects |
 | 0706F..075EE | game_code_after_entity_minimap.asm | Sprite dispatch suffix; unresolved715B and UNKNOWN preserved |
 | 075EF..07629 | status_copy.asm | Full DF-sensitive status-region copy, live DS and single-CALL/fallthrough wrapper |
@@ -608,5 +610,20 @@ the original live memory and explicitly prepared caller frames. The handoff is
 not execution of3634. The producer's relocated segment, DF, live ES and marker
 reads, and the consumer's raw SS output and saved CX/SI remain explicit.
 Only376 unique bytes are added, taking the main C union to18,971.
-See entity-display.md. Fresh3634 views now select6E83's live point/color tables
-and count before the wider706F/715B sprite-dispatch frontier; see next-work.md.
+See entity-display.md. That checkpoint selected6E83's live point/color tables
+and count; the subsequent leaf acceptance is recorded below.
+
+DrawEntityPointCloud passes 31 fixtures/62 core and actual RET comparisons: 248 bytes/all 110 sites/all 17 jump outcomes, 292,396 ordered bus events and 10 completed mutants.
+DrawEntityTwoByteStrip passes 26 fixtures/52 core and actual RET comparisons: 103 bytes/all 47 sites/all 2 jump outcomes, 6,928 ordered bus events and 8 completed mutants.
+The point gate adds four null-bus repeats and completes the original zero-count
+65,536-iteration scan at both APIs. The strip gate independently checks
+2,816 plane-byte writes and finite saved-count providers, including a nine-row
+expansion. Full RAM, returned roles, defined FLAGS and ordered bus/device
+state match original ASM. These disjoint leaves add351 unique main C bytes,
+taking the ledger union from18,971 to19,322. The live table bases retain
+UNKNOWN ownership and no new bounds or immutability claim. Reports are
+build/entity-points-differential.json and build/entity-strip-differential.json;
+only matching scopes/input hashes establish these focused results. This does
+not refresh aggregate campaigns or establish whole-game acceptance.
+Continue with6170 source/descriptor ownership and its callback leaf before
+the wider706F/715B sprite-dispatch domain. See next-work.md.

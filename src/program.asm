@@ -41,6 +41,8 @@ times -(($-$$) != 0x5d66) db 0 ; module end assertion
 %include "entity_graphics.asm"
 times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "game_code_late_after_entities.asm"
+%include "entity_points.asm"
+%include "entity_strip.asm"
 %include "entity_minimap.asm"
 %include "game_code_after_entity_minimap.asm"
 times -(($-$$) != 0x75ef) db 0 ; module end assertion

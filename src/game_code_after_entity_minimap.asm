@@ -110,7 +110,7 @@ loc_70FF:
     db 0x03,0xc2 ; ENCODED: add ax,dx (NASM chooses a different encoding) ; @0714A
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM chooses a different encoding) ; @0714C
     sub di,0x15f ; @0714E
-    call sub_6F7B ; @07152
+    call DrawEntityTwoByteStrip ; @07152
     pop bx ; @07155
     pop si ; @07156
     pop cx ; @07157

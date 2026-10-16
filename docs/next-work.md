@@ -363,19 +363,28 @@ separate from liveSS; no guessed visibility extent or bounded dirty matrix is
 introduced. See entity-display.md and matching-input reports. These disjoint
 scopes add376 unique main C bytes, taking the ledger union to18,971.
 
-The3634 parent now depends on6E83 and706F, whose715B callback domain remains
-unresolved. Next audit and port6E83..6F7A (248 bytes/110 sites, no children).
-It reads the byte count DS004D, initialized to50h at042C, once before an
-unconditional point loop; zero means65,536 iterations. Record+28 selects
-DS:2788+160*((byte-1)&FF). Each word's signed low byte offsets horizontal BP;
-the signed high byte offsets vertical DX. Low byte80 skips that point only.
-The16-byte color read is DS:2778+(CX&0F). Keep both tables live and their
-stored extents UNKNOWN until producer/buffer evidence justifies classification.
-The recovered3634 caller admits selectors1..127 via a signed test; that is not
-a direct-entry clamp. Trace block-copy/initialization ownership before treating
-2788 as a fixed static object. Preserve nested SS saves, dirty stores, VGA
-setup/read/write, flags and actual RET6F7A. Closing this leaf does not close
-706F's live record+14 target at715B or its nine known callback families.
+DrawEntityPointCloud passes 31 fixtures/62 core and actual RET comparisons: 248 bytes/all 110 sites/all 17 jump outcomes, 292,396 ordered bus events and 10 completed mutants.
+DrawEntityTwoByteStrip passes 26 fixtures/52 core and actual RET comparisons: 103 bytes/all 47 sites/all 2 jump outcomes, 6,928 ordered bus events and 8 completed mutants.
+The point gate adds four null-bus repeats and completes the original zero-count
+65,536-iteration scan at both APIs. The strip gate independently checks
+2,816 plane-byte writes and finite saved-count providers, including a nine-row
+expansion. Full RAM, returned roles, defined FLAGS and ordered bus/device
+state match original ASM. These disjoint leaves add351 unique main C bytes,
+taking the ledger union from18,971 to19,322. The live table bases retain
+UNKNOWN ownership and no new bounds or immutability claim. Reports are
+build/entity-points-differential.json and build/entity-strip-differential.json;
+only matching scopes/input hashes establish these focused results. This does
+not refresh aggregate campaigns or establish whole-game acceptance.
+
+Fresh3634 dependency views now select the nine sprite callback leaves before
+DrawObjectSprite706F..715E and the enclosing record loop. Start with6170
+(873 bytes/478 sites,22 observed direct record+14 producers), tracing the
+DS1FE6 source allocation and live descriptor fields first. The known table
+contains nine initialized slots, but copies/indexed stores and aliases leave
+the715B CALL AX domain open. Its target is the real SS word saved at70F0,
+not a late reread of record+14. Preserve helper7152->7155, callback715B->715D,
+the shared saved-DI/RET suffix and returned DS/ES/SS. See entity-display.md
+for targets, ownership, and source/count quirks.
 
 StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
