@@ -718,3 +718,22 @@ from progress prose/the raw symbol ledger, while the generated header and exact
 ASM verifier still pin names/offsets and physical bytes. See entity-sprite-banks.md.
 Next audit 5CC1's table/selector ownership and frame-free 5CDD tail, then 57D1,
 before connecting 58D2; its retry/fatal/provider seams remain open.
+
+The 5CC1 prefix and 57D1 leaf now add 114 unique main C bytes, taking the
+union to 23,806. Fixed-word banks pass 15 fixtures/30 boundaries, all 46
+integrated sites/ten outcomes, 197,574 events, 23,040 independent output bytes
+and ten completed mutants. The prefix adds 28 bytes; its 59-byte shared child
+is already counted. The VGA plane copy passes 21 fixtures/42 boundaries,
+86 bytes/all 45 sites/four outcomes, 78,878 events, 25,696 independent plane
+bytes and ten completed mutants. Both preserve live SS words, DF, wrap, aliases
+and actual returns; the fixed generator's final tail adds no frame.
+
+The 1FEA selector, two 96-byte sources, 0900h-byte normal output and 144-byte
+consumer slices are statically accounted for without reclassifying UNKNOWN
+storage. Sections 2/6 also pass their complete normal VGA copy profiles. All
+seven MAIN.DAT section sizes are statically recorded, including section 1's
+0184h-byte mask source and the adjacent section 3/4 destinations. See
+fixed-word-banks.md, vga-plane-copy.md and main-resource-sections.md.
+Next compose 58D2's twelve actual CALLs, live DS/BX saves, no-op stack traffic
+and neutral 200E gate; retain the retry/fatal seams. Only matching focused
+report inputs establish this checkpoint; aggregate acceptance remains separate.

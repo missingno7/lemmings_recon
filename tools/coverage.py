@@ -209,6 +209,8 @@ def report():
     executed.update(setup['executed_instruction_addresses'])
     decimal=read_json(BUILD/'decimal-digits-c-differential.json')
     status_icons=read_json(BUILD/'status-icons-differential.json')
+    fixed_word_banks=read_json(BUILD/'fixed-word-banks-differential.json')
+    vga_plane_copy=read_json(BUILD/'vga-plane-copy-differential.json')
     entity_sprite_banks=read_json(BUILD/'entity-sprite-banks-differential.json')
     sprite_wide_banks=read_json(BUILD/'sprite-wide-banks-differential.json')
     sprite_shift_banks=read_json(BUILD/'sprite-shift-banks-differential.json')
@@ -321,7 +323,7 @@ def report():
     entity_action_dispatch=read_json(BUILD/'entity-action-dispatch-differential.json')
     entity_batch=read_json(BUILD/'entity-batch-differential.json')
     entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
-    for label,extra in (('entity sprite bank transform',entity_sprite_banks),('five-byte sprite banks',sprite_wide_banks),('three-byte sprite banks',sprite_shift_banks),('sprite bank producer',sprite_bank),('entity drawing loop',entity_drawing),('entity sprite dispatch',entity_sprite_dispatch),('multiplane entity sprites',entity_sprite_planes),('wide entity sprite',entity_sprite_wide),('aligned entity sprite',entity_sprite_aligned),('shifted entity sprites',entity_sprite_shifted),('entity points',entity_points),('entity strip',entity_strip),('entity minimap',entity_minimap),('view visibility',view_visibility),('entity dirty',entity_dirty),('status copy',status_copy),('status initialize',status_initialize),('object drawing tick',object_drawing_tick),('object animation',object_animation),('status display',status_display),('status display full',status_display_full),('status text',status_text),('status count',status_count),('status glyph',status_glyph),
+    for label,extra in (('fixed word banks',fixed_word_banks),('resource planes to VGA',vga_plane_copy),('entity sprite bank transform',entity_sprite_banks),('five-byte sprite banks',sprite_wide_banks),('three-byte sprite banks',sprite_shift_banks),('sprite bank producer',sprite_bank),('entity drawing loop',entity_drawing),('entity sprite dispatch',entity_sprite_dispatch),('multiplane entity sprites',entity_sprite_planes),('wide entity sprite',entity_sprite_wide),('aligned entity sprite',entity_sprite_aligned),('shifted entity sprites',entity_sprite_shifted),('entity points',entity_points),('entity strip',entity_strip),('entity minimap',entity_minimap),('view visibility',view_visibility),('entity dirty',entity_dirty),('status copy',status_copy),('status initialize',status_initialize),('object drawing tick',object_drawing_tick),('object animation',object_animation),('status display',status_display),('status display full',status_display_full),('status text',status_text),('status count',status_count),('status glyph',status_glyph),
                         ('status icons',status_icons),('minimap viewport',minimap_viewport),
                         ('minimap status prefix',minimap_status),('decimal digits',decimal),('decimal fields',decimal_field),
                         ('entity selection',entity_select),('entity selection/action handoff',entity_select_actions),
@@ -410,6 +412,8 @@ def report():
     executed.update(status_icons['executed_instruction_addresses'])
     executed.update(status_count['executed_instruction_addresses'])
     executed.update(status_text['executed_instruction_addresses'])
+    executed.update(fixed_word_banks['executed_instruction_addresses'])
+    executed.update(vga_plane_copy['executed_instruction_addresses'])
     executed.update(entity_sprite_banks['executed_instruction_addresses'])
     executed.update(sprite_wide_banks['executed_instruction_addresses'])
     executed.update(sprite_shift_banks['executed_instruction_addresses'])
@@ -457,7 +461,7 @@ def report():
     for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
     for extra in (terrain_inputs,terrain,commands,streams,object_draw,redraw):executed.update(extra['executed_instruction_addresses'])
     reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
-    reports+=entity_sprite_banks,sprite_wide_banks,sprite_shift_banks,sprite_bank,entity_drawing,entity_sprite_dispatch,entity_sprite_planes,entity_sprite_wide,entity_sprite_aligned,entity_sprite_shifted,entity_points,entity_strip,entity_minimap,view_visibility,entity_dirty,status_copy,status_initialize,object_drawing_tick,object_animation,status_display,status_display_full,status_text,status_count,status_glyph,status_icons,minimap_viewport,minimap_status
+    reports+=fixed_word_banks,vga_plane_copy,entity_sprite_banks,sprite_wide_banks,sprite_shift_banks,sprite_bank,entity_drawing,entity_sprite_dispatch,entity_sprite_planes,entity_sprite_wide,entity_sprite_aligned,entity_sprite_shifted,entity_points,entity_strip,entity_minimap,view_visibility,entity_dirty,status_copy,status_initialize,object_drawing_tick,object_animation,status_display,status_display_full,status_text,status_count,status_glyph,status_icons,minimap_viewport,minimap_status
     reports+=decimal_field,entity_select,entity_select_actions
     reports+=terrain_inputs,terrain,commands,streams,object_draw,redraw
     reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)

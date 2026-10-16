@@ -1,4 +1,8 @@
 EntitySpriteBufferSegment equ GameDataImage+0x1FE6
+GeneratedWordPatternBufferSegment equ GameDataImage+0x1FEA
+; Proven source accesses; raw storage and its UNKNOWN classification remain below.
+FixedWordPatternA equ GameDataImage+0x52BC
+FixedWordPatternB equ GameDataImage+0x531C
 EntityPointCount equ GameDataImage+0x004D
 EntityPointColors equ GameDataImage+0x2778
 EntityPointFrames equ GameDataImage+0x2788

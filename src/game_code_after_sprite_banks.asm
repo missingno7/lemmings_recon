@@ -2,13 +2,20 @@
 
 times -(($-$$) != 0x5cc1) db 0 ; module start assertion
 sub_5CC1:
-    mov si,0x52bc ; @05CC1
-    mov es,[0x1fea] ; @05CC4
+GenerateFixedWordMaskBanks:
+; DS:52BC/531C contain three groups of sixteen words each on the initialized
+; data frame. ES is selected through live DS:1FEA. Normal output is 0900 bytes:
+; two 0480-byte sets, eight 0090-byte shifts with two data and one mask plane.
+; First child uses an actual near frame; the second enters by fallthrough and
+; its shared RET consumes the original outer word. DF and all SS saves are live.
+; Source storage remains UNKNOWN; see docs/fixed-word-banks.md for ownership.
+    mov si,FixedWordPatternA-GameDataImage ; @05CC1
+    mov es,[GeneratedWordPatternBufferSegment-GameDataImage] ; @05CC4
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @05CC8
     mov cx,0x10 ; @05CCA
     mov bl,0x3 ; @05CCD
     call GenerateWordMaskShifts ; @05CCF
-    mov si,0x531c ; @05CD2
+    mov si,FixedWordPatternB-GameDataImage ; @05CD2
     mov di,0x480 ; @05CD5
     mov bl,0x3 ; @05CD8
     mov cx,0x10 ; @05CDA
@@ -58,6 +65,7 @@ loc_5CF8:
     inc dh ; @05D10
     cmp dh,0x8 ; @05D12
     jnz loc_5CDF ; @05D15
+WordMaskGeneratorReturn:
     ret ; @05D17
 ; UNKNOWN: unresolved bytes
     db 0x32,0xf6,0x52,0x53,0x56,0x53,0x51,0x51,0x53,0xad,0x8b,0xd8,0xad,0x32,0xd2,0x22 ; @05D18

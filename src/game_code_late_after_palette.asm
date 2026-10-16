@@ -1,6 +1,11 @@
 ; Mixed resource ownership 57D1..5B10; UNKNOWN bytes unchanged.
 times -(($-$$) != 0x57d1) db 0 ; module start assertion
 sub_57D1:
+CopyResourcePlanesToVga:
+; DS:SI bytes -> ES=A000. BH planes (zero means 256), CX rows (zero wraps
+; through FFFF), BL bytes per REP (zero copies none), AX literal row pitch.
+; All row/plane/AX saves reread live SS words; mirrors precede OUT. REP follows
+; live DF, SI flows across planes, DI/CX restore per plane. DS/SS/BP unchanged.
     push ax ; @057D1
     mov dx,0xa000 ; @057D2
     mov es,dx ; @057D5
@@ -47,6 +52,7 @@ loc_580E:
     shl dh,1 ; @05820
     dec bh ; @05822
     jnz loc_57FE ; @05824
+VgaPlaneCopyReturn:
     ret ; @05826
 sub_5827:
     call sub_715F ; @05827
@@ -73,7 +79,7 @@ loc_5858:
     add bx,byte +0x60 ; @0585A
     mov di,[0xc] ; @0585D
     push ds ; @05861
-    mov ds,[0x1fea] ; @05862
+    mov ds,[GeneratedWordPatternBufferSegment-GameDataImage] ; @05862
     call sub_7218 ; @05866
     pop ds ; @05869
     mov ax,[0xc] ; @0586A

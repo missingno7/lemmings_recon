@@ -33069,9 +33069,11 @@
     "address": 22481,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_57D1",
-    "aliases": [],
+    "size": 86,
+    "symbol_name": "CopyResourcePlanesToVga",
+    "aliases": [
+      "sub_57D1"
+    ],
     "callers": [
       22823,
       22945
@@ -33137,10 +33139,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact 86-byte 57D1 leaf: live SS AX/plane/row saves, ordered mirror-before-OUT, DF-sensitive REP, zero BH/CX do-while counts and zero BL REP, physical word high+1 and actual outer RET; docs/vga-plane-copy.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 86
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 86,
+    "c_implementation": "c/vga_plane_copy.c",
+    "c_core": "lmn_copy_resource_planes_vga_core",
+    "c_code_ranges": [
+      [
+        22481,
+        22567
+      ]
+    ],
+    "verification_evidence": "tests/vga_plane_copy.py: 21 fixtures/42 core and actual RET comparisons; 86 bytes/all 45 sites/all four branch outcomes; 78878 ordered events, 49179 original steps, 25696 independent plane bytes, ten completed mutants. Pinned MAIN.DAT sections 2/6 with actual four-plane 40x40 inputs, zero BH/BL and finite zero-CX provider, DF, live AX/BX/DI/CX/RET, mirror order, VGA/source/stack aliases and wrap. Matching focused report inputs only; docs/vga-plane-copy.md"
   },
   {
     "address": 22567,
@@ -34203,9 +34215,11 @@
     "address": 23745,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5CC1",
-    "aliases": [],
+    "size": 28,
+    "symbol_name": "GenerateFixedWordMaskBanks",
+    "aliases": [
+      "sub_5CC1"
+    ],
     "callers": [
       22760
     ],
@@ -34256,10 +34270,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact 28-byte 5CC1 prefix selects ES through live DS:1FEA and composes the 59-byte 5CDD child; actual first CALL and frame-free final tail. Two 96-byte fixed sources and normal 0900h-byte output; docs/fixed-word-banks.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 87
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 87,
+    "c_implementation": "c/fixed_word_banks.c",
+    "c_core": "lmn_generate_fixed_word_mask_banks_core",
+    "c_code_ranges": [
+      [
+        23745,
+        23832
+      ]
+    ],
+    "verification_evidence": "tests/fixed_word_banks.py: 15 fixtures/30 core and actual RET comparisons; 28 new bytes/10 parent sites plus 59 overlapping child bytes/36 sites; 87 integrated bytes/46 sites/all ten branch outcomes; 197574 ordered events, 642524 original steps, 23040 independent output bytes, ten completed mutants. Static/synthetic sources, DF, live selector/BX/DX/SI/count/return providers, stack/source/output overlap, VGA stack and physical/offset wrap; first changed RET stops explicitly. Matching focused report inputs only; docs/fixed-word-banks.md"
   },
   {
     "address": 23773,
@@ -62284,5 +62308,85 @@
       "Actual near RET of 59BB sprite-bank transform. docs/entity-sprite-banks.md"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 22566,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "VgaPlaneCopyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near RET after57D1 plane loop"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 23831,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "WordMaskGeneratorReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared RET of GenerateWordMaskShifts and frame-free final tail from5CC1"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8170,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GeneratedWordPatternBufferSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup zeroes;1025 publishes allocation base+2E72 paragraphs;5CC4 selectsES and5862 selectsDS; nominal0900-byte partition. Live/unbounded/aliasable; docs/fixed-word-banks.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21180,
+    "segment": 2473,
+    "kind": "data_array",
+    "size": 96,
+    "symbol_name": "FixedWordPatternA",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Normal5CC1+5CDD path reads48 words/three16-word groups at imageED4C..EDAB; source UNKNOWN classification retained; docs/fixed-word-banks.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21276,
+    "segment": 2473,
+    "kind": "data_array",
+    "size": 96,
+    "symbol_name": "FixedWordPatternB",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Normal5CC1+5CDD path reads48 words/three16-word groups at imageEDAC..EE0B; source UNKNOWN classification retained; docs/fixed-word-banks.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

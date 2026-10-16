@@ -343,7 +343,7 @@
 #define CS_PaletteRgbReturn571E 0x571Eu
 #define CS_PaletteRgbDecrementReturn5725 0x5725u
 #define CS_MarkEntityDrawingDirty 0x5726u
-#define CS_sub_57D1 0x57D1u
+#define CS_CopyResourcePlanesToVga 0x57D1u
 #define CS_sub_5827 0x5827u
 #define CS_sub_587F 0x587Fu
 #define CS_LoadMainResourceSections 0x58D2u
@@ -354,7 +354,7 @@
 #define CS_GenerateThreeByteSpriteBanks 0x5B11u
 #define CS_CopySpritePlanesAndAppendMask 0x5BB0u
 #define CS_GenerateFiveByteSpriteBanks 0x5C06u
-#define CS_sub_5CC1 0x5CC1u
+#define CS_GenerateFixedWordMaskBanks 0x5CC1u
 #define CS_GenerateWordMaskShifts 0x5CDDu
 #define CS_GenerateByteMaskShifts 0x5D66u
 #define CS_ConfigureEntityPixelReadback 0x5D94u
@@ -887,4 +887,9 @@
 #define CS_ThreeByteSpriteBanksReturn 0x5BAFu
 #define CS_FiveByteSpriteBanksReturn 0x5CC0u
 #define CS_EntitySpriteBanksReturn 0x5AC0u
+#define CS_VgaPlaneCopyReturn 0x5826u
+#define CS_WordMaskGeneratorReturn 0x5D17u
+#define SEG09A9_GeneratedWordPatternBufferSegment 0x1FEAu
+#define SEG09A9_FixedWordPatternA 0x52BCu
+#define SEG09A9_FixedWordPatternB 0x531Cu
 #endif

@@ -1197,7 +1197,7 @@ sub_1007:
     add ax,0x1d0c ; @0101C
     mov [GeneratedGraphicsBufferSegment-GameDataImage],ax ; @0101F
     add ax,0x166 ; @01022
-    mov [0x1fea],ax ; @01025
+    mov [GeneratedWordPatternBufferSegment-GameDataImage],ax ; @01025
     add ax,0x90 ; @01028
     mov [StatusGlyphBufferSegment-GameDataImage],ax ; @0102B
     add ax,0x7c ; @0102E

@@ -2,40 +2,48 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 23,692 bytes. The 59BB sprite
-transform now composes all three native bank leaves through actual CALL/RET
-words: 262 new bytes/114 parent sites/all 30 parent branch outcomes. The 24
-fixtures/48 core and actual-RET comparisons cover 694 integrated bytes and
-313 sites, with 70 executed outcomes of 72 static outcomes, 2,787,712 ordered
-events and ten completed mutants. The two other child outcomes remain outside
-this campaign. Child bytes overlap existing translations and are counted once.
+The main-image translated-code ledger union is 23,806 bytes, adding 114 unique
+bytes with no removals. `GenerateFixedWordMaskBanks` at 5CC1 adds 28 prefix bytes
+and composes the existing 59-byte word generator through an actual first CALL
+and frame-free final fallthrough. Its 15 fixtures/30 core and actual-RET
+comparisons cover 87 integrated bytes/46 sites/all ten branch outcomes, 197,574
+ordered events, 23,040 independent output-byte checks and ten completed mutants.
+Live selector/BX/DX/SI/count/return words, DF, overlap, VGA stack and physical/offset
+wrap remain explicit. The two 96-byte source windows still retain UNKNOWN
+classification. See fixed-word-banks.md.
 
-Complete pinned MAIN.DAT section zero and constructed inputs each execute all
-337 calls at both boundaries. The decoded source is exactly 5270h bytes;
-independent equations check the whole 194B8h output and 455,752 bytes across
-the campaign. Returned ES/DI/FLAGS, ordered selectors, live CX/DS saves,
-changed returns for all three families and actual outer RET remain explicit.
-Focused cases also preserve DF, overlaps, VGA SS/DS/ES, word wrap and LOOP's
-zero-to-FFFF behavior. See entity-sprite-banks.md and exact report inputs.
+`CopyResourcePlanesToVga` at 57D1 adds 86 bytes/45 sites. Its 21 fixtures/42
+comparisons cover all four branch outcomes, 78,878 events, 25,696 independent
+plane-byte checks and ten completed mutants. Both pinned MAIN.DAT sections 2/6
+use the actual four-plane, 40-row, 40-byte caller profile. Live SS mirrors and
+saved AX/BX/DI/CX, zero BH/CX loops, zero BL REP, DF, word wrap, VGA aliases and the
+actual outer RET are preserved. See vga-plane-copy.md. No budget exhaustion
+counts as mutant detection; owned native traces and workers stay bounded.
 
-The parent campaign stores ordered traces in fixed 20-byte records under a
-512 MiB process-tree cap. The complete normal adapter needs 7,497,560 trace
-payload bytes. Progress prose and the raw symbol ledger are outside this
-behavioral input scope; compiled names/offsets remain pinned by the generated
-header and current ledger/ASM by the independent exact verifier. This avoids
-repeating a long unchanged campaign solely to update acceptance notes.
+The static 1FEA selector audit accounts for startup clearing and allocation,
+all direct selector references, two 96-byte source tables, a 0900h-byte normal
+output and the 144-byte consumer slices. Names live in the ledger and contracts
+beside ASM. Allocation bounds, lifetime, aliases and UNKNOWN 5D18..5D65 remain
+open. Static extraction also accounts for all seven MAIN.DAT section extents;
+section 1 exactly fills the 0184h-byte mask source, while sections 3/4 have adjacent
+normal destinations. Their higher-level consumer semantics remain separate.
 
-Next audit the 5CC1 prefix (28 new bytes plus the existing 59-byte 5CDD tail):
-its live DS:1FEA buffer selector, two 96-byte DS word-pattern sources at 52BC
-and 531C, actual first child CALL and frame-free final fallthrough. Prove table
-ownership/extent and the returned live DS/ES/SS/counts before naming semantics
-or translating the prefix. Keep UNKNOWN 5D18..5D65 explicit. Then translate the
-57D1 leaf (86 bytes/45 sites) and compose the 58D2 resource loader. Fresh
-views retain LoadDatResource's retry seam at 4B1C and decoder fatal exits.
+Next compose `LoadMainResourceSections` at 58D2..59BA: 233 bytes/101 sites,
+twelve actual CALLs and the two outcomes of the live DS:200E==FF gate. Read
+main-resource-sections.md and fresh graph tree/bottom-up views first. Use the
+existing native child cores with actual SS frames, live DS/BX restores and
+flowing segment/flag results. Preserve the literal PUSH/POP BX at 5964/5965.
+Propagate changed child returns and fatal 1949/04D0 without executing the parent
+tail; retain LoadDatResource's untranslated retry seam at 4B1C. Do not guess a
+semantic name for 200E. Full normal section 0 sprite generation is already
+verified through 337 native calls; child bytes are counted once.
 
-This is focused acceptance. Earlier unrelated campaigns remain historical
-until their recorded inputs match. Full contracts and matching complete native
-campaign inputs remain necessary for aggregate acceptance; SDL3 follows the core.
+These focused reports pin their consumed code, models, tools, assets and generated
+header. Progress prose and the raw symbol ledger are outside their behavioral
+scope; the independent exact gate pins the current ledger/header/ASM. Earlier
+unrelated campaigns remain historical until their recorded inputs match. Full
+contracts and matching complete native campaign inputs remain necessary for
+aggregate acceptance; SDL3 follows the core.
 
 ## Retained terrain campaign
 
