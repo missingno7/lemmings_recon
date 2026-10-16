@@ -1,8 +1,10 @@
 # Simulation ownership and state convergence
 
-The identified parent at `1F19` has 3,744 decoded bytes and 1,255 instruction
-sites in the fresh static graph. Its eleven direct CALL children have scoped
-native implementations. Those contracts retain their platform, IRQ, mutable
+AdvanceEntityRecords at `1F19` now composes its 3,744 known bytes and 1,255
+instruction sites through maintained C state/child cores. Its outer299 caller
+bytes add new translation; existing states and shared tails overlap this body
+and are counted once. Its eleven direct CALL children have scoped native
+implementations. Those contracts retain their platform, IRQ, mutable
 target and changed-return seams; they do not establish full simulation readiness.
 
 ## Live owners
@@ -117,9 +119,9 @@ credit. Input hashes must match the retained reports; file preservation does not
 refresh evidence. No game boot or native timing claim is involved.
 
 This is scoped verification, not full original/native campaign acceptance.
-The following five entries continue that bottom-up composition. The live
-iteration/scan parent and remaining states retain their platform and
-changed-target seams.
+The following entries continue that bottom-up composition. The full
+iteration/scan connection is documented below; platform and changed-target
+seams remain explicit.
 
 ## State0004 and neighboring cadence entries
 
@@ -388,7 +390,8 @@ to another valid caller continuation. Per-call limits are2,048 instructions/
 `build/entity-state100-differential.json`. Together these two scopes add420
 unique caller bytes/137 sites/48 actual owned outcomes. Children and shared
 tails overlap existing translations and are not added again. These are scoped
-native results; the full1F19 parent and aggregate game acceptance remain open.
+native results; aggregate game acceptance remains open. The full1F19
+composition is documented below.
 
 The0200 body at287D..2A6C owns496 known bytes/169 sites, with
 20 conditional and19 unconditional jumps:59 owned outcomes including conditional
@@ -503,3 +506,79 @@ There is no proof restricting this to intended selectors0..1. JNS2CB9 also
 targets its own fallthrough2CBB; retain the preceding live sign test while
 counting the unique transition once. The outer iteration/scan composition
 then remains at1F19..2046, excluding the already-tested1FE8 CALL.
+
+## State0800 signed selection and movement
+
+State0800 at2B35..2D0E owns473 known bytes/157 sites/70 unique jump
+outcomes; UNKNOWN2B50 stays excluded. Byte INC AL wraps, and only the exact
+updated value18 resets to zero. Signed JL after CMP AL,3 admits1,2,80..FF.
+DEC/CBW therefore passes130 distinct unchecked AX selectors to606B, including
+007F andFF80..FFFE. No narrower gameplay invariant is established.
+The actual mask return is2B63; both pixel calls retain distinct returns2B93
+and2C2B. Returned mask DS/SI and all actual SS saves remain live.
+
+Phases0F and3 add signed+27 to X twice, checking signed bounds[10,680)
+after each ADD. Phase3 also INCs live Y before the signed B4 check and probe.
+Zero phase INCs Y without probing. Clear pixels perform ordered0004-state
+stores, read callback002E late and clear state bit0800. Occupied pixels read
+an unchecked SS map nibble only after actual AX/DX pushes, MUL and pops.
+Nibble7 uses a fresh direction sign; nibble8 reads and ANDs direction even
+though JNS2CB9 has identical target and fallthrough. Nibble9 can issue native
+INT61 AX040A through return2D0D. Returned DS owns the subsequent memory NEG,
+zero-state stores and late callback. JMPs to1FE8/1FEB add no extra call frame.
+
+The0800 native gate passes177 fixtures at both core/JMP-adapter boundaries:
+473 owned bytes/157 sites/all70 unique owned outcomes,80,208 ordered events
+and nine completed mutants. All130 admitted mask selectors execute. Bounds,
+actual RET and IRET changes, returned DS, map/stack aliases, DF and VGA effects
+are compared against bounded original code. Limits are4,096 instructions/
+4,096 events per call and180 seconds/384 MiB process/640 MiB Windows tree.
+See `build/entity-state800-differential.json` for the exact inputs and scope.
+
+## Outer update and scan contract
+
+AdvanceEntityRecords at1F19 has299 additional caller bytes/108 sites in
+[1F19,1FE8) and[1FEB,2047); the three-byte1FE8 CALL belongs to the tested
+shared finish scope. All bytes in these outer spans are decoded. Actual
+CALL5D94 returns1F26, CALL2E04 returns1F4F, and outer near RET sites are
+2004,203B,2046. The known caller01B3 expects return01B6.
+
+Gate DS:002B==FF clears work guard0050 and returns2004 before setup/scan.
+Otherwise the actual readback child precedes guard0050=FF, SI=0088 and the
+live0043-to0042 byte copy. Zero slot bound returns2004. Each slot PUSHes ES;
+inactive+26==FF skips dispatch. Nonzero+20 calls countdown and uses its
+returned ZF; zero+20 dispatches directly. Flag+24 bit80 overrides the state
+word. A single AX read of+08 feeds first-match TESTs in the original order.
+The masks cover all16 bits, so taken1FE3-to1FE8 is infeasible on this direct
+path: AX was nonzero at1F61 and all earlier tested bits must be clear. This
+local proof does not classify the shared1FE8 CALL as dead; states JMP there.
+
+The1FEB tail POPs live ES, ADDs2D to live SI and memory-DECs live DS:0042.
+Its write observes the ADD flags and preserves CF. After the final slot,
+request004B==0 clears guard and returns2004. A request compares cursor004C
+with bound0043 for equality only. Equal clears request and guard, RET2046.
+Otherwise unsigned cursor*2D+0088 selects SI. Nonzero+20 increments cursor
+and RETs203B. With zero+20, inactive+26==FF increments cursor and loops;
+active candidates test+08&3. Occupied candidates increment and RET203B;
+clear candidates first store+20=4F, then increment and RET203B. These early
+returns leave guard/request intact. No array extent, corrected upper bound,
+lexical pass counter or shadow record replaces the original live memory.
+
+
+The outer native gate passes44 fixtures at both core/actual-RET-adapter
+boundaries:299 additional caller bytes/108 sites/all81 feasible owned outcomes
+of82 static outcomes,6,768 ordered events and eight completed mutants. The
+connection observes808 integrated main sites; exhaustive child matrices remain
+in their own scoped suites. Every state-word dispatch, the byte override,
+zero state, all three outer RETs, real setup/countdown return changes, PC
+service and both AdLib/Tandy prefixes execute. A provider extends the live
+pass counter beyond the copied initial bound; another changes the sound
+handler's saved DS and proves the new DS owns counter decrement and guard
+clear while the original DS fields stay untouched. The actual nested frames,
+full RAM/registers/defined FLAGS and ordered bus/VGA results match the original.
+Limits are20,000 original instruction hooks/8,192 events per call and240
+seconds/384 MiB process/640 MiB Windows tree. See
+`build/entity-update-differential.json` for exact inputs, per-case execution,
+local infeasible-edge accounting and child statuses. This scoped composed
+entry does not establish actual game scheduling, IRQ/device timing, unchecked
+record/table extents or aggregate original/native campaign acceptance.

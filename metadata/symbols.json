@@ -10761,9 +10761,11 @@
     "address": 7961,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1F19",
-    "aliases": [],
+    "size": 3819,
+    "symbol_name": "AdvanceEntityRecords",
+    "aliases": [
+      "sub_1F19"
+    ],
     "callers": [
       435
     ],
@@ -15534,13 +15536,63 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
-      "Live slot-bound/counter/scan ownership and first-match state priority audited; shared JMP tails ledger-owned; docs/entity-simulation.md"
+      "Live slot-bound/counter/scan ownership and first-match state priority audited; shared JMP tails ledger-owned; docs/entity-simulation.md",
+      "Maintained outer/dispatch/scan and child-boundary contract: docs/entity-simulation.md; original sole known CALL01B3 returns01B6."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 3744
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 3744,
+    "c_implementation": "c/entity_update.c",
+    "c_core": "lmn_entity_update_core",
+    "c_code_ranges": [
+      [
+        7961,
+        9090
+      ],
+      [
+        9091,
+        9889
+      ],
+      [
+        9890,
+        9974
+      ],
+      [
+        9975,
+        9983
+      ],
+      [
+        9984,
+        10082
+      ],
+      [
+        10083,
+        10299
+      ],
+      [
+        10365,
+        10941
+      ],
+      [
+        10942,
+        10971
+      ],
+      [
+        10972,
+        10987
+      ],
+      [
+        10988,
+        11088
+      ],
+      [
+        11089,
+        11780
+      ]
+    ],
+    "verification_evidence": "tests/entity_update.py:44 core/adapter fixtures,299 additional outer bytes/108 sites/all81 feasible owned jump outcomes of82 static outcomes,6768 ordered events,8 completed mutants; 808 integrated main sites. Full composed body3744 known bytes/1255 sites overlaps state and shared-finish C scopes. Taken1FE3-to1FE8 is locally infeasible under frozen nonzero AX and16-mask union; shared1FE8 remains live. Actual setup/countdown/outer returns, live counter and returned DS verified; platform/IRQ/changed-child seams remain explicit."
   },
   {
     "address": 10299,
@@ -16558,8 +16610,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_30A6",
-    "aliases": [],
+    "symbol_name": "CreateEntityRecordIfDue",
+    "aliases": [
+      "sub_30A6"
+    ],
     "callers": [
       432,
       1155
@@ -58885,5 +58939,181 @@
       ]
     ],
     "verification_evidence": "tests/entity_late_states.py:combined31 core/JMP-adapter fixtures across both entries;this entry1 owns79 bytes/21 sites/all4 outcomes. Combined245 bytes/74 sites/26 outcomes;2,690 events;6 completed mutants. Modulo8 register cadence,late002E callback,separate memory ANDs and actual1FE8 frame remain live. build/entity-late-states-differential.json;scoped domain."
+  },
+  {
+    "address": 11061,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 474,
+    "symbol_name": "AdvanceEntityState0800",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24683,
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match0800 dispatch from1FCD;byte INC/exact18 reset,signed130-input mask domain,actual mask/pixel/INT61 returns,live SS nibble and late callback;UNKNOWN2B50 excluded. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state800.c",
+    "c_core": "lmn_entity_state800_core",
+    "c_code_ranges": [
+      [
+        11061,
+        11088
+      ],
+      [
+        11089,
+        11535
+      ]
+    ],
+    "verification_evidence": "tests/entity_state800.py:177 core/adapter fixtures,473 known bytes/157 sites/all70 unique owned jump outcomes,80208 ordered events,9 completed mutants; full130 signed mask-selector handoffs, actual child/INT61 returns and shared finish. Scoped constructed states; UNKNOWN2B50 and wider initialization/IRQ domains remain unresolved."
+  },
+  {
+    "address": 11107,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0800AfterMaskCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match0800 dispatch from1FCD;byte INC/exact18 reset,signed130-input mask domain,actual mask/pixel/INT61 returns,live SS nibble and late callback;UNKNOWN2B50 excluded. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11155,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0800AfterFirstPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match0800 dispatch from1FCD;byte INC/exact18 reset,signed130-input mask domain,actual mask/pixel/INT61 returns,live SS nibble and late callback;UNKNOWN2B50 excluded. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11307,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0800AfterSecondPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match0800 dispatch from1FCD;byte INC/exact18 reset,signed130-input mask domain,actual mask/pixel/INT61 returns,live SS nibble and late callback;UNKNOWN2B50 excluded. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11533,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0800AfterSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match0800 dispatch from1FCD;byte INC/exact18 reset,signed130-input mask domain,actual mask/pixel/INT61 returns,live SS nibble and late callback;UNKNOWN2B50 excluded. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7974,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityUpdateAfterReadbackCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer1F19 actual CALL/RET/scan boundary; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8015,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityUpdateAfterCountdownCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer1F19 actual CALL/RET/scan boundary; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8196,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityUpdateOrdinaryReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer1F19 actual CALL/RET/scan boundary; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8251,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityUpdateScanCandidateReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer1F19 actual CALL/RET/scan boundary; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8262,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityUpdateScanExhaustedReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Outer1F19 actual CALL/RET/scan boundary; docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

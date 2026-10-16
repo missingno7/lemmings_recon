@@ -179,8 +179,8 @@ loc_0186:
     call sub_80FD ; @001A7
     call sub_7900 ; @001AA
     call sub_3150 ; @001AD
-    call sub_30A6 ; @001B0
-    call sub_1F19 ; @001B3
+    call CreateEntityRecordIfDue ; @001B0
+    call AdvanceEntityRecords ; @001B3
     call sub_3944 ; @001B6
     call sub_7BB8 ; @001B9
     call sub_3634 ; @001BC
@@ -468,7 +468,7 @@ sub_03E7:
     int 0x33 ; @0047E
 loc_0480:
     call sub_410F ; @00480
-    call sub_30A6 ; @00483
+    call CreateEntityRecordIfDue ; @00483
     call sub_5377 ; @00486
     call sub_482F ; @00489
     call sub_81CC ; @0048C

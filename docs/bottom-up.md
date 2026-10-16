@@ -93,8 +93,7 @@ The normal simulation tree now has its first maintained native leaf at
 saves the old interaction cells in the live 2Dh record before installing
 02/0A/03 rows. The leaf restores through DF-sensitive word/byte strings and
 live SS saves; 37 fixtures at both core/adapter boundaries cover all 37 sites
-with four completed mutants. See entity-pattern.md. The 1F19 parent remains
-untranslated. The 5DC6 pixel preparation leaf now adds 50 C bytes/22 sites,
+with four completed mutants. See entity-pattern.md. The full1F19 composition is documented below. The 5DC6 pixel preparation leaf now adds 50 C bytes/22 sites,
 verified in 39 fixtures at both boundaries with two JNS edges and four completed
 mutants. Its eight-byte bit-mask table is explicitly classified and named;
 post-PUSH X/table aliases, wrapped sign clamp and residual AL remain live.
@@ -184,13 +183,21 @@ States0200/0400 and the8000/flag80 entries now add938 unique bytes/309 sites/
 mutants. They compose native mask,coordinate,pixel,sound and finish contracts;
 UNKNOWN2ABD/2ADB/2AEB and pair-source extent remain unresolved. Same-target
 conditional transitions count once while their live reads/flags remain tested.
-Next compose0800 at2B35..2D0E:473 known bytes/157 sites/70 unique outcomes,
-excluding UNKNOWN2B50. Its signed cadence admits130 thirteen-row selector
-inputs,including negative CBW values; do not assume the intended0..1 domain.
-The children are already scoped C domains. Then connect the outer1F19 iteration/
-scan entry with all state branches. See entity-simulation.md and next-work.md.
-The remaining states and live1FEB iteration/scan parent retain initialization,
-table,platform and IRQ obligations.
+State0800 now adds473 known caller bytes/157 sites/all70 unique owned outcomes
+in177 core/adapter fixtures,with80,208 events and nine completed mutants. All130
+signed thirteen-row mask selector handoffs execute; UNKNOWN2B50 remains excluded.
+AdvanceEntityRecords1F19 now connects all states in44 core/adapter fixtures:
+299 additional outer bytes/108 sites/all81 feasible owned outcomes,6,768 events
+and eight completed mutants. The composed3,744-byte/1,255-site body overlaps
+existing C scopes; byte/site accounting unions them.
+Preserve actual setup/countdown returns, live ES saves/DS counter, cached state
+priority and scan candidate RET203B leaving guard/request intact. Only the taken
+1FE3-to1FE8 edge is locally infeasible under the frozen nonzero AX/mask union;
+shared1FE8 remains executed through state JMPs. Next port the audited170-byte
+CreateEntityRecordIfDue leaf30A6,including bound50h clearing its coordinate source before reads.
+Resolve3150's action/latch/record and interrupt contracts next. See
+entity-simulation.md and next-work.md. Initialization,unchecked table extents,
+platform and IRQ obligations remain explicit.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native

@@ -216,20 +216,36 @@ pass31 combined fixtures:245 bytes/74 sites/all26 unique outcomes,2,690 events
 and six mutants. Actual returns,returned DS,late callbacks,RMW flags and the
 same-target scan comparison remain explicit. See entity-simulation.md.
 
-Next port state0800 at2B35..2D0E:473 known bytes/157 sites/70 unique owned
-jump outcomes,excluding UNKNOWN2B50. The sole known external direct entry is
-1FCD. Preserve byte INC with reset only at AL18 (not general modulo arithmetic),
-the signed cadence selector domain,606B return2B63,5DC6 returns2B93/2C2B,
-INT61 AX040A return2D0D,actual shared1FE8/20E2 JMPs,signed bounds,live pitch,
-SS map stack saves and late callback002E. Updated nonzero values1,2,80..FF
-admit130 thirteen-row selector inputs; DEC/CBW produces0,1,007F orFF80..FFFE.
-Do not narrow this domain to0..1 without new evidence. JNS2CB9 has the same
-target and fallthrough2CBB; retain its preceding live sign test and flags.
-All direct children have scoped native domains. After this state,the outer
-iteration/scan entry1F19..2046 (excluding the tested1FE8 CALL) remains to
-compose with all state branches.
-The1F19 parent's eleven direct CALL children retain platform/fatal seams;
-broader initialization,IRQ timing and record/scan composition stay open.
+State0800 now passes177 core/adapter fixtures:473 known caller bytes/157 sites/
+all70 unique owned outcomes,80,208 ordered events and nine completed mutants.
+Every one of the130 signed thirteen-row selector handoffs executes. Exact18h
+reset, signed X guards, actual mask/pixel returns, same-target nibble8 sign
+read, returned DS before NEG and shared finish remain original behavior.
+UNKNOWN2B50 remains excluded. See entity-simulation.md.
+
+AdvanceEntityRecords at1F19 now composes all state branches in44 core/adapter
+fixtures:299 additional caller bytes/108 sites/all81 feasible owned outcomes,
+6,768 ordered events and eight completed mutants. The complete composed body
+is3,744 known bytes/1,255 sites; those state/shared-tail bytes overlap existing
+C scopes and are unioned. The connection observes808 integrated main sites.
+The additional caller scope excludes the already tested1FE8 CALL.
+Readback/countdown actual returns1F26/1F4F, cached first-match AX, live0042
+counter and ES saves, and scan RET203B's persistent guard/request are required
+contracts. Of82 static outer jump outcomes, taken1FE3-to1FE8 is locally
+infeasible because the frozen nonzero AX has passed tests covering all16 bits.
+State JMPs still execute the shared1FE8 CALL. No UNKNOWN or shared tail is
+classified as dead. The three actual outer RET sites remain2004/203B/2046.
+
+Next port CreateEntityRecordIfDue at30A6..314F:
+170 known bytes/54 sites/13 jump outcomes, no CALLs or services. Its equality
+limit is not an upper-bound clamp. At bound50h the cleared45-byte record
+starts at coordinate base0E98 and overwrites those coordinates before their
+later reads. Preserve that alias, live0048/0049 countdown and0043 increment,
+late callback and all ordered stores. Then resolve3150's latch/selected and
+alternate record pointers/action counts/SS map and INT60/61 ownership before
+translating its1,221 known bytes/402 sites. Its31 UNKNOWN bytes stay unresolved.
+The parent and its eleven CALL children retain platform/IRQ/changed-target
+seams; broader initialization and actual game scheduling remain open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

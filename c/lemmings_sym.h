@@ -182,11 +182,11 @@
 #define CS_DatCacheAllocationReadyReturn 0x1F12u
 #define CS_DatCacheAllocationBelowThreshold 0x1F13u
 #define CS_DatCacheAllocationDisabledReturn 0x1F18u
-#define CS_sub_1F19 0x1F19u
+#define CS_AdvanceEntityRecords 0x1F19u
 #define CS_CopyEntityPatternToInteractionMap 0x283Bu
 #define CS_AdvanceEntityCountdown 0x2E04u
 #define CS_ApplyEntityCellInteractions 0x2EC0u
-#define CS_sub_30A6 0x30A6u
+#define CS_CreateEntityRecordIfDue 0x30A6u
 #define CS_sub_3150 0x3150u
 #define CS_sub_3634 0x3634u
 #define CS_sub_3678 0x3678u
@@ -722,4 +722,14 @@
 #define CS_EntityState8000AfterSound 0x2D6Au
 #define CS_EntityState8000AfterPixelCall 0x2D86u
 #define CS_AdvanceEntityFlag80Override 0x2DB5u
+#define CS_AdvanceEntityState0800 0x2B35u
+#define CS_EntityState0800AfterMaskCall 0x2B63u
+#define CS_EntityState0800AfterFirstPixelCall 0x2B93u
+#define CS_EntityState0800AfterSecondPixelCall 0x2C2Bu
+#define CS_EntityState0800AfterSound 0x2D0Du
+#define CS_EntityUpdateAfterReadbackCall 0x1F26u
+#define CS_EntityUpdateAfterCountdownCall 0x1F4Fu
+#define CS_EntityUpdateOrdinaryReturn 0x2004u
+#define CS_EntityUpdateScanCandidateReturn 0x203Bu
+#define CS_EntityUpdateScanExhaustedReturn 0x2046u
 #endif

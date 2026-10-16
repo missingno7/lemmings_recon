@@ -4,17 +4,21 @@ loc_2E5E equ EntityCountdownSoundReturn
 loc_2EB2 equ EntityCountdownMaskedSoundReturn
 ; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
-sub_1F19:
+AdvanceEntityRecords:
 ; Simulation ownership contract (docs/entity-simulation.md): DS remains live.
 ; [0043] bounds slots, including inactive records; [0042] is the live pass
 ; counter. SI starts0088 and advances2D. No array extent is established.
 ; Each visited slot PUSHes ES; only the shared1FEB tail POPs the live word.
 ; Dispatch on +08 is first-match, not an independent set of Boolean handlers.
+; Actual child RETs are1F26/1F4F; outer RETs2004/203B/2046 stay distinct.
+; Gate FF and zero slot bound bypass scan. Countdown zero dispatches directly;
+; a nonzero countdown uses the child's returned ZF and live DS/SI/SS:SP.
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @01F19
     jnz loc_1F23 ; @01F1E
     jmp loc_1FFF ; @01F20
 loc_1F23:
     call ConfigureEntityPixelReadback ; @01F23
+EntityUpdateAfterReadbackCall:
     mov byte [EntityWorkGuard-GameDataImage],0xff ; @01F26
     mov si,EntityRecordsBase-GameDataImage ; @01F2B
     mov al,[EntitySlotBound-GameDataImage] ; @01F2E
@@ -32,6 +36,7 @@ loc_1F45:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01F48
     jz loc_1F54 ; @01F4A
     call AdvanceEntityCountdown ; @01F4C
+EntityUpdateAfterCountdownCall:
     jnz loc_1F54 ; @01F4F
     jmp loc_1FEB ; @01F51
 loc_1F54:
@@ -95,7 +100,7 @@ loc_1FC0:
 loc_1FC8:
     test ax,0x800 ; @01FC8
     jz loc_1FD0 ; @01FCB
-    jmp loc_2B35 ; @01FCD
+    jmp AdvanceEntityState0800 ; @01FCD
 loc_1FD0:
     test ax,0x1000 ; @01FD0
     jz loc_1FD8 ; @01FD3
@@ -105,6 +110,9 @@ loc_1FD8:
     jz loc_1FE0 ; @01FDB
     jmp loc_2326 ; @01FDD
 loc_1FE0:
+; AX remains the nonzero1F5E load. All prior one-bit tests plus4000 coverFFFF;
+; taken1FE3-to1FE8 is infeasible on this direct path. Shared1FE8 remains live
+; through state JMPs; this local proof does not classify any bytes as dead.
     test ax,0x4000 ; @01FE0
     jz loc_1FE8 ; @01FE3
     jmp loc_2340 ; @01FE5
@@ -126,6 +134,7 @@ loc_1FF8:
     jnz loc_2005 ; @01FFD
 loc_1FFF:
     mov byte [EntityWorkGuard-GameDataImage],0x0 ; @01FFF
+EntityUpdateOrdinaryReturn:
     ret ; @02004
 loc_2005:
     mov al,[EntityScanCursor-GameDataImage] ; @02005
@@ -148,10 +157,14 @@ loc_202C:
     mov byte [si+0x20],0x4f ; @02033
 loc_2037:
     inc byte [EntityScanCursor-GameDataImage] ; @02037
+EntityUpdateScanCandidateReturn:
+; Nonzero countdown, occupied low state bits or a new+20=4F candidate all
+; return here after cursor INC, leaving the work guard and scan request live.
     ret ; @0203B
 loc_203C:
     mov byte [EntityScanRequest-GameDataImage],0x0 ; @0203C
     mov byte [EntityWorkGuard-GameDataImage],0x0 ; @02041
+EntityUpdateScanExhaustedReturn:
     ret ; @02046
 AdvanceEntityZeroState:
 loc_2047:
@@ -1379,6 +1392,15 @@ loc_2B28:
     jmp loc_1FE8 ; @02B2F
 loc_2B32:
     jmp loc_20E2 ; @02B32
+; State0800 from1FCD;473 known bytes/157 sites,UNKNOWN2B50 excluded.
+; INC AL wraps as a byte; only exact AL18 resets to zero. Signed JL after
+; CMP AL,3 admits updated1,2,80..FF:130 unchecked thirteen-row selectors
+; after DEC/CBW. Actual mask RET2B63 and pixel RETs2B93/2C2B remain live.
+; Cadence3/0F move X twice with signed bounds;3 also INCs Y before sampling.
+; The SS nibble follows actual AX/DX saves. Nibble8 always reaches NEG+27,
+; but its fresh direction read/AND flags survive same-target JNS2CB9.
+; Optional INT61 AX040A returns2D0D; returned DS owns NEG and late callback.
+AdvanceEntityState0800:
 loc_2B35:
     mov al,[si+0x28] ; @02B35
     inc al ; @02B38
@@ -1407,6 +1429,7 @@ loc_2B5D:
     dec al ; @02B5D
     cbw ; @02B5F
     call DrawThirteenRowEntityMask ; @02B60
+EntityState0800AfterMaskCall:
     jmp loc_1FEB ; @02B63
 loc_2B66:
     mov al,[si+0x27] ; @02B66
@@ -1430,6 +1453,7 @@ loc_2B87:
     jmp loc_2CBB ; @02B8D
 loc_2B90:
     call PrepareEntityPixelSample ; @02B90
+EntityState0800AfterFirstPixelCall:
     mov al,[es:di] ; @02B93
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02B96
     jz loc_2B9D ; @02B98
@@ -1485,6 +1509,7 @@ loc_2C1B:
     jmp loc_20E2 ; @02C25
 loc_2C28:
     call PrepareEntityPixelSample ; @02C28
+EntityState0800AfterSecondPixelCall:
     mov al,[es:di] ; @02C2B
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02C2E
     jnz loc_2C76 ; @02C30
@@ -1562,6 +1587,7 @@ loc_2CFA:
     jz loc_2D0D ; @02D06
     mov ax,0x40a ; @02D08
     int 0x61 ; @02D0B
+EntityState0800AfterSound:
 loc_2D0D:
     jmp short loc_2CBB ; @02D0D
 ; State8000 from1F75:166 known bytes/53 sites. Register cadence modulo16;
@@ -1937,7 +1963,15 @@ loc_3059:
 EntityInteractionThirdSoundReturn:
 loc_30A5:
     ret ; @030A5
-sub_30A6:
+CreateEntityRecordIfDue:
+; Next independently audited leaf:30A6..314F,170 bytes/54 sites/13 outcomes.
+; Gate002B must differ from FF;0055 must equal FF. Byte DEC0048 wraps and
+; only zero reloads0048 from live0049. Equality0047==0043 prevents creation;
+; there is no upper-bound clamp. SI=0088+45*unsigned(bound), BX=0E98+4*(bound&3).
+; The45-byte clear advances DI with INC, independently of DF. Coordinates are
+; fetched only after the clear: bound50h makes SI=0E98 and destroys their source.
+; Ordered record stores and the late callback002E read precede live INC0043.
+; No array extent, coordinate cache, host record or corrected bound is implied.
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @030A6
     jnz loc_30B0 ; @030AB
     jmp loc_314F ; @030AD
