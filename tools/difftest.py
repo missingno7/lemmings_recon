@@ -18,6 +18,9 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('entity_minimap', 180, 384),
+    Suite('view_visibility', 180, 384),
+    Suite('entity_dirty', 240, 384),
     Suite('status_copy', 180, 384),
     Suite('status_initialize', 240, 384),
     Suite('display_status', 180, 384),

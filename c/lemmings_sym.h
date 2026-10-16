@@ -235,7 +235,7 @@
 #define CS_SelectEntityCandidate 0x3CDEu
 #define CS_sub_3E6F 0x3E6Fu
 #define CS_sub_4085 0x4085u
-#define CS_sub_410F 0x410Fu
+#define CS_RebuildViewVisibilityMap 0x410Fu
 #define CS_DrawStatusText 0x417Bu
 #define CS_sub_418C 0x418Cu
 #define CS_PollMousePosition 0x4252u
@@ -342,7 +342,7 @@
 #define CS_StepSignedRgbChannel 0x570Cu
 #define CS_PaletteRgbReturn571E 0x571Eu
 #define CS_PaletteRgbDecrementReturn5725 0x5725u
-#define CS_sub_5726 0x5726u
+#define CS_MarkEntityDrawingDirty 0x5726u
 #define CS_sub_57D1 0x57D1u
 #define CS_sub_5827 0x5827u
 #define CS_sub_587F 0x587Fu
@@ -389,7 +389,7 @@
 #define CS_sub_6CFC 0x6CFCu
 #define CS_sub_6E83 0x6E83u
 #define CS_sub_6F7B 0x6F7Bu
-#define CS_sub_6FE2 0x6FE2u
+#define CS_DrawEntityMinimapPixel 0x6FE2u
 #define CS_DrawObjectSprite 0x706Fu
 #define CS_sub_715D 0x715Du
 #define CS_sub_715F 0x715Fu
@@ -836,4 +836,10 @@
 #define CS_InitializeStatusReturn 0x3AC7u
 #define SEG09A9_EntityDrawingPassCount 0x0045u
 #define SEG09A9_StatusEntityCountField 0x2095u
+#define CS_EntityMinimapPixelReturn 0x706Eu
+#define CS_ViewVisibilityReturn 0x414Eu
+#define CS_EntityDrawingDirtyReturn 0x57D0u
+#define CS_ViewVisibilityStackSegmentOperand 0x4137u
+#define SEG09A9_ViewVisibilityMapBase 0x0EA8u
+#define SEG09A9_AlternateDrawingDirtyCellMapOffset 0x0028u
 #endif

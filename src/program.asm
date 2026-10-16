@@ -24,6 +24,8 @@ times -(($-$$) != 0x3cde) db 0 ; module end assertion
 %include "entity_selection.asm"
 times -(($-$$) != 0x3e6f) db 0 ; module end assertion
 %include "game_code_late_after_selection.asm"
+%include "view_visibility.asm"
+%include "game_code_after_view_visibility.asm"
 times -(($-$$) != 0x4b5c) db 0 ; module end assertion
 %include "decimal_fields.asm"
 times -(($-$$) != 0x4be7) db 0 ; module end assertion
@@ -33,11 +35,14 @@ times -(($-$$) != 0x52d4) db 0 ; module end assertion
 times -(($-$$) != 0x563e) db 0 ; module end assertion
 %include "palette_steps.asm"
 times -(($-$$) != 0x5726) db 0 ; module end assertion
+%include "entity_dirty.asm"
 %include "game_code_late_after_palette.asm"
 times -(($-$$) != 0x5d66) db 0 ; module end assertion
 %include "entity_graphics.asm"
 times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "game_code_late_after_entities.asm"
+%include "entity_minimap.asm"
+%include "game_code_after_entity_minimap.asm"
 times -(($-$$) != 0x75ef) db 0 ; module end assertion
 %include "status_copy.asm"
 times -(($-$$) != 0x762a) db 0 ; module end assertion

@@ -23165,9 +23165,11 @@
     "address": 16655,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_410F",
-    "aliases": [],
+    "size": 64,
+    "symbol_name": "RebuildViewVisibilityMap",
+    "aliases": [
+      "sub_410F"
+    ],
     "callers": [
       1152,
       16350
@@ -23233,10 +23235,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained exact ASM and bounded native logical-core/actual-RET gate; segment, flag, stack and provider seams remain explicit. docs/entity-display.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 64
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 64,
+    "c_implementation": "c/view_visibility.c",
+    "c_core": "lmn_rebuild_view_visibility_map_core",
+    "c_code_ranges": [
+      [
+        16655,
+        16719
+      ]
+    ],
+    "verification_evidence": "tests/view_visibility.py:28 fixtures/56 core and actualRET comparisons,64 new bytes/all27 sites/no jump edges,14672 ordered bus events,8 completed mutants. Exact loaded code views at0/1010/2345, explicit relocated143E operand distinct from liveSS, actual PUSHDS/POPES including provider, DF clear/fill, live post-clear origin and sequential markers, aliases/RET0000 and physical20-bit word wrap, IF/FLAGS, full RAM and independent state projection. Shared JMP/fallthrough entry adds no frame. docs/entity-display.md"
   },
   {
     "address": 16763,
@@ -32906,9 +32918,11 @@
     "address": 22310,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5726",
-    "aliases": [],
+    "size": 171,
+    "symbol_name": "MarkEntityDrawingDirty",
+    "aliases": [
+      "sub_5726"
+    ],
     "callers": [
       13908
     ],
@@ -33013,10 +33027,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained exact ASM and bounded native logical-core/actual-RET gate; segment, flag, stack and provider seams remain explicit. docs/entity-display.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 171
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 171,
+    "c_implementation": "c/entity_dirty.c",
+    "c_core": "lmn_mark_entity_drawing_dirty_core",
+    "c_code_ranges": [
+      [
+        22310,
+        22481
+      ]
+    ],
+    "verification_evidence": "tests/entity_dirty.py:33 fixtures/66 core and actualRET comparisons,171 new bytes/all73 sites/all25 jump outcomes,7690 ordered bus events,7 completed mutants. Unchecked live visibility==1, signed/wrapped fields, separateDS0026 reads,4096-step Y boundary, bit0002 row widths, CL0 first row, live CH0 producing256 stores, SS CX/SI/RET aliases, raw dirty stores and physical20-bit wrap. Two verified native producer cores feed4 accepted/rejected data handoffs with prepared caller frames (2 producer plus4 consumer comparisons,598 additional bus events); no3634 execution claimed. Ordinary RAM/provider domain, VGA-backed SS remains separate. docs/entity-display.md"
   },
   {
     "address": 22481,
@@ -41997,9 +42021,11 @@
     "address": 28642,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_6FE2",
-    "aliases": [],
+    "size": 141,
+    "symbol_name": "DrawEntityMinimapPixel",
+    "aliases": [
+      "sub_6FE2"
+    ],
     "callers": [
       13905
     ],
@@ -42112,10 +42138,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained exact ASM and bounded native logical-core/actual-RET gate; segment, flag, stack and provider seams remain explicit. docs/entity-display.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 141
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 141,
+    "c_implementation": "c/entity_minimap.c",
+    "c_core": "lmn_draw_entity_minimap_pixel_core",
+    "c_code_ranges": [
+      [
+        28642,
+        28783
+      ]
+    ],
+    "verification_evidence": "tests/entity_minimap.py:40 fixtures/80 core and actualRET comparisons plus4 null-bus repeats,141 new bytes/all58 sites/all5 jump outcomes,2096 compared bus events,8 completed mutants. Signed Y guards and8000 wrap, full DX:AX MUL, post-mirror live savedX, DS PixelBitMasks and origin providers, ordered mirrors/OUTs, CLI read/write/STI, early IF, RAM/VGA DS/SS aliases, actual RET and physical20-bit wrap; independent sequential replay. docs/entity-display.md"
   },
   {
     "address": 28783,
@@ -61218,6 +61254,102 @@
     "confidence": "PROVEN",
     "evidence": [
       "3687/3AB4 pass2095 to WriteDecimalByteField; its three-byte field belongs to the stored40-character line2083..20AA. No snapshot or new allocation."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 28782,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityMinimapPixelReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared actual near RET for early and drawn6FE2 paths."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16718,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ViewVisibilityReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared-tail actual near RET; no new CALL frame at410F."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 22480,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityDrawingDirtyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near RET after unchecked visibility gate or live SS dirty rows."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16695,
+    "segment": 0,
+    "kind": "relocation_operand",
+    "size": 2,
+    "symbol_name": "ViewVisibilityStackSegmentOperand",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4136 MOV CX,143E has a relocated immediate at4137. This operand is separate from incoming liveSS/CS; the C contract carries its loaded value explicitly."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 3752,
+    "segment": 2473,
+    "kind": "data_base",
+    "size": 0,
+    "symbol_name": "ViewVisibilityMapBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "410F clears68 words and fills29 bytes after live view-origin arithmetic;5726/7083 use unchecked live indices. This names the base only, with no extent, lifetime or matrix bound."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 40,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "AlternateDrawingDirtyCellMapOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "81E4 initializes45D3,81F2 selects an SS marker,820C/820F/8213 exchanges it with0026;010F..0116 also exchanges them.4143 selects a marker through the relocated stack operand."
     ],
     "verification_status": "UNRESOLVED"
   }

@@ -688,19 +688,19 @@ sub_81CC:
     mov word [AlternateDrawingOrigin-GameDataImage],0x2520 ; @081D2
     mov word [DrawingPageByteOffset-GameDataImage],0x2c0 ; @081D8
     mov word [DrawingDirtyCellMapOffset-GameDataImage],0x42b2 ; @081DE
-    mov word [0x28],0x45d3 ; @081E4
+    mov word [AlternateDrawingDirtyCellMapOffset-GameDataImage],0x45d3 ; @081E4
     mov bx,[DrawingDirtyCellMapOffset-GameDataImage] ; @081EA
     mov byte [ss:bx],0xff ; @081EE
-    mov bx,[0x28] ; @081F2
+    mov bx,[AlternateDrawingDirtyCellMapOffset-GameDataImage] ; @081F2
     mov byte [ss:bx],0xff ; @081F6
     mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0xff ; @081FA
     call sub_80FD ; @081FF
     mov ax,[AlternateDrawingOrigin-GameDataImage] ; @08202
     xchg [DrawingOrigin-GameDataImage],ax ; @08205
     mov [AlternateDrawingOrigin-GameDataImage],ax ; @08209
-    mov ax,[0x28] ; @0820C
+    mov ax,[AlternateDrawingDirtyCellMapOffset-GameDataImage] ; @0820C
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @0820F
-    mov [0x28],ax ; @08213
+    mov [AlternateDrawingDirtyCellMapOffset-GameDataImage],ax ; @08213
     call InitializeStatusDisplay ; @08216
     call sub_80FD ; @08219
     mov ax,0x160 ; @0821C

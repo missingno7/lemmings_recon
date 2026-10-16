@@ -353,33 +353,29 @@ eight-instruction prefixes check all release bytes. The two scopes add309
 unique main bytes (18,286 to18,595); child/leaf overlaps are not counted again.
 See status-display.md and the two matching-input native reports for scoped
 acceptance; the enclosing tick, device timing and IRQ scheduling remain open.
-The3634 entity-drawing parent still depends on6FE2/5726/6E83/706F and the
-unresolved715B indirect target domain; preserve that frontier.
+The6FE2 pixel,410F visibility producer and5726 dirty consumer now have scoped
+native acceptance:40/28/33 fixtures at both APIs,58/27/73 sites and5/0/25 jump
+outcomes, with8/8/7 completed mutants. Minimap also has4 null-bus comparisons.
+Two native producers at origins0/0180 feed4 accepted/rejected data handoffs,
+with598 additional bus events and explicit3654->3657 caller frames. This is
+data-flow evidence, not execution of3634. The exact loaded143E operand remains
+separate from liveSS; no guessed visibility extent or bounded dirty matrix is
+introduced. See entity-display.md and matching-input reports. These disjoint
+scopes add376 unique main C bytes, taking the ledger union to18,971.
 
-The next leaf candidate after status initialization is6FE2..706E (141 bytes/
-58 sites). Its Y guards, live saved X, DS PixelBitMasks lookup, SS mirrors and
-VGA read/write sequence are statically identified. Early returns retain IF;
-the drawing path finishes with STI. The eight stored mask bytes are known,
-but their runtime immutability is not established; use the live DS table.
-
-Before connecting5726's normal3634 handoff, close the410F producer contract.
-The shared410F..414E tail PUSHes DS/POPs ES, clears68h words at ES:0EA8, then
-fills29h bytes starting at `(live DS:[0]>>3)-2+0EA8`, with DF and offset wrap.
-It marks both DS:0026/0028 selected offsets through ES loaded from the relocated
-143E segment operand, restores its prior ES via AX, then STI/RET on the existing
-caller frame. Do not insert a CALL at this JMP/fallthrough entry. Its nominal
-D0h clear span does not bound the computed fill or5726's unchecked lookup.
-The ordinary visibility table therefore has a view-dependent producer, without
-proven semantic extent or lifetime beyond these accesses.
-
-5726 uses DS:0026 as an SS output offset, not a DS pointer. Each output row
-saves live CX/SI, writes3 or5 bytes, restores those actual words and advances
-SI by28h. The first row is unconditional even when CL is zero; unsigned BP
-comparison and DEC CL occur only afterward. Wrapped output can overwrite the
-saved words and change later loop state.81CC initializes the two offsets to
-42B2/45D3 and swaps them around80FD;010F..0116 also exchanges them. Preserve
-those producer/segment/stack contracts before a matrix-shaped C abstraction.
-The wider706F dispatch still has unresolved715B and must retain that boundary.
+The3634 parent now depends on6E83 and706F, whose715B callback domain remains
+unresolved. Next audit and port6E83..6F7A (248 bytes/110 sites, no children).
+It reads the byte count DS004D, initialized to50h at042C, once before an
+unconditional point loop; zero means65,536 iterations. Record+28 selects
+DS:2788+160*((byte-1)&FF). Each word's signed low byte offsets horizontal BP;
+the signed high byte offsets vertical DX. Low byte80 skips that point only.
+The16-byte color read is DS:2778+(CX&0F). Keep both tables live and their
+stored extents UNKNOWN until producer/buffer evidence justifies classification.
+The recovered3634 caller admits selectors1..127 via a signed test; that is not
+a direct-entry clamp. Trace block-copy/initialization ownership before treating
+2788 as a fixed static object. Preserve nested SS saves, dirty stores, VGA
+setup/read/write, flags and actual RET6F7A. Closing this leaf does not close
+706F's live record+14 target at715B or its nine known callback families.
 
 StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
@@ -405,6 +401,8 @@ Use fresh dependency views rather than an accumulated historical task list:
 .venv\Scripts\python.exe tools\graph.py 3634 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 6FE2 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 410F --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 6E83 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 6E83 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 3AC8 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --bottom-up

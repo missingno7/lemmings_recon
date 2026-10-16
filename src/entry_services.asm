@@ -108,9 +108,9 @@ loc_0105:
     mov ax,[AlternateDrawingOrigin-GameDataImage] ; @00105
     xchg [0x1f76],ax ; @00108
     mov [AlternateDrawingOrigin-GameDataImage],ax ; @0010C
-    mov ax,[0x28] ; @0010F
+    mov ax,[AlternateDrawingDirtyCellMapOffset-GameDataImage] ; @0010F
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @00112
-    mov [0x28],ax ; @00116
+    mov [AlternateDrawingDirtyCellMapOffset-GameDataImage],ax ; @00116
     cmp byte [0x200e],0xff ; @00119
     jnz loc_0164 ; @0011E
 loc_0120:
@@ -473,7 +473,7 @@ sub_03E7:
     mov dx,0x64 ; @0047B
     int 0x33 ; @0047E
 loc_0480:
-    call sub_410F ; @00480
+    call RebuildViewVisibilityMap ; @00480
     call CreateEntityRecordIfDue ; @00483
     call sub_5377 ; @00486
     call sub_482F ; @00489

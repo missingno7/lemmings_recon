@@ -1,3 +1,5 @@
+ViewVisibilityMapBase equ GameDataImage+0x0EA8
+AlternateDrawingDirtyCellMapOffset equ GameDataImage+0x0028
 EntityDrawingPassCount equ GameDataImage+0x0045
 StatusEntityCountField equ GameDataImage+0x2095
 StatusCompletionDisplayValue equ GameDataImage+0x0040

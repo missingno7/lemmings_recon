@@ -13,8 +13,8 @@ loc_3645:
     cmp byte [di+0x26],0xff ; @03647
     jz loc_367D ; @0364B
     inc byte [EntityDrawingPassCount-GameDataImage] ; @0364D
-    call sub_6FE2 ; @03651
-    call sub_5726 ; @03654
+    call DrawEntityMinimapPixel ; @03651
+    call MarkEntityDrawingDirty ; @03654
     mov ax,[DrawingCallbackSlots-GameDataImage+0xe] ; @03657
     cmp ax,[di+0x14] ; @0365A
     jnz loc_3670 ; @0365D

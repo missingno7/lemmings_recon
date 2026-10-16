@@ -25,14 +25,19 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 039CE..03AC7 | status_initialize.asm | Initial status copies, wrapped release reload, shared snapshots and actual child frames |
 | 03AC8..03CDD | status_display.asm | Status display, actual child frames, shared refresh fields and byte-DIV frontier; UNKNOWN preserved |
 | 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
-| 03E6F..04B5B | game_code_late_after_selection.asm | Input and display callers; mixed ownership remains provisional |
+| 03E6F..0410E | game_code_late_after_selection.asm | Input callers; mixed ownership remains provisional |
+| 0410F..0414E | view_visibility.asm | Shared visibility producer with live DS/ES, relocated marker segment and existing caller frame |
+| 0414F..04B5B | game_code_after_view_visibility.asm | Input/display suffix; physical order and UNKNOWN preserved |
 | 04B5C..04BE6 | decimal_fields.asm | Percent wrapper, shared variable-width decimal fields and fixed three-digit helper |
 | 04BE7..052D3 | game_code_late_after_decimal.asm | Display setup, timer and palette callers; mixed ownership remains provisional |
 | 052D4..0563D | palette_frontends.asm | Palette pointers, writers and transition callers; ownership/frontier contracts remain explicit |
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
-| 05726..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
+| 05726..057D0 | entity_dirty.asm | Unchecked visibility gate and live SS dirty rows; actual saved CX/SI and post-store bounds |
+| 057D1..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
-| 06170..075EE | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 06170..06FE1 | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 06FE2..0706E | entity_minimap.asm | Signed entity minimap pixel guards, live saved X/table and VGA effects |
+| 0706F..075EE | game_code_after_entity_minimap.asm | Sprite dispatch suffix; unresolved715B and UNKNOWN preserved |
 | 075EF..07629 | status_copy.asm | Full DF-sensitive status-region copy, live DS and single-CALL/fallthrough wrapper |
 | 0762A..0780C | status_glyphs.asm | Count and character glyph contracts; five UNKNOWN bytes preserved |
 | 0780D..078FF | status_icons.asm | Status outline and restoration; signed selector and live VGA frames |
@@ -592,7 +597,16 @@ same-IP39D1 nested stop and mirror-induced count return080C.
 Together these scopes add309 unique main bytes, taking the ledger union from
 18,286 to18,595. See status-display.md and the matching-input native reports;
 this does not refresh aggregate campaigns or establish complete gameplay.
-Fresh3634 views next select6FE2's known-mask VGA leaf;410F's live visibility-table
-producer must precede5726's normal caller connection. SS dirty-map outputs and
-unchecked indices are not a conventional bounded matrix. The wider706F/715B
-dispatch and its dependencies remain separate; see next-work.md.
+The6FE2 minimap pixel now passes40 fixtures at both APIs plus4 null-bus repeats:
+141 bytes/all58 sites/all5 jump outcomes,2,096 ordered events and eight mutants.
+The410F producer passes28 fixtures at both APIs:64 bytes/all27 sites/no jump
+edges,14,672 events and eight mutants, including exact loaded views at0/1010/2345.
+The5726 dirty consumer passes33 fixtures at both APIs:171 bytes/all73 sites/
+all25 jump outcomes,7,690 events and seven mutants. Two actual native producers
+also feed4 accepted/rejected data handoffs (598 additional events), preserving
+the original live memory and explicitly prepared caller frames. The handoff is
+not execution of3634. The producer's relocated segment, DF, live ES and marker
+reads, and the consumer's raw SS output and saved CX/SI remain explicit.
+Only376 unique bytes are added, taking the main C union to18,971.
+See entity-display.md. Fresh3634 views now select6E83's live point/color tables
+and count before the wider706F/715B sprite-dispatch frontier; see next-work.md.
