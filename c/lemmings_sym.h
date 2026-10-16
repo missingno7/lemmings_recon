@@ -232,7 +232,7 @@
 #define CS_LevelObjectsReturn 0x39CDu
 #define CS_sub_39CE 0x39CEu
 #define CS_sub_3AC8 0x3AC8u
-#define CS_sub_3CDE 0x3CDEu
+#define CS_SelectEntityCandidate 0x3CDEu
 #define CS_sub_3E6F 0x3E6Fu
 #define CS_sub_4085 0x4085u
 #define CS_sub_410F 0x410Fu
@@ -254,8 +254,8 @@
 #define CS_sub_4AC5 0x4AC5u
 #define CS_ShowResourceRetryScreen 0x4B1Cu
 #define CS_sub_4B5C 0x4B5Cu
-#define CS_sub_4B68 0x4B68u
-#define CS_sub_4BBE 0x4BBEu
+#define CS_WriteDecimalByteField 0x4B68u
+#define CS_WriteDecimalBytePair 0x4BBEu
 #define CS_WriteDecimalByteDigits 0x4BC2u
 #define CS_SetupDisplayModeAndLayout 0x4BE7u
 #define CS_DisplaySetupModeInterrupt 0x4BF2u
@@ -777,4 +777,11 @@
 #define SEG09A9_LevelActionCountRefreshCounter6 0x007Eu
 #define SEG09A9_LevelActionCountDisplaySnapshot7 0x0080u
 #define SEG09A9_LevelActionCountRefreshCounter7 0x0081u
+#define SEG09A9_EntitySelectionPresent 0x001Au
+#define SEG09A9_EntityPreferredRecordOffset 0x005Cu
+#define SEG09A9_EntitySelectedSlotIndex 0x005Eu
+#define SEG09A9_EntityPreferredSlotIndex 0x0060u
+#define CS_EntitySelectionAfterFormatter 0x3DF6u
+#define CS_EntitySelectionReturn 0x3E62u
+#define CS_DecimalFieldReturn 0x4BBDu
 #endif

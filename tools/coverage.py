@@ -208,6 +208,9 @@ def report():
     if setup['image_sha256']!=sha(image):raise ValueError('Special graphics setup differential oracle changed')
     executed.update(setup['executed_instruction_addresses'])
     decimal=read_json(BUILD/'decimal-digits-c-differential.json')
+    decimal_field=read_json(BUILD/'decimal-field-differential.json')
+    entity_select=read_json(BUILD/'entity-select-differential.json')
+    entity_select_actions=read_json(BUILD/'entity-select-actions-differential.json')
     selection=read_json(BUILD/'resource-select-differential.json')
     selection_full=read_json(BUILD/'resource-select-full-differential.json')
     objects=read_json(BUILD/'object-graphics-differential.json')
@@ -291,7 +294,9 @@ def report():
     entity_action_dispatch=read_json(BUILD/'entity-action-dispatch-differential.json')
     entity_batch=read_json(BUILD/'entity-batch-differential.json')
     entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
-    for label,extra in (('decimal digits',decimal),('resource selection',selection),
+    for label,extra in (('decimal digits',decimal),('decimal fields',decimal_field),
+                        ('entity selection',entity_select),('entity selection/action handoff',entity_select_actions),
+                        ('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
                         ('object cells',cells),('steel cells',steel),('object state',state),
                         ('object cells bus',cells_bus),('steel cells bus',steel_bus),
@@ -373,6 +378,9 @@ def report():
     executed.update(entity_cadence['executed_instruction_addresses'])
     for extra in (entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_actions_basic,entity_actions_advanced,entity_action_map,entity_action_dispatch,entity_batch,entity_pattern_bus):
         executed.update(extra['executed_instruction_addresses'])
+    executed.update(decimal_field['executed_instruction_addresses'])
+    executed.update(entity_select['executed_instruction_addresses'])
+    executed.update(entity_select_actions['executed_instruction_addresses'])
     executed.update(selection['executed_instruction_addresses'])
     for path,digest in selection_full['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
@@ -393,6 +401,7 @@ def report():
     for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
     for extra in (terrain_inputs,terrain,commands,streams,object_draw,redraw):executed.update(extra['executed_instruction_addresses'])
     reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
+    reports+=decimal_field,entity_select,entity_select_actions
     reports+=terrain_inputs,terrain,commands,streams,object_draw,redraw
     reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)
     reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)

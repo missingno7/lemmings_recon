@@ -21,7 +21,11 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 03634..0368D | entity_drawing_calls.asm | Untranslated draw-call loop and provider/IRQ seams |
 | 0368E..03789 | level_initialize.asm | Drawing initialization, live clear tail, header and level-state caller |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
-| 03944..052D3 | game_code_late.asm | Mixed ownership remains provisional |
+| 03944..03CDD | game_code_late.asm | Redraw and input/display callers; mixed ownership remains provisional |
+| 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
+| 03E6F..04B5B | game_code_late_after_selection.asm | Input and display callers; mixed ownership remains provisional |
+| 04B5C..04BE6 | decimal_fields.asm | Percent wrapper, shared variable-width decimal fields and fixed three-digit helper |
+| 04BE7..052D3 | game_code_late_after_decimal.asm | Display setup, timer and palette callers; mixed ownership remains provisional |
 | 052D4..0563D | palette_frontends.asm | Palette pointers, writers and transition callers; ownership/frontier contracts remain explicit |
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
 | 05726..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
@@ -220,10 +224,10 @@ sites. All eight cores share a typed register boundary and bounded test transpor
 Shared feedback and live outer returns retain their explicit segment/IRQ seams.
 All31 UNKNOWN bytes remain unresolved. The physical3150..3633 block now lives
 in entity_actions.asm,followed by the separate untranslated draw-call module.
-Next verify the left-aligned4B68/4BBE formatter cluster,then393-known-byte3CDE
-candidate selection and its actual CALL frame. Preserve stale outputs at zero
-bound,last-hit bucket ownership,live count/index and mask0002 selection. See
-entity-actions.md and next-work.md for exact contracts and open platform duties.
+The left-aligned4B68/4BBE formatter and393-known-byte3CDE candidate selector
+now have scoped native acceptance, detailed below. Stale zero-bound outputs,
+last-hit bucket ownership,live count/index and mask0002 selection remain intact.
+See entity-actions.md and next-work.md for exact contracts and open platform duties.
 
 Translated byte accounting validates explicit C domains against complete decoded
 instructions in the image. Shared tails may precede or follow the physical entry
@@ -498,3 +502,18 @@ at both boundaries andtwofull65536-iterationzeroCL cores. See palette-row-select
 The contiguous52D4..563D front ends now live in palette_frontends.asm, preserving
 all UNKNOWN markers and physical byte order. Transition callers531E/536C remain the next dependencies to connect, preserving
 their own live frames; writer prefixes stay separate setup paths.
+
+
+Candidate selection3CDE and both variable-width formatter entries4B68/4BBE
+now have scoped native acceptance:393+90 unique bytes,51 parent fixtures at
+both boundaries and1,064 formatter boundary cases. The parent retains live
+bucket/index ownership, record182/display overlap and the real formatter
+return. See entity-actions.md and decimal-field.md. Their maintained physical
+modules are entity_selection.asm and decimal_fields.asm; surrounding suffixes
+retain exact image order and all UNKNOWN classifications. The next independent
+normal-path leaf is7A5A, then3AC8's other display dependencies and the1FEC
+source-buffer producer/consumer contracts; see status-display.md. These scopes
+do not accept allocation extents, live IRQ scheduling or full main-loop behavior.
+Four focused native selection-to3150 data handoffs check preferred and forced
+fallback buckets against selectors2/3/4, without claiming the intervening3AC8
+display call or adding translated bytes.

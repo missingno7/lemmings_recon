@@ -1,0 +1,860 @@
+; Maintained image span 04BE7..052D3; physical order and UNKNOWN bytes preserved.
+times -(($-$$) != 0x4be7) db 0 ; module start assertion
+; CONTRACT: CS83BE store precedes CLI/BIOSAX0090; all12returnedCPUfields staylive.
+; STI is unconditional. Shared4BF5/4C07 entries skip earlier instructions.
+; FarCALL8808 hasrelocation4C14; actualSSfarframe andouterRET remainlive.
+; See docs/display-setup.md; no startup/BIOS/timing ownership is inferred.
+SetupDisplayModeAndLayout:
+    mov byte [cs:ChecksumCursor+3],0xff ; @04BE7
+    nop ; @04BED
+    cli ; @04BEE
+    mov ax,0x90 ; @04BEF
+DisplaySetupModeInterrupt:
+    int 0x10 ; @04BF2
+    sti ; @04BF4
+InitializeDisplayOrigins:
+    mov word [DrawingOrigin-GameDataImage],0x0 ; @04BF5
+    mov word [AlternateDrawingOrigin-GameDataImage],0x6d60 ; @04BFB
+    mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @04C01
+SetupDisplayLayout:
+    mov ax,0x280 ; @04C07
+    mov bx,0x15e ; @04C0A
+    mov dx,[DrawingOrigin-GameDataImage] ; @04C0D
+    call 0x0:SetDrawingLayout ; @04C11
+DisplaySetupAfterLayout:
+    ret ; @04C16
+sub_4C17:
+    mov di,0x15e0 ; @04C17
+    mov cx,0x5780 ; @04C1A
+    jmp ClearVgaBytes ; @04C1D
+; CONTRACT: Program liveDrawingOrigin via realCALL4C36, consumeactualchildRET,
+; then reread/swap liveorigins. Providers canoverwrite saved/returnwords.
+; SharedCLI/output/index0C,index0D/unconditionalSTI contract: docs/display-start.md.
+SwapDrawingOriginsAndDisplay:
+    mov bx,[DrawingOrigin-GameDataImage] ; @04C20
+    call ProgramDisplayStartFromValue ; @04C24
+DisplaySwapAfterProgram:
+    mov ax,[DrawingOrigin-GameDataImage] ; @04C27
+    xchg [AlternateDrawingOrigin-GameDataImage],ax ; @04C2A
+    mov [DrawingOrigin-GameDataImage],ax ; @04C2E
+DisplaySwapReturn:
+    ret ; @04C31
+ProgramAlternateDisplayStart:
+    mov bx,[AlternateDrawingOrigin-GameDataImage] ; @04C32
+ProgramDisplayStartFromValue:
+    cli ; @04C36
+    mov dx,[DisplayControllerBasePort-GameDataImage] ; @04C37
+    db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @04C3B
+    mov al,0xc ; @04C3D
+DisplayStartFirstOutput:
+    out dx,ax ; @04C3F
+    db 0x8a,0xe3 ; ENCODED: mov ah,bl (NASM chooses a different encoding) ; @04C40
+    inc al ; @04C42
+    out dx,ax ; @04C44
+    sti ; @04C45
+DisplayStartReturn:
+    ret ; @04C46
+MenuTimerIrqHandler:
+    push ax ; @04C47
+    push bx ; @04C48
+    push cx ; @04C49
+    push dx ; @04C4A
+    push si ; @04C4B
+    push di ; @04C4C
+    push bp ; @04C4D
+    push ds ; @04C4E
+    mov ax,0x9a9 ; @04C4F
+    mov ds,ax ; @04C52
+    mov al,[0x1fe3] ; @04C54
+    inc al ; @04C57
+    and al,0x3 ; @04C59
+    mov [0x1fe3],al ; @04C5B
+    jnz loc_4C66 ; @04C5E
+    call sub_18B2 ; @04C60
+    jmp short loc_4C70 ; @04C63
+; UNKNOWN: unresolved bytes
+    db 0x90 ; @04C65
+loc_4C66:
+    mov ax,0x4c70 ; @04C66
+    pushf ; @04C69
+    push cs ; @04C6A
+    push ax ; @04C6B
+    jmp far [SavedTimerVector-GameDataImage] ; @04C6C
+loc_4C70:
+    mov dl,0xff ; @04C70
+    call sub_418C ; @04C72
+    pop ds ; @04C75
+    pop bp ; @04C76
+    pop di ; @04C77
+    pop si ; @04C78
+    pop dx ; @04C79
+    pop cx ; @04C7A
+    pop bx ; @04C7B
+    pop ax ; @04C7C
+    iret ; @04C7D
+ReadCodeInput:
+    lea si,[0x4df2] ; @04C7E
+    mov cx,0xa ; @04C82
+    mov bx,0x5a41 ; @04C85
+    lea bp,[0x503b] ; @04C88
+    db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04C8C
+    db 0x8b,0xd6 ; ENCODED: mov dx,si (NASM chooses a different encoding) ; @04C8E
+    db 0x03,0xd1 ; ENCODED: add dx,cx (NASM chooses a different encoding) ; @04C90
+    mov cx,0x5f2e ; @04C92
+    mov byte [0x491e],0x14 ; @04C95
+loc_4C9A:
+    push si ; @04C9A
+    push di ; @04C9B
+    push bx ; @04C9C
+    push cx ; @04C9D
+    push dx ; @04C9E
+    push bp ; @04C9F
+loc_4CA0:
+    push di ; @04CA0
+    push si ; @04CA1
+    push cx ; @04CA2
+    push dx ; @04CA3
+    push bp ; @04CA4
+    call WaitForDisplayStatusBit3Cycle ; @04CA5
+    pop bp ; @04CA8
+    pop dx ; @04CA9
+    pop cx ; @04CAA
+    pop si ; @04CAB
+    pop di ; @04CAC
+    dec byte [0x491e] ; @04CAD
+    jnz loc_4CC4 ; @04CB1
+    mov byte [0x491e],0x14 ; @04CB3
+    mov al,[di] ; @04CB8
+    db 0x3a,0xc1 ; ENCODED: cmp al,cl (NASM chooses a different encoding) ; @04CBA
+    jz loc_4CC2 ; @04CBC
+    mov [di],cl ; @04CBE
+    jmp short loc_4CC4 ; @04CC0
+loc_4CC2:
+    mov [di],ch ; @04CC2
+loc_4CC4:
+    push di ; @04CC4
+    push si ; @04CC5
+    push cx ; @04CC6
+    push dx ; @04CC7
+    push bp ; @04CC8
+    call bp ; @04CC9
+    call SwapDrawingOriginsAndDisplay ; @04CCB
+    call sub_4D1A ; @04CCE
+    pop bp ; @04CD1
+    pop dx ; @04CD2
+    pop cx ; @04CD3
+    pop si ; @04CD4
+    pop di ; @04CD5
+    cmp al,0xff ; @04CD6
+    jz loc_4CA0 ; @04CD8
+    pop bp ; @04CDA
+    pop dx ; @04CDB
+    pop cx ; @04CDC
+    pop bx ; @04CDD
+    pop di ; @04CDE
+    pop si ; @04CDF
+    cmp al,0x7f ; @04CE0
+    jz loc_4D02 ; @04CE2
+    cmp al,0xd ; @04CE4
+    jz loc_4D10 ; @04CE6
+    db 0x3a,0xc3 ; ENCODED: cmp al,bl (NASM chooses a different encoding) ; @04CE8
+    jl loc_4C9A ; @04CEA
+    db 0x3a,0xc7 ; ENCODED: cmp al,bh (NASM chooses a different encoding) ; @04CEC
+    jg loc_4C9A ; @04CEE
+    db 0x3b,0xfa ; ENCODED: cmp di,dx (NASM chooses a different encoding) ; @04CF0
+    jz loc_4C9A ; @04CF2
+    mov [di],al ; @04CF4
+    inc di ; @04CF6
+    mov cl,[di] ; @04CF7
+    db 0x3b,0xfa ; ENCODED: cmp di,dx (NASM chooses a different encoding) ; @04CF9
+    jnz loc_4C9A ; @04CFB
+    dec di ; @04CFD
+    mov cl,[di] ; @04CFE
+    jmp short loc_4C9A ; @04D00
+loc_4D02:
+    mov byte [di],0x2e ; @04D02
+    mov cl,0x2e ; @04D05
+    db 0x3b,0xfe ; ENCODED: cmp di,si (NASM chooses a different encoding) ; @04D07
+    jz loc_4C9A ; @04D09
+    dec di ; @04D0B
+    mov cl,[di] ; @04D0C
+    jmp short loc_4C9A ; @04D0E
+loc_4D10:
+    mov word [0x1fc7],0x0 ; @04D10
+    mov [di],cl ; @04D16
+    jmp bp ; @04D18
+sub_4D1A:
+    lea si,[0xf78] ; @04D1A
+    db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @04D1E
+    mov cx,0x53 ; @04D20
+loc_4D23:
+    test byte [bx+si],0x80 ; @04D23
+    jnz loc_4D2E ; @04D26
+loc_4D28:
+    inc bx ; @04D28
+    loop loc_4D23 ; @04D29
+    mov al,0xff ; @04D2B
+    ret ; @04D2D
+loc_4D2E:
+    mov al,[bx+si] ; @04D2E
+    and al,0x7f ; @04D30
+    dec al ; @04D32
+    db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04D34
+    jz loc_4D42 ; @04D36
+    or al,0x80 ; @04D38
+    mov [bx+si],al ; @04D3A
+    cmp al,0x93 ; @04D3C
+    jz loc_4D45 ; @04D3E
+    jmp short loc_4D28 ; @04D40
+loc_4D42:
+    mov byte [bx+si],0x86 ; @04D42
+loc_4D45:
+    db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @04D45
+    lea bx,[0x202e] ; @04D47
+    xlatb ; @04D4B
+    ret ; @04D4C
+; Stream uses live DS:SI and incoming DF. Header: column(1-based), row, style.
+; Header column0 terminates; style0=>BP2 elseBP0. Only CR ends each text run.
+; Zero inside a run is a glyph. Save CX/BX/SI, consume actual glyph nearRET,
+; then live POP SI/BX/CX and byte INC CL. Child DS/ES and frame aliases flow.
+DrawTextStream:
+    lodsb ; @04D4D
+    db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04D4E
+    jz TextStreamReturn ; @04D50
+    db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @04D52
+    dec cl ; @04D54
+    lodsb ; @04D56
+    db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @04D57
+    lodsb ; @04D59
+    db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04D5A
+    jnz loc_4D63 ; @04D5C
+    mov bp,0x2 ; @04D5E
+    jmp short TextStreamReadCharacter ; @04D61
+loc_4D63:
+    db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @04D63
+TextStreamReadCharacter:
+    lodsb ; @04D65
+    cmp al,0xd ; @04D66
+    jz DrawTextStream ; @04D68
+    push cx ; @04D6A
+    push bx ; @04D6B
+    push si ; @04D6C
+    call DrawTextGlyph ; @04D6D
+TextStreamAfterGlyph:
+    pop si ; @04D70
+    pop bx ; @04D71
+    pop cx ; @04D72
+    inc cl ; @04D73
+    jmp short TextStreamReadCharacter ; @04D75
+TextStreamReturn:
+    ret ; @04D77
+; Space preserves incoming state except CMP flags. Other AL values wrap after SUB21.
+; SI=5BC0+96*index; DI=SI+40. Live DS:1FEE+1000 becomes graphics source.
+; CH/CL become top/left*16, width16/height16/three planes; BP is saved on live SS.
+; Far CALL uses relocated same-CS target; consume actual RETF, then live POP BP.
+DrawTextGlyph:
+    cmp al,0x20 ; @04D78
+    jz TextGlyphReturn ; @04D7A
+    sub al,0x21 ; @04D7C
+    db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04D7E
+    db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @04D80
+    db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @04D82
+    db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @04D84
+    db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @04D86
+    db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @04D88
+    db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM chooses a different encoding) ; @04D8A
+    db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @04D8C
+    db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @04D8E
+    add si,0x5bc0 ; @04D90
+    db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04D94
+    add di,byte +0x40 ; @04D96
+    mov bx,[UiGraphicsBufferSegment-GameDataImage] ; @04D99
+    add bx,0x1000 ; @04D9D
+    mov [GraphicsResourceSegment-GameDataImage],bx ; @04DA1
+    db 0x8a,0xdd ; ENCODED: mov bl,ch (NASM chooses a different encoding) ; @04DA5
+    db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @04DA7
+    db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @04DA9
+    db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04DAB
+    mov cl,0x4 ; @04DAD
+    shl bx,cl ; @04DAF
+    shl ax,cl ; @04DB1
+    mov cl,0x10 ; @04DB3
+    mov ch,0x3 ; @04DB5
+    mov dx,0x10 ; @04DB7
+    push bp ; @04DBA
+TextGlyphBitmapCall:
+    call 0x0:0x8822 ; @04DBB
+TextGlyphAfterBitmap:
+    pop bp ; @04DC0
+TextGlyphReturn:
+    ret ; @04DC1
+; SS mirrors precede OUTs; mode1 copies four read latches, not the CPU byte.
+; PUSH DS precedes live origin reads. REP copies6D60 bytes with incomingDF,
+; wrapping SI/DI16; live POP DS and RET may read overwritten/device words.
+; Flags and BX/BP are preserved; ES/AX=A000, DX=3CE,CX=0.
+CopyDrawingPageToAlternate:
+    mov dx,0x3c4 ; @04DC2
+    mov ax,0xf02 ; @04DC5
+    mov [ss:0x8],ax ; @04DC8
+DisplayPageCopyMapMaskOutput:
+    out dx,ax ; @04DCC
+    mov dx,0x3ce ; @04DCD
+    mov ax,0x105 ; @04DD0
+    mov [ss:0x0],ax ; @04DD3
+DisplayPageCopyModeOutput:
+    out dx,ax ; @04DD7
+    push ds ; @04DD8
+    mov si,[DrawingOrigin-GameDataImage] ; @04DD9
+    mov di,[AlternateDrawingOrigin-GameDataImage] ; @04DDD
+    mov ax,0xa000 ; @04DE1
+    mov ds,ax ; @04DE4
+    mov es,ax ; @04DE6
+    mov cx,0x6d60 ; @04DE8
+    rep movsb ; @04DEB
+DisplayPageCopyRestoreDataSegment:
+    pop ds ; @04DED
+DisplayPageCopyReturn:
+    ret ; @04DEE
+; Fixed DI=0,CX=6D60; tail shares ClearVgaBytes and its live outerRET.
+; The UNKNOWN byte at4DF7 is skipped and remains unresolved.
+ClearFullDrawingPage:
+    mov di,0x0 ; @04DEF
+    mov cx,0x6d60 ; @04DF2
+    jmp short ClearVgaBytes ; @04DF5
+; UNKNOWN: unresolved bytes
+    db 0x90 ; @04DF7
+; SS mirror words precede six OUTs. ES=A000, AX=A000, DX=3CE.
+; REP clears incoming CX bytes from DI with incoming DF; CX=0. No CLI/STI.
+; Final XOR defines CF/OF=0, PF/ZF=1,SF=0; AF undefined. RET reads live SS.
+ClearVgaBytes:
+    mov dx,0x3c4 ; @04DF8
+    mov ax,0xf02 ; @04DFB
+    mov [ss:0x8],ax ; @04DFE
+    out dx,ax ; @04E02
+    mov dx,0x3ce ; @04E03
+    db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04E06
+    mov [ss:0xa],ax ; @04E08
+    out dx,ax ; @04E0C
+    mov ax,0xf01 ; @04E0D
+    mov [ss:0xc],ax ; @04E10
+    out dx,ax ; @04E14
+    mov ax,0x5 ; @04E15
+    mov [ss:0x0],ax ; @04E18
+    out dx,ax ; @04E1C
+    mov ax,0x3 ; @04E1D
+    mov [ss:0x2],ax ; @04E20
+    out dx,ax ; @04E24
+    mov ax,0xff08 ; @04E25
+    mov [ss:0xe],ax ; @04E28
+    out dx,ax ; @04E2C
+    mov ax,0xa000 ; @04E2D
+    mov es,ax ; @04E30
+    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04E32
+    rep stosb ; @04E34
+ClearVgaReturn:
+    ret ; @04E36
+sub_4E37:
+    mov al,[0x1f72] ; @04E37
+    cmp al,0x2 ; @04E3A
+    jnz loc_4E46 ; @04E3C
+    mov al,[0x1f70] ; @04E3E
+    mov [0x1f72],al ; @04E41
+    jmp short loc_4E51 ; @04E44
+loc_4E46:
+    cmp [0x1f70],al ; @04E46
+    jz loc_4E83 ; @04E4A
+    mov byte [0x1f72],0x2 ; @04E4C
+loc_4E51:
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04E51
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04E54
+    mov si,0xee30 ; @04E57
+    mov al,[0x25a7] ; @04E5A
+    test al,0x3 ; @04E5D
+    jz loc_4E84 ; @04E5F
+    test al,0x2 ; @04E61
+    jz loc_4E6F ; @04E63
+    cmp byte [0x2010],0xff ; @04E65
+    jnz loc_4E6F ; @04E6A
+    mov si,0xea50 ; @04E6C
+loc_4E6F:
+    mov ax,0x15f ; @04E6F
+    mov bx,0x92 ; @04E72
+    mov dx,0x40 ; @04E75
+    mov cx,0x41f ; @04E78
+    mov bp,0x1 ; @04E7B
+    call 0x0:0x8822 ; @04E7E
+loc_4E83:
+    ret ; @04E83
+loc_4E84:
+    mov bx,0x78 ; @04E84
+    mov ax,0x144 ; @04E87
+    mov si,0xb120 ; @04E8A
+    mov bp,0x3 ; @04E8D
+    mov cx,0x43d ; @04E90
+    mov dx,0x78 ; @04E93
+    db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04E96
+    add di,0xab9 ; @04E98
+    call 0x0:0x8822 ; @04E9C
+    ret ; @04EA1
+sub_4EA2:
+    mov al,[0x1f6f] ; @04EA2
+    cmp al,0x4 ; @04EA5
+    jnz loc_4EB1 ; @04EA7
+    mov al,[0x1f6e] ; @04EA9
+    mov [0x1f6f],al ; @04EAC
+    jmp short loc_4EBC ; @04EAF
+loc_4EB1:
+    cmp [0x1f6e],al ; @04EB1
+    jz loc_4EE6 ; @04EB5
+    mov byte [0x1f6f],0x4 ; @04EB7
+loc_4EBC:
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04EBC
+    add ax,0x1000 ; @04EBF
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04EC2
+    mov bl,[0x1f6e] ; @04EC5
+    db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @04EC9
+    shl bx,1 ; @04ECB
+    mov si,[cs:bx+0x4ee7] ; @04ECD
+    mov ax,0x1e6 ; @04ED2
+    mov bx,0x91 ; @04ED5
+    mov dx,0x48 ; @04ED8
+    mov cx,0x41b ; @04EDB
+    mov bp,0x1 ; @04EDE
+    call 0x0:0x8822 ; @04EE1
+loc_4EE6:
+    ret ; @04EE6
+; UNKNOWN: unresolved bytes
+    db 0xf4,0x57,0x28,0x54,0x5c,0x50,0x90,0x4c ; @04EE7
+sub_4EEF:
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04EEF
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04EF2
+    db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04EF5
+    mov bx,0x14 ; @04EF7
+    mov bp,0xf42 ; @04EFA
+    mov cl,0x5e ; @04EFD
+    mov ch,0x4 ; @04EFF
+    mov dx,0x278 ; @04F01
+    mov si,0x2080 ; @04F04
+    mov di,0x7786 ; @04F07
+    call 0x0:0x8822 ; @04F0A
+    mov ax,0x8 ; @04F0F
+    mov bx,0xa ; @04F12
+    mov bp,0x2 ; @04F15
+    mov cl,0x5e ; @04F18
+    mov ch,0x4 ; @04F1A
+    mov dx,0x278 ; @04F1C
+    mov si,0x2080 ; @04F1F
+    mov di,0x7786 ; @04F22
+    call 0x0:0x8822 ; @04F25
+    ret ; @04F2A
+sub_4F2B:
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04F2B
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04F2E
+    mov bx,0x78 ; @04F31
+    mov ax,0x44 ; @04F34
+    mov cx,0x4 ; @04F37
+    lea di,[0x4f8a] ; @04F3A
+    call sub_4F4A ; @04F3E
+    mov bx,0xc5 ; @04F41
+    mov ax,0xc4 ; @04F44
+    mov cx,0x2 ; @04F47
+sub_4F4A:
+    push cx ; @04F4A
+    mov si,[cs:di] ; @04F4B
+    add di,byte +0x2 ; @04F4E
+    mov bp,0xf43 ; @04F51
+    push ax ; @04F54
+    push bx ; @04F55
+    sub ax,0x8 ; @04F56
+    add bx,byte +0x8 ; @04F59
+    call sub_4F6E ; @04F5C
+    pop bx ; @04F5F
+    pop ax ; @04F60
+    mov bp,0x3 ; @04F61
+    call sub_4F6E ; @04F64
+    pop cx ; @04F67
+    add ax,0x80 ; @04F68
+    loop sub_4F4A ; @04F6B
+    ret ; @04F6D
+sub_4F6E:
+    push ax ; @04F6E
+    push bx ; @04F6F
+    push bp ; @04F70
+    push si ; @04F71
+    push di ; @04F72
+    mov cx,0x43d ; @04F73
+    mov dx,0x78 ; @04F76
+    db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04F79
+    add di,0xab9 ; @04F7B
+    call 0x0:0x8822 ; @04F7F
+    pop di ; @04F84
+    pop si ; @04F85
+    pop bp ; @04F86
+    pop bx ; @04F87
+    pop ax ; @04F88
+    ret ; @04F89
+; UNKNOWN: unresolved bytes
+    db 0x88,0x94,0xd4,0xa2,0x20,0xb1,0x6c,0xbf,0xb8,0xcd,0x04,0xdc ; @04F8A
+sub_4F96:
+    mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04F96
+    add ax,0x800 ; @04F99
+    mov [GraphicsResourceSegment-GameDataImage],ax ; @04F9C
+    lea si,[0x4960] ; @04F9F
+    mov cx,0xa ; @04FA3
+loc_4FA6:
+    push cx ; @04FA6
+    mov ax,[si] ; @04FA7
+    cmp ax,0x8000 ; @04FA9
+    jz loc_4FF1 ; @04FAC
+    dec ax ; @04FAE
+    mov [si],ax ; @04FAF
+    cmp ax,0xffef ; @04FB1
+    jnz loc_4FBD ; @04FB4
+    mov ax,[si+0x2] ; @04FB6
+    mov [si],ax ; @04FB9
+    jmp short loc_4FF1 ; @04FBB
+loc_4FBD:
+    db 0x23,0xc0 ; ENCODED: and ax,ax (NASM chooses a different encoding) ; @04FBD
+    jns loc_4FF1 ; @04FBF
+    neg ax ; @04FC1
+    dec ax ; @04FC3
+    shr ax,1 ; @04FC4
+    xchg al,ah ; @04FC6
+    mov bp,[si+0x8] ; @04FC8
+    shr ax,1 ; @04FCB
+    db 0x03,0xe8 ; ENCODED: add bp,ax (NASM chooses a different encoding) ; @04FCD
+    shr ax,1 ; @04FCF
+    db 0x03,0xe8 ; ENCODED: add bp,ax (NASM chooses a different encoding) ; @04FD1
+    mov ax,[si+0x4] ; @04FD3
+    mov bx,[si+0x6] ; @04FD6
+    push si ; @04FD9
+    db 0x8b,0xf5 ; ENCODED: mov si,bp (NASM chooses a different encoding) ; @04FDA
+    db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04FDC
+    add di,0x90 ; @04FDE
+    mov bp,0x1 ; @04FE2
+    mov cx,0x40c ; @04FE5
+    mov dx,0x20 ; @04FE8
+    call 0x0:0x8822 ; @04FEB
+    pop si ; @04FF0
+loc_4FF1:
+    pop cx ; @04FF1
+    add si,byte +0xb ; @04FF2
+    loop loc_4FA6 ; @04FF5
+    ret ; @04FF7
+sub_4FF8:
+    lea si,[0x4960] ; @04FF8
+    mov cx,0xa ; @04FFC
+    mov bx,0x28 ; @04FFF
+loc_5002:
+    mov ax,[si+0x2] ; @05002
+    cmp ax,0x8000 ; @05005
+    jz loc_500C ; @05008
+    db 0x8b,0xc3 ; ENCODED: mov ax,bx (NASM chooses a different encoding) ; @0500A
+loc_500C:
+    mov [si],ax ; @0500C
+    add bx,byte +0x28 ; @0500E
+    add si,byte +0xb ; @05011
+    loop loc_5002 ; @05014
+    ret ; @05016
+; 5017 resets the row;5019 preserves incoming BX. Both share the7E76 tile loop.
+; See docs/background-drawing.md for live saves and changed child returns.
+DrawScreenBackground:
+    db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @05017
+DrawScreenBackgroundFromRow:
+    jmp DrawScreenBackgroundTiles ; @05019
+; UNKNOWN: unresolved bytes
+    db 0x32,0xc0,0xa2,0xcd,0x1f,0x3a,0x06,0xcd,0x1f,0x74,0xfa,0xc3 ; @0501C
+InstallMenuTimerVector:
+    cli ; @05028
+    push ds ; @05029
+    db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0502A
+    mov ds,ax ; @0502C
+    mov word [0x20],0x4c47 ; @0502E
+    mov [0x22],cs ; @05034
+    pop ds ; @05038
+    sti ; @05039
+    ret ; @0503A
+DrawCodeInputText:
+    lea si,[0x4def] ; @0503B
+    jmp DrawTextStream ; @0503F
+sub_5042:
+    mov dl,[LevelResourceSelectionByte-GameDataImage] ; @05042
+    mov dh,[0x491d] ; @05046
+    mov cl,[0x40] ; @0504A
+    lea si,[0x4913] ; @0504E
+    lea di,[0x4d68] ; @05052
+    db 0x8b,0xc2 ; ENCODED: mov ax,dx (NASM chooses a different encoding) ; @05056
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @05058
+    and ax,0x101 ; @0505A
+    and ch,0x1 ; @0505D
+    shl al,1 ; @05060
+    shl al,1 ; @05062
+    shl al,1 ; @05064
+    shl ah,1 ; @05066
+    shl ch,1 ; @05068
+    shl ch,1 ; @0506A
+    or al,[si] ; @0506C
+    db 0x0a,0xc4 ; ENCODED: or al,ah (NASM chooses a different encoding) ; @0506E
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @05070
+    mov [di],al ; @05072
+    db 0x8a,0xc2 ; ENCODED: mov al,dl (NASM chooses a different encoding) ; @05074
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @05076
+    and al,0x2 ; @05078
+    and ch,0x2 ; @0507A
+    shl al,1 ; @0507D
+    shr ch,1 ; @0507F
+    or al,[si+0x1] ; @05081
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @05084
+    mov [di+0x1],al ; @05086
+    db 0x8b,0xc2 ; ENCODED: mov ax,dx (NASM chooses a different encoding) ; @05089
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @0508B
+    and ax,0x204 ; @0508D
+    and ch,0x4 ; @05090
+    shr ah,1 ; @05093
+    shr ch,1 ; @05095
+    or al,[si+0x2] ; @05097
+    db 0x0a,0xc4 ; ENCODED: or al,ah (NASM chooses a different encoding) ; @0509A
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @0509C
+    mov [di+0x2],al ; @0509E
+    db 0x8a,0xc2 ; ENCODED: mov al,dl (NASM chooses a different encoding) ; @050A1
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @050A3
+    and al,0x8 ; @050A5
+    and ch,0x8 ; @050A7
+    shr al,1 ; @050AA
+    shr al,1 ; @050AC
+    shr al,1 ; @050AE
+    shr ch,1 ; @050B0
+    shr ch,1 ; @050B2
+    or al,[si+0x3] ; @050B4
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @050B7
+    mov [di+0x3],al ; @050B9
+    db 0x8b,0xc2 ; ENCODED: mov ax,dx (NASM chooses a different encoding) ; @050BC
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @050BE
+    and ax,0x410 ; @050C0
+    and ch,0x10 ; @050C3
+    shr al,1 ; @050C6
+    shr al,1 ; @050C8
+    shr al,1 ; @050CA
+    shr ah,1 ; @050CC
+    shr ah,1 ; @050CE
+    shr ch,1 ; @050D0
+    or al,[si+0x4] ; @050D2
+    db 0x0a,0xc4 ; ENCODED: or al,ah (NASM chooses a different encoding) ; @050D5
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @050D7
+    mov [di+0x4],al ; @050D9
+    db 0x8b,0xc2 ; ENCODED: mov ax,dx (NASM chooses a different encoding) ; @050DC
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @050DE
+    and al,0x20 ; @050E0
+    and ah,0x8 ; @050E2
+    and ch,0x20 ; @050E5
+    shr al,1 ; @050E8
+    shr al,1 ; @050EA
+    shr al,1 ; @050EC
+    shr al,1 ; @050EE
+    shr al,1 ; @050F0
+    shr ah,1 ; @050F2
+    shr ah,1 ; @050F4
+    shr ch,1 ; @050F6
+    shr ch,1 ; @050F8
+    shr ch,1 ; @050FA
+    or al,[si+0x5] ; @050FC
+    db 0x0a,0xc4 ; ENCODED: or al,ah (NASM chooses a different encoding) ; @050FF
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @05101
+    mov [di+0x5],al ; @05103
+    db 0x8a,0xc2 ; ENCODED: mov al,dl (NASM chooses a different encoding) ; @05106
+    db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @05108
+    and al,0xc0 ; @0510A
+    and ch,0x40 ; @0510C
+    shr al,1 ; @0510F
+    shr al,1 ; @05111
+    shr al,1 ; @05113
+    shr al,1 ; @05115
+    shr ch,1 ; @05117
+    shr ch,1 ; @05119
+    shr ch,1 ; @0511B
+    shr ch,1 ; @0511D
+    shr ch,1 ; @0511F
+    shr ch,1 ; @05121
+    or al,[si+0x6] ; @05123
+    db 0x0a,0xc5 ; ENCODED: or al,ch (NASM chooses a different encoding) ; @05126
+    mov [di+0x6],al ; @05128
+    db 0x8a,0xc2 ; ENCODED: mov al,dl (NASM chooses a different encoding) ; @0512B
+    and al,0xf ; @0512D
+    add al,[si+0x7] ; @0512F
+    mov [di+0x7],al ; @05132
+    db 0x8a,0xc2 ; ENCODED: mov al,dl (NASM chooses a different encoding) ; @05135
+    and al,0xf0 ; @05137
+    shr al,1 ; @05139
+    shr al,1 ; @0513B
+    shr al,1 ; @0513D
+    shr al,1 ; @0513F
+    add al,[si+0x8] ; @05141
+    mov [di+0x8],al ; @05144
+    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @05147
+    add al,[di] ; @05149
+    add al,[di+0x1] ; @0514B
+    add al,[di+0x2] ; @0514E
+    add al,[di+0x3] ; @05151
+    add al,[di+0x4] ; @05154
+    add al,[di+0x5] ; @05157
+    add al,[di+0x6] ; @0515A
+    add al,[di+0x7] ; @0515D
+    add al,[di+0x8] ; @05160
+    and al,0xf ; @05163
+    add al,[si+0x9] ; @05165
+    mov [di+0x9],al ; @05168
+    mov dh,0x7 ; @0516B
+    db 0x22,0xd6 ; ENCODED: and dl,dh (NASM chooses a different encoding) ; @0516D
+    db 0x2a,0xf2 ; ENCODED: sub dh,dl (NASM chooses a different encoding) ; @0516F
+    lea si,[0x4d6e] ; @05171
+loc_5175:
+    mov al,[si] ; @05175
+    mov ah,[si-0x1] ; @05177
+    mov [si],ah ; @0517A
+    mov ah,[si-0x2] ; @0517C
+    mov [si-0x1],ah ; @0517F
+    mov ah,[si-0x3] ; @05182
+    mov [si-0x2],ah ; @05185
+    mov ah,[si-0x4] ; @05188
+    mov [si-0x3],ah ; @0518B
+    mov ah,[si-0x5] ; @0518E
+    mov [si-0x4],ah ; @05191
+    mov ah,[si-0x6] ; @05194
+    mov [si-0x5],ah ; @05197
+    mov [si-0x6],al ; @0519A
+    dec dh ; @0519D
+    jns loc_5175 ; @0519F
+    ret ; @051A1
+sub_51A2:
+    lea si,[0x4df2] ; @051A2
+    cmp word [si],0x4942 ; @051A6
+    jnz loc_51CD ; @051AA
+    cmp word [si+0x2],0x4c4c ; @051AC
+    jnz loc_51CD ; @051B1
+    cmp word [si+0x4],0x4e41 ; @051B3
+    jnz loc_51CD ; @051B8
+    cmp word [si+0x6],0x5444 ; @051BA
+    jnz loc_51CD ; @051BF
+    cmp word [si+0x8],0x4445 ; @051C1
+    jnz loc_51CD ; @051C6
+    mov byte [0x1f74],0xff ; @051C8
+loc_51CD:
+    lea di,[0x4913] ; @051CD
+    mov cx,0x9 ; @051D1
+    db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @051D4
+    push si ; @051D6
+loc_51D7:
+    add al,[si] ; @051D7
+    inc si ; @051D9
+    loop loc_51D7 ; @051DA
+    pop si ; @051DC
+    and al,0xf ; @051DD
+    mov ah,[si+0x9] ; @051DF
+    db 0x2a,0xe0 ; ENCODED: sub ah,al (NASM chooses a different encoding) ; @051E2
+    cmp [di+0x9],ah ; @051E4
+    jz loc_51EC ; @051E7
+    jmp loc_52D3 ; @051E9
+loc_51EC:
+    mov al,[si+0x7] ; @051EC
+    sub al,[di+0x7] ; @051EF
+    mov ah,[si+0x8] ; @051F2
+    sub ah,[di+0x8] ; @051F5
+    and ax,0xf0f ; @051F8
+    shl ah,1 ; @051FB
+    shl ah,1 ; @051FD
+    shl ah,1 ; @051FF
+    shl ah,1 ; @05201
+    db 0x0a,0xc4 ; ENCODED: or al,ah (NASM chooses a different encoding) ; @05203
+    mov [LevelResourceSelectionByte-GameDataImage],al ; @05205
+    mov dh,0x7 ; @05208
+    db 0x22,0xc6 ; ENCODED: and al,dh (NASM chooses a different encoding) ; @0520A
+    db 0x2a,0xf0 ; ENCODED: sub dh,al (NASM chooses a different encoding) ; @0520C
+loc_520E:
+    mov al,[si] ; @0520E
+    mov ah,[si+0x1] ; @05210
+    mov [si],ah ; @05213
+    mov ah,[si+0x2] ; @05215
+    mov [si+0x1],ah ; @05218
+    mov ah,[si+0x3] ; @0521B
+    mov [si+0x2],ah ; @0521E
+    mov ah,[si+0x4] ; @05221
+    mov [si+0x3],ah ; @05224
+    mov ah,[si+0x5] ; @05227
+    mov [si+0x4],ah ; @0522A
+    mov ah,[si+0x6] ; @0522D
+    mov [si+0x5],ah ; @05230
+    mov [si+0x6],al ; @05233
+    dec dh ; @05236
+    jns loc_520E ; @05238
+    db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @0523A
+    mov al,[si] ; @0523C
+    shr al,1 ; @0523E
+    shr al,1 ; @05240
+    shr al,1 ; @05242
+    and al,0x1 ; @05244
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @05246
+    mov al,[si+0x1] ; @05248
+    shr al,1 ; @0524B
+    and al,0x2 ; @0524D
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @0524F
+    mov al,[si+0x2] ; @05251
+    and al,0x4 ; @05254
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @05256
+    mov al,[si+0x3] ; @05258
+    shl al,1 ; @0525B
+    shl al,1 ; @0525D
+    shl al,1 ; @0525F
+    and al,0x8 ; @05261
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @05263
+    mov al,[si+0x4] ; @05265
+    shl al,1 ; @05268
+    shl al,1 ; @0526A
+    shl al,1 ; @0526C
+    and al,0x10 ; @0526E
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @05270
+    mov al,[si+0x5] ; @05272
+    shl al,1 ; @05275
+    shl al,1 ; @05277
+    shl al,1 ; @05279
+    shl al,1 ; @0527B
+    shl al,1 ; @0527D
+    and al,0x20 ; @0527F
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @05281
+    mov al,[si+0x6] ; @05283
+    shl al,1 ; @05286
+    shl al,1 ; @05288
+    shl al,1 ; @0528A
+    shl al,1 ; @0528C
+    and al,0xc0 ; @0528E
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @05290
+    cmp ah,[LevelResourceSelectionByte-GameDataImage] ; @05292
+    jnz loc_52D3 ; @05296
+    mov al,[LevelResourceSelectionByte-GameDataImage] ; @05298
+    db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @0529B
+    mov cl,0x1e ; @0529D
+    div cl ; @0529F
+    mov [0x1f6e],al ; @052A1
+    db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @052A4
+    mov al,[si] ; @052A6
+    shr al,1 ; @052A8
+    and al,0x1 ; @052AA
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @052AC
+    mov al,[si+0x2] ; @052AE
+    shl al,1 ; @052B1
+    and al,0x2 ; @052B3
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @052B5
+    mov al,[si+0x4] ; @052B7
+    shl al,1 ; @052BA
+    shl al,1 ; @052BC
+    and al,0x4 ; @052BE
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @052C0
+    mov al,[si+0x5] ; @052C2
+    shl al,1 ; @052C5
+    shl al,1 ; @052C7
+    and al,0x8 ; @052C9
+    db 0x0a,0xe0 ; ENCODED: or ah,al (NASM chooses a different encoding) ; @052CB
+    mov [0x491d],ah ; @052CD
+    db 0x2a,0xe4 ; ENCODED: sub ah,ah (NASM chooses a different encoding) ; @052D1
+loc_52D3:
+    ret ; @052D3
+times -(($-$$) != 0x52d4) db 0 ; module end assertion

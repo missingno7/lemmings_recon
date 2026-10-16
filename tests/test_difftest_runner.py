@@ -55,8 +55,8 @@ class DifferentialRunnerTests(unittest.TestCase):
     def test_full_campaign_remains_explicit_and_complete(self):
         with patch.object(difftest, 'run_bounded') as run:
             self.invoke(['--all'])
-        self.assertEqual(len(difftest.SUITES), 120)
-        self.assertEqual(len({s.name for s in difftest.SUITES}), 120)
+        self.assertEqual(len(difftest.SUITES), 123)
+        self.assertEqual(len({s.name for s in difftest.SUITES}), 123)
         self.assertEqual([Path(c.args[0][1]).stem for c in run.call_args_list],
                          [s.name for s in difftest.SUITES])
         for suite, call in zip(difftest.SUITES, run.call_args_list):

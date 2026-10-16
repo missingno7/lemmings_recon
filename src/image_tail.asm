@@ -1,3 +1,7 @@
+EntitySelectionPresent equ GameDataImage+0x001A
+EntityPreferredRecordOffset equ GameDataImage+0x005C
+EntitySelectedSlotIndex equ GameDataImage+0x005E
+EntityPreferredSlotIndex equ GameDataImage+0x0060
 ExternalSoundDriverEnabled equ GameDataImage+0x2010
 SoundOptionBits equ GameDataImage+0x25A7
 ResourceRetryPromptText equ GameDataImage+0x4ECF

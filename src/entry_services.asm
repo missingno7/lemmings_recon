@@ -190,7 +190,7 @@ EntityBatchNextCaller:
     call sub_3944 ; @001B6
     call sub_7BB8 ; @001B9
     call sub_3634 ; @001BC
-    call sub_3CDE ; @001BF
+    call SelectEntityCandidate ; @001BF
     call sub_3AC8 ; @001C2
     call DispatchEntityAction ; @001C5
     cmp byte [0x4f],0xff ; @001C8

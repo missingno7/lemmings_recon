@@ -41,9 +41,13 @@ The ledger names live DS fields without creating host copies or proving extents:
 
 | Offset | Name | Producer/consumer contract |
 |---|---|---|
+|001A|EntitySelectionPresent|3DAF sets00 after a nonzero scan;3DE8 setsFF for a selected index;zero entry leaves it stale|
 |0058|EntitySelectedRecordOffset|3DC6/3DDA write SI;317C loads the live selected pointer|
 |005A|EntityAlternateRecordOffset|3D9C writes SI;four fallback paths replace SI before a fresh eligibility test|
+|005C|EntityPreferredRecordOffset|3D8E writes the last preferred hit;3DD3 reads only when its index is notFF|
+|005E|EntitySelectedSlotIndex|3CFB setsFF;3DC3/3DD7 copy the chosen bucket index;3DDE tests its live value|
 |005F|EntityAlternateSlotIndex|3D05 setsFF;3D99 stores wrapped0043-CL;action fallbacks require!=FF|
+|0060|EntityPreferredSlotIndex|3D00 setsFF;3D8B stores wrapped live0043-CL;FF can collide with a produced index|
 |0061|EntityActionPressLatch|3170 testsFF;3177 setsFF;31BE clears only after earlier gates pass and input bit0 clears|
 |0063|EntityCandidateCount|3CF6 clears;3DA1 byte-INCs on a candidate;3161 tests nonzero|
 |0082|EntityActionSelector|0422 initializes2;input updates wrap2..9;3150 retains signed comparisons|
@@ -73,8 +77,8 @@ rows in the SS map while saving nine displaced cells into the record. DF=0
 stores at+16..+1E; DF=1 only reverses the STOSB destination while explicit
 INC SI and literal019D row advances still move through the map forward.
 Its POP SI rereads the live stack word before JMP31E5. The restored283B
-pattern leaf is already native; producer and broader action integration stay
-open until their own composed verification. No shadow record, added clamp or
+pattern leaf and selector5 producer now have scoped native acceptance and two
+actual producer/restorer handoffs, detailed below. No shadow record, added clamp or
 corrected DF behavior may replace these aliases.
 
 
@@ -233,9 +237,9 @@ all nine original cells with DF clear. Budgets are768 original instructions/
 `build/entity-action-map-differential.json` for exact input hashes. This adds
 408 unique bytes; the reused feedback/RET/restoration domains are counted once.
 
-## Next producer: candidate selection
+## Candidate selection and formatter composition
 
-The3CDE entry,called at01BF and returning01C2,owns393 known bytes/140 sites
+`SelectEntityCandidate` at3CDE,called at01BF and returning01C2,owns393 known bytes/140 sites
 in physical[3CDE,3E6F). Eight one-byte holes remain UNKNOWN at3D26,3D44,
 3D4B,3D57,3D66,3D70,3D77 and3DE7. Its only RET is3E62. A nonzero frozen
 entry CL from0043 controls1..255 scans of2D-byte records starting0088; zero
@@ -256,13 +260,53 @@ A valid selection calls the separate4B68 formatter at3DF3 (return3DF6),then
 reloads0058 and copies seven live template bytes to2083..2089. Template
 addresses48BF,48C6,48D4,48DB,48E2,48E9,48F0,48F7,48FE and490C remain live
 DS data; no historical action names are inferred. Formatting receives the
-candidate count in AL and destination208B. The4B68 body is86 bytes/40 sites,
-with shared4B91 suffix entered separately from4BBE (four additional bytes).
+candidate count in AL and destination208B. The4B68 `WriteDecimalByteField` body is86 bytes/40 sites,
+with shared4B91 suffix entered separately from4BBE `WriteDecimalBytePair`
+(four additional bytes). The pair entry accepts every AL byte without a
+hundreds reduction:255 produces`I5`. Both entries preserve BH and discard AH.
 It fills spaces,omits leading zero digits and writes significant digits from
 the original SI onward:decimal0 produces`0  `,10 produces`10 `,100 produces
 `100`. Digits are left-aligned with trailing spaces; SI advances by their
 count,including the final units digit. BL counts emitted prefix digits and
-BH is preserved. This differs from the fixed three-digit4BC2 helper. Next
-verify both formatter entries,then compose3CDE through its actual stack frame
-before connecting the candidate outputs to3150. No game scheduling or record
-allocation extent is established by these static producer contracts.
+BH is preserved. This differs from the fixed three-digit4BC2 helper.
+Both formatter entries now have native acceptance, and3CDE composes the actual
+stack frame with an explicit changed-return stop. The physical modules are
+entity_selection.asm and decimal_fields.asm; their surrounding suffixes retain
+unchanged physical order. See decimal-field.md for the field/flag contract.
+Game scheduling and record allocation extents remain open.
+
+
+`tests/entity_select.py` passes51 fixtures at both logical-core and actual-RET
+adapter boundaries:393 own known bytes/140 sites/all69 CFG outcomes,23,800
+ordered bus events and nine completed mutants. All ten template choices and
+signed geometry rejection/clamp paths are represented. Independent ordered
+memory projection checks candidate count, chosen bucket/index/pointer, stale
+zero-bound outputs, formatted text and the live saved/CALL return words.
+VGA DS/SS, DF, changed selected-pointer/template providers, FF sentinel
+collisions and the actual changed formatter return remain explicit. Entry
+FLAGS are admissible CPU register values, including the fixed bit1.
+
+The full255-slot constructed scan overlaps the output row:record182 begins
+at2086, so clearing2083..208D forces its first four words to2020. In the
+dense fixture that record cannot pass the original bounds and the count is
+254, with final slot indexFE and formatted`254`. This alias is retained,
+not repaired. A separate provider installs FE after count initialization;
+the next live INC produces FF and the formatter receives255. No record-array
+extent or collision-free count/index domain is inferred.
+
+The native suite keeps20,000 original-instruction and callback-event caps per
+call inside240-second/384 MiB process/640 MiB Windows-tree workers. Completed
+mutant mismatches are distinct from oracle failures and budget exhaustion.
+The report records exact input hashes; broader game scheduling remains open.
+
+
+Four focused native producer-to3150 handoffs pass in
+`tests/entity_select_actions.py`. Each runs the actual selection adapter through
+RET to01C2, then feeds that exact memory and every returned register/segment
+into dispatch. Only the real near-CALL frame for01C5 is added, with return01C8.
+Preferred and mask0002-forced fallback buckets reach selectors2/3/4. Whole
+RAM, flags and ordered accesses match the originals; independent checks verify
+the selected action's counter/record update and unchanged unselected record.
+The union is216 executed sites (157 producer/formatter and59 dispatcher), with
+618 bus events. It adds no translated bytes or mutation credit. The intervening
+3AC8 display call is omitted explicitly; full main-loop behavior remains open.

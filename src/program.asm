@@ -16,6 +16,14 @@ times -(($-$$) != 0x378a) db 0 ; module end assertion
 %include "level_objects.asm"
 times -(($-$$) != 0x3944) db 0 ; module end assertion
 %include "game_code_late.asm"
+times -(($-$$) != 0x3cde) db 0 ; module end assertion
+%include "entity_selection.asm"
+times -(($-$$) != 0x3e6f) db 0 ; module end assertion
+%include "game_code_late_after_selection.asm"
+times -(($-$$) != 0x4b5c) db 0 ; module end assertion
+%include "decimal_fields.asm"
+times -(($-$$) != 0x4be7) db 0 ; module end assertion
+%include "game_code_late_after_decimal.asm"
 times -(($-$$) != 0x52d4) db 0 ; module end assertion
 %include "palette_frontends.asm"
 times -(($-$$) != 0x563e) db 0 ; module end assertion

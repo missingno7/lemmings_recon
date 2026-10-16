@@ -40,7 +40,7 @@ loc_367D:
     loop loc_3645 ; @03682
     mov al,[0x45] ; @03684
     mov si,0x2095 ; @03687
-    jmp sub_4B68 ; @0368A
+    jmp WriteDecimalByteField ; @0368A
 loc_368D:
     ret ; @0368D
 times -(($-$$) != 0x368e) db 0 ; module end assertion

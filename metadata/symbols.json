@@ -22064,9 +22064,11 @@
     "address": 15582,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3CDE",
-    "aliases": [],
+    "size": 401,
+    "symbol_name": "SelectEntityCandidate",
+    "aliases": [
+      "sub_3CDE"
+    ],
     "callers": [
       447
     ],
@@ -22469,10 +22471,56 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact static contract and physical shared-tail ownership in docs/entity-actions.md; no wider scheduling or allocation domain inferred."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 393
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 393,
+    "c_implementation": "c/entity_select.c",
+    "c_core": "lmn_select_entity_core",
+    "c_code_ranges": [
+      [
+        15582,
+        15654
+      ],
+      [
+        15655,
+        15684
+      ],
+      [
+        15685,
+        15691
+      ],
+      [
+        15692,
+        15703
+      ],
+      [
+        15704,
+        15718
+      ],
+      [
+        15719,
+        15728
+      ],
+      [
+        15729,
+        15735
+      ],
+      [
+        15736,
+        15847
+      ],
+      [
+        15848,
+        15971
+      ],
+      [
+        15971,
+        15983
+      ]
+    ],
+    "verification_evidence": "tests/entity_select.py:51 fixtures at logical core/actualRET adapter boundaries,393 own known bytes/140 sites/69 CFG outcomes,23800 ordered events,9 completed mutants. Zero-bound stale state,frozen scan/live bound indices,FF sentinel collisions,signed wrapped geometry,0680-to00D0 clamp,last-hit buckets,record182/display overlap,live countFF provider,all templates,actual formatter CALL/RET/changed-target,SS/provider/VGA/DF aliases. Shared formatter accepted separately. docs/entity-actions.md"
   },
   {
     "address": 15983,
@@ -27289,9 +27337,11 @@
     "address": 19304,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4B68",
-    "aliases": [],
+    "size": 86,
+    "symbol_name": "WriteDecimalByteField",
+    "aliases": [
+      "sub_4B68"
+    ],
     "callers": [
       18255,
       19296,
@@ -27369,18 +27419,30 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact static contract and physical shared-tail ownership in docs/entity-actions.md; no wider scheduling or allocation domain inferred."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 86
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 86,
+    "c_implementation": "c/decimal_field.c",
+    "c_core": "lmn_write_decimal_field_core",
+    "c_code_ranges": [
+      [
+        19304,
+        19390
+      ]
+    ],
+    "verification_evidence": "tests/decimal_field.py:1064 combined boundary cases across both entries/core/actualRET adapters; all256AL per boundary,90 unique bytes/42 sites/13 CFG outcomes,7 completed mutants. Independent arithmetic/format/ordered-write/RAM/VGA checks; forward cursor,full/pair quotient quirk,BH,all defined callback FLAGS,finalINC SI and live SS return aliases. docs/decimal-field.md"
   },
   {
     "address": 19390,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4BBE",
-    "aliases": [],
+    "size": 4,
+    "symbol_name": "WriteDecimalBytePair",
+    "aliases": [
+      "sub_4BBE"
+    ],
     "callers": [
       17796,
       17839
@@ -27422,10 +27484,24 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact static contract and physical shared-tail ownership in docs/entity-actions.md; no wider scheduling or allocation domain inferred."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 49
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 49,
+    "c_implementation": "c/decimal_field.c",
+    "c_core": "lmn_write_decimal_pair_core",
+    "c_code_ranges": [
+      [
+        19390,
+        19394
+      ],
+      [
+        19345,
+        19390
+      ]
+    ],
+    "verification_evidence": "tests/decimal_field.py:1064 combined boundary cases across both entries/core/actualRET adapters; all256AL per boundary,90 unique bytes/42 sites/13 CFG outcomes,7 completed mutants. Independent arithmetic/format/ordered-write/RAM/VGA checks; forward cursor,full/pair quotient quirk,BH,all defined callback FLAGS,finalINC SI and live SS return aliases. docs/decimal-field.md"
   },
   {
     "address": 19394,
@@ -59987,5 +60063,119 @@
       "39CE initializes snapshotsFF/counters0;3BA5..3CDD compares live ordinal count and snapshot,refreshes snapshot only at counter2,sets counterFF then INC before762A. Action transitions clear counters except selector2. docs/entity-actions.md"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 26,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntitySelectionPresent",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "003F3 initializes00;3DAF writes00 after nonzero scan;3DE8 writesFF for selected index.584D comparesFF. Zero scan leaves stale value; no Boolean normalization. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 92,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityPreferredRecordOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3D8E writes current candidate SI after+24 bit80 or+8 mask8B90;3DD3 consumes last-hit pointer only when0060!=FF. Not reset with sentinels. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 94,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntitySelectedSlotIndex",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3CFB initializesFF;3DC3/3DD7 copy chosen bucket index;3DDE testsFF. Pointer0058 remains live and may be stale. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 96,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityPreferredSlotIndex",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3D00 initializesFF;3D8B stores byte wrapping live0043 minus frozen iterationCL;3DCF sentinel selects preferred versus fallback bucket. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15862,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntitySelectionAfterFormatter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near return afterCALL3DF3 to4B68; changed live stack target stops composition. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15970,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntitySelectionReturn",
+    "aliases": [
+      "loc_3E62"
+    ],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "All known3CDE exits converge on actual nearRET. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19389,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DecimalFieldReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared nearRET for4B68 and4BBE, after live field writes. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

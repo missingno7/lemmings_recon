@@ -274,15 +274,32 @@ program/module assertions preserve byte order and every UNKNOWN classification.
 The action APIs share an exact typed live-register boundary and bounded native
 test transport; independent eligibility/transition/original models stay separate.
 
-Next port the4B68 decimal formatter and4BBE shared-suffix entry,then candidate
-selection3CDE. The formatter left-aligns digits with trailing spaces and advances
-SI past the units digit; it is not the fixed three-digit4BC2 helper. Selection
-uses393 known bytes/140 sites with eight one-byte UNKNOWN holes and actual
-CALL3DF3/RET4BBD. A zero entry bound leaves stale candidate state; otherwise
-last-hit bucket pointers/indices and live count/index arithmetic flow to3150.
-InputButtonsWord mask0002 forces the fallback bucket. See entity-actions.md for
-the full static contracts. Initialization,record/table extents and real game
-scheduling/platform/IRQ boundaries remain open.
+The4B68/4BBE variable-width fields now pass1,064 boundary cases,90 unique
+bytes/42 sites/all13 jump outcomes and seven completed mutants. Digits are
+left-aligned with trailing spaces; the pair entry retains its unnormalized
+tens quotient (255 produces I5). Ordered writes, BH, final INC SI flags and
+actual SS returns remain live. See decimal-field.md.
+
+SelectEntityCandidate3CDE now composes the formatter through its actual
+CALL3DF3/RET4BBD:51 fixtures at core/actualRET-adapter boundaries cover393
+known bytes/140 own sites/all69 outcomes,23,800 events and nine mutants.
+Zero entry leaves stale candidate state; frozen CL controls scanning while
+live0043-CL produces each bucket index. Last hits win and index FF can collide
+with the sentinel. The255-slot fixture retains the display-clear/record182
+alias and yields254 hits; a separate live count provider reaches FF. Broader
+record bounds, initialization and scheduling remain open. Four actual native
+selection-to3150 handoffs pass (preferred/forced fallback,selectors2/3/4),
+216 integrated sites/618 events and zero additional bytes. The intervening
+3AC8 call remains outside their domain. See entity-actions.md.
+
+Next port the independent7A5A VGA status leaf (350 known bytes/168 sites),
+then the other3AC8 display dependencies. Audit the1FEC allocation and MAIN.DAT
+section2/conditional section6 copies before7708/762A rather than inventing a
+host font. The stored status line at2083 continues for40 bytes to NUL20AB;
+selection's11-byte field is only its prefix. Preserve live termination and
+DF. Status rendering, allocation provenance, input snapshot ownership and
+processor exceptions are recorded in status-display.md. The intervening3AC8
+call remains untranslated; no direct selection/action handoff proves it.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain
@@ -291,6 +308,10 @@ required before aggregate acceptance.
 Use fresh dependency views rather than an accumulated historical task list:
 
 ```powershell
+.venv\Scripts\python.exe tools\graph.py 7A5A --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 7A5A --bottom-up
+.venv\Scripts\python.exe tools\graph.py 3AC8 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 3AC8 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 1F19 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 1F19 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 2E04 --tree --depth 2
