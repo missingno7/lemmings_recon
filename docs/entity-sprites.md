@@ -11,6 +11,10 @@ The enclosing706F descriptor arithmetic and live child frames are recorded in
 entity-sprite-dispatch.md. Its named first-record anchors remain aliases in
 canonical memory; they do not establish a converted or bounded record schema.
 
+The complete 59BB transform now has scoped native acceptance with all three
+bank helpers, including the pinned MAIN.DAT section-zero image. Its full output
+layout and actual frame/segment contracts are in entity-sprite-banks.md.
+
 ## Source ownership
 
 The allocation path at 1007 requests 5571h paragraphs and publishes the returned

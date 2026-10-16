@@ -33718,9 +33718,11 @@
     "address": 22971,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_59BB",
-    "aliases": [],
+    "size": 262,
+    "symbol_name": "GenerateEntitySpriteBanks",
+    "aliases": [
+      "sub_59BB"
+    ],
     "callers": [
       22757
     ],
@@ -33749,10 +33751,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact 59BB..5AC0 parent; fifteen live CX groups and final wide bank call compose three native leaves. PUSH DS precedes live destination/source selector reads; actual CX/DS/near-call and outer RET words remain authoritative. Ordinary source end 5270h/output end 194B8h; docs/entity-sprite-banks.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 262
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 262,
+    "c_implementation": "c/entity_sprite_banks.c",
+    "c_core": "lmn_generate_entity_sprite_banks_core",
+    "c_code_ranges": [
+      [
+        22971,
+        23233
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_banks.py: 24 fixtures/48 core and actual RET comparisons; 262 new bytes/all 114 parent sites/all 30 parent branch outcomes. Integrated 694 bytes/313 executed sites/70 of 72 static outcomes, 2787712 ordered events, 455752 independent output-byte checks and 10 completed mutants. Complete 337-call MAIN.DAT section0 and constructed transforms: source5270h/output194B8h; literal parent strides, flowing ES/DI/FLAGS, live selector/CX/DS/call/outer RET words, changed returns for all three child families, LOOP zero wrap, DF/overlap/VGA/physical wrap. Bounded packed traces at20 bytes/event and512MiB job cap; no budget failures counted. Child432 bytes overlap prior translations. docs/entity-sprite-banks.md"
   },
   {
     "address": 23233,
@@ -62254,6 +62266,22 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Actual near RET of 5C06 five-byte bank generator. docs/sprite-wide-banks.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 23232,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySpriteBanksReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual near RET of 59BB sprite-bank transform. docs/entity-sprite-banks.md"
     ],
     "verification_status": "STATIC"
   }

@@ -2,38 +2,36 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 23,430 bytes. The two shifted
-sprite-bank leaves now add 346 unique C bytes: GenerateThreeByteSpriteBanks
-at 5B11..5BAF (159 bytes/74 sites) and GenerateFiveByteSpriteBanks at
-5C06..5CC0 (187/80). Their 40 and 33 fixtures cover 80 and 66 core/actual-RET
-comparisons, all 17 branch outcomes in each leaf and ten completed mutants
-each. They compare 236,282 and 913,554 ordered events; separate equations
-check 56,016 and 20,480 output bytes. See sprite-shift-banks.md and
-sprite-wide-banks.md for exact domains and report inputs.
+The main-image translated-code ledger union is 23,692 bytes. The 59BB sprite
+transform now composes all three native bank leaves through actual CALL/RET
+words: 262 new bytes/114 parent sites/all 30 parent branch outcomes. The 24
+fixtures/48 core and actual-RET comparisons cover 694 integrated bytes and
+313 sites, with 70 executed outcomes of 72 static outcomes, 2,787,712 ordered
+events and ten completed mutants. The two other child outcomes remain outside
+this campaign. Child bytes overlap existing translations and are counted once.
 
-Both native producers feed all eight of their unchanged banks into native
-drawing callbacks through the same RAM object: 720 and 5,120 bytes, with nine
-phase comparisons per producer/consumer chain. Returned DS/ES/FLAGS and actual
-constructed CALL words remain live. Consumer sites/events stay separate from
-producer acceptance. These handoffs do not execute the 59BB caller.
+Complete pinned MAIN.DAT section zero and constructed inputs each execute all
+337 calls at both boundaries. The decoded source is exactly 5270h bytes;
+independent equations check the whole 194B8h output and 455,752 bytes across
+the campaign. Returned ES/DI/FLAGS, ordered selectors, live CX/DS saves,
+changed returns for all three families and actual outer RET remain explicit.
+Focused cases also preserve DF, overlaps, VGA SS/DS/ES, word wrap and LOOP's
+zero-to-FFFF behavior. See entity-sprite-banks.md and exact report inputs.
 
-The three leaves at 5B11..5CC0 now occupy sprite_banks.asm (432 bytes), between
-exact boundary assertions. Byte order, classifications and UNKNOWN remain
-unchanged. The existing 5BB0 copy/mask leaf retains its scoped zero-count,
-DF/overlap, live-save and bus contracts; its affected native suite is rechecked
-with the current source layout. The 3634 drawing loop remains connected to
-its minimap, dirty, point, sprite and frame-free decimal tails; UNKNOWN 366F
-and child seams remain explicit.
+The parent campaign stores ordered traces in fixed 20-byte records under a
+512 MiB process-tree cap. The complete normal adapter needs 7,497,560 trace
+payload bytes. Progress prose and the raw symbol ledger are outside this
+behavioral input scope; compiled names/offsets remain pinned by the generated
+header and current ledger/ASM by the independent exact verifier. This avoids
+repeating a long unchanged campaign solely to update acceptance notes.
 
-Next connect the 59BB transform (262 bytes/114 sites) to the three native leaves.
-Fresh dependency views now identify no untranslated child calls. Preserve the
-initial PUSH DS before selector reads, flowing child ES/DI/FLAGS, each actual
-near CALL/RET, live outer CX saves/LOOP counts and actual final POP DS/RET.
-Use the ordinary source/output arithmetic in entity-sprites.md: source end
-5270h, output end 194B8h. Verify the complete normal transform and independent
-bank layout, then exercise changed child returns, selector/save aliases and
-DF-sensitive 5BB0 paths. Do not replace the source, bank or saved state with
-converted copies, or infer allocation/lifetime bounds from nominal dimensions.
+Next audit the 5CC1 prefix (28 new bytes plus the existing 59-byte 5CDD tail):
+its live DS:1FEA buffer selector, two 96-byte DS word-pattern sources at 52BC
+and 531C, actual first child CALL and frame-free final fallthrough. Prove table
+ownership/extent and the returned live DS/ES/SS/counts before naming semantics
+or translating the prefix. Keep UNKNOWN 5D18..5D65 explicit. Then translate the
+57D1 leaf (86 bytes/45 sites) and compose the 58D2 resource loader. Fresh
+views retain LoadDatResource's retry seam at 4B1C and decoder fatal exits.
 
 This is focused acceptance. Earlier unrelated campaigns remain historical
 until their recorded inputs match. Full contracts and matching complete native

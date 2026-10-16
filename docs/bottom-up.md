@@ -703,3 +703,18 @@ leaves now occupy the exact 432-byte sprite_banks.asm physical module, with
 start/end assertions and unchanged emission/classification. See sprite-shift-banks.md
 and sprite-wide-banks.md. Next connect their 59BB caller; full resource/provider,
 allocation, timing and gameplay domains remain open.
+
+The complete 59BB sprite transform now adds 262 unique main C bytes, taking
+its union to 23,692. All three native children share canonical RAM and actual
+near frames. The 24 fixtures/48 boundaries cover all 114 parent sites/30 parent
+outcomes and 694 integrated bytes/313 sites/70 executed outcomes. Ten completed
+mutants, 2,787,712 bus events and 455,752 independent byte checks include two
+complete 337-call inputs at both APIs. Pinned MAIN.DAT section zero exactly
+fills the 5270h source span and produces 194B8h bytes. Live saves, flowing ES,
+changed returns, zero LOOP wrap, DF, overlap and VGA domains remain explicit.
+
+This campaign uses bounded packed traces and separates executable input hashes
+from progress prose/the raw symbol ledger, while the generated header and exact
+ASM verifier still pin names/offsets and physical bytes. See entity-sprite-banks.md.
+Next audit 5CC1's table/selector ownership and frame-free 5CDD tail, then 57D1,
+before connecting 58D2; its retry/fatal/provider seams remain open.

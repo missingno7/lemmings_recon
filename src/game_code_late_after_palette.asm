@@ -132,7 +132,7 @@ LoadMainResourceSections:
     call LoadDatResource ; @058E0
     pop ds ; @058E3
     push bx ; @058E4
-    call sub_59BB ; @058E5
+    call GenerateEntitySpriteBanks ; @058E5
     call sub_5CC1 ; @058E8
     pop bx ; @058EB
     push ds ; @058EC
@@ -227,7 +227,18 @@ sub_597D:
     pop ds ; @059B9
 loc_59BA:
     ret ; @059BA
-sub_59BB:
+; CONTRACT: PUSH DS occurs before ordered reads of incoming DS:1FE6 (ES)
+; and DS:1FE4 (source DS). SI=DI=0. Fifteen immediate groups push actual CX,
+; call a native-understood leaf through its actual near frame, pop live CX,
+; advance SI by the literal source stride, then LOOP without changing FLAGS.
+; Returned ES/DI/DS/SS/SP/FLAGS and saved counts remain authoritative. Child
+; RET aliases stop native composition at the changed CS:IP before parent POP.
+; With intact saves, DF clear and disjoint memory, the 336 grouped calls read
+; 50F0h source bytes and emit 180B8h bytes; the final 5C06 call adds 0180h
+; source bytes and 1400h output bytes. These are coordinates, not bounds.
+; Final ADD SI,0180 precedes actual POP DS and the caller RET at 5AC0.
+; The core stops before that RET. No converted sprite data or cached saves.
+GenerateEntitySpriteBanks:
     push ds ; @059BB
     mov es,[EntitySpriteBufferSegment-GameDataImage] ; @059BC
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @059C0
@@ -356,6 +367,7 @@ loc_5AAB:
     call GenerateFiveByteSpriteBanks ; @05AB8
     add si,0x180 ; @05ABB
     pop ds ; @05ABF
+EntitySpriteBanksReturn:
     ret ; @05AC0
 ; Producer for the live GeneratedGraphicsBufferSegment; 58FE calls after decode.
 ; With DF=0 and intact disjoint RAM/save frames: eight10-row*3-byte banks
