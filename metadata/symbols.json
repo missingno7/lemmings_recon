@@ -58149,5 +58149,213 @@
       "Actual original child return continuation; changed live frame target stops before caller resumes. docs/entity-simulation.md"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9203,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 348,
+    "symbol_name": "AdvanceEntityState0010",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006,
+      24250
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match state0010 entry from1F9D; raw11 special path joins240F,live pixel/exchange/INT61 frames,SS map and ordered transition/callback contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state10.c",
+    "c_core": "lmn_entity_state10_core",
+    "c_code_ranges": [
+      [
+        9203,
+        9551
+      ]
+    ],
+    "verification_evidence": "tests/entity_state10.py:48 logical-core/JMP-adapter fixtures;348 bytes/127 sites/all33 actual jump outcomes including LOOP;264 integrated main sites;11,578 ordered events;8 completed mutants;3 independent plane replays;actual CALL-specific changed and cross-continuation RETs,INT61 AX040A and restored DS. build/entity-state10-differential.json;scoped domain,not full simulation acceptance."
+  },
+  {
+    "address": 9243,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0010AfterFirstPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0010 dispatch from1F9D and live pixel/exchange/sound continuations. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9284,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0010AfterFirstExchange",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0010 dispatch from1F9D and live pixel/exchange/sound continuations. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9424,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0010AfterSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0010 dispatch from1F9D and live pixel/exchange/sound continuations. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9501,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0010AfterSpecialPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0010 dispatch from1F9D and live pixel/exchange/sound continuations. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9533,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0010AfterSpecialFirstExchange",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0010 dispatch from1F9D and live pixel/exchange/sound continuations. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9544,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0010AfterSpecialSecondExchange",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0010 dispatch from1F9D and live pixel/exchange/sound continuations. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9551,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 232,
+    "symbol_name": "AdvanceEntityState0020",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match state0020 entry from1FA5;unsigned height threshold,signed velocity,live pixel frames,pitch and late callback read;alternate transition preserves callback+14. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state20.c",
+    "c_core": "lmn_entity_state20_core",
+    "c_code_ranges": [
+      [
+        9551,
+        9783
+      ]
+    ],
+    "verification_evidence": "tests/entity_state20.py:24 logical-core/JMP-adapter fixtures;232 bytes/74 sites/all13 jump outcomes;3,538 events;8 completed mutants;actual pixel CALL-specific RETs,callback002E aliases,register NEG-before-MOV flags,wrapped cadence and live DS/ES/SS/DF. build/entity-state20-differential.json;scoped domain,not full simulation acceptance."
+  },
+  {
+    "address": 9593,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0020AfterFirstPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State mask and live shared-tail/pixel contracts from original dispatch and ASM. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9712,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0020AfterSecondPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State mask and live shared-tail/pixel contracts from original dispatch and ASM. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9783,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 92,
+    "symbol_name": "AdvanceEntityState0040",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First-match state0040 entry from1FAD; register byte cadence, direct2148 height/interaction and1FEB continuations, ordered zero-state stores and late live callback002E. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state40.c",
+    "c_core": "lmn_entity_state40_core",
+    "c_code_ranges": [
+      [
+        9783,
+        9875
+      ]
+    ],
+    "verification_evidence": "tests/entity_state40.py:25 logical-core/JMP-adapter fixtures;92 bytes/26 sites/all7 jump outcomes;2,160 ordered events;8 completed mutants;live callback aliases,post-transition height clamp,actual interaction frame,DF/VGA/stack/word wrapping. build/entity-state40-differential.json; scoped domain, not full simulation acceptance."
   }
 ]

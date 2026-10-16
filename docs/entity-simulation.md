@@ -249,12 +249,89 @@ pattern bus extension adds no bytes to its existing66-byte translation. This
 is scoped acceptance; full original/native campaigns with matching input hashes
 remain required before aggregate coverage acceptance.
 
-These contracts leave table extents, state initialization, IRQ timing and whole
-simulation readiness open. The next state0010 body is23F3..254E,348 bytes/
-127 sites. Its special+28==11 path temporarily adjusts X/Y, samples a pixel,
-performs two three-byte exchanges and joins240F after resetting+28. The ordinary
-path advances+28 modulo16 and enters240F only at0/8. Two CX&7 mask-shift loops,
-five actual child CALL frames, live stack/record aliases and optional AX040A
-INT61 must flow into the existing finish/interactions tails. A backward join
-at254C is not a repeated pass through the special path. No known interior
-cross-entry currently splits this state into separately owned handlers.
+Table extents, state initialization, IRQ timing and whole-simulation readiness
+remain open for the following three scopes.
+
+## States0010,0020 and0040
+
+The0010 body at23F3..254E owns348 bytes/127 sites and33 direct jump outcomes.
+The raw+28==11 path begins before the cadence update. It saves live X and Y,
+temporarily adds+04/subtracts Y by2, samples a pixel, then reads X before
+restoring the two words through actual SS pops. Two pixel exchanges preserve
+DI/CX/BX/BP saves; the second destination adds the fresh DS:0004 pitch. Resetting
++28 joins240F once;254C is a backward join, not a repeat of the special path.
+The ordinary path increments+28 modulo16 and admits0/8 to240F.
+
+The common0010 path saves BP=X, adds live+04 to X, pushes the altered X and
+calls5DC6. Only after its actual RET does it restore X, increment live Y and
+pop the saved X into CX. Signed Y>=B4 marks inactive through20E2. Both mask
+loops are bounded by CX&7; SHR BX transfers CF into RCR DL, which defines only
+CF/OF and preserves SZP/AF. LOOP changes CX without affecting FLAGS. The three
+5EBA calls retain actual return words, DF stepping, live SS mirrors, pixel
+samples and ordered OUTs; STI sets IF. A collision either selects state0004
+or an unchecked SS map nibble. Nibble9 may issue native INT61 AX040A when
+DS:2010==FF and DS:25A7&3 is nonzero; only the expected CS:24D0 resumes.
+Transition callback002E is read after earlier stores. All finishes compose the
+original JMPs without inventing a frame.
+
+The0020 body at254F..2636 owns232 bytes/74 sites and13 jump outcomes. Its AL
+cadence is modulo8. Values0..3 temporarily probe Y-7-AL; a clear pixel restores
+Y, adds2, subtracts a fresh+28 and transitions to state0040 before2148. That
+transition preserves callback+14. Values4..7 decrement Y and compare wrapped
+Y+height against0A using unsigned JNA. Otherwise sign-extended+27 temporarily
+shifts X around a5DC6 call, then restores X and probes eight live DS:0004 rows
+upward. A state0004 transition clears bit0020, writes fields in original order,
+reads callback002E late, NEGates AL from+27 and stores it with post-NEG FLAGS,
+then adds the signed result to X twice. This is register NEG followed by MOV,
+not a memory NEG. Both pixel calls check their own live near return words.
+
+The0040 body at2637..2692 owns92 bytes/26 sites and7 jump outcomes. It reads
++28 into AL, INCs/ANDs AL with7 and performs one store with post-AND FLAGS.
+Values5..7 continue at1FEB. Values1..4 subtract2 from live Y and reread BP before
+2148. Zero performs ordered transition stores, including+06=FFF6, before a
+late DS:002E callback read and a live Y-to-BP load. Thus the zero-path signed
+clamp sees Y-10: Y20 clamps to19, while Y21 does not clamp. A record at SI002A
+aliases the earlier+04=FFF8 store with callback002E; prefetching it is incorrect.
+
+`tests/entity_state40.py` passes25 fixtures at both boundaries:92 new caller
+bytes/26 sites/all7 jump outcomes,2,160 ordered events and eight completed
+mutants. Its constructed RAM/VGA,DF,offset/physical-wrap and live stack/record
+aliases retain the actual1FE8 interaction frame and normal1FEB boundary.
+Workers have180-second/384-MiB process/640-MiB tree bounds; each original call
+has1,600 instructions/1,024 events as hard limits. These are scoped results.
+
+The shared original engine can now associate allowed RET sites with each
+actual CALL site. It derives the expected CS:IP from that CALL, so a corrupted
+return to another valid continuation of the same helper still stops. Its
+one-bit carry-rotate mask retains prior defined SZP/AF and defines CF/OF.
+Existing single-call contracts keep their original behavior.
+
+
+`tests/entity_state10.py` passes48 fixtures at both logical-core/JMP-adapter
+boundaries:348 new caller bytes/127 sites/all33 observed jump outcomes,
+264 integrated main sites,11,578 ordered events and eight completed mutants.
+Three independent plane replays check the composed exchanges, including the
+known readback-mode-one register state. Changed targets are checked per actual
+CALL, including a corrupted return to another valid caller continuation. An
+INT61 saved-DS provider proves that stores after24D0 use the actual restored
+segment and its live callback002E. The full original body and all three exchange
+calls remain intact. Hard limits are4,096 instructions/4,096 events per original
+call and180 seconds/384 MiB process/640 MiB tree per worker.
+
+`tests/entity_state20.py` passes24 fixtures at both boundaries:232 new caller
+bytes/74 sites/all13 jump outcomes,3,538 ordered events and eight completed
+mutants. These cover both pixel calls, cross-continuation corrupted returns,
+unsigned height wrap, signed velocity, cadence wrapping, live pitch, callback
+aliasing, NEG-result write flags, alternate callback preservation and the real
+shared-tail interaction frame. Its hard limits are1,200 instructions/1,024
+events per call and180 seconds/384 MiB process/640 MiB tree per worker.
+
+The three new scopes add672 unique caller bytes/227 sites and53 observed jump
+outcomes. Child and shared-tail bytes are counted once. This is scoped native
+acceptance, separate from full-game readiness or aggregate coverage acceptance.
+The next state0080 body is2693..27E7:337 known code bytes/115 sites and44 jump
+outcomes, with UNKNOWN holes26A1/26F6/26FF/2762 explicitly excluded. It has
+three direct5DC6 calls, a5F0F stroke call with its own pixel child, optional
+INT60 AX0313 and INT61 AX0412, live AX/ES saves and ordered second-gate rereads.
+Record+21 is decremented only after two clear samples; zero wraps to FF. The
+32F2 store of0C is one observed producer, not complete ownership or bounds.

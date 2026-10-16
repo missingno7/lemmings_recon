@@ -248,6 +248,9 @@ def report():
     entity_cadence=read_json(BUILD/'entity-cadence-differential.json')
     entity_state8=read_json(BUILD/'entity-state8-differential.json')
     entity_state2=read_json(BUILD/'entity-state2-differential.json')
+    entity_state10=read_json(BUILD/'entity-state10-differential.json')
+    entity_state20=read_json(BUILD/'entity-state20-differential.json')
+    entity_state40=read_json(BUILD/'entity-state40-differential.json')
     entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
     for label,extra in (('decimal digits',decimal),('resource selection',selection),
                         ('object graphics',objects),('object coordinates',coordinates),
@@ -290,6 +293,9 @@ def report():
                         ('entity cadence states',entity_cadence),
                         ('entity state0008',entity_state8),
                         ('entity state0002',entity_state2),
+                        ('entity state0010',entity_state10),
+                        ('entity state0020',entity_state20),
+                        ('entity state0040',entity_state40),
                         ('entity pattern bus',entity_pattern_bus)):
         for path,digest in extra['input_hashes'].items():
             if sha((ROOT/path).read_bytes())!=digest:
@@ -312,7 +318,7 @@ def report():
     executed.update(entity_zero_state['executed_instruction_addresses'])
     executed.update(entity_state4['executed_instruction_addresses'])
     executed.update(entity_cadence['executed_instruction_addresses'])
-    for extra in (entity_state8,entity_state2,entity_pattern_bus):
+    for extra in (entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_pattern_bus):
         executed.update(extra['executed_instruction_addresses'])
     executed.update(selection['executed_instruction_addresses'])
     for path,digest in selection_full['input_hashes'].items():
@@ -339,7 +345,7 @@ def report():
     reports+=(display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_row_select,palette_transition,retry_input)
     reports+=(cells_bus,steel_bus,coordinates_bus,state_bus,finish,initialization)
     reports+=(entity_pattern,entity_pixel,entity_pixel_bus,entity_vga,entity_stroke,mask_generators,generated_graphics,entity_mask,entity_mask_rows,coordinate_pixel,entity_countdown)
-    reports+=(entity_interactions,entity_finish,entity_zero_state,entity_state4,entity_cadence,entity_state8,entity_state2,entity_pattern_bus)
+    reports+=(entity_interactions,entity_finish,entity_zero_state,entity_state4,entity_cadence,entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_pattern_bus)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
     decoded_sites={instruction['address'] for instruction in analysis['instructions']}

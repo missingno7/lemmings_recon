@@ -182,16 +182,30 @@ regression also passes. Live PUSH SS/POP ES, saved words, actual RET, DF,
 VGA source/destination aliases and instruction-phase FLAGS flow through the
 bus. This extends its existing66-byte scope and adds no translated bytes.
 
-Next port state0010 at23F3..254E:348 bytes/127 sites, with the sole known
-external entry from1F9D. The+28==11 special path samples/exchanges pixels and
-joins240F after resetting+28; the ordinary modulo16 path enters240F at0/8.
-254C is a backward join, not a cycle through the special path. Preserve both
-CX&7 mask-shift LOOPs, five actual CALL/RET frames to5DC6/5EBA, live stack and
-record restores, unchecked SS nibble reads, ordered transitions/callback reads,
-optional INT61 AX040A return24D0 and direct20E2/1FE8/1FEB tails. All direct
-children have scoped C; whole-state composition is the next uncertainty.
+States0010/0020/0040 now have scoped native acceptance. State0010 passes48
+core/adapter fixtures:348 new caller bytes/127 sites/all33 observed jump
+outcomes,264 integrated main sites,11,578 events,eight completed mutants and
+three independent plane replays. State0020 passes24 fixtures:232 bytes/74
+sites/all13 edges,3,538 events and eight mutants. State0040 passes25 fixtures:
+92 bytes/26 sites/all7 edges,2,160 events and eight mutants. Together they add
+672 unique caller bytes/227 sites; child/shared-tail bytes are not added again.
+Actual CALL-specific return contracts reject another valid caller continuation,
+and the original oracle records LOOP edges from actual CPU transitions.
+See entity-simulation.md for live mask,callback,segment and flag contracts.
+
+Next port state0080 at2693..27E7:337 known bytes/115 sites/44 jump outcomes.
+The four one-byte holes26A1/26F6/26FF/2762 remain UNKNOWN and excluded. Only
+known external entry is1FB5; no known interior cross-entry splits the body.
+Preserve modulo16 cadence,phaseA's unchecked+21<=3 gates and live PUSH AX/ES,
+INT60 AX0313 return26C2,then fresh DS2010/DS25A7 gates for INT61 AX0412
+return26D5,followed by actual POP ES/AX. Phase9 CALLs5F0F(return26E1), whose
+nested5DC6 return is5F57. The zero phase has three direct5DC6 returns2703/
+2713/272F,signed X/height tests,live pitch and a wrapped+21 decrement after
+two clear samples. Transitions read callback002E late and JMP2148; other exits
+JMP1FE8/1FEB. All direct children retain their scoped native contracts.
+Record+21=0C at32F2 is one observed producer,not a proven whole-field domain.
 The1F19 parent's eleven direct CALL children retain platform/fatal seams;
-broader state initialization, IRQ timing and record/scan composition stay open.
+broader initialization,IRQ timing and record/scan composition stay open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

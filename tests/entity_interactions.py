@@ -151,6 +151,12 @@ def flags_after(ins, previous_mask):
         return (FLAGS & ~CF) | (previous_mask & CF)
     if mnemonic in ('shl', 'shr', 'sar', 'rol', 'ror'):
         return LOGIC
+    if mnemonic in ('rcl', 'rcr'):
+        oracle_require(ins.operands[-1].type == capstone.x86.X86_OP_IMM and
+                       ins.operands[-1].imm == 1,
+                       'original rotate contract requires a one-bit count')
+        # One-bit carry rotates define CF/OF and preserve every other flag.
+        return previous_mask | 0x0801
     if mnemonic in ('mul', 'imul'):
         return (previous_mask & ~ARITH) | 0x0801
     if mnemonic in ('sti', 'cli'):
@@ -347,12 +353,16 @@ class Access:
 
 def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
              main_instructions=None, main_ret_continuations=None,
+             main_call_returns=None,
              stop_offsets=None, access_factory=Access,
              instruction_limit=MAX_INSTRUCTIONS):
     """Execute identified original instructions, including optional parent spans.
 
     Parent RET entries map address -> (expected IP, changed-return status).
     Matching returns continue; stop_offsets maps main IP -> success/seam status.
+    main_call_returns maps CALL sites -> (allowed RET sites, changed status).
+    These calls track their own actual expected CS:IP, allowing one helper to
+    serve several call sites without accepting another caller's return target.
     Sites/edges retain ('main', ...) tags so callers can filter owned ranges.
     The optional access object may flush deferred provider effects in its
     instruction_complete() method, after the actual CPU instruction finishes.
@@ -364,6 +374,7 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
     main_code = MAIN_INS if main_instructions is None else main_instructions
     main_rets = {address for address, ins in main_code.items() if ins.mnemonic == 'ret'}
     return_contracts = {} if main_ret_continuations is None else main_ret_continuations
+    call_contracts = {} if main_call_returns is None else main_call_returns
     stops = {} if stop_offsets is None else stop_offsets
     cpu = Uc(UC_ARCH_X86, UC_MODE_16)
     cpu.mem_map(0, SIZE * 2)
@@ -386,6 +397,7 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
     sites, edges, call_targets = set(), set(), set()
     interrupt_returns = []
     child_returns = []
+    main_returns = []
 
     def stop(u, value):
         nonlocal stopped, status
@@ -468,14 +480,23 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
         off = u.reg_read(REG_IDS['ip']) & 0xFFFF
         if previous is not None:
             source, prev_off, prev_ins = previous
-            if prev_ins.group(capstone.CS_GRP_JUMP):
+            if (prev_ins.group(capstone.CS_GRP_JUMP) or
+                    prev_ins.mnemonic.lower() in ('loop', 'loope', 'loopne', 'jcxz')):
                 edges.add((source, prev_off, off))
             current_mask = flags_after(prev_ins, current_mask)
             complete = getattr(access, 'instruction_complete', None)
             if complete is not None:
                 complete()
             if source == 'main' and prev_ins.mnemonic == 'ret':
-                if prev_off in return_contracts:
+                if main_returns:
+                    allowed, expected_cs, expected_ip, changed_status = main_returns.pop()
+                    if prev_off not in allowed:
+                        fail(u, f'original main RET {prev_off:04x} outside CALL contract')
+                        return
+                    if cs != expected_cs or off != expected_ip:
+                        stop(u, changed_status)
+                        return
+                elif prev_off in return_contracts:
                     expected_ip, changed_status = return_contracts[prev_off]
                     if cs != regs['cs'] or off != expected_ip:
                         stop(u, changed_status)
@@ -483,6 +504,12 @@ def original(case, memory, regs, device, core, *, entry_flag_mask=FLAGS,
                 else:
                     stop(u, 0)
                     return
+            if (source == 'main' and prev_ins.mnemonic == 'call' and
+                    prev_off in call_contracts):
+                allowed, changed_status = call_contracts[prev_off]
+                main_returns.append((set(allowed), regs['cs'],
+                                     (prev_off + prev_ins.size) & 0xFFFF,
+                                     changed_status))
             if source == 'pc-child' and prev_ins.mnemonic == 'ret':
                 expected = child_returns.pop() if child_returns else None
                 if expected is None or cs != expected[0] or off != expected[1]:

@@ -570,7 +570,18 @@ loc_23E4:
     mov bp,[si+0x2] ; @023EC
     inc bp ; @023EF
     jmp loc_2148 ; @023F0
+AdvanceEntityState0010:
 loc_23F3:
+; State0010: raw +28==11 takes the special pixel-exchange path before INC.
+; Otherwise INC/AND0F admits only0/8 to240F. Both paths preserve actual
+; 5DC6/5EBA CALL frames and subsequent live SS pops; 254C joins240F once.
+; CX&7 bounds each SHR BX/RCR DL loop. RCR takes SHR's CF, defines CF/OF,
+; and preserves SZP/AF; LOOP preserves FLAGS. Pixel exchange retains DF/IF,
+; VGA mirror/port order, returned samples and the actual near RET word.
+; Collision tests select ordered state stores or an unchecked SS map nibble.
+; Nibble9 may request INT61 AX040A; only CS:24D0 resumes transition stores.
+; DS callback002E is read after earlier stores. All exits are direct JMPs
+; to1FEB,20E2 or1FE8; no outer frame is introduced by these state entries.
     cmp byte [si+0x28],0x11 ; @023F3
     jnz loc_23FC ; @023F7
     jmp loc_250C ; @023F9
@@ -589,6 +600,7 @@ loc_240F:
     add [si],ax ; @02414
     push word [si] ; @02416
     call PrepareEntityPixelSample ; @02418
+EntityState0010AfterFirstPixelCall:
     mov [si],bp ; @0241B
     inc word [si+0x2] ; @0241D
     pop cx ; @02420
@@ -610,6 +622,7 @@ loc_243D:
     push bx ; @0243F
     push cx ; @02440
     call ExchangeThreeEntityPixelBytes ; @02441
+EntityState0010AfterFirstExchange:
     pop ax ; @02444
     pop dx ; @02445
     test dx,bx ; @02446
@@ -661,6 +674,7 @@ loc_24BD:
     jz loc_24D0 ; @024C9
     mov ax,0x40a ; @024CB
     int 0x61 ; @024CE
+EntityState0010AfterSound:
 loc_24D0:
     mov word [si+0x8],0x0 ; @024D0
     mov word [si+0xa],0x0 ; @024D5
@@ -683,6 +697,7 @@ loc_250C:
     add [si],ax ; @02514
     sub word [si+0x2],byte +0x2 ; @02516
     call PrepareEntityPixelSample ; @0251A
+EntityState0010AfterSpecialPixelCall:
     mov cx,[si] ; @0251D
     pop word [si+0x2] ; @0251F
     pop word [si] ; @02522
@@ -701,15 +716,26 @@ loc_2534:
     push bx ; @02538
     push bp ; @02539
     call ExchangeThreeEntityPixelBytes ; @0253A
+EntityState0010AfterSpecialFirstExchange:
     pop bp ; @0253D
     pop bx ; @0253E
     pop cx ; @0253F
     pop di ; @02540
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02541
     call ExchangeThreeEntityPixelBytes ; @02545
+EntityState0010AfterSpecialSecondExchange:
     mov byte [si+0x28],0x0 ; @02548
     jmp loc_240F ; @0254C
+AdvanceEntityState0020:
 loc_254F:
+; State0020: register INC/AND7 stores +28 with post-AND FLAGS. Values0..3
+; use the temporary Y-7-AL probe; values4..7 decrement Y and compare the
+; wrapped Y+height with0A using unsigned JNA before the upward probe.
+; Both 5DC6 calls consume their own actual RET, then restore live X or Y.
+; The upper probe rereads DS0004 and shifts it three times; MOV AL replaces
+; residual AL before AND AL,AH. Transition stores clear bit0020, retain
+; literal field order, and read callback002E late on the state0004 path.
+; The state0040 path leaves callback+14 untouched and JMPs2148 with live BP.
     mov al,[si+0x28] ; @0254F
     inc al ; @02552
     and al,0x7 ; @02554
@@ -728,6 +754,7 @@ loc_2560:
     cbw ; @02573
     sub [si],ax ; @02574
     call PrepareEntityPixelSample ; @02576
+EntityState0020AfterFirstPixelCall:
     mov [si],bp ; @02579
     mov dx,[EntityPixelRowPitchBytes-GameDataImage] ; @0257B
     shl dx,1 ; @0257F
@@ -767,6 +794,7 @@ loc_25E1:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @025E8
     sub [si+0x2],ax ; @025EA
     call PrepareEntityPixelSample ; @025ED
+EntityState0020AfterSecondPixelCall:
     mov [si+0x2],bp ; @025F0
     mov al,[es:di] ; @025F3
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @025F6
@@ -788,7 +816,12 @@ loc_25FD:
     and byte [si+0x24],0x1 ; @0262D
     mov bp,[si+0x2] ; @02631
     jmp loc_2148 ; @02634
+AdvanceEntityState0040:
 loc_2637:
+; State0040: MOV AL/+28, INC AL, AND AL,7, then one store of AL.
+; Zero performs ordered transition stores and a late DS002E callback read;
+; values1..4 SUB Y,2 and reread BP; values5..7 JMP1FEB without a height step.
+; The first two paths JMP2148 directly, carrying live DS/ES/SS and FLAGS.
     mov al,[si+0x28] ; @02637
     inc al ; @0263A
     and al,0x7 ; @0263C

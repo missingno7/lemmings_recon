@@ -30,6 +30,9 @@ count as a detected differential mutant. Reap workers and remove owned temporary
 DLL directories even after failure. Do not launch unbounded native mutant calls.
 Only delegate independent C clusters after static boundaries are reliable. Workers
 must report addresses, bytes, cases, branches, quirks, dependencies and regressions.
+For compile-only mutation preflights, use tools/cbuild.py's build() with numeric
+mutation IDs, or include -Wundef with -Werror and retain effective argv/exit for
+every variant. Placeholder macro values and artifact names are not build evidence.
 
 # Bottom-up convergence
 

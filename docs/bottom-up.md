@@ -164,11 +164,19 @@ core/adapter fixtures with eight mutants; state0002 adds110 known bytes/45
 sites/all20 edges in35 fixtures with eight mutants. Their actual pixel, pattern,
 mask and PC frames retain live DS/ES/SS/FLAGS. The283B optional bus passes28
 additional fixtures/four mutants and extends the existing66-byte translation.
-UNKNOWN2382 remains unresolved and excluded. Next compose the348-byte/127-site
-state0010 body23F3..254E, including its special path's backward join at254C,
-two bounded mask-shift loops and actual5DC6/5EBA/INT61 handoffs. The remaining
-states and live1FEB iteration/scan parent retain their initialization, table,
-platform and IRQ obligations.
+UNKNOWN2382 remains unresolved and excluded. States0010/0020/0040 now add672
+unique caller bytes/227 sites in48/24/25 core/adapter fixtures,with eight
+completed mutants per state. Their owned jump outcomes are33/13/7; LOOP edges
+come from actual original CPU transitions. The shared oracle tracks actual
+CALL-specific CS:IP returns when a helper serves several callers. State0010's
+pixel exchanges and INT61 restored DS remain live; state0020 preserves its
+unsigned threshold and register NEG write phase; state0040 retains the late
+callback and post-transition signed clamp. See entity-simulation.md.
+Next compose state0080 at2693..27E7:337 known bytes/115 sites,with four UNKNOWN
+holes preserved. Its pixel/stroke,dual sound transport,live AX/ES frames,+21
+counter and late callback transitions are the next composition uncertainty.
+The remaining states and live1FEB iteration/scan parent retain initialization,
+table,platform and IRQ obligations.
 
 Keep the edit loop small: the default `tools/verify.py` checks exact identity and
 ASM, followed by `tools/difftest.py SUITE [SUITE ...]` for affected bounded native
