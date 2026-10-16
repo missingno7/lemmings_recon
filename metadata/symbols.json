@@ -21420,9 +21420,11 @@
     "address": 15048,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3AC8",
-    "aliases": [],
+    "size": 534,
+    "symbol_name": "UpdateStatusDisplay",
+    "aliases": [
+      "sub_3AC8"
+    ],
     "callers": [
       450,
       1182
@@ -22055,10 +22057,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static normal-path minimap/status ownership; exact live-segment and CALL/RET contract in docs/minimap-viewport.md. Wider display/input/IRQ readiness remains open."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 533
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 533,
+    "c_implementation": "c/minimap_status.c",
+    "c_core": "lmn_update_minimap_status_core",
+    "c_code_ranges": [
+      [
+        15048,
+        15054
+      ]
+    ],
+    "verification_evidence": "Only the two-CALL prefix3AC8..3ACD is TESTED C:6 bytes/2 owned sites. tests/minimap_status.py:12 fixtures x core/adapter,266 integrated sites,54782 events,5 completed mutants. Actual column/viewport CALL/RET, returned live DS, nested/outer changed-return propagation and independent normal-plane replay. Stops before untranslated suffix3ACE; adapter performs no outer RET. docs/minimap-viewport.md"
   },
   {
     "address": 15582,
@@ -45279,9 +45291,11 @@
     "address": 30733,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_780D",
-    "aliases": [],
+    "size": 145,
+    "symbol_name": "DrawStatusIconOutline",
+    "aliases": [
+      "sub_780D"
+    ],
     "callers": [
       15158,
       15044
@@ -45467,18 +45481,30 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static byte selector, VGA/DF and live stack contract; docs/status-icons.md. No allocated table or input range inferred."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 145
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 145,
+    "c_implementation": "c/status_icons.c",
+    "c_core": "lmn_draw_status_icon_outline_core",
+    "c_code_ranges": [
+      [
+        30733,
+        30878
+      ]
+    ],
+    "verification_evidence": "tests/status_icons.py:combined512 fixtures x core/actual RET adapter,243 bytes/100 sites/6 branch outcomes,187432 ordered events,9 completed mutants. All256 AL values at each entry, independent48-pixel/24-row replay, live SS mirrors and saves, signed reset and byte wrapping, DF/IF, VGA-stack aliases and physical word wrap. Outline owns145 bytes/60 sites. docs/status-icons.md"
   },
   {
     "address": 30878,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_789E",
-    "aliases": [],
+    "size": 98,
+    "symbol_name": "RestoreStatusIcon",
+    "aliases": [
+      "sub_789E"
+    ],
     "callers": [
       15164
     ],
@@ -45551,10 +45577,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static byte selector, VGA/DF and live stack contract; docs/status-icons.md. No allocated table or input range inferred."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 98
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 98,
+    "c_implementation": "c/status_icons.c",
+    "c_core": "lmn_restore_status_icon_core",
+    "c_code_ranges": [
+      [
+        30878,
+        30976
+      ]
+    ],
+    "verification_evidence": "tests/status_icons.py:combined512 fixtures x core/actual RET adapter,243 bytes/100 sites/6 branch outcomes,187432 ordered events,9 completed mutants. All256 AL values at each entry, independent48-pixel/24-row replay, live SS mirrors and saves, signed reset and byte wrapping, DF/IF, VGA-stack aliases and physical word wrap. Restore owns98 bytes/40 sites. docs/status-icons.md"
   },
   {
     "address": 30976,
@@ -45966,9 +46002,11 @@
     "address": 31322,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7A5A",
-    "aliases": [],
+    "size": 350,
+    "symbol_name": "DrawMinimapViewport",
+    "aliases": [
+      "sub_7A5A"
+    ],
     "callers": [
       15051
     ],
@@ -46329,10 +46367,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static normal-path minimap/status ownership; exact live-segment and CALL/RET contract in docs/minimap-viewport.md. Wider display/input/IRQ readiness remains open."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 350
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 350,
+    "c_implementation": "c/minimap_viewport.c",
+    "c_core": "lmn_draw_minimap_viewport_core",
+    "c_code_ranges": [
+      [
+        31322,
+        31672
+      ]
+    ],
+    "verification_evidence": "tests/minimap_viewport.py:46 fixtures at core/actual RET adapter boundaries,350 bytes/168 sites/10 branch outcomes,39192 ordered events,9 completed mutants. Independent 80-cell raster replay; separate live DS coordinate/phase reads, actual popped AX including 256 shifts, DS/SS/VGA aliases, DF/IF and physical word wrap. docs/minimap-viewport.md"
   },
   {
     "address": 31672,
@@ -60175,6 +60223,109 @@
     "confidence": "PROVEN",
     "evidence": [
       "Shared nearRET for4B68 and4BBE, after live field writes. docs/entity-actions.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31671,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "MinimapViewportReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near RET after viewport raster writes; post-write SS word remains live. docs/minimap-viewport.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15051,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusDisplayAfterMinimapColumn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near return after3AC8 CALL796F; next CALL7A5A. docs/minimap-viewport.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15054,
+    "segment": 0,
+    "kind": "entry",
+    "size": 528,
+    "symbol_name": "StatusDisplayAfterMinimapViewport",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      16763,
+      30250,
+      30733,
+      30878
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near return after3ACB CALL7A5A; untranslated status suffix begins here. docs/minimap-viewport.md",
+      "Scoped investigation entry at native prefix continuation; exposes the untranslated suffix in dependency views. This does not infer an independent historical CALL or reclassify UNKNOWN3B08."
+    ],
+    "verification_status": "UNTRANSLATED",
+    "reachable_instruction_bytes": 527
+  },
+  {
+    "address": 30877,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusIconOutlineReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual live SS near return after VGA status icon operation; docs/status-icons.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30975,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusIconRestoreReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual live SS near return after VGA status icon operation; docs/status-icons.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8172,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "StatusGlyphBufferSegment",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "102B stores allocation base+2F02 paragraphs;5931/59AC load ES for7C0/720-byte copies;769A/77AC load DS for status digit/glyph reads. Nominal partition ends at1FEE base+2F7E, not a universal provider/unchecked-selector bound. docs/status-display.md"
     ],
     "verification_status": "UNRESOLVED"
   }

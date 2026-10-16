@@ -34,9 +34,15 @@ times -(($-$$) != 0x5d66) db 0 ; module end assertion
 %include "entity_graphics.asm"
 times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "game_code_late_after_entities.asm"
+times -(($-$$) != 0x780d) db 0 ; module end assertion
+%include "status_icons.asm"
+times -(($-$$) != 0x7900) db 0 ; module end assertion
+%include "game_code_before_minimap.asm"
 times -(($-$$) != 0x796f) db 0 ; module end assertion
 %include "minimap.asm"
 times -(($-$$) != 0x7a5a) db 0 ; module end assertion
+%include "minimap_viewport.asm"
+times -(($-$$) != 0x7bb8) db 0 ; module end assertion
 %include "game_code_late_tail.asm"
 times -(($-$$) != 0x8238) db 0 ; module end assertion
 %include "special_graphics.asm"

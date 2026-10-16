@@ -250,7 +250,7 @@ LoadMainResourceSections:
     push ds ; @0592B
     mov si,0x1900 ; @0592C
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @0592F
-    mov es,[0x1fec] ; @05931
+    mov es,[StatusGlyphBufferSegment-GameDataImage] ; @05931
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @05935
     mov cx,0x3e0 ; @05939
     rep movsw ; @0593C
@@ -305,7 +305,7 @@ sub_597D:
     push ds ; @059A5
     mov di,0xa0 ; @059A6
     mov si,0x1900 ; @059A9
-    mov es,[0x1fec] ; @059AC
+    mov es,[StatusGlyphBufferSegment-GameDataImage] ; @059AC
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @059B0
     mov cx,0x720 ; @059B4
     rep movsb ; @059B7

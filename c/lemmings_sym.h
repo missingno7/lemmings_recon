@@ -231,7 +231,7 @@
 #define CS_LevelObjectsNext 0x39C5u
 #define CS_LevelObjectsReturn 0x39CDu
 #define CS_sub_39CE 0x39CEu
-#define CS_sub_3AC8 0x3AC8u
+#define CS_UpdateStatusDisplay 0x3AC8u
 #define CS_SelectEntityCandidate 0x3CDEu
 #define CS_sub_3E6F 0x3E6Fu
 #define CS_sub_4085 0x4085u
@@ -398,15 +398,15 @@
 #define CS_sub_7602 0x7602u
 #define CS_sub_762A 0x762Au
 #define CS_sub_7708 0x7708u
-#define CS_sub_780D 0x780Du
-#define CS_sub_789E 0x789Eu
+#define CS_DrawStatusIconOutline 0x780Du
+#define CS_RestoreStatusIcon 0x789Eu
 #define CS_sub_7900 0x7900u
 #define CS_UpdateMinimapColumn 0x796Fu
 #define CS_MinimapColumnAfterRow 0x79FBu
 #define CS_AccumulateMinimapRow 0x7A25u
 #define CS_MinimapRowAfterSample 0x7A2Fu
 #define CS_AccumulateMinimapSample 0x7A39u
-#define CS_sub_7A5A 0x7A5Au
+#define CS_DrawMinimapViewport 0x7A5Au
 #define CS_sub_7BB8 0x7BB8u
 #define CS_DrawPackedTerrainPiece 0x7C67u
 #define CS_TerrainPieceBitmapCall 0x7CB5u
@@ -784,4 +784,10 @@
 #define CS_EntitySelectionAfterFormatter 0x3DF6u
 #define CS_EntitySelectionReturn 0x3E62u
 #define CS_DecimalFieldReturn 0x4BBDu
+#define CS_MinimapViewportReturn 0x7BB7u
+#define CS_StatusDisplayAfterMinimapColumn 0x3ACBu
+#define CS_StatusDisplayAfterMinimapViewport 0x3ACEu
+#define CS_StatusIconOutlineReturn 0x789Du
+#define CS_StatusIconRestoreReturn 0x78FFu
+#define SEG09A9_StatusGlyphBufferSegment 0x1FECu
 #endif

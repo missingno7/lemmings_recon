@@ -1,3 +1,4 @@
+StatusGlyphBufferSegment equ GameDataImage+0x1FEC
 EntitySelectionPresent equ GameDataImage+0x001A
 EntityPreferredRecordOffset equ GameDataImage+0x005C
 EntitySelectedSlotIndex equ GameDataImage+0x005E

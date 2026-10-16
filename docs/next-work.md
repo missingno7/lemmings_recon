@@ -292,14 +292,26 @@ selection-to3150 handoffs pass (preferred/forced fallback,selectors2/3/4),
 216 integrated sites/618 events and zero additional bytes. The intervening
 3AC8 call remains outside their domain. See entity-actions.md.
 
-Next port the independent7A5A VGA status leaf (350 known bytes/168 sites),
-then the other3AC8 display dependencies. Audit the1FEC allocation and MAIN.DAT
-section2/conditional section6 copies before7708/762A rather than inventing a
-host font. The stored status line at2083 continues for40 bytes to NUL20AB;
-selection's11-byte field is only its prefix. Preserve live termination and
-DF. Status rendering, allocation provenance, input snapshot ownership and
-processor exceptions are recorded in status-display.md. The intervening3AC8
-call remains untranslated; no direct selection/action handoff proves it.
+The7A5A viewport now passes46 core/adapter fixtures,350 bytes/168 sites/ten
+outcomes,39,192 events and nine completed mutants. Two icon leaves780D/789E
+pass512 fixtures at both boundaries,243 bytes/100 sites/six outcomes,187,432
+events and nine completed mutants. The two-CALL3AC8..3ACD prefix passes12
+fixtures at both boundaries,two owned/266 integrated sites,54,782 events and
+five completed mutants. It carries actual column-returned DS into the viewport
+and stops before3ACE; the prefix adapter does not consume an outer RET.
+See minimap-viewport.md and status-icons.md. These scopes add599 unique main
+bytes, taking the ledger union from16,479 to17,078; this is scoped translation
+accounting, not refreshed aggregate acceptance.
+
+Next port the closed glyph leaves762A/7708, then connect417B and the remaining
+3ACE status suffix. StatusGlyphBufferSegment names the live1FEC word. Its
+base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
+statically traced in status-display.md; broader producer verification remains
+open. Preserve count values100..255, signed glyph selectors, live saved words,
+map-mask passes and reverse DF reads. The stored2083 status line continues40
+bytes to NUL20AB; selection's11-byte field is only its prefix and no runtime
+scan bound. Keep the100*n byte-DIV exception frontier and input/cadence ownership
+explicit. No direct selection/action handoff accepts this remaining display body.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain
@@ -308,10 +320,11 @@ required before aggregate acceptance.
 Use fresh dependency views rather than an accumulated historical task list:
 
 ```powershell
-.venv\Scripts\python.exe tools\graph.py 7A5A --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 7A5A --bottom-up
+.venv\Scripts\python.exe tools\graph.py 762A --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 7708 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 3AC8 --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 3AC8 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 3ACE --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 3ACE --bottom-up
 .venv\Scripts\python.exe tools\graph.py 1F19 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 1F19 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 2E04 --tree --depth 2

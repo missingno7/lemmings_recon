@@ -152,11 +152,15 @@ sub_39CE:
     mov si,0x209d ; @03ABA
     mov byte [si-0x1],0x20 ; @03ABD
     mov al,[EntityActionSelector-GameDataImage] ; @03AC1
-    call sub_780D ; @03AC4
+    call DrawStatusIconOutline ; @03AC4
     ret ; @03AC7
-sub_3AC8:
+; Scoped C prefix composes actual column/viewport CALLs and stops3ACE.
+; Remaining status text/input/count display body is untranslated.
+UpdateStatusDisplay:
     call UpdateMinimapColumn ; @03AC8
-    call sub_7A5A ; @03ACB
+StatusDisplayAfterMinimapColumn:
+    call DrawMinimapViewport ; @03ACB
+StatusDisplayAfterMinimapViewport:
     mov al,[EntityCompletionCounter-GameDataImage] ; @03ACE
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @03AD1
     shl ax,1 ; @03AD3
@@ -205,9 +209,9 @@ loc_3B21:
     cmp [0x83],ah ; @03B2D
     jz loc_3B57 ; @03B31
     mov al,[EntityActionSelector-GameDataImage] ; @03B33
-    call sub_780D ; @03B36
+    call DrawStatusIconOutline ; @03B36
     mov al,[0x83] ; @03B39
-    call sub_789E ; @03B3C
+    call RestoreStatusIcon ; @03B3C
     cmp byte [0x84],0x2 ; @03B3F
     jnz loc_3B53 ; @03B44
     mov ah,[EntityActionSelector-GameDataImage] ; @03B46

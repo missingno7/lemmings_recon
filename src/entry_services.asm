@@ -191,7 +191,7 @@ EntityBatchNextCaller:
     call sub_7BB8 ; @001B9
     call sub_3634 ; @001BC
     call SelectEntityCandidate ; @001BF
-    call sub_3AC8 ; @001C2
+    call UpdateStatusDisplay ; @001C2
     call DispatchEntityAction ; @001C5
     cmp byte [0x4f],0xff ; @001C8
     jnz loc_01D2 ; @001CD
@@ -483,7 +483,7 @@ loc_0480:
     call sub_3944 ; @00495
     call sub_7BB8 ; @00498
     call sub_7900 ; @0049B
-    call sub_3AC8 ; @0049E
+    call UpdateStatusDisplay ; @0049E
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004A1
     db 0x33,0xd2 ; ENCODED: xor dx,dx (NASM chooses a different encoding) ; @004A3
     mov byte [0x1fcf],0x0 ; @004A5
@@ -1199,7 +1199,7 @@ sub_1007:
     add ax,0x166 ; @01022
     mov [0x1fea],ax ; @01025
     add ax,0x90 ; @01028
-    mov [0x1fec],ax ; @0102B
+    mov [StatusGlyphBufferSegment-GameDataImage],ax ; @0102B
     add ax,0x7c ; @0102E
     mov [UiGraphicsBufferSegment-GameDataImage],ax ; @01031
     add ax,0x17f3 ; @01034

@@ -6,20 +6,21 @@ with UNKNOWN3B08 retained. Known callers are01C2 and049E. Its children are
 calls7708. These dependencies are separate from candidate selection3CDE.
 A direct selection-to-action handoff does not verify the intervening3AC8 call.
 
-The next independent leaf is7A5A:350 known bytes/168 sites in[7A5A,7BB8),
-no child calls or UNKNOWN holes, and RET7BB7. It reads live DS:0000 and
-DrawingOrigin at1F76, sets ES=A000, programs VGA through3C4/3CE and live SS
-mirror words, and draws through the declared VGA bus. CLI/STI phases, incoming
-DF, actual stack aliases and returned ES remain part of the contract. It needs
-no font table. Check fresh graph tree/bottom-up views before implementing it.
+The7A5A viewport leaf now has scoped native acceptance over350 bytes/168 sites,
+and the two-CALL3AC8..3ACD prefix composes it with796F through actual frames.
+The prefix stops before3ACE and adds only six caller bytes. The separate
+StatusDisplayAfterMinimapViewport investigation entry exposes the remaining
+527 known bytes/172 sites and UNKNOWN3B08; it is still untranslated.
+See minimap-viewport.md for live coordinate/phase, SS, VGA, DF and IF contracts.
 
-The other UI leaves retain separate domains:780D is145 bytes/60 sites with
+The two icon leaves also have scoped native acceptance:780D is145 bytes/60 sites with
 RET789D;789E is98 bytes/40 sites with RET78FF, temporarily sets DS=ES=A000
-and restores actual saved DS. Its18 pairs of MOVSB retain DF. 762A is222
+and restores actual saved DS. Its24 pairs of MOVSB retain DF; see status-icons.md.
+The next closed glyph leaves remain untranslated:762A is222
 bytes/105 sites, with RET76DA/7707. 7708 has256 known bytes/118 sites and
 UNKNOWN7765,776F,7792,7799,77A0; its returns are77FD/780C. The last two
-routines read their source segment through the live DS:1FEC word. None of
-these facts establish native rendering or IRQ timing acceptance.
+routines read their source segment through the live DS:1FEC word. These scoped
+leaf checks do not establish the complete display caller or live IRQ timing.
 
 ## Source buffer and initialization
 
@@ -61,3 +62,33 @@ divisor is zero, the low byte of the undivided product continues. It stores
 0083 and cadence byte0084 are also read by input paths; do not treat them as
 private renderer state. Their producers, count/release triples, actual child
 returns and platform seams must be accounted for before accepting3AC8.
+
+
+## Glyph selector contracts for the next leaves
+
+The ledger names the live1FEC segment word StatusGlyphBufferSegment; the
+stored word and its surrounding UNKNOWN classification are unchanged.
+7708 selects `%` atA0, `:` at2B0, digits at`D0 + 30h*(AL-30h)` and
+uppercase letters at`2E0 + 30h*(AL-41h)`. Signed range checks reject80..FF.
+Each selected glyph uses three sequential16-byte passes, with Sequencer map
+masks0F,02,08; the second pass separately changes Graphics Controller index1.
+Z starts at790 and its forward48-byte source ends at7BF. Space instead
+blanks16 rows with no glyph reads; other rejected selectors return after
+setup and actual POP DS, preserving incoming IF because no raster STI ran.
+Drawn glyphs and spaces end with IF set. All three paths retain live saved
+DS and actual RET;5 skipped UNKNOWN bytes remain unresolved.
+
+762A receives destination slot in AL and count in AH, restored from actual
+POP AX after setup. Nonzero counts use quotient/remainder by ten without
+normalization:source halves are`10h*floor(count/10)` and
+`8 + 10h*(count mod 10)`, each eight bytes. Values100..255 can read beyond
+the nominal ten-digit prefix, into the next initialized graphics; keep those
+reads. Zero count blanks both eight-row cells without reading glyph data.
+Both routines use live StatusGlyphBufferSegment and never clear DF. The
+forward extent calculations above do not bound reverse LODSB reads.
+
+417B's NUL scan is a later parent. Its40-byte initial status text is no runtime
+bound: live strings, DF, actual saved AX/SI, near child returns and wrapped AH
+position count must remain visible. Port the closed glyph leaves first, then
+connect417B and the remaining3AC8 state/exception contracts. The broader
+LoadMainResourceSections decode/copy pipeline remains separate verification.

@@ -30,9 +30,12 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
 | 05726..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
-| 06170..0796E | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 06170..0780C | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 0780D..078FF | status_icons.asm | Status outline and restoration; signed selector and live VGA frames |
+| 07900..0796E | game_code_before_minimap.asm | Untranslated display preparation |
 | 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
-| 07A5A..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
+| 07A5A..07BB7 | minimap_viewport.asm | Live viewport outline, VGA mirrors and saved phase contract |
+| 07BB8..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
 | 08343..083BE | checksum.asm | Tested checksums, state and code/data overlap |
 | 083BF..08821 | code_tail.asm | Overlay storage, layout setter and unresolved spans |
@@ -511,9 +514,20 @@ bucket/index ownership, record182/display overlap and the real formatter
 return. See entity-actions.md and decimal-field.md. Their maintained physical
 modules are entity_selection.asm and decimal_fields.asm; surrounding suffixes
 retain exact image order and all UNKNOWN classifications. The next independent
-normal-path leaf is7A5A, then3AC8's other display dependencies and the1FEC
-source-buffer producer/consumer contracts; see status-display.md. These scopes
+normal-path leaves are762A/7708, then417B and the remaining3ACE status suffix.
+Their live1FEC source-buffer producer/consumer contracts are recorded in
+status-display.md. These scopes
 do not accept allocation extents, live IRQ scheduling or full main-loop behavior.
 Four focused native selection-to3150 data handoffs check preferred and forced
 fallback buckets against selectors2/3/4, without claiming the intervening3AC8
 display call or adding translated bytes.
+
+The viewport7A5A and two icon leaves780D/789E now have native acceptance over
+350+243 unique bytes; the actual column/viewport CALL prefix3AC8..3ACD adds
+six caller bytes. The three suites pass46,512 and12 fixtures respectively at
+core/adapter boundaries, with nine,nine and five completed mutants. Exact ASM
+modules preserve physical order and classifications. The prefix's3ACE exit has
+an explicit untranslated investigation entry so dependency views retain the
+pending text/count/input body. Main-image translated-byte union is17,078,
+up599 from16,479; this ledger total is separate from full-campaign acceptance.
+See minimap-viewport.md, status-icons.md and status-display.md.
