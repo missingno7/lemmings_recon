@@ -1,0 +1,45 @@
+# Shared differential verification
+
+New focused suites use tests/verification.py. Suites declare instruction ranges,
+supported entries/returns, finite providers and independent expectations. They do
+not implement another CPU runner, memory bus, ctypes callback guard or full-state
+comparator. tests/port_io.py is the first migrated consumer; tests/input_poll.py
+uses the same engine for the connected input subsystem.
+
+OriginalMachine runs exact loaded instructions in Unicorn and checks each reached
+instruction against the pinned relocated image. It rejects undeclared code writes
+and transfers outside the supplied domain. Near RET executes against actual live
+SS:SP; child continuations and core/adapter boundaries are declared by the suite.
+Instruction and phase limits fail the campaign. Pausing before an unsupported
+CALL or missing port provider does not claim execution of that instruction.
+
+Software interrupt transport is explicitly declared: live FLAGS/CS/IP frame
+writes, IF/TF clearing, current IVT reads, an opaque provider stopped before IRET,
+then the actual returned SS:SP frame. Transport/provider accesses are distinguished
+from original executed instructions. This is not discovery of an external ISR or
+a model of asynchronous interrupts. Suite-specific providers and expected
+algorithms stay outside the shared engine so the C and oracle do not share game
+logic. Device models retain their independent known-answer checks.
+
+BusAccess supplies one canonical RAM image, VGA aliases and bounded ordered
+observations. NativeCallbacks turns callback errors into immediate worker failure;
+Python ctypes exceptions cannot unwind a native loop. compare_states checks all
+registers with defined flag masks, canonical RAM, ordered events, provider effects
+and VGA state/traffic. Callback, time, instruction or memory exhaustion never
+earns mutation credit. Resource limits and temporary-DLL cleanup still belong to
+tools/bounded_process.py and the registered tools/difftest.py launcher.
+
+Migrate existing suites when their subsystem changes or a second consumer needs
+their machinery; do not rewrite the entire test tree before continuing the game.
+Use coherent dependency clusters and test leaf-to-parent handoffs. Choose mutation
+witnesses for distinct contracts rather than a fixed count. Preserve previously
+proved domains and quirks during migration; rerun affected campaigns and compare
+their site/edge/event accounting.
+
+Reports pin consumed code, helpers, headers, oracle inputs and tool semantics.
+Do not renew stale evidence merely by retaining a file. Keep status-only ledger
+changes and progress prose outside behavioral hashes when they are not consumed.
+Do not remove real dependencies to avoid invalidation. Focused acceptance is not
+aggregate acceptance: tools/verify.py --contracts and a matching complete native
+campaign remain the aggregate gates. The architecture and native smoke-test
+completion bar are documented in architecture.md.

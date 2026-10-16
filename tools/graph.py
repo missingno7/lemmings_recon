@@ -122,6 +122,7 @@ def main():
             print('native dependency:',tag(target,views),
                   'exits='+','.join(f'{p:04X}' for p in sorted(view['boundaries'])),
                   'unported calls='+','.join(f'{p:04X}' for p in sorted(unported)),
+                  'unresolved='+','.join(f'{p:04X}:{kind}' for p,kind in sorted(view['problems'])),
                   f'platform/IRQ sites={len(view["services"])}')
         print('This is an investigation order, not proof of native readiness or complete target domains.')
     elif args.tree:tree(entry,views,max(0,args.depth))

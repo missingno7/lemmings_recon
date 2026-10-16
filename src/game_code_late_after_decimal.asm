@@ -82,7 +82,7 @@ loc_4C66:
     jmp far [SavedTimerVector-GameDataImage] ; @04C6C
 loc_4C70:
     mov dl,0xff ; @04C70
-    call sub_418C ; @04C72
+    call PollInputState418C ; @04C72
     pop ds ; @04C75
     pop bp ; @04C76
     pop di ; @04C77

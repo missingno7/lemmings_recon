@@ -48,3 +48,18 @@ Translate an independently understood leaf, then connect and recheck its parent.
 Carry original live DS/ES/SS effects explicitly; do not copy Pre2's ES-only model
 without proving the same contract here. Bootstrap generation must not overwrite
 maintained semantic source. Current dependency order is recorded in docs/next-work.md.
+
+# Shared verification and native destination
+
+New focused suites use tests/verification.py for original instruction execution,
+canonical bus access, guarded native callbacks and state comparison. Add a shared
+capability when required; do not add another bespoke engine for a tiny leaf.
+Keep fixture providers and independent game expectations outside that engine.
+Migrate affected existing consumers incrementally and preserve their contracts.
+Choose mutation witnesses by distinct contract risks, not a fixed quota.
+Prefer a connected leaf/parent subsystem milestone over isolated byte gains.
+The destination is portable C11 plus explicit platform services and SDL3; no
+intermediate DOS-C target is required. Every behavior-affecting code dependency
+must be explained and implemented in C; unsupported alternatives do not count as
+complete. See docs/architecture.md and docs/verification.md for the native smoke
+test and separate evidence dimensions.

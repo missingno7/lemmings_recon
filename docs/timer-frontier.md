@@ -41,9 +41,10 @@ is later replaced by the live saved ES word. Carry returned SS:SP, memory,
 registers and FLAGS through both boundaries, including changed-target stops.
 
 The mouse bridge, 18B2 EOI leaf and 4334/4359/4386 port-201 cluster now have
-scoped C acceptance. Next establish 4252's mouse-provider contract and 3E6F's
-shared state before composing 418C's understood paths; then the 183E shared
-tail with explicit INT60/61, mirror-restorer
+scoped C acceptance. The 4252 mouse-provider contract and connected 418C input
+paths now have focused acceptance through the shared verifier. Next establish
+3E6F's shared state, then compose the 183E shared tail with explicit INT60/61,
+mirror-restorer
 and saved-INT08 provider seams; prefix dependencies 5473/553D; the prefix
 using the tested 5827 child; then full-handler composition. The unresolved
 indirect/far frontier at 42A5 stays explicit. Existing timer_chain.py cases

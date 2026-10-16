@@ -1,0 +1,351 @@
+"""Shared bounded differential machinery; original instructions run only in Unicorn.
+
+Suites supply instruction domains, boundary policies, finite providers and independent
+expectations. This module supplies no translated game routine or expected algorithm.
+"""
+import copy
+import ctypes as ct
+import os
+import random
+import sys
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[1]
+sys.path[:0]=[str(ROOT/'tools')]
+import capstone
+from minimap_vga import MinimapVga, VGA_BASE, VGA_END
+from unpack import ASSET, relocated, unpack
+from unicorn import (Uc, UC_ARCH_X86, UC_MODE_16, UC_HOOK_CODE,
+                     UC_HOOK_MEM_READ, UC_HOOK_MEM_WRITE, UC_HOOK_INSN, UC_HOOK_INTR)
+from unicorn import x86_const as x
+
+IMAGE,ORACLE=unpack(ASSET.read_bytes())
+SIZE,MASK,FLAGS=1<<20,(1<<20)-1,0x0FD7
+LOADS=(0x1010,0x1213,0x2345)
+REG_NAMES=('ax','bx','cx','dx','si','di','bp','sp','cs','ds','es','ss','ip','flags')
+REG_IDS={n:getattr(x,'UC_X86_REG_'+n.upper()) for n in REG_NAMES if n!='flags'}
+REG_IDS['flags']=x.UC_X86_REG_EFLAGS
+MEM=ct.POINTER(ct.c_uint8)
+class Regs(ct.Structure):
+    _fields_=[(n,ct.c_uint16) for n in REG_NAMES]
+READ=ct.CFUNCTYPE(ct.c_uint8,ct.c_void_p,MEM,ct.c_uint32,ct.c_uint16)
+WRITE=ct.CFUNCTYPE(None,ct.c_void_p,MEM,ct.c_uint32,ct.c_uint8,ct.c_uint16)
+OUT=ct.CFUNCTYPE(None,ct.c_void_p,ct.c_uint16,ct.c_uint16,ct.c_uint16)
+OUT8=ct.CFUNCTYPE(None,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint8,ct.c_uint16)
+IN8=ct.CFUNCTYPE(ct.c_uint8,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint16)
+class Bus(ct.Structure):
+    _fields_=[('context',ct.c_void_p),('read_byte',READ),('write_byte',WRITE),('out_word',OUT)]
+class Ports(ct.Structure):
+    _fields_=[('context',ct.c_void_p),('out_byte',OUT8),('in_byte',IN8)]
+MD=capstone.Cs(capstone.CS_ARCH_X86,capstone.CS_MODE_16);MD.detail=True
+class OracleFailure(AssertionError):pass
+class Mismatch(AssertionError):pass
+def check(condition,message):
+    if not condition:raise OracleFailure(message)
+def require(condition,message):
+    if not condition:raise Mismatch(message)
+
+def direct_jump_edges(instructions):
+    """Static outcomes of known direct branches; does not prove feasibility."""
+    edges=set()
+    for address,ins in instructions.items():
+        if not ins.group(capstone.CS_GRP_JUMP):continue
+        check(ins.operands[0].type==capstone.x86_const.X86_OP_IMM,
+              'indirect branch requires an explicit target-domain contract')
+        edges.add((address,ins.operands[0].imm&0xFFFF))
+        if ins.mnemonic!='jmp':edges.add((address,(address+ins.size)&0xFFFF))
+    return edges
+
+def physical(segment, offset):
+    return (((segment & 0xFFFF) << 4) + (offset & 0xFFFF)) & MASK
+
+def get16(memory, segment, offset):
+    at = physical(segment, offset)
+    return memory[at] | (memory[(at + 1) & MASK] << 8)
+
+def put8(memory, segment, offset, value):
+    memory[physical(segment, offset)] = value & 0xFF
+
+def sync_memory_byte(memory, device, segment, offset, value):
+    at = physical(segment, offset)
+    value &= 0xFF
+    memory[at] = value
+    if device is not None and VGA_BASE <= at < VGA_END:
+        index = at - VGA_BASE
+        for plane in device.planes:
+            plane[index] = value
+
+def put16(memory, segment, offset, value, device=None):
+    at = physical(segment, offset)
+    for delta, byte in enumerate((value & 0xFF, (value >> 8) & 0xFF)):
+        address = (at + delta) & MASK
+        memory[address] = byte
+        if device is not None and VGA_BASE <= address < VGA_END:
+            for plane in device.planes:
+                plane[address - VGA_BASE] = byte
+
+def loaded_image(load):
+    return relocated(IMAGE, ORACLE["relocations"], load)
+
+def code_image(memory, load):
+    image = loaded_image(load)
+    base = (load << 4) & MASK
+    first = min(len(image), SIZE - base)
+    memory[base:base + first] = image[:first]
+    if first < len(image):
+        memory[:len(image) - first] = image[first:]
+    return image
+
+def default_regs(load, seed, *, ss=0x5000, sp=0x9000, ds=0x3000,
+                 es=0x6400, flags=0x0AD7):
+    rng = random.Random(seed)
+    return dict(ax=rng.randrange(0x10000), bx=rng.randrange(0x10000),
+                cx=0x3A71 ^ seed, dx=0x91C2 ^ seed,
+                si=rng.randrange(0x10000), di=rng.randrange(0x10000),
+                bp=rng.randrange(0x10000), cs=load, ds=ds, es=es,
+                ss=ss, sp=sp, ip=0, flags=flags & 0xFFFF)
+
+def new_device(seed):
+    device = MinimapVga(seed, read_map=0)
+    device.seq[2] = 0x0F
+    device.gc[0] = 0
+    device.gc[1] = 0
+    device.gc[3] = 0
+    device.gc[5] = 0
+    device.gc[8] = 0xFF
+    return device
+
+def initial_memory(case):
+    rng = random.Random(case.get("seed", 0x587F))
+    memory = bytearray(rng.randbytes(SIZE))
+    load = case.get("load", LOADS[0])
+    code_image(memory, load)
+    device = new_device(case.get("seed", 0x587F) ^ 0xA5A5)
+    return memory, device
+
+
+class BusAccess:
+    """One canonical RAM image and bounded, ordered observations on either side."""
+    def __init__(self, case, memory, registers, device, *, max_events):
+        self.c,self.memory,self.r,self.device=case,memory,registers,device
+        self.events=[];self.providers=set();self.cursor=0;self.sync=None
+        self.max_events=max_events
+        self.service_events=[];self.transport_events=0
+
+    def emit(self,kind,address,value,flags,mask=FLAGS):
+        if len(self.events)>=self.max_events:raise OracleFailure('callback event budget exhausted')
+        self.events.append((kind,address,value,flags,mask))
+
+    def access(self,kind,address,flags,mask=FLAGS,value=None):
+        address&=MASK
+        if kind=='read':
+            value=self.device.read(self.memory,address,flags) if VGA_BASE<=address<VGA_END else self.memory[address]
+        elif VGA_BASE<=address<VGA_END:self.device.write(self.memory,address,value,flags)
+        else:self.memory[address]=value
+        self.emit(kind,address,value,flags,mask)
+        return value
+
+    def patch(self,segment,offset,value,name,word=True):
+        if word:put16(self.memory,segment,offset,value,self.device)
+        else:sync_memory_byte(self.memory,self.device,segment,offset,value)
+        at=physical(segment,offset)
+        if self.sync:
+            for delta in range(2 if word else 1):
+                p=(at+delta)&MASK
+                self.sync(p,bytes((self.memory[p],)));self.sync(p+SIZE,bytes((self.memory[p],)))
+        self.providers.add(name)
+
+    def word_read(self,segment,offset,flags,mask=FLAGS):
+        at=physical(segment,offset)
+        return self.access('read',at,flags,mask)|(self.access('read',at+1,flags,mask)<<8)
+
+    def word_write(self,segment,offset,value,flags,mask=FLAGS):
+        at=physical(segment,offset)
+        for delta in range(2):
+            p=(at+delta)&MASK
+            self.access('write',p,flags,mask,(value>>(delta*8))&255)
+            if self.sync:
+                self.sync(p,bytes((self.memory[p],)));self.sync(p+SIZE,bytes((self.memory[p],)))
+
+
+def callback_failure(error):
+    """A ctypes exception cannot unwind native loops; terminate the bounded worker."""
+    try:os.write(2,(str(error)+'\n').encode('utf8',errors='backslashreplace'))
+    finally:os._exit(86 if 'budget' in str(error) else 87)
+
+
+class NativeCallbacks:
+    def __init__(self,access,*,missing_in=False,missing_out=False):
+        def guarded(fn):
+            def call(*args):
+                try:return fn(*args)
+                except BaseException as error:callback_failure(error)
+            return call
+        def unexpected(*args):raise OracleFailure('unexpected word OUT')
+        self.keep=(READ(guarded(lambda _,m,a,f:access.access('read',a,f))),
+                   WRITE(guarded(lambda _,m,a,v,f:access.access('write',a,f,value=v))),
+                   OUT(guarded(unexpected)),
+                   OUT8(guarded(lambda _,m,p,v,f:access.out(p,v,f))),
+                   IN8(guarded(lambda _,m,p,f:access.inp(p,f))))
+        self.bus=Bus(None,*self.keep[:3])
+        self.ports=Ports(None,OUT8() if missing_out else self.keep[3],
+                         IN8() if missing_in else self.keep[4])
+
+
+def compare_states(label,actual,reference):
+    """Compare full canonical state and each defined observation; no budget credit."""
+    for name in ('status','service_status'):
+        if name in reference:require(actual[name]==reference[name],label+': '+name+' differs')
+    require(actual['memory']==reference['memory'],label+': RAM differs')
+    for name in REG_NAMES:
+        mask=reference['mask'] if name=='flags' else 0xFFFF
+        require(((actual['regs'][name]^reference['regs'][name])&mask)==0,
+                f'{label}: {name} {actual["regs"][name]:04X}/{reference["regs"][name]:04X}')
+    require(len(actual['events'])==len(reference['events']),label+': event count differs')
+    for i,(a,b) in enumerate(zip(actual['events'],reference['events'])):
+        require(a[:3]==b[:3] and ((a[3]^b[3])&b[4])==0,f'{label}: event{i} {a}/{b}')
+    for name in ('providers','cursor','services'):
+        if name in reference:require(actual[name]==reference[name],label+': '+name+' differs')
+    require(actual['device'].state()==reference['device'].state(),label+': VGA state differs')
+    require([e[:3] for e in actual['device'].trace]==[e[:3] for e in reference['device'].trace],label+': VGA access order differs')
+
+
+class OriginalMachine:
+    """Continuous exact Unicorn execution with declarative actual-RET boundaries.
+
+    The domain owns decoded instruction extents, not C source. Callers provide
+    finite port/service providers and may stop before an unsupported transfer.
+    Interrupt transport is explicitly declared separately from executed sites.
+    """
+    def __init__(self,case,memory,registers,device,core,*,instructions,access,
+                 outer_returns,child_returns=None,max_steps=100000,
+                 changed_return_status=4,before=None,interrupt=None):
+        self.c,self.memory,self.r,self.device,self.core=case,memory,registers,device,core
+        self.instructions=instructions;self.access=access
+        self.outer_returns=outer_returns if callable(outer_returns) else set(outer_returns)
+        self.child_returns=child_returns or {};self.max_steps=max_steps
+        self.changed_return_status=changed_return_status;self.before=before;self.interrupt=interrupt
+        self.cpu=Uc(UC_ARCH_X86,UC_MODE_16);self.cpu.mem_map(0,SIZE*2)
+        self.cpu.mem_write(0,bytes(memory));self.cpu.mem_write(SIZE,bytes(memory))
+        self.access.sync=self.cpu.mem_write
+        self.mask=FLAGS;self.flags=registers['flags'];self.steps=0;self.sites=set();self.edges=set()
+        self.previous=None;self.pending=False;self.executing_ret=False
+        self.status=0;self.service_status=0;self.stopped=False
+        self.loaded=loaded_image(case['load'])
+        self.code_bytes={physical(case['load'],p+d) for p,i in instructions.items() for d in range(i.size)}
+        self.cpu.hook_add(UC_HOOK_CODE,self.code)
+        self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
+        self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
+        self.cpu.hook_add(UC_HOOK_INSN,self.inp,None,1,0,x.UC_X86_INS_IN)
+        self.cpu.hook_add(UC_HOOK_INSN,self.out,None,1,0,x.UC_X86_INS_OUT)
+        self.cpu.hook_add(UC_HOOK_INTR,self.on_interrupt)
+        self.set_state(registers)
+
+    def state(self):return {n:self.cpu.reg_read(REG_IDS[n])&0xFFFF for n in REG_NAMES}
+    def set_state(self,registers):
+        for n in REG_NAMES:self.cpu.reg_write(REG_IDS[n],registers[n])
+
+    def stop(self,status):
+        self.status=status;self.stopped=True;self.cpu.emu_stop()
+
+    def code(self,u,address,size,_):
+        off=(address-(self.c['load']<<4))&0xFFFF
+        check(u.reg_read(REG_IDS['cs'])==self.c['load'] and off in self.instructions,'escaped identified code domain')
+        ins=self.instructions[off]
+        if self.previous:
+            old=self.previous
+            if old.group(capstone.CS_GRP_JUMP):self.edges.add((old.address,off))
+            if old.mnemonic in ('xor','and','or','test','shr','sar','shl'):self.mask=FLAGS&~0x10
+            elif old.mnemonic in ('add','sub','cmp'):self.mask=FLAGS
+            elif old.mnemonic in ('inc','dec'):self.mask|=0x8D4
+            elif old.mnemonic=='ror':self.mask|=0x801
+        check(bytes(u.mem_read(address,ins.size))==self.loaded[off:off+ins.size],f'code differs at {off:04X}')
+        if ins.mnemonic=='ret' and not self.executing_ret:
+            # Observe the completed predecessor's defined flags/edge even when
+            # the core boundary leaves this RET itself unexecuted.
+            self.previous=None;self.pending=True;u.emu_stop();return
+        if self.before and self.before(self,ins):return
+        if ins.mnemonic in ('in','out'):
+            missing=self.c.get('missing_in') if ins.mnemonic=='in' else self.c.get('missing_out')
+            if missing:
+                self.service_status=self.c.get('missing_service_status',0)
+                self.stop(self.c.get('missing_port_status',1));return
+        self.flags=u.reg_read(REG_IDS['flags'])&0xFFFF
+        self.previous=ins;self.sites.add(off);self.steps+=1
+        if self.steps>self.max_steps:raise OracleFailure('original instruction budget exhausted')
+
+    def read(self,u,kind,address,size,value,_):
+        for d in range(size):
+            p=(address+d)&MASK;v=self.access.access('read',p,self.flags,self.mask)
+            u.mem_write(p,bytes((v,)));u.mem_write(p+SIZE,bytes((v,)))
+
+    def write(self,u,kind,address,size,value,_):
+        for d in range(size):
+            p=(address+d)&MASK
+            check(p not in self.code_bytes,'undeclared code write')
+            self.access.access('write',p,self.flags,self.mask,(value>>(8*d))&255)
+        for d in range(size):
+            p=(address+d)&MASK;v=self.memory[p]
+            u.mem_write(p,bytes((v,)));u.mem_write(p+SIZE,bytes((v,)))
+
+    def inp(self,u,port,size,_):
+        check(size==1,'not a byte IN');return self.access.inp(port,self.flags,self.mask)
+    def out(self,u,port,size,value,_):
+        check(size==1,'not a byte OUT');self.access.out(port,value,self.flags,self.mask)
+    def on_interrupt(self,u,number,_):
+        check(self.interrupt is not None,'unexpected interrupt')
+        self.interrupt(self,number)
+
+    def software_interrupt(self,number,resume,binding,provider):
+        """Declared external pre-IRET provider, with actual canonical frame words."""
+        r=self.state();old_cs=r['cs'];access=self.access
+        check(r['ip']==resume,'software INT resume differs')
+        start=len(access.events)
+        for index,value in enumerate((r['flags'],old_cs,resume)):
+            r['sp']=(r['sp']-2)&0xFFFF
+            access.word_write(r['ss'],r['sp'],value,r['flags'],self.mask)
+            if index==0:r['flags']&=~0x300
+        r['cs']=access.word_read(0,number*4+2,r['flags'],self.mask)
+        r['ip']=access.word_read(0,number*4,r['flags'],self.mask)
+        access.transport_events+=len(access.events)-start
+        if provider is None or (r['cs'],r['ip'])!=binding:
+            self.set_state(r);self.stop(1);return
+        self.service_status=provider(access,r)
+        if self.service_status:
+            self.set_state(r);self.stop(2);return
+        start=len(access.events);values=[]
+        for _ in range(3):
+            values.append(access.word_read(r['ss'],r['sp'],r['flags']))
+            r['sp']=(r['sp']+2)&0xFFFF
+        access.transport_events+=len(access.events)-start
+        r['ip'],r['cs']=values[:2];r['flags']=(values[2]&0x7FD5)|2
+        self.mask=FLAGS;self.flags=r['flags'];self.set_state(r)
+        if (r['cs'],r['ip'])!=(old_cs,resume):self.stop(3)
+
+    def run(self):
+        # Each resumed near-return consumes at least one instruction, so this
+        # phase ceiling also covers unexpectedly recursive/changed call graphs.
+        for phase in range(self.max_steps+1):
+            if self.stopped:break
+            r=self.state();self.pending=False
+            self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=self.max_steps-self.steps+1)
+            if self.stopped:break
+            check(self.pending,'original did not reach bounded RET boundary')
+            off=self.state()['ip']
+            outer=self.outer_returns(self,off) if callable(self.outer_returns) else off in self.outer_returns
+            if outer and self.core:self.stopped=True;break
+            self.executing_ret=True
+            self.cpu.emu_start(physical(self.c['load'],off),0,count=1)
+            self.executing_ret=False
+            if outer:self.stopped=True;break
+            check(off in self.child_returns,'undeclared child RET')
+            if self.state()['ip'] not in self.child_returns[off]:
+                status=self.changed_return_status
+                if isinstance(status,dict):
+                    status,self.service_status=status[off]
+                self.stop(status);break
+        check(self.stopped,'original phase budget exhausted')
+        check(bytes(self.cpu.mem_read(0,SIZE))==bytes(self.memory),'canonical original RAM diverged')
+        return dict(regs=self.state(),status=self.status,memory=bytearray(self.memory),device=copy.deepcopy(self.device),
+                    events=self.access.events,providers=self.access.providers,cursor=self.access.cursor,
+                    sites=self.sites,edges=self.edges,steps=self.steps,mask=self.mask)

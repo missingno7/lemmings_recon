@@ -23353,9 +23353,11 @@
     "address": 16780,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_418C",
-    "aliases": [],
+    "size": 424,
+    "symbol_name": "PollInputState418C",
+    "aliases": [
+      "sub_418C"
+    ],
     "callers": [
       6208,
       19570
@@ -23561,16 +23563,29 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Connected input: parent345 known bytes/131 sites plus mouse79 and port152; 63 fixtures/126 original-native comparisons,243 integrated sites/91 direct jump outcomes,7486 original instructions,4644 ordered events (592 declared INT transport,96 provider accesses);7 completed mutants. Live segment/frame effects, unknown callback stops and asymmetric calibration; docs/input-poll.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 424
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 424,
+    "c_implementation": "c/input_poll.c",
+    "c_core": "lmn_poll_input_state_core",
+    "c_code_ranges": [
+      [
+        16780,
+        16978
+      ],
+      [
+        17057,
+        17204
+      ]
+    ]
   },
   {
     "address": 16978,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 79,
     "symbol_name": "PollMousePosition",
     "aliases": [
       "sub_4252"
@@ -23616,10 +23631,19 @@
     "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
-      "Original DS:25A0 callback word; INT33 AX3 polling body preserves registers and writes clamped mouse coordinates"
+      "Original DS:25A0 callback word; INT33 AX3 polling body preserves registers and writes clamped mouse coordinates",
+      "Direct mouse, mode0 tail and mode1 callback verified in connected input_poll campaign: real saved words, INT33 pre-IRET provider/full returned segments and frame, signed clamps, exact-FF suppression, actual RET and explicit service/changed-return stops; docs/input-poll.md. Physical79 bytes/40 sites unioned once with parent."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 79
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 79,
+    "c_implementation": "c/input_poll.c",
+    "c_core": "lmn_poll_mouse_position_core",
+    "c_code_ranges": [
+      [
+        16978,
+        17057
+      ]
+    ]
   },
   {
     "address": 17204,
@@ -63193,6 +63217,182 @@
     "confidence": "PROVEN",
     "evidence": [
       "4AAF stores option digit1..4;42B8 unchecked byte chooses literal asymmetric X/Y SAR tails; other byte values take default"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16977,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "PollInputKeyboardReturn4251",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual keyboard input RET at4251"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16991,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MousePollInt33",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact input instruction boundary; src/game_code_after_view_visibility.asm"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16993,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MousePollInt33Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact input instruction boundary; src/game_code_after_view_visibility.asm"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17056,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "PollMousePositionReturn42A0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact input instruction boundary; src/game_code_after_view_visibility.asm"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17061,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputPollCallbackCall42A5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact input instruction boundary; src/game_code_after_view_visibility.asm"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17063,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputPollCallbackReturn42A7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact input instruction boundary; src/game_code_after_view_visibility.asm"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17203,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputPollOuterReturn4333",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact input instruction boundary; src/game_code_after_view_visibility.asm"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "InputAccelerationX0016",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Live input state read/write operands in 418C..4333; keyboard mask producers 176E/1776; exact-FF mouse button suppression 4262"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 24,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "InputAccelerationY0018",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Live input state read/write operands in 418C..4333; keyboard mask producers 176E/1776; exact-FF mouse button suppression 4262"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8135,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "InputKeyMask1FC7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Live input state read/write operands in 418C..4333; keyboard mask producers 176E/1776; exact-FF mouse button suppression 4262"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8203,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "MouseButtonSuppression200B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Live input state read/write operands in 418C..4333; keyboard mask producers 176E/1776; exact-FF mouse button suppression 4262"
     ],
     "verification_status": "STATIC"
   }

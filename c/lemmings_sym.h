@@ -237,7 +237,7 @@
 #define CS_sub_4085 0x4085u
 #define CS_RebuildViewVisibilityMap 0x410Fu
 #define CS_DrawStatusText 0x417Bu
-#define CS_sub_418C 0x418Cu
+#define CS_PollInputState418C 0x418Cu
 #define CS_PollMousePosition 0x4252u
 #define CS_PollPort201ButtonsLow 0x4334u
 #define CS_PollPort201ButtonsHigh 0x4359u
@@ -934,4 +934,15 @@
 #define SEG09A9_InputAxisBaselineX25A2 0x25A2u
 #define SEG09A9_InputAxisBaselineY25A4 0x25A4u
 #define SEG09A9_InputAxisScaleSelector2005 0x2005u
+#define CS_PollInputKeyboardReturn4251 0x4251u
+#define CS_MousePollInt33 0x425Fu
+#define CS_MousePollInt33Return 0x4261u
+#define CS_PollMousePositionReturn42A0 0x42A0u
+#define CS_InputPollCallbackCall42A5 0x42A5u
+#define CS_InputPollCallbackReturn42A7 0x42A7u
+#define CS_InputPollOuterReturn4333 0x4333u
+#define SEG09A9_InputAccelerationX0016 0x0016u
+#define SEG09A9_InputAccelerationY0018 0x0018u
+#define SEG09A9_InputKeyMask1FC7 0x1FC7u
+#define SEG09A9_MouseButtonSuppression200B 0x200Bu
 #endif

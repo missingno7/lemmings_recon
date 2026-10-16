@@ -27,7 +27,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
 | 03E6F..0410E | game_code_late_after_selection.asm | Input callers; mixed ownership remains provisional |
 | 0410F..0414E | view_visibility.asm | Shared visibility producer with live DS/ES, relocated marker segment and existing caller frame |
-| 0414F..04333 | game_code_after_view_visibility.asm | Input dispatch and display tail |
+| 0414F..0418B | game_code_after_view_visibility.asm | Display tail and status text |
+| 0418C..04333 | input_poll.asm | Connected mouse, keyboard and live callback input |
 | 04334..043CD | port201_input.asm | Port-201 wrappers and measurement; two UNKNOWN bytes retained |
 | 043CE..04B5B | input_menu_and_retry.asm | Input/menu and retry suffix; physical order and UNKNOWN preserved |
 | 04B5C..04BE6 | decimal_fields.asm | Percent wrapper, shared variable-width decimal fields and fixed three-digit helper |
@@ -855,3 +856,12 @@ zero-byte XOR AH flags. Providers remain finite constructed inputs, with no
 hardware timing or IRQ claim. See port-io.md for the scoped 23-input report and
 worker limits. Next close 4252's mouse seam and 3E6F's shared-field ownership,
 then compose the understood 418C paths while retaining indirect 42A5 explicitly.
+
+The shared-verifier/input milestone now connects 418C to the native mouse and
+port children: 576 known bytes/243 sites/91 direct jump outcomes, including 424
+new C bytes. The ledger union is 26,014. Its 63 fixtures/126 comparisons and seven
+completed mutants cover the supported callback identities and explicit stops.
+The port regression retains its original accounting after migration. New focused
+suites share tests/verification.py; precise current work is in next-work.md and
+older checkpoint narrative is retained in convergence-history.md. Next close
+3E6F's shared fields and sound seams before composing the timer tail.

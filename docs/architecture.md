@@ -55,3 +55,57 @@ The oracle adapter reconstructs full machine state and performs the actual RET.
 Machine-register packets used by the INT60 connector describe its declared CPU
 boundary. They are transient values at that boundary, with canonical RAM still
 the only game-state owner; normal game logic composes through named C contracts.
+
+## Portable C and complete-game convergence
+
+The maintained path is original executable -> exact semantic ASM -> portable C11
+over canonical original memory -> native platform services -> SDL3 application.
+An intermediate runnable 16-bit DOS-C hybrid is not required. It would add a
+second compiler ABI, far/near bridges and segment placement constraints without
+removing the native platform work. Overkill used that path to retain its original
+DOS hardware backend; see its [DOS hybrid design](https://github.com/missingno7/overkill_recon/blob/main/docs/dos-hybrid.md)
+and [native host design](https://github.com/missingno7/overkill_recon/blob/main/docs/host-port.md). Lemmings
+already has portable native C and bounded original/native comparisons.
+
+The permanent specification is the pinned ASM, ledger and proven data contracts.
+C keeps the original records, offset identities, wrap, signed predicates, shared
+tails, bugs and behavior-affecting memory. Returned DS/ES/SS, actual stack words,
+flags and code modifications remain explicit wherever the original consumes them.
+One memory image owns game state; no converted record copies are synchronized.
+No ES-only assumption is imported from Pre2. Shared C helpers must express proven
+operations rather than interpret instructions or hide an unresolved transfer.
+
+Native C-to-C composition uses the same tested cores. Offset dispatch selects
+identified C functions and preserves actual frames where observable. Unknown
+targets stop explicitly. Test adapters are boundaries, not a second game engine.
+The final game executes C exclusively: no original instruction fallback, legacy
+interpreter, or CPU emulator at runtime. The test oracle may execute identified
+original routines with constructed state under the existing bounded policy.
+
+Every behavior-affecting executable region, including executable sound modules,
+must have an explained C implementation. Being an alternative hardware path,
+error path or currently unexecuted region does not by itself close that obligation.
+Tables, assets, initial bytes and checksum operands remain explained data with
+proven consumers and formats; their bytes need not become C algorithms. UNKNOWN
+bytes and incomplete target domains remain explicit until evidence closes them.
+
+Platform services model BIOS/DOS interaction, VGA, input, PIT/PIC and sound behind
+declared contracts. SDL3 presents those services after the C core is connected.
+Translation alone does not supply interrupt scheduling, clock progression, device
+initialization or audio/video presentation: these are required integration work.
+Exact behavior is assessed against the pinned executable and a stated machine
+configuration, clock/input schedule and service contract.
+
+The integration milestones are connected input, timer/game-state coordination,
+complete startup/resource/level/frame composition, remaining executable drivers,
+then the native platform and SDL3 host. Prioritize dependencies that unblock the
+next composed caller instead of accumulating unrelated isolated leaf ports.
+
+Final acceptance includes a deterministic native startup-to-gameplay smoke run,
+scripted input, bounded virtual time, state/frame/audio checkpoints, and exit.
+Follow with level/session transitions and longer bounded gameplay. Compare
+checkpoints with bounded original-region evidence and independently checked
+device behavior. A successful smoke run is necessary integration evidence, not
+proof that every state or hardware timing case matches. Byte classification,
+translated code, executed sites, connected C domains and native behavior remain
+separate measurements. Never boot the original game for discovery.

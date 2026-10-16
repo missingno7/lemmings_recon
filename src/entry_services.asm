@@ -2229,7 +2229,7 @@ loc_1837:
     call UpdateFixedWordPattern ; @0183B
 sub_183E:
     db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0183E
-    call sub_418C ; @01840
+    call PollInputState418C ; @01840
     inc byte [0x1c] ; @01843
     mov al,[0x1c] ; @01847
     and al,0x1 ; @0184A

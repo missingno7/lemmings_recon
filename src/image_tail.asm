@@ -5766,3 +5766,8 @@ InputModeByte25A6 equ GameDataImage+0x25a6
 InputAxisBaselineX25A2 equ GameDataImage+0x25a2
 InputAxisBaselineY25A4 equ GameDataImage+0x25a4
 InputAxisScaleSelector2005 equ GameDataImage+0x2005
+
+InputAccelerationX0016 equ GameDataImage+0x16
+InputAccelerationY0018 equ GameDataImage+0x18
+InputKeyMask1FC7 equ GameDataImage+0x1fc7
+MouseButtonSuppression200B equ GameDataImage+0x200b

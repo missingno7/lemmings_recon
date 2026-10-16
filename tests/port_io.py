@@ -3,18 +3,15 @@ import copy
 import ctypes as ct
 import gc
 import json
-import os
 from pathlib import Path
 import sys
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/'tests'),str(ROOT/'tools')]
-import vga_mirrors as base
+import verification as base
 from bounded_process import run_bounded,temporary_build_directory
 from cbuild import build
 from common import BUILD,sha,write_json
-from unicorn import Uc,UC_ARCH_X86,UC_MODE_16,UC_HOOK_CODE,UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_INSN
-from unicorn import x86_const as x
 
 SIZE,MASK,FLAGS=base.SIZE,base.MASK,base.FLAGS
 IMAGE,IDS,REGS,Regs,MEM=base.IMAGE,base.REG_IDS,base.REG_NAMES,base.Regs,base.MEM
@@ -31,12 +28,7 @@ EDGES={(0x433C,0x4341),(0x433C,0x433E),(0x4361,0x436A),(0x4361,0x4363),
        (0x4393,0x4396),(0x4396,0x4399),(0x43C6,0x4399),(0x43C6,0x43C8)}
 SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=420,384,3_000_000,150_000
 REPORT=BUILD/'port-io-differential.json';ORIGINAL=BUILD/'port-io-original-differential.json'
-OUT8=ct.CFUNCTYPE(None,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint8,ct.c_uint16)
-IN8=ct.CFUNCTYPE(ct.c_uint8,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint16)
-
-
-class Ports(ct.Structure):
-    _fields_=[('context',ct.c_void_p),('out_byte',OUT8),('in_byte',IN8)]
+OUT8,IN8,Ports=base.OUT8,base.IN8,base.Ports
 
 
 class Result(ct.Structure):
@@ -91,30 +83,9 @@ def setup(c):
     return memory,r,device
 
 
-class Access:
+class Access(base.BusAccess):
     def __init__(self,c,memory,r,device):
-        self.c,self.memory,self.r,self.device=c,memory,r,device
-        self.events=[];self.providers=set();self.cursor=0;self.sync=None
-    def emit(self,kind,address,value,flags,mask=FLAGS):
-        if len(self.events)>=MAX_EVENTS:raise Failure('port I/O event budget exhausted')
-        self.events.append((kind,address,value,flags,mask))
-    def access(self,kind,address,flags,mask=FLAGS,value=None):
-        address&=MASK
-        if kind=='read':value=self.device.read(self.memory,address,flags) if 0xA0000<=address<0xB0000 else self.memory[address]
-        elif 0xA0000<=address<0xB0000:self.device.write(self.memory,address,value,flags)
-        else:self.memory[address]=value
-        self.emit(kind,address,value,flags,mask);return value
-    def patch(self,ss,sp,value,name,word=True):
-        if word:put16(self.memory,ss,sp,value,self.device)
-        else:
-            at=physical(ss,sp);self.memory[at]=value
-            if 0xA0000<=at<0xB0000:
-                for p in self.device.planes:p[at-0xA0000]=value
-        at=physical(ss,sp)
-        if self.sync:
-            for delta in range(2 if word else 1):
-                p=(at+delta)&MASK;self.sync(p,bytes((self.memory[p],)));self.sync(p+SIZE,bytes((self.memory[p],)))
-        self.providers.add(name)
+        super().__init__(c,memory,r,device,max_events=MAX_EVENTS)
     def out(self,port,value,flags,mask=FLAGS):
         self.emit('out8',port,value,flags,mask)
         if self.c.get('provider')=='outer-ret' and 'outer-ret' not in self.providers:
@@ -134,81 +105,12 @@ class Access:
         self.cursor+=1;self.emit('in8',port,value,flags,mask);return value
 
 
-class Machine:
+class Machine(base.OriginalMachine):
     def __init__(self,c,memory,r,device,core):
-        self.c,self.memory,self.r,self.device,self.core=c,memory,r,device,core
-        self.cpu=Uc(UC_ARCH_X86,UC_MODE_16);self.cpu.mem_map(0,SIZE*2)
-        self.cpu.mem_write(0,bytes(memory));self.cpu.mem_write(SIZE,bytes(memory))
-        self.access=Access(c,memory,r,device);self.access.sync=self.cpu.mem_write
-        self.mask=FLAGS;self.flags=r['flags'];self.steps=0;self.sites=set();self.edges=set()
-        self.previous=None;self.pending=False;self.executing_ret=False;self.status=0;self.stopped=False
-        self.loaded=base.loaded_image(c['load'])
-        self.cpu.hook_add(UC_HOOK_CODE,self.code)
-        self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
-        self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
-        self.cpu.hook_add(UC_HOOK_INSN,self.inp,None,1,0,x.UC_X86_INS_IN)
-        self.cpu.hook_add(UC_HOOK_INSN,self.out,None,1,0,x.UC_X86_INS_OUT)
-        for n in REGS:self.cpu.reg_write(IDS[n],r[n])
-    def state(self):return {n:self.cpu.reg_read(IDS[n])&0xFFFF for n in REGS}
-    def code(self,u,address,size,_):
-        off=(address-(self.c['load']<<4))&0xFFFF
-        check(u.reg_read(IDS['cs'])==self.c['load'] and off in INS,'escaped port code domain')
-        ins=INS[off]
-        if ins.mnemonic=='ret' and not self.executing_ret:
-            self.pending=True;u.emu_stop();return
-        if self.previous:
-            old=self.previous
-            if old.group(base.capstone.CS_GRP_JUMP):self.edges.add((old.address,off))
-            if old.mnemonic in ('xor','and','or','test','shr','sar','shl'):self.mask=FLAGS&~0x10
-            elif old.mnemonic in ('add','sub','cmp'):self.mask=FLAGS
-            elif old.mnemonic=='ror':self.mask|=0x801
-        check(bytes(u.mem_read(address,ins.size))==self.loaded[off:off+ins.size],f'code differs at {off:04X}')
-        if ins.mnemonic in ('in','out'):
-            missing=(ins.mnemonic=='in' and self.c.get('missing_in')) or (ins.mnemonic=='out' and self.c.get('missing_out'))
-            if missing:self.status=1;self.stopped=True;u.emu_stop();return
-        self.flags=u.reg_read(IDS['flags'])&0xFFFF
-        self.previous=ins;self.sites.add(off);self.steps+=1
-        if self.steps>MAX_STEPS:raise Failure('original port instruction budget exhausted')
-    def read(self,u,kind,address,size,value,_):
-        for d in range(size):
-            p=(address+d)&MASK;v=self.access.access('read',p,self.flags,self.mask)
-            u.mem_write(p,bytes((v,)));u.mem_write(p+SIZE,bytes((v,)))
-    def write(self,u,kind,address,size,value,_):
-        for d in range(size):
-            p=(address+d)&MASK
-            check(not any(physical(self.c['load'],a)<=p<physical(self.c['load'],a)+i.size for a,i in INS.items()),'undeclared code write')
-            self.access.access('write',p,self.flags,self.mask,(value>>(8*d))&255)
-        for d in range(size):
-            p=(address+d)&MASK;v=self.memory[p];u.mem_write(p,bytes((v,)));u.mem_write(p+SIZE,bytes((v,)))
-    def inp(self,u,port,size,_):
-        check(size==1,'not a byte IN');return self.access.inp(port,self.flags,self.mask)
-    def out(self,u,port,size,value,_):
-        check(size==1,'not a byte OUT');self.access.out(port,value,self.flags,self.mask)
-    def run(self):
-        for phase in range(4):
-            if self.stopped:break
-            r=self.state();self.pending=False
-            self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=MAX_STEPS-self.steps+1)
-            if self.stopped:break
-            check(self.pending,'original did not reach bounded RET boundary')
-            off=self.state()['ip'];outer=off==RET[self.c['kind']]
-            if outer and self.core:self.stopped=True;break
-            self.executing_ret=True
-            self.cpu.emu_start(physical(self.c['load'],off),0,count=1)
-            self.executing_ret=False
-            if outer:self.stopped=True;break
-            expected=0x4341 if self.c['kind']=='low' else 0x4366
-            if self.state()['ip']!=expected:self.status=2;self.stopped=True;break
-        check(self.stopped,'original phase budget exhausted')
-        check(bytes(self.cpu.mem_read(0,SIZE))==bytes(self.memory),'canonical original RAM diverged')
-        return dict(regs=self.state(),status=self.status,memory=bytearray(self.memory),device=copy.deepcopy(self.device),
-                    events=self.access.events,providers=self.access.providers,cursor=self.access.cursor,
-                    sites=self.sites,edges=self.edges,steps=self.steps,mask=self.mask)
-
-
-def die(error):
-    try:os.write(2,(str(error)+'\n').encode('utf8',errors='backslashreplace'))
-    finally:os._exit(86 if 'budget' in str(error) else 87)
+        super().__init__(c,memory,r,device,core,instructions=INS,
+                         access=Access(c,memory,r,device),outer_returns={RET[c['kind']]},
+                         child_returns={0x43CD:{0x4341 if c['kind']=='low' else 0x4366}},
+                         max_steps=MAX_STEPS,changed_return_status=2)
 
 
 class Native:
@@ -222,23 +124,9 @@ class Native:
                 self.functions[kind,core]=fn
     def run(self,c,memory,r,device,core):
         access=Access(c,memory,r,device)
-        def read(_,m,a,f):
-            try:return access.access('read',a,f)
-            except BaseException as e:die(e)
-        def write(_,m,a,v,f):
-            try:access.access('write',a,f,value=v)
-            except BaseException as e:die(e)
-        def out_word(_,p,v,f):die(Failure('unexpected word OUT'))
-        def out(_,m,p,v,f):
-            try:access.out(p,v,f)
-            except BaseException as e:die(e)
-        def inp(_,m,p,f):
-            try:return access.inp(p,f)
-            except BaseException as e:die(e)
-        callbacks=(base.READ(read),base.WRITE(write),base.OUT(out_word),OUT8(out),IN8(inp))
-        bus=base.Bus(None,*callbacks[:3]);ports=Ports(None,OUT8() if c.get('missing_out') else callbacks[3],IN8() if c.get('missing_in') else callbacks[4])
+        callbacks=base.NativeCallbacks(access,missing_in=c.get('missing_in'),missing_out=c.get('missing_out'))
         ram=(ct.c_uint8*SIZE).from_buffer(memory);reg=Regs(**r)
-        result=self.functions[c['kind'],core](ram,ct.byref(reg),ct.byref(ports),ct.byref(bus))
+        result=self.functions[c['kind'],core](ram,ct.byref(reg),ct.byref(callbacks.ports),ct.byref(callbacks.bus))
         return dict(regs={n:getattr(result.registers,n) for n in REGS},status=result.status,
                     memory=memory,device=device,events=access.events,providers=access.providers,cursor=access.cursor)
 
@@ -289,18 +177,7 @@ def compare(native,c,core,reference=None):
         independent(c,r,reference,core)
     if native:
         actual=native.run(c,bytearray(memory),r,copy.deepcopy(device),core)
-        label=c['name']
-        require(actual['status']==reference['status'],label+': status differs')
-        require(actual['memory']==reference['memory'],label+': RAM differs')
-        for n in REGS:
-            mask=reference['mask'] if n=='flags' else 0xFFFF
-            require(((actual['regs'][n]^reference['regs'][n])&mask)==0,f'{label}: {n} {actual["regs"][n]:04X}/{reference["regs"][n]:04X}')
-        require(len(actual['events'])==len(reference['events']),label+': event count differs')
-        for i,(a,b) in enumerate(zip(actual['events'],reference['events'])):
-            require(a[:3]==b[:3] and ((a[3]^b[3])&b[4])==0,f'{label}: event{i} {a}/{b}')
-        require(actual['providers']==reference['providers'] and actual['cursor']==reference['cursor'],label+': provider effects differ')
-        require(actual['device'].state()==reference['device'].state(),label+': VGA state differs')
-        require([e[:3] for e in actual['device'].trace]==[e[:3] for e in reference['device'].trace],label+': VGA access order differs')
+        base.compare_states(c['name'],actual,reference)
     return reference
 
 
@@ -308,7 +185,7 @@ def hashes():
     paths=('AGENTS.md','assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
            'docs/executable.md','docs/minimap-vga.md','src/port201_input.asm','src/entry_services.asm',
            'c/port_io.c','c/port_io.h','c/lemmings_sym.h','c/aligned_read_mask.h','c/special_blit.h','c/regs.h',
-           'tests/port_io.py','tests/vga_mirrors.py','tests/minimap_vga.py','tools/bounded_process.py',
+           'tests/port_io.py','tests/verification.py','tests/minimap_vga.py','tools/bounded_process.py',
            'tools/cbuild.py','tools/difftest.py','tools/common.py','tools/unpack.py')
     return {p:sha((ROOT/p).read_bytes()) for p in paths}
 
