@@ -210,7 +210,7 @@ loc_01E7:
     mov al,[0x43] ; @001E7
     cmp al,[LevelCreationLimit-GameDataImage] ; @001EA
     jnz loc_01FA ; @001EE
-    mov al,[0x45] ; @001F0
+    mov al,[EntityDrawingPassCount-GameDataImage] ; @001F0
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @001F3
     jnz loc_01FA ; @001F5
     jmp loc_02B3 ; @001F7
@@ -478,7 +478,7 @@ loc_0480:
     call sub_5377 ; @00486
     call sub_482F ; @00489
     call sub_81CC ; @0048C
-    call sub_39CE ; @0048F
+    call InitializeStatusDisplay ; @0048F
     call InstallGameTimerVector ; @00492
     call AdvanceLevelObjectAnimations ; @00495
     call DrawLevelObjectGraphics ; @00498

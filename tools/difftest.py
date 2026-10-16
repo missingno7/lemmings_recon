@@ -18,6 +18,8 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('status_copy', 180, 384),
+    Suite('status_initialize', 240, 384),
     Suite('display_status', 180, 384),
     Suite('display_start', 180, 384),
     Suite('display_setup', 180, 384),

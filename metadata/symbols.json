@@ -21106,9 +21106,11 @@
     "address": 14798,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_39CE",
-    "aliases": [],
+    "size": 250,
+    "symbol_name": "InitializeStatusDisplay",
+    "aliases": [
+      "sub_39CE"
+    ],
     "callers": [
       1167,
       33302
@@ -21427,10 +21429,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained exact status ASM and bounded native logical-core/actual-RET gate; live segments, stack aliases, flags and child boundaries remain explicit. docs/status-display.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 250
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 250,
+    "c_implementation": "c/status_initialize.c",
+    "c_core": "lmn_initialize_status_display_core",
+    "c_code_ranges": [
+      [
+        14798,
+        15048
+      ]
+    ],
+    "verification_evidence": "tests/status_initialize.py:15 fixtures/30 core and actualRET comparisons,250 new caller bytes/all70 sites/0 owned jump edges,234488 ordered bus events,8 completed mutants;256 additional original-only eight-instruction rate prefixes check the independent wrapped formula without claiming256 native cases. Composes75EF,ten762A calls,4B68 and780D through actual frames, all live returned roles and ordered snapshots/counters; decimal DS0045 field and209C space, DF/IF, returnedDS, same-IP39D1 nested child stop, changed wrapper/count/outer returns, SS mirror-induced080C boundary, DS=SS and physicalFFFFF-to00000 outer word. Child ranges overlap existing C; only250 caller bytes added. docs/status-display.md"
   },
   {
     "address": 15048,
@@ -44815,9 +44827,11 @@
     "address": 30191,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_75EF",
-    "aliases": [],
+    "size": 59,
+    "symbol_name": "CopyStatusRegionToBothDrawingOrigins",
+    "aliases": [
+      "sub_75EF"
+    ],
     "callers": [
       14798
     ],
@@ -44876,18 +44890,30 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained exact status ASM and bounded native logical-core/actual-RET gate; live segments, stack aliases, flags and child boundaries remain explicit. docs/status-display.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 59
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 59,
+    "c_implementation": "c/status_copy.c",
+    "c_core": "lmn_copy_status_region_to_both_origins_core",
+    "c_code_ranges": [
+      [
+        30191,
+        30250
+      ]
+    ],
+    "verification_evidence": "tests/status_copy.py: combined16 fixtures/32 core and actualRET comparisons (9 direct-leaf,7 wrapper fixtures),59 unique bytes/all22 sites/0 jump edges,155458 ordered bus events,7 completed mutants. Leaf40 bytes/17 sites overlap wrapper. Full06E0-byte forward/reverse copies, sequential VGA overlap, actual savedDS/RET and SS mirror aliases, firstCALL75FA followed by fallthrough, returnedDS second-origin read, late provider and physical20-bit outer-return word wrap. Full RAM/register/definedFLAGS/device comparison plus independent sequential replay. docs/status-display.md"
   },
   {
     "address": 30210,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7602",
-    "aliases": [],
+    "size": 40,
+    "symbol_name": "CopyStatusRegionToVga",
+    "aliases": [
+      "sub_7602"
+    ],
     "callers": [
       30199
     ],
@@ -44928,10 +44954,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained exact status ASM and bounded native logical-core/actual-RET gate; live segments, stack aliases, flags and child boundaries remain explicit. docs/status-display.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 40
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 40,
+    "c_implementation": "c/status_copy.c",
+    "c_core": "lmn_copy_status_region_to_vga_core",
+    "c_code_ranges": [
+      [
+        30210,
+        30250
+      ]
+    ],
+    "verification_evidence": "tests/status_copy.py: combined16 fixtures/32 core and actualRET comparisons (9 direct-leaf,7 wrapper fixtures),59 unique bytes/all22 sites/0 jump edges,155458 ordered bus events,7 completed mutants. Leaf40 bytes/17 sites overlap wrapper. Full06E0-byte forward/reverse copies, sequential VGA overlap, actual savedDS/RET and SS mirror aliases, firstCALL75FA followed by fallthrough, returnedDS second-origin read, late provider and physical20-bit outer-return word wrap. Full RAM/register/definedFLAGS/device comparison plus independent sequential replay. docs/status-display.md"
   },
   {
     "address": 30250,
@@ -60910,6 +60946,278 @@
     "confidence": "PROVEN",
     "evidence": [
       "Actual farCALL8822 continuation or outer nearRET in7BB8 live object-drawing loop. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30202,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusCopyAfterFirst",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30249,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusCopyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14801,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterCopy",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14944,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterMinimum",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14953,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterRelease",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14962,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14971,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14980,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14989,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 14998,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15007,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15016,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15025,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterAction6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15034,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusAfterDecimal",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15047,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeStatusReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual instruction boundary and live near CALL/RET contract in status_copy.asm or status_initialize.asm."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 69,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityDrawingPassCount",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "363F/3641 clears CH into DS0045 for nonzero slot bound;3647..364D increments once per record whose+26 is not FF;3684/3687 and3AB1/3AB4 format it at2095.01F0 tests it after creation limit. It is a wrapped last drawing-pass count, not a proven persistent active population."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8341,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 3,
+    "symbol_name": "StatusEntityCountField",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3687/3AB4 pass2095 to WriteDecimalByteField; its three-byte field belongs to the stored40-character line2083..20AA. No snapshot or new allocation."
     ],
     "verification_status": "UNRESOLVED"
   }

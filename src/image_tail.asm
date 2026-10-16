@@ -1,3 +1,5 @@
+EntityDrawingPassCount equ GameDataImage+0x0045
+StatusEntityCountField equ GameDataImage+0x2095
 StatusCompletionDisplayValue equ GameDataImage+0x0040
 StatusPercentDigits equ GameDataImage+0x209C
 LevelReleaseMinimumDisplaySnapshot equ GameDataImage+0x0065

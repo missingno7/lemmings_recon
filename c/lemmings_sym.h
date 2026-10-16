@@ -230,7 +230,7 @@
 #define CS_LevelObjectsAfterBitmap 0x39C2u
 #define CS_LevelObjectsNext 0x39C5u
 #define CS_LevelObjectsReturn 0x39CDu
-#define CS_sub_39CE 0x39CEu
+#define CS_InitializeStatusDisplay 0x39CEu
 #define CS_UpdateStatusDisplay 0x3AC8u
 #define CS_SelectEntityCandidate 0x3CDEu
 #define CS_sub_3E6F 0x3E6Fu
@@ -394,8 +394,8 @@
 #define CS_sub_715D 0x715Du
 #define CS_sub_715F 0x715Fu
 #define CS_sub_7218 0x7218u
-#define CS_sub_75EF 0x75EFu
-#define CS_sub_7602 0x7602u
+#define CS_CopyStatusRegionToBothDrawingOrigins 0x75EFu
+#define CS_CopyStatusRegionToVga 0x7602u
 #define CS_DrawStatusCount 0x762Au
 #define CS_DrawStatusGlyph 0x7708u
 #define CS_DrawStatusIconOutline 0x780Du
@@ -819,4 +819,21 @@
 #define SEG09A9_FirstObjectGraphicsAnimationBase 0x17E0u
 #define CS_DrawLevelObjectGraphicsAfterBitmap 0x7BFEu
 #define CS_DrawLevelObjectGraphicsReturn 0x7C09u
+#define CS_StatusCopyAfterFirst 0x75FAu
+#define CS_StatusCopyReturn 0x7629u
+#define CS_InitializeStatusAfterCopy 0x39D1u
+#define CS_InitializeStatusAfterMinimum 0x3A60u
+#define CS_InitializeStatusAfterRelease 0x3A69u
+#define CS_InitializeStatusAfterAction2 0x3A72u
+#define CS_InitializeStatusAfterAction7 0x3A7Bu
+#define CS_InitializeStatusAfterAction0 0x3A84u
+#define CS_InitializeStatusAfterAction4 0x3A8Du
+#define CS_InitializeStatusAfterAction3 0x3A96u
+#define CS_InitializeStatusAfterAction5 0x3A9Fu
+#define CS_InitializeStatusAfterAction1 0x3AA8u
+#define CS_InitializeStatusAfterAction6 0x3AB1u
+#define CS_InitializeStatusAfterDecimal 0x3ABAu
+#define CS_InitializeStatusReturn 0x3AC7u
+#define SEG09A9_EntityDrawingPassCount 0x0045u
+#define SEG09A9_StatusEntityCountField 0x2095u
 #endif

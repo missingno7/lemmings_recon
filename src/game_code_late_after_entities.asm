@@ -2762,28 +2762,4 @@ sub_7218:
     add di,byte +0x29 ; @075EA
     sti ; @075ED
     ret ; @075EE
-sub_75EF:
-    mov di,[DrawingOrigin-GameDataImage] ; @075EF
-    add di,0x1e42 ; @075F3
-    call sub_7602 ; @075F7
-    mov di,[AlternateDrawingOrigin-GameDataImage] ; @075FA
-    add di,0x1e42 ; @075FE
-sub_7602:
-    push ds ; @07602
-    mov dx,0x3c4 ; @07603
-    mov ax,0xf02 ; @07606
-    mov [ss:0x8],ax ; @07609
-    out dx,ax ; @0760D
-    mov dx,0x3ce ; @0760E
-    mov ax,0x105 ; @07611
-    mov [ss:0x0],ax ; @07614
-    out dx,ax ; @07618
-    mov si,0xf91f ; @07619
-    mov dx,0xa000 ; @0761C
-    mov es,dx ; @0761F
-    mov ds,dx ; @07621
-    mov cx,0x6e0 ; @07623
-    rep movsb ; @07626
-    pop ds ; @07628
-    ret ; @07629
-times -(($-$$) != 0x762a) db 0 ; module end assertion
+times -(($-$$) != 0x75ef) db 0 ; module end assertion

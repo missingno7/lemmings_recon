@@ -21,7 +21,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 03634..0368D | entity_drawing_calls.asm | Untranslated draw-call loop and provider/IRQ seams |
 | 0368E..03789 | level_initialize.asm | Drawing initialization, live clear tail, header and level-state caller |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
-| 03944..03AC7 | game_code_late.asm | Redraw and initial status setup; mixed ownership remains provisional |
+| 03944..039CD | game_code_late.asm | Object-animation gate and redraw caller; UNKNOWN preserved |
+| 039CE..03AC7 | status_initialize.asm | Initial status copies, wrapped release reload, shared snapshots and actual child frames |
 | 03AC8..03CDD | status_display.asm | Status display, actual child frames, shared refresh fields and byte-DIV frontier; UNKNOWN preserved |
 | 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
 | 03E6F..04B5B | game_code_late_after_selection.asm | Input and display callers; mixed ownership remains provisional |
@@ -31,7 +32,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
 | 05726..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
-| 06170..07629 | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 06170..075EE | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 075EF..07629 | status_copy.asm | Full DF-sensitive status-region copy, live DS and single-CALL/fallthrough wrapper |
 | 0762A..0780C | status_glyphs.asm | Count and character glyph contracts; five UNKNOWN bytes preserved |
 | 0780D..078FF | status_icons.asm | Status outline and restoration; signed selector and live VGA frames |
 | 07900..0796E | game_code_before_minimap.asm | Untranslated display preparation |
@@ -577,7 +579,20 @@ Only186 unique bytes are added, taking the main C ledger union to18,286.
 See object-records.md and the two matching-input reports. No aggregate or
 full-tick readiness follows from these scoped gates.
 
-Fresh views next select7602's40-byte copy leaf,75EF's single-CALL/fallthrough
-two-origin wrapper, then39CE's250-byte status initializer. Its other direct
-children are native. Preserve all06E0 source bytes through A000:FFFE, DF,
-live POP DS and second-origin read, latch-mode writes and actual return words.
+The7602 copy leaf and75EF single-CALL/fallthrough wrapper now pass16 combined
+fixtures/32 core and adapter comparisons:59 unique bytes/all22 sites/no jump
+edges,155,458 ordered bus events and seven completed mutants. Each pass copies
+all06E0 source bytes with DF, live savedDS/RET, VGA overlap and ordered mirrors.
+The39CE initializer now composes these copies, ten count calls, decimal field
+and icon outline in15 fixtures/30 comparisons:250 new bytes/all70 caller sites/
+no owned jump edges,234,488 events and eight completed mutants. Another256
+original-only rate prefixes verify the byte arithmetic independently. Live DS,
+snapshot/counter order and changed child targets remain explicit, including the
+same-IP39D1 nested stop and mirror-induced count return080C.
+Together these scopes add309 unique main bytes, taking the ledger union from
+18,286 to18,595. See status-display.md and the matching-input native reports;
+this does not refresh aggregate campaigns or establish complete gameplay.
+Fresh3634 views next select6FE2's known-mask VGA leaf;410F's live visibility-table
+producer must precede5726's normal caller connection. SS dirty-map outputs and
+unchecked indices are not a conventional bounded matrix. The wider706F/715B
+dispatch and its dependencies remain separate; see next-work.md.

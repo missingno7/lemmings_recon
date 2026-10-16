@@ -16,6 +16,8 @@ times -(($-$$) != 0x378a) db 0 ; module end assertion
 %include "level_objects.asm"
 times -(($-$$) != 0x3944) db 0 ; module end assertion
 %include "game_code_late.asm"
+times -(($-$$) != 0x39ce) db 0 ; module end assertion
+%include "status_initialize.asm"
 times -(($-$$) != 0x3ac8) db 0 ; module end assertion
 %include "status_display.asm"
 times -(($-$$) != 0x3cde) db 0 ; module end assertion
@@ -36,6 +38,8 @@ times -(($-$$) != 0x5d66) db 0 ; module end assertion
 %include "entity_graphics.asm"
 times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "game_code_late_after_entities.asm"
+times -(($-$$) != 0x75ef) db 0 ; module end assertion
+%include "status_copy.asm"
 times -(($-$$) != 0x762a) db 0 ; module end assertion
 %include "status_glyphs.asm"
 times -(($-$$) != 0x780d) db 0 ; module end assertion

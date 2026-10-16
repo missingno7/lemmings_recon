@@ -701,7 +701,7 @@ sub_81CC:
     mov ax,[0x28] ; @0820C
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @0820F
     mov [0x28],ax ; @08213
-    call sub_39CE ; @08216
+    call InitializeStatusDisplay ; @08216
     call sub_80FD ; @08219
     mov ax,0x160 ; @0821C
     mov bx,0xa0 ; @0821F

@@ -341,18 +341,45 @@ forced-unshifted drawing, actual saved SI/DI/CX and child near/far/provider
 boundaries remain explicit. See object-records.md. This does not accept the
 enclosing tick CALL sequence, full native device timing or IRQ scheduling.
 
-Next port7602 (40 bytes/17 sites) then75EF (59 unique bytes/22 sites including
-that leaf), then the39CE status initializer (250 bytes/70 sites). Its remaining
-children4B68/762A/780D already have scoped native gates. Each7602 pass copies
-the full06E0 bytes from A000:F91F through FFFE when DF is clear; source end is
-exclusiveFFFF. Reverse DF traverses F91F down to F240. Keep live PUSH/POP DS,
-SS:0008/0000 mirrors and OUTs, actual near returns, mode1 latch behavior and
-VGA overlap. The75EF wrapper CALLs7602 once, then rereads the second origin
-through the returned DS and falls through into7602; do not invent a second
-CALL frame. The39CE initializer must carry every returned child role through
-its ten count calls, decimal field and outline before actual RET3AC7.
+The7602 leaf and75EF wrapper now pass16 fixtures at both APIs:59 unique bytes/
+22 sites/no jump edges,155,458 ordered events and seven completed mutants.
+Each pass copies all06E0 bytes with DF, live DS/RET words and mode1 overlap;
+the wrapper makes one CALL, then falls through into the second pass.
+The39CE initializer passes15 fixtures at both APIs:250 new caller bytes/all70
+sites/no owned jump edges,234,488 events and eight completed mutants. The
+same-IP39D1 nested child stop, changed copy/count/outer returns, all returned
+roles and ordered shared snapshots remain explicit. Another256 original-only
+eight-instruction prefixes check all release bytes. The two scopes add309
+unique main bytes (18,286 to18,595); child/leaf overlaps are not counted again.
+See status-display.md and the two matching-input native reports for scoped
+acceptance; the enclosing tick, device timing and IRQ scheduling remain open.
 The3634 entity-drawing parent still depends on6FE2/5726/6E83/706F and the
 unresolved715B indirect target domain; preserve that frontier.
+
+The next leaf candidate after status initialization is6FE2..706E (141 bytes/
+58 sites). Its Y guards, live saved X, DS PixelBitMasks lookup, SS mirrors and
+VGA read/write sequence are statically identified. Early returns retain IF;
+the drawing path finishes with STI. The eight stored mask bytes are known,
+but their runtime immutability is not established; use the live DS table.
+
+Before connecting5726's normal3634 handoff, close the410F producer contract.
+The shared410F..414E tail PUSHes DS/POPs ES, clears68h words at ES:0EA8, then
+fills29h bytes starting at `(live DS:[0]>>3)-2+0EA8`, with DF and offset wrap.
+It marks both DS:0026/0028 selected offsets through ES loaded from the relocated
+143E segment operand, restores its prior ES via AX, then STI/RET on the existing
+caller frame. Do not insert a CALL at this JMP/fallthrough entry. Its nominal
+D0h clear span does not bound the computed fill or5726's unchecked lookup.
+The ordinary visibility table therefore has a view-dependent producer, without
+proven semantic extent or lifetime beyond these accesses.
+
+5726 uses DS:0026 as an SS output offset, not a DS pointer. Each output row
+saves live CX/SI, writes3 or5 bytes, restores those actual words and advances
+SI by28h. The first row is unconditional even when CL is zero; unsigned BP
+comparison and DEC CL occur only afterward. Wrapped output can overwrite the
+saved words and change later loop state.81CC initializes the two offsets to
+42B2/45D3 and swaps them around80FD;010F..0116 also exchanges them. Preserve
+those producer/segment/stack contracts before a matrix-shaped C abstraction.
+The wider706F dispatch still has unresolved715B and must retain that boundary.
 
 StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
@@ -374,6 +401,10 @@ Use fresh dependency views rather than an accumulated historical task list:
 .venv\Scripts\python.exe tools\graph.py 75EF --bottom-up
 .venv\Scripts\python.exe tools\graph.py 39CE --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 39CE --bottom-up
+.venv\Scripts\python.exe tools\graph.py 3634 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 3634 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 6FE2 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 410F --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3AC8 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --bottom-up

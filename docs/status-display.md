@@ -200,3 +200,69 @@ bytes overlap the six-byte prefix and527-byte suffix, adding only527 unique
 main-image C bytes to the ledger (17,573 to18,100). Shared DS:0040 and the
 snapshot/refresh fields stay in canonical memory. This is scoped acceptance,
 not a refreshed aggregate campaign or complete gameplay.
+
+## Initial status copies and state ownership
+
+The maintained status_copy.asm module owns75EF..7629 in unchanged physical
+order. CopyStatusRegionToVga7602 takes the destination in DI, saves DS on live
+SS, writes SS:0008=0F02 before OUT3C4, then SS:0000=0105 before OUT3CE.
+It sets DS=ES=A000 and copies all06E0 bytes sequentially from F91F with the
+original DF. With DF clear the last source byte is FFFE and final SI=FFFF;
+with DF set the last source byte is F240 and final SI=F23F. Destination offsets
+wrap at16 bits. Mode1 writes use VGA latches, including overlapping source and
+destination; neither a RAM snapshot nor a shortened source extent is equivalent.
+The leaf changes no FLAGS and POPs the actual saved DS word before RET7629.
+
+CopyStatusRegionToBothDrawingOrigins75EF reads DrawingOrigin through live DS,
+adds1E42, and makes one actual CALL with return75FA. Only a completed return to
+that address permits the AlternateDrawingOrigin read through the returned DS.
+The second ADD1E42 supplies final arithmetic FLAGS. Execution then falls through
+into7602 without a second CALL frame. Both saved DS and return words can alias
+the SS mirrors; a changed child target is an explicit boundary before reading
+the alternate origin. Ordinary completion leaves ES=A000, AX=0105, DX=A000,
+CX=0 and the final DF-sensitive source/destination cursors.
+
+The maintained status_initialize.asm module owns39CE..3AC7. It copies both
+origins before setting EntityCreationCountdown=14h and computing the reload
+with the original byte operations:63h minus live release setting, SHR1, NEG,
+ADD35h, NEG, ADD39h. Wrap and FLAGS belong to these instructions. The eleven
+refresh counters are cleared in release-minimum/release-setting/action
+2/7/0/4/3/5/1/6/icon order. The corresponding ten count snapshots become FF,
+then the icon snapshot becomes3. Ten count calls use slots0/1/4/9/2/6/5/7/3/8
+in that same field order. All child-returned roles remain live for later reads,
+stores and actual CALL/RET frames.
+
+EntityDrawingPassCount names DS:0045. For a nonzero slot bound363F/3641 clears
+it, then3647..364D increments it once per visited record whose+26 is not FF.
+The byte wraps. A zero slot bound returns before clearing it; this is not a
+proven continuously maintained population count. The draw-pass tail3684/3687
+and initializer3AB1/3AB4 pass it to WriteDecimalByteField at2095, now named
+StatusEntityCountField inside the shared40-character status line. Entry01F0
+also tests it after the creation-limit comparison. The initializer subsequently
+clears209C to a space and calls the outline leaf using the live action selector.
+No shadow display state or new storage extent is introduced.
+
+The bounded copy gate passes16 combined fixtures at core/actual-RET boundaries
+(nine direct-leaf and seven wrapper fixtures,32 comparisons):59 unique bytes,
+all22 instruction sites, no jump edges,155,458 ordered events and seven completed
+mutants. It checks full RAM/register/defined-FLAGS/device state and independently
+replays the sequential copies, including VGA overlap, DF, mirror aliases, live
+DS and actual child/outer returns. The leaf's40 bytes overlap the wrapper.
+
+The initializer gate passes15 fixtures at both APIs (30 comparisons), covering
+all70 caller sites, no owned jump edges,234,488 events and eight completed
+mutants. All256 release bytes also run as separate original-only eight-instruction
+prefixes checked against `4 + (((99-rate) & 255) >> 1)`; those are not256 native
+caller cases. Fixtures include distinct counts, zero blanks, returned DS,
+snapshot/counter write order, decimal values0/7/42/99/100/255, DF/IF, DS=SS,
+and actual return-word providers. A nested copy RET to39D1 is CHILD_STOP even
+though that IP equals the parent's normal continuation. SS=FFFF/SP=000F yields
+the observed count-child return080C and stops; the separate clean outer word
+wrap uses FFFC:003F, whose two bytes span physical FFFFF/00000.
+
+Reports are build/status-copy-differential.json and
+build/status-initialize-differential.json. Their scope and exact input hashes
+own acceptance. These scopes add59+250=309 unique main-image C bytes, bringing
+the ledger union from18,286 to18,595. The broader visibility-map producer,
+entity drawing caller, IRQ schedule and device timing remain separate frontiers;
+this checkpoint does not renew aggregate campaign evidence.
