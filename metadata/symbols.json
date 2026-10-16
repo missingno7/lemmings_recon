@@ -20539,9 +20539,11 @@
     "address": 14660,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3944",
-    "aliases": [],
+    "size": 11,
+    "symbol_name": "AdvanceLevelObjectAnimations",
+    "aliases": [
+      "sub_3944"
+    ],
     "callers": [
       438,
       1173
@@ -20671,10 +20673,24 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "3944 checks live EntityUpdateGate002B and JMPs without a frame to7C0A,32 mutable object-animation slots; zeroX stores staleBX. docs/object-records.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 104
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 104,
+    "c_implementation": "c/object_animation.c",
+    "c_core": "lmn_advance_level_object_animations_core",
+    "c_code_ranges": [
+      [
+        14660,
+        14671
+      ],
+      [
+        31754,
+        31847
+      ]
+    ],
+    "verification_evidence": "tests/object_animation.py:61 fixtures x core/actualRET adapter plus12 selected null-bus repeats (134 comparisons),104 unique bytes/all39 sites/all17 jump outcomes,22816 compared native bus events plus2110 reference events for null-bus repeats,8 completed mutants. Separate002B/0055 gates, staleBX zeroX stores, low-byte type test, all32 single-active positions/all256 frame bytes, equality-only wrap/one-shotFFFD mask, fullDX:AX MUL and post-frame live fields, ordered providers, DS/SS and VGA aliases, actual20-bit physical RET wrap. Shared7C0A tail adds no frame; no shadow records. docs/object-records.md"
   },
   {
     "address": 14671,
@@ -46447,9 +46463,11 @@
     "address": 31672,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7BB8",
-    "aliases": [],
+    "size": 82,
+    "symbol_name": "DrawLevelObjectGraphics",
+    "aliases": [
+      "sub_7BB8"
+    ],
     "callers": [
       441,
       1176
@@ -46565,10 +46583,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "7BB8 visits32 live definitions/graphics records and far CALLs8822 for each nonzeroX; actual saved CX/DI/SI and far return remain live. docs/object-records.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 82
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 82,
+    "c_implementation": "c/object_drawing_tick.c",
+    "c_core": "lmn_draw_level_object_graphics_core",
+    "c_code_ranges": [
+      [
+        31672,
+        31754
+      ]
+    ],
+    "verification_evidence": "tests/object_drawing_tick.py:50 constructed caller fixtures plus1 actual native animation-to-drawing handoff,55 logical-core/actualRET comparisons,82 new caller bytes/all33 sites/all4 jump outcomes,346 integrated sites,30706 ordered bus events,109 independent plane checks,6 completed mutants. All32 single-active positions/full32 forward/backward passes, live scroll/resource word, bit0-cleared forced-unshifted renderer contract, child-returned DS/ES and general state, actual CX/DI/SI and farIP/CS stack words, changed near/far/missing-byte-provider stops, DS=SS and physical20-bit stack wrap. The handoff checks native animation RAM/registers/events against ASM, then renders its produced frame offset with independent inputs/planes. Renderer bytes and104 animation bytes overlap existing translation; only82 unique bytes added. Native device/IRQ timing remains open. docs/object-records.md"
   },
   {
     "address": 31847,
@@ -60712,6 +60740,176 @@
     "evidence": [
       "3AFB..3B02 writes100;3B1C/3B1E update only209D/209E otherwise, retaining209C.3ABD initializer clears209Cspace. These bytes are inside the stored40-character status line2083..20AA.",
       "Names do not reclassify or copy canonical storage. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31754,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 93,
+    "symbol_name": "AdvanceLevelObjectAnimationRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared JMP tail of3944;32 live8-byte definition/28-byte graphics slots, no additional guest frame. docs/object-records.md"
+    ],
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 93,
+    "c_implementation": "c/object_animation.c",
+    "c_core": "lmn_advance_level_object_animation_records_core",
+    "c_code_ranges": [
+      [
+        31754,
+        31847
+      ]
+    ],
+    "verification_evidence": "Direct7C0A entry shares the original32-record tail with3944, without its002B gate or a new stack frame. tests/object_animation.py covers35 tail sites/14 tail jump outcomes within61-fixture/134-comparison gate; same live fields, ordered byte accesses and actualRET contracts. These93 bytes overlap the104-byte gated scope and receive no duplicate credit. docs/object-records.md"
+  },
+  {
+    "address": 14670,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ObjectAnimationEarlyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual nearRET when live EntityUpdateGate002B equalsFF."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31846,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ObjectAnimationReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual nearRET after32 object-animation records."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6091,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "FirstObjectGraphicsAnimationFlags",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Relative field in first28-byte graphics record, also used at each record stride: bit1 enables advancement; bit0 disables bit1 after equal-limit wrap; zeroX may overwrite with staleBX. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6093,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "FirstObjectGraphicsAnimationFrame",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Relative field in first28-byte graphics record, also used at each record stride: byte frame increment at7C3B, wrap only on equality with live limit. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6094,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "FirstObjectGraphicsAnimationLimit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Relative field in first28-byte graphics record, also used at each record stride: byte equality limit, zero is not a clamp. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6097,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "FirstObjectGraphicsFrameStride",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Relative field in first28-byte graphics record, also used at each record stride: live unsigned word multiplicand at7C51, full productDX:AX. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6112,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "FirstObjectGraphicsAnimationBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Relative field in first28-byte graphics record, also used at each record stride: live word added to low frame product at7C56 before writing+17. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31742,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DrawLevelObjectGraphicsAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual farCALL8822 continuation or outer nearRET in7BB8 live object-drawing loop. docs/object-records.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 31753,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "DrawLevelObjectGraphicsReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual farCALL8822 continuation or outer nearRET in7BB8 live object-drawing loop. docs/object-records.md"
     ],
     "verification_status": "UNRESOLVED"
   }

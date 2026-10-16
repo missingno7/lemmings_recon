@@ -216,7 +216,7 @@
 #define CS_WriteObjectInteractionCells 0x37C2u
 #define CS_WriteSteelInteractionCells 0x3839u
 #define CS_CollectTypeOneObjectCoordinates 0x389Fu
-#define CS_sub_3944 0x3944u
+#define CS_AdvanceLevelObjectAnimations 0x3944u
 #define CS_RedrawLevel 0x394Fu
 #define CS_LevelRedrawAfterInitialize 0x3952u
 #define CS_LevelRedrawAfterSpecial 0x395Cu
@@ -407,7 +407,7 @@
 #define CS_MinimapRowAfterSample 0x7A2Fu
 #define CS_AccumulateMinimapSample 0x7A39u
 #define CS_DrawMinimapViewport 0x7A5Au
-#define CS_sub_7BB8 0x7BB8u
+#define CS_DrawLevelObjectGraphics 0x7BB8u
 #define CS_DrawPackedTerrainPiece 0x7C67u
 #define CS_TerrainPieceBitmapCall 0x7CB5u
 #define CS_TerrainPieceAfterBitmap 0x7CBAu
@@ -809,4 +809,14 @@
 #define CS_StatusDisplayAfterIconRestore 0x3B3Fu
 #define SEG09A9_StatusCompletionDisplayValue 0x0040u
 #define SEG09A9_StatusPercentDigits 0x209Cu
+#define CS_AdvanceLevelObjectAnimationRecords 0x7C0Au
+#define CS_ObjectAnimationEarlyReturn 0x394Eu
+#define CS_ObjectAnimationReturn 0x7C66u
+#define SEG09A9_FirstObjectGraphicsAnimationFlags 0x17CBu
+#define SEG09A9_FirstObjectGraphicsAnimationFrame 0x17CDu
+#define SEG09A9_FirstObjectGraphicsAnimationLimit 0x17CEu
+#define SEG09A9_FirstObjectGraphicsFrameStride 0x17D1u
+#define SEG09A9_FirstObjectGraphicsAnimationBase 0x17E0u
+#define CS_DrawLevelObjectGraphicsAfterBitmap 0x7BFEu
+#define CS_DrawLevelObjectGraphicsReturn 0x7C09u
 #endif

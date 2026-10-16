@@ -37,7 +37,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 07900..0796E | game_code_before_minimap.asm | Untranslated display preparation |
 | 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
 | 07A5A..07BB7 | minimap_viewport.asm | Live viewport outline, VGA mirrors and saved phase contract |
-| 07BB8..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
+| 07BB8..07C66 | object_graphics_tick.asm | Object draw loop and shared animation tail; live fields and stale-BX contract |
+| 07C67..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
 | 08343..083BE | checksum.asm | Tested checksums, state and code/data overlap |
 | 083BF..08821 | code_tail.asm | Overlay storage, layout setter and unresolved spans |
@@ -561,4 +562,22 @@ and child ranges are not counted again. See status-display.md for scope and
 input hashes. Fresh views select3944 and shared7C0A..7C66 next (104 bytes/
 39 sites), followed by7BB8's32-object draw loop and its native8822 child.
 The zero-X stale-BX store, low-byte type gate, live animation flags/frame
-fields and actual far-render frames must be understood before either port.
+fields and actual far-render frames now have the following scoped gates.
+
+The3944 gate and shared7C0A tail pass61 fixtures/134 core, adapter and selected
+null-bus comparisons:104 unique bytes/all39 sites/all17 jump outcomes,22,816
+native ordered events and eight completed mutants. Its direct tail overlaps
+the same93 bytes; no frame is added at the JMP. The7BB8 drawing caller passes
+50 constructed fixtures plus one native animation handoff,55 comparisons,
+all33 owned sites/all4 jump outcomes,346 integrated sites,30,706 events,109
+independent plane checks and six completed mutants. The typed8822 child owns
+its platform/IRQ and missing-byte-provider seams. Live returned DS/ES and
+actual SI/DI/CX/IP/CS stack words determine every subsequent step.
+Only186 unique bytes are added, taking the main C ledger union to18,286.
+See object-records.md and the two matching-input reports. No aggregate or
+full-tick readiness follows from these scoped gates.
+
+Fresh views next select7602's40-byte copy leaf,75EF's single-CALL/fallthrough
+two-origin wrapper, then39CE's250-byte status initializer. Its other direct
+children are native. Preserve all06E0 source bytes through A000:FFFE, DF,
+live POP DS and second-origin read, latch-mode writes and actual return words.

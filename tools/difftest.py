@@ -50,6 +50,8 @@ SUITES = (
     Suite('status_text', 240, 384),
     Suite('status_display', 240, 384),
     Suite('status_display_full', 240, 384),
+    Suite('object_animation', 180, 384),
+    Suite('object_drawing_tick', 360, 512),
     Suite('checksum', 120, 512),
     Suite('pcspeaker', 120, 512),
     Suite('pcspeaker_bus', 180, 384),

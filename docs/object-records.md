@@ -43,6 +43,99 @@ big-endian. Other bytes and wider producer/alias domains remain unresolved.
 The supplied ground input has 16 consecutive 28-byte records at its start.
 The unchecked object type is not restricted to that observed extent.
 
+## Per-tick animation and drawing contracts
+
+AdvanceLevelObjectAnimations3944 tests the live EntityUpdateGate at DS:002B.
+Exactly FF returns at394E without visiting records. Otherwise its JMP enters
+AdvanceLevelObjectAnimationRecords7C0A; this transfer adds no CALL frame. The
+tail initializes SI=17CB, DI=0FEB and CX=32 and visits every slot. It is93 bytes/
+35 sites; the gated entry owns104 bytes/39 sites across the two physical ranges.
+The7BB8..7C66 block lives in object_graphics_tick.asm, with exact module bounds.
+
+For zero X, the tail jumps directly to7C5C and stores the current BX into the
+record flags. BX is stale from entry or the previous processed record; no flags
+load occurs for this zero-X slot. This differs from the378A copy's stale-byte
+skip and must not become a clean inactive-object test. Nonzero X reads only
+definition byte+5 for type. If it equals1 and EntityCreationGate0055 is not FF,
+the slot skips all animation and flag stores. A high type byte does not alter
+that gate. Other slots load the live flags word; bit1 enables advancement.
+
+Enabled slots read current frame+2 and limit+3, increment AL with byte wrap,
+and reset to0 only when the resulting byte equals the limit. Values already
+above a nonzero limit keep advancing; limit0 can match FF-to00 wrap. At an
+equal-limit wrap, flag bit0 clears bit1, retaining every other bit. The current
+frame byte is written before reading live unsigned stride+6. MUL sets DX:AX;
+the live base word+15 is added to low AX and written to+17. High DX remains the
+product high word. The flags word is then stored at+0. Provider changes between
+these accesses must remain visible; no record snapshot or decoded structure
+owns the state. Both cursor additions and LOOP retain their original flags.
+
+The tail changes no segment register or DF/IF and has no internal stack frame.
+The core boundary is immediately before7C66 RET; the gated early boundary is
+before394E RET. An adapter must read the actual live SS:SP word after all stores,
+including a flags/frame/offset store that aliases that return word. Arithmetic
+flags undefined after logic/MUL remain separate from defined flag observations.
+The7BB8 drawing connection retains its actual far8822 frame and live CX/DI/SI
+saves rather than copying these records into host-owned state.
+
+Scoped animation acceptance now passes61 fixtures at logical-core and actual
+near-RET adapter boundaries, with12 additional null-bus repeats:134 comparisons,
+all39 sites/all17 jump outcomes,22,816 compared native bus events and2,110
+reference events for the null-bus repeats. Eight compiled mutants complete and
+are detected. The direct7C0A tail contributes35 sites/14 outcomes within that
+scope. Fixtures cover every single-active position and all256 frame bytes,
+separate update/creation gates, equality/over-limit/FF wrap, staleBX and the
+retained one-shot bit0, full DX product, post-frame live base provider/stride math,
+future definition/type-gate providers, DF/IF, DS=SS record/return aliases,
+physical20-bit outerRET wrapping and VGA-backed records/stack. The independent
+ordinary-RAM projection uses the exact sequential record behavior.
+
+The report is build/object-animation-differential.json; its input hashes own
+acceptance. Gated and direct-tail ranges overlap: only104 unique main C bytes
+are added (18,100 to18,204). Initialization, renderer connection, scheduling
+and broader allocation/provider domains remain separate.
+
+DrawLevelObjectGraphics7BB8 initializes the same two cursors and CX=32. For
+nonzero big-endian X it first saves CX,DI,SI, then computes X-live[DS:0000]+16
+with16-bit wrap. Y and drawing flags are big-endian; bit0 of flags is cleared.
+That cleared bit forces8822's unshifted selection even for non-byte-aligned X;
+do not silently replace it with a coordinate-based shifted dispatch.
+Live graphics+4/+5 supply byte width/height, +17 supplies SI, and +8+SI supplies
+the mask cursor DI. CH becomes4. The farCALL7BF9 pushes the actual CS and7BFE
+return IP; the native child is the existing8822 planar core.
+
+The caller does not initialize GraphicsResourceSegment1FE4. The renderer reads
+that live source segment; the explicit game-data segment carries the relocated
+09A9 operand used by renderer bodies and need not equal current DS. Child-returned
+DS/ES and every general register remain live. Only a normal child boundary
+permits reading RETF's actual IP/CS, and only expected CS:7BFE permits POP SI,
+DI,CX. Cursor additions and LOOP then use these live values; CX=32 is an initial
+value, not a hard iteration cap. Missing byte-port services, changed child near
+returns and changed far returns stop before those parent restores. The normal
+core boundary is before7C09; the adapter alone consumes its actual outer RET.
+
+The drawing gate now passes50 constructed caller fixtures plus one actual
+native animation-to-drawing handoff:55 core/actual-RET comparisons, all33 caller
+sites/all4 jump outcomes,346 integrated sites,30,706 ordered bus events and109
+independent plane checks. Six compiled mutants complete and are detected.
+All32 single-active positions and both full32-object DF passes retain their
+complete records. Explicit first-OUT providers rewrite the actual child-saved
+DS, parent-saved SI/DI/CX and far return IP; the original preflight proves
+DS=7000, the changed two-iteration cursor result, and far target4567. A separate
+dirty-map alias proves the child near-return stop. Missing read-mask byte
+services stop at969C. DS=SS and physically wrapped stack words remain live.
+
+The handoff first compares the native animation adapter with ASM on complete
+RAM/registers/flags/events, then feeds that exact resulting memory and state
+into the drawing adapter. Its computed frame source0100 and independent child
+inputs/planes are checked without a host graphics-record projection. This
+does not accept the enclosing01B6/01B9 CALL sequence or IRQ schedule.
+The report is build/object-drawing-tick-differential.json with matching input
+hashes. Only82 new caller bytes are added; the renderer and animation overlap
+their existing ranges. Together the pair adds186 unique main C bytes, taking
+the ledger union from18,100 to18,286. This is scoped acceptance; retained older
+reports do not become current aggregate evidence by surviving on disk.
+
 GroundTerrainGraphicsRecords at DS:1D0B..1F0A is the following 64 eight-byte
 records. 7C67 masks its terrain selector to six bits, then reads width/height
 bytes at +0/+1 and little-endian drawing offsets at +2/+4. Its far drawing callee
@@ -86,9 +179,11 @@ zero check. Rectangles write byte 9 at SS:0012+X+416*row with live row saves.
 
 These cell-writing routines now have native cores, and the four object calls
 inside 36B6 are connected within their original 376A..3775 span. See
-interaction-cells.md for live saves, return transfers and verification. The
-36B6/394F setup consumers, native VGA ownership, far blit 8822 and broader
-asynchronous/alias contracts remain unported. Full level setup is not complete.
+interaction-cells.md for live saves, return transfers and verification. Their
+native setup/redraw/render consumers have separate scoped gates; see
+level-drawing.md,level-redraw.md and drawing-render.md. Wider allocation,
+provider, native-device and asynchronous/alias contracts remain open. Full
+level setup is not complete.
 
 ## Native leaf verification
 

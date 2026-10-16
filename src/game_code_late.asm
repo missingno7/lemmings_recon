@@ -1,10 +1,12 @@
 ; Maintained image span 03944..03AC7; physical order and UNKNOWN bytes preserved.
 times -(($-$$) != 0x3944) db 0 ; module start assertion
-sub_3944:
-    cmp byte [0x2b],0xff ; @03944
-    jz loc_394E ; @03949
-    jmp loc_7C0A ; @0394B
-loc_394E:
+; ANIMATION GATE: exactly FF at live DS:002B returns before touching records.
+; The JMP enters the shared32-record tail without adding a guest stack frame.
+AdvanceLevelObjectAnimations:
+    cmp byte [EntityUpdateGate-GameDataImage],0xff ; @03944
+    jz ObjectAnimationEarlyReturn ; @03949
+    jmp AdvanceLevelObjectAnimationRecords ; @0394B
+ObjectAnimationEarlyReturn:
     ret ; @0394E
 ; LEVEL-DISPLAY REBUILD: native composition preserves live DS/ES/SS and actual
 ; near/far frames through initialization,special/terrain,copy and object drawing.

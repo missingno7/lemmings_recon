@@ -187,8 +187,8 @@ CreateAndAdvanceEntityRecords:
 EntityBatchAfterCreateCall:
     call AdvanceEntityRecords ; @001B3
 EntityBatchNextCaller:
-    call sub_3944 ; @001B6
-    call sub_7BB8 ; @001B9
+    call AdvanceLevelObjectAnimations ; @001B6
+    call DrawLevelObjectGraphics ; @001B9
     call sub_3634 ; @001BC
     call SelectEntityCandidate ; @001BF
     call UpdateStatusDisplay ; @001C2
@@ -480,8 +480,8 @@ loc_0480:
     call sub_81CC ; @0048C
     call sub_39CE ; @0048F
     call InstallGameTimerVector ; @00492
-    call sub_3944 ; @00495
-    call sub_7BB8 ; @00498
+    call AdvanceLevelObjectAnimations ; @00495
+    call DrawLevelObjectGraphics ; @00498
     call sub_7900 ; @0049B
     call UpdateStatusDisplay ; @0049E
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004A1

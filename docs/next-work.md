@@ -328,19 +328,31 @@ full40-byte line and the pre-DIV exception boundary remain explicit. The full
 entry and suffix ranges overlap; only527 new unique bytes are added, taking
 the main-image C ledger union from17,573 to18,100. See status-display.md.
 
-Next close the3944 entry and its JMP tail7C0A..7C66:104 decoded bytes/39 sites,
-with no child calls or unresolved transfers in the fresh dependency view.
-Keep the gate002B, live EntityCreationGate0055,32 big-endian object definitions
-and28-byte mutable graphics records. A zero-X definition jumps to the flag
-store with stale BX; type testing reads only the low byte, and the frame
-increment/limit, one-shot flag and MUL/base-offset stores retain live access
-order. Name the shared-tail entry and keep JMP entry free of an extra frame.
-Then connect7BB8..7C09 (82 bytes/33 sites) to the existing8822 renderer through
-its actual far CALL and live CX/DI/SI saves. This closes the next per-tick pair
-after creation/update and before entity drawing/status/action dispatch.
-The3634 parent still depends on6FE2/5726/6E83/706F and the unresolved715B
-indirect target domain; do not guess past it. The separate75EF/7602 leaves
-are the next initializer dependencies for39CE after the per-tick pair.
+The3944 gate/shared7C0A animation tail now passes61 fixtures/134 core,
+adapter and selected null-bus comparisons:104 known bytes/all39 sites/all17
+jump outcomes,22,816 native ordered events and eight completed mutants. The
+7BB8 draw caller passes50 constructed fixtures plus one actual native animation
+handoff,55 comparisons,all33 caller sites/all4 outcomes,346 integrated sites,
+30,706 events,109 independent plane checks and six completed mutants. The pair
+adds186 unique main C bytes, taking the ledger union from18,100 to18,286.
+Their maintained object_graphics_tick.asm keeps physical byte order. StaleBX,
+separate002B/0055 gates, equality-only frame wrap, low-byte type, live MUL/base,
+forced-unshifted drawing, actual saved SI/DI/CX and child near/far/provider
+boundaries remain explicit. See object-records.md. This does not accept the
+enclosing tick CALL sequence, full native device timing or IRQ scheduling.
+
+Next port7602 (40 bytes/17 sites) then75EF (59 unique bytes/22 sites including
+that leaf), then the39CE status initializer (250 bytes/70 sites). Its remaining
+children4B68/762A/780D already have scoped native gates. Each7602 pass copies
+the full06E0 bytes from A000:F91F through FFFE when DF is clear; source end is
+exclusiveFFFF. Reverse DF traverses F91F down to F240. Keep live PUSH/POP DS,
+SS:0008/0000 mirrors and OUTs, actual near returns, mode1 latch behavior and
+VGA overlap. The75EF wrapper CALLs7602 once, then rereads the second origin
+through the returned DS and falls through into7602; do not invent a second
+CALL frame. The39CE initializer must carry every returned child role through
+its ten count calls, decimal field and outline before actual RET3AC7.
+The3634 entity-drawing parent still depends on6FE2/5726/6E83/706F and the
+unresolved715B indirect target domain; preserve that frontier.
 
 StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
@@ -358,10 +370,10 @@ required before aggregate acceptance.
 Use fresh dependency views rather than an accumulated historical task list:
 
 ```powershell
-.venv\Scripts\python.exe tools\graph.py 3944 --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 3944 --bottom-up
-.venv\Scripts\python.exe tools\graph.py 7BB8 --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 7BB8 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 7602 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 75EF --bottom-up
+.venv\Scripts\python.exe tools\graph.py 39CE --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 39CE --bottom-up
 .venv\Scripts\python.exe tools\graph.py 3AC8 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --bottom-up
