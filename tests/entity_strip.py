@@ -683,7 +683,7 @@ def input_hashes():
         'metadata/tandysnd-symbols.json', 'metadata/toolchain-lock.json',
         'src/program.asm', 'src/game_code.asm', 'src/sound/pcspeaker.asm',
         'src/sound/adlib.asm', 'src/sound/tandysnd.asm', 'src/entity_strip.asm',
-        'src/game_code_after_entity_minimap.asm',
+        'src/entity_sprite_dispatch.asm', 'src/game_code_after_entity_minimap.asm',
         'src/entity_sprite_planes.asm', 'src/entity_sprite_wide.asm',
         'src/entity_sprite_four_planes.asm', 'src/entity_graphics.asm',
         'src/image_tail.asm',

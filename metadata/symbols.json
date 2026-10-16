@@ -42284,7 +42284,7 @@
     "address": 28783,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 240,
     "symbol_name": "DrawObjectSprite",
     "aliases": [
       "sub_706F"
@@ -42458,28 +42458,42 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "high",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Maintained706F..715E parent:113 decoded sites, live descriptor field anchors, nine known callback domains plus optional6F7B;715B arbitrary targets remain unresolved. docs/entity-sprite-dispatch.md",
+      "Bounded native core/adapter composition through actual child frames; arbitrary live callback targets and provider/IRQ timing remain open."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 240
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 240,
+    "c_implementation": "c/entity_sprite_dispatch.c",
+    "c_core": "lmn_draw_entity_sprite_core",
+    "c_code_ranges": [
+      [
+        28783,
+        29023
+      ]
+    ],
+    "verification_evidence": "tests/entity_sprite_dispatch.py:45 fixtures/90 core and actual-RET comparisons,240 new bytes/all113 parent sites/all15 branch outcomes,63950 ordered byte-bus events and10 completed mutants. Integrated nine callbacks plus optional strip:3690 bytes/1875 sites/144 edges, with child bytes counted once. Independent pre-CALL coordinate/product/segment/cursor/alignment/SP projections and unchanged original5B11/5BB0/5C06 handoffs. Actual SS selector/callback/DS/DI/child/outer return words, defined FLAGS, returned DS/ES, physical20-bit word wrap. Unknown715B callback and changed child returns remain explicit. docs/entity-sprite-dispatch.md"
   },
   {
     "address": 29021,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_715D",
-    "aliases": [],
+    "size": 2,
+    "symbol_name": "EntitySpriteRestoreDI",
+    "aliases": [
+      "sub_715D"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
-    "confidence": "HYPOTHESIS",
+    "confidence": "high",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Shared POP DI/RET tail of706F after visibility miss or callback return; live SS words"
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "STATIC",
     "reachable_instruction_bytes": 2
   },
   {
@@ -61719,5 +61733,277 @@
       "Actual near RET after live POP DS; logical core boundary"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 29013,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 4,
+    "symbol_name": "EntitySpriteStripResume",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Live BX/SI/CX/DI POPs after actual7152 child return"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 29019,
+    "segment": 0,
+    "kind": "call_site",
+    "size": 2,
+    "symbol_name": "EntitySpriteIndirectCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual POPped AX is a live near target; unknown targets remain explicit before CALL"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 29022,
+    "segment": 0,
+    "kind": "return",
+    "size": 1,
+    "symbol_name": "EntitySpriteReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "Actual outer near RET after live saved DI restore"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 136,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordX",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+00;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 138,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordY",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+02;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 140,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordDrawingXBias",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+04;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 142,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordDrawingYBias",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+06;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 146,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordSpriteSourceOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+0A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 148,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordSpriteParagraphOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+0C;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 152,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordSpriteFrameStride",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+10;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 154,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordSpriteMaskOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+12;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 156,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordSpriteCallback",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+14;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 168,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordStripSelector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+20;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 175,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordFrameAddGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+27;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 176,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordFrameSelector",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+28;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 177,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordFrameAddend",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+29;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 178,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordAlignmentGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "high",
+    "evidence": [
+      "First45-byte entity-record anchor only, base0088+2A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

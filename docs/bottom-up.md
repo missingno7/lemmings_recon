@@ -43,7 +43,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 06E83..06F7A | entity_points.asm | Point-cloud leaf, live point/color tables and nested SS saves; table ownership remains UNKNOWN |
 | 06F7B..06FE1 | entity_strip.asm | Two-byte strip with incoming CX source segment, DF strings and actual popped LOOP count |
 | 06FE2..0706E | entity_minimap.asm | Signed entity minimap pixel guards, live saved X/table and VGA effects |
-| 0706F..075EE | game_code_after_entity_minimap.asm | Sprite dispatch suffix; unresolved715B and UNKNOWN preserved |
+| 0706F..0715E | entity_sprite_dispatch.asm | Live entity descriptor arithmetic, optional strip and dynamic callback; unresolved715B retained |
+| 0715F..075EE | game_code_after_entity_minimap.asm | Display suffix; mixed ownership and UNKNOWN preserved |
 | 075EF..07629 | status_copy.asm | Full DF-sensitive status-region copy, live DS and single-CALL/fallthrough wrapper |
 | 0762A..0780C | status_glyphs.asm | Count and character glyph contracts; five UNKNOWN bytes preserved |
 | 0780D..078FF | status_icons.asm | Status outline and restoration; signed selector and live VGA frames |
@@ -651,7 +652,17 @@ checked 5BB0 banks and all eight checked 5C06 banks feed unchanged RAM handoffs;
 producer bytes/sites/transactions remain separate from the consumer C union.
 Another 1,280 original-only shift-prefix probes check all 256 CL values at each
 narrow entry, saved SI and defined FLAGS. See entity-sprites.md for scopes.
-Next connect 706F's known child domains while keeping the 715B changed-target
-boundary explicit, then the enclosing 3634 loop. Initial callback slots do not
-close arbitrary live targets, and finite fixture evidence does not close IRQ,
-provider, allocation or complete gameplay domains.
+That checkpoint selected 706F before the enclosing 3634 loop. Initial callback
+slots do not close arbitrary live targets, and finite fixture evidence does
+not close IRQ, provider, allocation or complete gameplay domains.
+
+The 706F sprite parent now adds 240 unique main C bytes, taking the ledger
+union to 22,909. Its 45 fixtures/90 core and actual-RET comparisons cover all
+113 parent sites/15 branch outcomes, with 63,950 ordered events and ten
+completed mutants. The integrated nine-callback/strip domain is 3,690 bytes,
+1,875 sites and 144 branch outcomes; existing child bytes are counted once.
+Actual original producer banks pass through normal record selection unchanged.
+Live selector/callback/DS/DI/return-word changes and the physical FFFFF-to-zero
+word boundary remain explicit. See entity-sprite-dispatch.md and the matching
+report inputs. Next connect the 3634 record loop and its frame-free decimal
+tail, preserving UNKNOWN 366F and the live DS:0050 guard.

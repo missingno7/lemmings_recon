@@ -391,7 +391,7 @@
 #define CS_DrawEntityTwoByteStrip 0x6F7Bu
 #define CS_DrawEntityMinimapPixel 0x6FE2u
 #define CS_DrawObjectSprite 0x706Fu
-#define CS_sub_715D 0x715Du
+#define CS_EntitySpriteRestoreDI 0x715Du
 #define CS_sub_715F 0x715Fu
 #define CS_sub_7218 0x7218u
 #define CS_CopyStatusRegionToBothDrawingOrigins 0x75EFu
@@ -857,4 +857,21 @@
 #define CS_EntitySprite3Plane16Return 0x6BDAu
 #define CS_EntityWideSprite32Return 0x6CFBu
 #define CS_EntitySprite4Plane14Return 0x6E82u
+#define CS_EntitySpriteStripResume 0x7155u
+#define CS_EntitySpriteIndirectCall 0x715Bu
+#define CS_EntitySpriteReturn 0x715Eu
+#define SEG09A9_EntityRecordX 0x0088u
+#define SEG09A9_EntityRecordY 0x008Au
+#define SEG09A9_EntityRecordDrawingXBias 0x008Cu
+#define SEG09A9_EntityRecordDrawingYBias 0x008Eu
+#define SEG09A9_EntityRecordSpriteSourceOffset 0x0092u
+#define SEG09A9_EntityRecordSpriteParagraphOffset 0x0094u
+#define SEG09A9_EntityRecordSpriteFrameStride 0x0098u
+#define SEG09A9_EntityRecordSpriteMaskOffset 0x009Au
+#define SEG09A9_EntityRecordSpriteCallback 0x009Cu
+#define SEG09A9_EntityRecordStripSelector 0x00A8u
+#define SEG09A9_EntityRecordFrameAddGate 0x00AFu
+#define SEG09A9_EntityRecordFrameSelector 0x00B0u
+#define SEG09A9_EntityRecordFrameAddend 0x00B1u
+#define SEG09A9_EntityRecordAlignmentGate 0x00B2u
 #endif

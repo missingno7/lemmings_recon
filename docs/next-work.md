@@ -2,13 +2,19 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 22,669 bytes. The latest scoped
-acceptance adds all six remaining sprite callbacks at 66D7/6817/6957/6A97/6BDB/
-6CFC: 1,964 unique bytes, 985 sites, 103 branch outcomes, 144 core/actual-RET
-comparisons and 20 completed mutants. The two new native reports compare
-203,570 ordered byte-bus events and 136,200 independent plane-byte writes.
-Another 1,280 original-only prefix probes cover all 256 unchecked shift counts
-at each of the five narrow entries, separately from native comparisons.
+The main-image translated-code ledger union is 22,909 bytes. The latest scoped
+acceptance connects DrawObjectSprite at 706F..715E to all nine initialized
+sprite callbacks and the optional strip through their actual CALL/RET words.
+Its 45 fixtures at both APIs compare 63,950 ordered byte-bus events, covering
+all 113 parent sites and 15 branch outcomes, with ten completed mutants.
+The integrated domain contains 3,690 bytes/1,875 sites/144 branch outcomes;
+only the parent's 240 bytes are new to the union.
+
+The preceding acceptance added six callbacks at 66D7/6817/6957/6A97/6BDB/6CFC:
+1,964 unique bytes, 985 sites, 103 branch outcomes, 144 core/actual-RET
+comparisons and 20 completed mutants. Their two reports compare 203,570 ordered
+events and 136,200 independent plane-byte writes. Another 1,280 original-only
+prefix probes cover all 256 unchecked shift counts at each narrow entry.
 
 Five original 5BB0 producers independently verify 80/104/112/128/140-byte banks
 used unchanged by the new narrow consumers. One original 5C06 producer verifies
@@ -17,15 +23,20 @@ Producer transactions/sites stay separate and their code remains untranslated.
 The earlier aligned and two-plane callbacks are rechecked after the shared C
 factorization and helper changes. See entity-sprites.md for exact report scopes.
 
-Fresh 706F dependency views now reach tested C domains for all nine initialized
-sprite callbacks and the optional strip. Next translate DrawObjectSprite
-(706F..715E, 240 bytes/113 sites) using its recorded live field/stack contract.
-Compose recognized callback targets through actual CALL/RET frames and retain
-an explicit boundary for other live targets at 715B; slot initialization does
-not close that domain. A changed strip return must stop before assumed 7155
-restoration; callback returns and the outer saved DI/RET also stay live. Then
-connect the enclosing 3634 record loop and its shared decimal tail while
-preserving UNKNOWN 366F and provider/IRQ seams.
+The parent gate also feeds unchanged banks from original 5B11/5BB0/5C06 runs
+through the actual record arithmetic. Closed-form coordinate/cursor checks
+stop before CALL AX. Provider fixtures change the saved selector, callback,
+DS, DI and child return words; unknown callbacks stop before 715B without a
+child push, and changed returns stop before assumed restores. See
+entity-sprite-dispatch.md. Initial slots do not close the live target domain.
+
+Next connect the enclosing 3634 record loop: 89 known body bytes/35 sites,
+with UNKNOWN 366F excluded. Fresh dependency views include the shared decimal
+tail in its larger reachable extent. Preserve zero-bound early RET, signed
+frame selection for the point path, the live EntityWorkGuard at DS:0050,
+returned DS/ES and outer saved DI/CX. The final 368A JMP to
+WriteDecimalByteField adds no frame; its RET consumes the caller's original
+word. Keep provider/IRQ seams and the 706F changed-target statuses explicit.
 
 This is focused acceptance. Full campaigns and matching inputs remain necessary
 for aggregate acceptance, and SDL3 follows the portable core.

@@ -7,6 +7,10 @@ the entity, source graphics, masks or save frame. Executing code must remain
 intact and TF clear in the bounded native domain. Device and IRQ timing remain
 separate platform obligations.
 
+The enclosing706F descriptor arithmetic and live child frames are recorded in
+entity-sprite-dispatch.md. Its named first-record anchors remain aliases in
+canonical memory; they do not establish a converted or bounded record schema.
+
 ## Source ownership
 
 The allocation path at 1007 requests 5571h paragraphs and publishes the returned
@@ -220,5 +224,6 @@ build/entity-sprite-planes-original-differential.json and
 build/entity-sprite-wide-differential.json. Acceptance requires matching scopes
 and input hashes. The complete 59BB transform, 3634 record loop, allocation
 lifetime, provider/IRQ timing and full gameplay remain outside this checkpoint.
-Next connect the known child domains at 706F, with explicit changed-target and
-changed-return boundaries.
+The 706F parent now connects these known child domains with explicit
+changed-target and changed-return boundaries; see entity-sprite-dispatch.md
+for its separate focused acceptance.

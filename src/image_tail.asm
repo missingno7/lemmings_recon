@@ -5723,3 +5723,19 @@ LevelActionCountDisplaySnapshot6 equ GameDataImage+0x007D
 LevelActionCountRefreshCounter6 equ GameDataImage+0x007E
 LevelActionCountDisplaySnapshot7 equ GameDataImage+0x0080
 LevelActionCountRefreshCounter7 equ GameDataImage+0x0081
+
+; First entity-record field anchors; later records retain their live45-byte stride.
+EntityRecordX equ EntityRecordsBase+0x00
+EntityRecordY equ EntityRecordsBase+0x02
+EntityRecordDrawingXBias equ EntityRecordsBase+0x04
+EntityRecordDrawingYBias equ EntityRecordsBase+0x06
+EntityRecordSpriteSourceOffset equ EntityRecordsBase+0x0A
+EntityRecordSpriteParagraphOffset equ EntityRecordsBase+0x0C
+EntityRecordSpriteFrameStride equ EntityRecordsBase+0x10
+EntityRecordSpriteMaskOffset equ EntityRecordsBase+0x12
+EntityRecordSpriteCallback equ EntityRecordsBase+0x14
+EntityRecordStripSelector equ EntityRecordsBase+0x20
+EntityRecordFrameAddGate equ EntityRecordsBase+0x27
+EntityRecordFrameSelector equ EntityRecordsBase+0x28
+EntityRecordFrameAddend equ EntityRecordsBase+0x29
+EntityRecordAlignmentGate equ EntityRecordsBase+0x2A

@@ -721,7 +721,7 @@ def input_hashes():
         'assets/adlib.dat', 'assets/tandysnd.dat', 'metadata/oracle.json',
         'metadata/symbols.json', 'metadata/regions.json', 'metadata/inputs.json',
         'metadata/hints.json', 'metadata/toolchain-lock.json', 'src/program.asm',
-        'src/entity_minimap.asm', 'src/game_code_after_entity_minimap.asm',
+        'src/entity_minimap.asm', 'src/entity_sprite_dispatch.asm', 'src/game_code_after_entity_minimap.asm',
         'src/image_tail.asm',
         'c/entity_minimap.c', 'c/entity_minimap.h', 'c/regs.h',
         'c/special_blit.h', 'c/lemmings_sym.h', 'tests/entity_minimap.py',
