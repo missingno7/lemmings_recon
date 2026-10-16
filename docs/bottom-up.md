@@ -179,11 +179,16 @@ frames,wrapped+21 counter and late callback transitions compose the tested
 children. State0100 passes19 fixtures:83 caller bytes/22 sites/all4 outcomes,
 2,726 events and six mutants,retaining separate cadence memory RMWs and actual
 pixel/pattern frames. These add420 unique bytes; see entity-simulation.md.
-Next compose state0200 at287D..2A6C:496 known bytes/169 sites/59 jump outcomes,
-with no known interior direct cross-entry or UNKNOWN hole. Its six mask/pixel
-CALLs and INT61 prefix already have scoped C domains. Preserve the post-mask
-phase reread,four coordinate returns,live pitch,Y increments,unchecked SS map
-nibble,late callback and returned DS before NEG+27. The caller remains unported.
+States0200/0400 and the8000/flag80 entries now add938 unique bytes/309 sites/
+112 unique owned outcomes in46/24/31 core/adapter fixtures,with9/8/6 completed
+mutants. They compose native mask,coordinate,pixel,sound and finish contracts;
+UNKNOWN2ABD/2ADB/2AEB and pair-source extent remain unresolved. Same-target
+conditional transitions count once while their live reads/flags remain tested.
+Next compose0800 at2B35..2D0E:473 known bytes/157 sites/70 unique outcomes,
+excluding UNKNOWN2B50. Its signed cadence admits130 thirteen-row selector
+inputs,including negative CBW values; do not assume the intended0..1 domain.
+The children are already scoped C domains. Then connect the outer1F19 iteration/
+scan entry with all state branches. See entity-simulation.md and next-work.md.
 The remaining states and live1FEB iteration/scan parent retain initialization,
 table,platform and IRQ obligations.
 

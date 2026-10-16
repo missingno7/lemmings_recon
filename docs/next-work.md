@@ -205,17 +205,29 @@ live pixel-produced ES and the final1FEB JMP. Child/tail bytes overlap existing
 translations and are not added again. See entity-simulation.md. Record+21=0C
 at32F2 remains one observed producer,not a proven whole-field domain.
 
-Next port state0200 at287D..2A6C:496 known bytes/169 sites/59 owned jump
-outcomes (20 conditional branches plus19 unconditional jumps). The sole known
-external direct entry is1FC5; no known interior cross-entry or UNKNOWN hole
-splits the body. Preserve separate memory INC/AND cadence,5FAC return28A4 and
-the following raw+28==5 reread,four6141 returns28C7/28D6/28E5/28F4,5DC6
-return294E,fresh pitch and ordered Y increments. The unchecked SS map nibble
-follows actual AX/DX pushes and pops; nibble9 can request INT61 AX040A with
-return2A6A before NEG+27,including live returned DS. Transitions read callback
-002E late. Direct exits JMP1FE8/1FEB without an added frame; all direct children
-retain scoped native contracts. The following0400 handler starts2A6D and is a
-separate frontier.
+States0200/0400/8000 and the+24-bit80 override now add938 unique caller bytes/
+309 sites/112 unique owned jump outcomes. State0200 passes46 core/adapter
+fixtures:496 bytes/169 sites/all59 outcomes,12,454 events and nine completed
+mutants,including native mask/coordinate/pixel/sound and shared PC handoffs.
+State0400 passes24 fixtures:197 known bytes/66 sites/all27 outcomes,2,800
+events and eight mutants. Its three UNKNOWN holes and unchecked pair-source
+extent remain unresolved; naming DS:2698 assigns no bounds. The late entries
+pass31 combined fixtures:245 bytes/74 sites/all26 unique outcomes,2,690 events
+and six mutants. Actual returns,returned DS,late callbacks,RMW flags and the
+same-target scan comparison remain explicit. See entity-simulation.md.
+
+Next port state0800 at2B35..2D0E:473 known bytes/157 sites/70 unique owned
+jump outcomes,excluding UNKNOWN2B50. The sole known external direct entry is
+1FCD. Preserve byte INC with reset only at AL18 (not general modulo arithmetic),
+the signed cadence selector domain,606B return2B63,5DC6 returns2B93/2C2B,
+INT61 AX040A return2D0D,actual shared1FE8/20E2 JMPs,signed bounds,live pitch,
+SS map stack saves and late callback002E. Updated nonzero values1,2,80..FF
+admit130 thirteen-row selector inputs; DEC/CBW produces0,1,007F orFF80..FFFE.
+Do not narrow this domain to0..1 without new evidence. JNS2CB9 has the same
+target and fallthrough2CBB; retain its preceding live sign test and flags.
+All direct children have scoped native domains. After this state,the outer
+iteration/scan entry1F19..2046 (excluding the tested1FE8 CALL) remains to
+compose with all state branches.
 The1F19 parent's eleven direct CALL children retain platform/fatal seams;
 broader initialization,IRQ timing and record/scan composition stay open.
 

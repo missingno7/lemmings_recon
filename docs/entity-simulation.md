@@ -390,12 +390,116 @@ unique caller bytes/137 sites/48 actual owned outcomes. Children and shared
 tails overlap existing translations and are not added again. These are scoped
 native results; the full1F19 parent and aggregate game acceptance remain open.
 
-The following0200 frontier at287D..2A6C owns496 known bytes/169 sites, with
+The0200 body at287D..2A6C owns496 known bytes/169 sites, with
 20 conditional and19 unconditional jumps:59 owned outcomes including conditional
 fallthroughs. Its sole known external direct edge is1FC5 to287D; no interior
 cross-entry or UNKNOWN hole is currently known. It CALLs5FAC(return28A4),6141
 four times(28C7/28D6/28E5/28F4) and5DC6(return294E). INT61 AX040A returns2A6A
 and flows into29C1, including returned DS. The2A00 nibble calculation reads
 unchecked SS:[BX] only after live AX/DX pushes and pops. Its children have
-scoped native contracts, while the0200 caller remains untranslated. The separate
+scoped native contracts, composed by the caller as described below. The separate
 0400 handler begins2A6D and precedes0200 in dispatch priority.
+
+## State0200 handoffs
+
+INC/AND byte+28 are separate memory RMWs; MOV AL rereads the masked byte,
+then AND AL,0F selects the low phase. Phases2..5 subtract2 and CBW before
+5FAC. The actual return28A4 precedes a fresh raw+28 comparison against5,
+so phase15h does not continue merely because its low nibble equals5. Live
+DS/SI restored by the mask child own the subsequent record reads. The four
+6141 calls sample Y-6 at X+8*signed(+27), then add the live BP velocity to
+returned CX between samples; their actual BX/CX/DX restores must flow onward.
+Four clear samples perform ordered zero-state stores and JMP1FEB directly.
+
+Phases0B..0F sign-extend+27 and ADD live X before signed bounds[10,680).
+The5DC6 call is followed by three samples; only clear samples INC live Y.
+The later samples add fresh DS:0004 pitch to returned DI. Three clear samples
+OR+08 with0004, perform the transition stores, then clear+08 bit0200 after
+the late callback002E read. A collision computes an unchecked SS map nibble
+after actual AX/DX saves and restores. Nibble7/8 rereads+27 for sign-sensitive
+decisions; nibble9 can request native INT61 AX040A. Returned DS flows into the
+29C1 memory NEG and late-callback transition. The caller does not add frames
+for its original1FE8/1FEB JMPs.
+
+`tests/entity_state200.py` passes46 fixtures at logical-core/JMP-adapter
+boundaries:496 new bytes/169 sites/all59 unique owned jump outcomes,12,454
+ordered events and nine completed mutants. This includes the actual ten-row
+mask under the readback-mode-one register state, a returned-DS/raw-phase
+witness, live coordinate BX restores, changed returns to another valid
+coordinate continuation, SS map/stack aliases and post-INT61 returned DS
+before NEG. A focused1FE8 handoff also enters the native PC service. Per-call
+limits are4,096 instructions/4,096 events; worker bounds are180 seconds,
+384 MiB process and640 MiB Windows tree. Exact input hashes and integrated
+sites are retained in `build/entity-state200-differential.json`.
+
+## State0400 pair source
+
+The2A6D..2B34 body owns197 known bytes/66 sites/27 unique jump outcomes;
+UNKNOWN2ABD/2ADB/2AEB remain excluded. Its only known external entry is1F85.
+`EntityState0400PairBase` names the observed DS:2698 reference (imageC128),
+with size zero and no table extent. Its stored bytes remain UNKNOWN. The
+21E3 producer initializes record+0E to zero while setting+08=0400; no complete
+index or record domain follows from that path. Every visit adds two to the
+live word without a bounds check, retaining offset and arithmetic wrapping.
+
+Entry reads the first byte at2698+index and stores+28 before reading the
+second byte atBX+1. Only then does memory ADD+0E,2 run, so aliases can change
+the second fetch but cannot replace its already-loaded AL after the ADD.
+CBW preserves the signed second byte. Values3/2/1 call5DC6 through actual
+returns2A95/2AC1/2ADF and perform three/two/one samples respectively. Each clear
+sample INCs live Y; intermediate DI increments read fresh pitch. An occupied
+sample retains prior Y increments and performs ordered stores before the late
+callback002E read and1FE8 JMP. Other second-byte values ADD signed AX directly
+to Y. The shared2B28 signed threshold compares live Y withB4 and JMPs1FE8 or
+20E2; it does not independently clamp or store height.
+
+`tests/entity_state400.py` passes24 core/adapter fixtures:197 new bytes/66
+sites/all27 unique owned outcomes,129 integrated main sites,2,800 ordered
+events and eight completed mutants. First-store/second-fetch and consumed-AL/
+index-ADD aliases, direct signed additions, all probe counts, partial Y
+increments, late callback, pitch providers and actual RET seams remain live.
+Per-call limits are2,000 instructions/1,024 events, with the same180-second/
+384-MiB process/640-MiB tree bounds. The three UNKNOWN bytes and pair-source
+extent stay unresolved. See `build/entity-state400-differential.json`.
+
+## State8000 and the flag override
+
+State8000 at2D0F..2DB4 owns166 bytes/53 sites/22 unique jump outcomes. Its
+register cadence is modulo16. Zero ORs0002 into+08 and performs ordered
+transition stores; +06=FFE7 precedes+04=FFF0. The callback read uses slot003C,
+and+22 is set to0F before the+24 mask and optional INT61 AX040C. Return2D6A
+retests live+08 bit0004 through the returned DS before deciding whether to
+clear+22. Nonzero cadence5 reads DS:004B (`EntityScanRequest`) and CMPs FF;
+the2D81 JNZ target equals its fallthrough2D83. Both compare predicates are
+exercised while the edge set records that transition once. The read and flags
+remain observable at the actual pixel CALL frame. Return2D86 precedes three
+samples: clear samples INC BP, fresh pitch advances DI only between probes,
+and the shared20D6 tail stores BP before the signed B4 inactive decision.
+
+The+24 bit80 override at2DB5..2E03 owns79 bytes/21 sites/four outcomes and
+precedes all state-word dispatch. Register modulo8 cadence either JMPs1FEB
+or performs ordered zero-state stores, reads callback002E late, then runs
+separate memory AND+24,1 and AND+24,7F before JMP1FE8. Their read/write and
+entry-FLAGS phases remain distinct even when the second mask leaves the byte
+unchanged. Neither JMP introduces a frame.
+
+`tests/entity_late_states.py` passes31 combined core/adapter fixtures:245
+new bytes/74 sites/all26 unique owned outcomes,142 integrated main sites,
+2,690 ordered events and six completed mutants. The fixtures include both
+scan comparisons, DF, VGA-backed stack/map behavior, actual pixel/IRET seams,
+late callback aliases and returned DS before the post-sound bit test. Limits
+are4,096 instructions/4,096 events per call and180 seconds/384 MiB process/
+640 MiB Windows tree per worker. See
+`build/entity-late-states-differential.json`. These four new handlers add938
+unique caller bytes/309 sites/112 unique owned outcomes; shared tails and
+children are not counted again. This remains scoped native acceptance.
+
+The next state0800 frontier is2B35..2D0E:473 known bytes/157 sites/70 unique
+owned outcomes, excluding UNKNOWN2B50. Its sole known external entry is1FCD.
+Calls are606B(return2B63) and5DC6(2B93/2C2B); INT61 AX040A returns2D0D.
+Preserve the signed thirteen-row selector domain: nonzero updated+28 values
+1,2,80..FF admit130 inputs, and DEC/CBW yields AX0,1,007F orFF80..FFFE.
+There is no proof restricting this to intended selectors0..1. JNS2CB9 also
+targets its own fallthrough2CBB; retain the preceding live sign test while
+counting the unique transition once. The outer iteration/scan composition
+then remains at1F19..2046, excluding the already-tested1FE8 CALL.

@@ -38,7 +38,7 @@ loc_1F54:
     mov al,[si+0x24] ; @01F54
     test al,0x80 ; @01F57
     jz loc_1F5E ; @01F59
-    jmp loc_2DB5 ; @01F5B
+    jmp AdvanceEntityFlag80Override ; @01F5B
 loc_1F5E:
     mov ax,[si+0x8] ; @01F5E
     db 0x23,0xc0 ; ENCODED: and ax,ax (NASM chooses a different encoding) ; @01F61
@@ -51,7 +51,7 @@ loc_1F68:
 loc_1F70:
     test ax,0x8000 ; @01F70
     jz loc_1F78 ; @01F73
-    jmp loc_2D0F ; @01F75
+    jmp AdvanceEntityState8000 ; @01F75
 loc_1F78:
     test ax,0x4 ; @01F78
     jz loc_1F80 ; @01F7B
@@ -59,7 +59,7 @@ loc_1F78:
 loc_1F80:
     test ax,0x400 ; @01F80
     jz loc_1F88 ; @01F83
-    jmp loc_2A6D ; @01F85
+    jmp AdvanceEntityState0400 ; @01F85
 loc_1F88:
     test ax,0x1 ; @01F88
     jz loc_1F90 ; @01F8B
@@ -1090,7 +1090,7 @@ sub_283B:
 ; The unchecked SS map nibble is read after actual AX/DX saves and restores.
 ; INT61 AX040A returns2A6A before NEG+27; its live DS effects flow onward.
 ; Transition callback002E is read late. Shared1FE8/1FEB exits are JMPs.
-; This following frontier has static contracts only; see entity-simulation.md.
+; Scoped native parent/child verification is recorded in entity-simulation.md.
 AdvanceEntityState0200:
 loc_287D:
     inc byte [si+0x28] ; @0287D
@@ -1112,6 +1112,7 @@ loc_289E:
     sub al,0x2 ; @0289E
     cbw ; @028A0
     call DrawTenRowEntityMask ; @028A1
+EntityState0200AfterMaskCall:
     mov al,[si+0x28] ; @028A4
     cmp al,0x5 ; @028A7
     jz loc_28AE ; @028A9
@@ -1128,6 +1129,7 @@ loc_28AE:
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @028C0
     db 0x03,0xc8 ; ENCODED: add cx,ax (NASM chooses a different encoding) ; @028C2
     call PrepareCoordinatePixelSample ; @028C4
+EntityState0200AfterFirstCoordinateCall:
     mov al,[es:di] ; @028C7
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028CA
     jz loc_28D1 ; @028CC
@@ -1135,6 +1137,7 @@ loc_28AE:
 loc_28D1:
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @028D1
     call PrepareCoordinatePixelSample ; @028D3
+EntityState0200AfterSecondCoordinateCall:
     mov al,[es:di] ; @028D6
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028D9
     jz loc_28E0 ; @028DB
@@ -1142,6 +1145,7 @@ loc_28D1:
 loc_28E0:
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @028E0
     call PrepareCoordinatePixelSample ; @028E2
+EntityState0200AfterThirdCoordinateCall:
     mov al,[es:di] ; @028E5
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028E8
     jz loc_28EF ; @028EA
@@ -1149,6 +1153,7 @@ loc_28E0:
 loc_28EF:
     db 0x03,0xcd ; ENCODED: add cx,bp (NASM chooses a different encoding) ; @028EF
     call PrepareCoordinatePixelSample ; @028F1
+EntityState0200AfterFourthCoordinateCall:
     mov al,[es:di] ; @028F4
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @028F7
     jz loc_28FE ; @028F9
@@ -1177,6 +1182,7 @@ loc_293A:
     cmp word [si],0x680 ; @02945
     jnl loc_29C1 ; @02949
     call PrepareEntityPixelSample ; @0294B
+EntityState0200AfterPixelCall:
     mov al,[es:di] ; @0294E
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02951
     jz loc_2958 ; @02953
@@ -1279,10 +1285,20 @@ loc_2A57:
     jz loc_2A6A ; @02A63
     mov ax,0x40a ; @02A65
     int 0x61 ; @02A68
+EntityState0200AfterSound:
 loc_2A6A:
     jmp loc_29C1 ; @02A6A
+; State0400 from1F85. Sparse known2A6D..2B34 excludes three UNKNOWN bytes.
+; Pair index+0E is unchecked;21E3 initializes one observed path to zero.
+; Store first pair byte to+28 before fetching the second, then ADD+0E,2.
+; Second byte CBW dispatches3/2/1 probes or a signed direct Y addition.
+; Clear probes INC live Y and reread pitch between samples; occupied probes
+; keep prior increments and transition through a late callback002E read.
+; Signed Y>=B4 JMPs20E2 without a height store; other finishes JMP1FE8.
+; The pair base is named only as a reference: its extent and bytes stay UNKNOWN.
+AdvanceEntityState0400:
 loc_2A6D:
-    mov bx,0x2698 ; @02A6D
+    mov bx,EntityState0400PairBase-GameDataImage ; @02A6D
     add bx,[si+0xe] ; @02A70
     mov al,[bx] ; @02A73
     mov [si+0x28],al ; @02A75
@@ -1299,6 +1315,7 @@ loc_2A6D:
     jmp loc_2B28 ; @02A8F
 loc_2A92:
     call PrepareEntityPixelSample ; @02A92
+EntityState0400AfterThreeProbePixelCall:
     mov al,[es:di] ; @02A95
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02A98
     jnz loc_2AEC ; @02A9A
@@ -1318,6 +1335,7 @@ loc_2A92:
     db 0x90 ; @02ABD
 loc_2ABE:
     call PrepareEntityPixelSample ; @02ABE
+EntityState0400AfterTwoProbePixelCall:
     mov al,[es:di] ; @02AC1
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AC4
     jnz loc_2AEC ; @02AC6
@@ -1332,6 +1350,7 @@ loc_2ABE:
     db 0x90 ; @02ADB
 loc_2ADC:
     call PrepareEntityPixelSample ; @02ADC
+EntityState0400AfterOneProbePixelCall:
     mov al,[es:di] ; @02ADF
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AE2
     jnz loc_2AEC ; @02AE4
@@ -1545,6 +1564,13 @@ loc_2CFA:
     int 0x61 ; @02D0B
 loc_2D0D:
     jmp short loc_2CBB ; @02D0D
+; State8000 from1F75:166 known bytes/53 sites. Register cadence modulo16;
+; zero transitions through late slot003C and optional INT61 AX040C, then
+; rereads live state bit0004 after the returned DS before deciding+22.
+; Nonzero cadence5 reads live EntityScanRequest. JNZ2D81 has identical target
+; and fallthrough; preserve the read/CMP/flags. Actual pixel RET2D86 precedes
+; three samples; clear probes INC BP, then JMP20D6 stores the live height.
+AdvanceEntityState8000:
 loc_2D0F:
     mov al,[si+0x28] ; @02D0F
     inc al ; @02D12
@@ -1571,6 +1597,7 @@ loc_2D0F:
     jz loc_2D6A ; @02D63
     mov ax,0x40c ; @02D65
     int 0x61 ; @02D68
+EntityState8000AfterSound:
 loc_2D6A:
     test word [si+0x8],0x4 ; @02D6A
     jz loc_2D75 ; @02D6F
@@ -1584,6 +1611,7 @@ loc_2D78:
     jnz loc_2D83 ; @02D81
 loc_2D83:
     call PrepareEntityPixelSample ; @02D83
+EntityState8000AfterPixelCall:
     mov bp,[si+0x2] ; @02D86
     mov al,[es:di] ; @02D89
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02D8C
@@ -1606,6 +1634,11 @@ loc_2DA2:
 loc_2DB1:
     inc bp ; @02DB1
     jmp loc_20D6 ; @02DB2
+; +24 bit80 override from1F5B precedes state-word dispatch:79 known bytes/
+; 21 sites. Register modulo8 cadence; zero performs ordered callback002E
+; transition then separate memory AND+24,1 / AND+24,7F before JMP1FE8.
+; Nonzero JMPs1FEB. No new frame is added for either original JMP tail.
+AdvanceEntityFlag80Override:
 loc_2DB5:
     mov al,[si+0x28] ; @02DB5
     inc al ; @02DB8

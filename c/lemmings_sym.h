@@ -706,4 +706,20 @@
 #define CS_EntityState0100AfterPixelCall 0x27F2u
 #define CS_EntityState0100AfterPatternCall 0x2838u
 #define CS_AdvanceEntityState0200 0x287Du
+#define CS_EntityState0200AfterMaskCall 0x28A4u
+#define CS_EntityState0200AfterFirstCoordinateCall 0x28C7u
+#define CS_EntityState0200AfterSecondCoordinateCall 0x28D6u
+#define CS_EntityState0200AfterThirdCoordinateCall 0x28E5u
+#define CS_EntityState0200AfterFourthCoordinateCall 0x28F4u
+#define CS_EntityState0200AfterPixelCall 0x294Eu
+#define CS_EntityState0200AfterSound 0x2A6Au
+#define CS_AdvanceEntityState0400 0x2A6Du
+#define CS_EntityState0400AfterThreeProbePixelCall 0x2A95u
+#define CS_EntityState0400AfterTwoProbePixelCall 0x2AC1u
+#define CS_EntityState0400AfterOneProbePixelCall 0x2ADFu
+#define SEG09A9_EntityState0400PairBase 0x2698u
+#define CS_AdvanceEntityState8000 0x2D0Fu
+#define CS_EntityState8000AfterSound 0x2D6Au
+#define CS_EntityState8000AfterPixelCall 0x2D86u
+#define CS_AdvanceEntityFlag80Override 0x2DB5u
 #endif

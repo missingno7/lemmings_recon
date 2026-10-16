@@ -58576,6 +58576,314 @@
     "evidence": [
       "First-match mask0200 dispatch from1FC5;exact287D..2A6C boundary,169sites/59jumpoutcomes,six actual calls,INT61 return2A6A,live SS map nibble and late callback. docs/entity-simulation.md"
     ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state200.c",
+    "c_core": "lmn_entity_state200_core",
+    "c_code_ranges": [
+      [
+        10365,
+        10861
+      ]
+    ],
+    "verification_evidence": "tests/entity_state200.py:46 core/JMP-adapter fixtures;496 bytes/169 sites/all59 unique owned jump outcomes;12,454 ordered events;9 completed mutants;actual ten-row/coordinate/pixel frames,readback-mode-one mask,returned DS and live raw phase,coordinate restores,SS map/stack aliases,late callback and INT61 DS-before-NEG plus shared PC handoff. build/entity-state200-differential.json;scoped domain,not complete simulation acceptance."
+  },
+  {
+    "address": 10404,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterMaskCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10439,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterFirstCoordinateCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10454,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterSecondCoordinateCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10469,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterThirdCoordinateCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10484,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterFourthCoordinateCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10574,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10858,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0200AfterSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0200 original actual child/INT61 return address with live DS/ES/SS and shared-tail contracts. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10861,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 200,
+    "symbol_name": "AdvanceEntityState0400",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0400 from1F85;unchecked pair index initialized at21E3 then advanced without bound;actual pixel returns and shared1FE8/20E2 tails. Pair base names only a reference, bytes/extent remain UNKNOWN. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_state400.c",
+    "c_core": "lmn_entity_state400_core",
+    "c_code_ranges": [
+      [
+        10861,
+        10941
+      ],
+      [
+        10942,
+        10971
+      ],
+      [
+        10972,
+        10987
+      ],
+      [
+        10988,
+        11061
+      ]
+    ],
+    "verification_evidence": "tests/entity_state400.py:24 core/JMP-adapter fixtures;197 known bytes/66 sites/all27 unique outcomes;129 integrated main sites;2,800 events;8 completed mutants;unchecked pair aliases,signed CBW delta,three probe counts,actual RETs,live pitch/partial Y updates and late callback. UNKNOWN2ABD/2ADB/2AEB and pair extent remain unresolved. build/entity-state400-differential.json;scoped domain."
+  },
+  {
+    "address": 10901,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0400AfterThreeProbePixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0400 from1F85;unchecked pair index initialized at21E3 then advanced without bound;actual pixel returns and shared1FE8/20E2 tails. Pair base names only a reference, bytes/extent remain UNKNOWN. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10945,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0400AfterTwoProbePixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0400 from1F85;unchecked pair index initialized at21E3 then advanced without bound;actual pixel returns and shared1FE8/20E2 tails. Pair base names only a reference, bytes/extent remain UNKNOWN. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 10975,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState0400AfterOneProbePixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0400 from1F85;unchecked pair index initialized at21E3 then advanced without bound;actual pixel returns and shared1FE8/20E2 tails. Pair base names only a reference, bytes/extent remain UNKNOWN. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9880,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 0,
+    "symbol_name": "EntityState0400PairBase",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State0400 from1F85;unchecked pair index initialized at21E3 then advanced without bound;actual pixel returns and shared1FE8/20E2 tails. Pair base names only a reference, bytes/extent remain UNKNOWN. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11535,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 166,
+    "symbol_name": "AdvanceEntityState8000",
+    "aliases": [],
+    "callers": [],
+    "callees": [
+      24006
+    ],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State8000 from1F75 and bit80 override from1F5B;actual pixel/INT61 returns,live scan compare and post-sound state retest. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_late_states.c",
+    "c_core": "lmn_entity_late_states_core",
+    "c_code_ranges": [
+      [
+        11535,
+        11701
+      ]
+    ],
+    "verification_evidence": "tests/entity_late_states.py:combined31 core/JMP-adapter fixtures for entry0(state8000) and entry1(flag80override);245 unique bytes/74 sites/all26 unique outcomes;2,690 events;6 completed mutants. This entry owns166 bytes/53 sites/22 outcomes. Actual pixel/INT61 frames,late callback003C,live scan compare including same-target2D81,returned DS before state retest and20D6 height store remain explicit. build/entity-late-states-differential.json;scoped domain."
+  },
+  {
+    "address": 11626,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState8000AfterSound",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State8000 from1F75 and bit80 override from1F5B;actual pixel/INT61 returns,live scan compare and post-sound state retest. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11654,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "EntityState8000AfterPixelCall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State8000 from1F75 and bit80 override from1F5B;actual pixel/INT61 returns,live scan compare and post-sound state retest. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 11701,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 79,
+    "symbol_name": "AdvanceEntityFlag80Override",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "State8000 from1F75 and bit80 override from1F5B;actual pixel/INT61 returns,live scan compare and post-sound state retest. docs/entity-simulation.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_late_states.c",
+    "c_core": "lmn_entity_late_states_core",
+    "c_code_ranges": [
+      [
+        11701,
+        11780
+      ]
+    ],
+    "verification_evidence": "tests/entity_late_states.py:combined31 core/JMP-adapter fixtures across both entries;this entry1 owns79 bytes/21 sites/all4 outcomes. Combined245 bytes/74 sites/26 outcomes;2,690 events;6 completed mutants. Modulo8 register cadence,late002E callback,separate memory ANDs and actual1FE8 frame remain live. build/entity-late-states-differential.json;scoped domain."
   }
 ]
