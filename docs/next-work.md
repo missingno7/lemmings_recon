@@ -2,23 +2,24 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 23,806 bytes, adding 114 unique
-bytes with no removals. `GenerateFixedWordMaskBanks` at 5CC1 adds 28 prefix bytes
-and composes the existing 59-byte word generator through an actual first CALL
-and frame-free final fallthrough. Its 15 fixtures/30 core and actual-RET
-comparisons cover 87 integrated bytes/46 sites/all ten branch outcomes, 197,574
-ordered events, 23,040 independent output-byte checks and ten completed mutants.
-Live selector/BX/DX/SI/count/return words, DF, overlap, VGA stack and physical/offset
-wrap remain explicit. The two 96-byte source windows still retain UNKNOWN
-classification. See fixed-word-banks.md.
+The main-image translated-code ledger union is 24,039 bytes, adding 233 unique
+bytes with no removals. `LoadMainResourceSections` at 58D2..59BA now composes
+the native DAT and graphics cores through actual SS frames. Its 14 fixtures/28
+pre-RET and actual-RET comparisons cover all 101 parent sites and both branch
+outcomes, with ten completed mutants. The exercised original composition has
+800 instruction sites and 147 branch outcomes; child domains remain scoped.
+Seven full pinned fixtures verify their complete section stream and all 337
+section-zero sprite calls. See main-resource-sections.md.
 
-`CopyResourcePlanesToVga` at 57D1 adds 86 bytes/45 sites. Its 21 fixtures/42
-comparisons cover all four branch outcomes, 78,878 events, 25,696 independent
-plane-byte checks and ten completed mutants. Both pinned MAIN.DAT sections 2/6
-use the actual four-plane, 40-row, 40-byte caller profile. Live SS mirrors and
-saved AX/BX/DI/CX, zero BH/CX loops, zero BL REP, DF, word wrap, VGA aliases and the
-actual outer RET are preserved. See vga-plane-copy.md. No budget exhaustion
-counts as mutant detection; owned native traces and workers stay bounded.
+The campaign executes each original fixture once, totaling 47,410,976
+instructions and 3,788,588 raster events, retaining both boundaries. The
+7,577,160 compared raster events and 276 DOS events are boundary sums, not
+unique execution.
+Live DS/BX restores, changed top and nested child returns, the actual outer RET,
+late CS:5968 operand changes, relocated loading, exact-FF gate, fatal1949/04D0
+and bounded retry recovery all pass. DAT internals retain their direct-RAM
+domain and the untranslated 4B1C retry-service seam. The worker uses packed
+traces, 1,500-second/512-MiB limits and fail-stop native callback guards.
 
 The static 1FEA selector audit accounts for startup clearing and allocation,
 all direct selector references, two 96-byte source tables, a 0900h-byte normal
@@ -28,15 +29,17 @@ open. Static extraction also accounts for all seven MAIN.DAT section extents;
 section 1 exactly fills the 0184h-byte mask source, while sections 3/4 have adjacent
 normal destinations. Their higher-level consumer semantics remain separate.
 
-Next compose `LoadMainResourceSections` at 58D2..59BA: 233 bytes/101 sites,
-twelve actual CALLs and the two outcomes of the live DS:200E==FF gate. Read
-main-resource-sections.md and fresh graph tree/bottom-up views first. Use the
-existing native child cores with actual SS frames, live DS/BX restores and
-flowing segment/flag results. Preserve the literal PUSH/POP BX at 5964/5965.
-Propagate changed child returns and fatal 1949/04D0 without executing the parent
-tail; retain LoadDatResource's untranslated retry seam at 4B1C. Do not guess a
-semantic name for 200E. Full normal section 0 sprite generation is already
-verified through 337 native calls; child bytes are counted once.
+Next translate the 715F..71C9 leaf (107 bytes/48 sites), then the literal
+7218..75EE renderer (983 bytes/556 sites), then compose their 5827..587E caller
+(88 bytes/33 sites). Read fixed-pattern-drawing.md and fresh graph views first.
+Preserve the two actual internal word saves in 715F, MUL's DX:AX and defined
+flags, both DF-sensitive VGA copy passes, live DS/ES/SS and forced IF on return.
+The 7218 leaf requires literal ordered mask/latch/source/port traffic.
+The 5827 caller uses 0090h-byte slices, exact EntitySelectionPresent==FF,
+and two live offset-pair swaps. Audit ledger names/contracts before C changes.
+Static producers establish four rotating VGA slots and pointer X/Y inputs;
+byte1FE0, selected-bank meaning, lifetime and aliases remain open. UNKNOWN
+71CA..7217 remains unresolved. Child bytes are counted once.
 
 These focused reports pin their consumed code, models, tools, assets and generated
 header. Progress prose and the raw symbol ledger are outside their behavioral

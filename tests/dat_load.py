@@ -12,7 +12,7 @@ from unicorn import x86_const as x
 
 SYMS={s['symbol_name']:s for s in read_json(ROOT/'metadata/symbols.json')}
 ENTRY=SYMS['LoadDatResource']['address'];TAIL=SYMS['DecodeDatPreservingSegment']['address']
-AFTER=SYMS['DatAfterResourceCheck']['address'];RETRY=SYMS['sub_4B1C']['address']
+AFTER=SYMS['DatAfterResourceCheck']['address'];RETRY=SYMS['ShowResourceRetryScreen']['address']
 FATALS=(SYMS['DatFileErrorTransfer']['address'],SYMS['DatFatalTransfer']['address'])
 LOCAL={i.address:i for i in decoder.MD.disasm(decoder.IMAGE[ENTRY:decoder.ENTRY],ENTRY) if i.mnemonic!='nop'}
 from dat_files import INS as FILE_INS

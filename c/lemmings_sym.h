@@ -892,4 +892,7 @@
 #define SEG09A9_GeneratedWordPatternBufferSegment 0x1FEAu
 #define SEG09A9_FixedWordPatternA 0x52BCu
 #define SEG09A9_FixedWordPatternB 0x531Cu
+#define CS_MainResourceSectionsReturn 0x59BAu
+#define CS_MainResourceSoundSegmentOperand5968 0x5968u
+#define SEG09A9_ConfigurationOption200E 0x200Eu
 #endif

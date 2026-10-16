@@ -734,6 +734,32 @@ storage. Sections 2/6 also pass their complete normal VGA copy profiles. All
 seven MAIN.DAT section sizes are statically recorded, including section 1's
 0184h-byte mask source and the adjacent section 3/4 destinations. See
 fixed-word-banks.md, vga-plane-copy.md and main-resource-sections.md.
-Next compose 58D2's twelve actual CALLs, live DS/BX saves, no-op stack traffic
-and neutral 200E gate; retain the retry/fatal seams. Only matching focused
-report inputs establish this checkpoint; aggregate acceptance remains separate.
+The next composition at that checkpoint was 58D2's twelve actual CALLs, live
+DS/BX saves, no-op stack traffic and neutral 200E gate, retaining retry/fatal
+seams. Only matching focused report inputs establish a checkpoint; aggregate
+acceptance remains separate.
+
+The 58D2..59BA parent now adds 233 unique main C bytes, taking the union to
+24,039. Fourteen fixtures/28 boundaries cover all 101 parent sites/two branch
+outcomes, with ten completed mutants. Seven full pinned cases verify the
+complete section stream for their gate and all 337 sprite calls. The original
+composition exercises 800 sites/147 branch outcomes, without closing all child
+domains. Shared references retain both boundaries from one execution:
+47,410,976 original instructions and 3,788,588 raster events; the compared
+boundary sum is 7,577,160 raster events and 276 DOS events.
+
+Live DS/BX saves, changed loader/top graphics/nested sprite returns, actual outer
+RET, second-load relocation, late CS:5968 changes, exact-FF selection and
+fatal1949/04D0 all pass. Retry recovery retains the declared 4B1C service and
+DAT retains its direct-RAM child domain. ConfigurationOption200E records the
+startup/option-parser/configuration provenance without guessing a narrower
+semantic meaning. Packed traces, fail-stop callbacks and 1,500-second/512-MiB
+worker limits remain mandatory. See main-resource-sections.md.
+
+Next use the generated word bank in its unchanged consumer chain: translate
+715F (107 bytes/48 sites), then 7218 (983 bytes/556 sites), then their 5827
+caller (88 bytes/33 sites). The static fixed-pattern-drawing.md contract records
+the live PUSH DX/POP DX around MUL, PUSH ES/POP DS, DF/IF and VGA ordering,
+144-byte slice choice and rotating VGA slots. Pointer-coordinate producers and
+the EntitySelectionPresent cross-use are identified; byte1FE0 and wider alias,
+allocation and visual semantics remain open. UNKNOWN71CA..7217 stays unresolved.

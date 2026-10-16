@@ -1,3 +1,4 @@
+ConfigurationOption200E equ GameDataImage+0x200E
 EntitySpriteBufferSegment equ GameDataImage+0x1FE6
 GeneratedWordPatternBufferSegment equ GameDataImage+0x1FEA
 ; Proven source accesses; raw storage and its UNKNOWN classification remain below.

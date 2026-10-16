@@ -129,6 +129,13 @@ sub_587F:
     sti ; @058D0
     ret ; @058D1
 LoadMainResourceSections:
+; Twelve actual near frames compose the DAT pipeline and graphics producers.
+; Every DS/BX restore rereads live SS, including PUSH/POP BX at5964/5965.
+; Ordered selector reads remain relative to current DS. Section5's MOV operand
+; at5968 is relocated and live (stored0842, loaded1852 at canonical load1010).
+; REP copies retain DF and word physical+1 addressing. Child fatal/changed
+; returns stop before parent restores. ExactFF gate200E selects section6.
+; Core boundary is the actual outer RET59BA. docs/main-resource-sections.md.
     push ds ; @058D2
     mov dx,0x252b ; @058D3
     mov es,[GraphicsResourceSegment-GameDataImage] ; @058D6
@@ -139,7 +146,7 @@ LoadMainResourceSections:
     pop ds ; @058E3
     push bx ; @058E4
     call GenerateEntitySpriteBanks ; @058E5
-    call sub_5CC1 ; @058E8
+    call GenerateFixedWordMaskBanks ; @058E8
     pop bx ; @058EB
     push ds ; @058EC
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @058ED
@@ -166,7 +173,7 @@ LoadMainResourceSections:
     mov ax,0x2c ; @0591D
     mov bx,0x428 ; @05920
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @05923
-    call sub_57D1 ; @05927
+    call CopyResourcePlanesToVga ; @05927
     pop ds ; @0592A
     push ds ; @0592B
     mov si,0x1900 ; @0592C
@@ -197,6 +204,7 @@ sub_5950:
     push bx ; @05964
     pop bx ; @05965
     push ds ; @05966
+MainResourceSoundSegmentOperand5968 equ $+1
     mov ax,0x842 ; @05967
     mov es,ax ; @0596A
     mov ds,ax ; @0596C
@@ -204,7 +212,7 @@ sub_5950:
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @05970
     call DecodeDatPreservingSegment ; @05972
     pop ds ; @05975
-    cmp byte [0x200e],0xff ; @05976
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @05976
     jnz loc_59BA ; @0597B
 sub_597D:
     push ds ; @0597D
@@ -221,7 +229,7 @@ sub_597D:
     mov ax,0x2c ; @05997
     mov bx,0x428 ; @0599A
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @0599D
-    call sub_57D1 ; @059A1
+    call CopyResourcePlanesToVga ; @059A1
     pop ds ; @059A4
     push ds ; @059A5
     mov di,0xa0 ; @059A6
@@ -232,6 +240,7 @@ sub_597D:
     rep movsb ; @059B7
     pop ds ; @059B9
 loc_59BA:
+MainResourceSectionsReturn:
     ret ; @059BA
 ; CONTRACT: PUSH DS occurs before ordered reads of incoming DS:1FE6 (ES)
 ; and DS:1FE4 (source DS). SI=DI=0. Fifteen immediate groups push actual CX,

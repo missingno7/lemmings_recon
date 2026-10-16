@@ -33363,7 +33363,7 @@
     "address": 22738,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 233,
     "symbol_name": "LoadMainResourceSections",
     "aliases": [
       "sub_58D2"
@@ -33551,10 +33551,19 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact233-byte parent/101sites/2edges;14fixtures/28boundaries,7full pinned stream/337-sprite-call cases,10completed mutants; live DS/BX restores, late relocated5968 operand, exactFF gate, child/nested changed returns, actual outerRET, fatal1949/04D0 and declared retry service.70causal input hashes; docs/main-resource-sections.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 233
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 233,
+    "c_implementation": "c/main_resources.c",
+    "c_core": "lmn_load_main_resource_sections_core",
+    "c_code_ranges": [
+      [
+        22738,
+        22971
+      ]
+    ]
   },
   {
     "address": 22864,
@@ -62388,5 +62397,53 @@
       "Normal5CC1+5CDD path reads48 words/three16-word groups at imageEDAC..EE0B; source UNKNOWN classification retained; docs/fixed-word-banks.md"
     ],
     "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 22970,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "MainResourceSectionsReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual outer near RET of 58D2..59BA; docs/main-resource-sections.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22888,
+    "segment": 0,
+    "kind": "operand",
+    "size": 2,
+    "symbol_name": "MainResourceSoundSegmentOperand5968",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Only parent relocation at5968: stored0842 becomes load_segment+0842 modulo16 bits. Runtime operand remains live; section5 output DS/ES selector. docs/main-resource-sections.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8206,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "ConfigurationOption200E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup clears byte; CLI -d/-x and interactive configuration writeFF at1200,11F9,135D,1370. ExactFF readers affect display waits, timer setup/polling and optionalMAINsection6. Neutral provenance name, semantic meaning and aliases remain open; docs/main-resource-sections.md"
+    ],
+    "verification_status": "STATIC"
   }
 ]

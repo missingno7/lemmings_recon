@@ -13,7 +13,7 @@ from unpack import ASSET,unpack,relocated
 IMAGE,ORACLE=unpack(ASSET.read_bytes())
 SYMS={s['symbol_name']:s for s in read_json(ROOT/'metadata/symbols.json')}
 ROOTS={k:SYMS[n] for k,n in (('open_file','OpenDatFile'),('check_file','CheckDatFile'))}
-FATAL=SYMS['DatFileErrorTransfer']['address'];RETRY=SYMS['sub_4B1C']['address']
+FATAL=SYMS['DatFileErrorTransfer']['address'];RETRY=SYMS['ShowResourceRetryScreen']['address']
 MD=capstone.Cs(capstone.CS_ARCH_X86,capstone.CS_MODE_16);MD.detail=True
 LOCAL={i.address:i for s in ROOTS.values() for i in MD.disasm(IMAGE[s['address']:s['address']+s['size']],s['address'])}
 HELPERS={i.address:i for n in ('PrepareDatCacheName','SelectCachedDatFile') for i in MD.disasm(

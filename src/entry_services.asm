@@ -111,7 +111,7 @@ loc_0105:
     mov ax,[AlternateDrawingDirtyCellMapOffset-GameDataImage] ; @0010F
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @00112
     mov [AlternateDrawingDirtyCellMapOffset-GameDataImage],ax ; @00116
-    cmp byte [0x200e],0xff ; @00119
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00119
     jnz loc_0164 ; @0011E
 loc_0120:
     mov byte [0x1fcf],0x0 ; @00120
@@ -332,7 +332,7 @@ sub_031E:
     mov al,[0x4e] ; @0031E
     test al,0x1 ; @00321
     jz loc_0342 ; @00323
-    cmp byte [0x200e],0xff ; @00325
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00325
     jnz loc_033D ; @0032A
 loc_032C:
     call sub_03C1 ; @0032C
@@ -349,7 +349,7 @@ loc_033D:
 loc_0342:
     test al,0x2 ; @00342
     jz loc_0361 ; @00344
-    cmp byte [0x200e],0xff ; @00346
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00346
     jnz loc_035E ; @0034B
 loc_034D:
     call sub_03D7 ; @0034D
@@ -1409,10 +1409,10 @@ loc_11E2:
     jmp short sub_1194 ; @011F2
 loc_11F4:
     mov byte [0x200b],0xff ; @011F4
-    mov byte [0x200e],0xff ; @011F9
+    mov byte [ConfigurationOption200E-GameDataImage],0xff ; @011F9
     jmp short sub_1194 ; @011FE
 loc_1200:
-    mov byte [0x200e],0xff ; @01200
+    mov byte [ConfigurationOption200E-GameDataImage],0xff ; @01200
     mov byte [0x200c],0xff ; @01205
     jmp short sub_1194 ; @0120A
 loc_120C:
@@ -1559,14 +1559,14 @@ loc_133A:
     jmp short loc_1301 ; @01356
 loc_1358:
     mov byte [0x200b],0xff ; @01358
-    mov byte [0x200e],0xff ; @0135D
+    mov byte [ConfigurationOption200E-GameDataImage],0xff ; @0135D
     jmp short loc_1301 ; @01362
 loc_1364:
     mov byte [0x200d],0xff ; @01364
     mov byte [0x200c],0xff ; @01369
     jmp short loc_1301 ; @0136E
 loc_1370:
-    mov byte [0x200e],0xff ; @01370
+    mov byte [ConfigurationOption200E-GameDataImage],0xff ; @01370
     jmp short loc_1301 ; @01375
 loc_1377:
     mov byte [0x200f],0xff ; @01377
@@ -1848,7 +1848,7 @@ RestoreKeyboardVectorReturn:
 ; UNKNOWN: unresolved bytes
     db 0x06,0x20,0x00,0xc7,0x17,0x8c,0x0e,0x22,0x00,0x1f,0xc3 ; @015A2
 sub_15AD:
-    cmp byte [0x200e],0xff ; @015AD
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @015AD
     jnz loc_15BB ; @015B2
     mov word [0x1fc9],0x4000 ; @015B4
     ret ; @015BA
@@ -2145,7 +2145,7 @@ GameTimerIrqHandler:
     pushf ; @017D0
     mov ax,0x9a9 ; @017D1
     mov ds,ax ; @017D4
-    cmp byte [0x200e],0xff ; @017D6
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @017D6
     jz sub_183E ; @017DB
     call sub_5473 ; @017DD
     cli ; @017E0

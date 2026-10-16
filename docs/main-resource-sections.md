@@ -1,9 +1,9 @@
 # Main resource section loader
 
 `LoadMainResourceSections` occupies `58D2..59BA` (233 decoded bytes, 101
-instruction sites). This is a static caller contract and composition plan; it
-does not claim that this parent is translated or behaviorally accepted. The
-known body has one conditional branch, `CMP byte [DS:200E],FFh` at `5976`
+instruction sites). Its logical C core and actual-RET adapter now have focused
+original/native acceptance, described below. The known body has one conditional
+branch, `CMP byte [DS:200E],FFh` at `5976`
 followed by `JNZ` at `597B` to the outer `RET` at `59BA`. Startup calls the
 routine at `00D5`; the normal return address is `00D8`.
 
@@ -22,7 +22,7 @@ The normal call frames and the first instruction after each `RET` are:
 | `5927` | `CopyResourcePlanesToVga` | `592A` | `DS=[DS:1FE4]`, `SI=0`, `DI=F91F`, `CX=28h`, `AX=2Ch`, `BX=0428h`. |
 | `594D` | `DecodeDatPreservingSegment`, section 3 | `5950` | `DS=ES=[DS:1FEE]`; `SI=DI=0`. |
 | `5960` | `DecodeDatPreservingSegment`, section 4 | `5963` | `AX=[DS:1FEE]+0F21h` with 16-bit wrap; `DS=ES=AX`; `SI=DI=0`. |
-| `5972` | `DecodeDatPreservingSegment`, section 5 | `5975` | `DS=ES=0842h`; `SI=DI=0`. |
+| `5972` | `DecodeDatPreservingSegment`, section 5 | `5975` | `DS=ES=word CS:[5968]` (relocated `load+0842h`); `SI=DI=0`. |
 | `598A` | `DecodeDatPreservingSegment`, section 6 (conditional) | `598D` | Only on the `200E==FFh` path; `DS=ES=[DS:1FE4]`; `SI=DI=0`. |
 | `59A1` | `CopyResourcePlanesToVga` (conditional) | `59A4` | Same literal plane-copy inputs as `5927`. |
 
@@ -60,7 +60,8 @@ uses 40 rows, 40 bytes per row, and pitch 44; the following `REP MOVSW` copies
 section-2 output is 20C0h bytes: a 1900h-byte plane prefix followed by that
 7C0h-byte copy. Section 3 is decoded at `[1FEE]:0000`; section 4 at the
 wrapped selector `[1FEE]+0F21h`, offset zero. Section 5 is decoded at
-`0842:0000`; it is independently identified as the 758-byte PC-speaker
+the segment selected by the live MOV operand at `CS:5968`, offset zero; it is
+independently identified as the 758-byte PC-speaker
 payload. The known section-6 output is 2020h bytes: the same 1900h-byte plane
 prefix plus 720h bytes. On the nominal DF-clear path, its conditional copy
 writes from `[1FE4]:1900h` to `[1FEC]:00A0h`, leaving the earlier first A0h
@@ -69,7 +70,17 @@ bytes in the glyph segment in place.
 The two VGA calls target four planes at `A000h`, beginning at offset `F91Fh`.
 Their row arithmetic and final source/cursor behavior remain those of the
 57D1 leaf. The string copies are `REP MOVSW` at `593C` and `REP MOVSB` at
-`59B7`; both follow incoming DF. No CLD is performed.
+`59B7`; both follow live DF. The parent performs no CLD, but each successful
+DAT decode executes CLD at 1C78 before returning. Thus ordinary complete loads
+reach these copies with DF clear; fatal decoder exits retain their own flags.
+
+`MainResourceSoundSegmentOperand5968` is the only relocation in this parent.
+The stored MOV immediate is 0842h; loading at 1010h changes it to 1852h.
+The original therefore loads section 5 over the relocated reserved main-image
+storage, rather than absolute physical 08420h. C composition must read the
+current code word at 5968; neither the stored value nor a cached load-segment
+formula preserves later changes to that operand. The opcode remains the exact
+MOV AX instruction, and ordinary operand fetch is not a raster-bus data read.
 
 ## Segment selectors and normal allocation coordinates
 
@@ -146,7 +157,77 @@ segment operands at `CheckDatFile+33h`, `SelectCachedDatFile+50h`,
 `ReadDatBytes+8`, and `DatReadFailure+1` from code. These platform and fatal
 boundaries remain part of the parent contract.
 
+The parent C interface is `lmn_load_main_resource_sections_core` plus its
+register adapter in `c/main_resources.c`. It carries the thirteen live register
+and segment roles, with continuation, status, direct child entry and child
+status in the result. READY=0 stops before 59BA; CHILD_STOP=1 propagates a child
+seam; CHANGED_CHILD_RETURN=2 preserves a changed target; FATAL=3 carries the DAT
+fatal value 1 or 2. For an otherwise normal child whose top return changed,
+child status remains zero and continuation holds that target. No parent POP or
+copy runs after any stop. Only READY permits the adapter's actual outer RET.
+
+The existing DAT cores access ordinary canonical RAM directly and use explicit
+DOS/file callbacks. Their internal reads and writes are not raster-bus events.
+The composition traces parent operands and strings, graphics-child traffic and
+the shared top DAT RET at 1BAE. This does not establish VGA-device alias behavior
+inside the DAT bodies. Their service segment bindings are captured from code
+at each top call as in their maintained adapters; changes to those bindings
+during a child invocation remain outside the accepted child domain. The
+section-5 parent operand at 5968 is instead read at its actual MOV phase.
+
+## Focused native acceptance
+
+`tools/difftest.py main_resources` passes 14 fixtures at both boundaries:
+233 parent bytes (232 core plus the adapter's one-byte RET), all 101 parent
+sites and both JNZ outcomes. The recorded original execution union has 800
+integrated sites and 147 branch outcomes; these are exercised child domains,
+not complete coverage of every child state. Seven full pinned fixtures verify
+the complete section stream for their gate and all 337 section-zero sprite
+calls, alongside fixed-word and generated-mask production and VGA/glyph copies.
+
+The cases include gate values 00/01/FF, live saved DS and BX, changed loader
+and top graphics returns, an altered nested sprite return propagated through
+59BB, a live outer RET, a second executable load segment, and a service-time
+write to CS:5968. Attribute failure reaches 1949; header/payload read failures
+reach 04D0. A bounded attribute-retry recovery uses the declared 4B1C service.
+The comparison checks canonical RAM, all returned roles, defined FLAGS, exact
+ordered raster/DOS traffic and VGA state at pre-RET and actual-RET boundaries.
+Bus FLAGS are captured at instruction entry, matching the maintained child
+oracle, rather than Unicorn's deferred memory-hook FLAGS view.
+
+Each fixture executes the original once and retains both boundary snapshots.
+The campaign executes 47,410,976 original instructions, 3,788,588 raster events
+and 138 DOS events. Comparing the two boundaries accounts for 7,577,160 raster
+events and 276 DOS events; the 94,821,944 boundary-step sum is not additional
+original execution. Ten completed mutants detect cached restores, copy-count
+and source errors, omitted stack traffic, wrong paragraph addition or gate,
+ignored changed returns, and prefetched/omitted outer RET handling. Guard,
+timeout and memory failures are not mutant evidence.
+
+The worker is limited to 1,500 seconds and 512 MiB process commit, with per-call
+limits of 16,000,000 original steps, 2,000,000 raster events and 4,096 DOS
+callbacks. Packed traces remain bounded; callback failures terminate native
+execution immediately. Original/native reports pin the same 70 causal inputs.
+Progress prose and the raw ledger are outside that behavioral hash scope;
+the independent exact ASM/relocation gate pins the current ledger/header/ASM.
+This adds 233 unique main-image C bytes, taking the ledger union to 24,039.
+It is scoped resource composition acceptance, not aggregate or full-game acceptance.
+
 ## Remaining uncertainties
+
+`ConfigurationOption200E` is a neutral provenance name for the live byte.
+Startup clears it with DS:0000..2011. The PSP command-tail parser reads the
+length at PSP:80 and options from PSP:81, accepting '-' and '/' and lowercasing
+the option letter. The `-d` path sets 200B at 1358 and 200E at 135D; `-x`
+sets 200E at 1370. Interactive configuration sets it at 11F9 or 1200 alongside
+200B or 200C. No direct word access or overlapping word store at 200D..200F
+was identified; dynamic aliases remain possible.
+
+The exact-FF readers at 0119, 0325, 0346, 15AD and 17D6 affect display waits,
+timer setup and timer-handler display polling. The palette checks at 5399 and
+53C2 converge to the same returns. The 5976 resource gate adds another use.
+These cross-subsystem effects and opaque configuration letters do not justify
+a narrower semantic name such as a sound or display-wait flag.
 
 The meaning of the live byte `DS:200E` is not established here. The routine
 tests whether it equals FFh after decoding section 5; the equal case loads

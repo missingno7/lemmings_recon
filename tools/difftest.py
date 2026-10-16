@@ -18,6 +18,7 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('main_resources', 1500, 512),
     Suite('fixed_word_banks', 420, 384),
     Suite('vga_plane_copy', 420, 384),
     Suite('entity_sprite_banks', 900, 512),

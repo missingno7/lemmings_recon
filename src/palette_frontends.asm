@@ -89,7 +89,7 @@ sub_5377:
     add di,byte +0x8 ; @05391
     mov cx,0x4 ; @05394
     rep movsw ; @05397
-    cmp byte [0x200e],0xff ; @05399
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @05399
     jnz loc_53C9 ; @0539E
     ret ; @053A0
 loc_53A1:
@@ -105,7 +105,7 @@ loc_53A1:
     add di,byte +0x18 ; @053BA
     mov cx,0xc ; @053BD
     rep movsw ; @053C0
-    cmp byte [0x200e],0xff ; @053C2
+    cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @053C2
     jnz loc_53C9 ; @053C7
 loc_53C9:
     ret ; @053C9
