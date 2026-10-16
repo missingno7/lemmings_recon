@@ -4,7 +4,7 @@ New focused suites use tests/verification.py. Suites declare instruction ranges,
 supported entries/returns, finite providers and independent expectations. They do
 not implement another CPU runner, memory bus, ctypes callback guard or full-state
 comparator. tests/port_io.py is the first migrated consumer; tests/input_poll.py
-uses the same engine for the connected input subsystem.
+and tests/ui_commands.py use the same engine for the connected input subsystem.
 
 OriginalMachine runs exact loaded instructions in Unicorn and checks each reached
 instruction against the pinned relocated image. It rejects undeclared code writes
@@ -13,6 +13,15 @@ SS:SP; child continuations and core/adapter boundaries are declared by the suite
 Instruction and phase limits fail the campaign. Pausing before an unsupported
 CALL or missing port provider does not claim execution of that instruction.
 
+An explicitly declared mutable code operand must match a complete decoded
+immediate, with its source/producer contract documented beside ASM and in the
+ledger. The visibility child uses this for the relocated IMM16 at4137. The
+runner guards every other instruction byte, observes canonical operand writes,
+and invalidates Unicorn's decoded cache before resuming the actual instruction.
+It does not emulate that instruction in Python or admit unexplained opcode
+changes. Static path infeasibility is reported separately from executed sites;
+it does not make UNKNOWN code dead or remove literal C behavior.
+
 Software interrupt transport is explicitly declared: live FLAGS/CS/IP frame
 writes, IF/TF clearing, current IVT reads, an opaque provider stopped before IRET,
 then the actual returned SS:SP frame. Transport/provider accesses are distinguished
@@ -20,6 +29,11 @@ from original executed instructions. This is not discovery of an external ISR or
 a model of asynchronous interrupts. Suite-specific providers and expected
 algorithms stay outside the shared engine so the C and oracle do not share game
 logic. Device models retain their independent known-answer checks.
+
+The native interrupt_service.c transport is shared by the INT33 mouse caller
+and INT60/61 command callers. Their provider descriptors carry full returned
+registers, including DS/ES/SS:SP. This consolidates frame mechanics without
+claiming the opaque service bodies or asynchronous IRQ delivery are translated.
 
 BusAccess supplies one canonical RAM image, VGA aliases and bounded ordered
 observations. NativeCallbacks turns callback errors into immediate worker failure;

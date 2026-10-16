@@ -18,6 +18,7 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('ui_commands', 420, 384),
     Suite('input_poll', 420, 384),
     Suite('port_io', 420, 384),
     Suite('mouse_irq_bridge', 420, 384),

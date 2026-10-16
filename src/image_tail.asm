@@ -5771,3 +5771,10 @@ InputAccelerationX0016 equ GameDataImage+0x16
 InputAccelerationY0018 equ GameDataImage+0x18
 InputKeyMask1FC7 equ GameDataImage+0x1fc7
 MouseButtonSuppression200B equ GameDataImage+0x200b
+
+ForegroundCounter0052 equ GameDataImage+0x52
+InputToggleSnapshot0053 equ GameDataImage+0x53
+PanelClickLatch0062 equ GameDataImage+0x62
+ForegroundCounter1FD3 equ GameDataImage+0x1fd3
+InputActionSnapshot1FD4 equ GameDataImage+0x1fd4
+TimerChainFlag1FCF equ GameDataImage+0x1fcf

@@ -22628,9 +22628,11 @@
     "address": 15983,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_3E6F",
-    "aliases": [],
+    "size": 534,
+    "symbol_name": "ProcessInputCommands3E6F",
+    "aliases": [
+      "sub_3E6F"
+    ],
     "callers": [
       6260
     ],
@@ -22985,10 +22987,36 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Input command parent known3E6F..4084,530 instruction bytes/195 sites; fourUNKNOWN bytes retained; foreground counters/latches and sound-returnedsegments remainlive"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 530
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 530,
+    "c_implementation": "c/ui_commands.c",
+    "c_core": "lmn_process_input_commands_core",
+    "c_code_ranges": [
+      [
+        15983,
+        16099
+      ],
+      [
+        16100,
+        16109
+      ],
+      [
+        16110,
+        16148
+      ],
+      [
+        16149,
+        16273
+      ],
+      [
+        16274,
+        16517
+      ]
+    ],
+    "verification_evidence": "tests/ui_commands.py:65 fixtures/130 original-native comparisons;530 own known bytes/195 static sites plus64-byte27-site visibility child;220/222 sites and121/124 direct jump outcomes executed, with3FB9/3FBC and three edges statically infeasible from this entry under synchronous providers.8407 original instructions,6044 ordered events (484 declared INT transport,44 provider accesses/28 calls),5 completed mutants. Shared INT60/61 transport, returned DS gates, live SS:SP and CALL/RET aliases, signed counter wrap, release equality quirks, late relocated4137 operand and independent view projection. Four UNKNOWN bytes retained. docs/input-commands.md"
   },
   {
     "address": 16517,
@@ -63393,6 +63421,230 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Live input state read/write operands in 418C..4333; keyboard mask producers 176E/1776; exact-FF mouse button suppression 4262"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16250,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsInt613F7A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16252,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsAfterInt613F7C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16269,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsInt603F8D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16271,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsAfterInt603F8F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16350,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsViewCall3FDE",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16353,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsAfterView3FE1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16360,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsReleaseReturn3FE8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 16366,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputCommandsReturn3FEE",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact known input-command instruction boundary"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 82,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "ForegroundCounter0052",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 83,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "InputToggleSnapshot0053",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 98,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "PanelClickLatch0062",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8147,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "ForegroundCounter1FD3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8148,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "InputActionSnapshot1FD4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8143,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "TimerChainFlag1FCF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Shared input byte: exact producers, initialization and wrapped predicates in docs/input-commands.md; do not infer wall-clock timing"
     ],
     "verification_status": "STATIC"
   }

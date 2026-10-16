@@ -33,10 +33,16 @@ WRITE=ct.CFUNCTYPE(None,ct.c_void_p,MEM,ct.c_uint32,ct.c_uint8,ct.c_uint16)
 OUT=ct.CFUNCTYPE(None,ct.c_void_p,ct.c_uint16,ct.c_uint16,ct.c_uint16)
 OUT8=ct.CFUNCTYPE(None,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint8,ct.c_uint16)
 IN8=ct.CFUNCTYPE(ct.c_uint8,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint16)
+INTERRUPT=ct.CFUNCTYPE(ct.c_uint16,ct.c_void_p,MEM,ct.POINTER(Regs),ct.c_void_p)
 class Bus(ct.Structure):
     _fields_=[('context',ct.c_void_p),('read_byte',READ),('write_byte',WRITE),('out_word',OUT)]
 class Ports(ct.Structure):
     _fields_=[('context',ct.c_void_p),('out_byte',OUT8),('in_byte',IN8)]
+# The bus pointer is opaque in this callback ABI; providers use the same
+# bounded BusAccess object on both sides rather than dereferencing a C table.
+class InterruptService(ct.Structure):
+    _fields_=[('context',ct.c_void_p),('execute',INTERRUPT),
+              ('code_segment',ct.c_uint16),('instruction_pointer',ct.c_uint16)]
 MD=capstone.Cs(capstone.CS_ARCH_X86,capstone.CS_MODE_16);MD.detail=True
 class OracleFailure(AssertionError):pass
 class Mismatch(AssertionError):pass
@@ -176,6 +182,7 @@ def callback_failure(error):
 
 class NativeCallbacks:
     def __init__(self,access,*,missing_in=False,missing_out=False):
+        self.access=access
         def guarded(fn):
             def call(*args):
                 try:return fn(*args)
@@ -190,6 +197,19 @@ class NativeCallbacks:
         self.bus=Bus(None,*self.keep[:3])
         self.ports=Ports(None,OUT8() if missing_out else self.keep[3],
                          IN8() if missing_in else self.keep[4])
+
+    def interrupt(self,provider):
+        """Guard a declared full-register pre-IRET fixture provider."""
+        def call(_,memory,registers,bus):
+            try:
+                address=ct.addressof((ct.c_uint8*len(self.access.memory)).from_buffer(self.access.memory))
+                check(ct.addressof(memory.contents)==address,'provider canonical RAM binding differs')
+                r={name:getattr(registers.contents,name) for name in REG_NAMES}
+                status=provider(self.access,r)
+                for name in REG_NAMES:setattr(registers.contents,name,r[name])
+                return status
+            except BaseException as error:callback_failure(error)
+        return INTERRUPT(call)
 
 
 def compare_states(label,actual,reference):
@@ -219,7 +239,8 @@ class OriginalMachine:
     """
     def __init__(self,case,memory,registers,device,core,*,instructions,access,
                  outer_returns,child_returns=None,max_steps=100000,
-                 changed_return_status=4,before=None,interrupt=None):
+                 changed_return_status=4,before=None,interrupt=None,
+                 mutable_operands=()):
         self.c,self.memory,self.r,self.device,self.core=case,memory,registers,device,core
         self.instructions=instructions;self.access=access
         self.outer_returns=outer_returns if callable(outer_returns) else set(outer_returns)
@@ -233,6 +254,14 @@ class OriginalMachine:
         self.status=0;self.service_status=0;self.stopped=False
         self.loaded=loaded_image(case['load'])
         self.code_bytes={physical(case['load'],p+d) for p,i in instructions.items() for d in range(i.size)}
+        self.mutable_operands={};self.operand_versions={};self.pending_fetch=None
+        for start,width in mutable_operands:
+            owner=next((i for i in instructions.values()
+                        if i.address+i.imm_offset==start and i.imm_size==width),None)
+            check(owner is not None and width>0,'mutable field is not a complete decoded immediate')
+            self.mutable_operands[owner.address]=(start,width)
+            self.operand_versions[owner.address]=bytes(self.loaded[start:start+width])
+            self.code_bytes.difference_update(physical(case['load'],start+d) for d in range(width))
         self.cpu.hook_add(UC_HOOK_CODE,self.code)
         self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
         self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
@@ -256,10 +285,21 @@ class OriginalMachine:
             old=self.previous
             if old.group(capstone.CS_GRP_JUMP):self.edges.add((old.address,off))
             if old.mnemonic in ('xor','and','or','test','shr','sar','shl'):self.mask=FLAGS&~0x10
-            elif old.mnemonic in ('add','sub','cmp'):self.mask=FLAGS
+            elif old.mnemonic in ('add','sub','cmp','neg'):self.mask=FLAGS
             elif old.mnemonic in ('inc','dec'):self.mask|=0x8D4
             elif old.mnemonic=='ror':self.mask|=0x801
-        check(bytes(u.mem_read(address,ins.size))==self.loaded[off:off+ins.size],f'code differs at {off:04X}')
+        expected=bytearray(self.loaded[off:off+ins.size])
+        if off in self.mutable_operands:
+            start,width=self.mutable_operands[off]
+            value=bytes(self.memory[physical(self.c['load'],start+d)] for d in range(width))
+            expected[start-off:start-off+width]=value
+        check(bytes(u.mem_read(address,ins.size))==bytes(expected),f'code differs at {off:04X}')
+        if off in self.mutable_operands and value!=self.operand_versions[off]:
+            # Only explicitly identified immediate bytes may change. Resume at
+            # this real instruction after invalidating Unicorn's decoded cache;
+            # never replace its execution with a Python instruction model.
+            self.operand_versions[off]=value;self.previous=None
+            self.pending_fetch=off;u.emu_stop();return
         if ins.mnemonic=='ret' and not self.executing_ret:
             # Observe the completed predecessor's defined flags/edge even when
             # the core boundary leaves this RET itself unexecuted.
@@ -327,9 +367,12 @@ class OriginalMachine:
         # phase ceiling also covers unexpectedly recursive/changed call graphs.
         for phase in range(self.max_steps+1):
             if self.stopped:break
-            r=self.state();self.pending=False
+            r=self.state();self.pending=False;self.pending_fetch=None
             self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=self.max_steps-self.steps+1)
             if self.stopped:break
+            if self.pending_fetch is not None:
+                self.cpu.ctl_remove_cache(0,SIZE*2)
+                continue
             check(self.pending,'original did not reach bounded RET boundary')
             off=self.state()['ip']
             outer=self.outer_returns(self,off) if callable(self.outer_returns) else off in self.outer_returns

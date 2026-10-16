@@ -42,9 +42,11 @@ registers and FLAGS through both boundaries, including changed-target stops.
 
 The mouse bridge, 18B2 EOI leaf and 4334/4359/4386 port-201 cluster now have
 scoped C acceptance. The 4252 mouse-provider contract and connected 418C input
-paths now have focused acceptance through the shared verifier. Next establish
-3E6F's shared state, then compose the 183E shared tail with explicit INT60/61,
-mirror-restorer
+paths now have focused acceptance through the shared verifier. The 3E6F command
+parent now composes the visibility child with proved shared-state ownership;
+INT33 and INT60/61 callers reuse interrupt_service.c's full-register transport.
+See input-commands.md for the scoped 594-byte domain and remaining sound seams.
+Next compose the 183E shared tail with explicit INT60/61, mirror-restorer
 and saved-INT08 provider seams; prefix dependencies 5473/553D; the prefix
 using the tested 5827 child; then full-handler composition. The unresolved
 indirect/far frontier at 42A5 stays explicit. Existing timer_chain.py cases

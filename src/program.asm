@@ -23,6 +23,7 @@ times -(($-$$) != 0x3ac8) db 0 ; module end assertion
 times -(($-$$) != 0x3cde) db 0 ; module end assertion
 %include "entity_selection.asm"
 times -(($-$$) != 0x3e6f) db 0 ; module end assertion
+%include "input_commands.asm"
 %include "game_code_late_after_selection.asm"
 %include "view_visibility.asm"
 %include "game_code_after_view_visibility.asm"

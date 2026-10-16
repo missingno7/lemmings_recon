@@ -233,7 +233,7 @@
 #define CS_InitializeStatusDisplay 0x39CEu
 #define CS_UpdateStatusDisplay 0x3AC8u
 #define CS_SelectEntityCandidate 0x3CDEu
-#define CS_sub_3E6F 0x3E6Fu
+#define CS_ProcessInputCommands3E6F 0x3E6Fu
 #define CS_sub_4085 0x4085u
 #define CS_RebuildViewVisibilityMap 0x410Fu
 #define CS_DrawStatusText 0x417Bu
@@ -945,4 +945,18 @@
 #define SEG09A9_InputAccelerationY0018 0x0018u
 #define SEG09A9_InputKeyMask1FC7 0x1FC7u
 #define SEG09A9_MouseButtonSuppression200B 0x200Bu
+#define CS_InputCommandsInt613F7A 0x3F7Au
+#define CS_InputCommandsAfterInt613F7C 0x3F7Cu
+#define CS_InputCommandsInt603F8D 0x3F8Du
+#define CS_InputCommandsAfterInt603F8F 0x3F8Fu
+#define CS_InputCommandsViewCall3FDE 0x3FDEu
+#define CS_InputCommandsAfterView3FE1 0x3FE1u
+#define CS_InputCommandsReleaseReturn3FE8 0x3FE8u
+#define CS_InputCommandsReturn3FEE 0x3FEEu
+#define SEG09A9_ForegroundCounter0052 0x0052u
+#define SEG09A9_InputToggleSnapshot0053 0x0053u
+#define SEG09A9_PanelClickLatch0062 0x0062u
+#define SEG09A9_ForegroundCounter1FD3 0x1FD3u
+#define SEG09A9_InputActionSnapshot1FD4 0x1FD4u
+#define SEG09A9_TimerChainFlag1FCF 0x1FCFu
 #endif

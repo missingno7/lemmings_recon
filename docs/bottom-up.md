@@ -25,7 +25,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 039CE..03AC7 | status_initialize.asm | Initial status copies, wrapped release reload, shared snapshots and actual child frames |
 | 03AC8..03CDD | status_display.asm | Status display, actual child frames, shared refresh fields and byte-DIV frontier; UNKNOWN preserved |
 | 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
-| 03E6F..0410E | game_code_late_after_selection.asm | Input callers; mixed ownership remains provisional |
+| 03E6F..04084 | input_commands.asm | Shared command counters/latches, sound boundaries and visibility child |
+| 04085..0410E | game_code_late_after_selection.asm | Remaining input edge/selection suffix |
 | 0410F..0414E | view_visibility.asm | Shared visibility producer with live DS/ES, relocated marker segment and existing caller frame |
 | 0414F..0418B | game_code_after_view_visibility.asm | Display tail and status text |
 | 0418C..04333 | input_poll.asm | Connected mouse, keyboard and live callback input |
@@ -865,3 +866,13 @@ The port regression retains its original accounting after migration. New focused
 suites share tests/verification.py; precise current work is in next-work.md and
 older checkpoint narrative is retained in convergence-history.md. Next close
 3E6F's shared fields and sound seams before composing the timer tail.
+
+The next checkpoint closes that scoped 3E6F parent: 530 new known C bytes take
+the main ledger union to26,544. Its65 fixtures/130 comparisons compose the actual
+410F child and cover220 sites/121 feasible direct outcomes; two known comparisons
+and three outcomes retain a separate synchronous-entry infeasibility proof.
+Five completed mutants and independent map/counter/release expectations pass.
+INT33 and INT60/61 now share native interrupt transport and the common verifier;
+the relocated4137 operand remains live at its original execution phase. UNKNOWN
+bytes and opaque service bodies remain open. Next compose183E with those scoped
+children and the saved-INT08 seam; see input-commands.md and next-work.md.

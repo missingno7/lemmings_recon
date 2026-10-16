@@ -40,12 +40,7 @@ class Result(ct.Structure):
     _fields_ = [('registers', Regs), ('status', ct.c_uint16), ('service_status', ct.c_uint16)]
 
 
-INT33 = ct.CFUNCTYPE(ct.c_uint16, ct.c_void_p, MEM, ct.POINTER(Regs), ct.POINTER(base.Bus))
-
-
-class Service(ct.Structure):
-    _fields_ = [('context', ct.c_void_p), ('interrupt33', INT33),
-                ('code_segment', ct.c_uint16), ('instruction_pointer', ct.c_uint16)]
+INT33, Service = base.INTERRUPT, base.InterruptService
 
 
 def u16(value):
@@ -527,6 +522,7 @@ def hashes():
         'docs/executable.md', 'docs/port-io.md',
         'src/input_poll.asm', 'src/port201_input.asm',
         'c/input_poll.c', 'c/input_poll.h', 'c/port_io.c', 'c/port_io.h',
+        'c/interrupt_service.c', 'c/interrupt_service.h',
         'c/lemmings_sym.h', 'c/aligned_read_mask.h', 'c/special_blit.h', 'c/regs.h',
         'tests/input_poll.py', 'tests/port_io.py', 'tests/verification.py',
         'tests/minimap_vga.py', 'tools/bounded_process.py', 'tools/cbuild.py',
@@ -554,17 +550,7 @@ class Native:
         callbacks = base.NativeCallbacks(access, missing_in=c.get('missing_in'),
                                          missing_out=c.get('missing_out'))
 
-        def provider(_, mem, pregs, pbus):
-            try:
-                r = {name: getattr(pregs.contents, name) for name in REGS}
-                status = external(access, r)
-                for name in REGS:
-                    setattr(pregs.contents, name, r[name])
-                return status
-            except BaseException as error:
-                base.callback_failure(error)
-
-        service_callback = INT33(provider)
+        service_callback = callbacks.interrupt(external)
         service = Service(None, service_callback, *binding)
         ram = (ct.c_uint8 * SIZE).from_buffer(memory)
         entry_regs = Regs(**regs)

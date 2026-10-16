@@ -63,6 +63,16 @@ static void write16(ViewVisibilityState *s,uint16_t segment,
     write_physical(s,address+1u,(uint8_t)(value>>8));
 }
 
+#if VIEW_VISIBILITY_MUTATION != 6
+static uint16_t read_code_operand16(const ViewVisibilityState *s,
+                                    uint16_t offset) {
+    uint32_t address=physical(s->cs,offset);
+    uint8_t low=s->memory[address];
+    uint8_t high=s->memory[(address+1u)&MEMORY_MASK];
+    return (uint16_t)(low|((uint16_t)high<<8));
+}
+#endif
+
 static uint16_t szp16(uint16_t value) {
     unsigned parity=0u,bit;
     uint16_t out=0u;
@@ -168,9 +178,9 @@ static LmnViewVisibilityResult result_of(const ViewVisibilityState *s) {
     return out;
 }
 
-LmnViewVisibilityResult lmn_rebuild_view_visibility_map_core(
+static LmnViewVisibilityResult run_view_visibility_map(
     uint8_t *memory,const LmnViewVisibilityCall *call,
-    const LmnRasterBus *bus) {
+    const LmnRasterBus *bus,int live_operand) {
     ViewVisibilityState s;
     uint16_t map_offset;
 #if VIEW_VISIBILITY_MUTATION == 2
@@ -238,9 +248,13 @@ LmnViewVisibilityResult lmn_rebuild_view_visibility_map_core(
 #endif
     s.ax=s.es;                                         /* MOV AX,ES */
 #if VIEW_VISIBILITY_MUTATION == 6
+    (void)live_operand;
     s.cx=s.ss;
 #else
-    s.cx=s.runtime_stack_segment;                     /* MOV CX,[operand 4137] */
+    if(live_operand)
+        s.cx=read_code_operand16(&s,CS_ViewVisibilityStackSegmentOperand);
+    else
+        s.cx=s.runtime_stack_segment;                 /* MOV CX,[operand 4137] */
 #endif
     s.es=s.cx;                                         /* MOV ES,CX */
     s.bx=read16(&s,s.ds,SEG09A9_DrawingDirtyCellMapOffset);
@@ -260,6 +274,12 @@ LmnViewVisibilityResult lmn_rebuild_view_visibility_map_core(
     s.flags=(uint16_t)(s.flags|IF);                    /* STI */
     s.continuation=CS_ViewVisibilityReturn;
     return result_of(&s);
+}
+
+LmnViewVisibilityResult lmn_rebuild_view_visibility_map_core(
+    uint8_t *memory,const LmnViewVisibilityCall *call,
+    const LmnRasterBus *bus) {
+    return run_view_visibility_map(memory,call,bus,0);
 }
 
 static void apply_result(LmnRegs *r,const LmnViewVisibilityResult *out) {
@@ -285,8 +305,9 @@ static uint16_t read_stack_return(uint8_t *memory,uint16_t ss,uint16_t sp,
     return (uint16_t)(low|((uint16_t)high<<8));
 }
 
-uint16_t lmn_rebuild_view_visibility_map_adapter(uint8_t *memory,
-    LmnRegs *r,uint16_t runtime_stack_segment,const LmnRasterBus *bus) {
+static uint16_t run_view_visibility_map_adapter(uint8_t *memory,
+    LmnRegs *r,uint16_t runtime_stack_segment,int live_operand,
+    const LmnRasterBus *bus) {
     LmnViewVisibilityCall call;
     LmnViewVisibilityResult out;
     call.value=r->ax;call.map_cursor=r->bx;call.count=r->cx;
@@ -296,11 +317,22 @@ uint16_t lmn_rebuild_view_visibility_map_adapter(uint8_t *memory,
     call.extra_segment=r->es;call.stack_segment=r->ss;
     call.stack_offset=r->sp;call.flags=r->flags;
     call.runtime_stack_segment=runtime_stack_segment;
-    out=lmn_rebuild_view_visibility_map_core(memory,&call,bus);
+    out=run_view_visibility_map(memory,&call,bus,live_operand);
     apply_result(r,&out);
     if(out.status==LMN_VIEW_VISIBILITY_READY) {
         r->ip=read_stack_return(memory,r->ss,r->sp,r->flags,bus);
         r->sp=(uint16_t)(r->sp+2u);
     }
     return out.status;
+}
+
+uint16_t lmn_rebuild_view_visibility_map_adapter(uint8_t *memory,
+    LmnRegs *r,uint16_t runtime_stack_segment,const LmnRasterBus *bus) {
+    return run_view_visibility_map_adapter(memory,r,runtime_stack_segment,
+                                           0,bus);
+}
+
+uint16_t lmn_rebuild_view_visibility_map_live_adapter(uint8_t *memory,
+    LmnRegs *r,const LmnRasterBus *bus) {
+    return run_view_visibility_map_adapter(memory,r,0,1,bus);
 }

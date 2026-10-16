@@ -114,14 +114,14 @@ loc_0105:
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00119
     jnz loc_0164 ; @0011E
 loc_0120:
-    mov byte [0x1fcf],0x0 ; @00120
+    mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @00120
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @00125
     add dl,0x6 ; @00129
 loc_012C:
     in al,dx ; @0012C
     test al,0x8 ; @0012D
     jnz loc_012C ; @0012F
-    cmp byte [0x1fcf],0xff ; @00131
+    cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @00131
     jnz loc_013F ; @00136
 loc_0138:
     in al,dx ; @00138
@@ -150,7 +150,7 @@ loc_015C:
 loc_0164:
     mov cx,[0x1ffe] ; @00164
     mov dx,[0x2000] ; @00168
-    mov byte [0x1fcf],0x0 ; @0016C
+    mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @0016C
 loc_0171:
     dec cx ; @00171
     jnz loc_0179 ; @00172
@@ -158,7 +158,7 @@ loc_0171:
     jz loc_0183 ; @00176
     dec dx ; @00178
 loc_0179:
-    cmp byte [0x1fcf],0xff ; @00179
+    cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @00179
     jnz loc_0171 ; @0017E
     jmp short loc_0186 ; @00180
 ; UNKNOWN: unresolved bytes
@@ -172,10 +172,10 @@ loc_0186:
     jng loc_0164 ; @0018D
     mov byte [0x1fcd],0x0 ; @0018F
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @00194
-    inc byte [0x1fd3] ; @00199
+    inc byte [ForegroundCounter1FD3-GameDataImage] ; @00199
     call sub_031E ; @0019D
     call sub_4085 ; @001A0
-    inc byte [0x52] ; @001A3
+    inc byte [ForegroundCounter0052-GameDataImage] ; @001A3
     call sub_80FD ; @001A7
     call sub_7900 ; @001AA
     call DispatchEntityAction ; @001AD
@@ -365,7 +365,7 @@ loc_035E:
 loc_0361:
     test al,0x4 ; @00361
     jz loc_037C ; @00363
-    mov dl,[0x52] ; @00365
+    mov dl,[ForegroundCounter0052-GameDataImage] ; @00365
     cmp dl,0xf ; @00369
     jz loc_0380 ; @0036C
     cmp dl,0x23 ; @0036E
@@ -444,11 +444,11 @@ sub_03E7:
     mov byte [EntityPointCount-GameDataImage],0x50 ; @0042C
     mov byte [0x4e],0x1 ; @00431
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00436
-    mov [0x1fd4],al ; @00438
-    mov [0x1fd3],al ; @0043B
+    mov [InputActionSnapshot1FD4-GameDataImage],al ; @00438
+    mov [ForegroundCounter1FD3-GameDataImage],al ; @0043B
     mov [0x4f],al ; @0043E
     mov [DrawingDirtyCellsEnabledByte-GameDataImage],al ; @00441
-    mov [0x52],al ; @00444
+    mov [ForegroundCounter0052-GameDataImage],al ; @00444
     mov [EntityCreationGate-GameDataImage],al ; @00447
     push ss ; @0044A
     pop es ; @0044B
@@ -486,17 +486,17 @@ loc_0480:
     call UpdateStatusDisplay ; @0049E
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004A1
     db 0x33,0xd2 ; ENCODED: xor dx,dx (NASM chooses a different encoding) ; @004A3
-    mov byte [0x1fcf],0x0 ; @004A5
+    mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @004A5
 loc_04AA:
-    cmp byte [0x1fcf],0xff ; @004AA
+    cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @004AA
     jnz loc_04AA ; @004AF
-    mov byte [0x1fcf],0x0 ; @004B1
+    mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @004B1
 loc_04B6:
     dec cx ; @004B6
     jnz loc_04BA ; @004B7
     dec dx ; @004B9
 loc_04BA:
-    cmp byte [0x1fcf],0xff ; @004BA
+    cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @004BA
     jnz loc_04B6 ; @004BF
     db 0x03,0xc9 ; ENCODED: add cx,cx (NASM chooses a different encoding) ; @004C1
     db 0x13,0xd2 ; ENCODED: adc dx,dx (NASM chooses a different encoding) ; @004C3
@@ -2251,7 +2251,7 @@ sub_186F:
     mov ax,0x0 ; @0186F
     int 0x61 ; @01872
 loc_1874:
-    call sub_3E6F ; @01874
+    call ProcessInputCommands3E6F ; @01874
     cmp byte [PrivateIrqCounter2002-GameDataImage],0x0 ; @01877
     jnz loc_1881 ; @0187C
 sub_187E:
@@ -2275,7 +2275,7 @@ ChecksumWindowEnd:
     jmp far [SavedTimerVector-GameDataImage] ; @01899
 sub_189D:
     sti ; @0189D
-    mov byte [0x1fcf],0xff ; @0189E
+    mov byte [TimerChainFlag1FCF-GameDataImage],0xff ; @0189E
     inc byte [0x1fcd] ; @018A3
     popf ; @018A7
     pop di ; @018A8

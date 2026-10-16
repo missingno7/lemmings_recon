@@ -1,5 +1,6 @@
 #include "input_poll.h"
 
+#include "interrupt_service.h"
 #include "lemmings_sym.h"
 
 #ifndef INPUT_POLL_MUTATION
@@ -13,19 +14,10 @@ enum {
     AF = 0x0010,
     ZF = 0x0040,
     SF = 0x0080,
-    TF = 0x0100,
-    IF = 0x0200,
     OF = 0x0800,
     ARITH = CF | PF | AF | ZF | SF | OF,
-    LOGIC = CF | PF | ZF | SF | OF,
-    SOFTWARE_INT_CLEAR = TF | IF,
-    IRET_FLAGS = 0x7fd5
+    LOGIC = CF | PF | ZF | SF | OF
 };
-
-typedef struct InputPollVector {
-    uint16_t code_segment;
-    uint16_t instruction_pointer;
-} InputPollVector;
 
 typedef struct InputPollState {
     uint8_t *memory;
@@ -214,33 +206,6 @@ static void set_status(InputPollState *s, uint16_t status,
     s->service_status = service_status;
 }
 
-static uint16_t normalize_iret_flags(uint16_t flags) {
-#if INPUT_POLL_MUTATION == 3
-    return flags;
-#else
-    return (uint16_t)((flags & IRET_FLAGS) | 2u);
-#endif
-}
-
-static void consume_iret(InputPollState *s, uint16_t segment,
-                         uint16_t *stack_offset, uint16_t access_flags) {
-    uint16_t ip = pop16_from(s, segment, stack_offset, access_flags);
-    uint16_t cs = pop16_from(s, segment, stack_offset, access_flags);
-    uint16_t flags = pop16_from(s, segment, stack_offset, access_flags);
-    s->r.ip = ip;
-    s->r.cs = cs;
-    s->r.flags = normalize_iret_flags(flags);
-}
-
-static InputPollVector read_int33_vector(InputPollState *s,
-                                         uint16_t access_flags) {
-    InputPollVector vector;
-    /* Real-mode IVT order is the CS word at 00CE before the IP word at 00CC. */
-    vector.code_segment = read16_at(s, 0, 0x00ceu, access_flags);
-    vector.instruction_pointer = read16_at(s, 0, 0x00ccu, access_flags);
-    return vector;
-}
-
 static void clamp_mouse_coordinate(InputPollState *s, uint16_t *value,
                                    uint16_t maximum) {
     cmp16(s, *value, 8);
@@ -253,17 +218,9 @@ static void clamp_mouse_coordinate(InputPollState *s, uint16_t *value,
 
 static void poll_mouse_body(InputPollState *s,
                             const LmnInputPollService *service) {
-    uint16_t entry_cs = s->r.cs;
-#if INPUT_POLL_MUTATION == 2
-    uint16_t int_frame_ss = 0;
-    uint16_t int_frame_sp = 0;
-#endif
-    InputPollVector vector;
-
-#if INPUT_POLL_MUTATION == 1
-    /* Mutant samples IVT33 before INT writes its real stack frame. */
-    vector = read_int33_vector(s, s->r.flags);
-#endif
+    LmnInterruptService interrupt_service;
+    const LmnInterruptService *provider = NULL;
+    LmnInterruptResult interrupt_result;
 
     push16(s, s->r.es); /* PUSH ES @4252 */
     push16(s, s->r.ds); /* PUSH DS @4253 */
@@ -277,58 +234,25 @@ static void poll_mouse_body(InputPollState *s,
     push16(s, s->r.ds); /* PUSH DS @425B */
     s->r.ax = 3;        /* MOV AX,3 @425C */
     s->r.ip = CS_MousePollInt33;
-
-    /* INT 33 pushes FLAGS, clears TF/IF, then pushes CS and return IP. */
-    {
-        uint16_t pushed_flags = s->r.flags;
-        uint16_t interrupt_flags = (uint16_t)(
-            pushed_flags & (uint16_t)~SOFTWARE_INT_CLEAR);
-        s->r.ip = CS_MousePollInt33Return;
-        push16_flags(s, pushed_flags, pushed_flags);
-        push16_flags(s, s->r.cs, interrupt_flags);
-        push16_flags(s, CS_MousePollInt33Return, interrupt_flags);
-        s->r.flags = interrupt_flags;
+    if (service) {
+        interrupt_service.context = service->context;
+        interrupt_service.execute = service->interrupt33;
+        interrupt_service.code_segment = service->code_segment;
+        interrupt_service.instruction_pointer = service->instruction_pointer;
+        provider = &interrupt_service;
     }
-#if INPUT_POLL_MUTATION == 2
-    int_frame_ss = s->r.ss;
-    int_frame_sp = s->r.sp;
-#endif
-
-#if INPUT_POLL_MUTATION != 1
-    vector = read_int33_vector(s, s->r.flags);
-#endif
-    s->r.cs = vector.code_segment;
-    s->r.ip = vector.instruction_pointer;
-    if (!service || !service->interrupt33 ||
-        vector.code_segment != service->code_segment ||
-        vector.instruction_pointer != service->instruction_pointer) {
-        set_status(s, LMN_INPUT_POLL_UNBOUND_SERVICE, 0);
+    interrupt_result = lmn_interrupt_service(s->memory, &s->r, 0x33u,
+        CS_MousePollInt33Return, provider, s->bus);
+    if (interrupt_result.status != LMN_INTERRUPT_RETURNED) {
+        uint16_t status = LMN_INPUT_POLL_UNBOUND_SERVICE;
+        if (interrupt_result.status == LMN_INTERRUPT_PROVIDER_STOP)
+            status = LMN_INPUT_POLL_EXTERNAL_STOP;
+        else if (interrupt_result.status == LMN_INTERRUPT_CHANGED_IRET)
+            status = LMN_INPUT_POLL_CHANGED_INTERRUPT_RETURN;
+        set_status(s, status, interrupt_result.service_status);
         return;
     }
-
-    s->service_status = service->interrupt33(
-        service->context, s->memory, &s->r, s->bus);
-    if (s->service_status != 0) {
-        set_status(s, LMN_INPUT_POLL_EXTERNAL_STOP, s->service_status);
-        return;
-    }
-
-    {
-        uint16_t live_ss = s->r.ss;
-        uint16_t live_sp = s->r.sp;
-        uint16_t access_flags = s->r.flags;
-#if INPUT_POLL_MUTATION == 2
-        live_ss = int_frame_ss;
-        live_sp = int_frame_sp;
-        s->r.ss = int_frame_ss;
-#endif
-        consume_iret(s, live_ss, &live_sp, access_flags);
-        s->r.sp = live_sp;
-    }
-    if (s->r.cs != entry_cs || s->r.ip != CS_MousePollInt33Return) {
-        set_status(s, LMN_INPUT_POLL_CHANGED_INTERRUPT_RETURN, 0);
-        return;
-    }
+    s->service_status = interrupt_result.service_status;
 
     s->r.ip = CS_MousePollInt33Return;
     s->r.ds = pop16(s); /* POP DS @4261 */

@@ -35,4 +35,9 @@ uint16_t lmn_rebuild_view_visibility_map_adapter(uint8_t *memory,
     LmnRegs *registers,uint16_t runtime_stack_segment,
     const LmnRasterBus *bus);
 
+/* Reads the live relocated MOV CX immediate at CS:4137 at the original MOV
+   phase, without routing instruction-operand fetches through raster data bus. */
+uint16_t lmn_rebuild_view_visibility_map_live_adapter(uint8_t *memory,
+    LmnRegs *registers,const LmnRasterBus *bus);
+
 #endif

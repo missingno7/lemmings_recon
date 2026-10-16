@@ -2,8 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 26,014 bytes. The EOI/port-201
-cluster passes 51 fixtures/102 comparisons, all 75 sites/eight edges and ten
+The main-image translated-code ledger union is 26,544 bytes. Input commands at
+3E6F add 530 known C bytes and compose the tested 64-byte visibility child.
+The campaign passes 65 fixtures/130 comparisons, all 220 reachable sites and
+121 feasible direct jump outcomes, with five completed mutants. Two known
+comparisons and three static outcomes are infeasible from this entry under
+synchronous providers; their literal C remains implemented. Four UNKNOWN bytes
+remain unresolved. The report records 8,407 original instructions and 6,044
+events (484 declared INT transport, 44 provider accesses across 28 calls).
+See input-commands.md for state ownership, proof and remaining sound boundaries.
+
+The EOI/port-201 cluster passes 51 fixtures/102 comparisons, all 75 sites/eight edges and ten
 completed mutation detections after migration to tests/verification.py. Its
 report retains matching consumed-input hashes. Exact ASM identity is unchanged.
 
@@ -12,24 +21,20 @@ all 243 sites/91 direct jump outcomes, and seven completed mutants. Its 576
 known bytes combine 345 parent, 79 mouse and 152 previously translated port
 bytes; only 424 new bytes enter the ledger. It executes 7,486 original
 instructions and compares 4,644 events, separating 592 declared INT transport
-and 96 provider accesses across 34 service calls. The 26-input report is fresh.
+and 96 provider accesses across 34 service calls. Its report now pins the shared
+native interrupt transport as well as the original campaign inputs.
 Known 4252/4334/4359 callbacks are supported; 42A5's target domain remains
 explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Establish ownership of the neutral DS bytes 0052,0053,0062,1FD3,1FD4 in 3E6F.
-   Its [3E6F,4085) body has 530 known bytes/195 sites, four UNKNOWN bytes and 44
-   conditional sites. It composes the tested 410F view-map child. Returned DS from
-   INT61 at 3F7A and INT60 at 3F8D feeds later gates; the narrower existing INT61 result
-   is not a full interrupt contract. Neighbor 4085 is a separate entry.
-2. Compose the 183E timer tail with the tested input/mirror/EOI children and
-   explicit INT60/61 and saved-INT08 provider seams. Preserve its live stack and
+1. Compose the 183E timer tail with the tested command, input, mirror and EOI
+   children and explicit INT60/61 and saved-INT08 provider seams. Preserve its live stack and
    checksum overlap. The 119-byte prefix and 116-byte tail overlap the 235-byte
    full handler: count shared bytes/sites once. See timer-frontier.md.
-3. Close prefix dependencies 5473/553D, finite status-port input and the tested
+2. Close prefix dependencies 5473/553D, finite status-port input and the tested
    5827 fixed-pattern child, then compose the 17C7 full handler.
-4. Connect startup/resource/level/frame coordination, complete the remaining
+3. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 
 The destination is portable C11 directly from the exact ASM oracle, with one

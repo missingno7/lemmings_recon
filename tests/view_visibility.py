@@ -401,7 +401,7 @@ def assert_independent(case, initial_memory, initial_regs, runtime_stack_segment
 def input_hashes():
     paths = {
         'assets/vgalemmi.exe', 'metadata/inputs.json', 'metadata/oracle.json',
-        'metadata/symbols.json', 'metadata/toolchain-lock.json',
+        'metadata/toolchain-lock.json',
         'src/game_code_late_after_selection.asm', 'src/view_visibility.asm',
         'src/image_tail.asm', 'src/program.asm',
         'c/view_visibility.c', 'c/view_visibility.h', 'c/lemmings_sym.h',
@@ -410,8 +410,8 @@ def input_hashes():
         'tests/pcspeaker_dispatch.py', 'tests/sound_latches.py',
         'tests/minimap_vga.py', 'tools/resources.py', 'tools/unpack.py',
         'tools/common.py', 'tools/bounded_process.py', 'tools/cbuild.py',
-        'tools/difftest.py', 'tools/coverage.py',
-        'docs/executable.md', 'docs/next-work.md', 'docs/bottom-up.md',
+        'tools/difftest.py',
+        'docs/executable.md',
         'docs/indirect-callbacks.md', 'docs/entity-display.md', 'AGENTS.md',
     }
     missing = sorted(path for path in paths if not (ROOT / path).is_file())
