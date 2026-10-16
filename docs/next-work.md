@@ -2,55 +2,46 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 25,217 bytes, adding 1,178 unique
-bytes with no removals. The fixed-pattern drawing chain now composes native
-715F and 7218 leaves through the actual SS frames in 5827. The three focused
-suites pass 100 fixtures/200 boundaries and 30 completed mutants. The parent
-covers its 33 sites/two outcomes and all 637 integrated sites/six outcomes.
-Child bytes and sites are unioned once. See fixed-pattern-drawing.md.
+The main-image translated-code ledger union is 25,385 bytes, adding the 168
+unique bytes of InitializeVgaRegisterMirrors (04F9..054D) and
+RestoreVgaRegisterMirrors (587F..58D1). Their C11 cores and actual near-RET
+adapters share c/vga_mirrors.c; the preceding fixed-pattern checkpoint is
+recorded in fixed-pattern-drawing.md.
 
-The copy leaf passes 21 fixtures/42 boundaries, all 48 sites/four LOOP outcomes,
-9,156 events and 5,376 independent plane-byte checks. Its live PUSH DX/POP DX
-and PUSH ES/POP DS witnesses assert the effective saved word and source segment.
-The literal renderer passes 36 fixtures/72 boundaries, all 556 sites/no branches,
-28,368 events and 10,560 independent plane-byte checks. Native producer output
-supplies both banks' eight slices as canonical RAM fixtures; producer and
-consumer counts remain separate from startup/runtime composition.
+The paired original/native suite passes 30 single fixtures at both boundaries
+plus two direct RAM-sharing initializer-to-restorer chains: 64 compared phases,
+all 63 unique sites/no branches, 2,064 original instructions and 1,870 ordered
+bus events. Ten mutants complete and are detected. An independent original ADD
+truth table checks all DL bytes under three flag patterns (768 checks).
+The exact stack/code alias receives a separate native-only 31-event witness:
+Unicorn cannot commit that PUSH into its own translated page, so this witness
+earns no original instruction coverage. No replacement PUSH interpreter is used.
 
-The 5827 parent passes 43 fixtures/86 boundaries and 53,900 events, including
-all alignments and selection 00/01/FF, DF/IF, coordinate/segment wrapping,
-actual child and outer returns, saved DS, live selector reads and pair swaps.
-The genuine SS=A000 hardware-changed child return remains a stop. Every suite
-uses 420-second/384-MiB worker limits, bounded traces and fail-stop callbacks;
-budget exhaustion never counts as mutant detection.
+The tests preserve the fixed relocated CS:5884 segment separately from live SS,
+the late operand read after PUSH, nine ordered words/OUTs, actual CX/ES/RET,
+IF/DF, BIOS 0040:0063, byte-only DL+6 and the literal duplicate SS:0010 store.
+SS:000E remains untouched. VGA and wrap aliases remain canonical RAM/device
+accesses. See vga-mirror-restore.md for contracts, limits and exact scope.
 
-The static 1FEA selector audit accounts for startup clearing and allocation,
-all direct selector references, two 96-byte source tables, a 0900h-byte normal
-output and the 144-byte consumer slices. Names live in the ledger and contracts
-beside ASM. Allocation bounds, lifetime, aliases and UNKNOWN 5D18..5D65 remain
-open. Static extraction also accounts for all seven MAIN.DAT section extents;
-section 1 exactly fills the 0184h-byte mask source, while sections 3/4 have adjacent
-normal destinations. Their higher-level consumer semantics remain separate.
+Next compose MouseIrqBridge (0F70..0F9F, 48 bytes/20 sites/four branch outcomes)
+with the accepted restore leaf. Its INT62 forwards to the old selected private
+vector installed during startup. Model actual INT/IRET frames and current IVT
+binding, full returned DS/ES/SS/SP/FLAGS, actual child/outer returns and explicit
+changed-target stops. The bridge counters DS:2002/2003 and CS:83BE gate are
+ledger-owned; the zero writer at 00FE is explicit. See mouse-irq-bridge.md.
 
-The physical 715F..75EE module is now fixed_pattern_drawing.asm. Four rotating
-VGA slots, PointerX/Y and the neutral bias byte are ledger-owned, with named
-producer stores and contracts beside the ASM. UNKNOWN71CA..7217 is unchanged;
-byte 1FE0's writer/meaning, selected-bank meaning, lifetime and aliases remain open.
+After the mouse bridge, close the 18B2 EOI leaf, understood children of 3E6F
+and 418C, then the 183E shared timer tail at explicit INT60/61 and saved-INT08
+seams. The 42A5 indirect/far frontier and UNKNOWN18B7..18F7 stay unresolved.
+The timer prefix depends on 5473/553D, tested 5827 and finite status-port inputs;
+compose the full handler only after those dependencies. The 183E tail overlaps
+the 17C7 handler and is unioned once. See timer-frontier.md.
 
-Next translate 587F..58D1 (83 bytes/38 sites), then its mirror initialization
-producer 04F9..054D (85 bytes/25 sites), before composing interrupt callers.
-Read vga-mirror-restore.md and fresh graph views first. The current CS:5884
-operand selects a fixed relocated 143E mirror frame, distinct from live SS.
-Preserve nine ordered mirror reads/OUTs, saved CX, entry ES, actual RET and IF.
-Startup literally overwrites SS:0010 with FF08 at 0549 and leaves SS:000E
-uninitialized; retain that quirk. Mouse INT62, timer chaining and asynchronous
-IRQ behavior remain explicit platform/frame frontiers.
-
-These focused reports pin their consumed code, models, tools, assets and generated
-header. Progress prose and the raw symbol ledger are outside their behavioral
-scope; the independent exact gate pins the current ledger/header/ASM. Earlier
-unrelated campaigns remain historical until their recorded inputs match. Full
-contracts and matching complete native campaign inputs remain necessary for
+Focused reports pin their 21 consumed code/model/tool/asset/header inputs.
+Progress prose and raw ledger status are outside behavioral scope; the exact
+gate independently pins current ASM/ledger/header identity. Older unrelated
+campaigns remain historical until their recorded inputs match. Full original
+contracts and a matching complete native campaign remain necessary for
 aggregate acceptance; SDL3 follows the core.
 
 ## Retained terrain campaign

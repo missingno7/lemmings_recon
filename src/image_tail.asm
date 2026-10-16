@@ -5755,3 +5755,8 @@ FixedPatternVgaOffset000E equ GameDataImage+0x000E
 PointerX equ GameDataImage+0x0010
 PointerY equ GameDataImage+0x0012
 FixedPatternOffsetBias1FE0 equ GameDataImage+0x1fe0
+DisplayStatusPort1FDC equ GameDataImage+0x1fdc
+
+PrivateIrqCounter2002 equ GameDataImage+0x2002
+PrivateIrqCounter2003 equ GameDataImage+0x2003
+MouseIrqMirrorGate83BE equ ChecksumCursor+3

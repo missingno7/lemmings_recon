@@ -1,7 +1,8 @@
 # VGA mirror restoration frontier
 
-This is a static contract for `sub_587F` at `587F..58D1`: 83 bytes, 38
-instruction sites, no child calls or branches. It is not yet a C domain.
+This records `RestoreVgaRegisterMirrors` at `587F..58D1`: 83 bytes, 38
+instruction sites, no child calls or branches. Both mirror leaves now have
+maintained C11 cores and actual near-RET adapters in c/vga_mirrors.c.
 The direct callers are MouseIrqBridge at 0F99 (return 0F9C) and the timer
 tail at 187E (return 1881). Keep this leaf's fixed relocated mirror segment
 separate from the supplied live SS used by the drawing cores and stack.
@@ -48,7 +49,12 @@ the outer RET independently. Segmented words retain physical high-byte +1.
 
 RuntimeStackFrame is at image-relative 143E0, six bytes beyond the static
 image's exclusive end 143DA. Initial mirror contents are unspecified until
-written. Startup calls `sub_04F9` at 0037; that helper writes live SS words:
+written. Startup calls `InitializeVgaRegisterMirrors` at 0037; that helper
+occupies 04F9..054D (85 bytes/25 sites), with no calls or branches. It sets
+ES=0040, reads the BIOS CRTC base word at ES:0063 and writes it through live
+DS:1FDA. `ADD DL,6 @0507` wraps only DL, preserves DH and supplies the byte ADD
+flags for the remaining instructions. DS:1FDC receives the adjusted word.
+Entry IF/DF survive; the helper contains no CLI/STI. It then writes live SS:
 
 | Store site | SS offset | Word value |
 |---|---|---|
@@ -75,7 +81,7 @@ changes, including the fixed-pattern leaves, do not update every mirror. The
 restorer therefore consumes live, possibly stale mirror values; they are not
 a validated copy of the current device state.
 
-## Caller boundaries and next verification
+## Caller boundaries
 
 MouseIrqBridge saves DS/AX, invokes INT62, then uses the returned DS for its
 gates and calls 587F after saving DX. It does not save ES around INT62; the
@@ -89,7 +95,42 @@ and 3E6F before conditionally calling 587F at 187E. The next instruction at
 then IRETs or chains to the saved INT08 handler. Preserve the STI/RET window;
 this static contract does not close asynchronous IRQ or INT62 behavior.
 
-Next translate 587F as a bounded leaf with current CS-operand binding, nine
-ordered mirror reads/OUTs, actual SS save/pop/RET, IF/DF/defined flags, aliases,
-relocation and the startup overwrite/missing-initialization witnesses. Only
-then connect its interrupt callers at their explicit platform/frame seams.
+Next compose MouseIrqBridge with the verified restore leaf at its explicit
+INT62 provider/frame seam; see mouse-irq-bridge.md. The timer dependency order
+and overlapping shared tail are recorded in timer-frontier.md.
+
+## Scoped verification
+
+The original-only and native campaigns pass 30 single fixtures at core and
+adapter boundaries plus two direct initializer-to-restorer chains: 64 compared
+boundaries/phases, all 63 unique instruction sites, no branch edges, 2,064
+executed original instructions and 1,870 ordered bus events. The restore leaf
+accounts for 38 comparisons/1,218 events; initialization accounts for 26/652.
+The two chains call native adapters on the same RAM object and device, with
+independent register setups between calls; boundary observations are snapshots,
+not replacement runtime state. Equal and distinct SS/fixed-frame cases expose
+the duplicate store and the missing bit-mask initialization independently.
+
+Fixtures retain all three documented relocation loads, late operand changes,
+live saved CX and outer return providers, the stack/mirror overlap, VGA DS/SS
+and mirror-frame aliases, physical and effective-offset wrap, IF/DF and byte
+ADD carry/overflow. An independent original-opcode truth table checks all 256
+DL inputs under three entry flag patterns (768 checks). It is separate from
+the 64 C comparisons and from instruction-site accounting. Ten deliberate C
+mutants are detected only after their native calls complete.
+
+Both workers use 420-second/384-MiB process-tree limits, bounded instruction
+and bus traces, fail-stop native callbacks and parent-owned temporary DLL
+directories. Budget exhaustion earns no mutant credit. Reports pin the 21
+consumed input paths; the generated header and independent exact ASM gate pin
+ledger names/offsets. These are scoped leaf/composition results, not aggregate
+coverage, an asynchronous IRQ model or full-game acceptance.
+
+The focused oracle keeps the exact stack/code overlap at SS=CS, SP=5886
+separate from original/native comparisons. Unicorn repeatedly restarts the
+PUSH at 5880 when its write lands in the translated code page, without
+committing SP or the write. No replacement PUSH interpreter is used. A
+bounded native-only witness checks independently predicted stack bytes,
+the changed immediate, nine outputs and 31 bus events; it earns no original
+execution coverage. The late-immediate provider fixture still executes the
+unmodified original routine and tests the operand read after a committed PUSH.

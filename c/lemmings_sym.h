@@ -18,7 +18,7 @@
 #define CS_CleanupMessageInterrupt 0x04F2u
 #define CS_CleanupTerminateInterrupt 0x04F7u
 #define CS_CleanupAfterTerminate 0x04F9u
-#define CS_sub_04F9 0x04F9u
+#define CS_InitializeVgaRegisterMirrors 0x04F9u
 #define CS_InitializeSoundDriver 0x054Eu
 #define CS_sub_060C 0x060Cu
 #define CS_sub_062B 0x062Bu
@@ -345,7 +345,7 @@
 #define CS_MarkEntityDrawingDirty 0x5726u
 #define CS_CopyResourcePlanesToVga 0x57D1u
 #define CS_UpdateFixedWordPattern 0x5827u
-#define CS_sub_587F 0x587Fu
+#define CS_RestoreVgaRegisterMirrors 0x587Fu
 #define CS_LoadMainResourceSections 0x58D2u
 #define CS_sub_5950 0x5950u
 #define CS_sub_597D 0x597Du
@@ -905,4 +905,12 @@
 #define CS_FixedPatternCopyReturn 0x71C9u
 #define CS_FixedPatternDrawReturn 0x75EEu
 #define CS_FixedPatternUpdateReturn 0x587Eu
+#define SEG09A9_DisplayStatusPort1FDC 0x1FDCu
+#define CS_VgaMirrorFrameOperand5884 0x5884u
+#define CS_VgaMirrorRestoreReturn 0x58D1u
+#define CS_VgaMirrorInitializeReturn 0x054Du
+#define SEG09A9_PrivateIrqCounter2002 0x2002u
+#define SEG09A9_PrivateIrqCounter2003 0x2003u
+#define CS_MouseIrqMirrorGate83BE 0x83BEu
+#define CS_MouseIrqDataFrameOperand0F73 0x0F73u
 #endif

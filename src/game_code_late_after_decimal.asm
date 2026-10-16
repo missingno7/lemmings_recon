@@ -5,7 +5,7 @@ times -(($-$$) != 0x4be7) db 0 ; module start assertion
 ; FarCALL8808 hasrelocation4C14; actualSSfarframe andouterRET remainlive.
 ; See docs/display-setup.md; no startup/BIOS/timing ownership is inferred.
 SetupDisplayModeAndLayout:
-    mov byte [cs:ChecksumCursor+3],0xff ; @04BE7
+    mov byte [cs:MouseIrqMirrorGate83BE],0xff ; @04BE7
     nop ; @04BED
     cli ; @04BEE
     mov ax,0x90 ; @04BEF

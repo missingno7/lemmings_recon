@@ -94,44 +94,53 @@ loc_5858:
     mov [FixedPatternVgaOffset0008-GameDataImage],ax ; @0587B
 FixedPatternUpdateReturn:
     ret ; @0587E
-sub_587F:
+RestoreVgaRegisterMirrors:
+; CONTRACT: CLI then actual PUSH CX, before reading live relocated CS:5884.
+; Fixed ES mirror frame is independent of live SS. Each word supplies AH;
+; AL is replaced with its literal register index before the ordered OUT.
+; XOR AL,AL at58B5 defines arithmetic flags except AF. Restore entry ES from
+; CX before live POP CX; STI forces IF before the actual RET58D1.
+; Stack/mirror/code aliases and startup's duplicate SS:10 store remain live.
+; docs/vga-mirror-restore.md.
     cli ; @0587F
     push cx ; @05880
     mov cx,es ; @05881
+VgaMirrorFrameOperand5884 equ $+1
     mov ax,0x143e ; @05883
     mov es,ax ; @05886
     mov dx,0x3c4 ; @05888
-    mov ax,[es:0x8] ; @0588B
+    mov ax,[es:VgaMapMaskMirror-RuntimeStackFrame] ; @0588B
     mov al,0x2 ; @0588F
     out dx,ax ; @05891
     mov dx,0x3ce ; @05892
-    mov ax,[es:0x0] ; @05895
+    mov ax,[es:VgaGraphicsModeMirror-RuntimeStackFrame] ; @05895
     mov al,0x5 ; @05899
     out dx,ax ; @0589B
-    mov ax,[es:0x2] ; @0589C
+    mov ax,[es:VgaDataRotateMirror-RuntimeStackFrame] ; @0589C
     mov al,0x3 ; @058A0
     out dx,ax ; @058A2
-    mov ax,[es:0x4] ; @058A3
+    mov ax,[es:VgaColorCompareMirror-RuntimeStackFrame] ; @058A3
     mov al,0x2 ; @058A7
     out dx,ax ; @058A9
-    mov ax,[es:0x6] ; @058AA
+    mov ax,[es:VgaColorCareMirror-RuntimeStackFrame] ; @058AA
     mov al,0x7 ; @058AE
     out dx,ax ; @058B0
-    mov ax,[es:0xa] ; @058B1
+    mov ax,[es:VgaSetResetMirror-RuntimeStackFrame] ; @058B1
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @058B5
     out dx,ax ; @058B7
-    mov ax,[es:0xc] ; @058B8
+    mov ax,[es:VgaEnableSetResetMirror-RuntimeStackFrame] ; @058B8
     mov al,0x1 ; @058BC
     out dx,ax ; @058BE
-    mov ax,[es:0xe] ; @058BF
+    mov ax,[es:VgaBitMaskMirror-RuntimeStackFrame] ; @058BF
     mov al,0x8 ; @058C3
     out dx,ax ; @058C5
-    mov ax,[es:0x10] ; @058C6
+    mov ax,[es:VgaReadMapMirror-RuntimeStackFrame] ; @058C6
     mov al,0x4 ; @058CA
     out dx,ax ; @058CC
     mov es,cx ; @058CD
     pop cx ; @058CF
     sti ; @058D0
+VgaMirrorRestoreReturn:
     ret ; @058D1
 LoadMainResourceSections:
 ; Twelve actual near frames compose the DAT pipeline and graphics producers.

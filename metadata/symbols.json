@@ -3532,9 +3532,11 @@
     "address": 1273,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_04F9",
-    "aliases": [],
+    "size": 85,
+    "symbol_name": "InitializeVgaRegisterMirrors",
+    "aliases": [
+      "sub_04F9"
+    ],
     "callers": [
       55
     ],
@@ -3639,10 +3641,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact leaf boundary; live SS stack/mirrors and distinct relocated ES frame contract; docs/vga-mirror-restore.md",
+      "85 bytes/25 sites/no branches; 12 single fixtures at core/adapter plus 2 direct-chain phases; 26 comparisons and 652 ordered events. BIOS 0040:0063, byte-only DL+6 flags, literal duplicate SS:0010 store, untouched SS:000E, aliases and actual RET; shared suite10 completed mutants; docs/vga-mirror-restore.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 85
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 85,
+    "c_implementation": "c/vga_mirrors.c",
+    "c_core": "lmn_initialize_vga_register_mirrors_core",
+    "c_code_ranges": [
+      [
+        1273,
+        1358
+      ]
+    ]
   },
   {
     "address": 1358,
@@ -4366,7 +4378,7 @@
     "address": 3952,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 48,
     "symbol_name": "MouseIrqBridge",
     "aliases": [
       "sub_0F70"
@@ -4428,7 +4440,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Signature-matched legacy entry lead",
-      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
+      "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped",
+      "0F70..0F9F: 48 bytes/20 sites; external INT62 from saved selected private vector, live returned DS/ES/SS/SP; docs/mouse-irq-bridge.md"
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 48
@@ -33282,9 +33295,11 @@
     "address": 22655,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_587F",
-    "aliases": [],
+    "size": 83,
+    "symbol_name": "RestoreVgaRegisterMirrors",
+    "aliases": [
+      "sub_587F"
+    ],
     "callers": [
       3993,
       6270
@@ -33366,10 +33381,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact leaf boundary; live SS stack/mirrors and distinct relocated ES frame contract; docs/vga-mirror-restore.md",
+      "83 bytes/38 sites/no branches; 18 single fixtures at core/adapter plus 2 direct-chain phases; 38 comparisons and 1218 ordered events. Late relocated operand, fixed ES versus live SS, ordered nine OUTs, live CX/ES/RET and IF/DF; separate native-only code/stack alias witness earns no original coverage; shared suite10 completed mutants; docs/vga-mirror-restore.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 83
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 83,
+    "c_implementation": "c/vga_mirrors.c",
+    "c_core": "lmn_restore_vga_register_mirrors_core",
+    "c_code_ranges": [
+      [
+        22655,
+        22738
+      ]
+    ]
   },
   {
     "address": 22738,
@@ -62641,5 +62666,133 @@
       "Actual outer near RET and logical C core boundary; docs/fixed-pattern-drawing.md"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 8156,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "DisplayStatusPort1FDC",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "050A stores BIOS CRTC base with ADD DL,6 byte wrap (DH unchanged), separate from word1FDA; docs/vga-mirror-restore.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22660,
+    "segment": 0,
+    "kind": "operand",
+    "size": 2,
+    "symbol_name": "VgaMirrorFrameOperand5884",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original relocated word of MOV AX,143E at5883; read at actual phase after PUSH CX; fixed mirror frame distinct from live SS; docs/vga-mirror-restore.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22737,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "VgaMirrorRestoreReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual outer near RET and logical core boundary; docs/vga-mirror-restore.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1357,
+    "segment": 0,
+    "kind": "label",
+    "size": 1,
+    "symbol_name": "VgaMirrorInitializeReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual outer near RET and logical core boundary; docs/vga-mirror-restore.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8194,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "PrivateIrqCounter2002",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "evidence": [
+      "Startup REP STOSB clears DS:0000..2011; bridge INC0F77/DEC0F85/CMP0F91, timer CMP1877; returned DS after INT62 remains live; wider nesting ownership unresolved"
+    ],
+    "verification_status": "STATIC",
+    "confidence": "PROVEN"
+  },
+  {
+    "address": 8195,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "PrivateIrqCounter2003",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "evidence": [
+      "Startup REP STOSB clears DS:0000..2011; bridge INC0F7B/DEC0F81 through possibly different returned DS; wider meaning unresolved"
+    ],
+    "verification_status": "STATIC",
+    "confidence": "PROVEN"
+  },
+  {
+    "address": 33726,
+    "segment": 0,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "MouseIrqMirrorGate83BE",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "evidence": [
+      "CS byte aliases ChecksumCursor+3; FF stores00B4/4BE7, zero store00FE; gate read0F89; no unreachable-branch claim"
+    ],
+    "verification_status": "STATIC",
+    "confidence": "PROVEN"
+  },
+  {
+    "address": 3955,
+    "segment": 0,
+    "kind": "operand",
+    "size": 2,
+    "symbol_name": "MouseIrqDataFrameOperand0F73",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "evidence": [
+      "Original relocated MOV AX,09A9 word, consumed after entry PUSH DS/PUSH AX; stack/code aliases remain live"
+    ],
+    "verification_status": "STATIC",
+    "confidence": "PROVEN"
   }
 ]

@@ -787,3 +787,32 @@ initialization producer. Their fixed ES frame is distinct from live SS, despite
 normal startup making them equal. The literal 0549 store overwrites SS:0010
 instead of initializing SS:000E. Caller INT62/IRQ/chaining seams remain open;
 see vga-mirror-restore.md. No broader interrupt/game acceptance is implied.
+
+
+The mirror producer/consumer now add 168 unique main C bytes, taking the ledger
+union to 25,385. InitializeVgaRegisterMirrors is 85 bytes/25 sites and
+RestoreVgaRegisterMirrors is 83 bytes/38 sites, both call-free and branch-free.
+Their paired suite passes 30 single fixtures at both boundaries and two direct
+same-RAM native chains: 64 comparisons, all 63 sites, 2,064 original instructions,
+1,870 ordered events and ten completed mutants. The independent ADD truth table
+has 768 original-opcode checks; it is not extra C comparison/site coverage.
+
+The original relocated mirror segment, live SS, late CS operand, actual CX/ES/RET,
+ordered ports and flag phases remain distinct contracts. Initialization preserves
+its SS:0010 overwrite and untouched SS:000E. A real stack/code overlap has an
+independent native-only 31-event witness, explicitly excluded from original
+execution counts because Unicorn cannot commit its self-code-page PUSH. No
+manual replacement instruction is admitted into the original oracle. See
+vga-mirror-restore.md for exact domains and the 420-second/384-MiB limits.
+
+The suite imports its decoder and device fixture directly, keeping its causal
+input closure to 21 paths without initializing unrelated sound models. Raw ledger
+status/progress prose do not renew or invalidate behavioral evidence; generated
+names and offsets still pass the independent exact gate. This is a translated
+ledger checkpoint with scoped matching reports, not aggregate acceptance.
+
+Next compose MouseIrqBridge with its external INT62/full-register/live-frame
+provider seam. The gate at CS:83BE has a direct zero writer at00FE; neither gate
+edge is discarded. Neutral counters2002/2003 retain returned-DS accesses. The
+following timer order and overlapping119/116-byte prefix/tail are recorded in
+timer-frontier.md; UNKNOWN18B7..18F7, indirect42A5 and IRQ timing remain open.

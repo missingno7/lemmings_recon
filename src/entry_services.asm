@@ -24,7 +24,7 @@ ProgramEntry:
     rep stosb ; @00031
     pop ax ; @00033
     mov [0x1ff6],ax ; @00034
-    call sub_04F9 ; @00037
+    call InitializeVgaRegisterMirrors ; @00037
     mov word [0x1f7c],0xff ; @0003A
     mov byte [PrivateVectorNumber-GameDataImage],0xc ; @00040
     mov byte [0x200f],0xff ; @00045
@@ -71,7 +71,7 @@ ProgramEntry:
     call InitializeSoundDriver ; @000AB
     call sub_1007 ; @000AE
     call InitializeMouseDriverHooks ; @000B1
-    mov byte [cs:0x83be],0xff ; @000B4
+    mov byte [cs:MouseIrqMirrorGate83BE],0xff ; @000B4
     nop ; @000BA
     mov ax,0xd ; @000BB
     int 0x10 ; @000BE
@@ -102,7 +102,7 @@ sub_00D8:
     jmp sub_43F2 ; @000F8
 loc_00FB:
     call sub_03E7 ; @000FB
-    mov byte [cs:0x83be],0x0 ; @000FE
+    mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
     nop ; @00104
 loc_0105:
     mov ax,[AlternateDrawingOrigin-GameDataImage] ; @00105
@@ -533,32 +533,38 @@ CleanupMessageInterrupt:
     mov ax,0x4c00 ; @004F4
 CleanupTerminateInterrupt:
     int 0x21 ; @004F7
-sub_04F9:
+InitializeVgaRegisterMirrors:
 CleanupAfterTerminate:
+; CONTRACT: read BIOS0040:0063, store CRTC base at live DS:1FDA, then add6
+; to DL alone before storing DS:1FDC. Preserve byte carry/overflow/flags.
+; Nine literal live-SS word stores include two writes to0010, endingFF08;
+; offset000E remains untouched. No local CLI/STI or register save frame.
+; Core precedes actual RET054D; aliases and original startup quirk retained.
     mov ax,0x40 ; @004F9
     mov es,ax ; @004FC
     mov dx,[es:0x63] ; @004FE
     mov [DisplayControllerBasePort-GameDataImage],dx ; @00503
     add dl,0x6 ; @00507
-    mov [0x1fdc],dx ; @0050A
+    mov [DisplayStatusPort1FDC-GameDataImage],dx ; @0050A
     mov ax,0x2 ; @0050E
-    mov [ss:0x8],ax ; @00511
+    mov [ss:VgaMapMaskMirror-RuntimeStackFrame],ax ; @00511
     mov ax,0x0 ; @00515
-    mov [ss:0xa],ax ; @00518
+    mov [ss:VgaSetResetMirror-RuntimeStackFrame],ax ; @00518
     mov ax,0x1 ; @0051C
-    mov [ss:0xc],ax ; @0051F
+    mov [ss:VgaEnableSetResetMirror-RuntimeStackFrame],ax ; @0051F
     mov ax,0x2 ; @00523
-    mov [ss:0x4],ax ; @00526
+    mov [ss:VgaColorCompareMirror-RuntimeStackFrame],ax ; @00526
     mov ax,0x3 ; @0052A
-    mov [ss:0x2],ax ; @0052D
+    mov [ss:VgaDataRotateMirror-RuntimeStackFrame],ax ; @0052D
     mov ax,0x4 ; @00531
-    mov [ss:0x10],ax ; @00534
+    mov [ss:VgaReadMapMirror-RuntimeStackFrame],ax ; @00534
     mov ax,0x5 ; @00538
-    mov [ss:0x0],ax ; @0053B
+    mov [ss:VgaGraphicsModeMirror-RuntimeStackFrame],ax ; @0053B
     mov ax,0xf07 ; @0053F
-    mov [ss:0x6],ax ; @00542
+    mov [ss:VgaColorCareMirror-RuntimeStackFrame],ax ; @00542
     mov ax,0xff08 ; @00546
-    mov [ss:0x10],ax ; @00549
+    mov [ss:VgaReadMapMirror-RuntimeStackFrame],ax ; @00549
+VgaMirrorInitializeReturn:
     ret ; @0054D
 InitializeSoundDriver:
     cmp byte [0x2010],0xff ; @0054E
@@ -1116,22 +1122,28 @@ loc_0F64:
 MouseEventReturn:
     retf ; @00F6F
 MouseIrqBridge:
+; 48 bytes/20 sites. See docs/mouse-irq-bridge.md for installed INT62 provenance.
+; Live SS pushes precede the relocated immediate; external INT62 may return new
+; DS/ES/SS/SP/FLAGS. Both decrements and gates use returned DS; no shadow state.
+; PUSH DX/CALL/POP DX and final POP AX/DS/IRET consume actual returned-stack words.
+; The 587F child sets IF before its RET; asynchronous IRQ/nesting stays a seam.
     push ds ; @00F70
     push ax ; @00F71
+MouseIrqDataFrameOperand0F73 equ $+1
     mov ax,0x9a9 ; @00F72
     mov ds,ax ; @00F75
-    inc byte [0x2002] ; @00F77
-    inc byte [0x2003] ; @00F7B
+    inc byte [PrivateIrqCounter2002-GameDataImage] ; @00F77
+    inc byte [PrivateIrqCounter2003-GameDataImage] ; @00F7B
     int 0x62 ; @00F7F
-    dec byte [0x2003] ; @00F81
-    dec byte [0x2002] ; @00F85
-    mov al,[cs:0x83be] ; @00F89
+    dec byte [PrivateIrqCounter2003-GameDataImage] ; @00F81
+    dec byte [PrivateIrqCounter2002-GameDataImage] ; @00F85
+    mov al,[cs:MouseIrqMirrorGate83BE] ; @00F89
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @00F8D
     jnz loc_0F9D ; @00F8F
-    cmp byte [0x2002],0x0 ; @00F91
+    cmp byte [PrivateIrqCounter2002-GameDataImage],0x0 ; @00F91
     jnz loc_0F9D ; @00F96
     push dx ; @00F98
-    call sub_587F ; @00F99
+    call RestoreVgaRegisterMirrors ; @00F99
     pop dx ; @00F9C
 loc_0F9D:
     pop ax ; @00F9D
@@ -2235,10 +2247,10 @@ sub_186F:
     int 0x61 ; @01872
 loc_1874:
     call sub_3E6F ; @01874
-    cmp byte [0x2002],0x0 ; @01877
+    cmp byte [PrivateIrqCounter2002-GameDataImage],0x0 ; @01877
     jnz loc_1881 ; @0187C
 sub_187E:
-    call sub_587F ; @0187E
+    call RestoreVgaRegisterMirrors ; @0187E
 loc_1881:
     cli ; @01881
     mov al,[0x1fe3] ; @01882
