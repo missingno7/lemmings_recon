@@ -676,3 +676,12 @@ contains 4,425 bytes/2,191 static sites; this scope executes 2,002 sites and
 remain authoritative. UNKNOWN 366F is excluded. See entity-drawing.md.
 Next audit-to-C acceptance is the 5BB0 copy/OR-mask producer, whose normal
 bank witnesses do not establish zero-count, DF, overlap or stack-alias behavior.
+
+The 5BB0 copy/OR-mask producer now adds 86 unique main C bytes, taking the union
+to 23,084. Its 35 fixtures/70 comparisons cover 45 sites/eight branch outcomes,
+287,970 events and ten mutants, with 4,544 independent output-byte checks. Five
+actual native producer/consumer handoffs compare ten additional phases and
+retain unchanged banks; their sites/events remain separate. Full zero counters,
+DF/overlap, live saves/RET, signed fold and byte-EA versus word-physical wrap
+remain explicit. See sprite-bank.md. Next translate the 5B11/5C06 sibling leaves
+before the 59BB caller; ordinary producer witnesses do not close alias domains.

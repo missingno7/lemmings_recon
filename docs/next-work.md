@@ -2,38 +2,33 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 22,998 bytes. The latest scoped
-acceptance connects DrawEntityRecords at3634 to minimap, dirty marking, points,
-and sprite dispatch through actual CALL/RET frames, then JMPs into the existing
-decimal writer without adding a frame. It adds89 body bytes/35 sites; UNKNOWN
-366F remains unresolved and the existing86-byte decimal tail is counted once.
+The main-image translated-code ledger union is 23,084 bytes. The latest scoped
+acceptance adds CopySpritePlanesAndAppendMask at 5BB0..5C05: 86 bytes/45 sites,
+35 fixtures/70 core and actual-RET comparisons, all eight branch outcomes,
+287,970 ordered bus events and ten completed mutants. Independent equations
+check 4,544 output bytes. Zero DX completes 65,536 inner OR iterations at both
+boundaries, with bounded traces; zero dimensions are not zero work.
 
-Its37 fixtures/74 core and actual-RET comparisons cover all35 body sites and
-all12 branch edges, with53,510 ordered byte-bus events and ten completed mutants.
-The integrated static domain is4,425 bytes/2,191 sites; this campaign executes
-2,002 sites and127 edges. These executed counts are distinct from static or
-translated coverage. The zero bound preserves stale count/output; constructed
-255-record cases retain actual aliases; live SS saves control DI/CX and LOOP.
-Returned DS owns the guard clear and decimal count, with child stops retained.
-See entity-drawing.md and the matching-input reports.
+Five native producer/consumer data handoffs compare ten phases using unchanged
+80/104/112/128/140-byte banks at shifts 0/1/7/3/5. Returned DS/ES/FLAGS and the
+constructed child frames stay live. Their consumer events/sites are separate;
+this is not execution of 59BB. See sprite-bank.md and the matching-input reports.
 
-The preceding sprite parent and nine callbacks retain their known/unknown
-715B target boundary and changed-return contracts. Their original producer
-handoffs remain separate from native translated bytes; see
-entity-sprite-dispatch.md and entity-sprites.md. Unrelated retained campaigns
-are historical until their exact inputs and scopes match again.
+The preceding 3634 entity loop remains connected to minimap, dirty marking,
+points, sprites and the frame-free decimal tail; UNKNOWN 366F and child stops
+remain explicit. Earlier sprite and terrain reports establish only their
+recorded scopes/inputs. Unrelated retained campaigns are historical until
+matching inputs are refreshed; this checkpoint is not aggregate acceptance.
 
-Next translate the independently audited5BB0..5C05 producer leaf:86 bytes/
-45 sites, no child calls. Its ordinary layout copies DH planes of DL words
-then appends DL OR-mask words. Preserve zero-byte do-while counts as256,
-DF-sensitive MOVSW/STOSW with forward mask reads, live ES readback and SS
-CX/SI/RET words, and signed DI<10h segment folding. The fold path replaces CX
-with the previous ES. Explicit byte operand ES:(SI+1) wraps its offset, whereas
-a word transfer's high byte follows its physical low address. Existing
-producer witnesses establish ordinary nonzero/disjoint banks only; they do
-not establish the zero-count, overlap, DF or stack-alias domains. Then translate
-the sibling5B11/5C06 producers and connect their59BB caller after its remaining
-contracts and dependencies are verified.
+Next translate the sibling 5B11 leaf (159 bytes/74 sites), then 5C06 (187/80),
+before connecting their 59BB caller. Both fresh dependency views identify
+no child calls. Existing original-only witnesses establish ordinary banks:
+5B11 forms eight three-byte shifted banks, 5C06 eight five-byte wide banks.
+Preserve actual live SS counts/cursors/segments and literal byte operand order,
+DF asymmetry, zero counters and segment folding. Audit full contracts before
+reusing the ordinary output models; do not infer disjoint storage or cache
+restored values from those models. The maintained 5BB0 contract records the
+related byte EA/word physical-wrap distinction and returned CX quirk.
 
 This is focused acceptance. Full campaigns and matching inputs remain necessary
 for aggregate acceptance, and SDL3 follows the portable core.
@@ -206,7 +201,7 @@ parent spans/RET/stop contracts in one traced CPU with the existing INT engine.
 
 State0008 at23BF..23F2 now passes18 core/adapter fixtures:52 new caller bytes,
 18 sites/all6 jump edges,1,976 events and eight completed mutants. State0002 at
-2350..23BE passes35 core/adapter fixtures:110 known caller bytes/45 sites/all20
+2350..23BE passes 35 core/adapter fixtures:110 known caller bytes/45 sites/all20
 edges,8,772 events and eight mutants. The two scopes add162 unique caller bytes;
 UNKNOWN2382 stays unresolved and excluded. State0008 retains actual5DC6 return
 23C2 and direct2148 finish; state0002 composes native INT60 AX030C, optional

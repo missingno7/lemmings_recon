@@ -245,7 +245,7 @@ loc_59CB:
 loc_59DB:
     push cx ; @059DB
     mov dx,0x30e ; @059DC
-    call sub_5BB0 ; @059DF
+    call CopySpritePlanesAndAppendMask ; @059DF
     pop cx ; @059E2
     add si,byte +0x54 ; @059E3
     loop loc_59DB ; @059E6
@@ -253,7 +253,7 @@ loc_59DB:
 loc_59EB:
     push cx ; @059EB
     mov dx,0x20c ; @059EC
-    call sub_5BB0 ; @059EF
+    call CopySpritePlanesAndAppendMask ; @059EF
     pop cx ; @059F2
     add si,byte +0x30 ; @059F3
     loop loc_59EB ; @059F6
@@ -269,7 +269,7 @@ loc_59FB:
 loc_5A0B:
     push cx ; @05A0B
     mov dx,0x20c ; @05A0C
-    call sub_5BB0 ; @05A0F
+    call CopySpritePlanesAndAppendMask ; @05A0F
     pop cx ; @05A12
     add si,byte +0x30 ; @05A13
     loop loc_5A0B ; @05A16
@@ -277,7 +277,7 @@ loc_5A0B:
 loc_5A1B:
     push cx ; @05A1B
     mov dx,0x30d ; @05A1C
-    call sub_5BB0 ; @05A1F
+    call CopySpritePlanesAndAppendMask ; @05A1F
     pop cx ; @05A22
     add si,byte +0x4e ; @05A23
     loop loc_5A1B ; @05A26
@@ -285,7 +285,7 @@ loc_5A1B:
 loc_5A2B:
     push cx ; @05A2B
     mov dx,0x30a ; @05A2C
-    call sub_5BB0 ; @05A2F
+    call CopySpritePlanesAndAppendMask ; @05A2F
     pop cx ; @05A32
     add si,byte +0x3c ; @05A33
     loop loc_5A2B ; @05A36
@@ -293,7 +293,7 @@ loc_5A2B:
 loc_5A3B:
     push cx ; @05A3B
     mov dx,0x30d ; @05A3C
-    call sub_5BB0 ; @05A3F
+    call CopySpritePlanesAndAppendMask ; @05A3F
     pop cx ; @05A42
     add si,byte +0x4e ; @05A43
     loop loc_5A3B ; @05A46
@@ -309,7 +309,7 @@ loc_5A4B:
 loc_5A5B:
     push cx ; @05A5B
     mov dx,0x310 ; @05A5C
-    call sub_5BB0 ; @05A5F
+    call CopySpritePlanesAndAppendMask ; @05A5F
     pop cx ; @05A62
     add si,byte +0x60 ; @05A63
     loop loc_5A5B ; @05A66
@@ -325,7 +325,7 @@ loc_5A6B:
 loc_5A7B:
     push cx ; @05A7B
     mov dx,0x20d ; @05A7C
-    call sub_5BB0 ; @05A7F
+    call CopySpritePlanesAndAppendMask ; @05A7F
     pop cx ; @05A82
     add si,byte +0x34 ; @05A83
     loop loc_5A7B ; @05A86
@@ -333,7 +333,7 @@ loc_5A7B:
 loc_5A8B:
     push cx ; @05A8B
     mov dx,0x40e ; @05A8C
-    call sub_5BB0 ; @05A8F
+    call CopySpritePlanesAndAppendMask ; @05A8F
     pop cx ; @05A92
     add si,byte +0x70 ; @05A93
     loop loc_5A8B ; @05A96
@@ -501,7 +501,7 @@ loc_5BAF:
 ; otherwise ES+=DI>>4 and DI&=0Fh, with CX replaced by the previous ES.
 ; Existing producer witnesses cover ordinary banks only; aliases/zero counts
 ; and segment/DF quirks require their own bounded native verification.
-sub_5BB0:
+CopySpritePlanesAndAppendMask:
     push si ; @05BB0
     db 0x8b,0xef ; ENCODED: mov bp,di (NASM chooses a different encoding) ; @05BB1
     db 0x8a,0xee ; ENCODED: mov ch,dh (NASM chooses a different encoding) ; @05BB3
@@ -539,7 +539,7 @@ loc_5BD5:
     jnz loc_5BC5 ; @05BEA
     pop si ; @05BEC
     cmp di,byte +0x10 ; @05BED
-    jl loc_5C05 ; @05BF0
+    jl SpriteBankReturn ; @05BF0
     db 0x8b,0xc7 ; ENCODED: mov ax,di (NASM chooses a different encoding) ; @05BF2
     shr ax,1 ; @05BF4
     shr ax,1 ; @05BF6
@@ -549,7 +549,7 @@ loc_5BD5:
     db 0x03,0xc1 ; ENCODED: add ax,cx (NASM chooses a different encoding) ; @05BFE
     mov es,ax ; @05C00
     and di,byte +0xf ; @05C02
-loc_5C05:
+SpriteBankReturn:
     ret ; @05C05
 sub_5C06:
     db 0x32,0xc9 ; ENCODED: xor cl,cl (NASM chooses a different encoding) ; @05C06
