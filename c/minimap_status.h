@@ -30,7 +30,7 @@ typedef struct LmnMinimapStatusResult {
 /* Executes only the 3AC8..3ACE two-CALL prefix, not the rest of the status
    display. The nonnull VGA raster bus must provide out_word (required by the
    column) and shared byte callbacks for the device state used by both children.
-   READY stops before the untranslated instruction at 3ACE; neither the core
+   READY stops before the separately implemented status suffix at 3ACE; neither the core
    nor adapter adds RET. */
 LmnMinimapStatusResult lmn_update_minimap_status_core(uint8_t *memory,
     const LmnMinimapStatusCall *call,const LmnRasterBus *bus);

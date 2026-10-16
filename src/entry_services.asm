@@ -325,7 +325,7 @@ loc_02F6:
 loc_0311:
     jmp loc_46EB ; @00311
 loc_0314:
-    mov byte [0x40],0x64 ; @00314
+    mov byte [StatusCompletionDisplayValue-GameDataImage],0x64 ; @00314
     call sub_5447 ; @00319
     jmp short loc_02C3 ; @0031C
 sub_031E:

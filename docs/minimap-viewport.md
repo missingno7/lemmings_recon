@@ -53,7 +53,7 @@ into the next child and uses actual near-CALL words in canonical memory.
 An explicit child boundary must propagate before fetching any outer RET;
 a changed nested return may numerically equal an outer continuation. Changed
 outer returns also stop at their actual target. READY at3ACE stops before the
-remaining untranslated status body; the prefix adapter has no outer RET.
+separately implemented status body; the prefix adapter has no outer RET.
 A shared VGA bus with word-port output is required by the existing column
 child. The viewport's RAM/no-op-port fallback only supports constructed leaf
 calls and is not a VGA backend. Real device timing and IRQ delivery remain open.
@@ -66,4 +66,5 @@ passes12 fixtures at both boundaries:two owned CALL sites,266 integrated sites,
 returns and a live POP DS value passed into the viewport. Reports are
 build/minimap-viewport-differential.json and build/minimap-status-differential.json;
 their recorded input hashes own acceptance. These scopes add350+6 unique main
-bytes. The3ACE suffix stays untranslated and has its own dependency-view entry.
+bytes. The3ACE suffix and complete3AC8 caller now have separate native gates;
+see status-display.md. This prefix API retains its six-byte scope.

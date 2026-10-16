@@ -16,6 +16,8 @@ times -(($-$$) != 0x378a) db 0 ; module end assertion
 %include "level_objects.asm"
 times -(($-$$) != 0x3944) db 0 ; module end assertion
 %include "game_code_late.asm"
+times -(($-$$) != 0x3ac8) db 0 ; module end assertion
+%include "status_display.asm"
 times -(($-$$) != 0x3cde) db 0 ; module end assertion
 %include "entity_selection.asm"
 times -(($-$$) != 0x3e6f) db 0 ; module end assertion

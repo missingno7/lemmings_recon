@@ -209,6 +209,8 @@ def report():
     executed.update(setup['executed_instruction_addresses'])
     decimal=read_json(BUILD/'decimal-digits-c-differential.json')
     status_icons=read_json(BUILD/'status-icons-differential.json')
+    status_display=read_json(BUILD/'status-display-differential.json')
+    status_display_full=read_json(BUILD/'status-display-full-differential.json')
     status_text=read_json(BUILD/'status-text-differential.json')
     status_count=read_json(BUILD/'status-count-differential.json')
     status_glyph=read_json(BUILD/'status-glyph-differential.json')
@@ -300,7 +302,7 @@ def report():
     entity_action_dispatch=read_json(BUILD/'entity-action-dispatch-differential.json')
     entity_batch=read_json(BUILD/'entity-batch-differential.json')
     entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
-    for label,extra in (('status text',status_text),('status count',status_count),('status glyph',status_glyph),
+    for label,extra in (('status display',status_display),('status display full',status_display_full),('status text',status_text),('status count',status_count),('status glyph',status_glyph),
                         ('status icons',status_icons),('minimap viewport',minimap_viewport),
                         ('minimap status prefix',minimap_status),('decimal digits',decimal),('decimal fields',decimal_field),
                         ('entity selection',entity_select),('entity selection/action handoff',entity_select_actions),
@@ -389,6 +391,8 @@ def report():
     executed.update(status_icons['executed_instruction_addresses'])
     executed.update(status_count['executed_instruction_addresses'])
     executed.update(status_text['executed_instruction_addresses'])
+    executed.update(status_display['executed_instruction_addresses'])
+    executed.update(status_display_full['executed_instruction_addresses'])
     executed.update(status_glyph['executed_instruction_addresses'])
     executed.update(minimap_viewport['executed_instruction_addresses'])
     executed.update(minimap_status['executed_instruction_addresses'])
@@ -415,7 +419,7 @@ def report():
     for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
     for extra in (terrain_inputs,terrain,commands,streams,object_draw,redraw):executed.update(extra['executed_instruction_addresses'])
     reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
-    reports+=status_text,status_count,status_glyph,status_icons,minimap_viewport,minimap_status
+    reports+=status_display,status_display_full,status_text,status_count,status_glyph,status_icons,minimap_viewport,minimap_status
     reports+=decimal_field,entity_select,entity_select_actions
     reports+=terrain_inputs,terrain,commands,streams,object_draw,redraw
     reports+=(header,allocation,video,vectors,timer,cleanup,file_error,raw_full,selection_full)

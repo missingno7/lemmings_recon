@@ -1,4 +1,4 @@
-# Status display dependency frontier
+# Status display contracts
 
 The current static3AC8 caller has533 known bytes/174 sites in[3AC8,3CDE),
 with UNKNOWN3B08 retained. Known callers are01C2 and049E. Its children are
@@ -9,8 +9,9 @@ A direct selection-to-action handoff does not verify the intervening3AC8 call.
 The7A5A viewport leaf now has scoped native acceptance over350 bytes/168 sites,
 and the two-CALL3AC8..3ACD prefix composes it with796F through actual frames.
 The prefix stops before3ACE and adds only six caller bytes. The separate
-StatusDisplayAfterMinimapViewport investigation entry exposes the remaining
-527 known bytes/172 sites and UNKNOWN3B08; it is still untranslated.
+StatusDisplayAfterMinimapViewport entry owns the separate native suffix over
+527 known bytes/172 sites, excluding UNKNOWN3B08. The full native entry composes
+the prefix and suffix without another guest frame at3ACE.
 See minimap-viewport.md for live coordinate/phase, SS, VGA, DF and IF contracts.
 
 The two icon leaves also have scoped native acceptance:780D is145 bytes/60 sites with
@@ -20,7 +21,7 @@ The closed glyph leaves now have scoped native acceptance:762A is222
 bytes/105 sites, with RET76DA/7707. 7708 has256 known bytes/118 sites and
 UNKNOWN7765,776F,7792,7799,77A0; its returns are77FD/780C. The last two
 routines read their source segment through the live DS:1FEC word. These scoped
-leaf checks do not establish the complete display caller or live IRQ timing.
+leaf checks remain separate from the complete caller gate and live IRQ timing.
 
 ## Source buffer and initialization
 
@@ -121,8 +122,8 @@ FFFFF-to00000 outer-return word, the complete stored40-character line and a
 46-character AH-wrap scan. Independent plane replay covers the full stored
 line and a mixed glyph/space/digit string. The parent has no scan-length clamp.
 The report is build/status-text-differential.json with matching input hashes;
-it adds17 bytes without recounting its256-byte child. The3ACE status body and
-resource producer remain separate frontiers.
+it adds17 bytes without recounting its256-byte child. The resource producer
+remains a separate frontier. The connected3ACE caller gate is below.
 
 ## Shared display acknowledgement state
 
@@ -148,3 +149,54 @@ action selection only when0084 is0; release adjustments403D/406C require0069
 to be0. A renderer-private snapshot or counter copy would break that sharing.
 The minimum0064 and live setting0067 are header/input-owned values, already
 named in the ledger; no new array extent or provider scheduling is inferred.
+
+## Complete caller contract and scoped native verification
+
+The maintained status_display.asm module owns3AC8..3CDD in unchanged physical
+order. UNKNOWN3B08 remains outside the known instruction ranges. The suffix
+starts3ACE and returns at3CDD; the full entry reaches it by fallthrough after
+the two minimap CALLs, without introducing another stack frame.
+
+StatusCompletionDisplayValue names DS:0040, which is also read by results-screen
+code471D/48BD/48F6/504A and initialized to100 at0314. StatusPercentDigits names
+the three bytes209C..209E inside the shared status line. The exact100 path writes
+all three bytes. Other values update only209D/209E, so a leading1 at209C can
+persist; the39CE initializer separately writes a space there at3ABD. Do not
+silently clear that byte on every display update.
+
+The DIV at3AED is byte sized and uses the live CL loaded from0047. Zero skips
+DIV; nonzero quotients above255 fault. The portable boundary must retain the
+pre-DIV state and expose this processor exception without inventing an INT0
+handler or frame. Successful DIV leaves arithmetic flags undefined until later
+instructions define them. Native data/return and device providers remain live
+through the subsequent text, icon and ten count CALLs.
+
+The suffix gate passes29 fixtures at both logical-core and actual-RET adapter
+boundaries:527 known bytes, all172 sites/all73 jump outcomes,48,738 ordered
+bus events and eight completed mutants. It checks the full stored40-byte line,
+all ten count slots in literal order0/1/4/9/2/6/5/7/3/8, zero redraw, snapshot
+skips, counter2 acknowledgement and byte wrap, live counter/selector providers,
+signed old-icon aliases, DF/IF, actual saved DS and changed child returns.
+The VGA-backed stack fixture stops at its observed count-return target3BAB;
+it does not silently continue a damaged frame. The pre-DIV error boundary is
+compared at both APIs; a separate two-byte original probe observes INT0.
+
+The complete3AC8 entry passes10 focused handoff fixtures (13 comparisons),
+with163/174 owned sites,68 observed jump outcomes,43,068 ordered events and
+three completed mutants. This scope checks actual minimap child frames, all
+returned register roles and DS into the suffix, no frame at the fallthrough,
+changed prefix/child targets, full-line/count output and the live outer RET.
+The suffix's separate exhaustive site/outcome matrix supplies the remaining
+body paths; the wrapper report does not claim to execute all174 sites.
+MINIMAP_BOUNDARY5 carries the prefix's actual continuation, entry marker3AC8
+and raw child status; suffix CHILD_STOP4 keeps its own child entry/status.
+Only READY consumes the outer RET. No INT0 handler/frame, IRQ schedule or
+native device timing is inferred.
+
+Reports are build/status-display-differential.json and
+build/status-display-full-differential.json; their exact input hashes own
+acceptance. The two ranges exclude UNKNOWN3B08. The full entry's533 known
+bytes overlap the six-byte prefix and527-byte suffix, adding only527 unique
+main-image C bytes to the ledger (17,573 to18,100). Shared DS:0040 and the
+snapshot/refresh fields stay in canonical memory. This is scoped acceptance,
+not a refreshed aggregate campaign or complete gameplay.

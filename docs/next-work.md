@@ -316,18 +316,40 @@ live NUL/source/saved AX/SI/DS, changed child returns, actual outer RET and
 independent planes remain covered. This adds17 unique bytes, taking the main
 ledger union to17,573 (+495 for count/glyph/text together).
 
-Next connect the remaining3ACE status suffix (527 known bytes/172 sites), then
-compose it after the existing two-CALL3AC8 minimap prefix. Every direct child
-now has scoped native acceptance. Preserve the100*n/divisor byte-DIV overflow
-as an explicit processor-exception boundary, exact refresh/snapshot ownership
-and actual child returns. StatusGlyphBufferSegment names the live1FEC word. Its
+The3ACE status suffix now passes29 fixtures at both boundaries:527 known bytes,
+all172 sites/all73 jump outcomes,48,738 events and eight completed mutants.
+The complete3AC8 entry composes the two minimap CALLs by fallthrough into that
+suffix:10 focused fixtures/13 comparisons,163/174 owned sites,68 observed
+outcomes,43,068 events and three completed mutants. The wrapper's remaining
+body paths retain the suffix's separate gate; no full174-site execution is
+claimed for the handoff matrix. Live returned DS/ES/SS, actual CALL/RET words,
+old-icon/count-field overlap, counter wrap, stale leading percentage digit,
+full40-byte line and the pre-DIV exception boundary remain explicit. The full
+entry and suffix ranges overlap; only527 new unique bytes are added, taking
+the main-image C ledger union from17,573 to18,100. See status-display.md.
+
+Next close the3944 entry and its JMP tail7C0A..7C66:104 decoded bytes/39 sites,
+with no child calls or unresolved transfers in the fresh dependency view.
+Keep the gate002B, live EntityCreationGate0055,32 big-endian object definitions
+and28-byte mutable graphics records. A zero-X definition jumps to the flag
+store with stale BX; type testing reads only the low byte, and the frame
+increment/limit, one-shot flag and MUL/base-offset stores retain live access
+order. Name the shared-tail entry and keep JMP entry free of an extra frame.
+Then connect7BB8..7C09 (82 bytes/33 sites) to the existing8822 renderer through
+its actual far CALL and live CX/DI/SI saves. This closes the next per-tick pair
+after creation/update and before entity drawing/status/action dispatch.
+The3634 parent still depends on6FE2/5726/6E83/706F and the unresolved715B
+indirect target domain; do not guess past it. The separate75EF/7602 leaves
+are the next initializer dependencies for39CE after the per-tick pair.
+
+StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
 statically traced in status-display.md; broader producer verification remains
 open. Preserve count values100..255, signed glyph selectors, live saved words,
 map-mask passes and reverse DF reads. The stored2083 status line continues40
 bytes to NUL20AB; selection's11-byte field is only its prefix and no runtime
 scan bound. Keep the100*n byte-DIV exception frontier and input/cadence ownership
-explicit. No direct selection/action handoff accepts this remaining display body.
+explicit. Direct selection/action handoffs remain separate data-flow evidence.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain
@@ -336,8 +358,10 @@ required before aggregate acceptance.
 Use fresh dependency views rather than an accumulated historical task list:
 
 ```powershell
-.venv\Scripts\python.exe tools\graph.py 762A --tree --depth 2
-.venv\Scripts\python.exe tools\graph.py 7708 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 3944 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 3944 --bottom-up
+.venv\Scripts\python.exe tools\graph.py 7BB8 --tree --depth 2
+.venv\Scripts\python.exe tools\graph.py 7BB8 --bottom-up
 .venv\Scripts\python.exe tools\graph.py 3AC8 --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --tree --depth 2
 .venv\Scripts\python.exe tools\graph.py 3ACE --bottom-up

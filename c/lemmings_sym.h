@@ -802,4 +802,11 @@
 #define SEG09A9_StatusIconRefreshCounter 0x0084u
 #define CS_StatusTextAfterGlyph 0x4185u
 #define CS_StatusTextReturn 0x418Bu
+#define CS_StatusDisplayDivide 0x3AEDu
+#define CS_StatusDisplayReturn 0x3CDDu
+#define CS_StatusDisplayAfterText 0x3B29u
+#define CS_StatusDisplayAfterIconOutline 0x3B39u
+#define CS_StatusDisplayAfterIconRestore 0x3B3Fu
+#define SEG09A9_StatusCompletionDisplayValue 0x0040u
+#define SEG09A9_StatusPercentDigits 0x209Cu
 #endif

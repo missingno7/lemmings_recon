@@ -1,3 +1,5 @@
+StatusCompletionDisplayValue equ GameDataImage+0x0040
+StatusPercentDigits equ GameDataImage+0x209C
 LevelReleaseMinimumDisplaySnapshot equ GameDataImage+0x0065
 LevelReleaseMinimumRefreshCounter equ GameDataImage+0x0066
 LevelReleaseSettingDisplaySnapshot equ GameDataImage+0x0068

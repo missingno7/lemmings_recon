@@ -580,7 +580,7 @@ DrawCodeInputText:
 sub_5042:
     mov dl,[LevelResourceSelectionByte-GameDataImage] ; @05042
     mov dh,[0x491d] ; @05046
-    mov cl,[0x40] ; @0504A
+    mov cl,[StatusCompletionDisplayValue-GameDataImage] ; @0504A
     lea si,[0x4913] ; @0504E
     lea di,[0x4d68] ; @05052
     db 0x8b,0xc2 ; ENCODED: mov ax,dx (NASM chooses a different encoding) ; @05056

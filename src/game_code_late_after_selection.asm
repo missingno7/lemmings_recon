@@ -1033,7 +1033,7 @@ loc_46EB:
     lea si,[0x4c2e] ; @04716
 loc_471A:
     call DrawTextStream ; @0471A
-    mov al,[0x40] ; @0471D
+    mov al,[StatusCompletionDisplayValue-GameDataImage] ; @0471D
     cmp al,[0x41] ; @04720
     jnl loc_4729 ; @04724
     jmp short loc_4778 ; @04726
@@ -1199,7 +1199,7 @@ loc_48AE:
 ; UNKNOWN: unresolved bytes
     db 0x51,0xb1,0x1e,0x8a,0xe8,0x8a,0xc4,0xf6,0xe1,0x02,0xc5,0x59,0xc3 ; @048B0
 sub_48BD:
-    mov al,[0x40] ; @048BD
+    mov al,[StatusCompletionDisplayValue-GameDataImage] ; @048BD
     lea si,[0x4c5d] ; @048C0
     call sub_4B5C ; @048C4
     mov al,[0x41] ; @048C7
@@ -1217,7 +1217,7 @@ loc_48EB:
     lea si,[0x4c4e] ; @048EF
     jmp DrawTextStream ; @048F3
 sub_48F6:
-    mov al,[0x40] ; @048F6
+    mov al,[StatusCompletionDisplayValue-GameDataImage] ; @048F6
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @048F9
     mov dl,[0x41] ; @048FB
     db 0x32,0xf6 ; ENCODED: xor dh,dh (NASM chooses a different encoding) ; @048FF

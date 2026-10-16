@@ -21,7 +21,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 03634..0368D | entity_drawing_calls.asm | Untranslated draw-call loop and provider/IRQ seams |
 | 0368E..03789 | level_initialize.asm | Drawing initialization, live clear tail, header and level-state caller |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
-| 03944..03CDD | game_code_late.asm | Redraw and input/display callers; mixed ownership remains provisional |
+| 03944..03AC7 | game_code_late.asm | Redraw and initial status setup; mixed ownership remains provisional |
+| 03AC8..03CDD | status_display.asm | Status display, actual child frames, shared refresh fields and byte-DIV frontier; UNKNOWN preserved |
 | 03CDE..03E6E | entity_selection.asm | Candidate scan, live bucket/index ownership and selected display; UNKNOWN preserved |
 | 03E6F..04B5B | game_code_late_after_selection.asm | Input and display callers; mixed ownership remains provisional |
 | 04B5C..04BE6 | decimal_fields.asm | Percent wrapper, shared variable-width decimal fields and fixed three-digit helper |
@@ -514,8 +515,8 @@ both boundaries and1,064 formatter boundary cases. The parent retains live
 bucket/index ownership, record182/display overlap and the real formatter
 return. See entity-actions.md and decimal-field.md. Their maintained physical
 modules are entity_selection.asm and decimal_fields.asm; surrounding suffixes
-retain exact image order and all UNKNOWN classifications. The next independent
-normal-path connection is the remaining3ACE status suffix.
+retain exact image order and all UNKNOWN classifications. The3ACE status
+connection is recorded below.
 Their live1FEC source-buffer producer/consumer contracts are recorded in
 status-display.md. These scopes
 do not accept allocation extents, live IRQ scheduling or full main-loop behavior.
@@ -528,8 +529,8 @@ The viewport7A5A and two icon leaves780D/789E now have native acceptance over
 six caller bytes. The three suites pass46,512 and12 fixtures respectively at
 core/adapter boundaries, with nine,nine and five completed mutants. Exact ASM
 modules preserve physical order and classifications. The prefix's3ACE exit has
-an explicit untranslated investigation entry so dependency views retain the
-pending text/count/input body. Main-image translated-byte union is17,078,
+an explicit suffix entry so dependency views retain its separate scope.
+At that checkpoint the main-image translated-byte union was17,078,
 up599 from16,479; this ledger total is separate from full-campaign acceptance.
 See minimap-viewport.md, status-icons.md and status-display.md.
 
@@ -547,3 +548,17 @@ independent planes cover the stored40-byte status line. There is no runtime
 40-character bound.
 Release/icon snapshot and refresh fields remain shared with input gates as
 documented in status-display.md. This checkpoint is scoped evidence only.
+
+The3ACE suffix now passes29 core/adapter fixtures, all172 sites/all73 jump
+outcomes,48,738 ordered events and eight completed mutants. The full3AC8
+caller passes10 focused handoff fixtures/13 comparisons,163/174 owned sites,
+68 observed outcomes,43,068 events and three completed mutants. Its minimap
+prefix flows directly into the suffix with no new guest frame and with all
+live child-returned segments/registers. Divide overflow stops before3AED;
+changed child targets stop before outer RET. UNKNOWN3B08 is excluded.
+The suffix adds527 unique main C bytes, taking the union to18,100; full-entry
+and child ranges are not counted again. See status-display.md for scope and
+input hashes. Fresh views select3944 and shared7C0A..7C66 next (104 bytes/
+39 sites), followed by7BB8's32-object draw loop and its native8822 child.
+The zero-X stale-BX store, low-byte type gate, live animation flags/frame
+fields and actual far-render frames must be understood before either port.

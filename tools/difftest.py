@@ -48,6 +48,8 @@ SUITES = (
     Suite('status_count', 240, 384),
     Suite('status_glyph', 240, 384),
     Suite('status_text', 240, 384),
+    Suite('status_display', 240, 384),
+    Suite('status_display_full', 240, 384),
     Suite('checksum', 120, 512),
     Suite('pcspeaker', 120, 512),
     Suite('pcspeaker_bus', 180, 384),

@@ -22058,19 +22058,24 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Static direct call target",
-      "Static normal-path minimap/status ownership; exact live-segment and CALL/RET contract in docs/minimap-viewport.md. Wider display/input/IRQ readiness remains open."
+      "Static normal-path minimap/status ownership; exact live-segment and CALL/RET contract in docs/minimap-viewport.md. Wider display/input/IRQ readiness remains open.",
+      "Complete native caller composes both minimap CALLs and the live3ACE suffix without an extra frame; scoped processor/changed-return boundaries remain. docs/status-display.md"
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 533,
-    "c_implementation": "c/minimap_status.c",
-    "c_core": "lmn_update_minimap_status_core",
+    "c_implementation": "c/status_display_full.c",
+    "c_core": "lmn_update_status_display_full_core",
     "c_code_ranges": [
       [
         15048,
-        15054
+        15112
+      ],
+      [
+        15113,
+        15582
       ]
     ],
-    "verification_evidence": "Only the two-CALL prefix3AC8..3ACD is TESTED C:6 bytes/2 owned sites. tests/minimap_status.py:12 fixtures x core/adapter,266 integrated sites,54782 events,5 completed mutants. Actual column/viewport CALL/RET, returned live DS, nested/outer changed-return propagation and independent normal-plane replay. Stops before untranslated suffix3ACE; adapter performs no outer RET. docs/minimap-viewport.md"
+    "verification_evidence": "tests/status_display_full.py:10 focused fixtures/13 core-or-adapter comparisons,533 known caller bytes/174 static sites,163 observed owned sites/68 observed outcomes,43068 ordered events,3 completed mutants. Actual minimap child frames, live returned register/segment roles into suffix, full stored40-byte line/allten counts, pre-DIV exception at3AED, changed prefix/text child seams and live outerRET. Separate tests/status_display.py covers all172 suffix sites/all73 outcomes; wrapper does not claim execution of all174 sites. UNKNOWN3B08 excluded; no new byte credit for overlapping prefix/suffix. docs/status-display.md"
   },
   {
     "address": 15582,
@@ -60331,11 +60336,24 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Actual near return after3ACB CALL7A5A; untranslated status suffix begins here. docs/minimap-viewport.md",
-      "Scoped investigation entry at native prefix continuation; exposes the untranslated suffix in dependency views. This does not infer an independent historical CALL or reclassify UNKNOWN3B08."
+      "Actual near return after3ACB CALL7A5A; native status suffix starts here by fallthrough. docs/status-display.md",
+      "Explicit suffix entry does not infer a separate historical CALL or reclassify UNKNOWN3B08."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 527
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 527,
+    "c_implementation": "c/status_display.c",
+    "c_core": "lmn_update_status_display_suffix_core",
+    "c_code_ranges": [
+      [
+        15054,
+        15112
+      ],
+      [
+        15113,
+        15582
+      ]
+    ],
+    "verification_evidence": "tests/status_display.py:29 fixtures x core/actualRET adapter,527 known bytes/all172 sites/all73 jump outcomes,48738 ordered events,8 completed mutants. Original100*n arithmetic, zero-divisor bypass and explicit pre-DIV overflow boundary, stale leading percentage byte, full stored40-byte line, literal ten-slot order, zero redraw, counter2 acknowledgement/live INC reread/bytewrap, signed old-icon clear aliases, actual child CALL/RET and returnedDS, changed glyph/text/count targets, DF/IF and RAM/VGA stack aliases. Separate actual two-byte DIV probe observes INT0 without inventing its frame. UNKNOWN3B08 excluded. docs/status-display.md"
   },
   {
     "address": 30877,
@@ -60580,6 +60598,120 @@
     "confidence": "PROVEN",
     "evidence": [
       "Actual glyph near CALL continuation or outer RET of417B NUL-scan caller. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15085,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusDisplayDivide",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact byte-DIV, actual near-CALL continuation or outer RET in the status display. src/status_display.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15581,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusDisplayReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact byte-DIV, actual near-CALL continuation or outer RET in the status display. src/status_display.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15145,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusDisplayAfterText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact byte-DIV, actual near-CALL continuation or outer RET in the status display. src/status_display.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15161,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusDisplayAfterIconOutline",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact byte-DIV, actual near-CALL continuation or outer RET in the status display. src/status_display.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 15167,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusDisplayAfterIconRestore",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact byte-DIV, actual near-CALL continuation or outer RET in the status display. src/status_display.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 64,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "StatusCompletionDisplayValue",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0314 initializes100;3AF4 stores low percentage byte.471D/48BD/48F6/504A read this shared result value.",
+      "Names do not reclassify or copy canonical storage. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8348,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 3,
+    "symbol_name": "StatusPercentDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3AFB..3B02 writes100;3B1C/3B1E update only209D/209E otherwise, retaining209C.3ABD initializer clears209Cspace. These bytes are inside the stored40-character status line2083..20AA.",
+      "Names do not reclassify or copy canonical storage. docs/status-display.md"
     ],
     "verification_status": "UNRESOLVED"
   }
