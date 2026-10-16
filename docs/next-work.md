@@ -255,28 +255,34 @@ child boundaries and stops01B6 before untranslated CALL3944. New records advance
 in the same pass; the boundFF wrap can instead make the update bound zero.
 This is not a complete main-loop or timing contract. See entity-simulation.md.
 
-The selector2/3/4 cluster now passes39 core/actualRET-adapter fixtures:
-107 unique bytes/31 sites,18 conditional outcomes plus4 directJMP edges,
-1,122 events and seven completed mutants. The3150 dispatch prefix adds113
-known bytes/43 sites/all28 conditional outcomes in279 core/adapter fixtures,
-including all256 selector bytes,6,964 events and six completed mutants.
-Latch/gate order,signed JL and sequential CMP flags,whole-byte marker stores,
-live count/refresh aliases and the original outer return are retained.
-Native selectors2/3/4 compose their tested feedback without a CALL frame;
-selectors5/6/7/8/9 remain explicit untranslated entry stops. This accepts the
-prefix domain,not all1,221 known action bytes. See entity-actions.md.
+All eight3150 action selectors now compose native cores through the known
+1,221-byte/402-site body. The basic2/3/4 suite retains39 fixtures/7 mutants;
+advanced6/7/8/9 adds534 unique bytes in186 fixtures,150 sites/all66 owned
+outcomes,10,154 events and ten mutants. Selector5 adds408 bytes in56 fixtures,
+158 sites/all73 outcomes,6,586 events and eight mutants,plus two actual native
+producer-to283B restoration handoffs checking all nine cells with DF clear.
+The full dispatch suite passes290 core/actualRET-adapter fixtures including
+all256 selectors:43 own sites/all28 own outcomes,376/402 integrated sites,
+110 integrated conditional outcomes,8,244 events and six completed mutants.
+Leaf matrices jointly cover all402 known sites; shared bytes count once.
+No fabricated CALL frame or host record copy was introduced. Sound seams and
+all31 UNKNOWN bytes remain explicit; broader scheduling/IRQ acceptance is open.
 
-Next translate the audited selectors6/7/9/8 together,retaining independently
-selectable entries and shared native feedback/failure tails:534 known bytes.
-The alternate record joins are different:selector6 bypasses the original sum
-gate,selector9 bypasses the original nibble/count gates,and7/8 rejoin their
-active-record nibble checks. Selector7's eligibility F76F differs from its
-transition AND F56F. Early nibble9 services7/8 consume no count. Preserve late
-callback reads,ordered fields,RMW flags and raw returned segments. Then port
-selector5's408-byte SS interaction-map checks/transition/nine-cell producer,
-connect all dispatch entries and verify the complete3150 action composition.
-Its31 UNKNOWN bytes stay unresolved. Broader initialization,record/table
-extents,actual game scheduling and platform/IRQ/changed-target seams remain open.
+The physical3150..3633 action block is maintained in entity_actions.asm.
+The untranslated3634..368D draw-call loop is separate in entity_drawing_calls.asm;
+program/module assertions preserve byte order and every UNKNOWN classification.
+The action APIs share an exact typed live-register boundary and bounded native
+test transport; independent eligibility/transition/original models stay separate.
+
+Next port the4B68 decimal formatter and4BBE shared-suffix entry,then candidate
+selection3CDE. The formatter left-aligns digits with trailing spaces and advances
+SI past the units digit; it is not the fixed three-digit4BC2 helper. Selection
+uses393 known bytes/140 sites with eight one-byte UNKNOWN holes and actual
+CALL3DF3/RET4BBD. A zero entry bound leaves stale candidate state; otherwise
+last-hit bucket pointers/indices and live count/index arithmetic flow to3150.
+InputButtonsWord mask0002 forces the fallback bucket. See entity-actions.md for
+the full static contracts. Initialization,record/table extents and real game
+scheduling/platform/IRQ boundaries remain open.
 
 Allocation bounds, the 5CC1 shared-tail caller and UNKNOWN 5D18..5D65 remain
 separate frontiers. Full original/native campaigns and matching inputs remain

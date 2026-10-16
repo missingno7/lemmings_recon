@@ -1,4 +1,6 @@
 #include "entity_action_dispatch.h"
+#include "entity_actions_advanced.h"
+#include "entity_action_map.h"
 #include "lemmings_sym.h"
 
 #ifndef ENTITY_ACTION_DISPATCH_MUTATION
@@ -125,15 +127,6 @@ static LmnEntityActionDispatchResult return_at(ActionDispatchState *s,
     return result_of(s);
 }
 
-static LmnEntityActionDispatchResult unsupported_action(
-    ActionDispatchState *s,uint16_t target) {
-    s->continuation=target;
-    s->status=LMN_ENTITY_ACTION_DISPATCH_UNTRANSLATED_ACTION;
-    s->child_entry=target;
-    s->child_status=0xffffu;
-    return result_of(s);
-}
-
 #if ENTITY_ACTION_DISPATCH_MUTATION == 6
 static void push_synthetic_call(ActionDispatchState *s) {
     s->stack_offset=(uint16_t)(s->stack_offset-2u);
@@ -142,8 +135,12 @@ static void push_synthetic_call(ActionDispatchState *s) {
 }
 #endif
 
-static LmnEntityActionDispatchResult apply_basic_action(
-    ActionDispatchState *s,uint16_t entry,uint16_t target,
+typedef LmnEntityActionsBasicResult (*EntityActionCore)(uint8_t *,
+    const LmnEntityActionsBasicCall *,const LmnPcSpeakerBinding *,
+    const LmnSoundDriverBinding *,const LmnRasterBus *);
+
+static LmnEntityActionDispatchResult apply_action(
+    ActionDispatchState *s,uint16_t entry,uint16_t target,EntityActionCore core,
     const LmnPcSpeakerBinding *pc_binding,
     const LmnSoundDriverBinding *sound_binding) {
     LmnEntityActionsBasicCall call;
@@ -160,7 +157,7 @@ static LmnEntityActionDispatchResult apply_basic_action(
     push_synthetic_call(s);
     call.stack_segment=s->stack_segment;call.stack_offset=s->stack_offset;
 #endif
-    out=lmn_entity_actions_basic_core(s->memory,&call,pc_binding,
+    out=core(s->memory,&call,pc_binding,
                                       sound_binding,s->bus);
     s->value=out.value;s->map_cursor=out.map_cursor;s->count=out.count;
     s->auxiliary_value=out.auxiliary_value;
@@ -172,7 +169,7 @@ static LmnEntityActionDispatchResult apply_basic_action(
     s->child_entry=target;s->child_status=out.status;
     s->status=(out.status==LMN_ENTITY_ACTIONS_BASIC_READY)
         ?LMN_ENTITY_ACTION_DISPATCH_READY
-        :LMN_ENTITY_ACTION_DISPATCH_BASIC_CHILD_STOP;
+        :LMN_ENTITY_ACTION_DISPATCH_CHILD_STOP;
     return result_of(s);
 }
 
@@ -264,38 +261,43 @@ LmnEntityActionDispatchResult lmn_entity_action_dispatch_core(
         return return_at(&s,CS_EntityActionDispatchReturn); /* JL. */
 #endif
     if(selector==0x02u)
-        return apply_basic_action(&s,LMN_ENTITY_ACTIONS_BASIC_SELECTOR_2,
-            CS_ApplyEntityAction2,pc_binding,sound_binding);
+        return apply_action(&s,LMN_ENTITY_ACTIONS_BASIC_SELECTOR_2,
+            CS_ApplyEntityAction2,lmn_entity_actions_basic_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x03u); /* CMP AL,3. */
     if(selector==0x03u)
-        return apply_basic_action(&s,LMN_ENTITY_ACTIONS_BASIC_SELECTOR_3,
-            CS_ApplyEntityAction3,pc_binding,sound_binding);
+        return apply_action(&s,LMN_ENTITY_ACTIONS_BASIC_SELECTOR_3,
+            CS_ApplyEntityAction3,lmn_entity_actions_basic_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x04u); /* CMP AL,4. */
     if(selector==0x04u)
-        return apply_basic_action(&s,LMN_ENTITY_ACTIONS_BASIC_SELECTOR_4,
-            CS_ApplyEntityAction4,pc_binding,sound_binding);
+        return apply_action(&s,LMN_ENTITY_ACTIONS_BASIC_SELECTOR_4,
+            CS_ApplyEntityAction4,lmn_entity_actions_basic_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x05u); /* CMP AL,5. */
     if(selector==0x05u)
-        return unsupported_action(&s,CS_ApplyEntityAction5);
+        return apply_action(&s,5u,CS_ApplyEntityAction5,
+            lmn_entity_action_map_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x06u); /* CMP AL,6. */
     if(selector==0x06u)
-        return unsupported_action(&s,CS_ApplyEntityAction6);
+        return apply_action(&s,6u,CS_ApplyEntityAction6,
+            lmn_entity_actions_advanced_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x07u); /* CMP AL,7. */
     if(selector==0x07u)
-        return unsupported_action(&s,CS_ApplyEntityAction7);
+        return apply_action(&s,7u,CS_ApplyEntityAction7,
+            lmn_entity_actions_advanced_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x08u); /* CMP AL,8. */
     if(selector==0x08u)
-        return unsupported_action(&s,CS_ApplyEntityAction8);
+        return apply_action(&s,8u,CS_ApplyEntityAction8,
+            lmn_entity_actions_advanced_core,pc_binding,sound_binding);
 
     s.flags=sub8_flags(s.flags,selector,0x09u); /* CMP AL,9. */
     if(selector==0x09u)
-        return unsupported_action(&s,CS_ApplyEntityAction9);
+        return apply_action(&s,9u,CS_ApplyEntityAction9,
+            lmn_entity_actions_advanced_core,pc_binding,sound_binding);
 
     return return_at(&s,CS_EntityActionDispatchReturn);
 }

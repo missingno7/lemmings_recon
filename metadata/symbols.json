@@ -18344,7 +18344,7 @@
         12740
       ]
     ],
-    "verification_evidence": "tests/entity_action_dispatch.py:279 core/actualRET-adapter fixtures including all256 selector bytes,113 own known bytes/43 sites/all28 conditional outcomes,6964 ordered events,6 completed mutants. Gates preserve latch,release clears it,arming storesFF before live pointer/selector loads,signedJL/sequentialCMPflags and actual SS/VGA returns retained. Native basic2/3/4 and feedback compose without CALL frames;5/6/7/8/9 stop explicitly at their untranslated entries. UNKNOWN3160/3199/31BC and all remaining action bodies are excluded from this C prefix scope; not full3150 acceptance."
+    "verification_evidence": "tests/entity_action_dispatch.py:290 core/actualRET-adapter fixtures including all256 raw selectors,113 own known bytes/43 sites/all28 owned conditional outcomes,376/402 integrated sites/110 integrated conditional outcomes,8244 ordered events,6 completed mutants. All8 selector cores and shared feedback compose without fabricated CALLs on canonical RAM/live DS/ES/SS. Independent leaf matrices cover all402 known instruction sites jointly;5/6/7/8/9 no longer untranslated. Every sound unbound/untranslated/changed-return boundary stays explicit. All31 UNKNOWN bytes excluded; own C ranges remain prefix-only to avoid recounting child bytes. No main-loop/IRQ timing acceptance."
   },
   {
     "address": 13876,
@@ -59603,7 +59603,7 @@
     "address": 13110,
     "segment": 0,
     "kind": "continuation",
-    "size": null,
+    "size": 408,
     "symbol_name": "ApplyEntityAction5",
     "aliases": [],
     "callers": [],
@@ -59613,13 +59613,22 @@
     "evidence": [
       "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_action_map.c",
+    "c_core": "lmn_entity_action_map_core",
+    "c_code_ranges": [
+      [
+        13110,
+        13518
+      ]
+    ],
+    "verification_evidence": "tests/entity_action_map.py:56 core/actualRET-adapter fixtures,408 known bytes/158 sites/all73 owned outcomes,6586 ordered events,8 completed mutants. Independent ordered memory projection and9x3 blocked-cell matrix,live AX/DX/ES/SI stack effects,late callback/fresh producer cells,DF/record/map/stack aliases,VGA/physical wrapping/feedback seams;2 actual native producer-to283B restoration handoffs independently restore all9 cells. No array/IRQ timing guarantee; sharedfeedback/RET bytes counted in existing scopes."
   },
   {
     "address": 12989,
     "segment": 0,
     "kind": "continuation",
-    "size": null,
+    "size": 121,
     "symbol_name": "ApplyEntityAction6",
     "aliases": [],
     "callers": [],
@@ -59629,13 +59638,22 @@
     "evidence": [
       "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_advanced.c",
+    "c_core": "lmn_entity_actions_advanced_core",
+    "c_code_ranges": [
+      [
+        12989,
+        13110
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_advanced.py:186 combined core/actualRET-adapter fixtures,534 unique known bytes/150 sites/all66 owned branch outcomes,10154 ordered events,10 completed mutants. All16 eligibility bits,direction nibble matrices,live alternate-pointer and join-specific bypass/rechecks,distinct selector7 eligibility/transition masks and intermediate RMW,late callback aliases,full-word increment/count overflow,PC/AdLib/Tandy seams,DF/physical stack/VGA verified. UNKNOWN35A1/35AB excluded; feedback/failure bytes overlap existing scopes."
   },
   {
     "address": 13518,
     "segment": 0,
     "kind": "continuation",
-    "size": null,
+    "size": 137,
     "symbol_name": "ApplyEntityAction7",
     "aliases": [],
     "callers": [],
@@ -59645,13 +59663,22 @@
     "evidence": [
       "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_advanced.c",
+    "c_core": "lmn_entity_actions_advanced_core",
+    "c_code_ranges": [
+      [
+        13518,
+        13655
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_advanced.py:186 combined core/actualRET-adapter fixtures,534 unique known bytes/150 sites/all66 owned branch outcomes,10154 ordered events,10 completed mutants. All16 eligibility bits,direction nibble matrices,live alternate-pointer and join-specific bypass/rechecks,distinct selector7 eligibility/transition masks and intermediate RMW,late callback aliases,full-word increment/count overflow,PC/AdLib/Tandy seams,DF/physical stack/VGA verified. UNKNOWN35A1/35AB excluded; feedback/failure bytes overlap existing scopes."
   },
   {
     "address": 13720,
     "segment": 0,
     "kind": "continuation",
-    "size": null,
+    "size": 156,
     "symbol_name": "ApplyEntityAction8",
     "aliases": [],
     "callers": [],
@@ -59661,13 +59688,30 @@
     "evidence": [
       "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_advanced.c",
+    "c_core": "lmn_entity_actions_advanced_core",
+    "c_code_ranges": [
+      [
+        13720,
+        13729
+      ],
+      [
+        13730,
+        13739
+      ],
+      [
+        13740,
+        13876
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_advanced.py:186 combined core/actualRET-adapter fixtures,534 unique known bytes/150 sites/all66 owned branch outcomes,10154 ordered events,10 completed mutants. All16 eligibility bits,direction nibble matrices,live alternate-pointer and join-specific bypass/rechecks,distinct selector7 eligibility/transition masks and intermediate RMW,late callback aliases,full-word increment/count overflow,PC/AdLib/Tandy seams,DF/physical stack/VGA verified. UNKNOWN35A1/35AB excluded; feedback/failure bytes overlap existing scopes."
   },
   {
     "address": 12813,
     "segment": 0,
     "kind": "continuation",
-    "size": null,
+    "size": 122,
     "symbol_name": "ApplyEntityAction9",
     "aliases": [],
     "callers": [],
@@ -59677,7 +59721,16 @@
     "evidence": [
       "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_implementation": "c/entity_actions_advanced.c",
+    "c_core": "lmn_entity_actions_advanced_core",
+    "c_code_ranges": [
+      [
+        12813,
+        12935
+      ]
+    ],
+    "verification_evidence": "tests/entity_actions_advanced.py:186 combined core/actualRET-adapter fixtures,534 unique known bytes/150 sites/all66 owned branch outcomes,10154 ordered events,10 completed mutants. All16 eligibility bits,direction nibble matrices,live alternate-pointer and join-specific bypass/rechecks,distinct selector7 eligibility/transition masks and intermediate RMW,late callback aliases,full-word increment/count overflow,PC/AdLib/Tandy seams,DF/physical stack/VGA verified. UNKNOWN35A1/35AB excluded; feedback/failure bytes overlap existing scopes."
   },
   {
     "address": 107,

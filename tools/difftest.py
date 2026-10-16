@@ -65,6 +65,8 @@ SUITES = (
     Suite('entity_create', 180, 384),
     Suite('entity_action_sound', 180, 384),
     Suite('entity_actions_basic', 180, 384),
+    Suite('entity_actions_advanced', 240, 384),
+    Suite('entity_action_map', 240, 384),
     Suite('entity_action_dispatch', 240, 384),
     Suite('entity_batch', 240, 384),
     Suite('dat', 120, 512),

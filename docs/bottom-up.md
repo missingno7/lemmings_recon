@@ -16,7 +16,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 |---|---|---|
 | 00000..01915 | entry_services.asm | Entry/service frame; protected views remain separate |
 | 01916..01F18 | resources.asm | Raw files, selection, special setup and DAT/cache cluster; allocation candidate has unresolved reachability |
-| 01F19..0368D | game_code.asm | Mixed ownership remains provisional |
+| 01F19..0314F | game_code.asm | Simulation-state and creation contracts; native domains remain scoped |
+| 03150..03633 | entity_actions.asm | Action dispatch, eight selectors and shared sound/RET tails; UNKNOWN preserved |
+| 03634..0368D | entity_drawing_calls.asm | Untranslated draw-call loop and provider/IRQ seams |
 | 0368E..03789 | level_initialize.asm | Drawing initialization, live clear tail, header and level-state caller |
 | 0378A..03943 | level_objects.asm | Record copy, interaction cells and coordinate collector |
 | 03944..052D3 | game_code_late.asm | Mixed ownership remains provisional |
@@ -205,16 +207,23 @@ frames in17 core/adapter fixtures:6 caller bytes/two sites,5,708 events and five
 mutants. It stops01B6 before3944,without claiming the whole main loop.
 The basic2/3/4 actions now add107 known bytes/31 sites in39 core/adapter
 fixtures,with18 conditional outcomes plus4 directJMPs,1,122 events and seven
-mutants. The3150 prefix adds113 known bytes/43 sites in279 core/adapter
-fixtures,all256 raw selector bytes/all28 conditional outcomes,6,964 events
-and six mutants. It composes basic actions and shared feedback without adding
-frames; remaining action entries are explicit untranslated boundaries.
-Next translate the audited534-byte selectors6/7/9/8 cluster,then selector5's
-408-byte SS interaction-map producer and full3150 composition. Preserve
-different alternate-record join points,early0412 services,selector7's differing
-eligibility/transition masks,live segments and all31 UNKNOWN bytes. See
-entity-actions.md and next-work.md. Initialization,unchecked table extents,
-platform and IRQ obligations remain explicit.
+mutants. The3150 prefix owns113 known bytes/43 sites/all28 conditional
+outcomes. It composes all eight actions and shared feedback without adding
+frames; current full-parent evidence is recorded below.
+The advanced6/7/8/9 cluster now adds534 known bytes in186 core/adapter
+fixtures,all150 sites/66 outcomes,10,154 events and ten mutants. Selector5 adds
+408 bytes in56 fixtures,all158 sites/73 outcomes,6,586 events and eight mutants;
+two native producer/restorer handoffs check all nine saved map cells. The full
+3150 composition passes290 fixtures,43 own sites/28 outcomes,376/402 integrated
+sites and six mutants; independent leaf matrices jointly cover all402 known
+sites. All eight cores share a typed register boundary and bounded test transport.
+Shared feedback and live outer returns retain their explicit segment/IRQ seams.
+All31 UNKNOWN bytes remain unresolved. The physical3150..3633 block now lives
+in entity_actions.asm,followed by the separate untranslated draw-call module.
+Next verify the left-aligned4B68/4BBE formatter cluster,then393-known-byte3CDE
+candidate selection and its actual CALL frame. Preserve stale outputs at zero
+bound,last-hit bucket ownership,live count/index and mask0002 selection. See
+entity-actions.md and next-work.md for exact contracts and open platform duties.
 
 Translated byte accounting validates explicit C domains against complete decoded
 instructions in the image. Shared tails may precede or follow the physical entry

@@ -1,5 +1,10 @@
 # Entity action ownership and shared feedback
 
+The physical3150..3633 block lives in `src/entity_actions.asm`,with start/end
+assertions and unchanged emission order. The following3634..368D untranslated
+draw-call loop is separate in `src/entity_drawing_calls.asm`. These are maintained
+source boundaries,not historical linker modules or additional resolved bytes.
+
 The3150 action body occupies[3150,3634):1,221 known bytes/402 instruction
 sites and31 explicitly UNKNOWN bytes. Its210 branch outcomes and three INT
 sites are static accounting, not native acceptance. Unknown holes remain3160,
@@ -83,8 +88,8 @@ stack frames. These tails always load AH4 before INT61,so an untranslated
 external AH0..2 service is not claimed as exercised here. Limits are512
 original instructions/2,048 events per call and180 seconds/384 MiB process/
 640 MiB Windows tree. See `build/entity-action-sound-differential.json` for
-exact hashes and per-case paths. The remainder of3150 and broader input,
-record-validity and IRQ/device scheduling contracts remain open.
+exact hashes and per-case paths. Broader input,record-validity and IRQ/device
+scheduling contracts remain open; the current action composition is below.
 
 ## Small selector actions and dispatch prefix
 
@@ -106,10 +111,8 @@ Record/global overlap,wrap and the separate memory RMW flags remain explicit.
 The named dispatch prefix[3150,31C4) has113 known bytes/43 sites/28 outcomes,
 excluding UNKNOWN3160,3199 and31BC. Its own physical ledger size covers only
 that prefix; the complete reachable3150 action graph still has1221 known
-bytes. Ordinary returns are31BD and31C3. The native prefix connects
-selectors2/3/4 directly and stops at the exact untranslated entries for
-selectors5/6/7/8/9. A scoped prefix does not establish those action bodies or
-the complete3150 caller. All256 selector bytes retain signed JL behavior and
+bytes. Ordinary returns are31BD and31C3. The native prefix now connects all eight selector cores directly. Its own
+byte accounting stays separate from their independently tested domains. All256 selector bytes retain signed JL behavior and
 the sequential CMP flags,including ordinary31BD returns for80..FF and0A..7F.
 The latch is set before both pointer and selector reads,even for invalid values.
 
@@ -123,7 +126,7 @@ through VGA. Action successes reset the corresponding counter as recorded
 above; no bounded range or general scheduling invariant follows from this.
 The names describe live fields; they do not resolve stored UNKNOWN bytes.
 
-The remaining five action bodies own942 known bytes before shared tails:
+The five later action bodies own942 known bytes before shared tails:
 
 | Selector | Physical body | Known bytes | Next dependency |
 |---|---|---:|---|
@@ -133,10 +136,10 @@ The remaining five action bodies own942 known bytes before shared tails:
 |8|3598..3633|154|Direction/nibble exclusions,0412 path;UNKNOWN35A1/35AB excluded|
 |5|3336..34CD|408|SS interaction-map checks,ordered transition and nine-cell producer|
 
-These are static boundaries,not executed or translated coverage. Their common
-INT/RET contracts remain those of the already verified feedback tails.
+These physical boundaries do not add shared-tail bytes again. Their native
+acceptance and common INT/RET contracts are recorded below.
 
-## Remaining transition and alternate-pointer contracts
+## Transition and alternate-pointer contracts
 
 Selectors6/7/9/8 have32/39/33/46 instruction sites and13/18/13/22 owned
 branch outcomes respectively,including unconditional JMPs. Their local bodies
@@ -171,8 +174,8 @@ at+2B reaches3287 before count consumption. Transition decrements007C,clears
 007E,ANDs stateFD6F then ORs0800,and writes ordered fields. It reads callback
 slot+8 and stores+14 before+2A=FF,+24 AND1 and a final word INC[SI+2],then
 JMP31E5. UNKNOWN35A1/35AB remain excluded; known jumps target35A2/35AC.
-All four failure paths reach320C. These are static contracts pending native
-translation; no historical action names or record/table extents are inferred.
+All four failure paths reach320C. Native acceptance is scoped below; no
+historical action names or record/table extents are inferred.
 
 ## Scoped native acceptance
 
@@ -188,15 +191,78 @@ Limits are1,024 original instructions/2,048 events per call and180 seconds/
 384 MiB process/640 MiB Windows tree. See
 `build/entity-actions-basic-differential.json` for exact input hashes.
 
-The dispatch prefix passes279 fixtures at both boundaries,including all256
-raw selector bytes:113 own known bytes/43 sites/all28 conditional outcomes,
-6,964 ordered events and six completed mutants. Independent gate/latch/AX/SI
-and event-order checks precede native comparison. A latch-write provider changes
-the selected pointer and selector before their later reads. Native basic actions
-and feedback retain raw child diagnostics and actual outer returns; supported
-paths include unbound/changed PC returns and returned DS. Other selectors stop
-at their exact untranslated action entries. The512-instruction/4,096-event
-per-call budgets and240-second/384 MiB process/640 MiB tree limits are hard.
-See `build/entity-action-dispatch-differential.json`. Shared child bytes are
-counted once; these scopes add220 unique known bytes,not the whole3150 body.
-All31 UNKNOWN bytes and broader input/record/IRQ timing contracts remain open.
+The complete dispatch composition passes290 fixtures at both boundaries,
+including all256 raw selector bytes:113 own known bytes/43 sites/all28 owned
+conditional outcomes,8,244 ordered events and six completed mutants. Its own
+cases execute376 of402 integrated sites and110 integrated conditional outcomes;
+the separate leaf matrices jointly execute all402 known sites. All eight
+selector cores and shared feedback use direct logical jumps on canonical RAM,
+with actual outer RETs and raw child diagnostics. Independent gate/latch/AX/SI
+and event-order checks precede comparison. Latch-write providers retain live
+pointer/selector reads; focused cases cover every new action,alternate joins,
+early0412 services and DF-sensitive map production. The512-instruction/
+4,096-event per-call budgets and240-second/384 MiB process/640 MiB tree limits
+are hard. See `build/entity-action-dispatch-differential.json`. The known
+1,221-byte body is now composed; all31 UNKNOWN bytes and broader input/record/
+IRQ timing contracts remain open. This pass adds942 unique known bytes.
+
+The selector6/7/8/9 cluster now passes186 core/actual-RET-adapter fixtures:
+534 unique known bytes/150 sites/all66 owned outcomes,10,154 ordered events
+and ten completed mutants. Single-bit eligibility probes cover all16 state
+bits; direction-nibble matrices retain high bits and both exact direction
+branches. Independent eligibility/transition checks include alternate join
+bypasses and rechecks,service paths consuming no count,selector7's intermediate
+AND write before OR,late callback aliases and full-word/count overflow. PC,
+AdLib,Tandy,unbound/changed-IRET/returned-DS seams,DF,physical stack wrapping
+and VGA returns remain explicit. The shared typed Call/Result boundary and
+bounded native transport are reused from the basic action suite. Budgets are
+2,048 instructions/4,096 events per call and240 seconds/384 MiB process/
+640 MiB tree. UNKNOWN35A1/35AB and all other holes remain unresolved. See
+`build/entity-actions-advanced-differential.json` for exact input hashes.
+
+Selector5 now passes56 core/actual-RET-adapter fixtures:408 known bytes/
+158 sites/all73 owned outcomes,6,586 ordered events and eight completed mutants.
+A9x3 rejection matrix checks every map cell against02/0A/03. Independent
+ordered memory projection retains map/record overlap and map writes changing
+the saved SI word; providers exercise live AX/DX/ES saves,late callback reads
+and producer rereads after the checks. DF only reverses the STOSB destination.
+Word wrapping,VGA SS access,feedback seams and instruction-phase RMW flags
+are checked. Two actual native producer-to283B restoration handoffs restore
+all nine original cells with DF clear. Budgets are768 original instructions/
+8,192 events per call and240 seconds/384 MiB process/640 MiB tree. See
+`build/entity-action-map-differential.json` for exact input hashes. This adds
+408 unique bytes; the reused feedback/RET/restoration domains are counted once.
+
+## Next producer: candidate selection
+
+The3CDE entry,called at01BF and returning01C2,owns393 known bytes/140 sites
+in physical[3CDE,3E6F). Eight one-byte holes remain UNKNOWN at3D26,3D44,
+3D4B,3D57,3D66,3D70,3D77 and3DE7. Its only RET is3E62. A nonzero frozen
+entry CL from0043 controls1..255 scans of2D-byte records starting0088; zero
+returns before clearing candidate fields,so stale0063/0058 state is possible.
+Inactive+26==FF records still consume an iteration. Geometry uses wrapped,
+signed comparisons and the original unusual0680-to00D0 X-bound replacement.
+
+After each hit,live record+24 bit80 or state+08&8B90 selects preferred bucket
+005C/0060; otherwise005A/005F receives the pointer/index. Later hits overwrite
+earlier hits. The index rereads live0043 and subtracts CL;0063 counts both
+buckets. Pointer fields are not cleared with the FF index sentinels.
+InputButtonsWord mask0002 forces005F/005A; when clear,0060/005C wins if its
+index!=FF,otherwise the routine falls back to005F/005A. The chosen pointer
+and index become0058/005E. Mask0002 is stated as a value,without assigning
+an input meaning or confusing it with bit number2.
+
+A valid selection calls the separate4B68 formatter at3DF3 (return3DF6),then
+reloads0058 and copies seven live template bytes to2083..2089. Template
+addresses48BF,48C6,48D4,48DB,48E2,48E9,48F0,48F7,48FE and490C remain live
+DS data; no historical action names are inferred. Formatting receives the
+candidate count in AL and destination208B. The4B68 body is86 bytes/40 sites,
+with shared4B91 suffix entered separately from4BBE (four additional bytes).
+It fills spaces,omits leading zero digits and writes significant digits from
+the original SI onward:decimal0 produces`0  `,10 produces`10 `,100 produces
+`100`. Digits are left-aligned with trailing spaces; SI advances by their
+count,including the final units digit. BL counts emitted prefix digits and
+BH is preserved. This differs from the fixed three-digit4BC2 helper. Next
+verify both formatter entries,then compose3CDE through its actual stack frame
+before connecting the candidate outputs to3150. No game scheduling or record
+allocation extent is established by these static producer contracts.

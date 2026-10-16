@@ -6,6 +6,10 @@ times -(($-$$) != 0x1916) db 0 ; module end assertion
 %include "resources.asm"
 times -(($-$$) != 0x1f19) db 0 ; module end assertion
 %include "game_code.asm"
+times -(($-$$) != 0x3150) db 0 ; module end assertion
+%include "entity_actions.asm"
+times -(($-$$) != 0x3634) db 0 ; module end assertion
+%include "entity_drawing_calls.asm"
 times -(($-$$) != 0x368e) db 0 ; module end assertion
 %include "level_initialize.asm"
 times -(($-$$) != 0x378a) db 0 ; module end assertion

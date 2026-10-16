@@ -1,4 +1,4 @@
-"""Bounded original-versus-native checks for the 3150 entity-action prefix."""
+"""Bounded full-path composition checks for the 3150 entity-action dispatcher."""
 import copy
 import ctypes as ct
 import gc
@@ -28,20 +28,30 @@ IMAGE = interactions.IMAGE
 MD = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_16)
 MD.detail = True
 
-# UNKNOWN bytes at 3160, 3199 and 31BC are intentionally left out of the
-# disassembly. Selector children 2/3/4 and their shared feedback tail are
-# included only so the original oracle can follow those real direct JMPs.
+# UNKNOWN bytes at 3160, 3199, 31BC, 35A1, 35AB and 357E..3597 are intentionally
+# left out. The independent original oracle composes every other known main
+# instruction through selector children 2..9 and their shared tails.
 OWN_RANGES = ((0x3150, 0x3160), (0x3161, 0x3199),
               (0x319A, 0x31BC), (0x31BD, 0x31C4))
 OWN_INS = {}
 for start, end in OWN_RANGES:
     OWN_INS.update({ins.address: ins for ins in MD.disasm(IMAGE[start:end], start)})
-COMPOSED_INS = dict(OWN_INS)
-for start, end in ((0x31C4, 0x320D), (0x329B, 0x32BD), (0x3557, 0x357E)):
+COMPOSED_RANGES = ((0x3150, 0x3160), (0x3161, 0x3199),
+                   (0x319A, 0x31BC), (0x31BD, 0x357E),
+                   (0x3598, 0x35A1), (0x35A2, 0x35AB),
+                   (0x35AC, 0x3634))
+COMPOSED_INS = {}
+for start, end in COMPOSED_RANGES:
     COMPOSED_INS.update({ins.address: ins for ins in MD.disasm(IMAGE[start:end], start)})
+MAIN_RETURNS = {address for address, ins in COMPOSED_INS.items()
+                if ins.mnemonic.lower() == 'ret'}
 
 CONDITIONALS = {
     address for address, ins in OWN_INS.items()
+    if ins.group(capstone.CS_GRP_JUMP) and ins.mnemonic.lower() != 'jmp'
+}
+COMPOSED_CONDITIONALS = {
+    address for address, ins in COMPOSED_INS.items()
     if ins.group(capstone.CS_GRP_JUMP) and ins.mnemonic.lower() != 'jmp'
 }
 OWN_EDGES = set()
@@ -49,9 +59,12 @@ for address in CONDITIONALS:
     ins = OWN_INS[address]
     OWN_EDGES.add((address, ins.operands[0].imm & 0xFFFF))
     OWN_EDGES.add((address, (address + ins.size) & 0xFFFF))
-UNTRANSLATED = {5: 0x3336, 6: 0x32BD, 7: 0x34CE,
-                8: 0x3598, 9: 0x320D}
-STOP_OFFSETS = {address: 1 for address in UNTRANSLATED.values()}
+ACTION_ENTRIES = {2: 0x329B, 3: 0x3557, 4: 0x31C4, 5: 0x3336,
+                  6: 0x32BD, 7: 0x34CE, 8: 0x3598, 9: 0x320D}
+ACTION_COUNT_OFFSETS = {2: 0x6A, 3: 0x6D, 4: 0x70, 5: 0x73,
+                        6: 0x76, 7: 0x79, 8: 0x7C, 9: 0x7F}
+ACTION_COUNT_KEYS = {selector: f'action_count{selector - 2}'
+                     for selector in ACTION_ENTRIES}
 NAMES = interactions.REG_NAMES
 REG_IDS = interactions.REG_IDS
 MEM = interactions.MEM
@@ -59,6 +72,9 @@ MEM = interactions.MEM
 assert sum(end - start for start, end in OWN_RANGES) == 113
 assert len(OWN_INS) == 43
 assert len(OWN_EDGES) == 28
+assert sum(end - start for start, end in COMPOSED_RANGES) == 1221
+assert sum(ins.size for ins in COMPOSED_INS.values()) == 1221
+assert len(COMPOSED_INS) == 402
 
 
 class DispatchCall(ct.Structure):
@@ -128,7 +144,6 @@ def original(case, memory, regs, device, *, core):
         case, memory, regs, device, core,
         entry_flag_mask=FLAGS,
         main_instructions=COMPOSED_INS,
-        stop_offsets=STOP_OFFSETS if core else STOP_OFFSETS,
         access_factory=DispatchAccess,
         instruction_limit=INSTRUCTION_LIMIT)
 
@@ -141,26 +156,17 @@ def expected_child(case, observed):
             case.get('latch', 0) == 0xFF):
         return 0, 0xFFFF
     selector = case.get('provider_selector', 5) if case.get('provider') == 'latch-selector' else case.get('selector', 2)
-    if observed['continuation'] in UNTRANSLATED.values() and observed['status'] == 1:
-        return observed['continuation'], 0xFFFF
-    for value in (2, 3, 4):
-        entry = selector_entry(value)
-        if ('main', entry) in observed['sites']:
-            return entry, 0 if observed['status'] == 0 else observed['status']
+    entry = ACTION_ENTRIES.get(selector)
+    if entry is not None:
+        return entry, observed['status']
     return 0, 0xFFFF
 
 
-def selector_entry(selector):
-    return {2: 0x329B, 3: 0x3557, 4: 0x31C4}[selector]
-
-
 def parent_status(case, observed):
-    child_entry, _ = expected_child(case, observed)
-    if child_entry in UNTRANSLATED.values():
-        return 1
-    if child_entry in (0x329B, 0x3557, 0x31C4) and observed['status'] != 0:
+    child_entry, child_status = expected_child(case, observed)
+    if child_entry and child_status != 0:
         return 2
-    return observed['status']
+    return 0
 
 
 def case_record(case, expected, core):
@@ -169,10 +175,19 @@ def case_record(case, expected, core):
     edges = {(source_ip, target)
              for source, source_ip, target in expected['edges']
              if source == 'main' and source_ip in CONDITIONALS}
+    composed_sites = {address for source, address in expected['sites']
+                      if source == 'main' and address in COMPOSED_INS}
+    composed_edges = {(source_ip, target)
+                      for source, source_ip, target in expected['edges']
+                      if source == 'main' and source_ip in COMPOSED_CONDITIONALS}
+    child_entry, child_status = expected_child(case, expected)
     return dict(name=case['name'], selector=case.get('selector'), core=core,
                 status=parent_status(case, expected),
                 continuation=expected['continuation'], sites=sorted(sites),
                 edges=[list(edge) for edge in sorted(edges)],
+                child_entry=child_entry, child_status=child_status,
+                integrated_sites=sorted(composed_sites),
+                integrated_edges=[list(edge) for edge in sorted(composed_edges)],
                 event_count=len(expected['events']), steps=expected['steps'],
                 providers=sorted(expected['used']))
 
@@ -235,6 +250,38 @@ def cases():
         dict(name='selector4-feedback-df', selector=4,
              action_count2=1, record_bits=0, action4_flag=0,
              enabled=0xFF, options=0, flags=0x04D7),
+        dict(name='selector5-map-normal-df-clear', selector=5,
+             action_count3=1, record_bits=0, x=4, y=0x16, flags=0x0AD7),
+        dict(name='selector5-map-normal-df-set', selector=5,
+             action_count3=1, record_bits=0, x=4, y=0x16, flags=0x04D7),
+        dict(name='selector5-map-blocked-first-cell', selector=5,
+             action_count3=1, record_bits=0, x=4, y=0x16,
+             blocked_cell=0, blocked_value=2),
+        dict(name='selector6-success', selector=6,
+             action_count4=1, record_bits=0, y=0x20),
+        dict(name='selector6-fallback-skips-sum-gate', selector=6,
+             action_count4=1, record_bits=1, y=0x20,
+             alternate_slot_index=0, alternate_record=0x4200,
+             alternate_record_bits=0, alternate_y=0,
+             alternate_action_y=0),
+        dict(name='selector7-normal-transition', selector=7,
+             action_count5=1, record_bits=0, direction=0,
+             direction_state=0),
+        dict(name='selector7-early-0412-service', selector=7,
+             action_count5=1, record_bits=0, direction=9,
+             direction_state=0, enabled=0xFF, options=1),
+        dict(name='selector8-normal-transition', selector=8,
+             action_count6=1, record_bits=0, direction=0,
+             direction_state=0, nibble2c=0),
+        dict(name='selector8-early-0412-service', selector=8,
+             action_count6=1, record_bits=0, direction=9,
+             direction_state=0, nibble2c=0, enabled=0xFF, options=1),
+        dict(name='selector9-normal-transition', selector=9,
+             action_count7=1, record_bits=0, nibble2c=0),
+        dict(name='selector9-fallback-nibble-gate-bypassed', selector=9,
+             action_count7=1, record_bits=1, nibble2c=0,
+             alternate_slot_index=0, alternate_record=0x4200,
+             alternate_record_bits=0, alternate_nibble2c=9),
     ])
     for row in rows:
         row.setdefault('action_count0', 0)
@@ -245,10 +292,28 @@ def cases():
 
 def set_action_fields(memory, regs, case):
     ds, si = regs['ds'], regs['si']
-    for selector, key, offset in ((2, 'action_count0', 0x6A),
-                                  (3, 'action_count1', 0x6D),
-                                  (4, 'action_count2', 0x70)):
-        interactions.put8(memory, ds, offset, case.get(key, 0))
+    for selector, offset in ACTION_COUNT_OFFSETS.items():
+        interactions.put8(memory, ds, offset,
+                          case.get(ACTION_COUNT_KEYS[selector], 0))
+    interactions.put8(memory, ds, 0x5F, case.get('alternate_slot_index', 0xFF))
+    interactions.put16(memory, ds, 0x5A, case.get('alternate_record', 0x4200))
+    for offset, default in ((0x2E, 0x6170), (0x32, 0x6172),
+                            (0x34, 0x6134), (0x36, 0x6136),
+                            (0x38, 0x6138), (0x3E, 0x6174)):
+        interactions.put16(memory, ds, offset,
+                           case.get(f'slot{offset:02x}', default))
+    # Advanced actions use +02/+06 as a coordinate pair; +02 is the same
+    # word the interaction fixture seeds as its Y input. Preserve that live
+    # value unless a focused case overrides it explicitly.
+    if 'action_x' in case:
+        interactions.put16(memory, ds, si + 0x02, case['action_x'])
+    if 'action_y' in case:
+        interactions.put16(memory, ds, si + 0x06, case['action_y'])
+    else:
+        interactions.put16(memory, ds, si + 0x06, 0)
+    interactions.put8(memory, ds, si + 0x27, case.get('direction_state', 0))
+    interactions.put8(memory, ds, si + 0x2B, case.get('direction', 0))
+    interactions.put8(memory, ds, si + 0x2C, case.get('nibble2c', 0))
     interactions.put8(memory, ds, si + 0x24,
                        case.get('entity_flags', 0xA5))
     interactions.put8(memory, ds, si + 0x25, case.get('marker3', 0xFF))
@@ -256,6 +321,35 @@ def set_action_fields(memory, regs, case):
                        case.get('action4_flag', 0x4F))
     if 'record_bits' in case:
         interactions.put16(memory, ds, si + 8, case['record_bits'])
+    if 'alternate_record_bits' in case:
+        alternate = case.get('alternate_record', 0x4200)
+        interactions.put16(memory, ds, alternate + 8,
+                           case['alternate_record_bits'])
+        interactions.put16(memory, ds, alternate + 2,
+                           case.get('alternate_y', 0))
+        interactions.put16(memory, ds, alternate + 6,
+                           case.get('alternate_action_y', 0))
+        interactions.put8(memory, ds, alternate + 0x2C,
+                           case.get('alternate_nibble2c', 0))
+        interactions.put8(memory, ds, alternate + 0x27,
+                           case.get('alternate_direction_state', 0))
+        interactions.put8(memory, ds, alternate + 0x2B,
+                           case.get('alternate_direction', 0))
+
+    if case.get('selector') == 5 or case.get('provider_selector') == 5:
+        x = case.get('x', 4)
+        y = case.get('y', 0x16)
+        xq = ((x - 4) & 0xFFFF) >> 2
+        yq = ((y - 6 - 0x10) & 0xFFFF) >> 2
+        base = (xq + yq * 0x1A0 + 0x12) & 0xFFFF
+        values = [0x41 + index for index in range(9)]
+        blocked = case.get('blocked_cell')
+        if blocked is not None:
+            values[blocked] = case.get('blocked_value', 0x02)
+        for row in range(3):
+            for column in range(3):
+                offset = (base + row * 0x1A0 + column) & 0xFFFF
+                memory[interactions.physical(regs['ss'], offset)] = values[row * 3 + column]
 
 
 def setup_case(case):
@@ -263,8 +357,11 @@ def setup_case(case):
     set_action_fields(memory, regs, case)
     # Make a provider-selected record readable and semantically inactive.
     if case.get('provider') == 'latch-selector':
-        interactions.put16(memory, regs['ds'], case.get('provider_record', 0x4100) + 8, 0)
-        interactions.put8(memory, regs['ds'], case.get('provider_record', 0x4100) + 0x24, 0)
+        pointer = case.get('provider_record', 0x4100)
+        interactions.put16(memory, regs['ds'], pointer + 8, 0)
+        interactions.put8(memory, regs['ds'], pointer + 0x24, 0)
+        interactions.put16(memory, regs['ds'], pointer + 2, 0)
+        interactions.put16(memory, regs['ds'], pointer + 6, 0)
     return memory, regs, device, pc_binding, sound_binding
 
 
@@ -289,36 +386,29 @@ def assert_original_path(case, expected, *, core):
             f"{case['name']}: gate return expected {want_ip:04X}, got "
             f"{expected['continuation']:04X}/{expected['status']}")
         return
-    if expected['continuation'] in UNTRANSLATED.values() and expected['status'] == 1:
-        target = expected['continuation']
-        interactions.oracle_require(target == UNTRANSLATED[selector],
-            f"{case['name']}: unsupported selector target {target:04X} mismatches")
-        return
-    if selector in (2, 3, 4) and ('main', selector_entry(selector)) in expected['sites']:
-        interactions.oracle_require(expected['status'] == 0 or
-                                    case.get('provider') in
-                                    ('pc-interrupt-return', 'pc-child-return',
-                                     'sound-interrupt-return') or
-                                    case.get('pc_vector') is not None or
-                                    case.get('sound_vector') is not None or
-                                    case.get('pc_binding') is False,
-            f"{case['name']}: basic action stopped unexpectedly with status "
-            f"{expected['status']}")
-        interactions.oracle_require(expected['status'] != 0 or core or
-                                    expected['continuation'] == case.get(
-                                        'outer_return', interactions.OUTER_RETURN),
-            f"{case['name']}: adapter did not consume live outer RET")
-        return
-    if selector in UNTRANSLATED:
-        interactions.oracle_require(expected['status'] == 1 and
-                                    expected['continuation'] == UNTRANSLATED[selector],
-            f"{case['name']}: unsupported selector did not stop at "
-            f"{UNTRANSLATED[selector]:04X}")
+    active_selector = (case.get('provider_selector', 5)
+                       if case.get('provider') == 'latch-selector'
+                       else selector)
+    if active_selector in ACTION_ENTRIES:
+        entry = ACTION_ENTRIES[active_selector]
+        interactions.oracle_require(('main', entry) in expected['sites'],
+            f"{case['name']}: selector {active_selector} did not enter {entry:04X}")
+        interactions.oracle_require(expected['status'] in (0, 1, 2, 3, 4),
+            f"{case['name']}: child stopped with unsupported status {expected['status']}")
+        if expected['status'] == 0:
+            if core:
+                interactions.oracle_require(expected['continuation'] in MAIN_RETURNS,
+                    f"{case['name']}: composed child did not stop before a main RET; "
+                    f"continuation {expected['continuation']:04X}")
+            else:
+                interactions.oracle_require(expected['continuation'] == case.get(
+                    'outer_return', interactions.OUTER_RETURN),
+                    f"{case['name']}: adapter did not consume the live outer RET")
         return
     want_ip = 0x31BD if core else case.get('outer_return', interactions.OUTER_RETURN)
     interactions.oracle_require(expected['status'] == 0 and
                                 expected['continuation'] == want_ip,
-        f"{case['name']}: ordinary selector expected {want_ip:04X}, got "
+        f"{case['name']}: unselected selector expected {want_ip:04X}, got "
         f"{expected['continuation']:04X}/{expected['status']}")
 
 
@@ -369,7 +459,8 @@ def assert_prefix_effects(case, regs, expected):
     if case.get('provider') == 'latch-selector':
         interactions.oracle_require('dispatch' in expected['used'] and
             expected['regs']['si'] == case['provider_record'] and
-            (expected['regs']['ax'] & 0xFF) == case['provider_selector'],
+            expected_child(case, expected)[0] ==
+                ACTION_ENTRIES[case['provider_selector']],
             case['name'] + ': latch provider did not change later SI/selector reads')
     elif expected_child(case, expected)[0] == 0:
         selected = case.get('selected_record', regs['si'])
@@ -382,6 +473,7 @@ def assert_prefix_effects(case, regs, expected):
 def original_only():
     before = input_hashes()
     all_sites, all_edges = set(), set()
+    integrated_sites, integrated_edges = set(), set()
     seen = 0
     for case in cases():
         memory, regs, device, _pc, _sound = setup_case(case)
@@ -395,6 +487,8 @@ def original_only():
             row = case_record(case, expected, core)
             all_sites.update(row['sites'])
             all_edges.update(tuple(edge) for edge in row['edges'])
+            integrated_sites.update(row['integrated_sites'])
+            integrated_edges.update(tuple(edge) for edge in row['integrated_edges'])
             seen += 1
     interactions.oracle_require(all_sites == set(OWN_INS),
         f'original action-dispatch prefix site coverage {len(all_sites)}/{len(OWN_INS)}')
@@ -403,7 +497,9 @@ def original_only():
     interactions.oracle_require(before == input_hashes(),
                                 'action-dispatch inputs changed during original preflight')
     print(f'PASS original entity action dispatch: {seen} executions, '
-          f'{len(all_sites)} prefix sites/{len(all_edges)} branch outcomes', flush=True)
+          f'{len(all_sites)} prefix sites/{len(all_edges)} branch outcomes; '
+          f'{len(integrated_sites)}/{len(COMPOSED_INS)} integrated sites and '
+          f'{len(integrated_edges)} integrated branch outcomes', flush=True)
 
 
 def assert_special_original(case, expected):
@@ -589,7 +685,7 @@ MUTATION_WITNESSES = {
 def input_hashes():
     paths = [
         'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-actions.md', 'src/game_code.asm',
+        'docs/bottom-up.md', 'docs/entity-actions.md', 'src/game_code.asm', 'src/entity_actions.asm',
         'src/program.asm', 'src/sound/pcspeaker.asm', 'src/sound/adlib.asm',
         'src/sound/tandysnd.asm', 'assets/vgalemmi.exe', 'assets/main.dat',
         'assets/adlib.dat', 'assets/tandysnd.dat', 'metadata/oracle.json',
@@ -601,6 +697,8 @@ def input_hashes():
         'metadata/tandysnd-symbols.json', 'requirements.txt',
         'c/entity_action_dispatch.c', 'c/entity_action_dispatch.h',
         'c/entity_actions_basic.c', 'c/entity_actions_basic.h',
+        'c/entity_actions_advanced.c', 'c/entity_actions_advanced.h',
+        'c/entity_action_map.c', 'c/entity_action_map.h',
         'c/entity_action_sound.c', 'c/entity_action_sound.h',
         'c/pcspeaker_interrupt.c', 'c/pcspeaker_interrupt.h',
         'c/pcspeaker_dispatch.c', 'c/pcspeaker_dispatch.h',
@@ -609,6 +707,8 @@ def input_hashes():
         'c/regs.h', 'c/special_blit.h', 'c/lemmings_sym.h',
         'c/pcspeaker_sym.h', 'c/sound_latches_sym.h',
         'tests/entity_action_dispatch.py', 'tests/entity_action_sound.py',
+        'tests/entity_actions_basic.py', 'tests/entity_pattern_bus.py',
+        'tests/entity_actions_advanced.py', 'tests/entity_action_map.py',
         'tests/entity_interactions.py', 'tests/pcspeaker_dispatch.py',
         'tests/sound_latches.py', 'tests/minimap_vga.py',
         'tests/pcspeaker_interrupt.py', 'tools/bounded_process.py',
@@ -625,6 +725,7 @@ def worker(directory):
     selected = specs
     baseline = Native(directory, 0)
     rows, all_sites, all_edges = [], set(), set()
+    integrated_sites, integrated_edges = set(), set()
     total_events = total_steps = 0
     for case in selected:
         for core in (True, False):
@@ -632,6 +733,8 @@ def worker(directory):
             rows.append(row)
             all_sites.update(row['sites'])
             all_edges.update(tuple(edge) for edge in row['edges'])
+            integrated_sites.update(row['integrated_sites'])
+            integrated_edges.update(tuple(edge) for edge in row['integrated_edges'])
             total_events += row['event_count']
             total_steps += row['steps']
     interactions.oracle_require(all_sites == set(OWN_INS),
@@ -669,6 +772,11 @@ def worker(directory):
         static_instruction_addresses=sorted(OWN_INS),
         branch_edges=[list(edge) for edge in sorted(all_edges)],
         static_branch_edges=[list(edge) for edge in sorted(OWN_EDGES)],
+        integrated_main_known_bytes=1221,
+        integrated_main_static_instruction_sites=len(COMPOSED_INS),
+        integrated_original_instruction_addresses=sorted(integrated_sites),
+        integrated_original_branch_edges=[list(edge)
+                                          for edge in sorted(integrated_edges)],
         total_bus_events=total_events, original_instruction_hook_steps=total_steps,
         cases=rows, input_hashes=before,
         limits=dict(worker_seconds=WORKER_SECONDS, process_memory_mib=PROCESS_MIB,
@@ -677,16 +785,21 @@ def worker(directory):
                     ordered_bus_event_limit=EVENT_LIMIT,
                     callback_budget_exit=GUARD_EXIT,
                     callback_error_exit=CALLBACK_EXIT),
-        domain=('The known 3150..31C4 DispatchEntityAction prefix (113 known bytes; '
-                'UNKNOWN bytes at 3160, 3199 and 31BC remain excluded). Original-only '
-                'fixtures exercise all 256 raw selector bytes. Native fixtures compare '
-                'the complete 1 MiB RAM, all registers, instruction-defined FLAGS, '
-                'ordered memory callbacks, provider transitions and VGA state where '
-                'the live outer stack word occupies the VGA aperture. Selectors 2/3/4 '
-                'compose their actual basic-action and shared feedback instructions; '
-                'selectors 5..9 stop at their exact untranslated handler entries.')))
+        domain=('The 3150..31C4 DispatchEntityAction prefix owns 113 known bytes, '
+                '43 instructions and 28 branch outcomes. Its composed original path '
+                'covers 1221 known bytes/402 instruction sites through selectors 2..9 '
+                'and their shared feedback tails. UNKNOWN bytes at 3160, 3199, 31BC, '
+                '35A1, 35AB and 357E..3597 remain excluded. All 256 raw selector '
+                'bytes run through native core and adapter; focused selector 5..9 '
+                'cases cover map success/rejection, advanced transitions, alternate '
+                'routes and service seams. Comparisons include all 1 MiB RAM, all '
+                'registers, instruction-defined FLAGS, ordered memory callbacks, '
+                'provider transitions and VGA state when the live outer stack word '
+                'occupies the VGA aperture.')))
     print(f'PASS entity action dispatch: {len(selected)} fixtures x core/adapter, '
-          f'{len(all_sites)} sites/{len(all_edges)} branch outcomes, '
+          f'{len(all_sites)} owned sites/{len(all_edges)} owned branch outcomes; '
+          f'{len(integrated_sites)}/{len(COMPOSED_INS)} integrated sites, '
+          f'{len(integrated_edges)} integrated branch outcomes, '
           f'{total_events} events, {len(mutations)} completed mutants', flush=True)
 
 

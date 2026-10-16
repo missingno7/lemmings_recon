@@ -404,17 +404,23 @@ def worker_fail(code, error):
 
 
 class Native:
+    # Identical live-role APIs reuse this bounded callback/adapter transport.
+    cluster = 'entity_actions_basic'
+    core_name = 'lmn_entity_actions_basic_core'
+    adapter_name = 'lmn_entity_actions_basic_adapter'
+    access_type = BasicAccess
+
     def __init__(self, directory, mutation=0):
-        path = build(Path(directory) / f'entity-actions-basic-m{mutation}.dll',
-                     mutation, 'entity_actions_basic')
+        path = build(Path(directory) / f'{self.cluster}-m{mutation}.dll',
+                     mutation, self.cluster)
         self.lib = ct.CDLL(str(path))
-        self.core = self.lib.lmn_entity_actions_basic_core
+        self.core = getattr(self.lib, self.core_name)
         self.core.argtypes = [interactions.MEM, ct.POINTER(BasicCall),
                               ct.POINTER(interactions.PcBinding),
                               ct.POINTER(interactions.SoundBinding),
                               ct.POINTER(interactions.Bus)]
         self.core.restype = BasicResult
-        self.adapter = self.lib.lmn_entity_actions_basic_adapter
+        self.adapter = getattr(self.lib, self.adapter_name)
         self.adapter.argtypes = [interactions.MEM,
                                  ct.POINTER(interactions.Regs), ct.c_uint16,
                                  ct.POINTER(interactions.PcBinding),
@@ -426,7 +432,7 @@ class Native:
             pc_binding, sound_binding, *, core):
         memory = bytearray(initial)
         device = copy.deepcopy(initial_device)
-        access = BasicAccess(case, memory, dict(initial_regs), device)
+        access = self.access_type(case, memory, dict(initial_regs), device)
 
         def read(_context, _memory, address, flags):
             try:
@@ -553,7 +559,7 @@ def input_hashes():
     paths = [
         'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
         'docs/bottom-up.md', 'docs/entity-actions.md',
-        'src/game_code.asm', 'src/game_code_late.asm',
+        'src/game_code.asm', 'src/entity_actions.asm', 'src/game_code_late.asm',
         'src/game_code_late_after_palette.asm',
         'src/game_code_late_after_entities.asm', 'src/game_code_late_tail.asm',
         'src/image_tail.asm', 'src/program.asm',
