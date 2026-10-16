@@ -23209,9 +23209,11 @@
     "address": 16763,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_417B",
-    "aliases": [],
+    "size": 17,
+    "symbol_name": "DrawStatusText",
+    "aliases": [
+      "sub_417B"
+    ],
     "callers": [
       15142
     ],
@@ -23230,10 +23232,20 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Actual NUL scan with no40-character runtime bound, live SS AX/SI saves and glyph CALL/RET; docs/status-display.md."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 17
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 17,
+    "c_implementation": "c/status_text.c",
+    "c_core": "lmn_draw_status_text_core",
+    "c_code_ranges": [
+      [
+        16763,
+        16780
+      ]
+    ],
+    "verification_evidence": "tests/status_text.py:18 fixtures x core/actual RET adapter,17 own bytes/11 sites/3 jump outcomes,34102 ordered events,7 completed mutants. Actual glyph CALL/RET at both child RET sites, changed targets stop before caller POPs, live parent AX/SI/DS and NUL/source providers, stored40-character and46-character AH-wrap scans, independent integrated planes, DF and actual physical20-bit outerRET word wrap. No runtime scan length clamp. docs/status-display.md"
   },
   {
     "address": 16780,
@@ -44904,9 +44916,11 @@
     "address": 30250,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_762A",
-    "aliases": [],
+    "size": 222,
+    "symbol_name": "DrawStatusCount",
+    "aliases": [
+      "sub_762A"
+    ],
     "callers": [
       15227,
       15266,
@@ -45094,18 +45108,30 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static glyph/count buffer, signed selector, live saves/segments/DF/IF ownership in docs/status-display.md and src/status_glyphs.asm; wider producer and caller remain separate."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 222
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 222,
+    "c_implementation": "c/status_count.c",
+    "c_core": "lmn_draw_status_count_core",
+    "c_code_ranges": [
+      [
+        30250,
+        30472
+      ]
+    ],
+    "verification_evidence": "tests/status_count.py:270 fixtures x core/actual RET adapter,222 bytes/105 sites/12 outcomes,48512 ordered events,7 completed mutants. Complete AH domain, unclamped100..255 glyph offsets, actual popped AX/remainder/DI/DS/RET, late1FEC segment including PUSH-DS alias, DF/IF/VGA stacks and independent8+8 plane replay. docs/status-display.md"
   },
   {
     "address": 30472,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7708",
-    "aliases": [],
+    "size": 261,
+    "symbol_name": "DrawStatusGlyph",
+    "aliases": [
+      "sub_7708"
+    ],
     "callers": [
       16770
     ],
@@ -45282,10 +45308,40 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Static glyph/count buffer, signed selector, live saves/segments/DF/IF ownership in docs/status-display.md and src/status_glyphs.asm; wider producer and caller remain separate."
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 256
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 256,
+    "c_implementation": "c/status_glyph.c",
+    "c_core": "lmn_draw_status_glyph_core",
+    "c_code_ranges": [
+      [
+        30472,
+        30565
+      ],
+      [
+        30566,
+        30575
+      ],
+      [
+        30576,
+        30610
+      ],
+      [
+        30611,
+        30617
+      ],
+      [
+        30618,
+        30624
+      ],
+      [
+        30625,
+        30733
+      ]
+    ],
+    "verification_evidence": "tests/status_glyph.py:269 fixtures x core/actual RET adapter,256 known bytes/118 sites/30 outcomes,30662 ordered events,9 completed mutants. Complete AL dispatch and independent three-pass mapping/plane replay; actual saved AX/DI/DS/RET, single-byte AH destination, source provider, DF/IF/VGA aliases. Space has no latch/source read; invalid selectors preserve IF. Five UNKNOWN bytes excluded. docs/status-display.md"
   },
   {
     "address": 30733,
@@ -60326,6 +60382,204 @@
     "confidence": "PROVEN",
     "evidence": [
       "102B stores allocation base+2F02 paragraphs;5931/59AC load ES for7C0/720-byte copies;769A/77AC load DS for status digit/glyph reads. Nominal partition ends at1FEE base+2F7E, not a universal provider/unchecked-selector bound. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30426,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusCountReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near RET after count/glyph drawing; logical C boundary before actual SS:SP return. src/status_glyphs.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30471,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusCountBlankReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near RET after count/glyph drawing; logical C boundary before actual SS:SP return. src/status_glyphs.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30717,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusGlyphReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near RET after count/glyph drawing; logical C boundary before actual SS:SP return. src/status_glyphs.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 30732,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusGlyphSpaceReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original near RET after count/glyph drawing; logical C boundary before actual SS:SP return. src/status_glyphs.asm"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 101,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "LevelReleaseMinimumDisplaySnapshot",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39CE initializer writesFF at3A20;3B5F compares minimum0064 and3B6C acknowledges it when refresh0066 equals2.",
+      "Names describe static shared ownership; bytes and surrounding UNKNOWN classification remain unchanged. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 102,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "LevelReleaseMinimumRefreshCounter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39E9 initializes0;3B65 checks2,3B70 writesFF and3B75 increments with byte wrap before DrawStatusCount.",
+      "Names describe static shared ownership; bytes and surrounding UNKNOWN classification remain unchanged. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 104,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "LevelReleaseSettingDisplaySnapshot",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3A25 initializesFF;3B86 compares live0067 and3B93 acknowledges it when0069 equals2.",
+      "Names describe static shared ownership; bytes and surrounding UNKNOWN classification remain unchanged. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 105,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "LevelReleaseSettingRefreshCounter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "39EE initializes0;3B8C/3B97/3B9C implement refresh2/FF/INC. Input403D/406C permits release adjustment only when this shared byte is0.",
+      "Names describe static shared ownership; bytes and surrounding UNKNOWN classification remain unchanged. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 131,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "StatusIconDisplaySnapshot",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0427 and3A52 initialize3;3B2D compares current action selector,3B39 restores this old icon,3B4A publishes current selector only when0084 equals2.",
+      "Names describe static shared ownership; bytes and surrounding UNKNOWN classification remain unchanged. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 132,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "StatusIconRefreshCounter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "3A1B initializes0;3B3F/3B4E/3B53 implement refresh2/FF/INC only on differing selectors. Mouse3F15/3F5C and keyboard40B5/40CD gate action selection on this shared byte being0.",
+      "Names describe static shared ownership; bytes and surrounding UNKNOWN classification remain unchanged. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16773,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusTextAfterGlyph",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual glyph near CALL continuation or outer RET of417B NUL-scan caller. docs/status-display.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16779,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "StatusTextReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual glyph near CALL continuation or outer RET of417B NUL-scan caller. docs/status-display.md"
     ],
     "verification_status": "UNRESOLVED"
   }

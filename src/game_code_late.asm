@@ -87,15 +87,15 @@ sub_39CE:
     call sub_75EF ; @039CE
     mov byte [EntityCreationCountdown-GameDataImage],0x14 ; @039D1
     mov al,0x63 ; @039D6
-    sub al,[0x67] ; @039D8
+    sub al,[LevelReleaseSetting-GameDataImage] ; @039D8
     shr al,1 ; @039DC
     neg al ; @039DE
     add al,0x35 ; @039E0
     neg al ; @039E2
     add al,0x39 ; @039E4
     mov [EntityCreationReload-GameDataImage],al ; @039E6
-    mov byte [0x66],0x0 ; @039E9
-    mov byte [0x69],0x0 ; @039EE
+    mov byte [LevelReleaseMinimumRefreshCounter-GameDataImage],0x0 ; @039E9
+    mov byte [LevelReleaseSettingRefreshCounter-GameDataImage],0x0 ; @039EE
     mov byte [LevelActionCountRefreshCounter2-GameDataImage],0x0 ; @039F3
     mov byte [LevelActionCountRefreshCounter7-GameDataImage],0x0 ; @039F8
     mov byte [LevelActionCountRefreshCounter0-GameDataImage],0x0 ; @039FD
@@ -104,9 +104,9 @@ sub_39CE:
     mov byte [LevelActionCountRefreshCounter5-GameDataImage],0x0 ; @03A0C
     mov byte [LevelActionCountRefreshCounter1-GameDataImage],0x0 ; @03A11
     mov byte [LevelActionCountRefreshCounter6-GameDataImage],0x0 ; @03A16
-    mov byte [0x84],0x0 ; @03A1B
-    mov byte [0x65],0xff ; @03A20
-    mov byte [0x68],0xff ; @03A25
+    mov byte [StatusIconRefreshCounter-GameDataImage],0x0 ; @03A1B
+    mov byte [LevelReleaseMinimumDisplaySnapshot-GameDataImage],0xff ; @03A20
+    mov byte [LevelReleaseSettingDisplaySnapshot-GameDataImage],0xff ; @03A25
     mov byte [LevelActionCountDisplaySnapshot2-GameDataImage],0xff ; @03A2A
     mov byte [LevelActionCountDisplaySnapshot7-GameDataImage],0xff ; @03A2F
     mov byte [LevelActionCountDisplaySnapshot0-GameDataImage],0xff ; @03A34
@@ -115,37 +115,37 @@ sub_39CE:
     mov byte [LevelActionCountDisplaySnapshot5-GameDataImage],0xff ; @03A43
     mov byte [LevelActionCountDisplaySnapshot1-GameDataImage],0xff ; @03A48
     mov byte [LevelActionCountDisplaySnapshot6-GameDataImage],0xff ; @03A4D
-    mov byte [0x83],0x3 ; @03A52
-    mov ah,[0x64] ; @03A57
+    mov byte [StatusIconDisplaySnapshot-GameDataImage],0x3 ; @03A52
+    mov ah,[LevelReleaseSettingMinimum-GameDataImage] ; @03A57
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @03A5B
-    call sub_762A ; @03A5D
-    mov ah,[0x67] ; @03A60
+    call DrawStatusCount ; @03A5D
+    mov ah,[LevelReleaseSetting-GameDataImage] ; @03A60
     mov al,0x1 ; @03A64
-    call sub_762A ; @03A66
+    call DrawStatusCount ; @03A66
     mov ah,[LevelActionCount2-GameDataImage] ; @03A69
     mov al,0x4 ; @03A6D
-    call sub_762A ; @03A6F
+    call DrawStatusCount ; @03A6F
     mov ah,[LevelActionCount7-GameDataImage] ; @03A72
     mov al,0x9 ; @03A76
-    call sub_762A ; @03A78
+    call DrawStatusCount ; @03A78
     mov ah,[LevelActionCount0-GameDataImage] ; @03A7B
     mov al,0x2 ; @03A7F
-    call sub_762A ; @03A81
+    call DrawStatusCount ; @03A81
     mov ah,[LevelActionCount4-GameDataImage] ; @03A84
     mov al,0x6 ; @03A88
-    call sub_762A ; @03A8A
+    call DrawStatusCount ; @03A8A
     mov ah,[LevelActionCount3-GameDataImage] ; @03A8D
     mov al,0x5 ; @03A91
-    call sub_762A ; @03A93
+    call DrawStatusCount ; @03A93
     mov ah,[LevelActionCount5-GameDataImage] ; @03A96
     mov al,0x7 ; @03A9A
-    call sub_762A ; @03A9C
+    call DrawStatusCount ; @03A9C
     mov ah,[LevelActionCount1-GameDataImage] ; @03A9F
     mov al,0x3 ; @03AA3
-    call sub_762A ; @03AA5
+    call DrawStatusCount ; @03AA5
     mov ah,[LevelActionCount6-GameDataImage] ; @03AA8
     mov al,0x8 ; @03AAC
-    call sub_762A ; @03AAE
+    call DrawStatusCount ; @03AAE
     mov al,[0x45] ; @03AB1
     mov si,0x2095 ; @03AB4
     call WriteDecimalByteField ; @03AB7
@@ -204,51 +204,51 @@ loc_3B19:
 loc_3B21:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @03B21
     mov si,0x2083 ; @03B23
-    call sub_417B ; @03B26
+    call DrawStatusText ; @03B26
     mov ah,[EntityActionSelector-GameDataImage] ; @03B29
-    cmp [0x83],ah ; @03B2D
+    cmp [StatusIconDisplaySnapshot-GameDataImage],ah ; @03B2D
     jz loc_3B57 ; @03B31
     mov al,[EntityActionSelector-GameDataImage] ; @03B33
     call DrawStatusIconOutline ; @03B36
-    mov al,[0x83] ; @03B39
+    mov al,[StatusIconDisplaySnapshot-GameDataImage] ; @03B39
     call RestoreStatusIcon ; @03B3C
-    cmp byte [0x84],0x2 ; @03B3F
+    cmp byte [StatusIconRefreshCounter-GameDataImage],0x2 ; @03B3F
     jnz loc_3B53 ; @03B44
     mov ah,[EntityActionSelector-GameDataImage] ; @03B46
-    mov [0x83],ah ; @03B4A
-    mov byte [0x84],0xff ; @03B4E
+    mov [StatusIconDisplaySnapshot-GameDataImage],ah ; @03B4A
+    mov byte [StatusIconRefreshCounter-GameDataImage],0xff ; @03B4E
 loc_3B53:
-    inc byte [0x84] ; @03B53
+    inc byte [StatusIconRefreshCounter-GameDataImage] ; @03B53
 loc_3B57:
-    mov ah,[0x64] ; @03B57
+    mov ah,[LevelReleaseSettingMinimum-GameDataImage] ; @03B57
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03B5B
     jz loc_3B65 ; @03B5D
-    cmp [0x65],ah ; @03B5F
+    cmp [LevelReleaseMinimumDisplaySnapshot-GameDataImage],ah ; @03B5F
     jz loc_3B7E ; @03B63
 loc_3B65:
-    cmp byte [0x66],0x2 ; @03B65
+    cmp byte [LevelReleaseMinimumRefreshCounter-GameDataImage],0x2 ; @03B65
     jnz loc_3B75 ; @03B6A
-    mov [0x65],ah ; @03B6C
-    mov byte [0x66],0xff ; @03B70
+    mov [LevelReleaseMinimumDisplaySnapshot-GameDataImage],ah ; @03B6C
+    mov byte [LevelReleaseMinimumRefreshCounter-GameDataImage],0xff ; @03B70
 loc_3B75:
-    inc byte [0x66] ; @03B75
+    inc byte [LevelReleaseMinimumRefreshCounter-GameDataImage] ; @03B75
     mov al,0x0 ; @03B79
-    call sub_762A ; @03B7B
+    call DrawStatusCount ; @03B7B
 loc_3B7E:
-    mov ah,[0x67] ; @03B7E
+    mov ah,[LevelReleaseSetting-GameDataImage] ; @03B7E
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03B82
     jz loc_3B8C ; @03B84
-    cmp [0x68],ah ; @03B86
+    cmp [LevelReleaseSettingDisplaySnapshot-GameDataImage],ah ; @03B86
     jz loc_3BA5 ; @03B8A
 loc_3B8C:
-    cmp byte [0x69],0x2 ; @03B8C
+    cmp byte [LevelReleaseSettingRefreshCounter-GameDataImage],0x2 ; @03B8C
     jnz loc_3B9C ; @03B91
-    mov [0x68],ah ; @03B93
-    mov byte [0x69],0xff ; @03B97
+    mov [LevelReleaseSettingDisplaySnapshot-GameDataImage],ah ; @03B93
+    mov byte [LevelReleaseSettingRefreshCounter-GameDataImage],0xff ; @03B97
 loc_3B9C:
-    inc byte [0x69] ; @03B9C
+    inc byte [LevelReleaseSettingRefreshCounter-GameDataImage] ; @03B9C
     mov al,0x1 ; @03BA0
-    call sub_762A ; @03BA2
+    call DrawStatusCount ; @03BA2
 loc_3BA5:
     mov ah,[LevelActionCount2-GameDataImage] ; @03BA5
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BA9
@@ -263,7 +263,7 @@ loc_3BB3:
 loc_3BC3:
     inc byte [LevelActionCountRefreshCounter2-GameDataImage] ; @03BC3
     mov al,0x4 ; @03BC7
-    call sub_762A ; @03BC9
+    call DrawStatusCount ; @03BC9
 loc_3BCC:
     mov ah,[LevelActionCount7-GameDataImage] ; @03BCC
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BD0
@@ -278,7 +278,7 @@ loc_3BDA:
 loc_3BEA:
     inc byte [LevelActionCountRefreshCounter7-GameDataImage] ; @03BEA
     mov al,0x9 ; @03BEE
-    call sub_762A ; @03BF0
+    call DrawStatusCount ; @03BF0
 loc_3BF3:
     mov ah,[LevelActionCount0-GameDataImage] ; @03BF3
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03BF7
@@ -293,7 +293,7 @@ loc_3C01:
 loc_3C11:
     inc byte [LevelActionCountRefreshCounter0-GameDataImage] ; @03C11
     mov al,0x2 ; @03C15
-    call sub_762A ; @03C17
+    call DrawStatusCount ; @03C17
 loc_3C1A:
     mov ah,[LevelActionCount4-GameDataImage] ; @03C1A
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C1E
@@ -308,7 +308,7 @@ loc_3C28:
 loc_3C38:
     inc byte [LevelActionCountRefreshCounter4-GameDataImage] ; @03C38
     mov al,0x6 ; @03C3C
-    call sub_762A ; @03C3E
+    call DrawStatusCount ; @03C3E
 loc_3C41:
     mov ah,[LevelActionCount3-GameDataImage] ; @03C41
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C45
@@ -323,7 +323,7 @@ loc_3C4F:
 loc_3C5F:
     inc byte [LevelActionCountRefreshCounter3-GameDataImage] ; @03C5F
     mov al,0x5 ; @03C63
-    call sub_762A ; @03C65
+    call DrawStatusCount ; @03C65
 loc_3C68:
     mov ah,[LevelActionCount5-GameDataImage] ; @03C68
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C6C
@@ -338,7 +338,7 @@ loc_3C76:
 loc_3C86:
     inc byte [LevelActionCountRefreshCounter5-GameDataImage] ; @03C86
     mov al,0x7 ; @03C8A
-    call sub_762A ; @03C8C
+    call DrawStatusCount ; @03C8C
 loc_3C8F:
     mov ah,[LevelActionCount1-GameDataImage] ; @03C8F
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03C93
@@ -353,7 +353,7 @@ loc_3C9D:
 loc_3CAD:
     inc byte [LevelActionCountRefreshCounter1-GameDataImage] ; @03CAD
     mov al,0x3 ; @03CB1
-    call sub_762A ; @03CB3
+    call DrawStatusCount ; @03CB3
 loc_3CB6:
     mov ah,[LevelActionCount6-GameDataImage] ; @03CB6
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @03CBA
@@ -368,7 +368,7 @@ loc_3CC4:
 loc_3CD4:
     inc byte [LevelActionCountRefreshCounter6-GameDataImage] ; @03CD4
     mov al,0x8 ; @03CD8
-    call sub_762A ; @03CDA
+    call DrawStatusCount ; @03CDA
 loc_3CDD:
     ret ; @03CDD
 times -(($-$$) != 0x3cde) db 0 ; module end assertion

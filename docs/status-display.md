@@ -16,7 +16,7 @@ See minimap-viewport.md for live coordinate/phase, SS, VGA, DF and IF contracts.
 The two icon leaves also have scoped native acceptance:780D is145 bytes/60 sites with
 RET789D;789E is98 bytes/40 sites with RET78FF, temporarily sets DS=ES=A000
 and restores actual saved DS. Its24 pairs of MOVSB retain DF; see status-icons.md.
-The next closed glyph leaves remain untranslated:762A is222
+The closed glyph leaves now have scoped native acceptance:762A is222
 bytes/105 sites, with RET76DA/7707. 7708 has256 known bytes/118 sites and
 UNKNOWN7765,776F,7792,7799,77A0; its returns are77FD/780C. The last two
 routines read their source segment through the live DS:1FEC word. These scoped
@@ -87,8 +87,64 @@ reads. Zero count blanks both eight-row cells without reading glyph data.
 Both routines use live StatusGlyphBufferSegment and never clear DF. The
 forward extent calculations above do not bound reverse LODSB reads.
 
-417B's NUL scan is a later parent. Its40-byte initial status text is no runtime
+417B's NUL scan now has scoped native acceptance. Its40-byte initial status text is no runtime
 bound: live strings, DF, actual saved AX/SI, near child returns and wrapped AH
-position count must remain visible. Port the closed glyph leaves first, then
-connect417B and the remaining3AC8 state/exception contracts. The broader
+position count remain visible. Next connect the remaining3AC8 state/exception
+contracts. The broader
 LoadMainResourceSections decode/copy pipeline remains separate verification.
+
+The glyph destination is `AH + 1E42h + live DrawingOrigin` with16-bit wrap;
+there is no doubling. Two passes PUSH/POP DI on live SS, while the third pass
+has no save and leaves DI advanced by16 rows. Drawn glyphs read DS from1FEC
+after setup; actual POP DS restores the saved word on every path. A drawn glyph returns
+DX=3C4, SI advanced by48 DF-sensitive bytes and AH=08; rejected and space
+paths retain their own AX/SI/IF residuals. Count destinations instead use
+`2*AL + 212Eh + live DrawingOrigin`. Actual second POP AX supplies the remainder
+half, so that source can change independently after the first eight rows.
+
+The bounded count gate passes270 fixtures at core/actual-RET adapter boundaries:
+all256 AH counts plus focused aliases,105 sites,twelve branch outcomes,48,512
+ordered events and seven completed mutants. The character gate passes269
+fixtures at both boundaries:all256 AL selectors,118 sites,thirty jump outcomes,
+30,662 events and nine completed mutants. Independent source/plane replay checks
+both8-row count cells and all three16-row character passes; VGA-stack aliases
+retain full CPU/native device comparison. Reports are
+build/status-count-differential.json and build/status-glyph-differential.json;
+matching input hashes own acceptance. Their478 known bytes exclude all five
+UNKNOWN holes and do not accept initialization, allocation, IRQ timing or callers.
+
+The417B connected gate passes18 fixtures at core/actual-RET adapter boundaries:
+17 new caller bytes/11 sites/three jump outcomes,34,102 ordered events and seven
+completed mutants. It exercises both glyph RET sites, changed child targets
+before caller POPs, actual saved AX/SI/DS and source/NUL providers, DF, a physical
+FFFFF-to00000 outer-return word, the complete stored40-character line and a
+46-character AH-wrap scan. Independent plane replay covers the full stored
+line and a mixed glyph/space/digit string. The parent has no scan-length clamp.
+The report is build/status-text-differential.json with matching input hashes;
+it adds17 bytes without recounting its256-byte child. The3ACE status body and
+resource producer remain separate frontiers.
+
+## Shared display acknowledgement state
+
+The ledger now names the remaining release/icon snapshot and refresh bytes.
+0065/0066 belong to the displayed release minimum0064;0068/0069 belong to
+the mutable release setting0067. These follow the same three-byte layout as
+the already named action-count fields. A nonzero live value equal to its
+snapshot skips drawing and leaves the counter unchanged. Otherwise the caller
+draws; if the counter was exactly2 it first copies the live value to the snapshot
+and writesFF to the counter, then INC makes it0. Other counter values increment
+with byte wrap. A zero live count always redraws even when its snapshot is zero.
+No elapsed-time or arbitrary-count normalization belongs to this state.
+
+StatusIconDisplaySnapshot0083 stores the old selector used by RestoreStatusIcon;
+StatusIconRefreshCounter0084 advances only while the current selector differs.
+The caller draws the current outline and restores the old icon before checking
+counter2 and acknowledging the new selector. A same-selector pass leaves the
+counter untouched. Initializers0427/3A52 set snapshot3;3A1B sets counter0.
+The39CE initializer sets both release snapshotsFF and their counters0.
+
+These bytes also own input gates. Mouse3F15/3F5C and keyboard40B5/40CD allow
+action selection only when0084 is0; release adjustments403D/406C require0069
+to be0. A renderer-private snapshot or counter copy would break that sharing.
+The minimum0064 and live setting0067 are header/input-owned values, already
+named in the ledger; no new array extent or provider scheduling is inferred.

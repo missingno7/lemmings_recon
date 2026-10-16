@@ -1,3 +1,9 @@
+LevelReleaseMinimumDisplaySnapshot equ GameDataImage+0x0065
+LevelReleaseMinimumRefreshCounter equ GameDataImage+0x0066
+LevelReleaseSettingDisplaySnapshot equ GameDataImage+0x0068
+LevelReleaseSettingRefreshCounter equ GameDataImage+0x0069
+StatusIconDisplaySnapshot equ GameDataImage+0x0083
+StatusIconRefreshCounter equ GameDataImage+0x0084
 StatusGlyphBufferSegment equ GameDataImage+0x1FEC
 EntitySelectionPresent equ GameDataImage+0x001A
 EntityPreferredRecordOffset equ GameDataImage+0x005C

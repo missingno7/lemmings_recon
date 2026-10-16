@@ -236,7 +236,7 @@
 #define CS_sub_3E6F 0x3E6Fu
 #define CS_sub_4085 0x4085u
 #define CS_sub_410F 0x410Fu
-#define CS_sub_417B 0x417Bu
+#define CS_DrawStatusText 0x417Bu
 #define CS_sub_418C 0x418Cu
 #define CS_PollMousePosition 0x4252u
 #define CS_sub_4334 0x4334u
@@ -396,8 +396,8 @@
 #define CS_sub_7218 0x7218u
 #define CS_sub_75EF 0x75EFu
 #define CS_sub_7602 0x7602u
-#define CS_sub_762A 0x762Au
-#define CS_sub_7708 0x7708u
+#define CS_DrawStatusCount 0x762Au
+#define CS_DrawStatusGlyph 0x7708u
 #define CS_DrawStatusIconOutline 0x780Du
 #define CS_RestoreStatusIcon 0x789Eu
 #define CS_sub_7900 0x7900u
@@ -790,4 +790,16 @@
 #define CS_StatusIconOutlineReturn 0x789Du
 #define CS_StatusIconRestoreReturn 0x78FFu
 #define SEG09A9_StatusGlyphBufferSegment 0x1FECu
+#define CS_StatusCountReturn 0x76DAu
+#define CS_StatusCountBlankReturn 0x7707u
+#define CS_StatusGlyphReturn 0x77FDu
+#define CS_StatusGlyphSpaceReturn 0x780Cu
+#define SEG09A9_LevelReleaseMinimumDisplaySnapshot 0x0065u
+#define SEG09A9_LevelReleaseMinimumRefreshCounter 0x0066u
+#define SEG09A9_LevelReleaseSettingDisplaySnapshot 0x0068u
+#define SEG09A9_LevelReleaseSettingRefreshCounter 0x0069u
+#define SEG09A9_StatusIconDisplaySnapshot 0x0083u
+#define SEG09A9_StatusIconRefreshCounter 0x0084u
+#define CS_StatusTextAfterGlyph 0x4185u
+#define CS_StatusTextReturn 0x418Bu
 #endif

@@ -34,6 +34,8 @@ times -(($-$$) != 0x5d66) db 0 ; module end assertion
 %include "entity_graphics.asm"
 times -(($-$$) != 0x6170) db 0 ; module end assertion
 %include "game_code_late_after_entities.asm"
+times -(($-$$) != 0x762a) db 0 ; module end assertion
+%include "status_glyphs.asm"
 times -(($-$$) != 0x780d) db 0 ; module end assertion
 %include "status_icons.asm"
 times -(($-$$) != 0x7900) db 0 ; module end assertion

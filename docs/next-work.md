@@ -303,8 +303,24 @@ See minimap-viewport.md and status-icons.md. These scopes add599 unique main
 bytes, taking the ledger union from16,479 to17,078; this is scoped translation
 accounting, not refreshed aggregate acceptance.
 
-Next port the closed glyph leaves762A/7708, then connect417B and the remaining
-3ACE status suffix. StatusGlyphBufferSegment names the live1FEC word. Its
+The closed glyph leaves762A/7708 now pass270/269 fixtures at both boundaries:
+222/256 known bytes,105/118 sites,12/30 jump outcomes,48,512/30,662 ordered
+events and seven/nine completed mutants. The main ledger union is17,556 after
+these478 additional bytes. The physical status_glyphs.asm module retains the
+five UNKNOWN bytes outside their accepted ranges. See status-display.md.
+
+The17-byte417B text caller now connects the glyph core through actual CALL/RET:
+18 fixtures at both boundaries,11 own sites/three jump outcomes,34,102 events
+and seven completed mutants. Full stored40-byte and46-character AH-wrap scans,
+live NUL/source/saved AX/SI/DS, changed child returns, actual outer RET and
+independent planes remain covered. This adds17 unique bytes, taking the main
+ledger union to17,573 (+495 for count/glyph/text together).
+
+Next connect the remaining3ACE status suffix (527 known bytes/172 sites), then
+compose it after the existing two-CALL3AC8 minimap prefix. Every direct child
+now has scoped native acceptance. Preserve the100*n/divisor byte-DIV overflow
+as an explicit processor-exception boundary, exact refresh/snapshot ownership
+and actual child returns. StatusGlyphBufferSegment names the live1FEC word. Its
 base+2F02 allocation and MAIN.DAT section2/conditional section6 copies are now
 statically traced in status-display.md; broader producer verification remains
 open. Preserve count values100..255, signed glyph selectors, live saved words,

@@ -90,7 +90,7 @@ loc_3F07:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03F14
 loc_3F15:
-    cmp byte [0x84],0x0 ; @03F15
+    cmp byte [StatusIconRefreshCounter-GameDataImage],0x0 ; @03F15
     jz loc_3F1F ; @03F1A
     jmp loc_3FE9 ; @03F1C
 loc_3F1F:
@@ -123,7 +123,7 @@ loc_3F52:
     jnz loc_3F5C ; @03F57
     jmp loc_3FE9 ; @03F59
 loc_3F5C:
-    cmp byte [0x84],0x0 ; @03F5C
+    cmp byte [StatusIconRefreshCounter-GameDataImage],0x0 ; @03F5C
     jz loc_3F66 ; @03F61
     jmp loc_3FE9 ; @03F63
 loc_3F66:
@@ -218,18 +218,18 @@ loc_4032:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04039
     jz loc_4068 ; @0403B
 loc_403D:
-    cmp byte [0x69],0x0 ; @0403D
+    cmp byte [LevelReleaseSettingRefreshCounter-GameDataImage],0x0 ; @0403D
     jz loc_4046 ; @04042
     jmp short loc_3FE9 ; @04044
 loc_4046:
-    cmp byte [0x67],0x63 ; @04046
+    cmp byte [LevelReleaseSetting-GameDataImage],0x63 ; @04046
     jnz loc_404F ; @0404B
     jmp short loc_3FE9 ; @0404D
 loc_404F:
-    inc byte [0x67] ; @0404F
+    inc byte [LevelReleaseSetting-GameDataImage] ; @0404F
 loc_4053:
     mov al,0x63 ; @04053
-    sub al,[0x67] ; @04055
+    sub al,[LevelReleaseSetting-GameDataImage] ; @04055
     shr al,1 ; @04059
     neg al ; @0405B
     add al,0x35 ; @0405D
@@ -238,16 +238,16 @@ loc_4053:
     mov [EntityCreationReload-GameDataImage],al ; @04063
     jmp short loc_3FE9 ; @04066
 loc_4068:
-    mov bl,[0x64] ; @04068
-    cmp byte [0x69],0x0 ; @0406C
+    mov bl,[LevelReleaseSettingMinimum-GameDataImage] ; @04068
+    cmp byte [LevelReleaseSettingRefreshCounter-GameDataImage],0x0 ; @0406C
     jz loc_4076 ; @04071
     jmp loc_3FE9 ; @04073
 loc_4076:
-    cmp [0x67],bl ; @04076
+    cmp [LevelReleaseSetting-GameDataImage],bl ; @04076
     jnz loc_407F ; @0407A
     jmp loc_3FE9 ; @0407C
 loc_407F:
-    dec byte [0x67] ; @0407F
+    dec byte [LevelReleaseSetting-GameDataImage] ; @0407F
     jmp short loc_4053 ; @04083
 sub_4085:
     mov al,[KeyboardScanCodeByte-GameDataImage] ; @04085
@@ -280,7 +280,7 @@ loc_40AC:
 loc_40B4:
     ret ; @040B4
 loc_40B5:
-    cmp byte [0x84],0x0 ; @040B5
+    cmp byte [StatusIconRefreshCounter-GameDataImage],0x0 ; @040B5
     jnz loc_40CC ; @040BA
     dec byte [EntityActionSelector-GameDataImage] ; @040BC
     cmp byte [EntityActionSelector-GameDataImage],0x1 ; @040C0
@@ -289,7 +289,7 @@ loc_40B5:
 loc_40CC:
     ret ; @040CC
 loc_40CD:
-    cmp byte [0x84],0x0 ; @040CD
+    cmp byte [StatusIconRefreshCounter-GameDataImage],0x0 ; @040CD
     jnz loc_40CC ; @040D2
     inc byte [EntityActionSelector-GameDataImage] ; @040D4
     cmp byte [EntityActionSelector-GameDataImage],0xa ; @040D8
@@ -360,18 +360,22 @@ loc_416A:
     mov [0x2],dx ; @04175
 loc_4179:
     jmp short sub_410F ; @04179
-sub_417B:
+; CONTRACT: live DS:SI NUL scan, no40-character bound; DF and AH wrap remain.
+; Actual AX/SI saves and glyph CALL/RET carry returned DS/ES/flags into next scan.
+DrawStatusText:
     lodsb ; @0417B
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @0417C
     jz loc_418B ; @0417E
     push ax ; @04180
     push si ; @04181
-    call sub_7708 ; @04182
+    call DrawStatusGlyph ; @04182
+StatusTextAfterGlyph:
     pop si ; @04185
     pop ax ; @04186
     inc ah ; @04187
-    jmp short sub_417B ; @04189
+    jmp short DrawStatusText ; @04189
 loc_418B:
+StatusTextReturn:
     ret ; @0418B
 sub_418C:
     cmp byte [0x25a6],0x0 ; @0418C

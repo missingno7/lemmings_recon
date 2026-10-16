@@ -30,7 +30,8 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 0563E..05725 | palette_steps.asm | Packed/RGB rows and channel arithmetic, tested native contracts |
 | 05726..05D65 | game_code_late_after_palette.asm | Resource/generator ownership remains mixed; UNKNOWN preserved |
 | 05D66..0616F | entity_graphics.asm | Byte masks, pixel setup/address and entity mask drawing contracts |
-| 06170..0780C | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 06170..07629 | game_code_late_after_entities.asm | Mixed ownership remains provisional |
+| 0762A..0780C | status_glyphs.asm | Count and character glyph contracts; five UNKNOWN bytes preserved |
 | 0780D..078FF | status_icons.asm | Status outline and restoration; signed selector and live VGA frames |
 | 07900..0796E | game_code_before_minimap.asm | Untranslated display preparation |
 | 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
@@ -514,7 +515,7 @@ bucket/index ownership, record182/display overlap and the real formatter
 return. See entity-actions.md and decimal-field.md. Their maintained physical
 modules are entity_selection.asm and decimal_fields.asm; surrounding suffixes
 retain exact image order and all UNKNOWN classifications. The next independent
-normal-path leaves are762A/7708, then417B and the remaining3ACE status suffix.
+normal-path connection is the remaining3ACE status suffix.
 Their live1FEC source-buffer producer/consumer contracts are recorded in
 status-display.md. These scopes
 do not accept allocation extents, live IRQ scheduling or full main-loop behavior.
@@ -531,3 +532,18 @@ an explicit untranslated investigation entry so dependency views retain the
 pending text/count/input body. Main-image translated-byte union is17,078,
 up599 from16,479; this ledger total is separate from full-campaign acceptance.
 See minimap-viewport.md, status-icons.md and status-display.md.
+
+The762A count and7708 character leaves now add478 known C bytes, bringing the
+main-image ledger union to17,556. Their maintained status_glyphs.asm module
+retains all483 physical bytes, including five UNKNOWN holes excluded from C.
+The focused gates pass270 and269 core/adapter fixtures,105/118 sites,12/30 jump
+outcomes and seven/nine completed mutants. Actual count/remainder, DI, DS and RET
+stack words, the three character passes, signed dispatch and space/invalid IF
+contracts remain live. The417B NUL-scan caller now passes18 core/adapter fixtures,
+11 own sites/three jump outcomes,34,102 events and seven completed mutants.
+Its17 caller bytes take the main ledger union to17,573 without recounting the
+child. It retains actual CALL/RET, saved AX/SI/DS, live NUL, DF and AH wrap;
+independent planes cover the stored40-byte status line. There is no runtime
+40-character bound.
+Release/icon snapshot and refresh fields remain shared with input gates as
+documented in status-display.md. This checkpoint is scoped evidence only.
