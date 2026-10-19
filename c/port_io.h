@@ -44,4 +44,15 @@ LmnPortIoResult lmn_poll_port201_buttons_high_adapter(
     uint8_t *memory, const LmnRegs *registers,
     const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
 
+/* Keyboard controller leaves17BE/17B4. Wait starts CX at zero: LOOPNE can
+   consume65,536 samples. Command preserves AX via actual saves, sets IF. */
+LmnPortIoResult lmn_wait_keyboard_controller_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnPortIoResult lmn_wait_keyboard_controller_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnPortIoResult lmn_send_keyboard_command_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnPortIoResult lmn_send_keyboard_command_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
 #endif

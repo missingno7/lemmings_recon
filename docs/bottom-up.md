@@ -944,3 +944,13 @@ IVT/stack aliases remain explicit. Fresh graph views identify17BE's9-byte
 port64/LOOPNE wait before17B4's10-byte command parent; the zero CX loop can take
 65,536 samples. Next connect those leaves and keyboard producer16D4/installer1562
 to the accepted input consumer; see timer-install.md and next-work.md.
+
+The keyboard checkpoint adds275 bytes, taking the main ledger union to27,344.
+Wait17BE, command17B4, IRQ16D4 and installer1562 compose EOI/input in856 known bytes.
+The592 fixtures/1,205 comparisons cover119 own sites/35 outcomes and seven mutants;
+three same-RAM install/IRQ/input handoffs use pinned bindings and four make/break
+transitions. ZeroCX permits65,536 busy samples; special7D/7E zeroAX before lookup,
+including releases. ReturnedDS/SS, actual saves, repeated reads and bitmap bounds
+remain explicit. Fresh4D1A graph views identify the51-byte repeat/character reader
+as next connected leaf. Its202E XLAT base overlaps the last201F binding byte;
+keep both consumers on canonical RAM. See keyboard-input.md and next-work.md.

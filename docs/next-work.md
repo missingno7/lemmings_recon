@@ -2,7 +2,15 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is27,069 bytes. The82-byte1644
+The main-image translated-code ledger union is27,344 bytes. The keyboard cluster
+connects wait17BE, command17B4, IRQ16D4 and installer1562 to native EOI/input in856
+known bytes. Its592 fixtures/1,205 comparisons cover119 own sites/35 outcomes and
+seven completed mutants. Three same-RAM installation/make-break/input handoffs
+use pinned bindings. Full zero-count waits, special AX-zero behavior, actual
+saves/RET/IRET and returned DOS DS/SS remain live. See keyboard-input.md;
+scheduling and opaque platform bodies remain open.
+
+The preceding82-byte1644
 installer now connects direct menu installation, actual DOS vector08/60 requests,
 the installed game IRQ and full-register cleanup16A9 on the same canonical RAM.
 The50 fixtures/106 comparisons cover42 installer and19 cleanup sites,13 installer
@@ -75,12 +83,11 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Close the16D4 keyboard producer, its17BE status-wait leaf/17B4 command parent
-   and1562 installer, then connect its produced state to the accepted input/timer
-   lifecycle. Fresh bottom-up views identify the9-byte17BE leaf: XOR CX,CX,
-   port64 bit1 TEST and LOOPNE permit65,536 busy samples. Preserve CX/AL/flags,
-   actual helper returns and17B4's unconditionalSTI. Reuse the shared verifier
-   and interrupt transport; retain42A5 and UNKNOWN4C65/1696..16A8.
+1. Close the51-byte4D1A repeat/character reader over produced83-byte0F78 state,
+   then compose its input/menu callers. Its202E XLAT base overlaps the final201F
+   binding byte. Preserve live repeat bytes, first-ready scanning, counter quirks,
+   AL/AH and actual nearRET; extend the shared keyboard campaign. Retain42A5 and
+   UNKNOWN4C65/1696..16A8.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

@@ -5785,3 +5785,7 @@ PanelClickLatch0062 equ GameDataImage+0x62
 ForegroundCounter1FD3 equ GameDataImage+0x1fd3
 InputActionSnapshot1FD4 equ GameDataImage+0x1fd4
 TimerChainFlag1FCF equ GameDataImage+0x1fcf
+
+KeyboardStateBytes0F78 equ GameDataImage+0x0f78
+KeyboardControllerGate200A equ GameDataImage+0x200a
+KeyboardBindings201F equ GameDataImage+0x201f

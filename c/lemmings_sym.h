@@ -62,7 +62,7 @@
 #define CS_DisplayStatusWaitSet 0x1557u
 #define CS_DisplayStatusWaitClear 0x155Cu
 #define CS_DisplayStatusReturn 0x1561u
-#define CS_sub_1562 0x1562u
+#define CS_InstallKeyboardVector 0x1562u
 #define CS_RestoreKeyboardVector 0x1582u
 #define CS_RestoreKeyboardVectorInterrupt 0x158Eu
 #define CS_RestoreKeyboardVectorReturn 0x1591u
@@ -76,8 +76,8 @@
 #define CS_TimerRestoreClockInterrupt 0x16D1u
 #define CS_TimerRestoreReturn 0x16D3u
 #define CS_KeyboardIrqHandler 0x16D4u
-#define CS_sub_17B4 0x17B4u
-#define CS_sub_17BE 0x17BEu
+#define CS_SendKeyboardControllerCommand 0x17B4u
+#define CS_WaitKeyboardControllerClear 0x17BEu
 #define CS_GameTimerIrqHandler 0x17C7u
 #define CS_GameTimerTail183E 0x183Eu
 #define CS_sub_184E 0x184Eu
@@ -991,4 +991,18 @@
 #define CS_GameTimerSoundSegmentOperand 0x1653u
 #define CS_GameTimerInstallAfterVector60 0x165Fu
 #define CS_GameTimerInstallReturn 0x1695u
+#define CS_KeyboardDataSegmentOperand16D9 0x16D9u
+#define CS_KeyboardAfterDisable16E9 0x16E9u
+#define CS_KeyboardAfterEoi17A3 0x17A3u
+#define CS_KeyboardAfterEnable17AF 0x17AFu
+#define CS_KeyboardOuterIret17B3 0x17B3u
+#define CS_KeyboardCommandAfterWait17B9 0x17B9u
+#define CS_KeyboardCommandReturn17BD 0x17BDu
+#define CS_KeyboardWaitReturn17C6 0x17C6u
+#define CS_KeyboardInstallAfterQuery156A 0x156Au
+#define CS_KeyboardInstallAfterSet157E 0x157Eu
+#define CS_KeyboardInstallReturn1581 0x1581u
+#define SEG09A9_KeyboardStateBytes0F78 0x0F78u
+#define SEG09A9_KeyboardControllerGate200A 0x200Au
+#define SEG09A9_KeyboardBindings201F 0x201Fu
 #endif

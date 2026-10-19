@@ -5,6 +5,10 @@
 #define PORT_IO_MUTATION 0
 #endif
 
+#ifndef KEYBOARD_PORT_MUTATION
+#define KEYBOARD_PORT_MUTATION 0
+#endif
+
 enum {
     CF = 0x001,
     PF = 0x004,
@@ -444,4 +448,61 @@ LmnPortIoResult lmn_poll_port201_buttons_high_adapter(uint8_t *memory,
     const LmnRasterBus *bus) {
     return consume_near_return(memory,
         lmn_poll_port201_buttons_high_core(memory, registers, ports, bus), bus, 0);
+}
+
+LmnPortIoResult lmn_wait_keyboard_controller_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    PortIoState s = state_from(memory, registers, ports, bus);
+    s.r.cx = xor16(&s, s.r.cx);
+#if KEYBOARD_PORT_MUTATION == 1
+    s.r.cx = 0xffffu;
+#endif
+    do {
+        uint8_t sample;
+        if (!ports || !ports->in_byte) {
+            set_missing(&s, 0x17c0u); return result_of(&s);
+        }
+        sample = ports->in_byte(ports->context, memory, 0x64u, s.r.flags);
+        s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | sample);
+        logic_flags(&s, (uint8_t)(sample & 2u), 8u);
+        s.r.cx = (uint16_t)(s.r.cx - 1u); /* LOOPNE does not change FLAGS. */
+    } while (s.r.cx != 0u && (s.r.flags & ZF) == 0u);
+    s.r.ip = CS_KeyboardWaitReturn17C6;
+    return result_of(&s);
+}
+
+LmnPortIoResult lmn_wait_keyboard_controller_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    return consume_near_return(memory,
+        lmn_wait_keyboard_controller_core(memory, registers, ports, bus), bus, 0);
+}
+
+LmnPortIoResult lmn_send_keyboard_command_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    PortIoState s = state_from(memory, registers, ports, bus);
+    LmnPortIoResult child;
+    push16(&s, s.r.ax);
+    s.r.flags &= (uint16_t)~IF;
+    push16(&s, CS_KeyboardCommandAfterWait17B9);
+    s.r.ip = CS_WaitKeyboardControllerClear;
+    child = lmn_wait_keyboard_controller_adapter(memory, &s.r, ports, bus);
+    s.r = child.registers;
+    if (child.status != LMN_PORT_IO_READY) {s.status=child.status;return result_of(&s);}
+    if (s.r.cs != registers->cs || s.r.ip != CS_KeyboardCommandAfterWait17B9) {
+        s.status=LMN_PORT_IO_CHANGED_CHILD_RETURN;return result_of(&s);
+    }
+    s.r.ax = pop16(&s);
+    if (!ports || !ports->out_byte) {set_missing(&s, 0x17bau);return result_of(&s);}
+    ports->out_byte(ports->context,memory,0x64u,(uint8_t)s.r.ax,s.r.flags);
+#if KEYBOARD_PORT_MUTATION != 2
+    s.r.flags |= IF;
+#endif
+    s.r.ip = CS_KeyboardCommandReturn17BD;
+    return result_of(&s);
+}
+
+LmnPortIoResult lmn_send_keyboard_command_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    return consume_near_return(memory,
+        lmn_send_keyboard_command_core(memory, registers, ports, bus), bus, 0);
 }

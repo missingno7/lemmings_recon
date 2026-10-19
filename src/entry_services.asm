@@ -89,7 +89,7 @@ sub_00D8:
     call DisableDatCache ; @000D8
     mov byte [DatRetryEnabled-GameDataImage],0xff ; @000DB
     call sub_062B ; @000E0
-    call sub_1562 ; @000E3
+    call InstallKeyboardVector ; @000E3
     cli ; @000E6
     mov cx,[0x1fc9] ; @000E7
     mov al,0x36 ; @000EB
@@ -1831,12 +1831,17 @@ DisplayStatusWaitClear:
     jnz loc_155C ; @0155F
 DisplayStatusReturn:
     ret ; @01561
-sub_1562:
+; Query DOS3509, save ES then BX through returnedDS; caller saves remain live.
+; Set DOS2509 to currentCS:16D4; returnedSS:SP owns POPES/POPDS/nearRET.
+; Both INTs use full register/IRET contracts; STI is unconditional.
+; See docs/keyboard-input.md for alias and provider boundaries.
+InstallKeyboardVector:
     cli ; @01562
     push ds ; @01563
     push es ; @01564
     mov ax,0x3509 ; @01565
     int 0x21 ; @01568
+KeyboardInstallAfterQuery156A:
     mov [SavedKeyboardVector-GameDataImage+2],es ; @0156A
     mov [SavedKeyboardVector-GameDataImage],bx ; @0156E
     mov dx,cs ; @01572
@@ -1844,9 +1849,11 @@ sub_1562:
     mov dx,0x16d4 ; @01576
     mov ax,0x2509 ; @01579
     int 0x21 ; @0157C
+KeyboardInstallAfterSet157E:
     pop es ; @0157E
     pop ds ; @0157F
     sti ; @01580
+KeyboardInstallReturn1581:
     ret ; @01581
 RestoreKeyboardVector:
 ; CONTRACT: actualPUSHDS may alter saved pointer fields before they are read.
@@ -2038,19 +2045,26 @@ TimerRestoreClockInterrupt:
     int 0x1a ; @016D1
 TimerRestoreReturn:
     ret ; @016D3
+; Four actual saves DS/AX/BX/CX. Relocated16D9 supplies the live game frame.
+; Special7D/7E paths zeroAX before binding lookup, including releases.
+; The separately popped raw scan owns the83-byte0F78 key-state array.
+; Both controller gates are fresh reads; EOI and helper returns stay live.
+; See docs/keyboard-input.md; no keyboard IRQ scheduling is inferred.
 KeyboardIrqHandler:
     push ds ; @016D4
     push ax ; @016D5
     push bx ; @016D6
     push cx ; @016D7
+KeyboardDataSegmentOperand16D9 equ $+1
     mov ax,0x9a9 ; @016D8
     mov ds,ax ; @016DB
-    mov al,[0x200a] ; @016DD
+    mov al,[KeyboardControllerGate200A-GameDataImage] ; @016DD
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @016E0
     jz loc_16E9 ; @016E2
     mov al,0xad ; @016E4
-    call sub_17B4 ; @016E6
+    call SendKeyboardControllerCommand ; @016E6
 loc_16E9:
+KeyboardAfterDisable16E9:
     in al,0x60 ; @016E9
     push ax ; @016EB
     in al,0x61 ; @016EC
@@ -2060,7 +2074,7 @@ loc_16E9:
     out 0x61,al ; @016F4
     pop ax ; @016F6
     push ax ; @016F7
-    mov bx,0x201f ; @016F8
+    mov bx,KeyboardBindings201F-GameDataImage ; @016F8
     mov cx,0x1 ; @016FB
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @016FE
     and ah,0x7f ; @01700
@@ -2116,7 +2130,7 @@ loc_1774:
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @0177A
 loc_177F:
     pop ax ; @0177F
-    lea bx,[0xf78] ; @01780
+    lea bx,[KeyboardStateBytes0F78-GameDataImage] ; @01780
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @01784
     db 0x8b,0xc8 ; ENCODED: mov cx,ax (NASM chooses a different encoding) ; @01786
     and al,0x7f ; @01788
@@ -2132,30 +2146,39 @@ loc_179E:
     mov [bx],cl ; @0179E
 loc_17A0:
     call SendMasterPicEoi ; @017A0
-    mov al,[0x200a] ; @017A3
+KeyboardAfterEoi17A3:
+    mov al,[KeyboardControllerGate200A-GameDataImage] ; @017A3
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @017A6
     jz loc_17AF ; @017A8
     mov al,0xae ; @017AA
-    call sub_17B4 ; @017AC
+    call SendKeyboardControllerCommand ; @017AC
 loc_17AF:
+KeyboardAfterEnable17AF:
     pop cx ; @017AF
     pop bx ; @017B0
     pop ax ; @017B1
     pop ds ; @017B2
+KeyboardOuterIret17B3:
     iret ; @017B3
-sub_17B4:
+; Actual AX/CALL saves, CLI, bounded-by-CX wait, POPAX, OUT64, unconditionalSTI.
+SendKeyboardControllerCommand:
     push ax ; @017B4
     cli ; @017B5
-    call sub_17BE ; @017B6
+    call WaitKeyboardControllerClear ; @017B6
+KeyboardCommandAfterWait17B9:
     pop ax ; @017B9
     out 0x64,al ; @017BA
     sti ; @017BC
+KeyboardCommandReturn17BD:
     ret ; @017BD
-sub_17BE:
+; CX=0 then LOOPNE:65,536 busy samples, or stop after a bit1-clear sample.
+; Leaves the last sample in AL and the decremented CX; no flags from LOOPNE.
+WaitKeyboardControllerClear:
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @017BE
 loc_17C0:
     in al,0x64 ; @017C0
     test al,0x2 ; @017C2
     loopne loc_17C0 ; @017C4
+KeyboardWaitReturn17C6:
     ret ; @017C6
 times -(($-$$) != 0x17c7) db 0

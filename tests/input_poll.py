@@ -532,9 +532,9 @@ def hashes():
 
 
 class Native:
-    def __init__(self, directory, mutation=0):
-        self.lib = ct.CDLL(str(build(Path(directory) / f'input-poll-{mutation}.dll',
-                                     mutation, 'input_poll')))
+    def __init__(self, directory, mutation=0, *, library=None):
+        self.lib = library if library is not None else ct.CDLL(str(build(
+            Path(directory) / f'input-poll-{mutation}.dll', mutation, 'input_poll')))
         self.functions = {}
         for entry, name in (('mouse', 'lmn_poll_mouse_position'),
                             ('input', 'lmn_poll_input_state')):
