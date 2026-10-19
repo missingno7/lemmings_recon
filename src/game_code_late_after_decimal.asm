@@ -55,6 +55,11 @@ DisplayStartFirstOutput:
 DisplayStartReturn:
     ret ; @04C46
 MenuTimerIrqHandler:
+; CONTRACT: eight saves AX/BX/CX/DX/SI/DI/BP/DS, then relocated4C50 loadsDS.
+; No ES or entryFLAGS save. Shared1FE3 increments modulo4; zero sendsEOI,
+; other phases chain through actualFLAGS/CS/4C70 and returnedSS:SP/DS/ES.
+; DL alone becomesFF before418C; actual eight pops then hardwareIRET.
+; UNKNOWN4C65 remains unresolved. docs/menu-timer.md.
     push ax ; @04C47
     push bx ; @04C48
     push cx ; @04C49
@@ -63,6 +68,7 @@ MenuTimerIrqHandler:
     push di ; @04C4C
     push bp ; @04C4D
     push ds ; @04C4E
+MenuTimerDataSegmentOperand4C50 equ $+1
     mov ax,0x9a9 ; @04C4F
     mov ds,ax ; @04C52
     mov al,[TimerChainPhase1FE3-GameDataImage] ; @04C54
@@ -71,7 +77,8 @@ MenuTimerIrqHandler:
     mov [TimerChainPhase1FE3-GameDataImage],al ; @04C5B
     jnz loc_4C66 ; @04C5E
     call SendMasterPicEoi ; @04C60
-    jmp short loc_4C70 ; @04C63
+MenuTimerAfterEoi4C63:
+    jmp short MenuTimerChainReturn4C70 ; @04C63
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04C65
 loc_4C66:
@@ -79,10 +86,12 @@ loc_4C66:
     pushf ; @04C69
     push cs ; @04C6A
     push ax ; @04C6B
+MenuTimerFarChain4C6C:
     jmp far [SavedTimerVector-GameDataImage] ; @04C6C
-loc_4C70:
+MenuTimerChainReturn4C70:
     mov dl,0xff ; @04C70
     call PollInputState418C ; @04C72
+MenuTimerAfterInput4C75:
     pop ds ; @04C75
     pop bp ; @04C76
     pop di ; @04C77
@@ -91,6 +100,7 @@ loc_4C70:
     pop cx ; @04C7A
     pop bx ; @04C7B
     pop ax ; @04C7C
+MenuTimerOuterIret4C7D:
     iret ; @04C7D
 ReadCodeInput:
     lea si,[0x4df2] ; @04C7E
@@ -565,6 +575,8 @@ DrawScreenBackgroundFromRow:
 ; UNKNOWN: unresolved bytes
     db 0x32,0xc0,0xa2,0xcd,0x1f,0x3a,0x06,0xcd,0x1f,0x74,0xfa,0xc3 ; @0501C
 InstallMenuTimerVector:
+; CONTRACT: CLI/PUSHDS before zeroDS. WriteIVT08 IP thenCS as actualwords.
+; POPDS and outerRET reread liveSS, including IVT/stack aliases; STI forcesIF.
     cli ; @05028
     push ds ; @05029
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0502A
@@ -573,6 +585,7 @@ InstallMenuTimerVector:
     mov [0x22],cs ; @05034
     pop ds ; @05038
     sti ; @05039
+MenuTimerInstallReturn503A:
     ret ; @0503A
 DrawCodeInputText:
     lea si,[0x4def] ; @0503B

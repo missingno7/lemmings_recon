@@ -918,3 +918,17 @@ reuses the narrower tail's fixture/service and native bindings; it adds no CPU,
 bus or comparison engine. The tail regression preserves its original accounting.
 Next connect the54-byte menu timer and timer installers as one IRQ lifecycle,
 retaining the unknown callback/provider/timing seams. See next-work.md.
+
+The menu lifecycle now connects4C47 and direct installer5028 through the same
+shared verifier and native interrupt transport. Its73 new known bytes take the
+main C ledger union to26,987. The654-byte connected domain passes54 fixtures/
+108 comparisons,42 own sites/three direct outcomes and eight completed mutants.
+Three installer/IRQ handoffs use actual same-memory results at separate loads;
+hardware entry remains an explicit constructed boundary, not a scheduler.
+
+Unlike the game IRQ, the menu saves eight words without ES or entryFLAGS and
+sends EOI only at modulo phase0. Returned DS/SS and live ES remain observable.
+The installer writes actual IVT words before popping savedDS, retaining aliases
+that change that pop or outerRET. UNKNOWN4C65 is unchanged. Next close1644's DOS
+vector/PIT installation and then the keyboard producer/installer lifecycle;
+see menu-timer.md and next-work.md.

@@ -980,4 +980,11 @@
 #define CS_GameTimerAfterPaletteBefore17E0 0x17E0u
 #define CS_GameTimerAfterPaletteAfter183B 0x183Bu
 #define SEG09A9_TimerPitReload1FC9 0x1FC9u
+#define CS_MenuTimerDataSegmentOperand4C50 0x4C50u
+#define CS_MenuTimerAfterEoi4C63 0x4C63u
+#define CS_MenuTimerFarChain4C6C 0x4C6Cu
+#define CS_MenuTimerChainReturn4C70 0x4C70u
+#define CS_MenuTimerAfterInput4C75 0x4C75u
+#define CS_MenuTimerOuterIret4C7D 0x4C7Du
+#define CS_MenuTimerInstallReturn503A 0x503Au
 #endif

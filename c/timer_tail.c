@@ -5,12 +5,16 @@
 #include "palette_ports.h"
 #include "ui_commands.h"
 #include "vga_mirrors.h"
+#include <stddef.h>
 
 #ifndef TIMER_TAIL_MUTATION
 #define TIMER_TAIL_MUTATION 0
 #endif
 #ifndef GAME_TIMER_MUTATION
 #define GAME_TIMER_MUTATION 0
+#endif
+#ifndef MENU_TIMER_MUTATION
+#define MENU_TIMER_MUTATION 0
 #endif
 
 enum {
@@ -588,14 +592,12 @@ static int fixed_pattern_call(TimerTailState *s) {
     return full_child_result(s, child_status, 0u, CS_GameTimerTail183E);
 }
 
-#if GAME_TIMER_MUTATION != 1
 static uint16_t read_code_word(const TimerTailState *s, uint16_t offset) {
     uint32_t address = physical(s->r.cs, offset);
     uint8_t low = s->memory[address];
     uint8_t high = s->memory[(address + 1u) & MEMORY_MASK];
     return (uint16_t)(low | ((uint16_t)high << 8));
 }
-#endif
 
 static int timer_word_out(TimerTailState *s, uint16_t port,
                           uint16_t value, uint16_t instruction_ip) {
@@ -801,4 +803,152 @@ LmnTimerTailResult lmn_game_timer_tail_adapter(uint8_t *memory,
     if (result.status == LMN_TIMER_TAIL_READY)
         lmn_interrupt_return(memory, &result.registers, bus);
     return result;
+}
+
+/* Menu4C47 and installer5028 compose the same canonical memory/return services. */
+static int menu_child_result(TimerTailState *s, uint16_t status,
+                             uint16_t service_status, uint16_t resume) {
+    int ready = child_result(s, status, service_status, resume);
+#if MENU_TIMER_MUTATION == 5
+    if (!ready && s->status == LMN_TIMER_TAIL_CHANGED_CHILD_RETURN) {
+        s->r.cs = s->entry_cs; s->r.ip = resume;
+        s->status = LMN_TIMER_TAIL_READY;
+        return 1;
+    }
+#endif
+    return ready;
+}
+
+LmnTimerTailResult lmn_menu_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    TimerTailState s = state_from_registers(memory, registers, mouse,
+        NULL, NULL, saved_int08, ports, bus);
+    uint8_t phase;
+#if MENU_TIMER_MUTATION == 3
+    uint16_t entry_es = registers->es;
+#endif
+    push16(&s, s.r.ax); push16(&s, s.r.bx); push16(&s, s.r.cx);
+    push16(&s, s.r.dx); push16(&s, s.r.si); push16(&s, s.r.di);
+    push16(&s, s.r.bp); push16(&s, s.r.ds);
+    s.r.ax = read_code_word(&s, CS_MenuTimerDataSegmentOperand4C50);
+    s.r.ds = s.r.ax;
+    phase = read8(&s, s.r.ds, SEG09A9_TimerChainPhase1FE3);
+    s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | phase);
+    phase = inc8(&s, phase);
+    phase &= 3u;
+    logic8(&s, phase);
+    s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | phase);
+    write8(&s, s.r.ds, SEG09A9_TimerChainPhase1FE3, phase);
+#if MENU_TIMER_MUTATION == 1
+    if (phase != 0u) {
+#else
+    if (phase == 0u) {
+#endif
+        LmnPortIoResult child;
+        push16(&s, CS_MenuTimerAfterEoi4C63);
+        s.r.ip = CS_SendMasterPicEoi;
+        child = lmn_send_master_pic_eoi_adapter(memory, &s.r, ports, bus);
+        s.r = child.registers;
+        if (!menu_child_result(&s, child.status, 0u, CS_MenuTimerAfterEoi4C63))
+            return result_of(&s);
+    } else {
+        uint16_t target_ip, target_cs;
+        LmnInterruptResult chained;
+        s.r.ax = CS_MenuTimerChainReturn4C70;
+        push16(&s, s.r.flags); push16(&s, s.r.cs); push16(&s, s.r.ax);
+        s.r.ip = CS_MenuTimerFarChain4C6C;
+        target_ip = read16(&s, s.r.ds, SEG09A9_SavedTimerVector);
+        target_cs = read16(&s, s.r.ds, (uint16_t)(SEG09A9_SavedTimerVector + 2u));
+        s.r.ip = target_ip; s.r.cs = target_cs;
+        chained = lmn_interrupt_invoke(memory, &s.r, s.entry_cs,
+            CS_MenuTimerChainReturn4C70, saved_int08, bus);
+        if (chained.status != LMN_INTERRUPT_RETURNED) {
+            s.service_status = chained.service_status;
+            s.status = chained.status == LMN_INTERRUPT_UNBOUND_SERVICE ?
+                LMN_TIMER_TAIL_UNBOUND_SERVICE :
+                chained.status == LMN_INTERRUPT_PROVIDER_STOP ?
+                LMN_TIMER_TAIL_EXTERNAL_STOP : LMN_TIMER_TAIL_CHANGED_INTERRUPT_RETURN;
+            return result_of(&s);
+        }
+#if MENU_TIMER_MUTATION == 4
+        s.r.ss = s.entry_ss;
+#endif
+    }
+    s.r.ip = CS_MenuTimerChainReturn4C70;
+#if MENU_TIMER_MUTATION == 2
+    s.r.dx = 0x00ffu;
+#else
+    s.r.dx = (uint16_t)((s.r.dx & 0xff00u) | 0xffu);
+#endif
+    {
+        LmnInputPollResult child;
+        push16(&s, CS_MenuTimerAfterInput4C75);
+        s.r.ip = CS_PollInputState418C;
+        child = lmn_poll_input_state_adapter(memory, &s.r, mouse, ports, bus);
+        s.r = child.registers;
+        if (!menu_child_result(&s, child.status, child.service_status,
+                               CS_MenuTimerAfterInput4C75))
+            return result_of(&s);
+    }
+    s.r.ds = pop16_from(&s, s.r.ss); s.r.bp = pop16_from(&s, s.r.ss);
+    s.r.di = pop16_from(&s, s.r.ss); s.r.si = pop16_from(&s, s.r.ss);
+    s.r.dx = pop16_from(&s, s.r.ss); s.r.cx = pop16_from(&s, s.r.ss);
+    s.r.bx = pop16_from(&s, s.r.ss); s.r.ax = pop16_from(&s, s.r.ss);
+#if MENU_TIMER_MUTATION == 3
+    s.r.es = entry_es;
+#endif
+    s.r.ip = CS_MenuTimerOuterIret4C7D;
+    return result_of(&s);
+}
+
+LmnTimerTailResult lmn_menu_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    LmnTimerTailResult out = lmn_menu_timer_core(memory, registers, mouse,
+        saved_int08, ports, bus);
+    if (out.status == LMN_TIMER_TAIL_READY)
+        lmn_interrupt_return(memory, &out.registers, bus);
+    return out;
+}
+
+LmnTimerTailResult lmn_install_menu_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBus *bus) {
+    TimerTailState s = state_from_registers(memory, registers, NULL,
+        NULL, NULL, NULL, NULL, bus);
+#if MENU_TIMER_MUTATION == 7
+    uint16_t cached_ds = s.r.ds;
+#endif
+    s.r.flags &= (uint16_t)~IF;
+    push16(&s, s.r.ds);
+    s.r.ax = 0u; logic8(&s, 0u); /* XOR AX,AX has the same zero SZP/CF/OF. */
+#if MENU_TIMER_MUTATION != 6
+    s.r.ds = s.r.ax;
+#endif
+    write16(&s, s.r.ds, 0x20u, CS_MenuTimerIrqHandler, s.r.flags);
+    write16(&s, s.r.ds, 0x22u, s.r.cs, s.r.flags);
+#if MENU_TIMER_MUTATION == 7
+    s.r.sp = (uint16_t)(s.r.sp + 2u); s.r.ds = cached_ds;
+#else
+    s.r.ds = pop16_from(&s, s.r.ss);
+#endif
+#if MENU_TIMER_MUTATION != 8
+    s.r.flags |= IF;
+#endif
+    s.r.ip = CS_MenuTimerInstallReturn503A;
+    return result_of(&s);
+}
+
+LmnTimerTailResult lmn_install_menu_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBus *bus) {
+    LmnTimerTailResult out = lmn_install_menu_timer_core(memory, registers, bus);
+    if (out.status == LMN_TIMER_TAIL_READY) {
+        TimerTailState s = state_from_registers(memory, &out.registers, NULL,
+            NULL, NULL, NULL, NULL, bus);
+        s.r.ip = pop16_from(&s, s.r.ss);
+        out.registers = s.r;
+    }
+    return out;
 }

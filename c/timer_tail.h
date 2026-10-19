@@ -63,4 +63,23 @@ LmnTimerTailResult lmn_game_timer_adapter(
     const LmnInterruptService *saved_int08,
     const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
 
+/* Menu IRQ4C47: hardware frame already at liveSS:SP; eight actual saves.
+   ES and entryFLAGS are not saved. Core stops before4C7D, adapter executes IRET.
+   Uses the same architectural FLAGS and declared service preconditions as above. */
+LmnTimerTailResult lmn_menu_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnTimerTailResult lmn_menu_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInputPollService *mouse,
+    const LmnInterruptService *saved_int08,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
+/* Direct IVT08 installer5028. Core before503A; adapter consumes actual nearRET.
+   Its vector writes can change the savedDS/return words through stack aliases. */
+LmnTimerTailResult lmn_install_menu_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBus *bus);
+LmnTimerTailResult lmn_install_menu_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBus *bus);
+
 #endif

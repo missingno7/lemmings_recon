@@ -2,7 +2,16 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is26,914 bytes. The full17C7 timer
+The main-image translated-code ledger union is26,987 bytes. The54-byte menu
+timer4C47 and19-byte direct IVT08 installer5028 now compose the native input/EOI
+and external saved-INT08 seams in a654-byte known domain. Their54 fixtures/108
+comparisons cover all42 own sites/three direct outcomes and detect eight completed
+mutants. Three same-memory handoffs retain actual installer output before a
+constructed hardware entry. Live ES, returned DS/SS, eight actual saves, opposite
+modulo-four phase and IVT/stack aliases stay explicit. UNKNOWN4C65 remains open.
+See menu-timer.md; native scheduling and opaque service bodies are not supplied.
+
+The preceding full17C7 timer
 now connects2,840 known bytes through the actual palette, fixed-pattern, input,
 command, mirror and interrupt-return paths. Its93 fixtures/186 comparisons cover
 all109 timer sites/36 direct outcomes and detect five completed mutants. The
@@ -57,12 +66,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Connect the54-byte4C47 menu timer to the same input/EOI and saved-vector
-   contracts, then its19-byte5028 installer and82-byte1644 game-timer installer.
-   Audit actual save frames, opposite modulo-four chain phase, live vector writes,
-   PIT bytes and setup/cleanup ownership. Then close the16D4 keyboard producer,
+1. Close the82-byte1644 game-timer installer: actual INT21 vector changes,
+   relocated sound-driver frame1653, live returned DS/ES/SS, finite status polls
+   and PIT writes. Connect it to the accepted timers and cleanup without assuming
+   an opaque DOS service preserves registers. Then close the16D4 keyboard producer,
    its17B4 port helper and1562 installer. Reuse the shared verifier and interrupt
-   transport; retain42A5 and UNKNOWN4C65.
+   transport; retain42A5 and UNKNOWN4C65/1696..16A8.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

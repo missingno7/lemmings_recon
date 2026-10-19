@@ -28363,8 +28363,21 @@
       "Signature-matched legacy entry lead",
       "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 54
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 54,
+    "c_implementation": "c/timer_tail.c",
+    "c_core": "lmn_menu_timer_core",
+    "c_code_ranges": [
+      [
+        19527,
+        19557
+      ],
+      [
+        19558,
+        19582
+      ]
+    ],
+    "verification_evidence": "tests/menu_timer.py:51 singles xcore/adapter plus3 same-memory two-stage installer/IRQ handoffs;54 fixtures/108 comparisons,73 new known bytes/42 own sites/3 direct outcomes,654-byte connected domain,166 integrated sites/28 outcomes,4945 original instructions,5633 events (312 declared interrupt transport,124 provider accesses/44 services),8 completed mutants. Eight actual saves, live ES and returned DS/SS, relocated4C50, opposite modulo phase, DL-onlyFF, actual child/synthetic/hardware returns, IVT/stack aliases and unconditional installerSTI. UNKNOWN4C65 and asynchronous/platform/unknown callback seams remain open; docs/menu-timer.md."
   },
   {
     "address": 19582,
@@ -29823,8 +29836,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 19
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 19,
+    "c_implementation": "c/timer_tail.c",
+    "c_core": "lmn_install_menu_timer_core",
+    "c_code_ranges": [
+      [
+        20520,
+        20539
+      ]
+    ],
+    "verification_evidence": "tests/menu_timer.py:51 singles xcore/adapter plus3 same-memory two-stage installer/IRQ handoffs;54 fixtures/108 comparisons,73 new known bytes/42 own sites/3 direct outcomes,654-byte connected domain,166 integrated sites/28 outcomes,4945 original instructions,5633 events (312 declared interrupt transport,124 provider accesses/44 services),8 completed mutants. Eight actual saves, live ES and returned DS/SS, relocated4C50, opposite modulo phase, DL-onlyFF, actual child/synthetic/hardware returns, IVT/stack aliases and unconditional installerSTI. UNKNOWN4C65 and asynchronous/platform/unknown callback seams remain open; docs/menu-timer.md."
   },
   {
     "address": 20539,
@@ -64051,6 +64073,118 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Startup clear; config11EC/1344=3468, parsed BX139A, calibration15B4/15F4/15FD; read live1815 after status polling. Zero and all words remain unchecked; docs/timer-frontier.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19536,
+    "segment": 0,
+    "kind": "operand",
+    "size": 2,
+    "symbol_name": "MenuTimerDataSegmentOperand4C50",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Relocated completeIMM16 at4C4F, fetched after eight saves; menu handler DS independent of incomingDS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19555,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuTimerAfterEoi4C63",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual CALL18B2 continuation from4C60"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19564,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuTimerFarChain4C6C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual far JMP through liveDS1FBE with syntheticFLAGS/CS/4C70 frame"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19568,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuTimerChainReturn4C70",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "SavedINT08 IRET resume, thenMOVDLFF and actualinputCALL"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19573,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuTimerAfterInput4C75",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual CALL418C continuation from4C72, followed by eight live pops"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19581,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuTimerOuterIret4C7D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Hardware IRET consumes liveSS:SP; menu does not saveES or entryFLAGS"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20538,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuTimerInstallReturn503A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Direct IVT08 installer outer RET after actualPOPDS and unconditionalSTI"
     ],
     "verification_status": "STATIC"
   }
