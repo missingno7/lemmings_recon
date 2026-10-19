@@ -11,6 +11,8 @@ sys.path[:0]=[str(ROOT/'tests'),str(ROOT/'tools')]
 import verification as base
 import input_poll as poll
 import text_stream as text
+import background_drawing as background
+import palette_transition as palette
 from bounded_process import run_bounded,temporary_build_directory
 from cbuild import build
 from common import BUILD,sha,write_json
@@ -19,7 +21,7 @@ check=base.check
 physical,put16,get16=base.physical,base.put16,base.get16
 RANGES={'irq':(0x16D4,0x17B4),'command':(0x17B4,0x17BE),'wait':(0x17BE,0x17C7),'install':(0x1562,0x1582),
         'reader':(0x4D1A,0x4D4D),'scale':(0x4A9F,0x4AB5),
-        'choice':(0x43CE,0x43F2),'controller':(0x4A4E,0x4ABD),'mode':(0x4A2E,0x4AC5)}
+        'choice':(0x43CE,0x43F2),'controller':(0x4A4E,0x4ABD),'mode':(0x4A2E,0x4AC5),'screen':(0x4A01,0x4AC5)}
 DOMAINS={n:{i.address:i for i in base.MD.disasm(base.IMAGE[a:b],a)} for n,(a,b) in RANGES.items()}
 EOI={i.address:i for i in base.MD.disasm(base.IMAGE[0x18B2:0x18B7],0x18B2)}
 DISPLAY={i.address:i for i in base.MD.disasm(base.IMAGE[0x1550:0x1562],0x1550)}
@@ -27,9 +29,10 @@ BOUNDARY={i.address:i for i in base.MD.disasm(base.IMAGE[0x4401:0x4407],0x4401)}
 SWAP={i.address:i for i in base.MD.disasm(base.IMAGE[0x4C20:0x4C47],0x4C20)}
 OWN={a:i for domain in DOMAINS.values() for a,i in domain.items()}
 BASE_INS=OWN|EOI|DISPLAY|BOUNDARY
-INS=BASE_INS|SWAP|poll.INS|text.INS
+SCREEN_INS={i.address:i for a,b in ((0x4BF5,0x4C17),(0x8808,0x8822),(0x4DC2,0x4DF7),(0x4DF8,0x4E37)) for i in base.MD.disasm(base.IMAGE[a:b],a)}
+INS=BASE_INS|SWAP|poll.INS|text.INS|SCREEN_INS|background.INS|palette.INS
 EDGES=base.direct_jump_edges(OWN)
-RET={'irq':0x17B3,'command':0x17BD,'wait':0x17C6,'install':0x1581,'reader':0x4D4C,'scale':0x4401,'choice':0x43ED,'controller':0x4401,'mode':0x4401}
+RET={'irq':0x17B3,'command':0x17BD,'wait':0x17C6,'install':0x1581,'reader':0x4D4C,'scale':0x4401,'choice':0x43ED,'controller':0x4401,'mode':0x4401,'screen':0x4401}
 SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=420,384,500_000,150_000
 REPORT=BUILD/'keyboard-input-differential.json'
 BINDING=(0x7100,0x210);HARDWARE=(0xD00D,0x6201,0x246)
@@ -177,24 +180,43 @@ def cases():
         ('missing-input',{'missing_in':True,'expected':3,'child_status':1}),
         ('offset-wrap',{'selection_chars':(0x33,),'sp':1}),
     )]
+    rows += [dict(name='screen-'+n,entry='screen',**kw) for n,kw in (
+        ('keyboard',{}),('no-mouse',{'mouse_gate':0xFF}),
+        ('mouse-fe',{'mouse_gate':0xFE,'menu_text':bytes((1,1,0,33,13,0))}),
+        ('rgb',{'palette_mode':4}),('pinned-text',{'pinned_text':True}),
+        ('layout-far-changed',{'screen_patch':'layout','expected':3,'child_status':2}),
+        ('palette-return-changed',{'screen_patch':'palette','expected':4}),
+        ('background-far-changed',{'screen_patch':'background','expected':3,'child_status':2}),
+        ('text-return-changed',{'screen_patch':'text','expected':4}),
+        ('copy-return-changed',{'screen_patch':'copy','expected':4}),
+        ('status-return-changed',{'screen_patch':'wait','expected':4}),
+        ('display-return-changed',{'screen_patch':'display','expected':4}),
+        ('late-mouse-disabled',{'screen_gate':0xFF}),
+        ('late-mouse-enabled',{'mouse_gate':0xFF,'screen_gate':0}),
+        ('stack-offset-wrap',{'sp':1}),('stack-physical-wrap',{'ss':0xFFFF,'sp':0x11,'expected':4}),('controller',{'selection_chars':(0x32,0x34),'mode_expected':1}),
+        ('clear-return-changed',{'screen_patch':'clear','expected':4}),
+        ('missing-word-output',{'missing_word_out':True,'expected':3,'child_status':2}),
+        ('missing-palette-input',{'missing_in':True,'expected':3,'child_status':1}),
+        ('missing-palette-output',{'missing_out':True,'expected':3,'child_status':2}),
+    )]
     rows += [dict(name=f'{entry}-load-{load:04x}',entry=entry,load=load) for entry in RANGES for load in base.LOADS]
     return [dict(load=0x1010,seed=0x16D4+i,raw=0x20,suppression=0,controller=0,flags=0xD7,
-                 selection_chars=(0x33,) if c['entry']=='mode' else (0x32,))|c for i,c in enumerate(rows)]
+                 selection_chars=(0x33,) if c['entry'] in ('mode','screen') else (0x32,))|c for i,c in enumerate(rows)]
 
 
 def setup(c):
     memory,device=base.initial_memory(c)
-    ds=c.get('runtime_ds',(c['load']+0x9A9)&0xFFFF if c['entry'] in ('controller','mode') else 0x3000)
+    ds=c.get('runtime_ds',(c['load']+0x9A9)&0xFFFF if c['entry'] in ('controller','mode','screen') else 0x3000)
     r=base.default_regs(c['load'],c['seed'],ds=ds,ss=c.get('ss',0x5000),sp=c.get('sp',0x9000),flags=c['flags'])
     r['ip']=RANGES[c['entry']][0]
     for frame in (ds,0x3600):
         base.put8(memory,frame,0x200A,c['controller']);base.put8(memory,frame,0x200B,c['suppression'])
         put16(memory,frame,0x1FC7,c.get('keymask',0xA55A));put16(memory,frame,0x14,c.get('buttons',0xBEEF))
-        base.put8(memory,frame,0x1FD0,c.get('latch',0 if c['entry'] in ('choice','controller','mode') else 0x91))
+        base.put8(memory,frame,0x1FD0,c.get('latch',0 if c['entry'] in ('choice','controller','mode','screen') else 0x91))
         base.put8(memory,frame,0x1F73,c.get('mouse_gate',0))
         for i,v in enumerate(c.get('bindings',BINDINGS)):base.put8(memory,frame,0x201F+i,v)
-        for i in range(0x53):base.sync_memory_byte(memory,device,frame,0xF78+i,c.get('states',{}).get(i,0 if c['entry'] in ('reader','scale','controller','mode') else 0x37))
-        if c['entry'] in ('reader','scale','controller','mode') or c.get('character_fixture'):
+        for i in range(0x53):base.sync_memory_byte(memory,device,frame,0xF78+i,c.get('states',{}).get(i,0 if c['entry'] in ('reader','scale','controller','mode','screen') else 0x37))
+        if c['entry'] in ('reader','scale','controller','mode','screen') or c.get('character_fixture'):
             for i,v in enumerate(PINNED_CHARACTERS):base.sync_memory_byte(memory,device,frame,0x202E+i,c.get('character_override',{}).get(i,v))
             if 'character_zero' in c:base.sync_memory_byte(memory,device,frame,0x202E,c['character_zero'])
         put16(memory,frame,0x1FDA,c.get('crtc',0x3D4),device)
@@ -203,11 +225,16 @@ def setup(c):
         for off,v in ((0x66F0,350),(0x66F2,1664),(0x66F4,208),(0x26,0x1000)):
             put16(memory,frame,off,v,device)
         base.put8(memory,frame,0x2A,0)
-        for start,size in ((0x4E85,36),(0x4EA9,38)):
+        for start,size in ((0x4E3A,52),(0x4E6E,23),(0x4E85,36),(0x4EA9,38)):
             stream=base.IMAGE[0x9A90+start:0x9A90+start+size] if c.get('pinned_text') else c.get('menu_text',b'\0')
             for i,v in enumerate(stream):base.sync_memory_byte(memory,device,frame,start+i,v)
         for off,v in ((0x10,0x60),(0x12,0x30),(0x16,0x10),(0x18,0x10)):put16(memory,frame,off,v)
         base.put8(memory,frame,0x25A6,c.get('initial_mode',2))
+    if c['entry']=='screen':
+        put16(memory,ds,0x1F7C,c.get('palette_mode',2),device)
+        base.put8(memory,ds,0x200C,0xFF)
+        for start,value in ((0x2638,0),(0x2608,1),(0x4920,2)):
+            for i in range(64):base.sync_memory_byte(memory,device,ds,start+i,value)
     put16(memory,0,0x84,BINDING[1]);put16(memory,0,0x86,BINDING[0])
     put16(memory,0,0x24,0xD123);put16(memory,0,0x26,0x6800)
     put16(memory,c['load'],0x16D9,(c['load']+0x9A9)&0xFFFF if c.get('late_operand') else ds)
@@ -242,9 +269,9 @@ def dos_provider(c):
 
 class Access(base.BusAccess):
     def __init__(self,c,memory,r,device):
-        super().__init__(c,memory,r,device,max_events=MAX_EVENTS)
+        super().__init__(c,memory,r,device,max_events=600_000 if c['entry']=='screen' else MAX_EVENTS)
         self.choice_cursor=0;self.axis_cursor=0;self.charged=False
-        self.display_cursor=0
+        self.display_cursor=0;self.selection_cursor=0
     def access(self,kind,address,flags,mask=base.FLAGS,value=None):
         v=super().access(kind,address,flags,mask,value)
         if kind=='write' and self.c.get('late_operand') and 'operand' not in self.providers:
@@ -257,6 +284,19 @@ class Access(base.BusAccess):
             self.patch(self.r['ss'],(self.r['sp']-2)&0xFFFF,0xD234,'scale-return')
         if kind=='read' and address==physical(self.r['ds'],0x4E85) and self.c.get('controller_patch')=='text' and 'controller-return' not in self.providers:
             self.patch(self.r['ss'],(self.r['sp']-2)&0xFFFF,0xD234,'controller-return')
+        if self.c['entry']=='screen':
+            phase=self.c.get('screen_patch')
+            triggers={'layout':('write',0x66F0,-6),'palette':('read',0x2608,-2),
+                'background':('read',0x1FE4,-12),'text':('read',0x4E3A,-2),'copy':('read',0x1F78,-2)}
+            if phase in triggers and 'screen-return' not in self.providers:
+                op,off,delta=triggers[phase]
+                # Copy's origin read occurs after its PUSH DS. Earlier reads
+                # at layout/background are excluded by the live outer frame.
+                frame=get16(self.memory,self.r['ss'],(self.r['sp']-2)&0xFFFF)
+                if kind==op and address==physical(self.r['ds'],off) and (phase!='copy' or frame==0x4A25):
+                    self.patch(self.r['ss'],(self.r['sp']+delta)&0xFFFF,0xD234,'screen-return')
+            if kind=='read' and address==physical(self.r['ds'],0x4E3A) and 'screen_gate' in self.c and 'screen-gate' not in self.providers:
+                self.patch(self.r['ds'],0x1F73,self.c['screen_gate'],'screen-gate',word=False)
         return v
     def inp(self,port,flags,mask=base.FLAGS):
         if port==0x64:
@@ -279,7 +319,7 @@ class Access(base.BusAccess):
             delta=2 if phase in ('choice','sample') else 4 if phase=='axes' else None
             if delta is not None and 'controller-return' not in self.providers and ((phase=='choice' and not self.charged) or (phase=='sample' and self.axis_cursor==len(seq)) or (phase=='axes' and self.charged)):
                 self.patch(self.r['ss'],(self.r['sp']-delta)&0xFFFF,0xD234,'controller-return')
-        elif self.c['entry'] in ('scale','controller','mode'):
+        elif self.c['entry'] in ('scale','controller','mode','screen'):
             crtc=self.c.get('crtc',0x3D4)
             check(port==((crtc&0xFF00)|((crtc+6)&255)),'unexpected display-status byte port')
             count=self.display_cursor;self.display_cursor+=1
@@ -287,8 +327,11 @@ class Access(base.BusAccess):
             if self.c.get('selection_from_state'):
                 check(self.cursor<=76,'finite held-key repeat schedule exhausted')
                 self.emit('in',port,v,flags,mask);return v
-            if count%4==3:
-                chars=self.c.get('selection_chars',(0x32,));index=count//4
+            if self.c.get('screen_patch')=='wait' and get16(self.memory,self.r['ss'],(self.r['sp']-2)&0xFFFF)==0x4A28 and 'screen-return' not in self.providers:
+                self.patch(self.r['ss'],(self.r['sp']-2)&0xFFFF,0xD234,'screen-return')
+            active=self.c['entry']!='screen' or get16(self.memory,self.r['ss'],(self.r['sp']-2)&0xFFFF) in (0x4A31,0x4AA2)
+            if count%4==3 and active:
+                chars=self.c.get('selection_chars',(0x32,));index=self.selection_cursor;self.selection_cursor+=1
                 check(index<len(chars),'finite menu input exhausted')
                 self.patch(self.r['ds'],0xF79,0x94,'scale-state',word=False)
                 self.patch(self.r['ds'],0x202F,chars[index],'scale-character',word=False)
@@ -308,6 +351,10 @@ class Access(base.BusAccess):
             self.patch(self.r['ss'],(self.r['sp']-10)&0xFFFF,0xD234,'return')
     def out_word(self,port,v,flags,mask=base.FLAGS):
         self.emit('out',port,v,flags,mask)
+        if self.c.get('screen_patch')=='clear' and 'screen-return' not in self.providers:
+            self.patch(self.r['ss'],(self.r['sp']-2)&0xFFFF,0xD234,'screen-return')
+        if self.c.get('screen_patch')=='display' and port==self.c.get('crtc',0x3D4) and 'screen-return' not in self.providers:
+            self.patch(self.r['ss'],(self.r['sp']-2)&0xFFFF,0xD234,'screen-return')
         if port in (0x3C4,0x3CE):self.device.out(port,v,flags)
         else:check(port==self.c.get('crtc',0x3D4),'unexpected constructed CRTC port')
         if port in (0x3C4,0x3CE) and self.c.get('controller_patch')=='glyph' and 'controller-return' not in self.providers:
@@ -318,37 +365,56 @@ class Access(base.BusAccess):
 
 class Machine(base.OriginalMachine):
     def __init__(self,c,memory,r,device,core):
-        self.child_status=0
+        self.child_status=0;far_frames=[]
+        def far_expected(m,off):
+            check(bool(far_frames),'unexpected far return')
+            return {(c['load'],far_frames.pop())}
         def before(m,i):
-            if c['entry'] in ('scale','controller','mode') and i.address==0x4401:m.stop(0);return True
+            if c['entry']=='screen' and c.get('missing_word_out') and i.address==0x4DF8:
+                m.child_status=2;m.stop(3);return True
+            if i.mnemonic=='lcall':far_frames.append(i.address+i.size)
+            if c['entry'] in ('scale','controller','mode','screen') and i.address==0x4401:m.stop(0);return True
             if i.mnemonic=='out' and i.operands[-1].size==2 and c.get('missing_word_out'):
                 m.child_status=1;m.stop(3);return True
-            missing=(i.mnemonic=='in' and c.get('missing_in')) or (i.mnemonic=='out' and c.get('missing_out'))
+            missing=(i.mnemonic=='in' and c.get('missing_in')) or (i.mnemonic=='out' and i.operands[-1].size==1 and c.get('missing_out'))
             if not missing:return False
             if c['entry'] in ('wait','command'):m.stop(1)
-            elif i.address in (0x17C0,0x17BA,0x18B4,0x1557,0x155C) or c['entry'] in ('controller','mode'):m.child_status=1;m.stop(3)
+            elif c['entry']=='screen' and i.address in palette.INS:
+                m.child_status=1 if i.mnemonic=='in' else 2;m.stop(3)
+            elif i.address in (0x17C0,0x17BA,0x18B4,0x1557,0x155C) or c['entry'] in ('controller','mode','screen'):m.child_status=1;m.stop(3)
             else:m.stop(1 if i.mnemonic=='in' else 2)
             return True
         def changed(m,off):
+            if off==0x8821:m.child_status=2;return (3,0)
+            if off==0x7EB1:return (4,0)
+            if c['entry']=='screen' and off in palette.INS and off not in (0x5600,0x563D) and m.state()['sp']!=r['sp']:
+                m.child_status=5;return (3,0)
             if off==0x17C6:
                 if c['entry']=='irq':m.child_status=2;return (3,0)
                 return (2,0)
             if off==0x43CD:m.child_status=2;return (3,0)
-            if off==0x4C46:m.child_status=2;return (3,0)
+            if off==0x4C46:
+                if c['entry']=='screen' and m.state()['sp']==r['sp']:return (4,0)
+                m.child_status=2;return (3,0)
             if off==0x4DC1:m.child_status=2;return (3,0)
-            if off in text.INS and text.INS[off].mnemonic=='retf':m.child_status=1;return (3,0)
+            if off in INS and INS[off].mnemonic=='retf':
+                m.child_status=2 if c['entry']=='screen' else 1;return (3,0)
+            if off in (0x99E7,0x9A0B,0x9A14,0x9A8E):m.child_status=1;return (3,0)
             return (4,0)
         def interrupt(m,number):
             check(number==0x21,'unexpected keyboard interrupt')
             m.software_interrupt(number,m.state()['ip'],BINDING,dos_provider(c))
             if m.stopped:m.status={1:5,2:6,3:7}[m.status]
-        super().__init__(c,memory,r,device,core,instructions=INS if c['entry'] in ('controller','mode') else BASE_INS,access=Access(c,memory,r,device),
+        super().__init__(c,memory,r,device,core,instructions=INS if c['entry'] in ('controller','mode','screen') else BASE_INS,access=Access(c,memory,r,device),
             outer_returns={0x4D2D,0x4D4C} if c['entry']=='reader' else {RET[c['entry']]},
-            child_returns={0x17C6:{0x17B9},0x17BD:{0x16E9,0x17AF},0x18B6:{0x17A3},0x1561:{0x4AA2,0x4A31},0x4D2D:{0x4AA5,0x4A34},0x4D4C:{0x4AA5,0x4A34},
-                0x43ED:{0x4A5B},0x4358:{0x4A73},0x4385:{0x4A8B},0x43CD:{0x4341,0x4366},0x4D77:{0x4A55,0x4A9C},
-                0x4DC1:{0x4D70},0x4C46:{0x4C27},0x4C31:{0x4A58,0x4A9F}},
-            max_steps=MAX_STEPS,before=before,interrupt=interrupt,changed_return_status=changed,mutable_operands=((0x16D9,2),),
-            far_returns={p:{(c['load'],0x4DC0)} for p,i in text.INS.items() if i.mnemonic=='retf'} if c['entry'] in ('controller','mode') else None)
+            child_returns={0x17C6:{0x17B9},0x17BD:{0x16E9,0x17AF},0x18B6:{0x17A3},0x1561:{0x4AA2,0x4A31,0x4A28,0x55F1,0x55F4,0x55F7,0x5634},0x4D2D:{0x4AA5,0x4A34},0x4D4C:{0x4AA5,0x4A34},
+                0x43ED:{0x4A5B},0x4358:{0x4A73},0x4385:{0x4A8B},0x43CD:{0x4341,0x4366},0x4D77:{0x4A55,0x4A9C,0x4A14,0x4A22},
+                0x4DC1:{0x4D70},0x4C46:{0x4C27,0x4A2B},0x4C31:{0x4A58,0x4A9F},
+                0x99E7:{0x884F},0x9A0B:{0x884F},0x9A14:{0x884F},0x9A8E:{0x885E},0x4E36:{0x4A04},0x4C16:{0x4A07},0x4DEE:{0x4A25},0x7EB1:{0x4A0D},0x5600:{0x4A0A,0x4A2E},0x563D:{0x4A0A,0x4A2E},
+                0x5446:{0x55E4},0x5506:{0x5627},0x566B:{0x55EC},0x570B:{0x562F},
+                0x5684:{0x564E},0x5695:{0x5657},0x56E1:{0x5660,0x567C,0x5691},0x571E:{0x56ED,0x56F8,0x5703},0x5725:{0x56ED,0x56F8,0x5703}},
+            max_steps=2_000_000 if c['entry']=='screen' else MAX_STEPS,before=before,interrupt=interrupt,changed_return_status=changed,mutable_operands=((0x16D9,2),),
+            far_returns={p:far_expected for p,i in INS.items() if i.mnemonic=='retf'} if c['entry'] in ('controller','mode','screen') else None)
     def run(self):
         out=super().run();out.update(child_status=self.child_status,service_status=self.service_status,
             services=self.access.service_events,transport_events=self.access.transport_events)
@@ -381,6 +447,9 @@ class Native:
             fn=self.lib.lmn_select_input_mode
             fn.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.POINTER(base.Ports),ct.POINTER(base.Bus)];fn.restype=Result
             self.functions['mode',core]=fn
+            fn=self.lib.lmn_show_input_selection
+            fn.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.POINTER(base.Ports),ct.POINTER(base.Bus)];fn.restype=Result
+            self.functions['screen',core]=fn
     def run(self,c,memory,r,device,core,*,copy_state=True):
         if copy_state:memory,device=bytearray(memory),copy.deepcopy(device)
         access=Access(c,memory,r,device);cb=base.NativeCallbacks(access,missing_in=c.get('missing_in'),missing_out=c.get('missing_out'))
@@ -400,8 +469,14 @@ class Native:
 def independent(c,memory,r,ref,core):
     if ref['status']:return
     out=ref['regs'];entry=c['entry'];ds=r['ds']
-    if entry=='mode':
+    if entry in ('mode','screen'):
         check(out['ip']==0x4401 and out['sp']==r['sp'] and ref['memory'][physical(ds,0x25A6)]==c.get('mode_expected',2),'input mode/continuation/frame differs')
+        if entry=='screen':
+            check((get16(ref['memory'],ds,0x66F0),get16(ref['memory'],ds,0x66F2),get16(ref['memory'],ds,0x66F4))==(350,640,80),'screen layout fields differ')
+            if c.get('mode_expected',2)==2:
+                check((get16(ref['memory'],ds,0x1F76),get16(ref['memory'],ds,0x1F78),get16(ref['memory'],ds,0x1F7A))==(0,0x6D60,0),'screen page origins differ')
+                check(all(plane[:0x6D60]==plane[0x6D60:0xDAC0] for plane in ref['device'].planes),'screen copy did not preserve all four planes')
+            if 'screen_gate' in c:check('screen-gate' in ref['providers'],'live prompt gate provider was not consumed')
         return
     if entry=='choice':
         latch=c.get('latch',0);seq=c.get('choice_samples',(0xEF,))
@@ -508,7 +583,7 @@ def hashes():
     paths=set(poll.hashes())|{'tests/keyboard_input.py','c/keyboard_input.c','c/keyboard_input.h','src/entry_services.asm','src/image_tail.asm',
         'src/game_code_late_after_decimal.asm','src/input_menu_and_retry.asm','c/display_status.c','c/display_status.h'}
     paths|=FIXTURE_SOURCES
-    paths|={'c/'+n+suffix for n in (*text.glyph.SOURCES,'text_stream','display_start') for suffix in ('.c','.h')}
+    paths|={'c/'+n+suffix for n in (*text.glyph.SOURCES,'text_stream','display_start','background_drawing','display_setup','drawing_layout','display_pages','vga_clear','palette_transition','palette_rows','palette_channels','palette_ports') for suffix in ('.c','.h')}
     paths|={'src/planar_drawing.asm'}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 
@@ -616,6 +691,32 @@ def handoff(native,load):
     return stages
 
 
+def screen_handoff(native,load):
+    """Screen -> calibration -> input on actual returned RAM and device planes."""
+    c=next(c for c in cases() if c['name']=='screen-controller')|dict(load=load,axis_samples=(3,1,1,0),selection_chars=(0x32,0x32))
+    memory,r,device=setup(c);ds=r['ds'];before=bytearray(memory)
+    ref=Machine(c,memory,dict(r),device,False).run()
+    independent(c,before,r,ref,False)
+    actual=native.run(c,before,r,copy.deepcopy(setup(c)[2]),False) if native else None
+    if actual:base.compare_states(c['name']+'-prepared',actual,ref)
+    stages=[(c['name']+f'-prepared-{load:04x}',ref)]
+    check((get16(ref['memory'],ds,0x25A2),get16(ref['memory'],ds,0x25A4),ref['memory'][physical(ds,0x2005)])==(3,1,2),'screen calibration handoff differs')
+    pc=dict(c,entry='input',mode=1,callback=0x4334,port_kind='low',samples=(3,)*128+(0,),buttons=0xCF,
+            dx=ref['regs']['dx'],base_x=0x60,base_y=0x30,baseline_x=3,baseline_y=1,scale=2)
+    def frame(out):
+        r=dict(out['regs'],ip=0x418C,sp=(out['regs']['sp']-2)&0xFFFF)
+        put16(out['memory'],r['ss'],r['sp'],0xD00D,out['device']);return r
+    before=bytearray(ref['memory']);r=frame(ref)
+    ref=poll.Machine(pc,ref['memory'],r,ref['device'],False).run()
+    poll.independent(pc,before,r,ref,False)
+    if actual:
+        nr=frame(actual);actual=native.poll.run(pc,actual['memory'],nr,actual['device'],BINDING,False)
+        base.compare_states(c['name']+'-screen-input',actual,ref)
+    check((get16(ref['memory'],ds,0x10),get16(ref['memory'],ds,0x12))==(0x63,0x37),'prepared screen configuration did not reach input movement')
+    stages.append((c['name']+f'-input-{load:04x}',ref))
+    return stages
+
+
 def worker(directory=None,snapshot=None):
     before=hashes()
     if snapshot:check(before==json.loads(Path(snapshot).read_text()),'keyboard snapshot changed')
@@ -627,19 +728,20 @@ def worker(directory=None,snapshot=None):
             provider_events=sum(e.get('provider_events',0) for e in ref['services']),service_calls=len(ref['services']),
             far_return_events=ref.get('far_return_events',0)))
     for c in cases():
-        for core in ((False,) if c['entry'] in ('scale','controller','mode') else (True,False)):
+        for core in ((False,) if c['entry'] in ('scale','controller','mode','screen') else (True,False)):
             record(c['name'],core,compare(native,c,core))
         gc.collect()
         if (c['entry']=='irq' and c['raw']%32==0) or (c['name'].startswith(('reader-byte-','choice-byte-')) and int(c['name'][-2:],16)%32==0) or (not c['name'].startswith(('irq-scan','reader-byte','reader-index','choice-byte'))):print('CHECKED '+c['name'],flush=True)
     for load in base.LOADS:
         for name,ref in handoff(native,load):record(name,False,ref)
+        for name,ref in screen_handoff(native,load):record(name,False,ref)
         gc.collect();print(f'CHECKED same-RAM keyboard/input handoff{load:04x}',flush=True)
     check(set(OWN)<=sites,'keyboard sites missing: '+str(sorted(set(OWN)-sites)))
     check(EDGES<=edges,'keyboard outcomes missing: '+str(sorted(EDGES-edges)))
     mutations=[]
     if native:
         lookup={c['name']:c for c in cases()}
-        for mutation,name in ((1,'wait-counter-exhausted'),(2,'command-clear'),(3,'irq-special-zero-lookup'),(4,'irq-scan-53-gate-00'),(5,'irq-relocated-ds'),(6,'irq-eoi-return-changed'),(7,'install-query-returned-ds'),(8,'reader-reload'),(9,'reader-index-00'),(10,'reader-live-second-read'),(11,'scale-upper-then-three'),(12,'controller-high'),(13,'controller-asymmetric-low'),(14,'mode-mouse-gate-fe'),(15,'mode-escape')):
+        for mutation,name in ((1,'wait-counter-exhausted'),(2,'command-clear'),(3,'irq-special-zero-lookup'),(4,'irq-scan-53-gate-00'),(5,'irq-relocated-ds'),(6,'irq-eoi-return-changed'),(7,'install-query-returned-ds'),(8,'reader-reload'),(9,'reader-index-00'),(10,'reader-live-second-read'),(11,'scale-upper-then-three'),(12,'controller-high'),(13,'controller-asymmetric-low'),(14,'mode-mouse-gate-fe'),(15,'mode-escape'),(16,'screen-mouse-fe'),(17,'screen-keyboard')):
             try:compare(Native(directory,mutation),lookup[name],True)
             except base.Mismatch as error:mutations.append(dict(mutation=mutation,case=name,completed=True,mismatch=str(error)))
             else:raise base.OracleFailure(f'keyboard mutant{mutation} survived')
@@ -649,14 +751,14 @@ def worker(directory=None,snapshot=None):
         image='main',image_sha256=sha(base.IMAGE),own_known_bytes=sum(i.size for i in OWN.values()),
         entry_code_ranges={name:list(span) for name,span in RANGES.items()},
         known_connected_bytes=sum(ins.size for at,ins in (INS|poll.INS).items() if at not in BOUNDARY),
-        case_count=len(cases())+len(base.LOADS),single_case_count=len(cases()),handoff_count=len(base.LOADS),comparison_count=len(rows),executed_instruction_addresses=sorted(sites),own_executed_instruction_addresses=sorted(set(OWN)&sites),
+        case_count=len(cases())+2*len(base.LOADS),single_case_count=len(cases()),handoff_count=2*len(base.LOADS),comparison_count=len(rows),executed_instruction_addresses=sorted(sites),own_executed_instruction_addresses=sorted(set(OWN)&sites),
         branch_edges=sorted(edges),own_branch_edges=sorted(EDGES),instruction_steps=sum(r['steps'] for r in rows),ordered_bus_events=sum(r['events'] for r in rows),
         declared_interrupt_transport_events=sum(r['transport_events'] for r in rows),declared_provider_events=sum(r['provider_events'] for r in rows),declared_service_calls=sum(r['service_calls'] for r in rows),
         declared_far_return_events=sum(r['far_return_events'] for r in rows),
         reference_limits=dict(retf_selector_ea_wrap_sp=[0xFFFE,0xFFFF]),
         mutation_count=len(mutations),mutations=mutations,input_hashes=before,rows=rows,
-        limits=dict(timeout_seconds=SECONDS,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
-        scope='Keyboard16D4, controller17B4/17BE, DOS installer1562, reader4D1A, choice43CE and active input menu4A2E..4AC4 with native text/glyph/renderer, EOI/input/display children; same-RAM configuration-to-input handoffs. Screen preparation4A01..4A2D and menu continuation4401 remain untranslated. Declared RETF observation rejects selector-EA wrap at SPFFFE/FFFF pending an independent oracle; no scheduling/platform-body proof.'))
+        limits=dict(timeout_seconds=SECONDS,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS,screen_instructions=2_000_000,screen_events=600_000),
+        scope='Keyboard16D4, controller17B4/17BE, DOS installer1562, reader4D1A, choice43CE and complete input-selection screen4A01..4AC4 with native text/glyph/renderer, EOI/input/display children; same-RAM configuration-to-input handoffs. Screen preparation4A01..4A2D composes tested native children; enclosing menu continuation4401 remains untranslated. Declared RETF observation rejects selector-EA wrap at SPFFFE/FFFF pending an independent oracle; no scheduling/platform-body proof.'))
     print(f'PASS keyboard: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(EDGES)} own outcomes,{len(mutations)} mutants',flush=True)
 
 

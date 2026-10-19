@@ -981,3 +981,16 @@ SPFFFE/FFFF fails explicitly pending independent evidence; it is not a proven C
 domain merely because the ordinary far-return tests pass. Next connect screen
 preparation4A01..4A2D before broader43F2 composition; see verification.md and
 next-work.md for retained platform, callback and UNKNOWN frontiers.
+
+
+Screen preparation4A01..4A2D adds45 bytes, taking the main C ledger union to27,627.
+The complete196-byte input-selection continuation now composes clear, layout,
+palettes, background, pinned text, page copy/display and active choice/calibration.
+The shared keyboard campaign passes1,289 fixtures/2,541 comparisons,229 own sites/
+79 outcomes and17 mutants in6,750 known connected bytes. Six same-RAM handoffs
+include prepared screen -> calibration -> input, preserving actual configuration.
+Plane equality,640x350 layout, live prompt gating and changed return frames remain
+explicit. Peak trace329,527 events stays under the screen's600,000-event limit and
+384MiB worker cap; the shared engine is unchanged. No aggregate or SDL3 acceptance
+is implied. Fresh4FF8 graph views put its ten-record initializer before4F96's
+renderer; audit eleven-byteDS4960 records and upstream graphics producers next.

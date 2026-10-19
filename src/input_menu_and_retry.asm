@@ -663,25 +663,38 @@ loc_49F9:
     loop loc_49F9 ; @049FC
     jmp loc_4401 ; @049FE
 loc_4A01:
+ShowInputSelection4A01:
+; Clear precedes origin initialization. Actual near/far child frames and live
+; palette/background/text state flow to4A2E with no invented parent RET.
+; Mouse prompt is skipped only for exactFF. docs/keyboard-input.md.
     call ClearFullDrawingPage ; @04A01
+InputScreenAfterClear4A04:
     call InitializeDisplayOrigins ; @04A04
+InputScreenAfterLayout4A07:
     call TransitionPaletteToSlot1 ; @04A07
+InputScreenAfterPalette1_4A0A:
     call DrawScreenBackground ; @04A0A
-    lea si,[0x4e3a] ; @04A0D
+InputScreenAfterBackground4A0D:
+    lea si,[InputChoiceText4E3A-GameDataImage] ; @04A0D
     call DrawTextStream ; @04A11
+InputScreenAfterText4A14:
     cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @04A14
     jz loc_4A22 ; @04A19
-    lea si,[0x4e6e] ; @04A1B
+    lea si,[MouseChoiceText4E6E-GameDataImage] ; @04A1B
     call DrawTextStream ; @04A1F
 loc_4A22:
+InputScreenAfterMouseText4A22:
     call CopyDrawingPageToAlternate ; @04A22
+InputScreenAfterCopy4A25:
     call WaitForDisplayStatusBit3Cycle ; @04A25
+InputScreenAfterWait4A28:
     call ProgramAlternateDisplayStart ; @04A28
+InputScreenAfterDisplay4A2B:
     call TransitionPaletteToSlot2 ; @04A2B
 loc_4A2E:
 ; Active input menu: actual display/character CALLs, exactFF mouse gate1F73,
 ; controller calibration, mode0/2 stores and scale loop. Escape preserves mode.
-; Complete native domain4A2E..4AC4 ends at4401; screen preparation remains open.
+; Active selection4A2E..4AC4 ends at4401; screen preparation is composed above.
 ; See docs/keyboard-input.md for constructed-state and RETF reference limits.
 SelectInputMode4A2E:
     call WaitForDisplayStatusBit3Cycle ; @04A2E

@@ -53,4 +53,8 @@ LmnKeyboardResult lmn_select_input_controller(uint8_t *memory,
    controller calibration and scale selection. Ends at original4401. */
 LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers,
     const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+/* Screen preparation4A01..4A2D followed by the active menu to4401.
+   Reuses live canonical child state and actual CALL/RET frames. */
+LmnKeyboardResult lmn_show_input_selection(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
 #endif

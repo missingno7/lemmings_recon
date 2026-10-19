@@ -5795,3 +5795,5 @@ KeyboardCharacterTable202E equ GameDataImage+0x202e
 ControllerChoiceText4E85 equ GameDataImage+0x4e85
 ControllerScaleText4EA9 equ GameDataImage+0x4ea9
 
+InputChoiceText4E3A equ GameDataImage+0x4e3a
+MouseChoiceText4E6E equ GameDataImage+0x4e6e

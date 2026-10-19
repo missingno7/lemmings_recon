@@ -3,6 +3,10 @@
 #include "display_status.h"
 #include "display_start.h"
 #include "text_stream.h"
+#include "background_drawing.h"
+#include "display_setup.h"
+#include "display_pages.h"
+#include "palette_transition.h"
 
 #ifndef KEYBOARD_INPUT_MUTATION
 #define KEYBOARD_INPUT_MUTATION 0
@@ -394,18 +398,62 @@ static int menu_text(KeyboardState *s,uint16_t resume) {
     return 1;
 }
 
-static int menu_swap(KeyboardState *s,uint16_t resume) {
+static int menu_display(KeyboardState *s,uint16_t resume,enum LmnDisplayStartEntry entry) {
     LmnDisplayStartState in;
     LmnDisplayStartResult out;
     uint16_t cs=s->r.cs;
     push16(s,resume);
     in=(LmnDisplayStartState){s->r.ax,s->r.bx,s->r.cx,s->r.dx,s->r.si,s->r.di,s->r.bp,
         s->r.ds,s->r.es,s->r.ss,s->r.sp,s->r.flags};
-    out=lmn_program_display_start_core(s->memory,&in,LMN_DISPLAY_START_ENTRY_SWAP,s->bus);
+    out=lmn_program_display_start_core(s->memory,&in,entry,s->bus);
     s->r=(LmnRegs){out.state.value,out.state.base_value,out.state.count,out.state.argument,
         out.state.source_cursor,out.state.output_cursor,out.state.frame_cursor,out.state.stack_offset,
         cs,out.state.data_segment,out.state.extra_segment,out.state.stack_segment,out.continuation,out.state.flags};
     if(out.status){s->status=LMN_KEYBOARD_CHILD_STOP;s->child_status=(uint16_t)out.status;return 0;}
+    s->r.ip=pop16(s);
+    if(s->r.cs!=s->entry_cs||s->r.ip!=resume){s->status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return 0;}
+    return 1;
+}
+
+static int menu_swap(KeyboardState *s,uint16_t resume) {
+    return menu_display(s,resume,LMN_DISPLAY_START_ENTRY_SWAP);
+}
+
+/* These children share the same transient twelve-field ABI. Canonical RAM,
+   including all real CALL/save words, remains the only persistent state. */
+static int input_screen_child(KeyboardState *s,uint16_t resume,uint16_t entry) {
+    LmnVideoRestoreState in,out;
+    uint16_t cs=s->r.cs,ip,status;
+    push16(s,resume);
+    in=(LmnVideoRestoreState){s->r.ax,s->r.bx,s->r.cx,s->r.dx,s->r.si,s->r.di,s->r.bp,
+        s->r.ds,s->r.es,s->r.ss,s->r.sp,s->r.flags};
+    if(entry==CS_ClearFullDrawingPage||entry==CS_CopyDrawingPageToAlternate) {
+        LmnDisplayPagesResult child=entry==CS_ClearFullDrawingPage ?
+            lmn_clear_full_drawing_page_core(s->memory,&in,s->bus):
+            lmn_copy_drawing_page_core(s->memory,&in,s->bus);
+        out=child.state;ip=child.continuation;status=(uint16_t)child.status;
+    } else if(entry==CS_InitializeDisplayOrigins) {
+        LmnDisplaySetupResult child=lmn_setup_display_core(s->memory,cs,&in,
+            LMN_DISPLAY_SETUP_ENTRY_INITIALIZE,NULL,s->bus);
+        out=child.state;cs=child.code_segment;ip=child.continuation;status=(uint16_t)child.status;
+    } else if(entry==CS_DrawScreenBackground) {
+        LmnBackgroundDrawingResult child=lmn_draw_background_core(s->memory,cs,
+            (uint16_t)(s->entry_cs+0x09a9u),&in,LMN_BACKGROUND_DRAWING_FULL,s->bus,s->ports);
+        out=child.state;cs=child.code_segment;ip=child.continuation;status=(uint16_t)child.status;
+    } else {
+        LmnPaletteTransitionResult child=lmn_transition_palette_core(s->memory,cs,&in,
+            #if KEYBOARD_INPUT_MUTATION == 17
+            LMN_PALETTE_TRANSITION_SLOT1,
+#else
+            entry==CS_TransitionPaletteToSlot1?LMN_PALETTE_TRANSITION_SLOT1:LMN_PALETTE_TRANSITION_SLOT2,
+#endif
+            s->ports,s->bus);
+        out=child.state;cs=child.code_segment;ip=child.continuation;status=(uint16_t)child.status;
+    }
+    s->r=(LmnRegs){out.value,out.base_value,out.count,out.argument,
+        out.source_cursor,out.output_cursor,out.frame_cursor,out.stack_offset,
+        cs,out.data_segment,out.extra_segment,out.stack_segment,ip,out.flags};
+    if(status){s->status=LMN_KEYBOARD_CHILD_STOP;s->child_status=status;return 0;}
     s->r.ip=pop16(s);
     if(s->r.cs!=s->entry_cs||s->r.ip!=resume){s->status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return 0;}
     return 1;
@@ -489,4 +537,32 @@ LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers
             s.r.ip=CS_MenuRefresh4401;return result(&s);
         }
     }
+}
+
+LmnKeyboardResult lmn_show_input_selection(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    KeyboardState s=state(memory,registers,ports,bus);
+    if(!input_screen_child(&s,CS_InputScreenAfterClear4A04,CS_ClearFullDrawingPage)||
+       !input_screen_child(&s,CS_InputScreenAfterLayout4A07,CS_InitializeDisplayOrigins)||
+       !input_screen_child(&s,CS_InputScreenAfterPalette1_4A0A,CS_TransitionPaletteToSlot1)||
+       !input_screen_child(&s,CS_InputScreenAfterBackground4A0D,CS_DrawScreenBackground))return result(&s);
+    s.r.si=SEG09A9_InputChoiceText4E3A;
+    if(!menu_text(&s,CS_InputScreenAfterText4A14))return result(&s);
+    cmp8(&s,read8(&s,s.r.ds,SEG09A9_MouseServicesDisabledByte),0xffu);
+#if KEYBOARD_INPUT_MUTATION == 16
+    if(read8(&s,s.r.ds,SEG09A9_MouseServicesDisabledByte)==0u) {
+#else
+    if(!(s.r.flags&ZF)) {
+#endif
+        s.r.si=SEG09A9_MouseChoiceText4E6E;
+        if(!menu_text(&s,CS_InputScreenAfterMouseText4A22))return result(&s);
+    }
+    if(!input_screen_child(&s,CS_InputScreenAfterCopy4A25,CS_CopyDrawingPageToAlternate))return result(&s);
+    push16(&s,CS_InputScreenAfterWait4A28);s.r.ip=CS_WaitForDisplayStatusBit3Cycle;
+    lmn_wait_display_status_bit3_cycle_adapter(memory,&s.r,ports,bus);
+    if(!ports||!ports->in_byte){s.status=LMN_KEYBOARD_CHILD_STOP;s.child_status=1u;return result(&s);}
+    if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputScreenAfterWait4A28){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
+    if(!menu_display(&s,CS_InputScreenAfterDisplay4A2B,LMN_DISPLAY_START_ENTRY_SAVED)||
+       !input_screen_child(&s,CS_SelectInputMode4A2E,CS_TransitionPaletteToSlot2))return result(&s);
+    return lmn_select_input_mode(memory,&s.r,ports,bus);
 }

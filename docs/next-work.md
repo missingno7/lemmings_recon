@@ -2,14 +2,20 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is27,582 bytes. Choice43CE and the
-complete active input-menu domain4A2E..4AC4 add165 unique bytes and connect native
-text/glyph/renderer, display, calibration and input children in5,974 known bytes.
-The keyboard campaign passes1,262 fixtures/2,511 comparisons,215 own sites/77
-outcomes and15 mutants. Three14-stage same-RAM handoffs consume actual callback,
-baseline and scale results in input418C. Pinned choice/scale prompts render through
-native glyphs. Screen preparation4A01..4A2D and enclosing43F2/4401 remain open.
-See keyboard-input.md; RETF selector-EA wrap still requires an independent oracle.
+The main-image translated-code ledger union is27,627 bytes. Screen preparation
+4A01..4A2D adds45 unique bytes and connects the complete196-byte input-selection
+screen4A01..4AC4 through native clear/layout/palette/background/text/copy/display.
+The keyboard campaign passes1,289 fixtures/2,541 comparisons,229 own sites/79
+outcomes and17 completed mutants in6,750 known connected bytes. Six same-RAM
+handoffs include three prepared-screen/calibration/input paths. Full pinned
+prompts render through C; copied planes and640x350 layout have independent checks.
+Enclosing43F2/4401, upstream initialization and platform scheduling remain open.
+RETF selector-EA wrap still requires an independent oracle. See keyboard-input.md.
+
+The preceding active-menu checkpoint added165 unique bytes, taking the union to
+27,582. Choice43CE and4A2E..4AC4 connected text/glyph/renderer, display, calibration
+and input in5,974 known bytes. Its1,262 fixtures/2,511 comparisons covered215 own
+sites/77 outcomes and15 mutants, with three14-stage configuration/input handoffs.
 
 The preceding reader4D1A and the
 scoped scale-selection span4A9F..4AB4 add73 bytes and compose native display/input
@@ -100,12 +106,13 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Compose the45-byte screen-preparation prefix4A01..4A2D with the accepted active
-   input menu: clear/layout, palette transitions, background/text, page copy and
-   actual display children. Audit pointer/state initialization before constructing
-   fixtures. Continue43F2's menu domains; retain42A5 and UNKNOWN4C65/1696..16A8.
-   Before accepting far-return selector-EA wrap at SPFFFE/FFFF, obtain an independent
-   oracle: pinned Unicorn's real-mode selector load uses a non-wrapped linear EA.
+1. Continue43F2's connected menu domains. Fresh4FF8 tree/bottom-up views identify
+   its31-byte ten-record initializer as a leaf before4F96's98-byte renderer parent.
+   Audit liveDS:4960 eleven-byte record fields,8000 sentinel, shared initialization
+   and graphics-buffer producers before translating that pair in shared fixtures.
+   Retain42A5 and UNKNOWN4C65/1696..16A8. Before accepting far-return selector-EA
+   wrap atSPFFFE/FFFF, obtain an independent oracle: pinned Unicorn's real-mode
+   selector load uses a non-wrapped linear EA.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

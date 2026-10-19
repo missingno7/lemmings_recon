@@ -64869,7 +64869,7 @@
         19141
       ]
     ],
-    "verification_evidence": "tests/keyboard_input.py:extended shared campaign closes active input-mode menu4A2E..4AC4 with actual native display/text/choice/calibration/scale children,exactFF mouse gate and escape preserving prior mode. Containing43F2,screen-preparation4A01..4A2D and4401 continuation remain untranslated. Existingcontroller/scale bytes count once; docs/keyboard-input.md"
+    "verification_evidence": "tests/keyboard_input.py:extended shared campaign closes active input-mode menu4A2E..4AC4 with actual native display/text/choice/calibration/scale children,exactFF mouse gate and escape preserving prior mode. Containing43F2 and4401 continuation remain untranslated;4A01 screen preparation now composes this active span. Existingcontroller/scale bytes count once; docs/keyboard-input.md"
   },
   {
     "address": 18993,
@@ -64900,6 +64900,206 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Original active input-menu mode dispatch boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18945,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 196,
+    "symbol_name": "ShowInputSelection4A01",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/keyboard_input.c",
+    "c_code_ranges": [
+      [
+        18945,
+        19141
+      ]
+    ],
+    "verification_evidence": "tests/keyboard_input.py:1,289 fixtures/2,541 comparisons,229 own sites/79 outcomes and17 completed mutants. Full4A01 screen composes native clear/layout/palette/background/text/copy/display and active input selection in6,750 known bytes; six same-RAM handoffs. Only45 additional bytes count. Upstream initialization, enclosing43F2/4401, platform timing and RETF selector-EA wrap remain open; docs/keyboard-input.md"
+  },
+  {
+    "address": 18948,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterClear4A04",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18951,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterLayout4A07",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18954,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterPalette1_4A0A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18957,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterBackground4A0D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18964,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterText4A14",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18978,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterMouseText4A22",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18981,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterCopy4A25",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18984,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterWait4A28",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18987,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScreenAfterDisplay4A2B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned screen-preparation and active input-selection continuation; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20026,
+    "segment": 2473,
+    "kind": "data",
+    "size": 52,
+    "symbol_name": "InputChoiceText4E3A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned column/row/style text record consumed by4A01; UNKNOWN storage remains unresolved"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20078,
+    "segment": 2473,
+    "kind": "data",
+    "size": 23,
+    "symbol_name": "MouseChoiceText4E6E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned column/row/style text record consumed by4A01; UNKNOWN storage remains unresolved"
     ],
     "verification_status": "STATIC"
   }

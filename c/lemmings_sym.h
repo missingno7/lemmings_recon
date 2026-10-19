@@ -1025,4 +1025,16 @@
 #define CS_SelectInputMode4A2E 0x4A2Eu
 #define CS_InputModeAfterWait4A31 0x4A31u
 #define CS_InputModeAfterCharacter4A34 0x4A34u
+#define CS_ShowInputSelection4A01 0x4A01u
+#define CS_InputScreenAfterClear4A04 0x4A04u
+#define CS_InputScreenAfterLayout4A07 0x4A07u
+#define CS_InputScreenAfterPalette1_4A0A 0x4A0Au
+#define CS_InputScreenAfterBackground4A0D 0x4A0Du
+#define CS_InputScreenAfterText4A14 0x4A14u
+#define CS_InputScreenAfterMouseText4A22 0x4A22u
+#define CS_InputScreenAfterCopy4A25 0x4A25u
+#define CS_InputScreenAfterWait4A28 0x4A28u
+#define CS_InputScreenAfterDisplay4A2B 0x4A2Bu
+#define SEG09A9_InputChoiceText4E3A 0x4E3Au
+#define SEG09A9_MouseChoiceText4E6E 0x4E6Eu
 #endif

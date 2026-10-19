@@ -186,7 +186,7 @@ before input418C consumes its callback, baselines and scale. A later128-sample
 input pass moves the produced pointer from0060:002F to0063:0036 using that state.
 No baseline or record copy is substituted at the handoff.
 
-The current1,262 fixtures/2,511 comparisons cover215 own sites/77 outcomes and
+The active-menu checkpoint's1,262 fixtures/2,511 comparisons cover215 own sites/77 outcomes and
 detect15 completed mutants. The new witnesses cover high/low callback identity,
 separate X/Y baselines, exactFF mouse gating and escape preserving the old mode.
 Integrated execution covers665 sites/150 outcomes and1,300,443 original
@@ -202,5 +202,61 @@ limitation at SPFFFE/FFFF. That unresolved edge is not accepted as verified.
 The165 new bytes comprise36 choice bytes and129 additional menu bytes; existing
 reader/scale/controller ranges are unioned once. Worker limits remain420seconds/
 384MiB,500,000 original instructions and150,000 events per comparison. Opaque
-platform bodies, asynchronous delivery, screen preparation and the surrounding
-menu remain open; this is not aggregate or whole-game acceptance.
+platform bodies, asynchronous delivery and the surrounding menu remain open; this is not aggregate or whole-game acceptance.
+
+
+## Complete input-selection screen at4A01
+
+The45-byte prefix4A01..4A2D now composes the active selection into the196-byte
+4A01..4AC4 domain. Its public C entry is lmn_show_input_selection;4401 remains
+an explicit untranslated enclosing-menu continuation, with no invented outerRET.
+The first CALL clears6D60 bytes before4BF5 resets drawing/alternate/page origins
+to0000/6D60/0000 and the actual far8808 child sets640x350,80-byte pitch. Preserve
+that order: clear uses incomingDF, flags, SS mirror stores and caller frame.
+
+Palette slot1 precedes the actual5017 background, then the pinned52-byte choice
+stream atDS:4E3A. The live1F73 byte is reread only after that text returns: exactFF
+skips the23-byte mouse stream at4E6E, whileFE still draws it. Providers may change
+the gate during text; no cached gate is substituted. Both records retain UNKNOWN
+storage classification. The same canonical1F73 is read again by active selection.
+
+4DC2 copies all6D60 bytes to the alternate page,1550 waits on the constructed
+status schedule,4C32 programs that alternate origin, and palette slot2 returns
+directly into4A2E. Typed native child cores return all12 transient fields and any
+changedCS/continuation/status. Each actual nearRET consumes its liveSS frame only
+when its child reachesREADY; far layout/renderer returns retain their own actual
+frames. No persistent record, palette or video copy shadows canonical game state.
+
+Tests reuse existing instruction maps and tests/verification.py. Constructed state
+supplies the original palette-pointer targets2638/2608/4920 or4930, graphics/font
+banks and bounded VGA/CRTC providers. This proves composition under those declared
+inputs; it does not close upstream allocation, bank production or mode setup.
+Independent checks assert640x350 layout, final page origins and equality of all
+four copied planes. Full pinned strings render through native glyphs. A live gate
+change and changed clear/layout/palette/background/text/copy/status/display frames
+retain their original stops. WithSSFFFF/SP0011, the clear's physical mirror/stack
+alias changes its actual return to4AFF; both implementations stop there.
+
+Three additional same-RAM screen/calibration/input handoffs use actual produced
+callback4334, baselines3/1 and scale2. A128-sample input pass consumes them and
+moves0060:0030 to0063:0037. It does not rewrite the produced configuration.
+The prior three installation/IRQ/reader/calibration handoffs remain in the suite.
+
+The screen path has a separate cap of2,000,000 original instructions and600,000
+ordered events per comparison; other cases retain500,000/150,000. The worker still
+has420 seconds and384MiB Windows process-tree commit limits. Native callbacks
+remain fail-stop; exhaustion is failure, never mutation evidence. All compile/DLL
+directories remain owned bounded build temporaries. The shared verifier is unchanged.
+RETF selector-EA wrap atSPFFFE/FFFF still requires an independent reference; this
+milestone does not close that edge, asynchronous scheduling or native SDL3 services.
+
+
+The accepted screen checkpoint covers1,289 fixtures/2,541 comparisons, all229 own
+sites/79 direct outcomes,1,152 integrated sites/215 outcomes and17 completed
+mutants in6,750 known bytes. It executes6,325,691 original instructions and compares
+5,835,130 ordered events;1,296 declared interrupt-transport events,1,160 far-return
+observations and456 provider accesses across80 calls stay separately recorded.
+Peak comparison size is326,061 instructions/329,527 events. Two additional mutants
+exercise the exactFF prompt gate and slot2 transition. Only45 new main-image code
+bytes enter the ledger, taking its unique union to27,627. This is a local connected
+checkpoint; aggregate coverage still requires fresh full contracts/native campaigns.
