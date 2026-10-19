@@ -987,4 +987,8 @@
 #define CS_MenuTimerAfterInput4C75 0x4C75u
 #define CS_MenuTimerOuterIret4C7D 0x4C7Du
 #define CS_MenuTimerInstallReturn503A 0x503Au
+#define CS_GameTimerInstallAfterVector08 0x1650u
+#define CS_GameTimerSoundSegmentOperand 0x1653u
+#define CS_GameTimerInstallAfterVector60 0x165Fu
+#define CS_GameTimerInstallReturn 0x1695u
 #endif

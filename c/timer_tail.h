@@ -82,4 +82,23 @@ LmnTimerTailResult lmn_install_menu_timer_core(uint8_t *memory,
 LmnTimerTailResult lmn_install_menu_timer_adapter(uint8_t *memory,
     const LmnRegs *registers, const LmnRasterBus *bus);
 
+/* DOS-vector/PIT installer1644; the service owns all pre-IRET state.
+   Core stops before1695. Adapter consumes the actual returned SS:SP nearRET. */
+LmnTimerTailResult lmn_install_game_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnTimerTailResult lmn_install_game_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
+/* Cleanup16A9 with actual INT1A transport and full returned registers.
+   The older timer_restore.h API retains its narrower abstract BIOS contract.
+   Core before16D3; adapter consumes the actual post-BIOS nearRET. */
+LmnTimerTailResult lmn_restore_timer_interrupt_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *bios_clock,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnTimerTailResult lmn_restore_timer_interrupt_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *bios_clock,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
 #endif

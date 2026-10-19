@@ -1943,6 +1943,11 @@ loc_1629:
     in al,0x40 ; @0163F
     db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @01641
     ret ; @01643
+; DOS21 owns all returned registers and the actual SS:SP IRET frame.
+; Both POPDS are live. Sound segment1653 is a relocated instruction operand.
+; ADD DL wraps without carrying into DH; status port stays fixed across polls.
+; Reload1FC9 is read after polling. STI is unconditional; nearRET stays live.
+; See docs/timer-install.md for lifecycle boundaries and bounded evidence.
 InstallGameTimerVector:
     cli ; @01644
     push ds ; @01645
@@ -1951,13 +1956,16 @@ InstallGameTimerVector:
     pop ds ; @0164A
     mov dx,0x17c7 ; @0164B
     int 0x21 ; @0164E
+GameTimerInstallAfterVector08:
     pop ds ; @01650
     push ds ; @01651
+GameTimerSoundSegmentOperand equ $+1
     mov ax,0x842 ; @01652
     mov ds,ax ; @01655
     mov ax,0x2560 ; @01657
     mov dx,0x182 ; @0165A
     int 0x21 ; @0165D
+GameTimerInstallAfterVector60:
     pop ds ; @0165F
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @01660
     add dl,0x6 ; @01664
@@ -1970,7 +1978,7 @@ loc_166C:
     test al,0x8 ; @0166D
     jnz loc_166C ; @0166F
     cli ; @01671
-    mov cx,[0x1fc9] ; @01672
+    mov cx,[TimerPitReload1FC9-GameDataImage] ; @01672
     mov al,0x36 ; @01676
     out 0x43,al ; @01678
     jmp short loc_167C ; @0167A
@@ -1996,6 +2004,7 @@ loc_1692:
     jmp short loc_1694 ; @01692
 loc_1694:
     sti ; @01694
+GameTimerInstallReturn:
     ret ; @01695
 ; UNKNOWN: unresolved bytes
     db 0xfa,0xb0,0x36,0xe6,0x43,0x8b,0x0e,0xc9,0x1f,0x8a,0xc1,0xe6,0x40,0x8a,0xc5,0xe6 ; @01696

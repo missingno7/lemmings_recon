@@ -16,6 +16,9 @@
 #ifndef MENU_TIMER_MUTATION
 #define MENU_TIMER_MUTATION 0
 #endif
+#ifndef TIMER_INSTALL_MUTATION
+#define TIMER_INSTALL_MUTATION 0
+#endif
 
 enum {
     MEMORY_MASK = 0xfffff,
@@ -951,4 +954,147 @@ LmnTimerTailResult lmn_install_menu_timer_adapter(uint8_t *memory,
         out.registers = s.r;
     }
     return out;
+}
+
+/* Lifecycle entries share bus/flags/transport with the IRQ bodies. */
+static int lifecycle_interrupt(TimerTailState *s, uint8_t number,
+                               uint16_t resume,
+                               const LmnInterruptService *service) {
+    LmnInterruptResult out = lmn_interrupt_service(s->memory, &s->r,
+        number, resume, service, s->bus);
+    if (out.status == LMN_INTERRUPT_RETURNED) return 1;
+    s->service_status = out.service_status;
+    s->status = out.status == LMN_INTERRUPT_UNBOUND_SERVICE ?
+        LMN_TIMER_TAIL_UNBOUND_SERVICE :
+        out.status == LMN_INTERRUPT_PROVIDER_STOP ? LMN_TIMER_TAIL_EXTERNAL_STOP :
+        LMN_TIMER_TAIL_CHANGED_INTERRUPT_RETURN;
+    return 0;
+}
+
+LmnTimerTailResult lmn_install_game_timer_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    TimerTailState s = state_from_registers(memory, registers,
+        NULL, NULL, NULL, NULL, ports, bus);
+    uint8_t status;
+#if TIMER_INSTALL_MUTATION == 6
+    uint16_t cached_pit;
+#endif
+    s.r.flags &= (uint16_t)~IF;
+    push16(&s, s.r.ds);
+    s.r.ax = 0x2508u;
+    push16(&s, s.r.cs);
+    s.r.ds = pop16_from(&s, s.r.ss);
+    s.r.dx = CS_GameTimerIrqHandler;
+    if (!lifecycle_interrupt(&s, 0x21u, CS_GameTimerInstallAfterVector08, dos))
+        return result_of(&s);
+    s.r.ds = pop16_from(&s, s.r.ss);
+#if TIMER_INSTALL_MUTATION == 2
+    s.r.ds = s.entry_ds;
+#endif
+    push16(&s, s.r.ds);
+#if TIMER_INSTALL_MUTATION == 1
+    s.r.ax = (uint16_t)(s.entry_cs + 0x0842u);
+#else
+    s.r.ax = read_code_word(&s, CS_GameTimerSoundSegmentOperand);
+#endif
+    s.r.ds = s.r.ax;
+    s.r.ax = 0x2560u;
+    s.r.dx = 0x0182u;
+    if (!lifecycle_interrupt(&s, 0x21u, CS_GameTimerInstallAfterVector60, dos))
+        return result_of(&s);
+    s.r.ds = pop16_from(&s, s.r.ss);
+    s.r.dx = read16(&s, s.r.ds, SEG09A9_DisplayControllerBasePort);
+#if TIMER_INSTALL_MUTATION == 6
+    cached_pit = read16(&s, s.r.ds, SEG09A9_TimerPitReload1FC9);
+#endif
+#if TIMER_INSTALL_MUTATION == 3
+    s.r.dx = add16(&s, s.r.dx, 6u);
+#else
+    s.r.dx = (uint16_t)((s.r.dx & 0xff00u) | add8(&s, (uint8_t)s.r.dx, 6u));
+#endif
+    do {
+        if (!timer_byte_in(&s, 0x1667u)) return result_of(&s);
+        status = (uint8_t)s.r.ax & 8u; logic8(&s, status);
+    } while (status == 0u);
+    do {
+        if (!timer_byte_in(&s, 0x166cu)) return result_of(&s);
+        status = (uint8_t)s.r.ax & 8u; logic8(&s, status);
+    } while (status != 0u);
+    s.r.flags &= (uint16_t)~IF;
+#if TIMER_INSTALL_MUTATION == 6
+    s.r.cx = cached_pit;
+#else
+    s.r.cx = read16(&s, s.r.ds, SEG09A9_TimerPitReload1FC9);
+#endif
+    s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | 0x36u);
+    if (!timer_byte_out(&s, 0x43u, (uint8_t)s.r.ax, 0x1678u)) return result_of(&s);
+    s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | (uint8_t)s.r.cx);
+    if (!timer_byte_out(&s, 0x40u, (uint8_t)s.r.ax, 0x1682u)) return result_of(&s);
+    s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | (uint8_t)(s.r.cx >> 8));
+    if (!timer_byte_out(&s, 0x40u, (uint8_t)s.r.ax, 0x168cu)) return result_of(&s);
+#if TIMER_INSTALL_MUTATION != 4
+    s.r.flags |= IF;
+#endif
+    s.r.ip = CS_GameTimerInstallReturn;
+    return result_of(&s);
+}
+
+static LmnTimerTailResult lifecycle_near_return(uint8_t *memory,
+    LmnTimerTailResult out, const LmnRasterBus *bus) {
+    if (out.status == LMN_TIMER_TAIL_READY) {
+        TimerTailState s = state_from_registers(memory, &out.registers,
+            NULL, NULL, NULL, NULL, NULL, bus);
+        s.r.ip = pop16_from(&s, s.r.ss);
+        out.registers = s.r;
+    }
+    return out;
+}
+
+LmnTimerTailResult lmn_install_game_timer_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    return lifecycle_near_return(memory,
+        lmn_install_game_timer_core(memory, registers, dos, ports, bus), bus);
+}
+
+LmnTimerTailResult lmn_restore_timer_interrupt_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *bios_clock,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    TimerTailState s = state_from_registers(memory, registers,
+        NULL, NULL, NULL, NULL, ports, bus);
+    push16(&s, s.r.ds);
+    s.r.flags &= (uint16_t)~IF;
+    s.r.ax = (uint16_t)((s.r.ax & 0xff00u) | 0x36u);
+    if (!timer_byte_out(&s, 0x43u, (uint8_t)s.r.ax, CS_TimerRestoreControlPort)) return result_of(&s);
+    s.r.ax &= 0xff00u; logic8(&s, 0u);
+    if (!timer_byte_out(&s, 0x40u, 0u, CS_TimerRestoreCounterLowPort)) return result_of(&s);
+    if (!timer_byte_out(&s, 0x40u, 0u, CS_TimerRestoreCounterHighPort)) return result_of(&s);
+    s.r.ax = 0u; logic8(&s, 0u);
+    s.r.bx = read16(&s, s.r.ds, SEG09A9_SavedTimerVector);
+    s.r.es = read16(&s, s.r.ds, (uint16_t)(SEG09A9_SavedTimerVector + 2u));
+    s.r.ds = s.r.ax;
+#if TIMER_INSTALL_MUTATION == 5
+    write16(&s, 0u, 0x22u, s.r.es, s.r.flags);
+    write16(&s, 0u, 0x20u, s.r.bx, s.r.flags);
+#else
+    write16(&s, 0u, 0x20u, s.r.bx, s.r.flags);
+    write16(&s, 0u, 0x22u, s.r.es, s.r.flags);
+#endif
+    s.r.flags |= IF;
+    s.r.ds = pop16_from(&s, s.r.ss);
+    s.r.cx = read16(&s, s.r.ds, SEG09A9_SavedBiosClockHigh);
+    s.r.dx = read16(&s, s.r.ds, SEG09A9_SavedBiosClockLow);
+    s.r.ax = (uint16_t)((s.r.ax & 0x00ffu) | 0x0100u);
+    if (!lifecycle_interrupt(&s, 0x1au, CS_TimerRestoreReturn, bios_clock))
+        return result_of(&s);
+    s.r.ip = CS_TimerRestoreReturn;
+    return result_of(&s);
+}
+
+LmnTimerTailResult lmn_restore_timer_interrupt_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnInterruptService *bios_clock,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus) {
+    return lifecycle_near_return(memory,
+        lmn_restore_timer_interrupt_core(memory, registers, bios_clock, ports, bus), bus);
 }

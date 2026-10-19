@@ -18,6 +18,7 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('timer_install', 420, 384),
     Suite('menu_timer', 420, 384),
     Suite('game_timer', 420, 384),
     Suite('palette_timer', 420, 384),

@@ -2,7 +2,16 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is26,987 bytes. The54-byte menu
+The main-image translated-code ledger union is27,069 bytes. The82-byte1644
+installer now connects direct menu installation, actual DOS vector08/60 requests,
+the installed game IRQ and full-register cleanup16A9 on the same canonical RAM.
+The50 fixtures/106 comparisons cover42 installer and19 cleanup sites,13 installer
+outcomes and six completed mutants. Integrated coverage is901 sites/76 outcomes
+in a2,984-byte known domain. Relocated1653, returnedSS:SP, actualPOPDS, byte-only
+status adjustment, live reload and BIOS/IVT aliases remain explicit. See
+timer-install.md; this does not supply scheduling or opaque DOS/BIOS bodies.
+
+The preceding54-byte menu
 timer4C47 and19-byte direct IVT08 installer5028 now compose the native input/EOI
 and external saved-INT08 seams in a654-byte known domain. Their54 fixtures/108
 comparisons cover all42 own sites/three direct outcomes and detect eight completed
@@ -66,12 +75,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Close the82-byte1644 game-timer installer: actual INT21 vector changes,
-   relocated sound-driver frame1653, live returned DS/ES/SS, finite status polls
-   and PIT writes. Connect it to the accepted timers and cleanup without assuming
-   an opaque DOS service preserves registers. Then close the16D4 keyboard producer,
-   its17B4 port helper and1562 installer. Reuse the shared verifier and interrupt
-   transport; retain42A5 and UNKNOWN4C65/1696..16A8.
+1. Close the16D4 keyboard producer, its17BE status-wait leaf/17B4 command parent
+   and1562 installer, then connect its produced state to the accepted input/timer
+   lifecycle. Fresh bottom-up views identify the9-byte17BE leaf: XOR CX,CX,
+   port64 bit1 TEST and LOOPNE permit65,536 busy samples. Preserve CX/AL/flags,
+   actual helper returns and17B4's unconditionalSTI. Reuse the shared verifier
+   and interrupt transport; retain42A5 and UNKNOWN4C65/1696..16A8.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

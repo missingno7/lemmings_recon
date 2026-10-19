@@ -6398,7 +6398,7 @@
     "address": 5700,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 82,
     "symbol_name": "InstallGameTimerVector",
     "aliases": [
       "sub_1644"
@@ -6426,12 +6426,21 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact DOS21 vector08/60 requests, live relocated1653, two actual returned-stack POPDS, finite bit3 polls, post-poll reload/PIT/CLI/STI; docs/timer-install.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 82
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 82,
+    "c_implementation": "c/timer_tail.c",
+    "c_code_ranges": [
+      [
+        5700,
+        5782
+      ]
+    ],
+    "verification_evidence": "tests/timer_install.py:50 fixtures/106 comparisons;42 installer and19 cleanup sites,13 installer outcomes,901 integrated sites/76 outcomes,6012 original steps,7283 ordered events (2344 declared INT transport/588 provider accesses/145 calls),six completed mutants. Same-RAM direct menu install/game install/installed IRQ/cleanup at three loads. Live relocated1653, full returned DS/ES/SS:SP/IRET, POPDS, byte-only status port, post-poll PIT reload, actual nearRET and cleanup IVT/clock aliases. 82 new bytes/2984 known connected domain; UNKNOWN1696..16A8 and opaque DOS/BIOS/timing remain open. docs/timer-install.md"
   },
   {
     "address": 5801,
@@ -6493,7 +6502,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
-      "PUSHDS/CLI, PIT byte outputs43:36/40:00/40:00, liveLES saved vector, IVT08 writes, unconditionalSTI/livePOPDS, saved BIOS clock INT1A/AH01; docs/timer-restore.md"
+      "PUSHDS/CLI, PIT byte outputs43:36/40:00/40:00, liveLES saved vector, IVT08 writes, unconditionalSTI/livePOPDS, saved BIOS clock INT1A/AH01; docs/timer-restore.md",
+      "Additional c/timer_tail.c full-register INT1A cleanup API preserves actual software-INT/IRET transport and composes installer/IRQ lifecycle; older abstract BIOS API remains separately scoped; docs/timer-install.md"
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 43,
@@ -6505,7 +6515,8 @@
       ]
     ],
     "verification_evidence": "tests/timer_restore.py:291 adapter+291 auxiliary core cases;287 NULL-bus comparisons per boundary;19 sites/43 bytes,0 branches;4 completed mutants;livePUSH/LES/IVT/STI/POPDS/clock/BIOS/RET,RAM/VGA,A20/SP boundaries;docs/timer-restore.md. Hardware timing/IRQ/BIOS implementation and parentcleanup remain open.",
-    "original_verification_evidence": "tests/timer_restore.py --original-only:291 original/model adapter+291 core-boundary cases;all19sites,0branches;all256 incomingAHbytes,26alias/device/provider/wrapprofiles,9missing-provider cases;fullRAM/GPR/segment/stack/definedflags,busorder/portoutputs/VGAstate;noCcoverage."
+    "original_verification_evidence": "tests/timer_restore.py --original-only:291 original/model adapter+291 core-boundary cases;all19sites,0branches;all256 incomingAHbytes,26alias/device/provider/wrapprofiles,9missing-provider cases;fullRAM/GPR/segment/stack/definedflags,busorder/portoutputs/VGAstate;noCcoverage.",
+    "interrupt_verification_evidence": "tests/timer_install.py:19 cleanup sites with real INT1A transport, full returned registers/SS:SP, changed/unbound/stopped services, IVT/savedDS/clock/LES/nearRET aliases and same-RAM installed IRQ lifecycle. Existing43 bytes count once; docs/timer-install.md"
   },
   {
     "address": 5805,
@@ -64185,6 +64196,70 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct IVT08 installer outer RET after actualPOPDS and unconditionalSTI"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 5712,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerInstallAfterVector08",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "INT21 vector08 return; POPDS uses the actual returned SS:SP"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 5715,
+    "segment": 0,
+    "kind": "operand",
+    "size": 2,
+    "symbol_name": "GameTimerSoundSegmentOperand",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Complete relocated MOV AX immediate for INT60 driver frame; fetched after the first DOS service"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 5727,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerInstallAfterVector60",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "INT21 vector60 return; live POPDS selects status/PIT data"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 5781,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameTimerInstallReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Actual near RET after unconditional STI and three PIT outputs"
     ],
     "verification_status": "STATIC"
   }

@@ -192,8 +192,8 @@ class Machine(tail.Machine):
 
 
 class Native(tail.Native):
-    def __init__(self,directory,mutation=0):
-        super().__init__(directory,mutation,cluster='game_timer',function_prefix='lmn_game_timer',access_type=Access)
+    def __init__(self,directory,mutation=0,*,library=None):
+        super().__init__(directory,mutation,cluster='game_timer',function_prefix='lmn_game_timer',access_type=Access,library=library)
 
 
 def compare(native,c,core):

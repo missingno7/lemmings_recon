@@ -1,5 +1,11 @@
 # Timer, vector and BIOS clock restoration
 
+The additional c/timer_tail.c full-register cleanup entry now composes actual
+INT1A transport with timer installation and IRQ execution. See timer-install.md
+for that distinct service contract and its50-fixture/106-comparison campaign.
+The narrower abstract BIOS API and historical evidence below remain separate;
+the43 decoded bytes count once in the translated-code ledger.
+
 `RestoreTimerState` is the pinned straight-line `16A9..16D3` routine: 43
 decoded bytes, 19 sites, no branches. Its callers are `02FB`, `04D0` and
 `0EDF`. The nearby unresolved bytes `1696..16A8` remain unresolved.

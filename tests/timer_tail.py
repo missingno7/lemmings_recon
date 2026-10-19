@@ -213,16 +213,17 @@ class Machine(base.OriginalMachine):
 
 
 class Native:
-    def __init__(self,directory,mutation=0,*,cluster='timer_tail',function_prefix='lmn_game_timer_tail',access_type=Access):
+    def __init__(self,directory,mutation=0,*,cluster='timer_tail',function_prefix='lmn_game_timer_tail',access_type=Access,library=None):
         self.access_type=access_type
-        self.library=ct.CDLL(str(build(Path(directory)/f'timer-{mutation}.dll',mutation,cluster)))
+        self.library=library if library is not None else ct.CDLL(str(build(Path(directory)/f'timer-{mutation}.dll',mutation,cluster)))
         self.functions={}
         for core in (True,False):
             fn=getattr(self.library,function_prefix+'_'+('core' if core else 'adapter'))
             fn.argtypes=[base.MEM,ct.POINTER(base.Regs)]+[ct.POINTER(base.InterruptService)]*4+[ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
             fn.restype=Result;self.functions[core]=fn
-    def run(self,c,memory,r,device,core):
-        memory=bytearray(memory);access=self.access_type(c,memory,dict(r),copy.deepcopy(device))
+    def run(self,c,memory,r,device,core,*,copy_state=True):
+        if copy_state:memory,device=bytearray(memory),copy.deepcopy(device)
+        access=self.access_type(c,memory,dict(r),device)
         cb=base.NativeCallbacks(access,missing_in=c.get('missing_in',False),missing_out=c.get('missing_out',False))
         if c.get('missing_word_out'):cb.bus.out_word=base.OUT()
         keep=[];ptrs=[]

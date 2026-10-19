@@ -48,7 +48,8 @@ The fixture handoffs retain the installer's actual C/original memory and
 register results, check the installed CS:IP, then construct a hardware-entry
 frame and run the identified menu IRQ on that same memory. This establishes
 the installer/handler handoff without claiming interrupt delivery or scheduling.
-The82-byte game-timer installer1644 and keyboard producer16D4 remain separate.
+The separate timer-install.md campaign now composes installer1644, the installed
+game IRQ and cleanup using the same RAM; keyboard producer16D4 remains open.
 
 ## Focused acceptance
 

@@ -932,3 +932,15 @@ The installer writes actual IVT words before popping savedDS, retaining aliases
 that change that pop or outerRET. UNKNOWN4C65 is unchanged. Next close1644's DOS
 vector/PIT installation and then the keyboard producer/installer lifecycle;
 see menu-timer.md and next-work.md.
+
+The1644 lifecycle checkpoint adds82 bytes and takes the main ledger union to
+27,069. Its50 fixtures/106 comparisons cover all42 installer and19 cleanup sites,
+13 installer outcomes and six completed mutants. Three same-RAM handoffs compose
+direct menu installation, DOS game/sound-vector installation, the installed game
+IRQ and actual-INT1A cleanup in a2,984-byte known domain. Reused fixtures retain
+original instructions and canonical buffers; no new verification engine is added.
+Live returnedSS/DS, relocated1653, byte-only port arithmetic, post-poll reload and
+IVT/stack aliases remain explicit. Fresh graph views identify17BE's9-byte
+port64/LOOPNE wait before17B4's10-byte command parent; the zero CX loop can take
+65,536 samples. Next connect those leaves and keyboard producer16D4/installer1562
+to the accepted input consumer; see timer-install.md and next-work.md.
