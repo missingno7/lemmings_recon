@@ -29635,8 +29635,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4F96",
-    "aliases": [],
+    "symbol_name": "AdvanceMenuAnimations",
+    "aliases": [
+      "sub_4F96"
+    ],
     "callers": [
       17505
     ],
@@ -29729,16 +29731,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 98
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 98,
+    "c_implementation": "c/menu_animation.c",
+    "c_code_ranges": [
+      [
+        20374,
+        20472
+      ]
+    ],
+    "verification_evidence": "tests/menu_animation.py:70 fixtures/791 comparisons,54 own sites/13 outcomes and5 completed mutants; initializer ->218 tick same-RAM cycles at three loads. Live eleven-byte records,8000/FFEF semantics,unclipped bitmap control1,returned segments and actual save/return frames.129 unique bytes total in4,835 known connected bytes; docs/menu-animation.md. Bank production,selector-EA wrap and enclosing menu remain open."
   },
   {
     "address": 20472,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4FF8",
-    "aliases": [],
+    "symbol_name": "InitializeMenuAnimations",
+    "aliases": [
+      "sub_4FF8"
+    ],
     "callers": [
       17457
     ],
@@ -29773,8 +29785,16 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 31
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 31,
+    "c_implementation": "c/menu_animation.c",
+    "c_code_ranges": [
+      [
+        20472,
+        20503
+      ]
+    ],
+    "verification_evidence": "tests/menu_animation.py:70 fixtures/791 comparisons,54 own sites/13 outcomes and5 completed mutants; initializer ->218 tick same-RAM cycles at three loads. Live eleven-byte records,8000/FFEF semantics,unclipped bitmap control1,returned segments and actual save/return frames.129 unique bytes total in4,835 known connected bytes; docs/menu-animation.md. Bank production,selector-EA wrap and enclosing menu remain open."
   },
   {
     "address": 20503,
@@ -65100,6 +65120,134 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned column/row/style text record consumed by4A01; UNKNOWN storage remains unresolved"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20464,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuAnimationAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20471,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuAnimationTickReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20502,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuAnimationInitializeReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18784,
+    "segment": 2473,
+    "kind": "data",
+    "size": 110,
+    "symbol_name": "MenuAnimationRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18786,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuAnimationResetWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18788,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuAnimationLeftWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18790,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuAnimationTopWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18792,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuAnimationSourceWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
     ],
     "verification_status": "STATIC"
   }

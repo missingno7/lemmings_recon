@@ -295,8 +295,8 @@
 #define CS_sub_4F2B 0x4F2Bu
 #define CS_sub_4F4A 0x4F4Au
 #define CS_sub_4F6E 0x4F6Eu
-#define CS_sub_4F96 0x4F96u
-#define CS_sub_4FF8 0x4FF8u
+#define CS_AdvanceMenuAnimations 0x4F96u
+#define CS_InitializeMenuAnimations 0x4FF8u
 #define CS_DrawScreenBackground 0x5017u
 #define CS_DrawScreenBackgroundFromRow 0x5019u
 #define CS_InstallMenuTimerVector 0x5028u
@@ -1037,4 +1037,12 @@
 #define CS_InputScreenAfterDisplay4A2B 0x4A2Bu
 #define SEG09A9_InputChoiceText4E3A 0x4E3Au
 #define SEG09A9_MouseChoiceText4E6E 0x4E6Eu
+#define CS_MenuAnimationAfterBitmap 0x4FF0u
+#define CS_MenuAnimationTickReturn 0x4FF7u
+#define CS_MenuAnimationInitializeReturn 0x5016u
+#define SEG09A9_MenuAnimationRecords 0x4960u
+#define SEG09A9_MenuAnimationResetWord 0x4962u
+#define SEG09A9_MenuAnimationLeftWord 0x4964u
+#define SEG09A9_MenuAnimationTopWord 0x4966u
+#define SEG09A9_MenuAnimationSourceWord 0x4968u
 #endif

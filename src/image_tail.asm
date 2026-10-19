@@ -5797,3 +5797,8 @@ ControllerScaleText4EA9 equ GameDataImage+0x4ea9
 
 InputChoiceText4E3A equ GameDataImage+0x4e3a
 MouseChoiceText4E6E equ GameDataImage+0x4e6e
+MenuAnimationRecords equ GameDataImage+0x4960
+MenuAnimationResetWord equ GameDataImage+0x4962
+MenuAnimationLeftWord equ GameDataImage+0x4964
+MenuAnimationTopWord equ GameDataImage+0x4966
+MenuAnimationSourceWord equ GameDataImage+0x4968

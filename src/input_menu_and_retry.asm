@@ -47,7 +47,7 @@ MenuRefresh4401:
     call ClearFullDrawingPage ; @04428
     call DrawScreenBackground ; @0442B
     call sub_7CBC ; @0442E
-    call sub_4FF8 ; @04431
+    call InitializeMenuAnimations ; @04431
     call sub_4EEF ; @04434
     call sub_4F2B ; @04437
     lea si,[0x4ad9] ; @0443A
@@ -65,7 +65,7 @@ loc_4453:
 loc_445B:
     call WaitForDisplayStatusBit3Cycle ; @0445B
     call sub_7D0D ; @0445E
-    call sub_4F96 ; @04461
+    call AdvanceMenuAnimations ; @04461
     call sub_4EA2 ; @04464
     call sub_4E37 ; @04467
     call SwapDrawingOriginsAndDisplay ; @0446A

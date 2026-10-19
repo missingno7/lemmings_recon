@@ -512,11 +512,16 @@ sub_4F6E:
     ret ; @04F89
 ; UNKNOWN: unresolved bytes
     db 0x88,0x94,0xd4,0xa2,0x20,0xb1,0x6c,0xbf,0xb8,0xcd,0x04,0xdc ; @04F8A
-sub_4F96:
+; Ten11-byte DS4960 records: +0 live countdown,+2 reset,+4 x,+6 y,+8 source.
+; Entry8000 disables; decrement toFFEF reloads +2 without drawing. Other negative
+; values derive the frame by literal NEG/DEC/SHR/XCHG/SHR/ADD operations, wrapping.
+; Far8822 uses actual CS/IP words; returnedDS/ES and POPSI/POPCX stay live.
+; Byte+10 is untouched and its meaning remains unresolved. docs/menu-animation.md.
+AdvanceMenuAnimations:
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04F96
     add ax,0x800 ; @04F99
     mov [GraphicsResourceSegment-GameDataImage],ax ; @04F9C
-    lea si,[0x4960] ; @04F9F
+    lea si,[MenuAnimationRecords-GameDataImage] ; @04F9F
     mov cx,0xa ; @04FA3
 loc_4FA6:
     push cx ; @04FA6
@@ -552,14 +557,18 @@ loc_4FBD:
     mov cx,0x40c ; @04FE5
     mov dx,0x20 ; @04FE8
     call 0x0:0x8822 ; @04FEB
+MenuAnimationAfterBitmap:
     pop si ; @04FF0
 loc_4FF1:
     pop cx ; @04FF1
     add si,byte +0xb ; @04FF2
     loop loc_4FA6 ; @04FF5
+MenuAnimationTickReturn:
     ret ; @04FF7
-sub_4FF8:
-    lea si,[0x4960] ; @04FF8
+; Initialize only +0: exact +2 sentinel8000 survives, otherwise40*(index+1).
+; BX advances even for disabled records; all accesses use liveDS and word order.
+InitializeMenuAnimations:
+    lea si,[MenuAnimationRecords-GameDataImage] ; @04FF8
     mov cx,0xa ; @04FFC
     mov bx,0x28 ; @04FFF
 loc_5002:
@@ -572,6 +581,7 @@ loc_500C:
     add bx,byte +0x28 ; @0500E
     add si,byte +0xb ; @05011
     loop loc_5002 ; @05014
+MenuAnimationInitializeReturn:
     ret ; @05016
 ; 5017 resets the row;5019 preserves incoming BX. Both share the7E76 tile loop.
 ; See docs/background-drawing.md for live saves and changed child returns.

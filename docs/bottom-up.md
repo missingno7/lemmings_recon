@@ -994,3 +994,15 @@ explicit. Peak trace329,527 events stays under the screen's600,000-event limit a
 384MiB worker cap; the shared engine is unchanged. No aggregate or SDL3 acceptance
 is implied. Fresh4FF8 graph views put its ten-record initializer before4F96's
 renderer; audit eleven-byteDS4960 records and upstream graphics producers next.
+
+
+Menu animation4FF8/4F96 adds129 bytes, taking the main C ledger union to27,756.
+The ten eleven-byteDS4960 records now have a connected initializer/countdown/
+bitmap contract: exact8000 disable,FFEF reload, paired frames,live savedSI/CX and
+actual near/far returns. Its70 fixtures/791 comparisons cover54 own sites/13
+outcomes and five mutants in4,835 known bytes. Three same-RAM218-tick cycles
+consume initializer output and complete every enabled pinned record's first
+reset, without copying game records. BP1 bypasses clipping; extreme coordinates
+retain original wrapped drawing. The final record byte and upstream bank extents
+remain unresolved. Next audit4F6E/4F4A/4F2B plus4EEF drawing parents and their
+CS4F8A table before composing more of43F2; see menu-animation.md and next-work.md.

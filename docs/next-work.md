@@ -2,15 +2,21 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is27,627 bytes. Screen preparation
-4A01..4A2D adds45 unique bytes and connects the complete196-byte input-selection
-screen4A01..4AC4 through native clear/layout/palette/background/text/copy/display.
-The keyboard campaign passes1,289 fixtures/2,541 comparisons,229 own sites/79
-outcomes and17 completed mutants in6,750 known connected bytes. Six same-RAM
-handoffs include three prepared-screen/calibration/input paths. Full pinned
-prompts render through C; copied planes and640x350 layout have independent checks.
-Enclosing43F2/4401, upstream initialization and platform scheduling remain open.
-RETF selector-EA wrap still requires an independent oracle. See keyboard-input.md.
+The main-image translated-code ledger union is27,756 bytes. The129-byte menu
+animation initializer4FF8 and tick4F96 now compose native bitmap rendering in
+4,835 known bytes. The shared-engine campaign passes70 fixtures/791 comparisons,
+all54 own sites/13 direct outcomes and five completed mutants. Three same-RAM
+initialization/218-tick cycles verify actual countdowns, eight frame pairs and
+reset values for all enabled pinned records. Returned segments, live SI/CX saves,
+8000/FFEF behavior and the caller's deliberately unclipped control1 stay explicit.
+Bank production, enclosing43F2/4401 and scheduling remain open. See menu-animation.md.
+
+The preceding screen checkpoint added45 unique bytes, taking the union to27,627.
+The complete196-byte input-selection domain4A01..4AC4 composes native clear,
+layout, palettes, background/text, page copy/display, choice and calibration.
+Its1,289 fixtures/2,541 comparisons covered229 own sites/79 outcomes and17 mutants
+in6,750 known connected bytes, including six same-RAM handoffs. Detailed reports
+remain evidence only for their matching consumed inputs. See keyboard-input.md.
 
 The preceding active-menu checkpoint added165 unique bytes, taking the union to
 27,582. Choice43CE and4A2E..4AC4 connected text/glyph/renderer, display, calibration
@@ -106,10 +112,11 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue43F2's connected menu domains. Fresh4FF8 tree/bottom-up views identify
-   its31-byte ten-record initializer as a leaf before4F96's98-byte renderer parent.
-   Audit liveDS:4960 eleven-byte record fields,8000 sentinel, shared initialization
-   and graphics-buffer producers before translating that pair in shared fixtures.
+1. Continue43F2's connected menu drawing domains. Fresh4EEF tree and4F2B
+   bottom-up views put4F6E's saved bitmap wrapper beneath4F4A's table-driven rows
+   and4F2B's combined caller;4EEF composes two direct8822 draws. Audit liveCS:4F8A
+   table interpretation, initialized UI source/mask extents and all actual save/
+   return frames, then translate/connect that drawing cluster in shared fixtures.
    Retain42A5 and UNKNOWN4C65/1696..16A8. Before accepting far-return selector-EA
    wrap atSPFFFE/FFFF, obtain an independent oracle: pinned Unicorn's real-mode
    selector load uses a non-wrapped linear EA.
