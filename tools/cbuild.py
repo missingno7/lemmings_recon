@@ -22,6 +22,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     out.parent.mkdir(parents=True, exist_ok=True)
     sources=[ROOT/"c"/(cluster+".c")]
     if cluster=="keyboard_input":sources += [ROOT/"c/port_io.c",ROOT/"c/interrupt_service.c",ROOT/"c/input_poll.c",ROOT/"c/display_status.c"]
+    if cluster=="keyboard_input":sources += [ROOT/"c"/(n+".c") for n in ('text_stream', 'text_glyph', 'display_start', 'drawing_render', 'drawing_plan', 'drawing_inputs', 'drawing_clip', 'drawing_dirty', 'drawing_dispatch', 'drawing_source', 'aligned_opaque', 'aligned_masked', 'aligned_mask_effects', 'aligned_protected', 'aligned_read_mask', 'shifted_mask_effects', 'shifted_opaque', 'shifted_masked', 'shifted_protected', 'shifted_read_mask')]
     if cluster=="mouse_irq_bridge":sources += [ROOT/"c/vga_mirrors.c"]
     if cluster=="fixed_pattern_draw":sources += [ROOT/"c/fixed_word_banks.c",ROOT/"c/mask_generators.c"]
     if cluster=="fixed_pattern_update":sources += [ROOT/"c"/(n+".c") for n in ("fixed_pattern_copy","fixed_pattern_draw","fixed_word_banks","mask_generators")]

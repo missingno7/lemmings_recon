@@ -89,3 +89,30 @@ inherited hash set previously invalidated palette transition workers on a
 progress correction. Their actual fixture, contract, executable, source and
 tool inputs remain pinned. Regenerate affected reports after this manifest
 change; existing reports are not renewed by preserving or editing hashes.
+
+## Declared original RETF observation
+
+The shared OriginalMachine can now declare plain RETF sites and expected CS:IP
+continuations. It observes the four actual frame bytes through BusAccess, suspends
+only Unicorn's memory-read hook, then executes the unchanged original opcode.
+The ordinary code hook still checks bytes and records the instruction. No CS/IP/SP
+result is synthesized or forced to the expected target. Frame reads are reported
+separately as declared_far_return_events, not opaque interrupt transport.
+
+If a later frame read's provider overwrites an already observed word, the original
+instruction receives the observed word and the canonical provider write remains
+published afterward. Tests cover three loads, VGA frames, physical wrap, final-SP
+wrap, changed CS and a later read overwriting the consumed IP word. This migrates
+the established drawing-oracle workaround into the shared engine; new callers do
+not add another CPU/bus implementation.
+
+Selector-EA wrap at entrySP=FFFE/FFFF remains an explicit reference limitation.
+Pinned Unicorn2.1.4 advances the linear address between the IP and selector loads
+in its real-mode RETF path; the second word does not use the wrapped16-bit EA.
+See its [pinned translator](https://raw.githubusercontent.com/unicorn-engine/unicorn/2.1.4/qemu/target/i386/translate.c)
+around do_lret, particularly the selector load after gen_add_A0_im. This differs
+from the existing two-word stack contract. The shared engine raises OracleFailure
+before accepting such a comparison. It does not patch the opcode/target, change
+the C adapters to match this emulator limitation, or credit it as a mutant.
+Independent CPU evidence is required before claiming parity for that edge; the
+legacy C far-return model is not renewed as verified there by these tests.

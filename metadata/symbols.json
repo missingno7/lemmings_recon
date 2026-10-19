@@ -23911,9 +23911,11 @@
     "address": 17358,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_43CE",
-    "aliases": [],
+    "size": 36,
+    "symbol_name": "ChooseInputController",
+    "aliases": [
+      "sub_43CE"
+    ],
     "callers": [
       19032
     ],
@@ -23928,12 +23930,22 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Repeated live latch/port201 decision, CL0/1/2 and actualRET; docs/keyboard-input.md",
+      "Exact bounded shared-verifier connected C/ASM evidence with native text/glyph/renderer and display children; docs/keyboard-input.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 36
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 36,
+    "c_implementation": "c/keyboard_input.c",
+    "c_code_ranges": [
+      [
+        17358,
+        17394
+      ]
+    ],
+    "verification_evidence": "tests/keyboard_input.py:extended same campaign through live43CE choice and4A4E..4ABC native text/swap/port calibration/scale composition;all256 choice bytes,late latch,actual child frames,asymmetric counters,full pinned text with glyph rendering,missing/changed stops,and same-RAM calibration-to-input handoff. 125 new unique code bytes (existing22-byte scale span counted once). Surrounding43F2/4401 and RETF selector-EA wrap reference limitation stay open; docs/keyboard-input.md"
   },
   {
     "address": 17394,
@@ -56437,7 +56449,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Startupclear0031 supplieszero;138B request and0F69 failed/skippedmouse initialization setFF.04DC/0EEB andothermouse callers skip services only forFF"
+      "Startupclear0031 supplieszero;138B request and0F69 failed/skippedmouse initialization setFF.04DC/0EEB andothermouse callers skip services only forFF",
+      "Menu4A14/4A34 suppresses mouse prompt/character31 only for exactFF; other bytes retain selection; initialized by mouse setup0F08/0F69 and configuration138B"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -64662,6 +64675,231 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "4D1A XLAT base202E plus scan0..82; first byte aliases final binding201F+15; initial UNKNOWN storage classification retained"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17389,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputControllerChoiceReturn43ED",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19022,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 111,
+    "symbol_name": "SelectInputController4A4E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md",
+      "Exact bounded shared-verifier connected C/ASM evidence with native text/glyph/renderer and display children; docs/keyboard-input.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/keyboard_input.c",
+    "c_code_ranges": [
+      [
+        19022,
+        19133
+      ]
+    ],
+    "verification_evidence": "tests/keyboard_input.py:extended same campaign through live43CE choice and4A4E..4ABC native text/swap/port calibration/scale composition;all256 choice bytes,late latch,actual child frames,asymmetric counters,full pinned text with glyph rendering,missing/changed stops,and same-RAM calibration-to-input handoff. 125 new unique code bytes (existing22-byte scale span counted once). Surrounding43F2/4401 and RETF selector-EA wrap reference limitation stay open; docs/keyboard-input.md"
+  },
+  {
+    "address": 19029,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ControllerMenuAfterText4A55",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19032,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ControllerMenuAfterSwap4A58",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19035,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ControllerMenuAfterChoice4A5B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19059,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ControllerMenuAfterLow4A73",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19083,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ControllerMenuAfterHigh4A8B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19100,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ControllerMenuAfterScaleText4A9C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original controller selection/calibration menu boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20101,
+    "segment": 2473,
+    "kind": "data",
+    "size": 36,
+    "symbol_name": "ControllerChoiceText4E85",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Pinned column/row/style + CR text record, column0 terminator; menu4A4E/4A95 consumes this live stream; initial UNKNOWN storage classification retained"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20137,
+    "segment": 2473,
+    "kind": "data",
+    "size": 38,
+    "symbol_name": "ControllerScaleText4EA9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Pinned column/row/style + CR text record, column0 terminator; menu4A4E/4A95 consumes this live stream; initial UNKNOWN storage classification retained"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18990,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 151,
+    "symbol_name": "SelectInputMode4A2E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original active input-menu mode dispatch boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/keyboard_input.c",
+    "c_code_ranges": [
+      [
+        18990,
+        19141
+      ]
+    ],
+    "verification_evidence": "tests/keyboard_input.py:extended shared campaign closes active input-mode menu4A2E..4AC4 with actual native display/text/choice/calibration/scale children,exactFF mouse gate and escape preserving prior mode. Containing43F2,screen-preparation4A01..4A2D and4401 continuation remain untranslated. Existingcontroller/scale bytes count once; docs/keyboard-input.md"
+  },
+  {
+    "address": 18993,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputModeAfterWait4A31",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original active input-menu mode dispatch boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18996,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputModeAfterCharacter4A34",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original active input-menu mode dispatch boundary; docs/keyboard-input.md"
     ],
     "verification_status": "STATIC"
   }

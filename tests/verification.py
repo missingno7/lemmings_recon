@@ -249,22 +249,27 @@ class OriginalMachine:
     def __init__(self,case,memory,registers,device,core,*,instructions,access,
                  outer_returns,child_returns=None,max_steps=100000,
                  changed_return_status=4,before=None,interrupt=None,
-                 mutable_operands=(), far_calls=None):
+                 mutable_operands=(), far_calls=None, far_returns=None):
         self.c,self.memory,self.r,self.device,self.core=case,memory,registers,device,core
         self.instructions=instructions;self.access=access
         self.outer_returns=outer_returns if callable(outer_returns) else set(outer_returns)
         self.child_returns=child_returns or {};self.max_steps=max_steps
         self.changed_return_status=changed_return_status;self.before=before;self.interrupt=interrupt
         self.far_calls=far_calls or {}
+        self.far_returns=far_returns or {}
         for off in self.far_calls:
             check(off in instructions and instructions[off].id==capstone.x86_const.X86_INS_LJMP,
                   'external chain is not an identified far JMP')
+        for off in self.far_returns:
+            check(off in instructions and instructions[off].mnemonic=='retf' and instructions[off].size==1,
+                  'far return is not an identified plain RETF')
         self.cpu=Uc(UC_ARCH_X86,UC_MODE_16);self.cpu.mem_map(0,SIZE*2)
         self.cpu.mem_write(0,bytes(memory));self.cpu.mem_write(SIZE,bytes(memory))
         self.access.sync=self.cpu.mem_write
         self.mask=FLAGS;self.flags=registers['flags'];self.steps=0;self.sites=set();self.edges=set()
         self.previous=None;self.pending=False;self.executing_boundary=False
         self.status=0;self.service_status=0;self.stopped=False
+        self.far_return_events=0
         self.loaded=loaded_image(case['load'])
         self.code_bytes={physical(case['load'],p+d) for p,i in instructions.items() for d in range(i.size)}
         self.mutable_operands={};self.operand_versions={};self.pending_fetch=None
@@ -276,7 +281,7 @@ class OriginalMachine:
             self.operand_versions[owner.address]=bytes(self.loaded[start:start+width])
             self.code_bytes.difference_update(physical(case['load'],start+d) for d in range(width))
         self.cpu.hook_add(UC_HOOK_CODE,self.code)
-        self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
+        self.read_hook=self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
         self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
         self.cpu.hook_add(UC_HOOK_INSN,self.inp,None,1,0,x.UC_X86_INS_IN)
         self.cpu.hook_add(UC_HOOK_INSN,self.out,None,1,0,x.UC_X86_INS_OUT)
@@ -314,7 +319,7 @@ class OriginalMachine:
             # never replace its execution with a Python instruction model.
             self.operand_versions[off]=value;self.previous=None
             self.pending_fetch=off;u.emu_stop();return
-        if (ins.mnemonic in ('ret','iret') or off in self.far_calls) and not self.executing_boundary:
+        if (ins.mnemonic in ('ret','iret') or off in self.far_calls or off in self.far_returns) and not self.executing_boundary:
             # Observe the completed predecessor's defined flags/edge even when
             # the core boundary leaves this RET itself unexecuted.
             self.previous=None;self.pending=True;u.emu_stop();return
@@ -410,6 +415,50 @@ class OriginalMachine:
                 continue
             outer=self.outer_returns(self,off) if callable(self.outer_returns) else off in self.outer_returns
             if outer and self.core:self.stopped=True;break
+            if off in self.far_returns:
+                # Unicorn's RETF is corrupted by its memory-read hook. As in
+                # drawing_caller_oracle, observe/inject the actual frame reads,
+                # then execute the unchanged original instruction without that
+                # hook. Do not synthesize CS/IP/SP or patch an opcode/target.
+                r=self.state()
+                check(r['sp']<0xFFFE,
+                      'RETF reference limitation: pinned Unicorn does not wrap the selector word EA; independent wrap oracle required')
+                observed=[];start=len(self.access.events)
+                for word in range(2):
+                    offset=(r['sp']+2*word)&0xFFFF
+                    value=self.access.word_read(r['ss'],offset,r['flags'],self.mask)
+                    at=physical(r['ss'],offset)
+                    for delta in range(2):
+                        p=(at+delta)&MASK;byte=bytes(((value>>(8*delta))&255,))
+                        observed.append((p,byte))
+                self.far_return_events+=len(self.access.events)-start
+                # A later read's provider can overwrite an already observed word.
+                # The instruction consumes the observed values; canonical provider
+                # writes are published again after it, never discarded.
+                for p,byte in observed:
+                    self.cpu.mem_write(p,byte);self.cpu.mem_write(p+SIZE,byte)
+                self.cpu.hook_del(self.read_hook);self.executing_boundary=True
+                try:
+                    self.cpu.ctl_remove_cache(0,SIZE*2)
+                    self.cpu.emu_start(physical(r['cs'],off),0,count=1)
+                finally:
+                    self.executing_boundary=False
+                    for p,_ in observed:
+                        byte=bytes((self.memory[p],))
+                        self.cpu.mem_write(p,byte);self.cpu.mem_write(p+SIZE,byte)
+                    self.read_hook=self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
+                    self.cpu.ctl_remove_cache(0,SIZE*2)
+                expected=self.far_returns[off]
+                if callable(expected):expected=expected(self,off)
+                returned=self.state()
+                if (returned['cs'],returned['ip']) not in expected:
+                    status=self.changed_return_status
+                    if callable(status):status=status(self,off)
+                    if isinstance(status,dict):status=status[off]
+                    if isinstance(status,tuple):status,self.service_status=status
+                    self.stop(status);break
+                if outer:self.stopped=True;break
+                continue
             self.executing_boundary=True
             self.cpu.emu_start(physical(self.c['load'],off),0,count=1)
             self.executing_boundary=False
@@ -427,4 +476,5 @@ class OriginalMachine:
         check(bytes(self.cpu.mem_read(0,SIZE))==bytes(self.memory),'canonical original RAM diverged')
         return dict(regs=self.state(),status=self.status,memory=bytearray(self.memory),device=copy.deepcopy(self.device),
                     events=self.access.events,providers=self.access.providers,cursor=self.access.cursor,
-                    sites=self.sites,edges=self.edges,steps=self.steps,mask=self.mask)
+                    sites=self.sites,edges=self.edges,steps=self.steps,mask=self.mask,
+                    far_return_events=self.far_return_events)

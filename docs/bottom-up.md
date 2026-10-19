@@ -965,3 +965,19 @@ Both reader RETs, AH, second reads, byte underflow and the shared final binding
 byte stay explicit. Fresh43CE graph views identify its36-byte port/latch choice
 as the next leaf before controller-selection/calibration composition; see
 keyboard-input.md and next-work.md.
+
+The active input-menu checkpoint adds165 unique bytes and takes the main ledger
+union to27,582. Choice43CE and4A2E..4AC4 now compose native text/glyph/bitmap,
+display, port calibration and input in5,974 known bytes. The1,262 fixtures/2,511
+comparisons cover215 own sites/77 outcomes and15 mutants. Actual pinned prompts
+render through C; three14-stage same-RAM handoffs reach calibrated pointer motion.
+Existing scale/controller spans are unioned once. ExactFF mouse gating, escape
+preserving mode, full AL/AH/CH and returned frame/segment effects remain explicit.
+
+The shared verifier now supports declared plainRETF with the established isolated
+read-hook workaround while executing the unchanged original instruction. Frame
+observations and opaque interrupt transport are separate. Selector-EA wrap at
+SPFFFE/FFFF fails explicitly pending independent evidence; it is not a proven C
+domain merely because the ordinary far-return tests pass. Next connect screen
+preparation4A01..4A2D before broader43F2 composition; see verification.md and
+next-work.md for retained platform, callback and UNKNOWN frontiers.

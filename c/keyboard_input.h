@@ -38,4 +38,19 @@ LmnKeyboardResult lmn_read_keyboard_character_adapter(uint8_t *memory,
    The surrounding menu remains a separate untranslated continuation. */
 LmnKeyboardResult lmn_select_input_scale(uint8_t *memory, const LmnRegs *registers,
     const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+
+/* 43CE choice: repeated live latch/port201 reads, AL remains the inverted
+   port byte or77; CL0/1/2, CH unchanged. Core before43ED; adapter actualRET. */
+LmnKeyboardResult lmn_choose_input_controller_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+LmnKeyboardResult lmn_choose_input_controller_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+/* Scoped menu path4A4E..4ABC, including native text/swap, choice, calibration,
+   and scale loop. Ends at untranslated4401 without an invented outer RET. */
+LmnKeyboardResult lmn_select_input_controller(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
+/* Active input-menu domain4A2E..4AC4, including mouse availability gate,
+   controller calibration and scale selection. Ends at original4401. */
+LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
 #endif

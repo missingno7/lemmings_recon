@@ -242,7 +242,7 @@
 #define CS_PollPort201ButtonsLow 0x4334u
 #define CS_PollPort201ButtonsHigh 0x4359u
 #define CS_MeasurePort201Axes 0x4386u
-#define CS_sub_43CE 0x43CEu
+#define CS_ChooseInputController 0x43CEu
 #define CS_sub_43F2 0x43F2u
 #define CS_sub_4566 0x4566u
 #define CS_sub_46A2 0x46A2u
@@ -1012,4 +1012,17 @@
 #define CS_InputScaleAfterCharacter4AA5 0x4AA5u
 #define CS_MenuRefresh4401 0x4401u
 #define SEG09A9_KeyboardCharacterTable202E 0x202Eu
+#define CS_InputControllerChoiceReturn43ED 0x43EDu
+#define CS_SelectInputController4A4E 0x4A4Eu
+#define CS_ControllerMenuAfterText4A55 0x4A55u
+#define CS_ControllerMenuAfterSwap4A58 0x4A58u
+#define CS_ControllerMenuAfterChoice4A5B 0x4A5Bu
+#define CS_ControllerMenuAfterLow4A73 0x4A73u
+#define CS_ControllerMenuAfterHigh4A8B 0x4A8Bu
+#define CS_ControllerMenuAfterScaleText4A9C 0x4A9Cu
+#define SEG09A9_ControllerChoiceText4E85 0x4E85u
+#define SEG09A9_ControllerScaleText4EA9 0x4EA9u
+#define CS_SelectInputMode4A2E 0x4A2Eu
+#define CS_InputModeAfterWait4A31 0x4A31u
+#define CS_InputModeAfterCharacter4A34 0x4A34u
 #endif

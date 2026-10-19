@@ -5791,3 +5791,7 @@ KeyboardControllerGate200A equ GameDataImage+0x200a
 KeyboardBindings201F equ GameDataImage+0x201f
 
 KeyboardCharacterTable202E equ GameDataImage+0x202e
+
+ControllerChoiceText4E85 equ GameDataImage+0x4e85
+ControllerScaleText4EA9 equ GameDataImage+0x4ea9
+

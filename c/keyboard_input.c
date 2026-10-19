@@ -1,6 +1,8 @@
 #include "keyboard_input.h"
 #include "lemmings_sym.h"
 #include "display_status.h"
+#include "display_start.h"
+#include "text_stream.h"
 
 #ifndef KEYBOARD_INPUT_MUTATION
 #define KEYBOARD_INPUT_MUTATION 0
@@ -338,5 +340,153 @@ LmnKeyboardResult lmn_select_input_scale(uint8_t *memory,const LmnRegs *register
         {uint8_t v=(uint8_t)s.r.ax;cmp8(&s,v,0x30u);al(&s,(uint8_t)(v-0x30u));}
         write8(&s,s.r.ds,SEG09A9_InputAxisScaleSelector2005,(uint8_t)s.r.ax);
         s.r.ip=CS_MenuRefresh4401;return result(&s);
+    }
+}
+
+LmnKeyboardResult lmn_choose_input_controller_core(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    KeyboardState s=state(memory,registers,ports,bus);
+    for(;;) {
+        uint8_t v=read8(&s,s.r.ds,SEG09A9_KeyboardScanCodeByte);
+        al(&s,v);logic(&s,v,8);
+        if(v!=0u) {
+            cmp8(&s,v,0x77u);
+            if(s.r.flags&ZF) {
+                s.r.cx=(uint16_t)((s.r.cx&0xff00u)|2u);
+                s.r.ip=CS_InputControllerChoiceReturn43ED;return result(&s);
+            }
+        }
+        s.r.flags&=(uint16_t)~IF;s.r.dx=0x201u;
+        if(!in_byte(&s,s.r.dx,0x43ddu))return result(&s);
+        s.r.flags|=IF;v=(uint8_t)~s.r.ax;al(&s,v);logic(&s,v&0xf0u,8);
+        if(s.r.flags&ZF)continue;
+        s.r.cx&=0xff00u;logic(&s,0u,8);logic(&s,v&0x30u,8);
+        if(s.r.flags&ZF) {
+            uint16_t carry=s.r.flags&CF;
+            s.r.cx|=1u;cmp8(&s,1u,0u); /* INC CL from its known zero. */
+            s.r.flags=(uint16_t)((s.r.flags&~CF)|carry);
+        }
+        s.r.ip=CS_InputControllerChoiceReturn43ED;return result(&s);
+    }
+}
+
+LmnKeyboardResult lmn_choose_input_controller_adapter(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnKeyboardResult out=lmn_choose_input_controller_core(memory,registers,ports,bus);
+    if(out.status==0u){KeyboardState s=state(memory,&out.registers,ports,bus);s.r.ip=pop16(&s);out.registers=s.r;}
+    return out;
+}
+
+static int menu_text(KeyboardState *s,uint16_t resume) {
+    LmnTextStreamState in;
+    LmnTextStreamResult out;
+    push16(s,resume);
+    in=(LmnTextStreamState){s->r.ax,s->r.bx,s->r.cx,s->r.dx,s->r.si,s->r.di,s->r.bp,
+        s->r.ds,s->r.es,s->r.ss,s->r.sp,s->r.flags};
+    out=lmn_draw_text_stream_core(s->memory,s->r.cs,(uint16_t)(s->entry_cs+0x09a9u),&in,s->bus,s->ports);
+    s->r=(LmnRegs){out.state.value,out.state.base_value,out.state.count,out.state.argument,
+        out.state.source_cursor,out.state.output_cursor,out.state.frame_cursor,out.state.stack_offset,
+        out.code_segment,out.state.data_segment,out.state.extra_segment,out.state.stack_segment,
+        out.continuation,out.state.flags};
+    if(out.status){s->status=LMN_KEYBOARD_CHILD_STOP;s->child_status=(uint16_t)out.status;return 0;}
+    s->r.ip=pop16(s);
+    if(s->r.cs!=s->entry_cs||s->r.ip!=resume){s->status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return 0;}
+    return 1;
+}
+
+static int menu_swap(KeyboardState *s,uint16_t resume) {
+    LmnDisplayStartState in;
+    LmnDisplayStartResult out;
+    uint16_t cs=s->r.cs;
+    push16(s,resume);
+    in=(LmnDisplayStartState){s->r.ax,s->r.bx,s->r.cx,s->r.dx,s->r.si,s->r.di,s->r.bp,
+        s->r.ds,s->r.es,s->r.ss,s->r.sp,s->r.flags};
+    out=lmn_program_display_start_core(s->memory,&in,LMN_DISPLAY_START_ENTRY_SWAP,s->bus);
+    s->r=(LmnRegs){out.state.value,out.state.base_value,out.state.count,out.state.argument,
+        out.state.source_cursor,out.state.output_cursor,out.state.frame_cursor,out.state.stack_offset,
+        cs,out.state.data_segment,out.state.extra_segment,out.state.stack_segment,out.continuation,out.state.flags};
+    if(out.status){s->status=LMN_KEYBOARD_CHILD_STOP;s->child_status=(uint16_t)out.status;return 0;}
+    s->r.ip=pop16(s);
+    if(s->r.cs!=s->entry_cs||s->r.ip!=resume){s->status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return 0;}
+    return 1;
+}
+
+LmnKeyboardResult lmn_select_input_controller(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    KeyboardState s=state(memory,registers,ports,bus);
+    LmnKeyboardResult choice;
+    LmnPortIoResult sample;
+    uint16_t resume;
+    s.r.si=SEG09A9_ControllerChoiceText4E85;
+    if(!menu_text(&s,CS_ControllerMenuAfterText4A55)||!menu_swap(&s,CS_ControllerMenuAfterSwap4A58))return result(&s);
+    push16(&s,CS_ControllerMenuAfterChoice4A5B);s.r.ip=CS_ChooseInputController;
+    choice=lmn_choose_input_controller_adapter(memory,&s.r,ports,bus);s.r=choice.registers;
+    if(choice.status){s.status=LMN_KEYBOARD_CHILD_STOP;s.child_status=choice.status;return result(&s);}
+    if(s.r.cs!=s.entry_cs||s.r.ip!=CS_ControllerMenuAfterChoice4A5B){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
+    cmp8(&s,(uint8_t)s.r.cx,2u);
+    if(s.r.flags&ZF) {
+        write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,2u);s.r.ip=CS_MenuRefresh4401;return result(&s);
+    }
+    cmp8(&s,(uint8_t)s.r.cx,1u);
+    if(s.r.flags&ZF){s.r.ax=CS_PollPort201ButtonsHigh;resume=CS_ControllerMenuAfterHigh4A8B;}
+    else{s.r.ax=CS_PollPort201ButtonsLow;resume=CS_ControllerMenuAfterLow4A73;}
+#if KEYBOARD_INPUT_MUTATION == 12
+    s.r.ax=CS_PollPort201ButtonsLow;
+#endif
+    write16(&s,s.r.ds,SEG09A9_InputPollCallback,s.r.ax,s.r.flags);
+    al(&s,1u);write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,(uint8_t)s.r.ax);
+    push16(&s,resume);
+    s.r.ip=resume==CS_ControllerMenuAfterHigh4A8B?CS_PollPort201ButtonsHigh:CS_PollPort201ButtonsLow;
+    sample=resume==CS_ControllerMenuAfterHigh4A8B ?
+        lmn_poll_port201_buttons_high_adapter(memory,&s.r,ports,bus):
+        lmn_poll_port201_buttons_low_adapter(memory,&s.r,ports,bus);
+    s.r=sample.registers;
+    if(sample.status){s.status=LMN_KEYBOARD_CHILD_STOP;s.child_status=sample.status;return result(&s);}
+    if(s.r.cs!=s.entry_cs||s.r.ip!=resume){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
+    write16(&s,s.r.ds,SEG09A9_InputAxisBaselineX25A2,s.r.bx,s.r.flags);
+#if KEYBOARD_INPUT_MUTATION == 13
+    write16(&s,s.r.ds,SEG09A9_InputAxisBaselineY25A4,s.r.bx,s.r.flags);
+#else
+    write16(&s,s.r.ds,SEG09A9_InputAxisBaselineY25A4,s.r.cx,s.r.flags);
+#endif
+    s.r.si=SEG09A9_ControllerScaleText4EA9;
+    if(!menu_text(&s,CS_ControllerMenuAfterScaleText4A9C)||!menu_swap(&s,CS_SelectInputScale4A9F))return result(&s);
+    return lmn_select_input_scale(memory,&s.r,ports,bus);
+}
+
+LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    KeyboardState s=state(memory,registers,ports,bus);
+    for(;;) {
+        LmnKeyboardResult character;
+        push16(&s,CS_InputModeAfterWait4A31);
+        s.r.ip=CS_WaitForDisplayStatusBit3Cycle;
+        lmn_wait_display_status_bit3_cycle_adapter(memory,&s.r,ports,bus);
+        if(!ports||!ports->in_byte){s.status=LMN_KEYBOARD_CHILD_STOP;s.child_status=1u;return result(&s);}
+        if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputModeAfterWait4A31){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
+        push16(&s,CS_InputModeAfterCharacter4A34);
+        s.r.ip=CS_ReadKeyboardCharacter;
+        character=lmn_read_keyboard_character_adapter(memory,&s.r,bus);s.r=character.registers;
+        if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputModeAfterCharacter4A34){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
+        cmp8(&s,read8(&s,s.r.ds,SEG09A9_MouseServicesDisabledByte),0xffu);
+#if KEYBOARD_INPUT_MUTATION == 14
+        if(read8(&s,s.r.ds,SEG09A9_MouseServicesDisabledByte)==0u) {
+#else
+        if(!(s.r.flags&ZF)) {
+#endif
+            cmp8(&s,(uint8_t)s.r.ax,0x31u);
+            if(s.r.flags&ZF){write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,0u);s.r.ip=CS_MenuRefresh4401;return result(&s);}
+        }
+        cmp8(&s,(uint8_t)s.r.ax,0x32u);
+        if(s.r.flags&ZF)return lmn_select_input_controller(memory,&s.r,ports,bus);
+        cmp8(&s,(uint8_t)s.r.ax,0x33u);
+        if(s.r.flags&ZF){write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,2u);s.r.ip=CS_MenuRefresh4401;return result(&s);}
+        cmp8(&s,(uint8_t)s.r.ax,0x1bu);
+        if(s.r.flags&ZF){
+#if KEYBOARD_INPUT_MUTATION == 15
+            write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,2u);
+#endif
+            s.r.ip=CS_MenuRefresh4401;return result(&s);
+        }
     }
 }

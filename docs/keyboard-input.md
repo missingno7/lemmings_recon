@@ -6,6 +6,10 @@ controller leaves; c/keyboard_input.c owns IRQ/installer. Native EOI/input child
 bring the known connected domain to856 bytes. Canonical RAM owns every field,
 binding, saved word and interrupt frame. The reader/menu extension below adds73
 bytes, bringing the known connected domain to947 bytes and the cluster to348.
+The active-menu extension adds165 further unique bytes. The maintained cluster
+now owns513 bytes; including its text/glyph/renderer and display/input children,
+the known connected domain contains5,974 bytes. Child domains retain their
+previously declared stops and platform boundaries.
 
 ## Controller leaves
 
@@ -57,7 +61,8 @@ writer inventory or exclusion of physical aliases.
 Consumer4D1A scans83 state bytes, changes held-key repeat values and XLATs
 from DS:202E. That table starts at the final binding byte: disjoint copied arrays
 would lose the overlap. Call4AA2 now composes the reader in the scoped scale loop;
-callers4478/4A31/4CCE and the surrounding menu remain untranslated.
+call4A31 is now composed by the active-mode dispatcher below. Callers4478/4CCE
+and the surrounding43F2 menu remain untranslated.
 
 ## Installer
 
@@ -139,3 +144,63 @@ compiled display child and both containing ASM modules, own this evidence.
 
 This closes these73 known bytes while retaining UNKNOWN storage/classifications,
 opaque services, asynchronous scheduling and the remaining menu/input domains.
+
+## Controller choice and active input menu
+
+ChooseInputController43CE adds36 bytes/19 sites. Each iteration reads the live
+scan latch.77 returnsCL2 without changing DX or IF; other latch bytes clearIF,
+setDX201 and read the port. STI precedes NOTAL and TESTF0. An inactive high nibble
+loops through the latch read again. Otherwise CL becomes0 when inverted bits30
+are active,1 when only bitsC0 are active. AH/CH and the complete inverted AL
+survive. The core stops before43ED; the adapter consumes the real nearRET.
+
+The controller path4A4E..4ABC draws the choice text and swaps/programs the drawing
+origin through actual native children before CALL43CE. ReturnedCL2 sets mode2 and
+JMPs4401. Other choices store callback4334/4359 and mode1 before invoking the
+corresponding native port measurement/button routine. Actual returned BX and CX
+are stored at25A2/25A4 in order. The scale prompt is then drawn/swapped before the
+existing4A9F loop. Every text, display, choice, axes and outer sample return word
+remains live; returned DS/ES and the original stack/flag effects propagate.
+
+The root151-byte active-menu domain4A2E..4AC4 also composes its display/character
+polling and dispatch. Character31 selects mode0 only when MouseServicesDisabledByte
+at1F73 is not exactFF; FE still permits it.32 enters controller selection,33 sets
+mode2, escape returns without changing the existing mode, and other characters
+repeat. These are branches/fallthroughs between C blocks, without added emulated
+CALL or RET frames. The root's53 sites end at original4401. Screen preparation
+4A01..4A2D and the enclosing43F2/4401 continuation remain untranslated.
+
+Mouse setup0F08/0F69 and configuration138B are identified1F73 producers; the menu
+also uses the same byte to decide whether to draw the mouse choice. This reuses
+the ledger's existing MouseServicesDisabledByte identity, not a duplicate state
+field. Choice/calibration text streams at4E85/4EA9 are36/38 bytes with the pinned
+column/row/style, CR and column0 record format. Tests render the actual strings
+through native glyphs/bitmap drawing with constructed font-bank and VGA state;
+no text service stub or original game boot is used.
+
+The same shared campaign now covers all256 choice-port bytes, a latch change
+after an inactive sample, asymmetric low/high calibration, full pinned text,
+mouse/keyboard/controller/escape dispatch, changed child frames and missing
+services. Three14-stage same-RAM handoffs preserve actual configuration output
+before input418C consumes its callback, baselines and scale. A later128-sample
+input pass moves the produced pointer from0060:002F to0063:0036 using that state.
+No baseline or record copy is substituted at the handoff.
+
+The current1,262 fixtures/2,511 comparisons cover215 own sites/77 outcomes and
+detect15 completed mutants. The new witnesses cover high/low callback identity,
+separate X/Y baselines, exactFF mouse gating and escape preserving the old mode.
+Integrated execution covers665 sites/150 outcomes and1,300,443 original
+instructions, comparing476,136 ordered events. Those include1,296 declared
+interrupt-transport events,240 declared far-return observations and456 provider
+accesses across80 calls. These are separate evidence dimensions, not additional
+translated instruction bytes or opaque service-body coverage.
+Entry ranges and reference limits are explicit report fields. The declared RETF
+observations for bitmap returns are counted separately; see verification.md for
+the shared original-instruction workaround and the selector-EA wrap reference
+limitation at SPFFFE/FFFF. That unresolved edge is not accepted as verified.
+
+The165 new bytes comprise36 choice bytes and129 additional menu bytes; existing
+reader/scale/controller ranges are unioned once. Worker limits remain420seconds/
+384MiB,500,000 original instructions and150,000 events per comparison. Opaque
+platform bodies, asynchronous delivery, screen preparation and the surrounding
+menu remain open; this is not aggregate or whole-game acceptance.

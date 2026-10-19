@@ -1,6 +1,10 @@
 ; Maintained span43CE..4B5B; physical order/UNKNOWN preserved.
 times -(($-$$) != 0x43ce) db 0
-sub_43CE:
+; Live latch77 returnsCL2 without touching DX/IF. Other bytes poll201 underCLI,
+; STI then NOTAL/TESTF0; upper inactivity loops back through the latch read.
+; Active bits30 chooseCL0, otherwiseCL1; AH/CH and the full invertedAL stay live.
+; Core before43ED; actualRET may alias state. docs/keyboard-input.md.
+ChooseInputController:
     mov al,[KeyboardScanCodeByte-GameDataImage] ; @043CE
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @043D1
     jz loc_43D9 ; @043D3
@@ -13,12 +17,13 @@ loc_43D9:
     sti ; @043DE
     not al ; @043DF
     test al,0xf0 ; @043E1
-    jz sub_43CE ; @043E3
+    jz ChooseInputController ; @043E3
     db 0x32,0xc9 ; ENCODED: xor cl,cl (NASM chooses a different encoding) ; @043E5
     test al,0x30 ; @043E7
     jnz loc_43ED ; @043E9
     inc cl ; @043EB
 loc_43ED:
+InputControllerChoiceReturn43ED:
     ret ; @043ED
 loc_43EE:
     mov cl,0x2 ; @043EE
@@ -664,7 +669,7 @@ loc_4A01:
     call DrawScreenBackground ; @04A0A
     lea si,[0x4e3a] ; @04A0D
     call DrawTextStream ; @04A11
-    cmp byte [0x1f73],0xff ; @04A14
+    cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @04A14
     jz loc_4A22 ; @04A19
     lea si,[0x4e6e] ; @04A1B
     call DrawTextStream ; @04A1F
@@ -674,9 +679,16 @@ loc_4A22:
     call ProgramAlternateDisplayStart ; @04A28
     call TransitionPaletteToSlot2 ; @04A2B
 loc_4A2E:
+; Active input menu: actual display/character CALLs, exactFF mouse gate1F73,
+; controller calibration, mode0/2 stores and scale loop. Escape preserves mode.
+; Complete native domain4A2E..4AC4 ends at4401; screen preparation remains open.
+; See docs/keyboard-input.md for constructed-state and RETF reference limits.
+SelectInputMode4A2E:
     call WaitForDisplayStatusBit3Cycle ; @04A2E
+InputModeAfterWait4A31:
     call ReadKeyboardCharacter ; @04A31
-    cmp byte [0x1f73],0xff ; @04A34
+InputModeAfterCharacter4A34:
+    cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @04A34
     jz loc_4A3F ; @04A39
     cmp al,0x31 ; @04A3B
     jz short loc_4ABD ; original +126-byte branch; prevent -O0 forward-pass widening ; @04A3D
@@ -689,10 +701,19 @@ loc_4A3F:
     jnz loc_4A2E ; @04A49
     jmp loc_4401 ; @04A4B
 loc_4A4E:
-    lea si,[0x4e85] ; @04A4E
+; Native menu domain4A4E..4ABC: real text/swap/choice/port/scale child frames.
+; ReturnedCL2 sets mode2 andJMP4401. Other choices store callback/mode1 before
+; measurement, then actualBX/CX baselines before drawing the scale prompt.
+; LiveDS/ES/SS/flags and each child return propagate; no invented outerRET.
+; Surrounding43F2/4401 remain untranslated. docs/keyboard-input.md.
+SelectInputController4A4E:
+    lea si,[ControllerChoiceText4E85-GameDataImage] ; @04A4E
     call DrawTextStream ; @04A52
+ControllerMenuAfterText4A55:
     call SwapDrawingOriginsAndDisplay ; @04A55
-    call sub_43CE ; @04A58
+ControllerMenuAfterSwap4A58:
+    call ChooseInputController ; @04A58
+ControllerMenuAfterChoice4A5B:
     cmp cl,0x2 ; @04A5B
     jz loc_4AB5 ; @04A5E
     cmp cl,0x1 ; @04A60
@@ -702,6 +723,7 @@ loc_4A4E:
     mov al,0x1 ; @04A6B
     mov [InputModeByte25A6-GameDataImage],al ; @04A6D
     call PollPort201ButtonsLow ; @04A70
+ControllerMenuAfterLow4A73:
     mov [InputAxisBaselineX25A2-GameDataImage],bx ; @04A73
     mov [InputAxisBaselineY25A4-GameDataImage],cx ; @04A77
     jmp short loc_4A95 ; @04A7B
@@ -711,12 +733,14 @@ loc_4A7D:
     mov al,0x1 ; @04A83
     mov [InputModeByte25A6-GameDataImage],al ; @04A85
     call PollPort201ButtonsHigh ; @04A88
+ControllerMenuAfterHigh4A8B:
     mov [InputAxisBaselineX25A2-GameDataImage],bx ; @04A8B
     mov [InputAxisBaselineY25A4-GameDataImage],cx ; @04A8F
     jmp short loc_4A95 ; @04A93
 loc_4A95:
-    lea si,[0x4ea9] ; @04A95
+    lea si,[ControllerScaleText4EA9-GameDataImage] ; @04A95
     call DrawTextStream ; @04A99
+ControllerMenuAfterScaleText4A9C:
     call SwapDrawingOriginsAndDisplay ; @04A9C
 loc_4A9F:
 ; Scoped menu loop: actual display/character CALL frames; unsigned31..34 acceptance.
