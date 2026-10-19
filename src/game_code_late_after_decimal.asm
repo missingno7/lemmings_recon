@@ -149,7 +149,7 @@ loc_4CC4:
     push bp ; @04CC8
     call bp ; @04CC9
     call SwapDrawingOriginsAndDisplay ; @04CCB
-    call sub_4D1A ; @04CCE
+    call ReadKeyboardCharacter ; @04CCE
     pop bp ; @04CD1
     pop dx ; @04CD2
     pop cx ; @04CD3
@@ -193,8 +193,13 @@ loc_4D10:
     mov word [0x1fc7],0x0 ; @04D10
     mov [di],cl ; @04D16
     jmp bp ; @04D18
-sub_4D1A:
-    lea si,[0xf78] ; @04D1A
+; Scan83 live state bytes. TEST then MOV reread held bytes; low7 decrement wraps.
+; Decrement0 reloads86 and emits; stored93 emits; other states continue scanning.
+; AH survives. EmptyALFF returns4D2D, readyXLAT uses202E and returns4D4C.
+; 202E overlaps final binding201F+15. Actual RET/SS:SP and field aliases stay live.
+; See docs/keyboard-input.md for IRQ-to-repeat-to-menu handoffs and limits.
+ReadKeyboardCharacter:
+    lea si,[KeyboardStateBytes0F78-GameDataImage] ; @04D1A
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @04D1E
     mov cx,0x53 ; @04D20
 loc_4D23:
@@ -204,6 +209,7 @@ loc_4D28:
     inc bx ; @04D28
     loop loc_4D23 ; @04D29
     mov al,0xff ; @04D2B
+KeyboardCharacterEmptyReturn4D2D:
     ret ; @04D2D
 loc_4D2E:
     mov al,[bx+si] ; @04D2E
@@ -220,8 +226,9 @@ loc_4D42:
     mov byte [bx+si],0x86 ; @04D42
 loc_4D45:
     db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @04D45
-    lea bx,[0x202e] ; @04D47
+    lea bx,[KeyboardCharacterTable202E-GameDataImage] ; @04D47
     xlatb ; @04D4B
+KeyboardCharacterReadyReturn4D4C:
     ret ; @04D4C
 ; Stream uses live DS:SI and incoming DF. Header: column(1-based), row, style.
 ; Header column0 terminates; style0=>BP2 elseBP0. Only CR ends each text run.

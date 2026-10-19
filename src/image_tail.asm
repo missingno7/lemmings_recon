@@ -5789,3 +5789,5 @@ TimerChainFlag1FCF equ GameDataImage+0x1fcf
 KeyboardStateBytes0F78 equ GameDataImage+0x0f78
 KeyboardControllerGate200A equ GameDataImage+0x200a
 KeyboardBindings201F equ GameDataImage+0x201f
+
+KeyboardCharacterTable202E equ GameDataImage+0x202e

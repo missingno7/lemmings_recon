@@ -272,7 +272,7 @@
 #define CS_DisplayStartReturn 0x4C46u
 #define CS_MenuTimerIrqHandler 0x4C47u
 #define CS_ReadCodeInput 0x4C7Eu
-#define CS_sub_4D1A 0x4D1Au
+#define CS_ReadKeyboardCharacter 0x4D1Au
 #define CS_DrawTextStream 0x4D4Du
 #define CS_TextStreamReadCharacter 0x4D65u
 #define CS_TextStreamAfterGlyph 0x4D70u
@@ -1005,4 +1005,11 @@
 #define SEG09A9_KeyboardStateBytes0F78 0x0F78u
 #define SEG09A9_KeyboardControllerGate200A 0x200Au
 #define SEG09A9_KeyboardBindings201F 0x201Fu
+#define CS_KeyboardCharacterEmptyReturn4D2D 0x4D2Du
+#define CS_KeyboardCharacterReadyReturn4D4C 0x4D4Cu
+#define CS_SelectInputScale4A9F 0x4A9Fu
+#define CS_InputScaleAfterWait4AA2 0x4AA2u
+#define CS_InputScaleAfterCharacter4AA5 0x4AA5u
+#define CS_MenuRefresh4401 0x4401u
+#define SEG09A9_KeyboardCharacterTable202E 0x202Eu
 #endif

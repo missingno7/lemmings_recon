@@ -1,5 +1,6 @@
 #include "keyboard_input.h"
 #include "lemmings_sym.h"
+#include "display_status.h"
 
 #ifndef KEYBOARD_INPUT_MUTATION
 #define KEYBOARD_INPUT_MUTATION 0
@@ -253,4 +254,89 @@ LmnKeyboardResult lmn_install_keyboard_adapter(uint8_t *memory,const LmnRegs *re
     LmnKeyboardResult out=lmn_install_keyboard_core(memory,registers,dos,bus);
     if(out.status==0u){KeyboardState s=state(memory,&out.registers,0,bus);s.r.ip=pop16(&s);out.registers=s.r;}
     return out;
+}
+
+LmnKeyboardResult lmn_read_keyboard_character_core(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus) {
+    KeyboardState s=state(memory,registers,0,bus);
+    s.r.si=SEG09A9_KeyboardStateBytes0F78;s.r.bx=0u;logic(&s,0u,16);
+    s.r.cx=0x53u;
+    for(;;) {
+        uint16_t at=(uint16_t)(s.r.bx+s.r.si);
+        uint8_t v=read8(&s,s.r.ds,at);
+        logic(&s,v&0x80u,8);
+        if(!(s.r.flags&ZF)) {
+#if KEYBOARD_INPUT_MUTATION != 10
+            v=read8(&s,s.r.ds,at);
+#endif
+            v&=0x7fu;al(&s,v);logic(&s,v,8);
+            {uint16_t carry=s.r.flags&CF;
+             cmp8(&s,v,1u);v=(uint8_t)(v-1u);al(&s,v);
+             s.r.flags=(uint16_t)((s.r.flags&~CF)|carry);}
+            logic(&s,v,8);
+            if(s.r.flags&ZF) {
+#if KEYBOARD_INPUT_MUTATION == 8
+                write8(&s,s.r.ds,at,0x85u);
+#else
+                write8(&s,s.r.ds,at,0x86u);
+#endif
+                break;
+            }
+            v|=0x80u;al(&s,v);logic(&s,v,8);
+            write8(&s,s.r.ds,at,v);cmp8(&s,v,0x93u);
+            if(s.r.flags&ZF)break;
+        }
+        inc_bx(&s);s.r.cx=(uint16_t)(s.r.cx-1u);
+        if(s.r.cx==0u) {
+            al(&s,0xffu);s.r.ip=CS_KeyboardCharacterEmptyReturn4D2D;
+            return result(&s);
+        }
+    }
+    al(&s,(uint8_t)s.r.bx);s.r.bx=SEG09A9_KeyboardCharacterTable202E;
+#if KEYBOARD_INPUT_MUTATION == 9
+    s.r.bx=(uint16_t)(s.r.bx+1u);
+#endif
+    al(&s,read8(&s,s.r.ds,(uint16_t)(s.r.bx+(uint8_t)s.r.ax)));
+    s.r.ip=CS_KeyboardCharacterReadyReturn4D4C;return result(&s);
+}
+
+LmnKeyboardResult lmn_read_keyboard_character_adapter(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus) {
+    LmnKeyboardResult out=lmn_read_keyboard_character_core(memory,registers,bus);
+    KeyboardState s=state(memory,&out.registers,0,bus);
+    s.r.ip=pop16(&s);out.registers=s.r;return out;
+}
+
+LmnKeyboardResult lmn_select_input_scale(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    KeyboardState s=state(memory,registers,ports,bus);
+    for(;;) {
+        LmnKeyboardResult character;
+        push16(&s,CS_InputScaleAfterWait4AA2);
+        s.r.ip=CS_WaitForDisplayStatusBit3Cycle;
+        lmn_wait_display_status_bit3_cycle_adapter(memory,&s.r,ports,bus);
+        if(!ports||!ports->in_byte) {
+            s.status=LMN_KEYBOARD_CHILD_STOP;s.child_status=1u;return result(&s);
+        }
+        if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputScaleAfterWait4AA2) {
+            s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);
+        }
+        push16(&s,CS_InputScaleAfterCharacter4AA5);
+        s.r.ip=CS_ReadKeyboardCharacter;
+        character=lmn_read_keyboard_character_adapter(memory,&s.r,bus);s.r=character.registers;
+        if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputScaleAfterCharacter4AA5) {
+            s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);
+        }
+        cmp8(&s,(uint8_t)s.r.ax,0x31u);
+        if(s.r.flags&CF)continue;
+        cmp8(&s,(uint8_t)s.r.ax,0x34u);
+#if KEYBOARD_INPUT_MUTATION == 11
+        if(s.r.flags&(CF|ZF))continue;
+#else
+        if(!(s.r.flags&(CF|ZF)))continue;
+#endif
+        {uint8_t v=(uint8_t)s.r.ax;cmp8(&s,v,0x30u);al(&s,(uint8_t)(v-0x30u));}
+        write8(&s,s.r.ds,SEG09A9_InputAxisScaleSelector2005,(uint8_t)s.r.ax);
+        s.r.ip=CS_MenuRefresh4401;return result(&s);
+    }
 }

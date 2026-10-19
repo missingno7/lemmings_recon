@@ -21,7 +21,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
     sources=[ROOT/"c"/(cluster+".c")]
-    if cluster=="keyboard_input":sources += [ROOT/"c/port_io.c",ROOT/"c/interrupt_service.c",ROOT/"c/input_poll.c"]
+    if cluster=="keyboard_input":sources += [ROOT/"c/port_io.c",ROOT/"c/interrupt_service.c",ROOT/"c/input_poll.c",ROOT/"c/display_status.c"]
     if cluster=="mouse_irq_bridge":sources += [ROOT/"c/vga_mirrors.c"]
     if cluster=="fixed_pattern_draw":sources += [ROOT/"c/fixed_word_banks.c",ROOT/"c/mask_generators.c"]
     if cluster=="fixed_pattern_update":sources += [ROOT/"c"/(n+".c") for n in ("fixed_pattern_copy","fixed_pattern_draw","fixed_word_banks","mask_generators")]
@@ -143,7 +143,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="sound_latches":defines=["-DSOUND_LATCH_MUTATION="+str(mutation)]
     if cluster=="generated_graphics":defines=["-DMUTATION=0","-DGENERATED_GRAPHICS_MUTATION="+str(mutation)]
     if cluster=="entity_stroke":defines=["-DMUTATION=0","-DSTROKE_MUTATION="+str(mutation)]
-    if cluster=="keyboard_input":defines=["-DKEYBOARD_INPUT_MUTATION="+str(mutation),"-DKEYBOARD_PORT_MUTATION="+str(mutation),"-DPORT_IO_MUTATION=0","-DINPUT_POLL_MUTATION=0","-DINTERRUPT_SERVICE_MUTATION=0"]
+    if cluster=="keyboard_input":defines=["-DKEYBOARD_INPUT_MUTATION="+str(mutation),"-DKEYBOARD_PORT_MUTATION="+str(mutation),"-DPORT_IO_MUTATION=0","-DINPUT_POLL_MUTATION=0","-DINTERRUPT_SERVICE_MUTATION=0","-DDISPLAY_STATUS_MUTATION=0"]
     if cluster=="vector_restore":defines=["-DVECTOR_RESTORE_MUTATION="+str(mutation)]
     if cluster=="timer_restore":defines=["-DTIMER_RESTORE_MUTATION="+str(mutation)]
     if cluster=="fatal_cleanup":defines=["-DFATAL_CLEANUP_MUTATION="+str(mutation)]

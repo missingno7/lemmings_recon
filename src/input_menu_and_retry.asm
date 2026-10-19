@@ -30,6 +30,7 @@ sub_43F2:
     call sub_53FC ; @043FB
     call sub_4AC5 ; @043FE
 loc_4401:
+MenuRefresh4401:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04401
     mov word [AlternateDrawingOrigin-GameDataImage],0x6d60 ; @04407
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0440D
@@ -68,7 +69,7 @@ loc_445B:
     jz loc_4478 ; @04473
     jmp loc_454C ; @04475
 loc_4478:
-    call sub_4D1A ; @04478
+    call ReadKeyboardCharacter ; @04478
     cmp al,0x80 ; @0447B
     jnz loc_4482 ; @0447D
     jmp loc_454C ; @0447F
@@ -674,7 +675,7 @@ loc_4A22:
     call TransitionPaletteToSlot2 ; @04A2B
 loc_4A2E:
     call WaitForDisplayStatusBit3Cycle ; @04A2E
-    call sub_4D1A ; @04A31
+    call ReadKeyboardCharacter ; @04A31
     cmp byte [0x1f73],0xff ; @04A34
     jz loc_4A3F ; @04A39
     cmp al,0x31 ; @04A3B
@@ -718,8 +719,14 @@ loc_4A95:
     call DrawTextStream ; @04A99
     call SwapDrawingOriginsAndDisplay ; @04A9C
 loc_4A9F:
+; Scoped menu loop: actual display/character CALL frames; unsigned31..34 acceptance.
+; SUBAL30 stores2005, then actual JMP4401. No invented RET; surrounding menu open.
+; See docs/keyboard-input.md. Both waits retain their original unbounded loops.
+SelectInputScale4A9F:
     call WaitForDisplayStatusBit3Cycle ; @04A9F
-    call sub_4D1A ; @04AA2
+InputScaleAfterWait4AA2:
+    call ReadKeyboardCharacter ; @04AA2
+InputScaleAfterCharacter4AA5:
     cmp al,0x31 ; @04AA5
     jc loc_4A9F ; @04AA7
     cmp al,0x34 ; @04AA9

@@ -2,7 +2,15 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is27,344 bytes. The keyboard cluster
+The main-image translated-code ledger union is27,417 bytes. Reader4D1A and the
+scoped scale-selection span4A9F..4AB4 add73 bytes and compose native display/input
+children in947 known bytes. The extended keyboard campaign passes961 fixtures/
+1,938 comparisons, all152 own sites/49 outcomes and11 mutants. Three same-RAM
+handoffs reach character output, consume the actual repeat state over19 display
+cycles, update scale2005 and JMP4401 without an invented RET. Full43F2 and its
+refresh continuation remain untranslated. See keyboard-input.md.
+
+The preceding keyboard cluster
 connects wait17BE, command17B4, IRQ16D4 and installer1562 to native EOI/input in856
 known bytes. Its592 fixtures/1,205 comparisons cover119 own sites/35 outcomes and
 seven completed mutants. Three same-RAM installation/make-break/input handoffs
@@ -83,11 +91,11 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Close the51-byte4D1A repeat/character reader over produced83-byte0F78 state,
-   then compose its input/menu callers. Its202E XLAT base overlaps the final201F
-   binding byte. Preserve live repeat bytes, first-ready scanning, counter quirks,
-   AL/AH and actual nearRET; extend the shared keyboard campaign. Retain42A5 and
-   UNKNOWN4C65/1696..16A8.
+1. Close36-byte43CE's scan/port201 selection loop, then connect menu controller
+   selection/calibration at4A4E..4A95 to native4334/4359 and the accepted scale
+   loop. Preserve returnedCL, live latch/port samples, actual display/text/return
+   seams and unchecked table overlap. Continue composing43F2's menu domains;
+   retain42A5 and UNKNOWN4C65/1696..16A8.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

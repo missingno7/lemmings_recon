@@ -28627,9 +28627,11 @@
     "address": 19738,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4D1A",
-    "aliases": [],
+    "size": 51,
+    "symbol_name": "ReadKeyboardCharacter",
+    "aliases": [
+      "sub_4D1A"
+    ],
     "callers": [
       17528,
       18993,
@@ -28687,12 +28689,22 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Live83-byte repeat scan and overlapping202E XLAT table; docs/keyboard-input.md",
+      "Exact bounded shared-verifier native composition with original byte/flag/stack/data contracts; docs/keyboard-input.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 51
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 51,
+    "c_implementation": "c/keyboard_input.c",
+    "c_code_ranges": [
+      [
+        19738,
+        19789
+      ]
+    ],
+    "verification_evidence": "tests/keyboard_input.py:extended existing producer campaign through4D1A repeat/character reader and scoped4A9F..4AB4 scale loop;1938 comparisons/11 completed mutants,all152 cluster sites/49 outcomes. 73 new bytes; surrounding43F2 menu/4401 continuation remain untranslated. Live83-byte states,second reads,zero-underflow/86 reload/93 emission,overlapping202E XLAT,AH,actual RET/CALL words and unsigned31..34 scale filtering. Same-RAM IRQ/character output/repeat/menu handoff at three loads; no scheduler/platform-body proof. docs/keyboard-input.md"
   },
   {
     "address": 19789,
@@ -64529,6 +64541,127 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Keyboard16D4 literal indexed field extent and consumers; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19757,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "KeyboardCharacterEmptyReturn4D2D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19788,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "KeyboardCharacterReadyReturn4D4C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19103,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 22,
+    "symbol_name": "SelectInputScale4A9F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md",
+      "Exact bounded shared-verifier native composition with original byte/flag/stack/data contracts; docs/keyboard-input.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/keyboard_input.c",
+    "c_code_ranges": [
+      [
+        19103,
+        19125
+      ]
+    ],
+    "verification_evidence": "tests/keyboard_input.py:extended existing producer campaign through4D1A repeat/character reader and scoped4A9F..4AB4 scale loop;1938 comparisons/11 completed mutants,all152 cluster sites/49 outcomes. 73 new bytes; surrounding43F2 menu/4401 continuation remain untranslated. Live83-byte states,second reads,zero-underflow/86 reload/93 emission,overlapping202E XLAT,AH,actual RET/CALL words and unsigned31..34 scale filtering. Same-RAM IRQ/character output/repeat/menu handoff at three loads; no scheduler/platform-body proof. docs/keyboard-input.md"
+  },
+  {
+    "address": 19106,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScaleAfterWait4AA2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19109,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InputScaleAfterCharacter4AA5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17409,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuRefresh4401",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8238,
+    "segment": 2473,
+    "kind": "data",
+    "size": 83,
+    "symbol_name": "KeyboardCharacterTable202E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "STRONGLY_SUPPORTED",
+    "evidence": [
+      "4D1A XLAT base202E plus scan0..82; first byte aliases final binding201F+15; initial UNKNOWN storage classification retained"
     ],
     "verification_status": "STATIC"
   }

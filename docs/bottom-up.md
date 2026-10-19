@@ -954,3 +954,14 @@ including releases. ReturnedDS/SS, actual saves, repeated reads and bitmap bound
 remain explicit. Fresh4D1A graph views identify the51-byte repeat/character reader
 as next connected leaf. Its202E XLAT base overlaps the last201F binding byte;
 keep both consumers on canonical RAM. See keyboard-input.md and next-work.md.
+
+Reader4D1A and menu scale span4A9F..4AB4 add73 bytes, taking the main ledger union
+to27,417. The existing keyboard campaign now covers961 fixtures/1,938 comparisons,
+152 own sites/49 outcomes and11 mutants in947 known connected bytes. IRQ-produced
+94 emits through live202E XLAT and leaves93; the actual menu loop consumes19 more
+display/read iterations, reloads86 and stores scale1 before JMP4401. Hardware
+entry remains constructed; the surrounding43F2/4401 domain is still untranslated.
+Both reader RETs, AH, second reads, byte underflow and the shared final binding
+byte stay explicit. Fresh43CE graph views identify its36-byte port/latch choice
+as the next leaf before controller-selection/calibration composition; see
+keyboard-input.md and next-work.md.

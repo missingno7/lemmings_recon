@@ -1,10 +1,11 @@
 # Keyboard producer and controller lifecycle
 
-The cluster adds275 main-code bytes: wait17BE (9 bytes/five sites), command17B4
+The producer checkpoint added275 main-code bytes: wait17BE (9 bytes/five sites), command17B4
 (10/seven), IRQ16D4 (224/91), installer1562 (32/16). c/port_io.c owns the two
 controller leaves; c/keyboard_input.c owns IRQ/installer. Native EOI/input children
 bring the known connected domain to856 bytes. Canonical RAM owns every field,
-binding, saved word and interrupt frame.
+binding, saved word and interrupt frame. The reader/menu extension below adds73
+bytes, bringing the known connected domain to947 bytes and the cluster to348.
 
 ## Controller leaves
 
@@ -53,9 +54,10 @@ This establishes their live consumer/extent; the existing UNKNOWN storage
 classification remains pending broader code/data ownership. It is not a complete
 writer inventory or exclusion of physical aliases.
 
-Next consumer4D1A scans83 state bytes, changes held-key repeat values and XLATs
+Consumer4D1A scans83 state bytes, changes held-key repeat values and XLATs
 from DS:202E. That table starts at the final binding byte: disjoint copied arrays
-would lose the overlap. Callers4478/4A31/4AA2/4CCE remain untranslated.
+would lose the overlap. Call4AA2 now composes the reader in the scoped scale loop;
+callers4478/4A31/4CCE and the surrounding menu remain untranslated.
 
 ## Installer
 
@@ -67,7 +69,7 @@ passes through DX into DS; DX16D4/AX2509 requests installation. ReturnedSS:SP
 owns POPES/POPDS/nearRET1581. STI is unconditional. Unbound, provider-stop and
 changed-IRET states remain distinct; IVT/stack/saved-vector aliases stay live.
 
-## Focused evidence
+## Producer checkpoint
 
 tests/keyboard_input.py reuses tests/verification.py original execution, bus,
 guarded callbacks and comparator.589 single fixtures include all256 raw scans at
@@ -92,3 +94,48 @@ Callback or budget failures never count as mutation detection. Owned DLL directo
 are removed after workers exit. This is scoped C evidence: opaque services,
 scheduling/reentrancy, repeat/character callers and unresolved code/data remain
 open. Aggregate acceptance requires fresh full original/native campaigns.
+
+## Character reader and menu scale loop
+
+ReadKeyboardCharacter4D1A adds51 bytes/24 sites. SI becomes0F78, BX0 and CX53.
+Each byte is TESTed for bit7; a held byte is read again before masking low7 bits
+and decrementing AL with byte wrap. Decrement0 reloads86 and emits immediately.
+Other decrements store the result OR80; stored93 emits, while other values keep
+scanning. Initial80 underflows toFF. An earlier non-ready held byte is updated
+before scanning the next one; the first ready index ends the scan. A full miss
+returnsALFF through RET4D2D with BX53/CX0. AH is preserved in every path.
+
+On a ready index, AL receivesBL and BX becomes202E. Actual XLAT reads the live
+character byte, including the overlap with binding15. RET4D4C consumes actual
+SS:SP in the adapter. A character valueFF remains indistinguishable in AL from
+an empty result but still has its state update and ready-return path. No separate
+repeat/character copy is created; stack and source aliases remain canonical.
+
+SelectInputScale4A9F..4AB4 adds22 bytes/nine sites within43F2's larger untranslated
+menu. It CALLs native1550 through actual4AA2 and character4D1A through4AA5.
+Unsigned lower/upper comparisons accept31..34 inclusive; other bytes repeat both
+calls with their original unbounded waits. SUBAL30 stores the live selector2005;
+JMP4401 transfers to the untranslated refresh continuation. This span creates no
+outer RET or new caller frame. Changed child RETs and missing display input stop
+at their actual consumed/reached boundaries. Full43F2 is not claimed implemented.
+
+The extended shared campaign checks every initial state byte and all83 positions,
+multiple held bytes, both emission paths, underflow, AH, late second reads,
+overlapping characters, translatedFF, actual RET aliases, VGA/physical/offset wrap,
+scale bounds and changed child frames. Three same-RAM handoffs now continue from
+the original nine producer stages through another IRQ make02, the character
+reader and the scale loop. Pinned lookup emits31 and leaves state93. Without
+rewriting any state/table byte,19 subsequent display/reader iterations consume
+that repeat state, reload86, select scale1 and reach4401 with the same SP.
+
+The961 fixtures (958 singles plus three12-stage handoffs) perform1,938 comparisons:
+all152 cluster sites/49 outcomes,211 integrated sites/69 outcomes,1,191,423 original
+instructions and401,292 ordered events. Declared interrupt transport remains1,296
+events and provider accesses456 across80 calls. Eleven completed mutants include
+the prior seven plus reload86, overlapping XLAT base, the live second read and
+the scale upper bound. The reused engine and worker bounds above are unchanged;
+no new suite or verification engine is added. Current input hashes, including the
+compiled display child and both containing ASM modules, own this evidence.
+
+This closes these73 known bytes while retaining UNKNOWN storage/classifications,
+opaque services, asynchronous scheduling and the remaining menu/input domains.

@@ -25,4 +25,17 @@ LmnKeyboardResult lmn_install_keyboard_core(uint8_t *memory, const LmnRegs *regi
     const LmnInterruptService *dos, const LmnRasterBus *bus);
 LmnKeyboardResult lmn_install_keyboard_adapter(uint8_t *memory, const LmnRegs *registers,
     const LmnInterruptService *dos, const LmnRasterBus *bus);
+
+/* Reader4D1A: scans live83-byte state, advances repeat counts, XLATs through
+  202E (overlapping the last binding). Core leaves either realRET unconsumed. */
+LmnKeyboardResult lmn_read_keyboard_character_core(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBus *bus);
+LmnKeyboardResult lmn_read_keyboard_character_adapter(uint8_t *memory,
+    const LmnRegs *registers, const LmnRasterBus *bus);
+
+/* Menu span4A9F..4AB4, no synthetic RET. Runs the real loop,
+   actual child CALL frames and JMP4401 after accepting character31..34.
+   The surrounding menu remains a separate untranslated continuation. */
+LmnKeyboardResult lmn_select_input_scale(uint8_t *memory, const LmnRegs *registers,
+    const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
 #endif
