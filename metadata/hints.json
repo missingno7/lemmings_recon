@@ -33,43 +33,6 @@
   ],
   "regions": [
     {
-      "start": 6287,
-      "end": 6297,
-      "class": "code_used_as_data",
-      "overlay": true,
-      "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
-    },
-    {
-      "start": 33720,
-      "end": 33727,
-      "class": "static_data",
-      "evidence": "Entry stores 83B8/83BD/83BE; 8343 and 8363 read/write 83B9..83BC"
-    },
-    {
-      "start": 39568,
-      "end": 47778,
-      "class": "static_data",
-      "evidence": "Startup0029..0031 explicitly initializes DS:0000..2011 with REP STOSB; stored image retained exactly; executable overlap not excluded by this initial classification"
-    },
-    {
-      "start": 47779,
-      "end": 47791,
-      "class": "lookup_table",
-      "evidence": "13F8..140B iterates four records: enable byte then near code word via LODSB/LODSW/CALL AX"
-    },
-    {
-      "start": 49200,
-      "end": 49202,
-      "class": "pointer_data",
-      "evidence": "42A1 loads indirect callback from DS:25A0; static4252; stores4334/4359 at4A68/4A80"
-    },
-    {
-      "start": 3583,
-      "end": 3642,
-      "class": "runtime_modified_code",
-      "evidence": "0DBA CALL-next pushes0DBD;0DC1 adds0042 =>0DFF;0DD0..0DD8 negates003B bytes before using this INT1 handler"
-    },
-    {
       "start": 1645,
       "end": 2125,
       "class": "state_specific_code",
@@ -88,18 +51,6 @@
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
     },
     {
-      "start": 3486,
-      "end": 3507,
-      "class": "state_specific_code",
-      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
-    },
-    {
-      "start": 3642,
-      "end": 3686,
-      "class": "state_specific_code",
-      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
-    },
-    {
       "start": 2444,
       "end": 2956,
       "class": "runtime_sector_buffer",
@@ -114,16 +65,71 @@
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     },
     {
+      "start": 3486,
+      "end": 3507,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 3583,
+      "end": 3642,
+      "class": "runtime_modified_code",
+      "evidence": "0DBA CALL-next pushes0DBD;0DC1 adds0042 =>0DFF;0DD0..0DD8 negates003B bytes before using this INT1 handler"
+    },
+    {
+      "start": 3642,
+      "end": 3686,
+      "class": "state_specific_code",
+      "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
       "start": 5424,
       "end": 5456,
       "class": "lookup_table",
       "evidence": "1462 uses CS:1530 XLAT;1410 indexes visible word table1536..154F. Hardware-supplied index bounds require an external contract."
     },
     {
+      "start": 6287,
+      "end": 6297,
+      "class": "code_used_as_data",
+      "overlay": true,
+      "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
+    },
+    {
+      "start": 18773,
+      "end": 18791,
+      "class": "lookup_table",
+      "evidence": "Read only at 494D as CS:[BX+4955] with BX in {0,2,..,16} set by 48F6 completion-vs-requirement comparisons; nine little-endian DS offsets 4F33..517A, each a valid two-line DrawTextStream start (result assessment messages). tests/level_result.py executes every index."
+    },
+    {
+      "start": 33720,
+      "end": 33727,
+      "class": "static_data",
+      "evidence": "Entry stores 83B8/83BD/83BE; 8343 and 8363 read/write 83B9..83BC"
+    },
+    {
       "start": 33824,
       "end": 34582,
       "class": "runtime_executable_overlay_storage",
       "evidence": "5972 decodes MAIN.DAT section5 (758 bytes) here;165D installs frame0842 offset0182 as INT60. Stored bytes remain canonical zeros."
+    },
+    {
+      "start": 39568,
+      "end": 47778,
+      "class": "static_data",
+      "evidence": "Startup0029..0031 explicitly initializes DS:0000..2011 with REP STOSB; stored image retained exactly; executable overlap not excluded by this initial classification"
+    },
+    {
+      "start": 47779,
+      "end": 47791,
+      "class": "lookup_table",
+      "evidence": "13F8..140B iterates four records: enable byte then near code word via LODSB/LODSW/CALL AX"
+    },
+    {
+      "start": 49200,
+      "end": 49202,
+      "class": "pointer_data",
+      "evidence": "42A1 loads indirect callback from DS:25A0; static4252; stores4334/4359 at4A68/4A80"
     },
     {
       "start": 61196,

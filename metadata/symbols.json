@@ -2906,7 +2906,16 @@
     "evidence": [
       "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        251,
+        261
+      ]
+    ],
+    "c_core": "lmn_game_session_core",
+    "c_implementation": "c/game_session.c",
+    "verification_evidence": "tests/game_session.py; build/game-session-differential.json: all3 owned sites/10 bytes,391 exact-frame/poll checkpoints,7008684 connected original instructions/4405 sites/652 outcomes, three IRQ09 helper comparisons and four completed numeric mutants. Real native/original INT08/09 delivery through live IVT and SS:SP at explicit polls; full RAM/register/bus/VGA equality. Inherited child/platform domains remain conditional. Exact gate passes on the host."
   },
   {
     "address": 261,
@@ -33903,7 +33912,20 @@
     "evidence": [
       "Session exit target from 0311: menu display/palette/timer setup and success test of StatusCompletionDisplayValue against the level requirement (signed JNL)."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        18155,
+        18216
+      ],
+      [
+        18217,
+        18479
+      ]
+    ],
+    "c_core": "lmn_level_result_core",
+    "c_implementation": "c/level_result.c",
+    "verification_evidence": "tests/level_result.py; build/level-result-differential.json; bounded result operation, explicit foreground input polls and existing child domains"
   },
   {
     "address": 18217,
@@ -34243,8 +34265,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_48BD",
-    "aliases": [],
+    "symbol_name": "DrawResultPercentagesAndPrompt",
+    "aliases": [
+      "sub_48BD"
+    ],
     "callers": [
       18176
     ],
@@ -34378,16 +34402,27 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 100
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 100,
+    "c_code_ranges": [
+      [
+        18621,
+        18678
+      ]
+    ],
+    "c_core": "lmn_level_result_core",
+    "c_implementation": "c/level_result.c",
+    "verification_evidence": "tests/level_result.py; build/level-result-differential.json; bounded result operation, explicit foreground input polls and existing child domains"
   },
   {
     "address": 18678,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_48F6",
-    "aliases": [],
+    "symbol_name": "DrawResultAssessmentMessage",
+    "aliases": [
+      "sub_48F6"
+    ],
     "callers": [
       18328
     ],
@@ -34456,8 +34491,42 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 138
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 138,
+    "c_code_ranges": [
+      [
+        18678,
+        18773
+      ]
+    ],
+    "c_core": "lmn_level_result_core",
+    "c_implementation": "c/level_result.c",
+    "verification_evidence": "tests/level_result.py; build/level-result-differential.json; bounded result operation, explicit foreground input polls and existing child domains"
+  },
+  {
+    "address": 18773,
+    "segment": 0,
+    "kind": "lookup_table",
+    "size": 18,
+    "symbol_name": "ResultAssessmentTextOffsets",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [
+      {
+        "instruction": 18765,
+        "segment": "cs",
+        "displacement": 18773,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      }
+    ],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Nine little-endian DS text offsets; even BX0..16 established by48F6..494D; all nine exact targets parse as two-line DrawTextStream starts ending CR and zero-column terminator"
+    ],
+    "verification_status": "STATIC"
   },
   {
     "address": 18791,

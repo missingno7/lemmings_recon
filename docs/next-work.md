@@ -7,27 +7,25 @@ loop and physical source map. Old checkpoints are in convergence-history.md.
 
 ## Immediate mode
 
-The foreground session operation is now understood and translated as one unit:
-InitializeGameSession 03E7..04CF, the frame controller 0105..031D, transition
-cues 031E..03E6 and selector/edge scroll 4085/414F (c/game_initialize.c,
-c/game_frame.c, c/game_transition.c, c/view_scroll.c). Its contract, timer
-handshake and readiness decision sit beside the ASM at 00FB/0186/0462 and in
-src/game_timer.asm; result/restart lifecycle at 46EB. The connected suites model
-an IRQ only as the tail's foreground-visible stores at explicit polls.
-No SDL3 integration is part of this phase.
+The level session is native end to end: EnterLoadedLevelGame 00FB
+(c/game_session.c) runs InitializeGameSession 03E7..04CF and the frame
+0105..03E6 (game_frame/game_transition/view_scroll) to the result screen 46EB
+(c/level_result.c), whose exits JMP to 4551 (next/retry) or 4401 (menu).
+c/hardware_irq.c delivers the real native INT08/IRQ09 handlers at the explicit
+LmnForegroundPoll sites; tests/game_session.py checks this against original
+handler delivery with scripted mouse/keyboard play. Contracts sit beside the ASM
+at 00FB/0186/0462/46EB and in src/game_timer.asm. No SDL3 in this phase.
 
 ## Priorities
 
-1. **Native session runner with real INT08 delivery (00FB).** Compose
-   lmn_initialize_game_core and lmn_game_frame_core into the 00FB session and
-   deliver the native 17C7 handler (input poll 418C, commands 3E6F, mirrors,
-   EOI/BIOS chain) at the LmnForegroundPoll sites with a real hardware frame and
-   IF honoured; verify against original 17C7 delivery on the same schedule over
-   multi-frame scenarios with scripted mouse/keyboard input. This replaces the
-   minimal 1FCF/1FCD fixture, exercises IRQ-produced input end to end and is the
-   native core the platform/SDL layer will drive. Keep 004A's unknown FF
-   producer, preemption inside child bodies and sound-engine bodies explicit.
-   Then translate the 46EB result screen to close next-level/retry/menu.
+1. **Native menu -> level -> session -> result loop.** Main menu 43F2/4401,
+   level start 454C/4551, the session and the result screen all have native
+   cores. Compose them into one driver from EnterMainMenu with startup state
+   constructed from the documented 0000..00FA producers, delivering IRQs only at
+   poll sites, and verify a scripted multi-level run (pass -> next level, fail
+   -> retry, menu return) against the original. This is the native core the
+   platform/SDL layer drives. Keep 004A's FF producer, preemption inside child
+   bodies, 715B callbacks and sound-engine bodies explicit.
 2. **Record/graphics lifecycle and callback writers (30A6,1F19,3150,3634,706F).**
    Trace the same 2D-byte record from per-level clear through creation, action,
    state transitions and drawing. Preserve shared +20/+26/+27 roles and sample

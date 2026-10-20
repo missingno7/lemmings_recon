@@ -9,11 +9,11 @@ it does not independently certify toolchain freshness or manifest completeness.
 |---|---|
 | Main binary identity | retained exact-image evidence (82,906 main bytes; recorded input hashes match) |
 | Canonical main image | 82,906 bytes; SHA256 `b0c4ef403e4bd28fa7913cb51a8c87e4dbbba8c4f1c36ea1594ba4424d64ee4e` |
-| Classified main bytes | 45,768; classification is not semantic closure |
+| Classified main bytes | 45,786; classification is not semantic closure |
 | Decoded main instructions | 15,417 sites / 35,826 bytes |
-| UNKNOWN main bytes | 37,138 in 115 runs; 2,032 bytes inside provisional code frame |
+| UNKNOWN main bytes | 37,120 in 114 runs; 2,014 bytes inside provisional code frame |
 | Static control-flow frontier | 7 transfers; known target sets remain conditional |
-| Main C implementation union | 33,510 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
+| Main C implementation union | 33,995 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
 | Semantic readiness | Scoped qualitative gate and subsystem matrix in [semantic audit](semantic-audit.md); no numeric semantic-completion claim |
 | Differential coverage | Per-suite scope and matching consumed hashes required; aggregate not evaluated by this inventory |
 | Whole-game integration | Not established by routine or byte totals; native startup/frame/platform completion remains open |

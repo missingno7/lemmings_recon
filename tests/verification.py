@@ -328,6 +328,7 @@ class OriginalMachine:
         self.mask=FLAGS;self.flags=registers['flags'];self.steps=0;self.sites=set();self.edges=set()
         self.previous=None;self.previous_count=0;self.pending=False;self.executing_boundary=False
         self.status=0;self.service_status=0;self.stopped=False
+        self.pending_hardware=None;self.hardware_frames=[]
         self.far_return_events=0
         self.loaded=loaded_image(case['load'])
         self.code_bytes={physical(case['load'],p+d) for p,i in instructions.items() for d in range(i.size)}
@@ -439,6 +440,21 @@ class OriginalMachine:
         self.set_state(r)
         self.external_iret(old_cs,resume,binding,provider)
 
+    def hardware_interrupt(self,number,*,returns):
+        """Schedule real original ISR execution at the current instruction.
+
+        Called only from a suite's declared before/poll hook. IF-clear requests
+        are deferred without touching the machine. The run loop pushes the
+        canonical hardware frame, reads the live IVT, executes the identified
+        handler and checks its actual IRET before resuming this instruction.
+        `returns` names identified outer IRET sites, never a provider body.
+        """
+        if not self.state()['flags']&0x200:return False
+        check(self.pending_hardware is None,'multiple pending hardware deliveries')
+        check(all(p in self.instructions and self.instructions[p].mnemonic=='iret'
+                  for p in returns),'hardware return is not an identified IRET')
+        self.pending_hardware=(number,set(returns));self.cpu.emu_stop();return True
+
     def external_iret(self,return_cs,resume,binding,provider):
         """Declared bound service body; consumes the provider's live IRET frame."""
         r=self.state();access=self.access
@@ -464,11 +480,28 @@ class OriginalMachine:
             r=self.state();self.pending=False;self.pending_fetch=None
             self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=self.max_steps-self.steps+1)
             if self.stopped:break
+            if self.pending_hardware is not None:
+                number,returns=self.pending_hardware;self.pending_hardware=None
+                r=self.state();self.hardware_frames.append((r['cs'],r['ip'],returns))
+                for index,value in enumerate((r['flags'],r['cs'],r['ip'])):
+                    r['sp']=(r['sp']-2)&0xFFFF
+                    self.access.word_write(r['ss'],r['sp'],value,r['flags'],self.mask)
+                    if index==0:r['flags']&=~0x300
+                r['cs']=self.access.word_read(0,number*4+2,r['flags'],self.mask)
+                r['ip']=self.access.word_read(0,number*4,r['flags'],self.mask)
+                self.previous=None;self.set_state(r);continue
             if self.pending_fetch is not None:
                 self.cpu.ctl_remove_cache(0,SIZE*2)
                 continue
             check(self.pending,'original did not reach bounded return/chain boundary')
             off=self.state()['ip']
+            if self.hardware_frames and off in self.hardware_frames[-1][2]:
+                cs,ip,_=self.hardware_frames.pop()
+                self.executing_boundary=True
+                try:self.cpu.emu_start(physical(self.c['load'],off),0,count=1)
+                finally:self.executing_boundary=False
+                check((self.state()['cs'],self.state()['ip'])==(cs,ip),'hardware IRET target differs')
+                self.previous=None;self.mask=FLAGS;continue
             if off in self.far_calls:
                 self.executing_boundary=True
                 self.cpu.emu_start(physical(self.c['load'],off),0,count=1)

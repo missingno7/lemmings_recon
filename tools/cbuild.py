@@ -17,6 +17,12 @@ def compiler():
 
 def source_files(cluster="checksum"):
     """Canonical ordered native source closure, including aliased clusters."""
+    if cluster=="game_session":
+        return tuple(dict.fromkeys((ROOT/'c/game_session.c',ROOT/'c/hardware_irq.c',
+            *(p for d in ('game_initialize','game_frame','game_timer','keyboard_input') for p in source_files(d)))))
+    if cluster=="level_result":
+        dependencies=('main_menu','level_briefing','timer_tail')
+        return tuple(dict.fromkeys((ROOT/'c/level_result.c',*(p for d in dependencies for p in source_files(d)))))
     if cluster=="view_scroll":return (ROOT/'c/view_scroll.c',ROOT/'c/view_visibility.c')
     if cluster=="game_transition":return tuple(dict.fromkeys((ROOT/'c/game_transition.c',ROOT/'c/interrupt_service.c',*source_files('palette_transition'))))
     if cluster=="game_frame":
@@ -169,8 +175,14 @@ def build(output=None, mutation=0, cluster="checksum", *, dependency_library=Non
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
     defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
+    if cluster=="game_session":
+        defines=['-DMUTATION=0','-Wundef','-DGAME_SESSION_MUTATION='+str(mutation if mutation<10 else 0),
+                 '-DHARDWARE_IRQ_MUTATION='+str(mutation-10 if mutation>=10 else 0)]
     if cluster in ('view_scroll','game_transition','game_frame'):
         defines=['-DMUTATION=0','-Wundef','-D'+cluster.upper()+'_MUTATION='+str(mutation)]
+    if cluster=="level_result":
+        if not isinstance(mutation,int):raise ValueError('level_result mutation must be numeric')
+        defines=['-DMUTATION=0','-Wundef','-DLEVEL_RESULT_MUTATION='+str(mutation)]
     if cluster=="level_start":defines=["-DLEVEL_START_MUTATION="+str(mutation)]
     if cluster=="video_probe":defines=["-DVIDEO_PROBE_MUTATION="+str(mutation)]
     if cluster=="game_prepare":defines=["-DGAME_PREPARE_MUTATION="+str(mutation)]

@@ -620,8 +620,9 @@
 #define CS_SpecialLevelSoundIds 0x4888u
 #define CS_FormatSelectedLevelAndGroup 0x488Cu
 #define CS_LevelGroupFormatReturn 0x48AFu
-#define CS_sub_48BD 0x48BDu
-#define CS_sub_48F6 0x48F6u
+#define CS_DrawResultPercentagesAndPrompt 0x48BDu
+#define CS_DrawResultAssessmentMessage 0x48F6u
+#define CS_ResultAssessmentTextOffsets 0x4955u
 #define CS_MainMenuCodeTransition 0x4967u
 #define CS_CodeEntryAfterCall4967 0x496Au
 #define CS_CodeEntryAfterCall496A 0x496Du

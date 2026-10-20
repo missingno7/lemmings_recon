@@ -743,7 +743,7 @@
     {
       "start": 18773,
       "end": 18791,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 18791,
@@ -1188,13 +1188,6 @@
   ],
   "overlays": [
     {
-      "start": 6287,
-      "end": 6297,
-      "class": "code_used_as_data",
-      "overlay": true,
-      "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
-    },
-    {
       "start": 2444,
       "end": 2956,
       "class": "runtime_sector_buffer",
@@ -1207,6 +1200,13 @@
       "class": "runtime_sector_buffer",
       "overlay": true,
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
+    },
+    {
+      "start": 6287,
+      "end": 6297,
+      "class": "code_used_as_data",
+      "overlay": true,
+      "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
     }
   ]
 }

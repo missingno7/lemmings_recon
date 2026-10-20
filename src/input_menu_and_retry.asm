@@ -457,6 +457,9 @@ LevelResultScreen:
 ; completion >= DS:0041. Passed advances the selection; failed keeps it. After
 ; buttons are released: button0 -> 4551 reloads (clear 0000..0FC9) -> 00FB a
 ; new session; button1/keys 20/40 -> main menu 4401; 120 levels -> final screen.
+; READINESS: READY and translated (c/level_result.c) to the stops at JMP 4401/
+; 4551; the button/key spins read IRQ-produced words through LmnForegroundPoll.
+; Children keep their menu/palette/timer/text domains; 4728 stays unresolved.
     call ClearFullDrawingPage ; @046EB
     call SetupDisplayModeAndLayout ; @046EE
     call PublishMenuPalette ; @046F1
@@ -464,7 +467,7 @@ LevelResultScreen:
     call ClearFullDrawingPage ; @046F7
     call InstallMenuTimerVector ; @046FA
     call DrawScreenBackground ; @046FD
-    call sub_48BD ; @04700
+    call DrawResultPercentagesAndPrompt ; @04700
     lea si,[0x4c19] ; @04703
     mov al,[LevelCountdownHighDigit-GameDataImage] ; @04707
     mov bx,[0x20a9] ; @0470A
@@ -520,7 +523,7 @@ ResultLevelFailed:
     lea bx,[0x4d20] ; @04793
 loc_4797:
     push bx ; @04797
-    call sub_48F6 ; @04798
+    call DrawResultAssessmentMessage ; @04798
     pop si ; @0479B
     call DrawTextStream ; @0479C
     mov si,[UiScrollPhaseOrPromptPointer-GameDataImage] ; @0479F
@@ -658,7 +661,7 @@ LevelGroupFormatReturn:
     ret ; @048AF
 ; UNKNOWN: unresolved bytes
     db 0x51,0xb1,0x1e,0x8a,0xe8,0x8a,0xc4,0xf6,0xe1,0x02,0xc5,0x59,0xc3 ; @048B0
-sub_48BD:
+DrawResultPercentagesAndPrompt:
     mov al,[StatusCompletionDisplayValue-GameDataImage] ; @048BD
     lea si,[0x4c5d] ; @048C0
     call WritePercentageByteField ; @048C4
@@ -676,7 +679,7 @@ loc_48EB:
     mov [UiScrollPhaseOrPromptPointer-GameDataImage],si ; @048EB
     lea si,[0x4c4e] ; @048EF
     jmp DrawTextStream ; @048F3
-sub_48F6:
+DrawResultAssessmentMessage:
     mov al,[StatusCompletionDisplayValue-GameDataImage] ; @048F6
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @048F9
     mov dl,[0x41] ; @048FB
@@ -715,11 +718,14 @@ sub_48F6:
     jl loc_494D ; @04948
     add bx,byte +0x2 ; @0494A
 loc_494D:
-    mov si,[cs:bx+0x4955] ; @0494D
+    mov si,[cs:bx+ResultAssessmentTextOffsets] ; @0494D
     jmp DrawTextStream ; @04952
-; UNKNOWN: unresolved bytes
+; Nine DS text offsets selected by 48F6 (completion vs DS:0041 requirement):
+; 0 none, 1 below half, 2 below req-5, 3 below req-1, 4 req-1, 5 req, 6 below
+; req+20, 7 otherwise, 8 completion 100. All are two-line DrawTextStream starts.
+ResultAssessmentTextOffsets:
+; DATA: lookup_table
     db 0x33,0x4f,0x77,0x4f,0xbc,0x4f,0x03,0x50,0x4e,0x50,0x91,0x50,0xde,0x50,0x2c,0x51 ; @04955
-; UNKNOWN: unresolved bytes
     db 0x7a,0x51 ; @04965
 loc_4967:
 ; Entry4967 composes editor/decoder and returns via JMP4401. Valid result uses
