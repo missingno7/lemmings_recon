@@ -301,8 +301,8 @@
 #define CS_DrawScreenBackgroundFromRow 0x5019u
 #define CS_InstallMenuTimerVector 0x5028u
 #define CS_DrawCodeInputText 0x503Bu
-#define CS_sub_5042 0x5042u
-#define CS_sub_51A2 0x51A2u
+#define CS_EncodeLevelCode 0x5042u
+#define CS_DecodeLevelCode 0x51A2u
 #define CS_sub_52F4 0x52F4u
 #define CS_TransitionPaletteToSlot1 0x531Eu
 #define CS_sub_5329 0x5329u
@@ -1131,4 +1131,11 @@
 #define CS_MenuStartupAfterCall4B10 0x4B13u
 #define CS_MenuStartupAfterCall4B13 0x4B16u
 #define SEG09A9_StartupFatIdByte1FDE 0x1FDEu
+#define CS_LevelCodeEncodeReturn 0x51A1u
+#define CS_LevelCodeDecodeReturn 0x52D3u
+#define SEG09A9_SpecialLevelCodeLatch 0x1F74u
+#define SEG09A9_LevelCodeTemplate 0x4913u
+#define SEG09A9_LevelCodePayloadByte 0x491Du
+#define SEG09A9_GeneratedLevelCode 0x4D68u
+#define SEG09A9_EnteredLevelCode 0x4DF2u
 #endif

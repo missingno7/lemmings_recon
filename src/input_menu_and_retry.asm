@@ -438,7 +438,7 @@ loc_4748:
     call sub_488C ; @04748
     lea si,[0x4d5d] ; @0474B
     call WriteDecimalByteField ; @0474F
-    call sub_5042 ; @04752
+    call EncodeLevelCode ; @04752
     lea si,[0x4d3f] ; @04755
     call DrawTextStream ; @04759
     lea bx,[0x4d75] ; @0475C
@@ -665,7 +665,7 @@ loc_497D:
     call ProgramAlternateDisplayStart ; @04990
     call TransitionPaletteToSlot2 ; @04993
     call ReadCodeInput ; @04996
-    call sub_51A2 ; @04999
+    call DecodeLevelCode ; @04999
     jnz loc_49EC ; @0499C
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @0499E
     call sub_488C ; @049A1

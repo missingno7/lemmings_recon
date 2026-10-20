@@ -180,7 +180,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="palette_ports":defines=["-DPALETTE_PORTS_MUTATION="+str(mutation)]
     if cluster=="palette_rows":defines=["-DPALETTE_ROWS_MUTATION="+str(mutation)]
     if cluster=="palette_channels":defines=["-DPALETTE_CHANNELS_MUTATION="+str(mutation)]
-    if cluster=="main_menu":defines=["-DMAIN_MENU_MUTATION="+str(mutation if mutation<100 else 0),"-DPALETTE_PUBLISH_MUTATION="+str(mutation-100 if 100<=mutation<200 else 0)]
+    if cluster=="main_menu":defines=["-DMAIN_MENU_MUTATION="+str(mutation if mutation<100 else 0),"-DPALETTE_PUBLISH_MUTATION="+str(mutation-100 if 100<=mutation<200 else 0),"-DLEVEL_CODE_MUTATION="+str(mutation-200 if 200<=mutation<300 else 0)]
     if cluster=="menu_scroll":defines=["-DMENU_SCROLL_MUTATION="+str(mutation)]
     if cluster=="menu_cache":defines=["-DMENU_CACHE_MUTATION="+str(mutation)]
     if cluster=="menu_animation":defines=["-DMENU_ANIMATION_MUTATION="+str(mutation)]

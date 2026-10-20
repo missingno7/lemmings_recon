@@ -18,10 +18,12 @@ from common import BUILD,sha,write_json
 check=base.check
 physical,put16,get16=base.physical,base.put16,base.get16
 ENTRIES=(0x4401,0x4453,0x445B,0x4478)
+CODE_ENTRIES=(0x5042,0x51A2)
+CODE_RANGES=((0x5042,0x52D4),)
 PUBLISH_ENTRIES=(0x53F6,0x53FC,0x53FE,0x5401)
 MENU_RANGES=((0x4401,0x44A3),(0x44A4,0x44AA),(0x44AB,0x44E9),(0x44EC,0x454C))
 PUBLISH_RANGES=((0x53F6,0x53FB),(0x53FC,0x5417),(0x5418,0x5424))
-RANGES=MENU_RANGES+PUBLISH_RANGES+((0x43F2,0x4401),(0x4AC5,0x4B1C))
+RANGES=CODE_RANGES+MENU_RANGES+PUBLISH_RANGES+((0x43F2,0x4401),(0x4AC5,0x4B1C))
 OWN={i.address:i for a,b in RANGES for i in base.MD.disasm(base.IMAGE[a:b],a)}
 EXITS=(0x4D0,0x4967,0x4A01,0x454C)
 BOUNDARY={p:next(base.MD.disasm(base.IMAGE[p:p+16],p)) for p in EXITS}
@@ -58,6 +60,52 @@ class PackedVgaTrace:
         if isinstance(index,slice):return [e[:4] for e in self.events[index]]
         return self.events[index][:4]
     def clear(self):self.events=base.PackedEvents()
+
+# Independent bit layout; this fixture formula does not model instruction flags,
+# register intermediates, memory access order or native execution.
+TEMPLATE=b'AJHLDHBBCJ'
+def expected_code(selection,payload,completion,template=TEMPLATE):
+    v=[template[0]|((selection&1)<<3)|((payload&1)<<1)|((completion&1)<<2),
+       template[1]|((selection&2)<<1)|((completion&2)>>1),
+       template[2]|(selection&4)|((payload&2)>>1)|((completion&4)>>1),
+       template[3]|((selection&8)>>3)|((completion&8)>>2),
+       template[4]|((selection&16)>>3)|((payload&4)>>2)|((completion&16)>>1),
+       template[5]|((selection&32)>>5)|((payload&8)>>2)|((completion&32)>>3),
+       template[6]|((selection&192)>>4)|((completion&64)>>6),
+       (template[7]+(selection&15))&255,(template[8]+(selection>>4))&255]
+    v.append((template[9]+(sum(v)&15))&255)
+    count=(8-(selection&7))%7
+    if count:v[:7]=v[7-count:7]+v[:7-count]
+    return bytes(v)
+
+def code_cases():
+    rows=[]
+    for selection in range(256):
+        values=dict(selection=selection,payload=(selection*7)&255,completion=(selection*29)&255)
+        for kind in ('encode','decode'):
+            rows.append(dict(name=f'code-{kind}-{selection:03}',kind=kind,entry=0,**values))
+    for load in base.LOADS:
+        for kind in ('encode','decode'):
+            rows.append(dict(name=f'code-{kind}-load-{load:04x}',kind=kind,entry=0,load=load,selection=119,payload=15,completion=100))
+    for name,kw in (
+        ('core',dict(core=True)),('df',dict(flags=0x6D7)),('sp-wrap',dict(sp=0)),('sp-ffff',dict(sp=65535)),
+        ('distinct-ds',dict(code_ds=0x3A21)),('physical-wrap',dict(code_ds=0xFFFF)),
+        ('template-live',dict(template=bytes((0xFF,0x35,0x9A,0,0x11,0x27,0xC1,0xFE,0xFF,0xFA)))),
+        ('stack-input',dict(stack_alias='input')),('stack-template',dict(stack_alias='template')),
+        ('saved-si',dict(patch='code-saved-si'))):
+        for kind in ('encode','decode'):
+            if kind=='encode' and name=='saved-si':continue
+            rows.append(dict(name=f'code-{kind}-'+name,kind=kind,entry=0,selection=127,payload=0xFA,completion=0xE3,**kw))
+    # Every prefix comparison must take both outcomes. The latch is intentionally
+    # independent of final code acceptance and never cleared for other inputs.
+    special=b'BILLANDTED'
+    for i in range(6):
+        value=bytearray(special)
+        if i<5:value[2*i]^=1
+        rows.append(dict(name=f'code-special-{i}',kind='decode',entry=0,input=bytes(value)))
+    rows += [dict(name='code-checksum-fail',kind='decode',entry=0,corrupt='checksum'),
+             dict(name='code-selection-fail',kind='decode',entry=0,corrupt='selection',initial_selection=0xA5)]
+    return rows
 
 def cases():
     rows=[dict(name='frame-button',entry=2,keys=(None,)),dict(name='release-waits',entry=1,keys=(None,),release_samples=(1,3,8))]
@@ -109,7 +157,7 @@ def cases():
     rows += [dict(name='startup-resource',kind='startup',entry=0,keys=(None,),media=0xFD,pinned=True),
              dict(name='startup-no-mode',kind='startup',entry=0,missing_mode=True,expected=1,child_status=1),
              dict(name='startup-mode-ds',kind='startup',entry=0,mode_ds=0x3600,missing_out=True,expected=1,child_status=2)]
-    return [dict(name='case',kind='menu',entry=3,load=0x1010,seed=0x4401+i,flags=0xD7,group=1,option=0,toggle=0,driver=0xFF,keys=(0x80,))|c for i,c in enumerate(rows)]
+    return [dict(name='case',kind='menu',entry=3,load=0x1010,seed=0x4401+i,flags=0xD7,group=1,option=0,toggle=0,driver=0xFF,keys=(0x80,))|c for i,c in enumerate(rows+code_cases())]
 
 def setup(c):
     memory,device=base.initial_memory(c);ds=(c['load']+0x9A9)&65535
@@ -136,6 +184,18 @@ def setup(c):
     else:base.sync_memory_byte(memory,device,ds,0x4AD9,0)
     put16(memory,r['ss'],r['sp'],0xD00D,device)
     device.trace=PackedVgaTrace(c.get('reference_events',MAX_EVENTS))
+    if c['kind'] in ('encode','decode'):
+        ds=c.get('code_ds',ds);r['ds']=ds;r['ip']=CODE_ENTRIES[c['kind']=='decode']
+        selection=c.get('selection',37);payload=c.get('payload',6);completion=c.get('completion',83);template=c.get('template',TEMPLATE)
+        value=c.get('input',expected_code(selection,payload,completion,template));value=bytearray(value)
+        if c.get('corrupt')=='checksum':value[9]^=1
+        if c.get('corrupt')=='selection':value[(8-(selection&7))%7]^=8;value[9]=(template[9]+(sum(value[:9])&15))&255
+        for start,data in ((0x4913,template),(0x4DF2,value),(0x4D68,b'0123456789\r')):
+            for i,v in enumerate(data):base.sync_memory_byte(memory,device,ds,start+i,v)
+        for off,v in ((0x491D,payload),(0x40,completion),(0x1F6B,c.get('initial_selection',selection)),(0x1F74,0x39)):
+            base.sync_memory_byte(memory,device,ds,off,v)
+        if c.get('stack_alias'):r['ss']=ds;r['sp']=0x4DF4 if c['stack_alias']=='input' else 0x4915
+        put16(memory,r['ss'],r['sp'],0xD00D,device)
     if c['kind']=='publish':
         r.update(ip=PUBLISH_ENTRIES[c['entry']],ax=0xBE00|c.get('index',1),cx=c.get('count',0xAD05))
     elif c['kind']=='probe':r['ip']=0x4AC5
@@ -158,6 +218,8 @@ class Access(base.BusAccess):
         self.probe_active=c['kind'] in ('probe','startup') and c.get('media',0)==0xFD
         self.wait_reads=0;self.open_count=0;self.close_count=0;self.handles=set();self.live_ds=r['ds']
     def access(self,kind,address,flags,mask=base.FLAGS,value=None):
+        if self.c.get('patch')=='code-saved-si' and 'code-saved-si' not in self.providers and kind=='read' and address==physical(self.r['ss'],(self.r['sp']-2)&65535):
+            self.patch(self.r['ss'],(self.r['sp']-2)&65535,0x4D68,'code-saved-si')
         phase=self.c.get('patch')
         if kind=='read' and address==physical(self.live_ds,0x14) and (self.probe_active or self.c['kind']=='probe'):
             self.wait_reads+=1;check(self.wait_reads<=16,'finite resource wait schedule exhausted')
@@ -281,7 +343,7 @@ class Machine(base.OriginalMachine):
             check(number==0x21,'unexpected menu startup interrupt')
             m.software_interrupt(number,m.state()['ip'],DOS_BINDING,None if c.get('no_service') else dos_provider)
             if m.stopped:m.status={1:3,2:4,3:5}[m.status]
-        outer={0x4B1B} if c['kind']=='probe' else {0x5446,0x5506} if c['kind']=='publish' else set()
+        outer={0x51A1 if c['kind']=='encode' else 0x52D3} if c['kind'] in ('encode','decode') else {0x4B1B} if c['kind']=='probe' else {0x5446,0x5506} if c['kind']=='publish' else set()
         super().__init__(c,memory,r,device,c.get('core',False),instructions=INS,access=access,outer_returns=outer,max_steps=c.get('reference_steps',MAX_STEPS),
             before=before,child_returns={p:expected for p,i in INS.items() if i.mnemonic=='ret'},
             far_returns={p:expected for p,i in INS.items() if i.mnemonic=='retf'},changed_return_status=changed,
@@ -294,7 +356,11 @@ class Native:
         self.lib=ct.CDLL(str(build(Path(directory)/f'main-menu-{mutation}.dll',mutation,'main_menu')))
         self.run_menu=self.lib.lmn_run_main_menu;self.run_menu.restype=Result
         self.run_menu.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.c_int,ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
-        self.publish={};self.probe={}
+        self.publish={};self.probe={};self.code={}
+        for kind in ('encode','decode'):
+            for core,suffix in ((True,'core'),(False,'adapter')):
+                fn=getattr(self.lib,'lmn_'+kind+'_level_code_'+suffix);fn.restype=Result
+                fn.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.POINTER(base.Bus)];self.code[kind,core]=fn
         for core,suffix in ((True,'core'),(False,'adapter')):
             fn=getattr(self.lib,'lmn_publish_palette_'+suffix);fn.restype=PublishResult
             fn.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_int,ct.POINTER(base.Ports),ct.POINTER(base.Bus)];self.publish[core]=fn
@@ -317,7 +383,8 @@ class Native:
         callback=cb.interrupt(dos_provider);service=base.InterruptService(None,callback,*DOS_BINDING)
         dos=None if c.get('no_service') else ct.byref(service)
         regs=ct.byref(base.Regs(**r));game_ds=(c['load']+0x9A9)&65535;tail=[ct.byref(cb.ports),ct.byref(cb.bus)]
-        if c['kind']=='publish':out=self.publish[c.get('core',False)](mem,regs,c['entry'],*tail)
+        if c['kind'] in ('encode','decode'):out=self.code[c['kind'],c.get('core',False)](mem,regs,ct.byref(cb.bus))
+        elif c['kind']=='publish':out=self.publish[c.get('core',False)](mem,regs,c['entry'],*tail)
         elif c['kind']=='probe':out=self.probe[c.get('core',False)](mem,regs,game_ds,dos,*tail)
         elif c['kind']=='startup':out=self.startup(mem,regs,game_ds,None if c.get('missing_mode') else ct.byref(video),dos,*tail)
         else:out=self.run_menu(mem,regs,game_ds,c['entry'],*tail)
@@ -327,6 +394,34 @@ class Native:
 def independent(c,r,ref):
     check(ref['status']==c.get('expected',0) and ref['child_status']==c.get('child_status',0),c['name']+': unexpected stop')
     if ref['status']:return
+    if c['kind'] in ('encode','decode'):
+        ds=r['ds'];mem=ref['memory'];at=lambda off:physical(ds,off)
+        end=(0x51A1 if c['kind']=='encode' else 0x52D3) if c.get('core') else 0xD00D
+        check(ref['regs']['ip']==end,'code actual return differs')
+        if c.get('stack_alias') or c.get('patch')=='code-saved-si':return
+        selection=c.get('selection',37);payload=c.get('payload',6);completion=c.get('completion',83);template=c.get('template',TEMPLATE)
+        if c['kind']=='encode':
+            check(bytes(mem[at(0x4D68):at(0x4D68)+10])==expected_code(selection,payload,completion,template),'encoded bit layout differs')
+            check(mem[at(0x4D72)]==13,'encoder changed trailing terminator')
+        else:
+            value=c.get('input',expected_code(selection,payload,completion,template));value=bytearray(value)
+            if c.get('corrupt')=='checksum':value[9]^=1
+            if c.get('corrupt')=='selection':value[(8-(selection&7))%7]^=8;value[9]=(template[9]+(sum(value[:9])&15))&255
+            latch=255 if value==b'BILLANDTED' else 0x39
+            check(mem[at(0x1F74)]==latch,'special latch ordering differs')
+            checksum=((value[9]-(sum(value[:9])&15))&255)==template[9]
+            if not checksum:
+                check(not ref['regs']['flags']&64 and bytes(mem[at(0x4DF2):at(0x4DF2)+10])==value,'checksum failure changed code')
+                check(mem[at(0x1F6B)]==selection,'checksum failure changed selection')
+            elif template==TEMPLATE and not c.get('corrupt') and 'input' not in c:
+                check(ref['regs']['flags']&64,'valid code rejected')
+                check(mem[at(0x1F6B)]==selection and mem[at(0x1F6E)]==selection//30,'decoded selection/group differs')
+                check(mem[at(0x491D)]==(payload&15),'decoded payload differs')
+            if c.get('corrupt')=='selection':
+                check(not ref['regs']['flags']&64,'duplicate selection corruption accepted')
+                check(mem[at(0x1F6B)]==selection,'late failure rolled back selected level')
+                check(bytes(mem[at(0x4DF2):at(0x4DF2)+10])!=value,'late failure rolled back input rotation')
+        return
     if c['kind']=='publish':
         mode=c.get('mode',2);index=2 if c['entry']==1 else c.get('index',1)
         table=0x52E4 if mode==4 else 0x52D4;at=physical(r['cs'],table+2*index)
@@ -430,6 +525,32 @@ def input_handoff(native,record):
     record('handoff-menu-refresh',ref);gc.collect()
     print('CHECKED menu/input/refresh handoff',flush=True)
 
+def code_handoffs(native,record):
+    for load in base.LOADS:
+        c=next(c for c in cases() if c['name']==f'code-encode-load-{load:04x}')
+        memory,r,device=setup(c);actual_memory,actual_device=bytearray(memory),copy.deepcopy(device)
+        ref=Machine(c,memory,dict(r),device).run();independent(c,r,ref)
+        actual=native.run(c,actual_memory,dict(r),actual_device,copy_state=False)
+        base.compare_states('code-handoff-encode',actual,ref);record('code-handoff-encode-'+hex(load),ref)
+        for outcome in (ref,actual):
+            # Declared external code submission. The keyboard editor remains a
+            # separate frontier; no translated routine is replaced by this step.
+            mem,regs=outcome['memory'],outcome['regs'];ds=regs['ds']
+            for n in range(10):base.sync_memory_byte(mem,outcome['device'],ds,0x4DF2+n,mem[physical(ds,0x4D68+n)])
+            regs['sp']=(regs['sp']-2)&65535;put16(mem,regs['ss'],regs['sp'],0xD00D,outcome['device'])
+            regs['ip']=0x51A2;outcome['device'].trace.clear()
+        c=dict(c,kind='decode',name='code-handoff-decode-'+hex(load))
+        r=dict(ref['regs']);decoded=Machine(c,ref['memory'],r,ref['device']).run();independent(c,r,decoded)
+        actual=native.run(c,actual['memory'],actual['regs'],actual['device'],copy_state=False)
+        base.compare_states(c['name'],actual,decoded);record(c['name'],decoded)
+        check(decoded['regs']['flags']&64,'generated code did not roundtrip')
+        del ref,actual,decoded;gc.collect()
+    print('CHECKED three same-memory code handoffs',flush=True)
+
+CODE_MUTANTS=((201,'code-encode-000'),(202,'code-encode-template-live'),(203,'code-decode-037'),
+    (204,'code-special-5'),(205,'code-selection-fail'),(206,'code-decode-037'),
+    (207,'code-decode-119'),(208,'code-decode-037'),(209,'code-checksum-fail'),(210,'code-decode-saved-si'))
+
 def worker(directory,snapshot):
     before=hashes();check(before==json.loads(Path(snapshot).read_text()),'main menu snapshot changed');native=Native(directory)
     sites=set();edges=set();rows=[]
@@ -440,22 +561,23 @@ def worker(directory,snapshot):
         ref=compare(native,c);record(c['name'],ref)
         gc.collect();print('CHECKED '+c['name'],flush=True)
     input_handoff(native,record)
+    code_handoffs(native,record)
     check(set(OWN)<=sites,'main menu sites missing: '+str(sorted(set(OWN)-sites)))
     check(EDGES<=edges,'main menu outcomes missing: '+str(sorted(EDGES-edges)))
     mutants=[];lookup={c['name']:c for c in cases()}
-    for mutation,name in ((1,'sound-blocked'),(2,'sound-driver-fe'),(3,'sound-unexpected-index'),(4,'key-82'),(5,'group-8a-unexpected'),(6,'key-8a'),(7,'key-80'),(8,'wait-return'),(9,'key-82'),(11,'probe-media-fe'),(12,'probe-open-retry'),(13,'probe-close-retry'),(14,'probe-returned-ds'),(15,'probe-latch'),(16,'probe-success'),(17,'probe-media-fe'),(101,'publish-e0-m2-i0'),(102,'publish-e0-m2-i2'),(103,'publish-e2-m260-i7'),(104,'publish-e1-m2-i0'),(105,'publish-e1-m2-i0')):
+    for mutation,name in ((1,'sound-blocked'),(2,'sound-driver-fe'),(3,'sound-unexpected-index'),(4,'key-82'),(5,'group-8a-unexpected'),(6,'key-8a'),(7,'key-80'),(8,'wait-return'),(9,'key-82'),(11,'probe-media-fe'),(12,'probe-open-retry'),(13,'probe-close-retry'),(14,'probe-returned-ds'),(15,'probe-latch'),(16,'probe-success'),(17,'probe-media-fe'),(101,'publish-e0-m2-i0'),(102,'publish-e0-m2-i2'),(103,'publish-e2-m260-i7'),(104,'publish-e1-m2-i0'),(105,'publish-e1-m2-i0'))+CODE_MUTANTS:
         try:compare(Native(directory,mutation),lookup[name])
         except base.Mismatch as error:mutants.append(dict(mutation=mutation,case=name,completed=True,mismatch=str(error)))
         else:raise base.OracleFailure(f'main menu mutant{mutation} survived')
         gc.collect()
     check(before==hashes(),'main menu inputs changed')
     write_json(REPORT,dict(image='main',image_sha256=sha(base.IMAGE),own_known_bytes=sum(i.size for i in OWN.values()),known_connected_bytes=sum(i.size for p,i in INS.items() if p not in BOUNDARY),
-        entry_code_ranges=[list(r) for r in RANGES],case_count=len(cases())+1,comparison_count=len(rows),handoff_count=1,
+        entry_code_ranges=[list(r) for r in RANGES],case_count=len(cases())+4,comparison_count=len(rows),handoff_count=4,
         executed_instruction_addresses=sorted(sites),own_executed_instruction_addresses=sorted(set(OWN)&sites),branch_edges=sorted(edges),own_branch_edges=sorted(EDGES),
         instruction_steps=sum(r['steps'] for r in rows),ordered_bus_events=sum(r['events'] for r in rows),declared_far_return_events=sum(r['far_return_events'] for r in rows),declared_interrupt_transport_events=sum(r['transport_events'] for r in rows),service_calls=sum(r['service_calls'] for r in rows),
         mutation_count=len(mutants),mutations=mutants,input_hashes=before,rows=rows,
         limits=dict(timeout_seconds=SECONDS,outer_timeout_seconds=960,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
-        scope='Connected43F2 startup,4AC5 FAT-ID-gated resource retry,53F6/53FC/53FE/5401 palette selectors and4401..454B controller. Real near/far/INT21/IRET frames,existing logical display-setup INT10 ABI,returned segments and actual JMP exits. Destination bodies,native scheduling/opaque services and inherited reference limits remain open.'))
+        scope='5042 encoder/51A2 decoder and same-RAM code-submission handoffs; actual keyboard editor remains separate. Connected43F2 startup,4AC5 FAT-ID-gated resource retry,53F6/53FC/53FE/5401 palette selectors and4401..454B controller. Real near/far/INT21/IRET frames,existing logical display-setup INT10 ABI,returned segments and actual JMP exits. Destination bodies,native scheduling/opaque services and inherited reference limits remain open.'))
     print(f'PASS main menu: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(EDGES)} outcomes,{len(mutants)} mutants',flush=True)
 def main():
     if len(sys.argv)==4 and sys.argv[1]=='--worker':worker(sys.argv[2],sys.argv[3]);return

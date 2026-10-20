@@ -2,7 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is29,001 bytes. The146 new
+The main-image translated-code ledger union is 29,659 bytes. The 658 new bytes
+implement the 5042 encoder and 51A2 decoder in the existing menu C module and
+shared campaign. All 256 selections, actual stack words, live template, byte
+rotation/checksum and failure side effects are retained. The expanded campaign
+passes 671 fixtures / 676 comparisons, all 441 own sites / 87 direct outcomes,
+and 31 completed mutants. Three same-RAM encode/submission/decode handoffs are
+included; the actual keyboard editor and 4967 screen remain open. All 81 unit
+tests pass, with native work bounded to 384 MiB. See level-code.md. Full-game,
+original-contract and aggregate acceptance remain separate.
+
+The preceding main-image translated-code ledger union was29,001 bytes. The146 new
 startup/resource/palette-selector bytes now enter the accepted controller via
 declared BIOS-service,near/far,timer-vector and INT21/IRET contracts. The expanded
 menu campaign passes123 fixtures/125 comparisons,169 own sites/66 outcomes
@@ -158,20 +168,20 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue the code-entry destination4967 above the accepted menu. Fresh4C7E
-   tree and5042/51A2 bottom-up views identify the code transforms as leaf
-   uncertainties before input composition. Audit live DS4913 template,491D
-   payload,4D68 output,4DF2 input,1F74 special latch,byte rotations/checksum,
-   in-place failure effects and level-selection/group writes. Preserve the
-   reader's unresolved4CC9/4D18 transfer domains until their producers/targets
-   are proven;503B's text bridge also remains untranslated. The startup/media
-   checkpoint distinguishes sampled FAT ID1FDE from critical flag1FDF; it does
-   not translate the earlier AH1B producer or its protection consumers. Retain
-   separate04D0/4967/4A01/454C destination contracts and the remaining level/game
-   body; scoped EnterMainMenu acceptance does not complete those bodies. Source layout closure
-   does not close broader allocation/initialization. Keep artificial VGA-stack budget failure and
-   RETF selector-EA wrap atSPFFFE/FFFF explicitly unverified. Retain42A5 and
-   UNKNOWN4C65/1696..16A8; no unsupported alternative is declared complete.
+1. Connect the code-entry destination 4967 above the accepted codec pair.
+   Fresh 4C7E and 503B trees select the input editor and seven-byte text bridge,
+   with existing display/keyboard/text cores. The indirect hints already identify
+   503B as the known BP target at 4CC9 and 4D18; retain alternate live-stack/alias
+   targets as explicit unresolved domains. Preserve byte 491E's 20-cycle cursor
+   blink, signed ASCII bounds, final-slot replacement, deferred backspace erase,
+   actual saved registers and final JMP rather than an invented RET. The 488C
+   level/rating formatter rereads selection after byte-wrap increment and MUL;
+   selection FF returns AX=FF1E under stable memory. See level-code.md.
+   Then compose both 4967 validation paths and their actual 4401 continuation.
+   Keep earlier AH1B/protection consumers, 04D0/454C and level/game bodies scoped.
+   Artificial VGA-stack budget failure, RETF selector-EA wrap at SP FFFE/FFFF,
+   callback 42A5 and UNKNOWN 4C65/1696..16A8 remain open. No unsupported
+   alternative is declared complete.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

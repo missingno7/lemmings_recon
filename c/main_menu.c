@@ -11,6 +11,9 @@
 #ifndef MAIN_MENU_MUTATION
 #define MAIN_MENU_MUTATION 0
 #endif
+#ifndef LEVEL_CODE_MUTATION
+#define LEVEL_CODE_MUTATION 0
+#endif
 enum { CF=1,PF=4,ZF=64,SF=128,OF=2048,ARITH=0x8d5 };
 typedef struct Menu {
     uint8_t *memory;
@@ -362,4 +365,148 @@ LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
     push(&s,CS_MenuStartupAfterCall43FE);resource_probe(&s,dos);
     if(s.status||!finish_child(&s,cs,CS_MenuStartupAfterCall43FE,0u))return result(&s);
     return lmn_run_main_menu(memory,&s.r,game_ds,LMN_MAIN_MENU_REFRESH,ports,bus);
+}
+static void cl(Menu *s,uint8_t v) {s->r.cx=(uint16_t)((s->r.cx&0xff00u)|v);}
+static void ch(Menu *s,uint8_t v) {s->r.cx=(uint16_t)((s->r.cx&0xffu)|((uint16_t)v<<8));}
+static void dl(Menu *s,uint8_t v) {s->r.dx=(uint16_t)((s->r.dx&0xff00u)|v);}
+static void dh(Menu *s,uint8_t v) {s->r.dx=(uint16_t)((s->r.dx&0xffu)|((uint16_t)v<<8));}
+static uint8_t shr8(Menu *s,uint8_t v) {
+    uint8_t out=v>>1;
+    s->r.flags=(uint16_t)((s->r.flags&~ARITH)|szp(out,1)|(v&1u?CF:0u)|(v&0x80u?OF:0u));return out;
+}
+static uint8_t shift_right(Menu *s,uint8_t v,unsigned count) {while(count--)v=shr8(s,v);return v;}
+static uint8_t shift_left(Menu *s,uint8_t v,unsigned count) {while(count--)v=shl8(s,v);return v;}
+static void code_template_or(Menu *s,unsigned n,int with_ah) {
+#if LEVEL_CODE_MUTATION == 2
+    al(s,(uint8_t)logic(s,(uint8_t)s->r.ax^read8(s,(uint16_t)(s->r.si+n)),1));
+#else
+    al(s,(uint8_t)logic(s,(uint8_t)s->r.ax|read8(s,(uint16_t)(s->r.si+n)),1));
+#endif
+    if(with_ah)al(s,(uint8_t)logic(s,(uint8_t)s->r.ax|(s->r.ax>>8),1));
+    al(s,(uint8_t)logic(s,(uint8_t)s->r.ax|(s->r.cx>>8),1));
+    write8(s,(uint16_t)(s->r.di+n),(uint8_t)s->r.ax);
+}
+static void rotate_code(Menu *s,int right) {
+    /* Each source is reread after preceding stores, including stack/DS aliases. */
+    do {
+        al(s,read8(s,s->r.si));
+        for(unsigned n=1;n<=6u;++n) {
+            uint16_t source=(uint16_t)(right?s->r.si-n:s->r.si+n);
+            uint16_t dest=(uint16_t)(right?s->r.si-n+1u:s->r.si+n-1u);
+            ah(s,read8(s,source));write8(s,dest,(uint8_t)(s->r.ax>>8));
+        }
+        write8(s,(uint16_t)(right?s->r.si-6u:s->r.si+6u),(uint8_t)s->r.ax);
+        dh(s,incdec8(s,(uint8_t)(s->r.dx>>8),1));
+    } while(!(s->r.flags&SF));
+}
+LmnMainMenuResult lmn_encode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
+    Menu s={memory,0,bus,*registers,0u,0u,0u};
+    dl(&s,read8(&s,SEG09A9_LevelResourceSelectionByte));dh(&s,read8(&s,SEG09A9_LevelCodePayloadByte));
+    cl(&s,read8(&s,SEG09A9_StatusCompletionDisplayValue));s.r.si=SEG09A9_LevelCodeTemplate;s.r.di=SEG09A9_GeneratedLevelCode;
+    s.r.ax=s.r.dx;ch(&s,(uint8_t)s.r.cx);s.r.ax=logic(&s,s.r.ax&0x101u,0);ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&1u,1));
+    al(&s,shift_left(&s,(uint8_t)s.r.ax,3));ah(&s,shl8(&s,(uint8_t)(s.r.ax>>8)));ch(&s,shift_left(&s,(uint8_t)(s.r.cx>>8),2));code_template_or(&s,0,1);
+    al(&s,(uint8_t)s.r.dx);ch(&s,(uint8_t)s.r.cx);al(&s,(uint8_t)logic(&s,s.r.ax&2u,1));ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&2u,1));
+    al(&s,shl8(&s,(uint8_t)s.r.ax));ch(&s,shr8(&s,(uint8_t)(s.r.cx>>8)));code_template_or(&s,1,0);
+    s.r.ax=s.r.dx;ch(&s,(uint8_t)s.r.cx);s.r.ax=logic(&s,s.r.ax&0x204u,0);ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&4u,1));
+    ah(&s,shr8(&s,(uint8_t)(s.r.ax>>8)));ch(&s,shr8(&s,(uint8_t)(s.r.cx>>8)));code_template_or(&s,2,1);
+    al(&s,(uint8_t)s.r.dx);ch(&s,(uint8_t)s.r.cx);al(&s,(uint8_t)logic(&s,s.r.ax&8u,1));ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&8u,1));
+    al(&s,shift_right(&s,(uint8_t)s.r.ax,3));ch(&s,shift_right(&s,(uint8_t)(s.r.cx>>8),2));code_template_or(&s,3,0);
+    s.r.ax=s.r.dx;ch(&s,(uint8_t)s.r.cx);s.r.ax=logic(&s,s.r.ax&0x410u,0);ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&0x10u,1));
+    al(&s,shift_right(&s,(uint8_t)s.r.ax,3));ah(&s,shift_right(&s,(uint8_t)(s.r.ax>>8),2));ch(&s,shr8(&s,(uint8_t)(s.r.cx>>8)));code_template_or(&s,4,1);
+    s.r.ax=s.r.dx;ch(&s,(uint8_t)s.r.cx);al(&s,(uint8_t)logic(&s,s.r.ax&0x20u,1));ah(&s,(uint8_t)logic(&s,(s.r.ax>>8)&8u,1));ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&0x20u,1));
+    al(&s,shift_right(&s,(uint8_t)s.r.ax,5));ah(&s,shift_right(&s,(uint8_t)(s.r.ax>>8),2));ch(&s,shift_right(&s,(uint8_t)(s.r.cx>>8),3));code_template_or(&s,5,1);
+    al(&s,(uint8_t)s.r.dx);ch(&s,(uint8_t)s.r.cx);al(&s,(uint8_t)logic(&s,s.r.ax&0xc0u,1));ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&0x40u,1));
+    al(&s,shift_right(&s,(uint8_t)s.r.ax,4));ch(&s,shift_right(&s,(uint8_t)(s.r.cx>>8),6));code_template_or(&s,6,0);
+    al(&s,(uint8_t)s.r.dx);al(&s,(uint8_t)logic(&s,s.r.ax&15u,1));
+    al(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.ax,read8(&s,(uint16_t)(s.r.si+7u)),0,1));write8(&s,(uint16_t)(s.r.di+7u),(uint8_t)s.r.ax);
+    al(&s,(uint8_t)s.r.dx);al(&s,(uint8_t)logic(&s,s.r.ax&0xf0u,1));al(&s,shift_right(&s,(uint8_t)s.r.ax,4));
+    al(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.ax,read8(&s,(uint16_t)(s.r.si+8u)),0,1));write8(&s,(uint16_t)(s.r.di+8u),(uint8_t)s.r.ax);
+    al(&s,(uint8_t)logic(&s,0u,1));
+    for(unsigned n=0;n<9u;++n)al(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.ax,read8(&s,(uint16_t)(s.r.di+n)),0,1));
+    al(&s,(uint8_t)logic(&s,s.r.ax&15u,1));al(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.ax,read8(&s,(uint16_t)(s.r.si+9u)),0,1));
+    write8(&s,(uint16_t)(s.r.di+9u),(uint8_t)s.r.ax);
+#if LEVEL_CODE_MUTATION == 1
+    dh(&s,6u);
+#else
+    dh(&s,7u);
+#endif
+    dl(&s,(uint8_t)logic(&s,(uint8_t)s.r.dx&(s.r.dx>>8),1));dh(&s,(uint8_t)arithmetic(&s,s.r.dx>>8,(uint8_t)s.r.dx,1,1));
+    s.r.si=(uint16_t)(SEG09A9_GeneratedLevelCode+6u);rotate_code(&s,1);s.r.ip=CS_LevelCodeEncodeReturn;return result(&s);
+}
+LmnMainMenuResult lmn_decode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
+    Menu s={memory,0,bus,*registers,0u,0u,0u};s.r.si=SEG09A9_EnteredLevelCode;
+#if LEVEL_CODE_MUTATION == 9
+    write8(&s,SEG09A9_SpecialLevelCodeLatch,0u);
+#endif
+    static const uint16_t special[5]={0x4942u,0x4c4cu,0x4e41u,0x5444u,0x4445u};
+    for(unsigned n=0;n<5u;++n) {
+        (void)arithmetic(&s,read16(&s,s.r.ds,(uint16_t)(s.r.si+2u*n)),special[n],1,0);
+        if(!(s.r.flags&ZF))goto checksum;
+    }
+#if LEVEL_CODE_MUTATION != 4
+    write8(&s,SEG09A9_SpecialLevelCodeLatch,0xffu);
+#endif
+checksum:
+    s.r.di=SEG09A9_LevelCodeTemplate;s.r.cx=9u;al(&s,(uint8_t)logic(&s,0u,1));push(&s,s.r.si);
+    do {
+        uint16_t cf;al(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.ax,read8(&s,s.r.si),0,1));
+        cf=s.r.flags&CF;s.r.si=arithmetic(&s,s.r.si,1u,0,0);s.r.flags=(uint16_t)((s.r.flags&~CF)|cf);--s.r.cx;
+    } while(s.r.cx);
+    s.r.si=pop(&s);
+#if LEVEL_CODE_MUTATION == 10
+    s.r.si=SEG09A9_EnteredLevelCode;
+#endif
+#if LEVEL_CODE_MUTATION != 3
+    al(&s,(uint8_t)logic(&s,s.r.ax&15u,1));
+#endif
+    ah(&s,read8(&s,(uint16_t)(s.r.si+9u)));
+    ah(&s,(uint8_t)arithmetic(&s,s.r.ax>>8,(uint8_t)s.r.ax,1,1));cmp8(&s,read8(&s,(uint16_t)(s.r.di+9u)),(uint8_t)(s.r.ax>>8));
+    if(!(s.r.flags&ZF))goto done;
+    al(&s,read8(&s,(uint16_t)(s.r.si+7u)));al(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.ax,read8(&s,(uint16_t)(s.r.di+7u)),1,1));
+    ah(&s,read8(&s,(uint16_t)(s.r.si+8u)));ah(&s,(uint8_t)arithmetic(&s,s.r.ax>>8,read8(&s,(uint16_t)(s.r.di+8u)),1,1));
+    s.r.ax=logic(&s,s.r.ax&0x0f0fu,0);ah(&s,shift_left(&s,(uint8_t)(s.r.ax>>8),4));al(&s,(uint8_t)logic(&s,(uint8_t)s.r.ax|(s.r.ax>>8),1));
+#if LEVEL_CODE_MUTATION != 5
+    write8(&s,SEG09A9_LevelResourceSelectionByte,(uint8_t)s.r.ax);
+#endif
+    dh(&s,7u);al(&s,(uint8_t)logic(&s,(uint8_t)s.r.ax&(s.r.dx>>8),1));dh(&s,(uint8_t)arithmetic(&s,s.r.dx>>8,(uint8_t)s.r.ax,1,1));
+#if LEVEL_CODE_MUTATION != 6
+    rotate_code(&s,0);
+#endif
+    ah(&s,(uint8_t)logic(&s,0u,1));
+    for(unsigned n=0;n<7u;++n) {
+        static const uint8_t right[7]={3,1,0,0,0,0,0},left[7]={0,0,0,3,3,5,4},mask[7]={1,2,4,8,16,32,192};
+        al(&s,read8(&s,(uint16_t)(s.r.si+n)));al(&s,shift_right(&s,(uint8_t)s.r.ax,right[n]));al(&s,shift_left(&s,(uint8_t)s.r.ax,left[n]));
+        al(&s,(uint8_t)logic(&s,s.r.ax&mask[n],1));ah(&s,(uint8_t)logic(&s,(s.r.ax>>8)|(uint8_t)s.r.ax,1));
+    }
+    cmp8(&s,(uint8_t)(s.r.ax>>8),read8(&s,SEG09A9_LevelResourceSelectionByte));if(!(s.r.flags&ZF))goto done;
+    al(&s,read8(&s,SEG09A9_LevelResourceSelectionByte));ah(&s,(uint8_t)logic(&s,0u,1));cl(&s,30u);
+#if LEVEL_CODE_MUTATION == 7
+    cl(&s,29u);
+#endif
+    {uint16_t dividend=s.r.ax,divisor=(uint8_t)s.r.cx;al(&s,(uint8_t)(dividend/divisor));ah(&s,(uint8_t)(dividend%divisor));}
+    write8(&s,SEG09A9_MenuLevelGroupIndex,(uint8_t)s.r.ax);ah(&s,(uint8_t)logic(&s,0u,1));
+    for(unsigned n=0;n<4u;++n) {
+        static const uint8_t index[4]={0,2,4,5},left[4]={0,1,2,2},mask[4]={1,2,4,
+#if LEVEL_CODE_MUTATION == 8
+        0xf8u
+#else
+        8u
+#endif
+        };
+        al(&s,read8(&s,(uint16_t)(s.r.si+index[n])));
+        al(&s,n?shift_left(&s,(uint8_t)s.r.ax,left[n]):shr8(&s,(uint8_t)s.r.ax));
+        al(&s,(uint8_t)logic(&s,s.r.ax&mask[n],1));ah(&s,(uint8_t)logic(&s,(s.r.ax>>8)|(uint8_t)s.r.ax,1));
+    }
+    write8(&s,SEG09A9_LevelCodePayloadByte,(uint8_t)(s.r.ax>>8));ah(&s,(uint8_t)arithmetic(&s,s.r.ax>>8,s.r.ax>>8,1,1));
+done:
+    s.r.ip=CS_LevelCodeDecodeReturn;return result(&s);
+}
+static LmnMainMenuResult code_return(uint8_t *memory,LmnMainMenuResult out,const LmnRasterBus *bus) {
+    Menu s={memory,0,bus,out.registers,0u,0u,0u};s.r.ip=pop(&s);out.registers=s.r;return out;
+}
+LmnMainMenuResult lmn_encode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
+    return code_return(memory,lmn_encode_level_code_core(memory,registers,bus),bus);
+}
+LmnMainMenuResult lmn_decode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
+    return code_return(memory,lmn_decode_level_code_core(memory,registers,bus),bus);
 }

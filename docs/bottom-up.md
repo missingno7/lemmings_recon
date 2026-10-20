@@ -1072,3 +1072,16 @@ source/define plans remain unchanged. Packed observations retain complete VGA
 traces within384MiB. Native timer/palette regressions pass. Fresh4C7E and5042/
 51A2 views select code-entry transforms/ownership next; unresolved reader
 transfers and level/game bodies remain explicit. See menu-startup.md.
+
+The code-transform pair adds 658 bytes, taking the main C union to 29,659.
+EncodeLevelCode5042 and DecodeLevelCode51A2 retain live DS buffers/template,
+actual SS words, full-byte selection, wrapped checksum, eight-minus-low-three
+rotation and in-place failure effects. The expanded shared menu campaign passes
+671 fixtures / 676 comparisons, 441 own sites / 87 outcomes and 31 completed
+mutants. Three same-memory code submissions connect encoder output to decoder
+input at a declared external-input boundary; ReadCodeInput is still pending.
+All 81 unit tests pass. The native worker keeps its existing 384 MiB, 900-second
+and per-call limits; no new engine or harness was added. Fresh 4C7E/503B views
+select editor/text composition and the 488C wrap-sensitive formatter before the
+4967 screen. See level-code.md; aggregate and full native-host acceptance remain
+separate from this scoped milestone.

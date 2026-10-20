@@ -42,4 +42,11 @@ LmnMainMenuResult lmn_check_menu_resource_adapter(uint8_t *memory,const LmnRegs 
 LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_data_segment,const LmnVideoRestoreServices *video,
     const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+/* 5042/51A2 over live DS buffers; core stops before the original RET.
+   Decoder validity is returned in ZF, not the transport status. Failed decode
+   may already have changed the special latch, selection and input buffer. */
+LmnMainMenuResult lmn_encode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_encode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_decode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_decode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
 #endif

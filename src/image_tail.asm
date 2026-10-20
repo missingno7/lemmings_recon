@@ -5816,3 +5816,8 @@ MainMenuText equ GameDataImage+0x4AD9
 MenuResourceRetryText equ GameDataImage+0x4F00
 MenuResourceProbeFilename equ GameDataImage+0x2534
 StartupFatIdByte1FDE equ GameDataImage+0x1FDE
+LevelCodeTemplate equ GameDataImage+0x4913
+LevelCodePayloadByte equ GameDataImage+0x491d
+GeneratedLevelCode equ GameDataImage+0x4d68
+EnteredLevelCode equ GameDataImage+0x4df2
+SpecialLevelCodeLatch equ GameDataImage+0x1f74

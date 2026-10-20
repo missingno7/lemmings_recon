@@ -25297,7 +25297,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 17766,
@@ -27566,7 +27566,7 @@
         19228
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 19228,
@@ -30110,8 +30110,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_5042",
-    "aliases": [],
+    "symbol_name": "EncodeLevelCode",
+    "aliases": [
+      "sub_5042"
+    ],
     "callers": [
       18258
     ],
@@ -30510,20 +30512,31 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live DS field and exact checksum/rotation/failure contracts; docs/level-code.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 352
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 352,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        20546,
+        20898
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:671 fixtures/676 comparisons,441 own sites/87 direct outcomes and31 completed mutants in7727 known bytes. New5042/51A2 transform pair:545 focused cases,551 comparisons including three same-RAM encode/submission/decode handoffs,272 own sites/21 outcomes,ten completed contract mutants. All256 selections,three loads,live template,DF,stack/physical wrap,input/template aliases,changed saved SI,special-latch-before-validation and both failure stages. Actual near RET,byte rotation/checksum,early selection store,unsigned group and four-bit payload retained. Keyboard editor/text bridge/4967 screen and native scheduling/platform remain separate; docs/level-code.md."
   },
   {
     "address": 20898,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_51A2",
-    "aliases": [],
+    "symbol_name": "DecodeLevelCode",
+    "aliases": [
+      "sub_51A2"
+    ],
     "callers": [
       18841
     ],
@@ -30890,12 +30903,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live DS field and exact checksum/rotation/failure contracts; docs/level-code.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 306
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 306,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        20898,
+        21204
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:671 fixtures/676 comparisons,441 own sites/87 direct outcomes and31 completed mutants in7727 known bytes. New5042/51A2 transform pair:545 focused cases,551 comparisons including three same-RAM encode/submission/decode handoffs,272 own sites/21 outcomes,ten completed contract mutants. All256 selections,three loads,live template,DF,stack/physical wrap,input/template aliases,changed saved SI,special-latch-before-validation and both failure stages. Actual near RET,byte rotation/checksum,early selection store,unsigned group and four-bit payload retained. Keyboard editor/text bridge/4967 screen and native scheduling/platform remain separate; docs/level-code.md."
   },
   {
     "address": 21236,
@@ -31764,7 +31786,7 @@
         21767
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 21500,
@@ -31919,7 +31941,7 @@
         21767
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 21502,
@@ -32073,7 +32095,7 @@
         21767
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 21541,
@@ -64930,7 +64952,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 8238,
@@ -66079,7 +66101,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 17499,
@@ -66115,7 +66137,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 17528,
@@ -66151,7 +66173,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 17740,
@@ -66491,7 +66513,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 17502,
@@ -66639,7 +66661,7 @@
         21767
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 19227,
@@ -66800,7 +66822,7 @@
       "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
     ],
     "verification_status": "STATIC",
-    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
   },
   {
     "address": 19151,
@@ -66975,6 +66997,118 @@
     "confidence": "PROVEN",
     "evidence": [
       "0096 AH1B INT21,009A read returnedDS:BX,009C restoreDS,009D store1FDE;062B F8 comparison;4AC5 exactFD guard. Distinct from1FDF critical-error flag. Microsoft MS-DOS Encyclopedia sectionV AH1B; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20897,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelCodeEncodeReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code transform own RET; consumes actual live SS caller word"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21203,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelCodeDecodeReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code transform own RET; consumes actual live SS caller word"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8052,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "SpecialLevelCodeLatch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "51C8 setsFF for exact BILLANDTED before checksum validation;024D consumes exactFF"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18707,
+    "segment": 2473,
+    "kind": "data",
+    "size": 10,
+    "symbol_name": "LevelCodeTemplate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "504E/51CD read live10-byte template; pinned bytes AJHLDHBBCJ; 51E4 compares checksum base"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18717,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelCodePayloadByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "5046 samples payload; successful52CD writes decoded low4 payload bits"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19816,
+    "segment": 2473,
+    "kind": "data",
+    "size": 10,
+    "symbol_name": "GeneratedLevelCode",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "5052 outputs ten bytes;5171 rotates first7 in place; terminator at+10 untouched"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19954,
+    "segment": 2473,
+    "kind": "data",
+    "size": 10,
+    "symbol_name": "EnteredLevelCode",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "4C7E keyboard input;51A2 compares and rotates same ten-byte live buffer"
     ],
     "verification_status": "STATIC"
   }
