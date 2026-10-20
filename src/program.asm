@@ -75,6 +75,11 @@ times -(($-$$) != 0x7a5a) db 0 ; module end assertion
 times -(($-$$) != 0x7bb8) db 0 ; module end assertion
 %include "object_graphics_tick.asm"
 %include "game_code_late_tail.asm"
+
+times -(($-$$) != 0x7eb2) db 0 ; module end assertion
+%include "level_preview.asm"
+times -(($-$$) != 0x80fd) db 0 ; module end assertion
+%include "game_code_after_level_preview.asm"
 times -(($-$$) != 0x8238) db 0 ; module end assertion
 %include "special_graphics.asm"
 times -(($-$$) != 0x8343) db 0 ; module end assertion

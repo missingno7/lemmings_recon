@@ -423,7 +423,7 @@
 #define CS_BackgroundFirstAfterBitmap 0x7E95u
 #define CS_BackgroundSecondAfterBitmap 0x7EAAu
 #define CS_BackgroundReturn 0x7EB1u
-#define CS_sub_7EB2 0x7EB2u
+#define CS_DrawLevelPreview 0x7EB2u
 #define CS_sub_80FD 0x80FDu
 #define CS_sub_81CC 0x81CCu
 #define CS_BlitSpecialResourceStrip0 0x8238u
@@ -1189,4 +1189,6 @@
 #define CS_SplitPaletteVerticalLowInput46C5 0x46C5u
 #define CS_SplitPaletteHorizontalLowInput46D7 0x46D7u
 #define CS_SplitPaletteHorizontalHighInput46DC 0x46DCu
+#define CS_LevelPreviewInitialOutput 0x7ECCu
+#define CS_LevelPreviewReturn 0x80FCu
 #endif

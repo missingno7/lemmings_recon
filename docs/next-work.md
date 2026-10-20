@@ -2,7 +2,18 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 30,195 bytes. The 183 new unique
+The main-image translated-code ledger union is 30,782 bytes. DrawLevelPreview
+adds587 unique bytes and preserves four-plane bit sampling, OR destination
+latches, overlapping VRAM, live saved counts/cursors/port/DS, and actual RET.
+Its shared campaign passes25 fixtures /50 comparisons, all278 sites /six direct
+outcomes and nine completed mutants. Three full loads and an independent live
+pixel-index model exercise every byte value in each source lane/plane. All83
+unit tests pass. The selected suite completes in81.42 seconds under384MiB;
+owned DLL contexts are reaped. The VGA-backed stack/opaque-port fixture remains
+unverified, and exhaustion earns no credit. See level-preview.md. Briefing,
+game/platform and aggregate acceptance remain open.
+
+The preceding main-image translated-code ledger union is 30,195 bytes. The 183 new unique
 bytes connect 5329/534B split-palette row pairs, 53CA upper-eight publication,
 46B9 raster refresh and the 46A2 fade -> native clear tail. Their shared-engine
 campaign passes 185 fixtures / 366 comparisons, 88 own sites / 25 outcomes and
@@ -196,12 +207,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 1. Continue the 454C level-start / 4566 briefing and game transition above
    the accepted split-palette cluster. Fresh graph views expose shared-tail
    overlap: 4C17 has nine new prefix bytes over 63 native clear bytes; 5447 has
-   43 bytes outside existing C ranges over its native palette writers. The 7EB2
-   VGA sampling/conversion body remains 587 decoded bytes / 278 sites with no
-   borrowed C bytes. Prioritize its live VGA read-map/plane operations, SS mirror
-   writes, source/destination geometry and returned DS; never snapshot its
-   overlapping VRAM sources into a shadow image. Inspect the 4B5C text-field
-   wrapper and remaining publication paths while composing the briefing prefix.
+   43 bytes outside existing C ranges over its native palette writers. The7EB2
+   DrawLevelPreview body is now native across587 bytes /278 sites; preserve its
+   live VGA/SS/OR-latch contract while connecting the parent. Its VGA-backed
+   stack/opaque-port domain remains unverified. Batch the4B5C percentage-field
+   wrapper,4C17 partial clear and5447 palette publication with the briefing
+   connection instead of creating individual harnesses for their tiny prefixes.
    The existing 197D selector retains its declared RAM-only DOS/retry/fatal seam;
    add the required shared bus capability deliberately before broader 454C claims.
    Preserve DS->actual ES, the DF-sensitive 0FCA-byte clear, header/record aliases,

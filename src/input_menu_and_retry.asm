@@ -306,7 +306,7 @@ loc_45F2:
     call RedrawLevel ; @04612
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04615
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0461B
-    call sub_7EB2 ; @04621
+    call DrawLevelPreview ; @04621
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04624
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0462A
     call sub_4C17 ; @04630

@@ -48383,9 +48383,11 @@
     "address": 32434,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7EB2",
-    "aliases": [],
+    "size": 587,
+    "symbol_name": "DrawLevelPreview",
+    "aliases": [
+      "sub_7EB2"
+    ],
     "callers": [
       17953
     ],
@@ -48712,12 +48714,22 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Caller4621 follows RedrawLevel; four read maps sample source bits5/1,52 bytes x39 rows,OR destination latches and actual SS saves. docs/level-preview.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 587
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 587,
+    "c_implementation": "c/level_preview.c",
+    "c_core": "lmn_draw_level_preview_core",
+    "c_code_ranges": [
+      [
+        32434,
+        33021
+      ]
+    ],
+    "verification_evidence": "tests/level_preview.py:25 fixtures/50 core and actualRET comparisons,587 bytes/all278 sites/all6 direct outcomes,9 completed numeric mutants. Three full loads,DF/IF,exact/forward overlap,wrapped destination/coordinates; independent live pixel-index whole-plane model and all256 values per lane/plane. Live saved counts/DS/SI/DI/DX,late plane/page providers,changed outerRET,20-bit/offset wrap,SS coordinate/mirror aliases and missing-word output. 8,616,454 original steps/2,500,888 events;18 consumed hashes match. VGA-backed stack/opaque output ports,arbitrary nonterminating aliases,briefing parent and hardware/IRQ/native-host domains remain open. docs/level-preview.md"
   },
   {
     "address": 33021,
@@ -68042,6 +68054,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned raster split input stop boundary; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32460,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelPreviewInitialOutput",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7EB2 sampling/OR-latch and live near-return boundary; docs/level-preview.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 33020,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelPreviewReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7EB2 sampling/OR-latch and live near-return boundary; docs/level-preview.md"
     ],
     "verification_status": "STATIC"
   }

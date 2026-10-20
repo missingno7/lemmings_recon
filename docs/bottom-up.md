@@ -60,7 +60,9 @@ These are reconstruction boundaries, not claims about historical linker modules.
 | 0796F..07A59 | minimap.asm | Column, row and population sample contracts |
 | 07A5A..07BB7 | minimap_viewport.asm | Live viewport outline, VGA mirrors and saved phase contract |
 | 07BB8..07C66 | object_graphics_tick.asm | Object draw loop and shared animation tail; live fields and stale-BX contract |
-| 07C67..08237 | game_code_late_tail.asm | Mixed ownership remains provisional |
+| 07C67..07EB1 | game_code_late_tail.asm | Terrain, scroll/copy and background bodies; scoped native domains |
+| 07EB2..080FC | level_preview.asm | Four-plane source sampling, OR destination latches and live SS saves |
+| 080FD..08237 | game_code_after_level_preview.asm | Remaining game display/dirty suffix; UNKNOWN preserved |
 | 08238..08342 | special_graphics.asm | Tested strip entries/shared tail |
 | 08343..083BE | checksum.asm | Tested checksums, state and code/data overlap |
 | 083BF..08821 | code_tail.asm | Overlay storage, layout setter and unresolved spans |
@@ -1110,3 +1112,18 @@ coverage instruction-union validator, preventing shared tails from inflating
 new-work estimates. 4C17 exposes9 new bytes and5447 exposes43;7EB2 remains587
 untranslated bytes. Hardware timing,remaining level/game/platform seams and
 aggregate acceptance remain open. See split-palette.md and next-work.md.
+
+The7EB2 preview producer adds587 unique bytes, taking the main C union to30,782.
+Its25 fixtures /50 comparisons cover all278 sites /six outcomes and detect nine
+completed mutants through the shared verifier. A live pixel-index model checks
+whole planes at three full loads, including all256 source-byte values per lane.
+OR destination latches, late plane reads, exact/forward overlap, saved counts/
+cursors/port/DS and actual RET stay explicit. All83 unit tests and exact ASM
+pass; the81.42-second selected suite stays under384MiB and reaps its DLLs.
+SSFFFF:0011 mirror/count overlap exhausted a reference budget and a VGA-backed
+stack produced unsupported ports; neither earns credit. The accepted independent
+physical-wrap witness avoids that separate mirror alias. Physical ASM boundaries
+now isolate7EB2..80FC without reordering or reclassification. Fresh4566 graph
+views select the4B5C/4C17/5447 wrappers and connected briefing path next, retaining
+197D RAM-only service scope. No new CPU/bus/comparison engine, runtime image copy
+or native platform closure is introduced. See level-preview.md and next-work.md.
