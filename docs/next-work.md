@@ -2,16 +2,18 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is32,499 bytes. The132 new unique
-bytes implement the 03E7 state stores and SS map clears through
-actual0462/0465/0468 CALL/RETs to native video, base-palette and timer-calibration cores, stopping
-before level initialization at046B. Twenty-four bounded comparisons cover37
-parent sites,295 decoded dependency sites and six completed mutants, including
-actual PUSH SS/POP ES effects, live BIOS frames, packed/RGB palette output,
-timer reloads, DS/SS aliases,20-bit physical wrap and planar VGA state. The
-checkpoint executes451,671 original instructions and451,201 ordered bus
-events. The dynamic detector callback, later controller, platform providers
-and scheduled timer waits remain open. See game-initialize.md.
+The main-image translated-code ledger union is32,502 bytes. The135 unique
+03E7..046D bytes implement the initializer's ordered state stores and SS map
+clears, then compose the actual0462/0465/0468/046B CALL/RETs through native
+video, palette, timer-calibration and level-initialization cores. Twenty-seven
+bounded memory/frame comparisons cover38 parent sites,396 connected child
+sites and eight completed mutants. They include the level child's missing
+raster stop, drawing/header fallthrough to the declared missing-special-service
+boundary at1A7B, a full normal outer RET to046E and a changed live parent return
+word. The checkpoint executes882,636 original instructions and666,524 ordered
+bus events with224 matching consumed hashes. The conditional mouse-service
+check at046E, later game children, platform providers, scheduled timer waits,
+frame loop and full game remain open. See game-initialize.md.
 
 The previous main-image translated-code ledger union is32,367 bytes. The620 new unique
 bytes implement52F4/5377 palettes,482F sound selection,7900 backdrop,80FD dirty

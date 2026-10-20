@@ -3507,7 +3507,32 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Continuation after the live RET from CalibrateGameTimerReload at0468; the next original instruction calls InitializeLevelFromRecord at046B and remains the next native parent frontier."
+      "Continuation after the live RET from CalibrateGameTimerReload at0468; this actual CALL to InitializeLevelFromRecord at046B is composed through the level core."
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/game_initialize.c",
+    "c_code_ranges": [
+      [
+        1131,
+        1134
+      ]
+    ],
+    "c_core": "lmn_initialize_game_core",
+    "verification_evidence": "tests/game_initialize_prefix.py bounds the actual046B CALL and preserves its live return, the level child's missing-raster stop, drawing/header fallthrough to the missing-special-service boundary, normal outer RET to046E, and a changed actual parent return. The full level caller and children retain their independent level-initialize campaign. See docs/game-initialize.md."
+  },
+  {
+    "address": 1134,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 18,
+    "symbol_name": "InitializeGameAfterLevelInitialization",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Actual near RET from InitializeLevelFromRecord at046B resumes here before the conditional mouse-service check and mouse initialization block."
     ],
     "verification_status": "UNRESOLVED"
   },

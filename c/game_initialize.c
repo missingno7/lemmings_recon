@@ -84,7 +84,7 @@ static void stosb(uint8_t *memory,const LmnRasterBus *bus,LmnRegs *r){
 LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
     const LmnRegs *registers,const LmnGameInitializeServices *services){
     const LmnRasterBus *bus=services?services->bus:0;
-    LmnGameInitializeResult out={*registers,LMN_GAME_INITIALIZE_AT_LEVEL_INITIALIZATION,0,0};
+    LmnGameInitializeResult out={*registers,LMN_GAME_INITIALIZE_AT_MOUSE_SERVICE_CHECK,0,0};
     LmnRegs *r=&out.registers;
 
     /* Literal stores from 03E7..0449, in their original order. */
@@ -208,5 +208,63 @@ LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
         return out;
     }
     r->ip=timer_resume;
+
+    /* CALL InitializeLevelFromRecord at046B with the explicit live game-data
+       segment and the caller's raster, byte-port and resource contracts. */
+    const uint16_t level_resume=CS_InitializeGameAfterLevelInitialization;
+    expected_cs=r->cs;
+    push_word(memory,bus,r,level_resume);
+    r->ip=CS_InitializeLevelFromRecord;
+    LmnLevelInitializeCall level_call={
+        {r->ax,r->bx,r->cx,r->dx,r->si,r->di,r->bp,r->sp,r->flags,r->ip},
+        r->ds,r->es,r->cs,r->ss,
+        services?services->game_data_segment:0
+    };
+    LmnLevelInitializeResult level=lmn_initialize_level_core(memory,&level_call,
+        services?services->level:0);
+    r->ax=level.state.work_value;
+    r->bx=level.state.second_source_cursor;
+    r->cx=level.state.packed_counts;
+    r->dx=level.state.width_state;
+    r->si=level.state.source_cursor;
+    r->di=level.state.destination_cursor;
+    r->bp=level.state.control;
+    r->sp=level.state.stack_offset;
+    r->ds=level.data_segment;
+    r->es=level.output_segment;
+    r->cs=level.code_segment;
+    r->ip=level.state.continuation;
+    r->flags=level.state.flags;
+    if(level.status!=LMN_LEVEL_INITIALIZE_READY_TO_RETURN){
+#if GAME_INITIALIZE_MUTATION == 7
+        /* Mutant: discard the level child's explicit stop boundary. */
+        r->ip=level_resume;
+        return out;
+#else
+        out.status=level.status==LMN_LEVEL_INITIALIZE_CHANGED_RETURN
+            ?LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN:LMN_GAME_INITIALIZE_CHILD_STOP;
+        out.child_status=(uint16_t)level.status;
+        out.service_status=level.fatal?level.fatal:
+            level.missing_services?level.missing_services:
+            level.missing_provider?level.missing_provider:
+            level.unported?level.unported:0;
+        return out;
+#endif
+    }
+
+    /* The logical child leaves its actual outer RET pending at3789. Consume
+       that live SS word here, exactly as the original CALL at046B does. */
+    r->ip=pop_word(memory,bus,r);
+#if GAME_INITIALIZE_MUTATION == 7
+    r->ip=level_resume;
+#endif
+#if GAME_INITIALIZE_MUTATION == 8
+    r->ip=level_resume;
+#endif
+    if(r->cs!=expected_cs||r->ip!=level_resume){
+        out.status=LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN;
+        return out;
+    }
+    r->ip=level_resume;
     return out;
 }

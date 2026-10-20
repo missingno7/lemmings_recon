@@ -4,29 +4,25 @@ The exact 03E7..04CF controller has233 known bytes and72 sites. Its direct
 children now have scoped native implementations. It is the first CALL from the
 still untranslated game entry00FB; the controller and full gameplay remain open.
 
-## Tested parent/child checkpoint (03E7..046A)
+## Tested parent/child checkpoint through the level call
 
-The native `lmn_initialize_game_core` implements132 bytes of this controller
-and composes its actual0462/0465/0468 CALL/RETs through video, base-palette and
-timer-calibration cores. It stops at046B before level initialization.
-Twenty-four bounded comparisons cover37 parent sites,295 decoded dependency
-sites and six completed numeric mutants. They preserve ordered DS stores, both
-live PUSH SS/POP ES frames, incoming DF, DS/SS aliases,20-bit physical wrap,
-planar VGA reads/writes, BIOS frames, packed/RGB palette output and timer
-reloads. In SS-alias cases, timer calibration reaches the still-unbound dynamic
-display-probe target at1407; that stop remains explicit. The two string
-clears retain their literal ranges and leave CX exhausted.
+The native `lmn_initialize_game_core` composes the actual0462/0465/0468/046B
+CALL/RETs through video, base-palette, timer-calibration and level-record
+initialization. It passes the explicit game-data segment and the caller's level
+services into the existing level core. Missing raster services preserve the
+live046E return at the child entry; a bounded full-service case runs drawing
+setup and header fallthrough through the actual CALL to1A7B, where missing
+special-resource services remain an explicit child stop. A normal terrain-only
+fixture also completes the level child's outer RET at3789 and reaches046E;
+another case changes the actual parent return word and preserves that stop.
 
-Connected coverage is823 known bytes:132 newly translated parent bytes plus691
-already translated video, detector, timer and palette code. The24
-original/native comparisons execute451,671 original instructions and compare
-451,201 ordered bus events. When the forward clear wraps through physical
-address zero, it clears the live INT10 vector before the first child call; the
-resulting unbound BIOS stop is preserved.
-
-The rest of the controller remains untranslated. Continue from046B through
-level initialization and later children, carrying each live frame and platform
-service. This checkpoint does not initialize a complete game session.
+The test retains ordered DS stores, both live PUSH SS/POP ES frames, incoming
+DF, DS/SS aliases,20-bit physical wrap, planar VGA accesses, BIOS frames,
+packed/RGB palette output, timer reloads and the actual nested 36B9/374C stack
+words. In SS-alias cases, timer calibration still reaches the unbound dynamic
+display-probe target at1407. The level core's full terrain/object/minimap
+campaign remains independently scoped; this parent checkpoint does not
+initialize a complete game session.
 
 ## Memory ownership before the child calls
 
@@ -51,7 +47,8 @@ must remain live. Saved words can be changed by aliases; ES is the popped word.
 
 The near calls, in order, are0FB2,52F4,15AD,36B6; then410F,30A6,5377,482F,
 81CC,39CE,1644,3944,7BB8,7900,3AC8. The first three now compose with their
-actual CALL/RET words;36B6 is next. Carry returned registers/segments and
+actual CALL/RET words;36B6 now composes through its explicit missing-service
+and special-resource stop boundaries. Carry returned registers/segments and
 bridge each declared boundary explicitly. The relocated game/visibility segment operands
 remain distinct from live DS/SS.
 

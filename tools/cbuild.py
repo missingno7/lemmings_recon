@@ -17,7 +17,7 @@ def compiler():
 
 def source_files(cluster="checksum"):
     """Canonical ordered native source closure, including aliased clusters."""
-    if cluster=="game_initialize":return tuple(dict.fromkeys((ROOT/'c/game_initialize.c',*source_files('video_probe'),*source_files('game_prepare'))))
+    if cluster=="game_initialize":return tuple(dict.fromkeys((ROOT/'c/game_initialize.c',*source_files('video_probe'),*source_files('game_prepare'),*source_files('level_initialize'))))
     if cluster=="video_probe":return (ROOT/'c/video_probe.c',ROOT/'c/interrupt_service.c')
     if cluster=="game_prepare":
         return tuple(dict.fromkeys((ROOT/'c/game_prepare.c',ROOT/'c/palette_ports.c',ROOT/'c/drawing_layout.c',*source_files('status_initialize'))))
@@ -155,7 +155,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="level_start":defines=["-DLEVEL_START_MUTATION="+str(mutation)]
     if cluster=="video_probe":defines=["-DVIDEO_PROBE_MUTATION="+str(mutation)]
     if cluster=="game_prepare":defines=["-DGAME_PREPARE_MUTATION="+str(mutation)]
-    if cluster=="game_initialize":defines=["-DGAME_INITIALIZE_MUTATION="+str(mutation),"-DVIDEO_PROBE_MUTATION=0","-DGAME_PREPARE_MUTATION=0","-DPALETTE_PORTS_MUTATION=0","-DINTERRUPT_SERVICE_MUTATION=0"]
+    if cluster=="game_initialize":defines=["-DMUTATION=0","-DGAME_INITIALIZE_MUTATION="+str(mutation),"-DVIDEO_PROBE_MUTATION=0","-DGAME_PREPARE_MUTATION=0","-DPALETTE_PORTS_MUTATION=0","-DINTERRUPT_SERVICE_MUTATION=0","-DLEVEL_INITIALIZE_MUTATION=0"]
     if cluster=="pcspeaker_interrupt":defines=["-DMUTATION=0","-DPC_INTERRUPT_MUTATION="+str(mutation)]
     if cluster=="entity_interactions":defines=["-DMUTATION=0","-DENTITY_INTERACTIONS_MUTATION="+str(mutation)]
     if cluster=="entity_finish":defines=["-DMUTATION=0","-DENTITY_FINISH_MUTATION="+str(mutation)]
