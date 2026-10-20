@@ -451,6 +451,7 @@ SplitPaletteAfterBottomPublish46E9:
 SplitPaletteRasterReturn46EA:
     ret ; @046EA
 loc_46EB:
+LevelResultScreen:
     call ClearFullDrawingPage ; @046EB
     call SetupDisplayModeAndLayout ; @046EE
     call PublishMenuPalette ; @046F1
@@ -460,7 +461,7 @@ loc_46EB:
     call DrawScreenBackground ; @046FD
     call sub_48BD ; @04700
     lea si,[0x4c19] ; @04703
-    mov al,[0x20a7] ; @04707
+    mov al,[LevelCountdownHighDigit-GameDataImage] ; @04707
     mov bx,[0x20a9] ; @0470A
     db 0x0a,0xd8 ; ENCODED: or bl,al (NASM chooses a different encoding) ; @0470E
     cmp bx,0x3030 ; @04710

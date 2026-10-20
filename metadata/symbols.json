@@ -2941,6 +2941,70 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 300,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameWaitRetraceEnd",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Option-FF raster sync: IN status port (base+6) until bit3 clears; then checks TimerChainFlag1FCF for a timer edge during the wait."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 312,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameRetraceAfterTimerEdge",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TimerChainFlag1FCF was exact FF after leaving retrace: wait for the next retrace start, then JMP 0120 to retry the whole sync."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 319,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameProgramDisplayStart",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Option-FF path: CLI, CRTC 0C/0D word packets from AlternateDrawingOrigin+DrawingPageByteOffset+2 (16-bit wrap), STI."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 348,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameWaitRetraceStart",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Option-FF path: poll status bit3 set (retrace start) before CALL UpdateFixedWordPattern at 0161."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 356,
     "segment": 0,
     "kind": "label",
@@ -2957,6 +3021,54 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 369,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameWaitPoll",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Foreground wait loop body: DEC CX; DX decremented only when CX reaches zero with nonzero DX; zero DX at that point exits to the watchdog reinstall 0183."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 377,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameWaitCheckTimerFlag",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact FF in TimerChainFlag1FCF (written by timer tail 189E) ends the wait and JMPs to the tick gate 0186."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 387,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameWatchdogReinstallTimer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Wait budget exhausted without a timer edge: CALL InstallGameTimerVector (1644) re-hooks INT08 and reprograms the PIT, then falls into the tick gate."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 390,
     "segment": 0,
     "kind": "label",
@@ -2969,6 +3081,70 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original foreground/session control-flow block at 0186. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 416,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterTransition",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL AdvanceGameTransitionEffects at 019D; next CALL is the selector-key/edge-scroll handler 4085."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 419,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterSelectorScroll",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL HandleSelectorKeysAndEdgeScroll at 01A0 (also reached through its JMP/fallthrough into RebuildViewVisibilityMap RET)."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 426,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterDirtyRows",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL CopyDirtyLevelRowsToDrawingPage at 01A7."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 429,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterStatusBackdrop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL CopyStatusBackdropToDrawingPage at 01AA; next is the first DispatchEntityAction CALL."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -3033,6 +3209,182 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 441,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterObjectAnimations",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL AdvanceLevelObjectAnimations at 01B6."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 444,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterObjectGraphics",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL DrawLevelObjectGraphics at 01B9."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 447,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterEntityDrawing",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL DrawEntityRecords at 01BC."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 450,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterSelection",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL SelectEntityCandidate at 01BF; selection/candidate count are fresh for the second dispatch."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 453,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterStatusDisplay",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL UpdateStatusDisplay at 01C2; next is the second DispatchEntityAction CALL."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 456,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameAfterSecondDispatch",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the second CALL DispatchEntityAction at 01C5; end-request test follows."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 466,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameDoubleWaitCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Exact FF in FrameDoubleWaitFlag004A adds two observed TimerForegroundCounter1FCD changes of foreground delay; other values skip to 01E7."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 476,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameDoubleWaitSample",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Samples TimerForegroundCounter1FCD into AL; LOOP 01E5 repeats twice (CX=2)."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 479,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameDoubleWaitSpin",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Spins while the IRQ-owned counter still equals the sample; only an asynchronous INT08 tail can leave it."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 487,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameCheckAllAccounted",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "EntitySlotBound equal to LevelCreationLimit and zero EntityDrawingPassCount request the closing fade (all creatures released and none remain)."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 506,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameCheckTimeExpired",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "OR of the three ASCII time digits equal to 30 (0:00) requests the closing fade; otherwise the countdown divider runs."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 524,
     "segment": 0,
     "kind": "label",
@@ -3049,6 +3401,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 579,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameCountdownStoreDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stores the minutes digit byte and the tens/ones digit word after the ASCII borrow chain."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 586,
     "segment": 0,
     "kind": "label",
@@ -3061,6 +3429,86 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original foreground/session control-flow block at 024A. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 604,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameMusicToggleCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Key mask bit 0080: optional INT60 0100/0000 then clear SoundOptionBits; with the external driver and bits 03 set INT61 0200."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 629,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameMusicToggleAfterInt60Stop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Resume after the conditional INT60 AX=0100 at 0273."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 648,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameFrameMusicToggleRestore",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Resume after the conditional INT60 AX=0000 at 0286; POP AX restores the key mask before SoundOptionBits is cleared."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 673,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameSoundEnableCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Key mask bit 0100 writes SoundOptionBits=03; also the resume after INT61 AX=0200 at 029F."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 683,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameQuitCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Key mask bit 0020 requests the closing fade; otherwise JMP 0105 begins the next frame."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -3093,6 +3541,134 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original foreground/session control-flow block at 02C3. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 717,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameEndAfterFade",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Closing fade bit 02 is clear: publish base palette, stop sound, clear dirty-cell enable, restore timer, JMP to the result screen 46EB."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 720,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameEndAfterBasePalette",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL PublishBasePaletteBothBanks at 02CD."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 739,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameEndAfterInt60Stop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Resume after conditional INT60 AX=0100 at 02E1."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 758,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameEndDisableDirtyCells",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Resume after conditional INT60 AX=0000 at 02F4; clears DrawingDirtyCellsEnabledByte before CALL RestoreTimerState."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 766,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameEndAfterTimerRestore",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL RestoreTimerState at 02FB."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 785,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameEndToResultScreen",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "JMP LevelResultScreen (46EB); also the resume after conditional INT61 AX=0200 at 030F. Nonreturning session exit."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 788,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameLevelSkipCheat",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Reached when the BILLANDTED latch 1F74 is exact FF and key mask bit 8000 is set: completion display value 64 (100), base palette, JMP 02C3 end wait."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 796,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "GameLevelSkipAfterPalette",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL PublishBasePaletteBothBanks at 0319; JMP short 02C3."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -3220,6 +3796,342 @@
     "reachable_instruction_bytes": 164
   },
   {
+    "address": 812,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionOpeningRasterLoop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Option FF: repeat opening fade step + display-status cycle + timer palette until AL bit01 clears, inside one foreground tick."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 815,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionOpeningRasterAfterStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL StepGameOpeningFade at 032C."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 819,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionOpeningRasterAfterStatus",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL WaitForDisplayStatusBit3Cycle at 0330."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 822,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionOpeningRasterAfterTimerPalette",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL UpdateTimerPaletteAfter553D at 0333; POP AX restores the step result."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 829,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionOpeningStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Non-FF option: one opening fade step per foreground tick."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 832,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionOpeningAfterStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL StepGameOpeningFade at 033D."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 834,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionClosingCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Opening bit01 clear: test closing bit02."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 845,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionClosingRasterLoop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Option FF: repeat closing fade step + display-status cycle + timer palette until AL bit02 clears."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 848,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionClosingRasterAfterStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL StepGameClosingFade at 034D."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 852,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionClosingRasterAfterStatus",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL WaitForDisplayStatusBit3Cycle at 0351."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 855,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionClosingRasterAfterTimerPalette",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL UpdateTimerPaletteAfter553D at 0354."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 862,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionClosingStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Non-FF option: one closing fade step per foreground tick."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 865,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionDelayedCueCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Bit04 opening-cue sequence keyed by ForegroundCounter0052: 0F external cue 0403, 23 release start + cue 0402, 37 level music; above 37 clears bit04."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 892,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionPublishFlags",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Only publication of AL to GameTransitionFlags; cue paths RET without it."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 896,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionCue0F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Counter 0F: external driver with SoundOptionBits&03 issues INT61 AX=0403; RET without publishing AL."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 915,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionCue0FReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared RET of the counter-0F cue; also the INT61 resume."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 916,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionCue23ReleaseStart",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Counter 23: EntityCreationGate=FF starts creature release; external driver cue INT61 AX=0402; RET without publishing AL."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 940,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionCue23Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared RET of the counter-23 cue; also the INT61 resume."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 941,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionCue37LevelMusic",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Counter 37: SoundOptionBits bit02 selects INT61 AH=03 AL=LevelSoundId then INT61 AX=0000; clear bit02 RETs through 03D6."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 955,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "TransitionCue37AfterSelect",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Resume after INT61 AH=03 at 03B9."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 960,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionCue37Return",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "RET after INT61 AX=0000 at 03BE; no AL publication."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 961,
     "segment": 0,
     "kind": "entry",
@@ -3244,6 +4156,38 @@
     "reachable_instruction_bytes": 22
   },
   {
+    "address": 977,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "OpeningFadeAfterPaletteStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL StepSplitPaletteToTargets at 03CE; POP AX keeps the child ZF."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 982,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "TransitionSharedReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared RET: incomplete opening step and the music-disabled cue 37 path (JZ 03B2)."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 983,
     "segment": 0,
     "kind": "entry",
@@ -3266,6 +4210,22 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 17
+  },
+  {
+    "address": 993,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "ClosingFadeAfterPaletteStep",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of CALL StepSplitPaletteToSlot1 at 03DE; POP AX keeps the child ZF."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 999,
@@ -26781,8 +27741,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4085",
-    "aliases": [],
+    "symbol_name": "HandleSelectorKeysAndEdgeScroll",
+    "aliases": [
+      "sub_4085"
+    ],
     "callers": [
       416
     ],
@@ -27005,6 +27967,150 @@
     "reachable_instruction_bytes": 243
   },
   {
+    "address": 16527,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SelectorKeyCheckNext",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Scan code 2D selects the next action selector; other codes reach the edge-scroll test."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16534,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EdgeScrollCheck",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PointerY+8 signed below C0 (playfield) with PointerX exactly 8 scrolls left, exactly 148 scrolls right; otherwise RET."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16556,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EdgeScrollCheckRight",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PointerX exactly 148 enters ScrollViewRight."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16564,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EdgeScrollNoneReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "RET without view change."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16565,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SelectPreviousActionKey",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Scan 2C with zero StatusIconRefreshCounter decrements EntityActionSelector, wrapping 1 to 9."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16588,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SelectorKeyReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Shared RET for both selector keys."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16589,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SelectNextActionKey",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Scan 2D with zero StatusIconRefreshCounter increments EntityActionSelector, wrapping 0A to 2."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16613,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ScrollViewRight",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "View origin pixels at 500 tail-JMPs RebuildViewVisibilityMap unchanged; else +8, and +8 again with button bit1 unless 500 reached."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16640,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ScrollViewRightStore",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stores origin pixels and pixels>>3 bytes, then falls into RebuildViewVisibilityMap at 410F."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 16655,
     "segment": 0,
     "kind": "entry",
@@ -27122,6 +28228,54 @@
     "confidence": "PROVEN",
     "evidence": [
       "Shared-tail actual near RET; no new CALL frame at410F."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16719,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ScrollViewLeft",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Origin pixels signed not greater than 10 rebuild unchanged; else -8, and -8 again with button bit1 unless 10 reached."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16746,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ScrollViewLeftStore",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stores origin pixels and pixels>>3 bytes before JMP RebuildViewVisibilityMap."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 16761,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ScrollViewLeftRebuild",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "JMP short RebuildViewVisibilityMap; its RET returns to the 01A0 CALL frame."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -32347,6 +33501,22 @@
       "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 18155,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelResultScreen",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Session exit target from 0311: menu display/palette/timer setup and success test of StatusCompletionDisplayValue against the level requirement (signed JNL)."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 18479,
@@ -65075,6 +66245,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "39E6 and4063 store the original release-setting arithmetic result;30C3 reads on countdown expiry; no host rate domain inferred. docs/entity-simulation.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 74,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "FrameDoubleWaitFlag004A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup clears 0000..2011, 4551 clears 0000..0FC9 and 0409 stores 00; 01D2 consumes exact FF to add two observed IRQ counter changes per frame. No decoded writer of FF exists; any producer remains UNKNOWN (indexed or unresolved code), so the FF branch is retained, not called dead."
     ],
     "verification_status": "UNRESOLVED"
   },

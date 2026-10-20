@@ -98,6 +98,7 @@ FirstObjectGraphicsFrameOffset equ LevelObjectGraphicsRecords+0x17
 ; Session lifetime and partial entity-field anchors; these equates emit no bytes.
 GameTransitionFlags equ GameDataImage+0x004E
 GameEndRequested equ GameDataImage+0x004F
+FrameDoubleWaitFlag004A equ GameDataImage+0x004A
 GameCountdownTickCounter equ GameDataImage+0x0085
 GameCountdownTickReload equ GameDataImage+0x0086
 ForegroundWaitLowWord equ GameDataImage+0x1FFE

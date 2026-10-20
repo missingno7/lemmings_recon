@@ -1,6 +1,7 @@
 ; Maintained suffix after view_visibility.asm; physical order unchanged.
 times -(($-$$) != 0x414f) db 0 ; module start assertion
 loc_414F:
+ScrollViewLeft:
     mov ax,[0x0] ; @0414F
     cmp ax,0x10 ; @04152
     jng loc_4179 ; @04155
@@ -11,6 +12,7 @@ loc_414F:
     jng loc_4179 ; @04165
     sub ax,0x8 ; @04167
 loc_416A:
+ScrollViewLeftStore:
     mov [0x0],ax ; @0416A
     db 0x8b,0xd0 ; ENCODED: mov dx,ax (NASM chooses a different encoding) ; @0416D
     shr dx,1 ; @0416F
@@ -18,6 +20,7 @@ loc_416A:
     shr dx,1 ; @04173
     mov [0x2],dx ; @04175
 loc_4179:
+ScrollViewLeftRebuild:
     jmp short RebuildViewVisibilityMap ; @04179
 ; CONTRACT: live DS:SI NUL scan, no40-character bound; DF and AH wrap remain.
 ; Actual AX/SI saves and glyph CALL/RET carry returned DS/ES/flags into next scan.

@@ -102,13 +102,34 @@ sub_00D8:
     jmp EnterMainMenu ; @000F8
 loc_00FB:
 EnterLoadedLevelGame:
-; Session entry after resource loading/briefing. This is a JMP destination, not
-; an independently returning routine. Initialization precedes every frame.
-; Frame order: swap origin/map pairs -> raster/timer pacing -> transition/input
-; work -> dirty/background drawing -> action/create/simulate -> objects/entities
-; -> selection/status -> action again. The two action calls share the press latch.
-; DS is live across children; SS owns interaction/dirty maps as well as saves.
-; BIOS/DOS/sound and installed IRQ scheduling remain explicit dependencies.
+; Session entry after resource loading/briefing: JMP target from the level-start
+; path (454C/4551), never RETs. Its only exit is 02CD..0311 -> JMP 46EB.
+; LIFETIMES: startup clears DS:0000..2011 once; every level start (4551) clears
+; DS:0000..0FC9 and loads LEVEL at 0FCB; 03E7 resets session fields and the SS
+; cell/dirty maps; 36B6 then replaces origin, creation limit and minutes digit.
+; FRAME: 0105 swap -> pace/wait -> 0186 gate -> tick -> end/time tests ->
+; countdown -> key-mask commands -> JMP 0105. Tick CALL order: 031E fades/cues,
+; 4085 selector keys/edge scroll, 80FD dirty rows, 7900 status backdrop, 3150
+; action #1, 30A6 create, 1F19 simulate, 3944 object animation, 7BB8 object
+; draw, 3634 entity draw, 3CDE selection, 3AC8 status, 3150 action #2.
+; TIMER HANDSHAKE: INT08 17C7 (PIT reload 1FC9 from 15AD; chains to BIOS every
+; fourth IRQ) runs input poll 418C and key commands 3E6F, then sets 1FCF=FF and
+; INC 1FCD. The foreground clears 1FCF, polls it (watchdog 0183), and ticks
+; only when 1FCD>4 signed, then zeroes 1FCD: overrun IRQs are dropped, never
+; replayed; a count that reached 80..FF must wrap through 00 before 05.
+; Buttons/pointer/key mask/pause gate 002B/scan byte are IRQ-produced and may
+; change between any two foreground instructions executed with IF=1.
+; DOUBLE DISPATCH: both 3150 calls share press latch 0061. #1 uses the previous
+; frame's candidate/selection (the highlighted creature on screen) and normally
+; consumes a press made during the wait; #2 sees this frame's fresh selection,
+; catching presses gated at #1 (no candidate) or delivered mid-frame. A press
+; applies at most once until release reaches 31BE and clears the latch.
+; REGISTERS: the controller reads only its own loads, the fade steps' AL/ZF,
+; and AX after INT61 0200 at 02A1. Children get full predecessor state.
+; READINESS (0105..03E6 + 4085..417A): READY for C in the declared domain where
+; IRQs arrive only at the explicit polls 0171/0179, 01DF and the option-FF port
+; loops; INT60/61 via providers; children keep their scoped domains (3634 715B
+; callbacks, sound bodies). Open: 004A FF producer, preemption interleavings.
     call InitializeGameSession ; @000FB
     mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
     nop ; @00104
@@ -129,17 +150,20 @@ GameFrameRetryRasterSync:
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @00125
     add dl,0x6 ; @00129
 loc_012C:
+GameFrameWaitRetraceEnd:
     in al,dx ; @0012C
     test al,0x8 ; @0012D
     jnz loc_012C ; @0012F
     cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @00131
     jnz loc_013F ; @00136
 loc_0138:
+GameFrameRetraceAfterTimerEdge:
     in al,dx ; @00138
     test al,0x8 ; @00139
     jz loc_0138 ; @0013B
     jmp short GameFrameRetryRasterSync ; @0013D
 loc_013F:
+GameFrameProgramDisplayStart:
     sub dl,0x6 ; @0013F
     cli ; @00142
     mov bx,[AlternateDrawingOrigin-GameDataImage] ; @00143
@@ -154,6 +178,7 @@ loc_013F:
     sti ; @00158
     add dl,0x6 ; @00159
 loc_015C:
+GameFrameWaitRetraceStart:
     in al,dx ; @0015C
     test al,0x8 ; @0015D
     jz loc_015C ; @0015F
@@ -166,22 +191,28 @@ GameFrameWaitForTimer:
     mov dx,[ForegroundWaitHighWord-GameDataImage] ; @00168
     mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @0016C
 loc_0171:
+GameFrameWaitPoll:
     dec cx ; @00171
     jnz loc_0179 ; @00172
     db 0x23,0xd2 ; ENCODED: and dx,dx (NASM chooses a different encoding) ; @00174
     jz loc_0183 ; @00176
     dec dx ; @00178
 loc_0179:
+GameFrameWaitCheckTimerFlag:
     cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @00179
     jnz loc_0171 ; @0017E
     jmp short GameFrameTickGate ; @00180
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00182
 loc_0183:
+GameFrameWatchdogReinstallTimer:
     call InstallGameTimerVector ; @00183
 GameFrameTickGate:
 ; JNG below compares AL as signed against4. IRQ17C7 increments the shared byte;
 ; at an accepted tick the foreground clears it and the keyboard scan snapshot.
+; 0194 clears KeyboardScanCodeByte before 4085 reads it: 4085's selector keys
+; see only a make code IRQ09 (1707) stores during 031E. 1FD3 counts accepted
+; ticks; 0052 is incremented after 031E, so cues compare the previous count.
     mov al,[TimerForegroundCounter1FCD-GameDataImage] ; @00186
     mov cl,0x4 ; @00189
     db 0x3a,0xc1 ; ENCODED: cmp al,cl (NASM chooses a different encoding) ; @0018B
@@ -190,10 +221,14 @@ GameFrameTickGate:
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @00194
     inc byte [ForegroundCounter1FD3-GameDataImage] ; @00199
     call AdvanceGameTransitionEffects ; @0019D
-    call sub_4085 ; @001A0
+GameFrameAfterTransition:
+    call HandleSelectorKeysAndEdgeScroll ; @001A0
+GameFrameAfterSelectorScroll:
     inc byte [ForegroundCounter0052-GameDataImage] ; @001A3
     call CopyDirtyLevelRowsToDrawingPage ; @001A7
+GameFrameAfterDirtyRows:
     call CopyStatusBackdropToDrawingPage ; @001AA
+GameFrameAfterStatusBackdrop:
     call DispatchEntityAction ; @001AD
 CreateAndAdvanceEntityRecords:
 ; Scoped two-CALL prefix:actual returns01B3/01B6 remain live SS words.
@@ -204,25 +239,35 @@ EntityBatchAfterCreateCall:
     call AdvanceEntityRecords ; @001B3
 EntityBatchNextCaller:
     call AdvanceLevelObjectAnimations ; @001B6
+GameFrameAfterObjectAnimations:
     call DrawLevelObjectGraphics ; @001B9
+GameFrameAfterObjectGraphics:
     call DrawEntityRecords ; @001BC
+GameFrameAfterEntityDrawing:
     call SelectEntityCandidate ; @001BF
+GameFrameAfterSelection:
     call UpdateStatusDisplay ; @001C2
+GameFrameAfterStatusDisplay:
     call DispatchEntityAction ; @001C5
+GameFrameAfterSecondDispatch:
     cmp byte [GameEndRequested-GameDataImage],0xff ; @001C8
     jnz loc_01D2 ; @001CD
     jmp GameEndWaitForFade ; @001CF
 loc_01D2:
-    cmp byte [0x4a],0xff ; @001D2
+GameFrameDoubleWaitCheck:
+    cmp byte [FrameDoubleWaitFlag004A-GameDataImage],0xff ; @001D2
     jnz loc_01E7 ; @001D7
     mov cx,0x2 ; @001D9
 loc_01DC:
+GameFrameDoubleWaitSample:
     mov al,[TimerForegroundCounter1FCD-GameDataImage] ; @001DC
 loc_01DF:
+GameFrameDoubleWaitSpin:
     cmp [TimerForegroundCounter1FCD-GameDataImage],al ; @001DF
     jz loc_01DF ; @001E3
     loop loc_01DC ; @001E5
 loc_01E7:
+GameFrameCheckAllAccounted:
     mov al,[EntitySlotBound-GameDataImage] ; @001E7
     cmp al,[LevelCreationLimit-GameDataImage] ; @001EA
     jnz loc_01FA ; @001EE
@@ -231,7 +276,8 @@ loc_01E7:
     jnz loc_01FA ; @001F5
     jmp RequestGameFadeOut ; @001F7
 loc_01FA:
-    mov al,[0x20a7] ; @001FA
+GameFrameCheckTimeExpired:
+    mov al,[LevelCountdownHighDigit-GameDataImage] ; @001FA
     or al,[LevelCountdownTensDigit-GameDataImage] ; @001FD
     or al,[LevelCountdownOnesDigit-GameDataImage] ; @00201
     cmp al,0x30 ; @00205
@@ -247,7 +293,7 @@ GameCountdownTick:
     jnz GameFrameCommands ; @00217
     mov al,[GameCountdownTickReload-GameDataImage] ; @00219
     mov [GameCountdownTickCounter-GameDataImage],al ; @0021C
-    mov al,[0x20a7] ; @0021F
+    mov al,[LevelCountdownHighDigit-GameDataImage] ; @0021F
     mov bx,[LevelCountdownTensDigit-GameDataImage] ; @00222
     dec bh ; @00226
     cmp bh,0x2f ; @00228
@@ -263,16 +309,21 @@ GameCountdownTick:
     mov al,0x30 ; @0023E
     mov bx,0x3030 ; @00240
 loc_0243:
-    mov [0x20a7],al ; @00243
+GameCountdownStoreDigits:
+    mov [LevelCountdownHighDigit-GameDataImage],al ; @00243
     mov [LevelCountdownTensDigit-GameDataImage],bx ; @00246
 GameFrameCommands:
     mov ax,[InputKeyMask1FC7-GameDataImage] ; @0024A
-    cmp byte [0x1f74],0xff ; @0024D
+    cmp byte [SpecialLevelCodeLatch-GameDataImage],0xff ; @0024D
     jnz loc_025C ; @00252
     test ax,0x8000 ; @00254
     jz loc_025C ; @00257
     jmp loc_0314 ; @00259
 loc_025C:
+GameFrameMusicToggleCheck:
+; Key mask from IRQ09 (1FC7). 0289 clears SoundOptionBits before 0295 tests it,
+; so INT61 0200 at 029C needs an asynchronous writer between them; only then
+; does 02A1 test the INT61-returned AX instead of the restored key mask.
     test ax,0x80 ; @0025C
     jz loc_02A1 ; @0025F
     push ax ; @00261
@@ -283,6 +334,7 @@ loc_025C:
     mov ax,0x100 ; @00270
     int 0x60 ; @00273
 loc_0275:
+GameFrameMusicToggleAfterInt60Stop:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00275
     jz loc_0288 ; @0027A
     test byte [SoundOptionBits-GameDataImage],0x1 ; @0027C
@@ -290,6 +342,7 @@ loc_0275:
     mov ax,0x0 ; @00283
     int 0x60 ; @00286
 loc_0288:
+GameFrameMusicToggleRestore:
     pop ax ; @00288
     mov byte [SoundOptionBits-GameDataImage],0x0 ; @00289
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0028E
@@ -299,10 +352,12 @@ loc_0288:
     mov ax,0x200 ; @0029C
     int 0x61 ; @0029F
 loc_02A1:
+GameFrameSoundEnableCheck:
     test ax,0x100 ; @002A1
     jz loc_02AB ; @002A4
     mov byte [SoundOptionBits-GameDataImage],0x3 ; @002A6
 loc_02AB:
+GameFrameQuitCheck:
     test ax,0x20 ; @002AB
     jnz RequestGameFadeOut ; @002AE
     jmp GameFrameSwapAndPace ; @002B0
@@ -320,7 +375,9 @@ GameEndWaitForFade:
     jz loc_02CD ; @002C8
     jmp GameFrameSwapAndPace ; @002CA
 loc_02CD:
+GameEndAfterFade:
     call PublishBasePaletteBothBanks ; @002CD
+GameEndAfterBasePalette:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @002D0
     jz loc_02E3 ; @002D5
     test byte [SoundOptionBits-GameDataImage],0x1 ; @002D7
@@ -328,6 +385,7 @@ loc_02CD:
     mov ax,0x100 ; @002DE
     int 0x60 ; @002E1
 loc_02E3:
+GameEndAfterInt60Stop:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @002E3
     jz loc_02F6 ; @002E8
     test byte [SoundOptionBits-GameDataImage],0x1 ; @002EA
@@ -335,8 +393,10 @@ loc_02E3:
     mov ax,0x0 ; @002F1
     int 0x60 ; @002F4
 loc_02F6:
+GameEndDisableDirtyCells:
     mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0x0 ; @002F6
     call RestoreTimerState ; @002FB
+GameEndAfterTimerRestore:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @002FE
     jnz loc_0311 ; @00303
     test byte [SoundOptionBits-GameDataImage],0x3 ; @00305
@@ -344,10 +404,13 @@ loc_02F6:
     mov ax,0x200 ; @0030C
     int 0x61 ; @0030F
 loc_0311:
+GameEndToResultScreen:
     jmp loc_46EB ; @00311
 loc_0314:
+GameLevelSkipCheat:
     mov byte [StatusCompletionDisplayValue-GameDataImage],0x64 ; @00314
     call PublishBasePaletteBothBanks ; @00319
+GameLevelSkipAfterPalette:
     jmp short GameEndWaitForFade ; @0031C
 AdvanceGameTransitionEffects:
 ; GameTransitionFlags:01 opening fade,02 closing fade,04 delayed opening sound
@@ -362,34 +425,47 @@ AdvanceGameTransitionEffects:
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00325
     jnz loc_033D ; @0032A
 loc_032C:
+TransitionOpeningRasterLoop:
     call StepGameOpeningFade ; @0032C
+TransitionOpeningRasterAfterStep:
     push ax ; @0032F
     call WaitForDisplayStatusBit3Cycle ; @00330
+TransitionOpeningRasterAfterStatus:
     call UpdateTimerPaletteAfter553D ; @00333
+TransitionOpeningRasterAfterTimerPalette:
     pop ax ; @00336
     test al,0x1 ; @00337
     jnz loc_032C ; @00339
     jmp short loc_0361 ; @0033B
 loc_033D:
+TransitionOpeningStep:
     call StepGameOpeningFade ; @0033D
+TransitionOpeningAfterStep:
     jmp short loc_0361 ; @00340
 loc_0342:
+TransitionClosingCheck:
     test al,0x2 ; @00342
     jz loc_0361 ; @00344
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00346
     jnz loc_035E ; @0034B
 loc_034D:
+TransitionClosingRasterLoop:
     call StepGameClosingFade ; @0034D
+TransitionClosingRasterAfterStep:
     push ax ; @00350
     call WaitForDisplayStatusBit3Cycle ; @00351
+TransitionClosingRasterAfterStatus:
     call UpdateTimerPaletteAfter553D ; @00354
+TransitionClosingRasterAfterTimerPalette:
     pop ax ; @00357
     test al,0x2 ; @00358
     jnz loc_034D ; @0035A
     jmp short loc_0361 ; @0035C
 loc_035E:
+TransitionClosingStep:
     call StepGameClosingFade ; @0035E
 loc_0361:
+TransitionDelayedCueCheck:
     test al,0x4 ; @00361
     jz loc_037C ; @00363
     mov dl,[ForegroundCounter0052-GameDataImage] ; @00365
@@ -402,9 +478,11 @@ loc_0361:
     jc loc_037C ; @00378
     and al,0xfb ; @0037A
 loc_037C:
+TransitionPublishFlags:
     mov [GameTransitionFlags-GameDataImage],al ; @0037C
     ret ; @0037F
 loc_0380:
+TransitionCue0F:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00380
     jnz loc_0393 ; @00385
     test byte [SoundOptionBits-GameDataImage],0x3 ; @00387
@@ -412,8 +490,10 @@ loc_0380:
     mov ax,0x403 ; @0038E
     int 0x61 ; @00391
 loc_0393:
+TransitionCue0FReturn:
     ret ; @00393
 loc_0394:
+TransitionCue23ReleaseStart:
     mov byte [EntityCreationGate-GameDataImage],0xff ; @00394
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00399
     jnz loc_03AC ; @0039E
@@ -422,15 +502,19 @@ loc_0394:
     mov ax,0x402 ; @003A7
     int 0x61 ; @003AA
 loc_03AC:
+TransitionCue23Return:
     ret ; @003AC
 loc_03AD:
+TransitionCue37LevelMusic:
     test byte [SoundOptionBits-GameDataImage],0x2 ; @003AD
     jz loc_03D6 ; @003B2
     mov al,[LevelSoundId-GameDataImage] ; @003B4
     mov ah,0x3 ; @003B7
     int 0x61 ; @003B9
+TransitionCue37AfterSelect:
     mov ax,0x0 ; @003BB
     int 0x61 ; @003BE
+TransitionCue37Return:
     ret ; @003C0
 StepGameOpeningFade:
 ; AL carries transition flags. Set04 before saving AX; palette child's ZF must
@@ -443,10 +527,12 @@ StepGameOpeningFade:
     mov cx,0x10 ; @003C8
     mov dx,0x8 ; @003CB
     call StepSplitPaletteToTargets ; @003CE
+OpeningFadeAfterPaletteStep:
     pop ax ; @003D1
     jnz loc_03D6 ; @003D2
     and al,0xfe ; @003D4
 loc_03D6:
+TransitionSharedReturn:
     ret ; @003D6
 StepGameClosingFade:
 ; Preserve AL around the palette step and consume its returned ZF after POP AX;
@@ -455,6 +541,7 @@ StepGameClosingFade:
     mov cx,0x10 ; @003D8
     mov dx,0x8 ; @003DB
     call StepSplitPaletteToSlot1 ; @003DE
+ClosingFadeAfterPaletteStep:
     pop ax ; @003E1
     jnz loc_03D6 ; @003E2
     and al,0xfd ; @003E4
@@ -472,7 +559,7 @@ InitializeGameSession:
     mov word [PointerX-GameDataImage],0x96 ; @003F8
     mov word [PointerY-GameDataImage],0x64 ; @003FE
     mov byte [LevelCreationLimit-GameDataImage],0xc8 ; @00404
-    mov byte [0x4a],0x0 ; @00409
+    mov byte [FrameDoubleWaitFlag004A-GameDataImage],0x0 ; @00409
     mov byte [LevelCountdownTensDigit-GameDataImage],0x30 ; @0040E
     mov byte [LevelCountdownOnesDigit-GameDataImage],0x30 ; @00413
     mov byte [GameCountdownTickCounter-GameDataImage],0x11 ; @00418
