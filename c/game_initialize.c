@@ -84,7 +84,7 @@ static void stosb(uint8_t *memory,const LmnRasterBus *bus,LmnRegs *r){
 LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
     const LmnRegs *registers,const LmnGameInitializeServices *services){
     const LmnRasterBus *bus=services?services->bus:0;
-    LmnGameInitializeResult out={*registers,LMN_GAME_INITIALIZE_AT_BASE_PALETTE,0,0};
+    LmnGameInitializeResult out={*registers,LMN_GAME_INITIALIZE_AT_LEVEL_INITIALIZATION,0,0};
     LmnRegs *r=&out.registers;
 
     /* Literal stores from 03E7..0449, in their original order. */
@@ -184,5 +184,29 @@ LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
         return out;
     }
     r->ip=palette_resume;
+
+    /* CALL CalibrateGameTimerReload at0468 with the live display services. */
+    const uint16_t timer_resume=CS_InitializeGameAfterTimerCalibration;
+    expected_cs=r->cs;
+    push_word(memory,bus,r,timer_resume);
+    r->ip=CS_CalibrateGameTimerReload;
+    LmnVideoProbeResult timer=lmn_video_probe_core(memory,r,
+        LMN_VIDEO_CALIBRATE,services?services->video:0);
+    *r=timer.registers;
+    if(timer.status){
+        out.status=LMN_GAME_INITIALIZE_CHILD_STOP;
+        out.child_status=timer.status;
+        out.service_status=timer.service_status;
+        return out;
+    }
+    r->ip=pop_word(memory,bus,r);
+#if GAME_INITIALIZE_MUTATION == 6
+    r->ip=timer_resume;
+#endif
+    if(r->cs!=expected_cs||r->ip!=timer_resume){
+        out.status=LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN;
+        return out;
+    }
+    r->ip=timer_resume;
     return out;
 }

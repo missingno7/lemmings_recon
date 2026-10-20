@@ -4,28 +4,29 @@ The exact 03E7..04CF controller has233 known bytes and72 sites. Its direct
 children now have scoped native implementations. It is the first CALL from the
 still untranslated game entry00FB; the controller and full gameplay remain open.
 
-## Tested parent/child checkpoint (03E7..0467)
+## Tested parent/child checkpoint (03E7..046A)
 
-The native `lmn_initialize_game_core` implements129 bytes of this controller
-and composes its actual0462/0465 CALL/RETs through the verified0FB2 video and
-52F4 base-palette setup. It stops at0468 before timer calibration. Twenty-two
-bounded comparisons cover36 controller sites,84 executed child sites and five
-completed numeric mutants. The paths preserve ordered DS stores, both live
-PUSH SS/POP ES frames, incoming DF, DS/SS aliases,20-bit physical wrap, planar
-VGA reads/writes, the BIOS interrupt frame, packed/RGB palette paths, blanking
-control and missing byte-port stops. The two string clears retain their
-literal ranges and leave CX exhausted.
+The native `lmn_initialize_game_core` implements132 bytes of this controller
+and composes its actual0462/0465/0468 CALL/RETs through video, base-palette and
+timer-calibration cores. It stops at046B before level initialization.
+Twenty-four bounded comparisons cover37 parent sites,295 decoded dependency
+sites and six completed numeric mutants. They preserve ordered DS stores, both
+live PUSH SS/POP ES frames, incoming DF, DS/SS aliases,20-bit physical wrap,
+planar VGA reads/writes, BIOS frames, packed/RGB palette output and timer
+reloads. In SS-alias cases, timer calibration reaches the still-unbound dynamic
+display-probe target at1407; that stop remains explicit. The two string
+clears retain their literal ranges and leave CX exhausted.
 
-Connected coverage is330 known bytes: the129 newly translated parent bytes
-plus201 already translated video/palette code. The22 original/native
-comparisons execute413,787 original instructions and compare413,341 ordered
-bus events. When the forward clear wraps through physical address zero, it
-clears the live INT10 vector before the first child call; the resulting
-unbound BIOS stop is preserved.
+Connected coverage is823 known bytes:132 newly translated parent bytes plus691
+already translated video, detector, timer and palette code. The24
+original/native comparisons execute451,671 original instructions and compare
+451,201 ordered bus events. When the forward clear wraps through physical
+address zero, it clears the live INT10 vector before the first child call; the
+resulting unbound BIOS stop is preserved.
 
-The rest of the controller remains untranslated. Continue from0468 through
-timer calibration and level initialization, carrying each live frame and
-platform service. This checkpoint does not initialize a complete game session.
+The rest of the controller remains untranslated. Continue from046B through
+level initialization and later children, carrying each live frame and platform
+service. This checkpoint does not initialize a complete game session.
 
 ## Memory ownership before the child calls
 
@@ -49,9 +50,9 @@ must remain live. Saved words can be changed by aliases; ES is the popped word.
 ## Child and platform sequence
 
 The near calls, in order, are0FB2,52F4,15AD,36B6; then410F,30A6,5377,482F,
-81CC,39CE,1644,3944,7BB8,7900,3AC8. The first two now compose with their actual
-CALL/RET words;15AD is next. Carry returned registers/segments and bridge each
-declared boundary explicitly. The relocated game/visibility segment operands
+81CC,39CE,1644,3944,7BB8,7900,3AC8. The first three now compose with their
+actual CALL/RET words;36B6 is next. Carry returned registers/segments and
+bridge each declared boundary explicitly. The relocated game/visibility segment operands
 remain distinct from live DS/SS.
 
 Between36B6 and410F, only an exact FF mouse-disabled byte skips BIOS mouse

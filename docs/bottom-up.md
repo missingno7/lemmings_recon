@@ -94,15 +94,17 @@ copy pitches,live map swaps and actual frames are retained. Its620 new unique
 instruction bytes are separate from1498 connected bytes; UNKNOWN remains
 explicit. See game-prepare.md.
 
-The03E7 controller now translates129 bytes through its actual0462/0465
-CALL/RETs to native0FB2 video and52F4 palette setup, stopping before timer
-calibration at0468. Twenty-two bounded comparisons exercise36 parent sites
-and84 child sites, including actual PUSH SS/POP ES stack events,DF-sensitive
-clears,live aliases,planar VGA and the case where forward physical wrap clears
-the INT10 vector. Its129 unique bytes bring the main union to32,496; the
-connected region is330 bytes including existing video/palette code. Continue
-at0468 through timer calibration and level-record initialization. The final
-BIOS/DOS providers and timer-driven waits remain open. See game-initialize.md.
+The03E7 controller now translates132 bytes through its actual0462/0465/0468
+CALL/RETs to native video, palette and timer-calibration setup, stopping before
+level initialization at046B. Twenty-four bounded comparisons exercise37
+parent sites and295 decoded dependency sites, including actual PUSH SS/POP ES
+stack events,DF-sensitive clears,live aliases,planar VGA and the physical-wrap
+case that clears the INT10 vector. Its132 unique bytes bring the main union to
+32,499; the connected region is823 bytes including existing video/detector/
+timer/palette code. The SS-alias calibration case preserves the unresolved
+dynamic probe stop at1407. Continue at046B through level-record initialization.
+Later BIOS/DOS providers and timer-driven waits remain open. See
+game-initialize.md.
 
 The 03E7 setup dependency cluster now has native 0FB2 video/sprite-slot setup
 and 15AD calibration through all four13DC probe callbacks and1602 raster/PIT

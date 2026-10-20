@@ -465,14 +465,16 @@ InitializeGameSession:
     rep stosb ; @00460
 ; CONTRACT: 03E7..0461 initializes live DS fields, then clears SS:0012..42B1
 ; and SS:42B2..48F3 using the original DF-sensitive REP STOSB loops. The
-; tested native parent composes the 0462/0465 CALL/RETs through 0FB2/52F4 and
-; stops at0468 before timer calibration. Later providers and timer waits remain open.
+; tested native parent composes the 0462/0465/0468 CALL/RETs through 0FB2,
+; 52F4 and 15AD, stopping at046B before level initialization. The measured
+; timer path preserves its unbound dynamic probe target; later waits remain open.
 InitializeGameAfterStateClear:
     call SetupGameVideoAndSpriteCallbacks ; @00462
 InitializeGameAfterVideoSetup:
     call PublishGameBasePalette ; @00465
 InitializeGameAfterPalette:
     call CalibrateGameTimerReload ; @00468
+InitializeGameAfterTimerCalibration:
     call InitializeLevelFromRecord ; @0046B
     cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0046E
     jz loc_0480 ; @00473

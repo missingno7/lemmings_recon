@@ -3418,7 +3418,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:22 bounded original/native comparisons include34 owned state-prefix sites in03E7..0461 and5 completed numeric mutants; this scoped range covers123 of the entry's233 known bytes. Literal DS stores, both actual PUSH SS/POP ES stack words, DF-sensitive 42A0/0642 REP clears, canonical RAM/VGA effects,20-bit wrap and live DS/SS aliases. The actual0462/0465 CALLs are separately recorded at InitializeGameAfterStateClear and InitializeGameAfterVideoSetup."
+    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons cover34 owned state-prefix sites in03E7..0461 and6 completed numeric mutants across the parent scope. The translated prefix covers132 unique parent bytes including the three separately ledgered CALL continuations. Literal DS stores, both actual PUSH SS/POP ES stack words, DF-sensitive REP clears, canonical RAM/VGA effects,20-bit wrap and live DS/SS aliases remain explicit; actual0462/0465/0468 CALLs are recorded at their continuation symbols."
   },
   {
     "address": 1122,
@@ -3443,7 +3443,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:22 bounded original/native comparisons execute the actual0462 CALL/RET through native0FB2: one owned parent CALL site and17 executed video-child sites, with5 completed numeric mutants across the full parent scope. The composed parent continues through the next palette CALL at0465 and stops before timer calibration at0468. It preserves the live return, BIOS INT10 frame and returned registers; forward physical wrap can clear the live INT10 vector and cause the original unbound-service stop. See docs/game-initialize.md."
+    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0462 CALL/RET through native0FB2 video setup, then continue through palette and timer calibration to046B or preserve a child stop. One owned parent CALL site and17 video-child sites are included;6 completed numeric mutants cover the full parent. The live return, BIOS INT10 frame and returned registers remain exact; forward physical wrap can clear the live INT10 vector and cause the original unbound-service stop. See docs/game-initialize.md."
   },
   {
     "address": 1125,
@@ -3468,7 +3468,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:22 bounded original/native comparisons execute this actual0465 CALL/RET through native52F4 base-palette setup: one owned parent CALL site plus the connected video/palette dependencies. Packed attribute and RGB DAC paths, blanking-control ports, missing input/output stops and the live changed parent return are covered by5 completed numeric mutants across the parent. This adds3 new parent bytes to129 total; the connected scope is330 known bytes, including already translated children. The parent stops at0468 before timer calibration after413,787 original instructions and413,341 ordered bus events. Later controller/platform/IRQ waits remain open. See docs/game-initialize.md."
+    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0465 CALL/RET through native52F4 base-palette setup, then continue through the timer call to046B. Packed attribute and RGB DAC paths, blanking control, missing byte-port stops and changed live returns are covered alongside the full parent scope. The parent contributes132 unique bytes; the connected scope is823 known bytes including already translated dependencies. See docs/game-initialize.md."
   },
   {
     "address": 1128,
@@ -3482,7 +3482,32 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Continuation after the live RET from CALL PublishGameBasePalette at0465; the next original instruction calls CalibrateGameTimerReload at0468 and remains the next native parent frontier."
+      "Continuation after the live RET from CALL PublishGameBasePalette at0465; the actual CALL CalibrateGameTimerReload at0468 is now composed to its return at046B, before the unresolved level-initialization call."
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/game_initialize.c",
+    "c_code_ranges": [
+      [
+        1128,
+        1131
+      ]
+    ],
+    "c_core": "lmn_initialize_game_core",
+    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0468 CALL/RET through native15AD timer calibration, then stop at046B before level initialization. Fixed-option reload, the live changed timer return and the SS-alias stop at unresolved dynamic detector target1407 are represented;6 completed numeric mutants cover the parent. The routine measured paths remain independently covered by tests/video_probe.py. This continuation adds3 parent bytes to132 total and connects823 known bytes including translated video, detector, timer and palette dependencies. 451,671 original instructions and451,201 ordered bus events; later controller/platform/IRQ paths remain open. See docs/game-initialize.md."
+  },
+  {
+    "address": 1131,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 3,
+    "symbol_name": "InitializeGameAfterTimerCalibration",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Continuation after the live RET from CalibrateGameTimerReload at0468; the next original instruction calls InitializeLevelFromRecord at046B and remains the next native parent frontier."
     ],
     "verification_status": "UNRESOLVED"
   },

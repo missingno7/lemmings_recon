@@ -10,18 +10,21 @@ import sys
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/'tests'),str(ROOT/'tools')]
 import verification as v
+import video_probe as probe
 from cbuild import build,source_files
 from bounded_process import run_bounded,temporary_build_directory
 from common import BUILD,sha,write_json
 
-START,BOUNDARY=0x03E7,0x0468
+START,BOUNDARY=0x03E7,0x046B
 OWN_RANGES=((START,BOUNDARY),)
-CHILD_RANGES=((0x0FB2,0x0FF8),(0x52F4,0x531D),(0x5425,0x5447),(0x548C,0x54C4))
+CHILD_RANGES=((0x0FB2,0x0FF8),(0x13DC,0x14C1),(0x14C2,0x1530),
+              (0x15AD,0x1644),(0x52F4,0x531D),
+              (0x5425,0x5447),(0x548C,0x54C4))
 OWN={i.address:i for a,b in OWN_RANGES for i in v.MD.disasm(v.IMAGE[a:b],a)}
 CHILD={i.address:i for a,b in CHILD_RANGES for i in v.MD.disasm(v.IMAGE[a:b],a)}
 BOUNDARY_INSTRUCTION=next(v.MD.disasm(v.IMAGE[BOUNDARY:BOUNDARY+3],BOUNDARY))
 INS=OWN|CHILD|{BOUNDARY_INSTRUCTION.address:BOUNDARY_INSTRUCTION}
-SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=180,384,100_000,50_000
+SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=180,384,2_000_000,1_000_000
 REPORT=BUILD/'game-initialize-prefix-differential.json'
 
 class Result(ct.Structure):
@@ -43,9 +46,9 @@ def cases():
                 ds=0x6000,ss=0x9000,flags=flags,ax=0xB543))
     rows.extend((
         dict(name='ds-ss-alias',load=v.LOADS[0],seed=0x31A5,ds=0x6800,ss=0x6800,
-             flags=0x0AD7,ax=0xC37E),
+             flags=0x0AD7,ax=0xC37E,expected=1,child_status=6),
         dict(name='vga-data-and-stack',load=v.LOADS[1],seed=0x31A6,ds=0xA000,ss=0xA000,
-             flags=0x0AD7,ax=0xA55A),
+             flags=0x0AD7,ax=0xA55A,expected=1,child_status=6),
         dict(name='vga-data-separate-stack',load=v.LOADS[0],seed=0x31AA,ds=0xA000,ss=0x9000,
              flags=0x0AD7,ax=0xA55A),
         dict(name='vga-stack-backward',load=v.LOADS[2],seed=0x31A7,ds=0x6000,ss=0xA000,
@@ -74,7 +77,16 @@ def cases():
              flags=0x0AD7,ax=0xB543,mode=2,missing_in=True,expected=1,child_status=1,service_status=1),
         dict(name='palette-service-missing-output',load=v.LOADS[1],seed=0x31B4,ds=0x6000,ss=0x9000,
              flags=0x0AD7,ax=0xB543,mode=2,missing_out=True,expected=1,child_status=1,service_status=2),
+        dict(name='timer-fixed-option',load=v.LOADS[0],seed=0x31B5,ds=0x6000,ss=0x9000,
+             flags=0x0AD7,ax=0xB543,mode=4,option=0xFF),
+        dict(name='timer-parent-return-changed',load=v.LOADS[1],seed=0x31B6,ds=0x6000,ss=0x9000,
+             flags=0x0AD7,ax=0xB543,mode=4,option=0xFF,patch='timer-parent-return',expected=2),
     ))
+    defaults=dict(pit=0x1234,primary=7,secondary=0,dcc=True,ega=True,ega_config=0,
+                  color=True,mono=True,mono_id=0x50,base=0x3D4)
+    for case in rows:
+        case.update({key:value for key,value in defaults.items() if key not in case})
+        if case['ds']==case['ss']:case['base']=0
     return rows
 
 def setup(case):
@@ -83,9 +95,12 @@ def setup(case):
                         sp=case.get('sp',0x4AF4),flags=case['flags'])
     regs.update(ip=START,ax=case['ax'])
     for segment in {case['ds'],0x7000}:
-        v.put16(memory,segment,0x1FDA,0x3D4,device)
+        v.put16(memory,segment,0x1FDA,case['base'],device)
         v.put16(memory,segment,0x1F7C,case.get('mode',2),device)
-        v.put8(memory,segment,0x200C,case.get('blanking',0xFF))
+        v.put16(memory,segment,0x1FC9,case.get('reload',0x4567),device)
+        v.put16(memory,segment,0x2011,case.get('raster_mode',0),device)
+        v.sync_memory_byte(memory,device,segment,0x200E,case.get('option',0xFF))
+        v.sync_memory_byte(memory,device,segment,0x200C,case.get('blanking',0xFF))
         for n in range(48):
             v.sync_memory_byte(memory,device,segment,0x2608+n,(n*7+3)&63)
         for n in range(9):v.put16(memory,segment,0x002E+2*n,0xD234,device)
@@ -93,10 +108,21 @@ def setup(case):
     device.trace=v.PackedDeviceTrace(MAX_EVENTS)
     return memory,regs,device
 
-class Access(v.BusAccess):
+class Access(probe.Access):
     def __init__(self,*args):
-        super().__init__(*args,max_events=MAX_EVENTS,packed_events=True)
-        self.outputs=[];self.input_count=0
+        super().__init__(*args)
+        self.timer_phase=False
+        self.palette_inputs=0
+    def access(self,kind,address,flags,mask=v.FLAGS,value=None):
+        got=super().access(kind,address,flags,mask,value)
+        if kind=='read' and address==v.physical(self.r['ds'],0x2011):
+            self.timer_phase=True
+        if (self.c.get('patch')=='timer-parent-return' and kind=='write' and
+                address==v.physical(self.r['ds'],0x1FC9) and
+                'timer-parent-return' not in self.providers):
+            self.patch(self.r['ss'],(self.r.get('sp',0x4AF4)-2)&0xFFFF,
+                       0xD234,'timer-parent-return')
+        return got
     def out_word(self,port,value,flags,mask=v.FLAGS):
         expected_port=0 if self.c['ds']==self.c['ss'] else 0x3D4
         v.check((port,value)==(expected_port,0x1613),
@@ -106,22 +132,28 @@ class Access(v.BusAccess):
             ss=self.r['ss'];sp=self.r.get('sp',0x4AF4)
             self.patch(ss,(sp-2)&0xFFFF,0xD234,'parent-return')
     def inp(self,port,flags,mask=v.FLAGS):
-        base=0 if self.c['ds']==self.c['ss'] else 0x3D4
-        status_port=(base&0xFF00)|((base+6)&0xFF)
-        v.check(port in (status_port,0x3C5),
-                f"{self.c['name']}: undeclared palette input {port:04X}")
-        value=0x93 if port==0x3C5 else 0
-        self.input_count+=1;v.check(self.input_count<=4,'palette input budget exhausted')
-        self.cursor+=1;self.emit('in',port,value,flags,mask);return value
+        if not self.timer_phase:
+            status_port=(self.c['base']&0xFF00)|((self.c['base']+6)&0xFF)
+            if port in (status_port,0x3C5):
+                value=0x93 if port==0x3C5 else 0
+                self.palette_inputs+=1
+                v.check(self.palette_inputs<=4,'palette input budget exhausted')
+                self.cursor+=1;self.emit('in',port,value,flags,mask);return value
+        return super().inp(port,flags,mask)
     def out(self,port,value,flags,mask=v.FLAGS):
-        v.check(port in (0x00C0,0x3C0,0x3C4,0x3C5,0x3C8,0x3C9),
-                f"{self.c['name']}: undeclared palette output {port:04X}")
-        self.emit('out8',port,value,flags,mask)
-        if self.c.get('patch')=='palette-parent-return' and 'palette-parent-return' not in self.providers:
-            ss=self.r['ss'];sp=self.r.get('sp',0x4AF4)
-            self.patch(ss,(sp-2)&0xFFFF,0xD234,'palette-parent-return')
+        if not self.timer_phase and port in (0x00C0,0x3C0,0x3C4,0x3C5,0x3C8,0x3C9):
+            self.emit('out8',port,value,flags,mask)
+            if (self.c.get('patch')=='palette-parent-return' and
+                    'palette-parent-return' not in self.providers):
+                self.patch(self.r['ss'],(self.r.get('sp',0x4AF4)-2)&0xFFFF,
+                           0xD234,'palette-parent-return')
+            return
+        return super().out(port,value,flags,mask)
 
 def bios_provider(access,r):
+    if r['ax']!=0x008D:
+        access.timer_phase=True
+        return probe.bios_provider(access,r)
     entry=dict(r);v.check(r['ax']==0x008D,'unexpected BIOS video service')
     if access.c.get('returned_state'):
         r.update(ds=0x7000,es=0x7100,di=0x2200,bp=0xABCD)
@@ -134,6 +166,10 @@ def original(case,memory,regs,device):
     def before(machine,instruction):
         if instruction.address==BOUNDARY:
             machine.stop(0)
+            return True
+        if instruction.address==0x1407 and machine.state()['ax'] not in probe.TARGETS:
+            self_state['child_status']=6
+            machine.stop(1)
             return True
         missing=(case.get('missing_in') if instruction.mnemonic=='in' else
                  case.get('missing_out') if instruction.mnemonic=='out' and
@@ -191,19 +227,24 @@ class Native:
 
 def independent(case,initial,reference):
     result=reference['regs'];step=-1 if case['flags']&0x400 else 1
-    parent_return=(0xD234 if case.get('patch') in ('parent-return','palette-parent-return')
+    timer_started=0x15AD in reference['sites']
+    parent_return=(0xD234 if case.get('patch') in ('parent-return','palette-parent-return','timer-parent-return')
                    else 0x0465 if reference['status']==1 and reference['child_status']==3
+                   else 0x0468 if reference['status']==1 and case['name'].startswith('palette-')
                    else BOUNDARY)
     if reference['status'] in (0,2):
-        v.check(result['cx']==0,'initializer did not exhaust the final palette count')
+        if case['ds']==case['ss'] and reference['status']==0:
+            v.check(result['cx']==case['pit'],'timer measurement did not preserve the PIT count')
+        else:v.check(result['cx']==0,'initializer did not exhaust the final palette count')
         v.check(result['ip']==parent_return,'initializer did not preserve the live parent RET target')
-        v.check((result['flags']&0x400)==(case['flags']&0x400),'video child changed DF')
-        expected_di=0x2200 if case.get('returned_state') else (0x42B2+step*0x0642)&0xFFFF
-        v.check(result['di']==expected_di,'live DI differs after first child return')
-        v.check(result['bp']==(0xABCD if case.get('returned_state') else initial['bp']),
-                'live BP differs after first child return')
+        if case['ds']!=case['ss']:
+            v.check((result['flags']&0x400)==(case['flags']&0x400),'video child changed DF')
+            expected_di=0x2200 if case.get('returned_state') else (0x42B2+step*0x0642)&0xFFFF
+            v.check(result['di']==expected_di,'live DI differs after first child return')
+            v.check(result['bp']==(0xABCD if case.get('returned_state') else initial['bp']),
+                    'live BP differs after first child return')
         mode=0 if case['ds']==case['ss'] else case.get('mode',2)
-        if case.get('patch')!='parent-return':
+        if case['ds']!=case['ss'] and case.get('patch') not in ('parent-return','palette-parent-return','timer-parent-return'):
             palette_step=-1 if case['flags']&0x400 else 1
             palette_count=48 if mode==4 else 16
             v.check(result['si']==(0x2608+palette_step*palette_count)&0xFFFF,
@@ -213,13 +254,22 @@ def independent(case,initial,reference):
             v.check(v.get16(reference['memory'],result['ds'],0x2E+2*n)==value,
                     f'video child callback slot {n} differs')
         expected_port=0 if case['ds']==case['ss'] else 0x3D4
-        v.check(reference['hardware']==[(expected_port,0x1613)],'video child word OUT differs')
-        if case.get('patch')!='parent-return' and mode==4:
+        v.check(reference['hardware'][0]==(expected_port,0x1613),'video child word OUT differs')
+        if case.get('patch') not in ('parent-return','palette-parent-return') and mode==4:
             banks=[event[2] for event in reference['events'] if event[:2]==('out8',0x3C8)]
             colors=[event[2] for event in reference['events'] if event[:2]==('out8',0x3C9)]
             v.check(banks==[0,16],'base palette DAC bank starts differ')
             v.check(colors==[(i*7+3)&63 for i in range(48)],
                     'base palette source continuation differs')
+        timer_ds=0x7000 if case.get('returned_state') else case['ds']
+        final_option=0 if case['ds']==case['ss'] else case.get('option',0xFF)
+        timer_reached=reference['status']==0 or case.get('patch')=='timer-parent-return'
+        if timer_reached and final_option==0xFF:
+            v.check(v.get16(reference['memory'],timer_ds,0x1FC9)==0x4000,
+                    'fixed timer option did not publish the literal reload')
+        elif timer_reached and case['ds']==case['ss']:
+            v.check(v.get16(reference['memory'],timer_ds,0x1FC9)==(0xFFFF-case['pit'])&0xFFFF,
+                    'measured timer reload differs from the independent PIT complement')
     stack_start=(case.get('sp',0x4AF4)-2)&0xFFFF
     frame_offsets={(stack_start+n)&0xFFFF for n in range(2)}
     for first in (-4,-6,-8):
@@ -228,7 +278,8 @@ def independent(case,initial,reference):
         for n in range(count):
             offset=(start+step*n)&0xFFFF
             if offset in frame_offsets:continue
-            if case['ds']==case['ss'] and reference['status'] in (0,2) and 0x2E<=offset<0x40:continue
+            if case['ds']==case['ss'] and 0x2E<=offset<0x40:continue
+            if case['ds']==case['ss'] and timer_started and 0x1FC9<=offset<0x2020:continue
             at=v.physical(case['ss'],offset)
             v.check(reference['memory'][at]==0,
                     f'{case["name"]}: ordered stack/SS clear result differs at {offset:04X}')
@@ -256,7 +307,8 @@ def independent(case,initial,reference):
         for start,count in ((0x0012,0x42A0),(0x42B2,0x0642)):
             for n in range(count):
                 offset=(start+step*n)&0xFFFF
-                if case['ds']==case['ss'] and reference['status'] in (0,2) and 0x2E<=offset<0x40:continue
+                if case['ds']==case['ss'] and 0x2E<=offset<0x40:continue
+                if case['ds']==case['ss'] and timer_started and 0x1FC9<=offset<0x2020:continue
                 for plane in reference['device'].planes:
                     v.check(plane[offset]==0,f'{case["name"]}: planar clear misses {offset:04X}')
 
@@ -273,7 +325,7 @@ def compare(native,case):
     return ref
 
 def hashes():
-    paths={'tests/game_initialize_prefix.py','tests/verification.py','tests/minimap_vga.py',
+    paths={'tests/game_initialize_prefix.py','tests/video_probe.py','tests/verification.py','tests/minimap_vga.py',
         'tools/cbuild.py','tools/difftest.py','tools/bounded_process.py','tools/common.py',
         'tools/unpack.py','metadata/oracle.json','metadata/toolchain-lock.json','assets/vgalemmi.exe',
         'src/entry_services.asm','src/palette_frontends.asm'}
@@ -286,7 +338,8 @@ def hashes():
     return {name:sha((ROOT/name).read_bytes()) for name in sorted(paths)}
 
 MUTANTS=((1,'forward-1010'),(2,'backward-1010'),(3,'forward-1010'),
-         (4,'video-parent-return-changed'),(5,'palette-parent-return-changed'))
+         (4,'video-parent-return-changed'),(5,'palette-parent-return-changed'),
+         (6,'timer-parent-return-changed'))
 
 def worker(directory,snapshot):
     before=hashes();v.check(before==json.loads(Path(snapshot).read_text()),'initializer inputs changed')
@@ -310,7 +363,7 @@ def worker(directory,snapshot):
         instruction_steps=sum(row['steps'] for row in rows),ordered_bus_events=sum(row['events'] for row in rows),
         rows=rows,input_hashes=before,limits=dict(worker_seconds=SECONDS,windows_process_mib=MEMORY_MIB,
         windows_tree_mib=MEMORY_MIB+256,instructions_each=MAX_STEPS,events_each=MAX_EVENTS),
-        domain='03E7 state initialization and SS interaction/dirty-map clears composed through actual0462/0465 CALL/RET to native0FB2 video and52F4 palette setup. Twenty-two memory/frame cases plus BIOS returned registers, unbound BIOS, changed parent returns, packed/RGB palette, blanking control and missing byte-port stops;20-bit physical wrap, DS/SS alias,VGA,DF and ordered bus/device effects. Stops before0468 timer calibration. Later providers, timer/IRQ schedule, frame loop and full game remain open.'))
+        domain='03E7 state initialization and SS interaction/dirty-map clears composed through actual0462/0465/0468 CALL/RET to native video, palette and timer-calibration cores. Twenty-four memory/frame cases cover BIOS returns, unbound services and detector target, changed parent returns, packed/RGB palette, fixed timer reload, missing byte-port stops,20-bit physical wrap, DS/SS aliases, planar VGA,DF and ordered bus/device effects. Stops at046B before level initialization; later controller/providers, timer/IRQ schedule, frame loop and full game remain open.'))
     print(f'PASS game initialization: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(CHILD)} child sites,{len(mutants)} mutants',flush=True)
 
 def main():

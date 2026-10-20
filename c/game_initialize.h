@@ -4,7 +4,7 @@
 #include "game_prepare.h"
 
 enum LmnGameInitializeStatus {
-    LMN_GAME_INITIALIZE_AT_BASE_PALETTE = 0,
+    LMN_GAME_INITIALIZE_AT_LEVEL_INITIALIZATION = 0,
     LMN_GAME_INITIALIZE_CHILD_STOP = 1,
     LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN = 2
 };
@@ -22,8 +22,9 @@ typedef struct LmnGameInitializeServices {
 } LmnGameInitializeServices;
 
 /* Execute 03E7 state initialization, both live SS map clears, and the actual
-   0462/0465 CALLs to verified0FB2 video and52F4 palette setup. Stop at0468
-   before timer calibration. Child/provider stops and changed RETs remain live. */
+   0462/0465/0468 CALLs to video, palette and timer-calibration cores. Stop at
+   046B before level initialization. Child/provider stops and changed RETs
+   remain live. */
 LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
     const LmnRegs *registers,const LmnGameInitializeServices *services);
 
