@@ -1046,3 +1046,15 @@ complete comparison,without resetting device/game state. Fresh43F2 views and its
 445B call order select the active menu controller above scroll/animation/cache/
 keyboard children next. Keep its startup,code-entry and game-loop exits scoped;
 see menu-scroll.md and next-work.md. SDL3 and full-game acceptance remain open.
+
+The4401..454B menu controller adds326 bytes,taking the main C union to28,855.
+Its48 fixtures/50 comparisons cover118 own sites/51 outcomes and nine completed
+mutants. Refresh and repeated inputs compose native children at three loads;
+one same-RAM handoff runs menu -> input selection -> menu refresh ->454C with
+the chosen mode intact. Exact-byte guards,unchecked CS values,group wrap and
+AH selection,actual frames and RMW XOR bus flags remain explicit. No new CPU,
+bus,callback or comparison engine is introduced. The five UNKNOWN bytes inside
+the physical span stay unresolved. Fresh53FC/4AC5 views select palette-source
+publication and critical resource open/close retry before43F2 startup composition.
+The326-byte domain does not claim43F2's entire level/game body. See main-menu.md;
+full original-contract,aggregate and native-host acceptance remain separate.

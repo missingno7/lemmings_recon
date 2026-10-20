@@ -12,7 +12,7 @@ guarded native callbacks and comparison; this campaign introduces no new engine.
 |---|---|---|
 | 1F70 | MenuSoundRedrawToggle | Reset0 at4420; XOR FF at44BA; read by4E37 |
 | 1F72 | MenuSoundRedrawCache | ResetFF at441B; update by4E37; marker2 gates44B3 |
-| 1F6E | MenuLevelGroupIndex | Increment/decrement with0..3 clamps at4502/4532; quotient of level selection divided by30 at52A1; read by4EA2 |
+| 1F6E | MenuLevelGroupIndex | Normal0..3 increment/decrement bounds at4502/4532; unexpected bytes wrap (main-menu.md); quotient of level selection divided by30 at52A1; read by4EA2 |
 | 1F6F | MenuLevelGroupRedrawCache | ResetFF at4416; update by4EA2; marker4 gates44EC/451C |
 
 These are original bytes in canonical RAM. There is no host-side valid bit or

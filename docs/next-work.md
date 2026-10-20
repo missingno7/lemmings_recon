@@ -2,7 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is28,529 bytes. The442-byte
+The main-image translated-code ledger union is28,855 bytes. The326-byte
+4401..454B menu controller composes refresh,scroll,animation,cached graphics,
+text,palette,page copy/display and keyboard in the original order. Its48 fixtures/
+50 comparisons cover118 own sites/51 outcomes and nine completed mutants.
+Refresh and repeated inputs run at three loads. A same-RAM menu -> input screen
+-> refresh ->454C handoff preserves the chosen mode and actual JMP transitions.
+Exact byte guards/wrap,CS table,AH resource selection,XOR bus flags and changed
+child frames remain explicit.43F2 startup and destination bodies stay scoped;
+aggregate acceptance remains separate. See main-menu.md.
+
+The preceding main-image translated-code ledger union was28,529 bytes. The442-byte
 7CBC..7E75 scroll/copy cluster connects six entries and the existing renderer/
 display swap. Its102 fixtures/500 comparisons cover193 own sites/30 outcomes
 and nine completed mutants in5,187 known connected bytes. Three same-RAM
@@ -137,15 +147,17 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Connect43F2's active menu controller. Fresh43F2 tree/bottom-up views and the
-   literal445B call order now place native scroll,animation,cache,display-swap
-   and keyboard children beneath its loop. Audit4401 refresh/445B iteration,
-   sound-cycle byte1F71 and liveCS44E9 table,button-release waits and cache guards
-   before translating a connected bounded domain. Preserve actual transitions
-   to04D0/4967/4A01/454C; scoped acceptance must not claim the whole43F2 startup/
-   level/game loop. The43F2 prefix still depends on53FC/4AC5; code transforms
-   5042/51A2 and code entry4C7E remain later connected input obligations. Source
-   layout closure does not close broader allocation/initialization. Keep artificial VGA-stack budget failure and
+1. Connect43F2's startup prefix to the accepted menu controller. Fresh53FC
+   bottom-up and4AC5 tree views put palette selection/publication and critical
+   resource availability above tested palette/display children. Audit53F6/53FC/
+   53FE's shared5401 tail and live CS pointer tables before translating its
+   prefix; keep mapped/attribute writer contracts. Audit4AC5's exactFD critical
+   flag1FDE,live keyboard/button wait,DS2534 filename,actual DOS open/close
+   register/segment/flag/handle effects and retry loop before connecting43F2.
+   Retain separate04D0/4967/4A01/454C destination contracts;43F2's level/game loop
+   is not accepted by its326-byte menu domain. Code transforms5042/51A2 and
+   code entry4C7E remain connected input obligations. Source layout closure
+   does not close broader allocation/initialization. Keep artificial VGA-stack budget failure and
    RETF selector-EA wrap atSPFFFE/FFFF explicitly unverified. Retain42A5 and
    UNKNOWN4C65/1696..16A8; no unsupported alternative is declared complete.
 2. Connect startup/resource/level/frame coordination, complete the remaining

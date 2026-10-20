@@ -5811,3 +5811,5 @@ MenuScrollTextCursor equ GameDataImage+0x001F
 UiScrollPhaseOrPromptPointer equ GameDataImage+0x0021
 MenuScrollPauseTicks equ GameDataImage+0x0023
 MenuScrollText equ GameDataImage+0x49CE
+MenuSoundOptionIndex equ GameDataImage+0x1F71
+MainMenuText equ GameDataImage+0x4AD9

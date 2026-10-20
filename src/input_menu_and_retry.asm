@@ -35,46 +35,77 @@ sub_43F2:
     call sub_53FC ; @043FB
     call sub_4AC5 ; @043FE
 loc_4401:
+; Connected refresh: actual near calls flow through returnedDS/ES/SS/flags.
+; Reset origins,caches,toggle; option index1F71 and SoundOptionBits survive.
+; Draw/copy both pages then release-wait. No nearRET: exits are actual JMPs.
+; Scope4401..454B excludes three UNKNOWN table bytes and two UNKNOWN NOP bytes.
 MenuRefresh4401:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04401
     mov word [AlternateDrawingOrigin-GameDataImage],0x6d60 ; @04407
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0440D
     call ProgramAlternateDisplayStart ; @04413
+MainMenuAfterCall4413:
     mov byte [MenuLevelGroupRedrawCache-GameDataImage],0xff ; @04416
     mov byte [MenuSoundRedrawCache-GameDataImage],0xff ; @0441B
     mov byte [MenuSoundRedrawToggle-GameDataImage],0x0 ; @04420
     call TransitionPaletteToSlot1 ; @04425
+MainMenuAfterCall4425:
     call ClearFullDrawingPage ; @04428
+MainMenuAfterCall4428:
     call DrawScreenBackground ; @0442B
+MainMenuAfterCall442B:
     call InitializeMenuScroll ; @0442E
+MainMenuAfterCall442E:
     call InitializeMenuAnimations ; @04431
+MainMenuAfterCall4431:
     call DrawMenuBackdropLayers ; @04434
+MainMenuAfterCall4434:
     call DrawMenuDecorationRows ; @04437
-    lea si,[0x4ad9] ; @0443A
+MainMenuAfterCall4437:
+    lea si,[MainMenuText-GameDataImage] ; @0443A
     call DrawTextStream ; @0443E
+MainMenuAfterCall443E:
     call RefreshMenuLevelGroupGraphic ; @04441
+MainMenuAfterCall4441:
     call RefreshMenuSoundGraphic ; @04444
+MainMenuAfterCall4444:
     call CopyDrawingPageToAlternate ; @04447
+MainMenuAfterCall4447:
     call WaitForDisplayStatusBit3Cycle ; @0444A
+MainMenuAfterCall444A:
     call ProgramAlternateDisplayStart ; @0444D
+MainMenuAfterCall444D:
     call TransitionPaletteToSlot2 ; @04450
 loc_4453:
+MainMenuReleaseWait:
+MainMenuAfterCall4450:
     mov ax,[InputButtonsWord-GameDataImage] ; @04453
     test ax,0x7 ; @04456
     jnz loc_4453 ; @04459
 loc_445B:
+; Literal frame order: display wait,scroll,animation,group,sound,display swap.
+; Read live buttons only after all children; keyboard then drives actual exits.
+RunMainMenuFrame:
     call WaitForDisplayStatusBit3Cycle ; @0445B
+MainMenuAfterCall445B:
     call AdvanceMenuScroll ; @0445E
+MainMenuAfterCall445E:
     call AdvanceMenuAnimations ; @04461
+MainMenuAfterCall4461:
     call RefreshMenuLevelGroupGraphic ; @04464
+MainMenuAfterCall4464:
     call RefreshMenuSoundGraphic ; @04467
+MainMenuAfterCall4467:
     call SwapDrawingOriginsAndDisplay ; @0446A
+MainMenuAfterCall446A:
     mov ax,[InputButtonsWord-GameDataImage] ; @0446D
     test ax,0x7 ; @04470
     jz loc_4478 ; @04473
     jmp loc_454C ; @04475
 loc_4478:
+ReadMainMenuKeyboard:
     call ReadKeyboardCharacter ; @04478
+MainMenuAfterCall4478:
     cmp al,0x80 ; @0447B
     jnz loc_4482 ; @0447D
     jmp loc_454C ; @0447F
@@ -111,10 +142,13 @@ loc_44AD:
 loc_44B0:
     jmp loc_4A01 ; @044B0
 loc_44B3:
+; Exact marker2 blocks cycling. XOR whole toggle byte under incoming bus flags;
+; INC option wraps only on equality with2 or3 (driver must equalFF for3).
+; CS table indexing remains unchecked. See docs/main-menu.md.
     cmp byte [MenuSoundRedrawCache-GameDataImage],0x2 ; @044B3
     jz loc_445B ; @044B8
     xor byte [MenuSoundRedrawToggle-GameDataImage],0xff ; @044BA
-    mov al,[0x1f71] ; @044BF
+    mov al,[MenuSoundOptionIndex-GameDataImage] ; @044BF
     inc al ; @044C2
     mov ah,0x3 ; @044C4
     cmp byte [0x2010],0xff ; @044C6
@@ -125,16 +159,19 @@ loc_44CF:
     jnz loc_44D5 ; @044D1
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @044D3
 loc_44D5:
-    mov [0x1f71],al ; @044D5
+    mov [MenuSoundOptionIndex-GameDataImage],al ; @044D5
     db 0x8a,0xd8 ; ENCODED: mov bl,al (NASM chooses a different encoding) ; @044D8
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @044DA
-    add bx,0x44e9 ; @044DC
+    add bx,MenuSoundOptionValues ; @044DC
     mov al,[cs:bx] ; @044E0
     mov [0x25a7],al ; @044E3
     jmp loc_445B ; @044E6
 ; UNKNOWN: unresolved bytes
+MenuSoundOptionValues:
     db 0x00,0x01,0x03 ; @044E9
 loc_44EC:
+; Marker4 blocks changes. Increase rejects exactly3, decrease rejects exactly0;
+; other byte values retain wrap. Literal AH additions publish group*30 modulo256.
     cmp byte [MenuLevelGroupRedrawCache-GameDataImage],0x4 ; @044EC
     jnz loc_44F6 ; @044F1
     jmp loc_445B ; @044F3
@@ -179,6 +216,7 @@ loc_4530:
     mov [LevelResourceSelectionByte-GameDataImage],ah ; @04545
     jmp loc_445B ; @04549
 loc_454C:
+MainMenuStartLevel:
     mov byte [0x1f6d],0x0 ; @0454C
 loc_4551:
     push ds ; @04551
@@ -601,6 +639,7 @@ loc_494D:
 ; UNKNOWN: unresolved bytes
     db 0x7a,0x51 ; @04965
 loc_4967:
+MainMenuCodeTransition:
     call ClearFullDrawingPage ; @04967
     call InitializeDisplayOrigins ; @0496A
     call TransitionPaletteToSlot1 ; @0496D

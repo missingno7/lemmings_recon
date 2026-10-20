@@ -64808,7 +64808,27 @@
     "evidence": [
       "Original keyboard reader/menu input-scale boundary; docs/keyboard-input.md"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        17409,
+        17571
+      ],
+      [
+        17572,
+        17578
+      ],
+      [
+        17579,
+        17641
+      ],
+      [
+        17644,
+        17740
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
   },
   {
     "address": 8238,
@@ -65920,6 +65940,566 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17491,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuReleaseWait",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        17491,
+        17571
+      ],
+      [
+        17572,
+        17578
+      ],
+      [
+        17579,
+        17641
+      ],
+      [
+        17644,
+        17740
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+  },
+  {
+    "address": 17499,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "RunMainMenuFrame",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        17499,
+        17571
+      ],
+      [
+        17572,
+        17578
+      ],
+      [
+        17579,
+        17641
+      ],
+      [
+        17644,
+        17740
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+  },
+  {
+    "address": 17528,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ReadMainMenuKeyboard",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        17499,
+        17571
+      ],
+      [
+        17572,
+        17578
+      ],
+      [
+        17579,
+        17641
+      ],
+      [
+        17644,
+        17740
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+  },
+  {
+    "address": 17740,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuStartLevel",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18791,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuCodeTransition",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8049,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "MenuSoundOptionIndex",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17641,
+    "segment": 0,
+    "kind": "data",
+    "size": 3,
+    "symbol_name": "MenuSoundOptionValues",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19161,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "MainMenuText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17430,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4413",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17448,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4425",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17451,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4428",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17454,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall442B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17457,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall442E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17460,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4431",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17463,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4434",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17466,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4437",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17473,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall443E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17476,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4441",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17479,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4444",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17482,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4447",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17485,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall444A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17488,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall444D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17491,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4450",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        17491,
+        17571
+      ],
+      [
+        17572,
+        17578
+      ],
+      [
+        17579,
+        17641
+      ],
+      [
+        17644,
+        17740
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+  },
+  {
+    "address": 17502,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall445B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17505,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall445E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17508,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4461",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17511,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4464",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17514,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4467",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17517,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall446A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17531,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MainMenuAfterCall4478",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
     ],
     "verification_status": "STATIC"
   }
