@@ -7,6 +7,12 @@
 ; Alternate origin+page+2 wraps16; two wordCRTC packets; ADD DL6 wraps8.
 ; STI exposes both status polls; CLI then live1FC9 programs36/low/high PIT.
 ; Actual palette/pattern returns17E0/183B/183E; docs/timer-frontier.md.
+; CADENCE: option200E!=FF reprograms PIT mode3 from1FC9 after each retrace,
+; so IRQs are display-locked, one per frame; 15AD stores the measured PIT
+; count for BX(140/A0) display-enable cycles only while1FC9 is zero (startup)
+; and keeps it on per-level calls. Option FF fixes reload4000 (~72.8Hz) and
+; the foreground owns retrace sync. Every fourth IRQ chains to BIOS INT08.
+; The foreground ticks after five IRQs (signed1FCD>4), dropping any excess.
 times -(($-$$) != 0x17c7) db 0
 GameTimerIrqHandler:
     push ax ; @017C7
