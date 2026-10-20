@@ -412,7 +412,7 @@ sub_03C1:
     nop ; @003C7
     mov cx,0x10 ; @003C8
     mov dx,0x8 ; @003CB
-    call sub_534B ; @003CE
+    call StepSplitPaletteToTargets ; @003CE
     pop ax ; @003D1
     jnz loc_03D6 ; @003D2
     and al,0xfe ; @003D4
@@ -422,7 +422,7 @@ sub_03D7:
     push ax ; @003D7
     mov cx,0x10 ; @003D8
     mov dx,0x8 ; @003DB
-    call sub_5329 ; @003DE
+    call StepSplitPaletteToSlot1 ; @003DE
     pop ax ; @003E1
     jnz loc_03D6 ; @003E2
     and al,0xfd ; @003E4

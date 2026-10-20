@@ -541,3 +541,180 @@ void lmn_transition_palette_adapter(uint8_t *memory, LmnRegs *registers,
         registers->ip = (uint16_t)(low | ((uint16_t)high << 8));
     }
 }
+#include "palette_row_select.h"
+#include "display_pages.h"
+#ifndef SPLIT_PALETTE_MUTATION
+#define SPLIT_PALETTE_MUTATION 0
+#endif
+
+static uint8_t split_dec(uint16_t *flags,uint8_t v) {
+    uint8_t out=(uint8_t)(v-1u);
+    *flags=(uint16_t)((*flags&~(ARITHMETIC_FLAGS&~CF))|szp8(out)|
+        ((v^1u^out)&AF)|(v==0x80u?OF:0u));return out;
+}
+static int split_ret(uint8_t *memory,uint16_t before_cs,LmnPaletteTransitionResult *r,
+    uint16_t expected,const LmnRasterBus *bus) {
+    if(r->status!=LMN_PALETTE_TRANSITION_READY)return 0;
+    r->continuation=pop_word(memory,bus,&r->state);
+#if SPLIT_PALETTE_MUTATION == 1
+    r->continuation=expected;
+#endif
+    if(r->code_segment!=before_cs||r->continuation!=expected) {
+        r->status=LMN_PALETTE_TRANSITION_CHANGED_RETURN;return 0;
+    }
+    return 1;
+}
+static LmnPaletteTransitionResult split_step(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,uint16_t expected,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=*input;push_word(memory,bus,&s,expected);
+    LmnPaletteRowResult c=lmn_select_and_step_palette_row_core(memory,cs,&s,bus);
+    LmnPaletteTransitionResult out=make_result(&c.state,c.code_segment,c.continuation,palette_row_status(c.status));
+    (void)split_ret(memory,cs,&out,expected,bus);return out;
+}
+LmnPaletteTransitionResult lmn_step_split_palette_core(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,LmnSplitPaletteStepEntry entry,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=*input;LmnPaletteTransitionResult c;int targets=entry==LMN_SPLIT_PALETTE_TO_TARGETS;
+    if(targets)push_word(memory,bus,&s,s.base_value);
+    push_word(memory,bus,&s,s.argument);
+    s.base_value=targets?(uint16_t)(s.base_value&0xff00u):0x0100u;
+    c=split_step(memory,cs,&s,targets?CS_SplitPaletteAfterFirstStep5352:CS_SplitPaletteAfterFirstStep5330,bus);
+    if(c.status)return c;
+    s=c.state;cs=c.code_segment;
+    if(targets) {
+        s.count=pop_word(memory,bus,&s);
+#if SPLIT_PALETTE_MUTATION == 3
+        s.count=16u;
+#endif
+        s.base_value=pop_word(memory,bus,&s);
+        s.argument=(uint16_t)((s.argument&0xff00u)|1u);
+        if(s.flags&ZF)s.argument=(uint16_t)((s.argument&0xff00u)|split_dec(&s.flags,(uint8_t)s.argument));
+        push_word(memory,bus,&s,s.argument);
+#if SPLIT_PALETTE_MUTATION == 12
+        s.base_value=(uint16_t)(((s.base_value&7u)<<8)|7u);
+#else
+        s.base_value=(uint16_t)(((s.base_value&255u)<<8)|7u);
+#endif
+    } else {
+        s.base_value=(uint16_t)((s.base_value&0xff00u)|1u);
+        if(s.flags&ZF)s.base_value=(uint16_t)((s.base_value&0xff00u)|split_dec(&s.flags,(uint8_t)s.base_value));
+        s.count=pop_word(memory,bus,&s);push_word(memory,bus,&s,s.base_value);s.count=16u;s.base_value=0x0107u;
+    }
+    c=split_step(memory,cs,&s,targets?CS_SplitPaletteAfterSecondStep5362:CS_SplitPaletteAfterSecondStep5341,bus);
+    if(c.status)return c;
+    s=c.state;cs=c.code_segment;set_al(&s,1u);
+    if(s.flags&ZF)set_al(&s,split_dec(&s.flags,(uint8_t)s.value));
+    s.base_value=pop_word(memory,bus,&s);
+#if SPLIT_PALETTE_MUTATION == 4
+    s.base_value=input->base_value;
+#endif
+#if SPLIT_PALETTE_MUTATION == 2
+    set_al(&s,!!((uint8_t)s.value|(uint8_t)s.base_value));
+#else
+    set_al(&s,(uint8_t)s.value|(uint8_t)s.base_value);
+#endif
+    logic8(&s.flags,(uint8_t)s.value);
+    return make_result(&s,cs,targets?CS_SplitPaletteTargetsReturn536B:CS_SplitPaletteSlot1Return534A,LMN_PALETTE_TRANSITION_READY);
+}
+static LmnRegs split_registers(uint16_t cs,const LmnVideoRestoreState *s) {
+    LmnRegs r={s->value,s->base_value,s->count,s->argument,s->source_cursor,s->output_cursor,s->frame_cursor,
+        s->stack_offset,cs,s->data_segment,s->extra_segment,s->stack_segment,0u,s->flags};return r;
+}
+static LmnPaletteTransitionResult split_publish(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,LmnPalettePublishEntry entry,uint16_t expected,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=*input;push_word(memory,bus,&s,expected);LmnRegs r=split_registers(cs,&s);
+    LmnPalettePublishResult child=lmn_publish_palette_core(memory,&r,entry,ports,bus);
+    s=state_from_registers(&child.registers);
+    LmnPaletteTransitionResult out=make_result(&s,child.registers.cs,child.registers.ip,
+        palette_ports_status((enum LmnPalettePortsStatus)child.status));
+    (void)split_ret(memory,cs,&out,expected,bus);return out;
+}
+static int split_input(uint8_t *memory,LmnVideoRestoreState *s,uint16_t ip,
+    const LmnRasterBytePorts *ports,LmnPaletteTransitionResult *out) {
+    if(!ports||!ports->in_byte){out->continuation=ip;out->state=*s;out->status=LMN_PALETTE_TRANSITION_MISSING_INPUT;return 0;}
+    set_al(s,ports->in_byte(ports->context,memory,s->argument,s->flags));return 1;
+}
+LmnPaletteTransitionResult lmn_refresh_split_palette_core(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=*input;LmnPaletteTransitionResult out=make_result(&s,cs,0u,LMN_PALETTE_TRANSITION_READY);
+    s.argument=read_word(memory,bus,s.data_segment,SEG09A9_DisplayControllerBasePort,s.flags);
+    {uint8_t v=(uint8_t)s.argument,n=(uint8_t)(v+6u);
+        s.flags=(uint16_t)((s.flags&~ARITHMETIC_FLAGS)|szp8(n)|(v>249u?CF:0u)|((v^6u^n)&AF)|((~(v^6u)&(v^n)&0x80u)?OF:0u));
+#if SPLIT_PALETTE_MUTATION == 6
+        s.argument=(uint16_t)(s.argument+6u);
+#else
+        s.argument=(uint16_t)((s.argument&0xff00u)|n);
+#endif
+    }
+    do {if(!split_input(memory,&s,CS_SplitPaletteVerticalHighInput46C0,ports,&out))return out;logic8(&s.flags,(uint8_t)s.value&8u);}while(s.flags&ZF);
+    do {if(!split_input(memory,&s,CS_SplitPaletteVerticalLowInput46C5,ports,&out))return out;logic8(&s.flags,(uint8_t)s.value&8u);}while(!(s.flags&ZF));
+    s.flags&=(uint16_t)~0x200u;push_word(memory,bus,&s,s.argument);set_al(&s,0u);
+    out=split_publish(memory,cs,&s,LMN_PALETTE_PUBLISH_EIGHT,CS_SplitPaletteAfterTopPublish46D2,ports,bus);
+    if(out.status)return out;
+    s=out.state;cs=out.code_segment;s.argument=pop_word(memory,bus,&s);
+#if SPLIT_PALETTE_MUTATION == 5
+    s.argument=0x3DAu;
+#endif
+#if SPLIT_PALETTE_MUTATION != 11
+    s.flags&=(uint16_t)~0x200u;
+#endif
+    s.count=60u;
+#if SPLIT_PALETTE_MUTATION == 7
+    s.count=59u;
+#endif
+    do {
+        do {if(!split_input(memory,&s,CS_SplitPaletteHorizontalLowInput46D7,ports,&out))return out;logic8(&s.flags,(uint8_t)s.value&1u);}while(!(s.flags&ZF));
+        do {if(!split_input(memory,&s,CS_SplitPaletteHorizontalHighInput46DC,ports,&out))return out;logic8(&s.flags,(uint8_t)s.value&1u);}while(s.flags&ZF);
+        --s.count;
+    }while(s.count);
+    set_al(&s,7u);out=split_publish(memory,cs,&s,LMN_PALETTE_PUBLISH_EIGHT,CS_SplitPaletteAfterBottomPublish46E9,ports,bus);
+    if(out.status)return out;
+    s=out.state;s.flags|=0x200u;return make_result(&s,out.code_segment,CS_SplitPaletteRasterReturn46EA,LMN_PALETTE_TRANSITION_READY);
+}
+LmnPaletteTransitionResult lmn_fade_split_palette_core(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=*input;LmnPaletteTransitionResult out;
+    for(;;) {
+        push_word(memory,bus,&s,CS_SplitPaletteFadeAfterRefresh46A5);
+        out=lmn_refresh_split_palette_core(memory,cs,&s,ports,bus);
+        if(!split_ret(memory,cs,&out,CS_SplitPaletteFadeAfterRefresh46A5,bus))return out;
+        s=out.state;cs=out.code_segment;
+        set_al(&s,0u);out=split_publish(memory,cs,&s,LMN_PALETTE_PUBLISH_UPPER_EIGHT,CS_SplitPaletteFadeAfterUpper46AB,ports,bus);
+        if(out.status)return out;
+    s=out.state;cs=out.code_segment;s.count=16u;s.argument=16u;
+        push_word(memory,bus,&s,CS_SplitPaletteFadeAfterStep46B4);out=lmn_step_split_palette_core(memory,cs,&s,LMN_SPLIT_PALETTE_TO_SLOT1,bus);
+        if(!split_ret(memory,cs,&out,CS_SplitPaletteFadeAfterStep46B4,bus))return out;
+        s=out.state;cs=out.code_segment;
+#if SPLIT_PALETTE_MUTATION == 10
+        break;
+#else
+        if(s.flags&ZF)break;
+#endif
+    }
+#if SPLIT_PALETTE_MUTATION == 13
+    push_word(memory,bus,&s,CS_SplitPaletteFadeAfterStep46B4);
+#endif
+    LmnDisplayPagesResult clear=lmn_clear_full_drawing_page_core(memory,&s,bus);
+    return make_result(&clear.state,cs,clear.continuation,clear.status==LMN_DISPLAY_PAGES_MISSING_CLEAR_BUS?LMN_PALETTE_TRANSITION_MISSING_CLEAR_BUS:
+        clear.status?LMN_PALETTE_TRANSITION_MISSING_WORD_OUTPUT:LMN_PALETTE_TRANSITION_READY);
+}
+static LmnPaletteTransitionResult split_adapter_result(uint8_t *memory,LmnRegs *registers,
+    LmnPaletteTransitionResult out,const LmnRasterBus *bus) {
+    if(!out.status)out.continuation=pop_word(memory,bus,&out.state);
+    apply_state(registers,&out.state);registers->cs=out.code_segment;registers->ip=out.continuation;return out;
+}
+LmnPaletteTransitionResult lmn_step_split_palette_adapter(uint8_t *memory,LmnRegs *registers,
+    LmnSplitPaletteStepEntry entry,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=state_from_registers(registers);
+    return split_adapter_result(memory,registers,lmn_step_split_palette_core(memory,registers->cs,&s,entry,bus),bus);
+}
+LmnPaletteTransitionResult lmn_refresh_split_palette_adapter(uint8_t *memory,LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=state_from_registers(registers);
+    return split_adapter_result(memory,registers,lmn_refresh_split_palette_core(memory,registers->cs,&s,ports,bus),bus);
+}
+LmnPaletteTransitionResult lmn_fade_split_palette_adapter(uint8_t *memory,LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnVideoRestoreState s=state_from_registers(registers);
+    return split_adapter_result(memory,registers,lmn_fade_split_palette_core(memory,registers->cs,&s,ports,bus),bus);
+}

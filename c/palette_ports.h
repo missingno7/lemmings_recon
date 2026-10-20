@@ -74,12 +74,14 @@ LmnTimerPaletteResult lmn_timer_palette_adapter(uint8_t *memory,
 
 typedef enum LmnPalettePublishEntry {
     LMN_PALETTE_PUBLISH_EIGHT, LMN_PALETTE_PUBLISH_MENU,
-    LMN_PALETTE_PUBLISH_SIXTEEN, LMN_PALETTE_PUBLISH_KEEP_COUNT
+    LMN_PALETTE_PUBLISH_SIXTEEN, LMN_PALETTE_PUBLISH_KEEP_COUNT,
+    LMN_PALETTE_PUBLISH_UPPER_EIGHT
 } LmnPalettePublishEntry;
 typedef LmnTimerPaletteResult LmnPalettePublishResult;
-/* 53F6/53FC/53FE/5401: zero-extend AL, double, read unchecked live CS
-   pointer table. Only mode word4 selects mapped DAC. Tail JMP shares the
-   writer's actual caller RET; no extra frame or shadow palette is created. */
+/* 53CA and53F6/53FC/53FE/5401 zero-extend/double AL and read an
+   unchecked live CS pointer. Only mode word4 selects mapped DAC. Upper8
+   supplies CH8/CL8 and advances packed/RGB source by8/24. Both branches
+   tail-JMP into the writer using the actual inherited caller RET. */
 LmnPalettePublishResult lmn_publish_palette_core(uint8_t *memory,
     const LmnRegs *registers,LmnPalettePublishEntry entry,
     const LmnRasterBytePorts *ports,const LmnRasterBus *bus);

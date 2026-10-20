@@ -11,6 +11,10 @@
 #define PALETTE_PUBLISH_MUTATION 0
 #endif
 
+#ifndef SPLIT_PALETTE_MUTATION
+#define SPLIT_PALETTE_MUTATION 0
+#endif
+
 enum { CF = 0x0001, PF = 0x0004, AF = 0x0010, ZF = 0x0040,
        SF = 0x0080, IF = 0x0200, DF = 0x0400, OF = 0x0800,
        ARITHMETIC_FLAGS = 0x08d5 };
@@ -767,7 +771,13 @@ LmnPalettePublishResult lmn_publish_palette_core(uint8_t *memory,
         state.value=(uint16_t)((state.value&0xff00u)|2u);
 #endif
     }
-    if(entry!=LMN_PALETTE_PUBLISH_KEEP_COUNT) {
+    if(entry==LMN_PALETTE_PUBLISH_UPPER_EIGHT) {
+        state.count=0x0808u;
+#if SPLIT_PALETTE_MUTATION == 9
+        state.count=0x0807u;
+#endif
+    }
+    else if(entry!=LMN_PALETTE_PUBLISH_KEEP_COUNT) {
         state.count=entry==LMN_PALETTE_PUBLISH_EIGHT?8u:16u;
 #if PALETTE_PUBLISH_MUTATION == 5
         state.count=8u;
@@ -791,6 +801,14 @@ LmnPalettePublishResult lmn_publish_palette_core(uint8_t *memory,
 #else
     state.source_cursor=read_word(memory,bus,registers->cs,state.source_cursor,state.flags);
 #endif
+    if(entry==LMN_PALETTE_PUBLISH_UPPER_EIGHT)
+        state.source_cursor=add16_flags(&state.flags,state.source_cursor,
+#if SPLIT_PALETTE_MUTATION == 8
+            0u
+#else
+            mode==4u?24u:8u
+#endif
+        );
     /* Both original branches tail-JMP: the writer owns the existing RET. */
     return timer_child(memory,registers,&state,mode==4u?
         LMN_PALETTE_PORTS_ENTRY_MAPPED_DAC:LMN_PALETTE_PORTS_ENTRY_ATTRIBUTE,ports,bus);

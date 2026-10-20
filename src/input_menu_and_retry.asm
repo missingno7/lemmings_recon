@@ -295,7 +295,7 @@ loc_45E5:
 loc_45F2:
     mov cx,0x10 ; @045F2
     mov dx,0x10 ; @045F5
-    call sub_5329 ; @045F8
+    call StepSplitPaletteToSlot1 ; @045F8
     jnz loc_45F2 ; @045FB
     mov al,0x1 ; @045FD
     nop ; @045FF
@@ -329,51 +329,60 @@ loc_4660:
     test ax,0x7 ; @04663
     jnz loc_4660 ; @04666
 loc_4668:
-    call sub_46B9 ; @04668
+    call RefreshRasterSplitPalette ; @04668
     mov al,0x0 ; @0466B
     nop ; @0466D
-    call sub_53CA ; @0466E
+    call PublishUpperEightPaletteColors ; @0466E
     mov cx,0x10 ; @04671
     mov dx,0x10 ; @04674
     mov bx,0x302 ; @04677
     nop ; @0467A
-    call sub_534B ; @0467B
+    call StepSplitPaletteToTargets ; @0467B
     jnz loc_4668 ; @0467E
 loc_4680:
-    call sub_46B9 ; @04680
+    call RefreshRasterSplitPalette ; @04680
     mov ax,[InputButtonsWord-GameDataImage] ; @04683
     test ax,0x7 ; @04686
-    jnz sub_46A2 ; @04689
+    jnz FadeAndClearSplitPalette ; @04689
     mov ax,[0x1fc7] ; @0468B
     test ax,0x20 ; @0468E
     jnz loc_469B ; @04691
     test ax,0x40 ; @04693
     jz loc_4680 ; @04696
-    jmp short sub_46A2 ; @04698
+    jmp short FadeAndClearSplitPalette ; @04698
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0469A
 loc_469B:
-    call sub_46A2 ; @0469B
+    call FadeAndClearSplitPalette ; @0469B
     pop ax ; @0469E
     jmp loc_4401 ; @0469F
-sub_46A2:
-    call sub_46B9 ; @046A2
+; Repeated raster refresh, upper8 publication and two live row steps. Returned
+; ZF decides loop before tailJMP into full-page clear; no extra caller frame.
+FadeAndClearSplitPalette:
+    call RefreshRasterSplitPalette ; @046A2
+SplitPaletteFadeAfterRefresh46A5:
     mov al,0x0 ; @046A5
     nop ; @046A7
-    call sub_53CA ; @046A8
+    call PublishUpperEightPaletteColors ; @046A8
+SplitPaletteFadeAfterUpper46AB:
     mov cx,0x10 ; @046AB
     mov dx,0x10 ; @046AE
-    call sub_5329 ; @046B1
-    jnz sub_46A2 ; @046B4
+    call StepSplitPaletteToSlot1 ; @046B1
+SplitPaletteFadeAfterStep46B4:
+    jnz FadeAndClearSplitPalette ; @046B4
     jmp ClearFullDrawingPage ; @046B6
-sub_46B9:
+; ADDDL6 retainsDH; wait bit3 high->low, CLI/savedDX and publish slot0 first8.
+; Pop actualDX, CLI,60 bit0 low->high cycles, publish slot7 first8, STI/RET.
+RefreshRasterSplitPalette:
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @046B9
     add dl,0x6 ; @046BD
 loc_46C0:
+SplitPaletteVerticalHighInput46C0:
     in al,dx ; @046C0
     test al,0x8 ; @046C1
     jz loc_46C0 ; @046C3
 loc_46C5:
+SplitPaletteVerticalLowInput46C5:
     in al,dx ; @046C5
     test al,0x8 ; @046C6
     jnz loc_46C5 ; @046C8
@@ -382,14 +391,17 @@ loc_46C5:
     mov al,0x0 ; @046CC
     nop ; @046CE
     call PublishEightPaletteColors ; @046CF
+SplitPaletteAfterTopPublish46D2:
     pop dx ; @046D2
     cli ; @046D3
     mov cx,0x3c ; @046D4
 loc_46D7:
+SplitPaletteHorizontalLowInput46D7:
     in al,dx ; @046D7
     test al,0x1 ; @046D8
     jnz loc_46D7 ; @046DA
 loc_46DC:
+SplitPaletteHorizontalHighInput46DC:
     in al,dx ; @046DC
     test al,0x1 ; @046DD
     jz loc_46DC ; @046DF
@@ -397,7 +409,9 @@ loc_46DC:
     mov al,0x7 ; @046E3
     nop ; @046E5
     call PublishEightPaletteColors ; @046E6
+SplitPaletteAfterBottomPublish46E9:
     sti ; @046E9
+SplitPaletteRasterReturn46EA:
     ret ; @046EA
 loc_46EB:
     call ClearFullDrawingPage ; @046EB

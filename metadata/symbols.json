@@ -27000,8 +27000,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_46A2",
-    "aliases": [],
+    "symbol_name": "FadeAndClearSplitPalette",
+    "aliases": [
+      "sub_46A2"
+    ],
     "callers": [
       18075
     ],
@@ -27068,20 +27070,39 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live row-pair/raster/fade contracts and shared-tail ownership; docs/split-palette.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 94
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 94,
+    "c_implementation": "c/palette_transition.c",
+    "c_code_ranges": [
+      [
+        18082,
+        18105
+      ],
+      [
+        19951,
+        19959
+      ],
+      [
+        19960,
+        20023
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py shared split worker:185 fixtures/366 comparisons,88 own sites/25 outcomes and13 completed mutants in183 new unique code bytes. Four full65536-loop first/second-count witnesses in packed/RGB,live saved markers/counts/ports,mode/table reads,unmasked targets,DS/ES/SS/DF/wrap,actual immediate/internal returns,missing byte/clear providers and connected46A2 refresh/publication/step->clear tail. 21,732,941 original steps/7,774,840 ordered events;131 consumed hashes match. Retained legacy1191x2 transition comparisons/six mutants pass. Quiescent IRQ/opaque finite status ports; hardware timing,remaining level-start/native platform and aggregate acceptance remain separate. docs/split-palette.md."
   },
   {
     "address": 18105,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_46B9",
-    "aliases": [],
+    "symbol_name": "RefreshRasterSplitPalette",
+    "aliases": [
+      "sub_46B9"
+    ],
     "callers": [
       18024,
       18048,
@@ -27100,12 +27121,21 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live row-pair/raster/fade contracts and shared-tail ownership; docs/split-palette.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 50
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 50,
+    "c_implementation": "c/palette_transition.c",
+    "c_code_ranges": [
+      [
+        18105,
+        18155
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py shared split worker:185 fixtures/366 comparisons,88 own sites/25 outcomes and13 completed mutants in183 new unique code bytes. Four full65536-loop first/second-count witnesses in packed/RGB,live saved markers/counts/ports,mode/table reads,unmasked targets,DS/ES/SS/DF/wrap,actual immediate/internal returns,missing byte/clear providers and connected46A2 refresh/publication/step->clear tail. 21,732,941 original steps/7,774,840 ordered events;131 consumed hashes match. Retained legacy1191x2 transition comparisons/six mutants pass. Quiescent IRQ/opaque finite status ports; hardware timing,remaining level-start/native platform and aggregate acceptance remain separate. docs/split-palette.md."
   },
   {
     "address": 18479,
@@ -31198,8 +31228,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_5329",
-    "aliases": [],
+    "symbol_name": "StepSplitPaletteToSlot1",
+    "aliases": [
+      "sub_5329"
+    ],
     "callers": [
       990,
       17912,
@@ -31209,20 +31241,31 @@
       21865
     ],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live row-pair/raster/fade contracts and shared-tail ownership; docs/split-palette.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 34
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 34,
+    "c_implementation": "c/palette_transition.c",
+    "c_code_ranges": [
+      [
+        21289,
+        21323
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py shared split worker:185 fixtures/366 comparisons,88 own sites/25 outcomes and13 completed mutants in183 new unique code bytes. Four full65536-loop first/second-count witnesses in packed/RGB,live saved markers/counts/ports,mode/table reads,unmasked targets,DS/ES/SS/DF/wrap,actual immediate/internal returns,missing byte/clear providers and connected46A2 refresh/publication/step->clear tail. 21,732,941 original steps/7,774,840 ordered events;131 consumed hashes match. Retained legacy1191x2 transition comparisons/six mutants pass. Quiescent IRQ/opaque finite status ports; hardware timing,remaining level-start/native platform and aggregate acceptance remain separate. docs/split-palette.md."
   },
   {
     "address": 21323,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_534B",
-    "aliases": [],
+    "symbol_name": "StepSplitPaletteToTargets",
+    "aliases": [
+      "sub_534B"
+    ],
     "callers": [
       974,
       18043
@@ -31231,12 +31274,21 @@
       21865
     ],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live row-pair/raster/fade contracts and shared-tail ownership; docs/split-palette.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 33
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 33,
+    "c_implementation": "c/palette_transition.c",
+    "c_code_ranges": [
+      [
+        21323,
+        21356
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py shared split worker:185 fixtures/366 comparisons,88 own sites/25 outcomes and13 completed mutants in183 new unique code bytes. Four full65536-loop first/second-count witnesses in packed/RGB,live saved markers/counts/ports,mode/table reads,unmasked targets,DS/ES/SS/DF/wrap,actual immediate/internal returns,missing byte/clear providers and connected46A2 refresh/publication/step->clear tail. 21,732,941 original steps/7,774,840 ordered events;131 consumed hashes match. Retained legacy1191x2 transition comparisons/six mutants pass. Quiescent IRQ/opaque finite status ports; hardware timing,remaining level-start/native platform and aggregate acceptance remain separate. docs/split-palette.md."
   },
   {
     "address": 21356,
@@ -31534,8 +31586,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_53CA",
-    "aliases": [],
+    "symbol_name": "PublishUpperEightPaletteColors",
+    "aliases": [
+      "sub_53CA"
+    ],
     "callers": [
       18030,
       18088
@@ -31655,12 +31709,33 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned live row-pair/raster/fade contracts and shared-tail ownership; docs/split-palette.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 144
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 144,
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21450,
+        21478
+      ],
+      [
+        21479,
+        21494
+      ],
+      [
+        21541,
+        21575
+      ],
+      [
+        21700,
+        21767
+      ]
+    ],
+    "verification_evidence": "tests/palette_transition.py shared split worker:185 fixtures/366 comparisons,88 own sites/25 outcomes and13 completed mutants in183 new unique code bytes. Four full65536-loop first/second-count witnesses in packed/RGB,live saved markers/counts/ports,mode/table reads,unmasked targets,DS/ES/SS/DF/wrap,actual immediate/internal returns,missing byte/clear providers and connected46A2 refresh/publication/step->clear tail. 21,732,941 original steps/7,774,840 ordered events;131 consumed hashes match. Retained legacy1191x2 transition comparisons/six mutants pass. Quiescent IRQ/opaque finite status ports; hardware timing,remaining level-start/native platform and aggregate acceptance remain separate. docs/split-palette.md."
   },
   {
     "address": 21494,
@@ -67711,6 +67786,262 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21296,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteAfterFirstStep5330",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21313,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteAfterSecondStep5341",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21322,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteSlot1Return534A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21330,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteAfterFirstStep5352",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21346,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteAfterSecondStep5362",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21355,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteTargetsReturn536B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18130,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteAfterTopPublish46D2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18153,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteAfterBottomPublish46E9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18154,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteRasterReturn46EA",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18085,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteFadeAfterRefresh46A5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18091,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteFadeAfterUpper46AB",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18100,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteFadeAfterStep46B4",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned split-palette near CALL/RET and shared clear tail; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18112,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteVerticalHighInput46C0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned raster split input stop boundary; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18117,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteVerticalLowInput46C5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned raster split input stop boundary; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18135,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteHorizontalLowInput46D7",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned raster split input stop boundary; docs/split-palette.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18140,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SplitPaletteHorizontalHighInput46DC",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned raster split input stop boundary; docs/split-palette.md"
     ],
     "verification_status": "STATIC"
   }

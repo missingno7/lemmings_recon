@@ -3,7 +3,7 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
-from graph import body,dependency_order,routine_views
+from graph import body,dependency_order,routine_views,tag
 
 class GraphTests(unittest.TestCase):
     def test_explicit_native_ranges_do_not_require_a_physical_entry_size(self):
@@ -32,6 +32,18 @@ class GraphTests(unittest.TestCase):
         self.assertEqual(views[1]['callees'],{8});self.assertNotIn(4,views)
         self.assertEqual(views[0]['sites'],{0,1,4,5})
         self.assertFalse(views[0]['symbol'].get('c_implementation'))
+
+    def test_native_tail_overlap_is_not_reported_as_new_translation_work(self):
+        analysis=dict(instructions=[dict(address=0,mnemonic='jmp',size=2),
+            dict(address=8,mnemonic='ret',size=1)],
+            edges=[dict(source=0,target=8,kind='branch')],unresolved=[],routines=[0,8])
+        ledger=[dict(address=0,segment=0,kind='entry',size=None,symbol_name='Prefix',verification_status='UNTRANSLATED'),
+            dict(address=8,segment=0,kind='entry',size=1,symbol_name='NativeTail',verification_status='TESTED',c_implementation='fixture.c')]
+        views=routine_views(analysis,ledger)
+        self.assertEqual(views[0]['sites'],{0,8})
+        self.assertEqual((views[0]['bytes'],views[0]['existing_c_bytes'],views[0]['outside_c_bytes']),(3,1,2))
+        self.assertIn('1 already-C bytes/2 outside C ranges',tag(0,views))
+        self.assertEqual(views[8]['outside_c_bytes'],0)
 
     def test_shared_tail_and_call_have_different_ownership(self):
         instructions={p:dict(mnemonic=m,size=1) for p,m in ((0,'call'),(1,'jmp'),(3,'ret'),(9,'ret'))}

@@ -62,3 +62,10 @@ palette or timing model. Segment-limit exceptions, arbitrary nonconverging data
 or providers, pointer/buffer initialization ownership and4B40 input/IRQ remain
 open. The original convergence and polling loops remain unbounded in C. No game
 boot, runtime snapshot or persistent shadow game state is introduced.
+
+The later split-palette/briefing extension lives in the same C module and native
+suite. Its new cases use tests/verification.py; the original1191-case transition
+campaign remains an unchanged regression path. See split-palette.md for the
+5329/534B row pairs,53CA publication and46B9/46A2 connected raster/fade contracts.
+The suite emits a separate scoped report for those new regions; retaining any
+older report does not renew its consumed-input evidence.

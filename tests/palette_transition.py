@@ -13,7 +13,8 @@ import palette_rows as rows
 import palette_ports as ports
 import display_status as status
 from bounded_process import run_bounded,temporary_build_directory
-from cbuild import build
+from cbuild import build,source_files
+import verification as shared
 from common import ROOT,BUILD,sha,write_json,read_json
 from unpack import relocated
 
@@ -333,7 +334,17 @@ def compare(native,case,core):
 
 def input_hashes(native=False):
     paths=set(rows.input_hashes(native))|set(ports.input_hashes(native))|{'tests/palette_transition.py','docs/palette-transition.md'}
+    paths|={'tests/verification.py','tests/minimap_vga.py','tools/difftest.py','src/input_menu_and_retry.asm','src/palette_frontends.asm','c/lemmings_sym.h','c/regs.h'}
+    if native:
+        for source in source_files('palette_transition'):
+            paths.add(source.relative_to(ROOT).as_posix())
+            if source.with_suffix('.h').is_file():paths.add(source.with_suffix('.h').relative_to(ROOT).as_posix())
     if native:paths|={'c/palette_transition.c','c/palette_transition.h','c/display_status.c','c/display_status.h'}
+    # Palette domains/fixtures use literal instruction ranges and generated C
+    # offsets. Imported drawing fixtures load unused symbol dictionaries, but
+    # no palette behavior consumes their ledger annotations. Keep the actual
+    # header/ASM/oracle dependencies; status-only acceptance must not stale it.
+    paths.discard('metadata/symbols.json')
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 
 
@@ -361,6 +372,7 @@ def worker(directory=None,part=0):
 
 
 def run(original_only=False):
+    if not original_only:SPLIT_REPORT.unlink(missing_ok=True)
     report=ORIGINAL_REPORT if original_only else REPORT;report.unlink(missing_ok=True);before=input_hashes(not original_only);deadline=time.monotonic()+660
     try:
         with temporary_build_directory(prefix='palette-transition-',parent=BUILD) as directory:
@@ -370,6 +382,8 @@ def run(original_only=False):
                 if remain<=0:fail('Transition campaign deadline exhausted')
                 run_bounded([sys.executable,str(Path(__file__).resolve()),'--worker','-' if original_only else directory,str(part)],cwd=ROOT,timeout=min(240,remain),memory_mib=384)
                 reports.append(read_json(BUILD/f'palette-transition-original-part-{part}.json' if original_only else Path(directory)/f'part-{part}.json'))
+            if not original_only:
+                run_bounded([sys.executable,str(Path(__file__).resolve()),'--split-worker',directory],cwd=ROOT,timeout=720,memory_mib=384,check=True)
         if input_hashes(not original_only)!=before or any(r['input_hashes']!=before for r in reports):fail('Transition reports stale')
         results=[c for r in reports for c in r['cases']];sites={p for c in results for p in c['sites']};edges={tuple(e) for c in results for e in c['edges']};mutants=[m for r in reports for m in r['mutants']]
         if sites!=set(INS) or edges!=EDGES:fail(f'Transition coverage incomplete {set(INS)-sites}/{EDGES-edges}')
@@ -382,9 +396,206 @@ def run(original_only=False):
     except BaseException:report.unlink(missing_ok=True);raise
 
 
+# Incremental migration: the added briefing cluster uses the shared executor,
+# canonical bus, guarded native callbacks and comparator. Existing legacy cases
+# remain as their unchanged regression campaign; no new CPU engine is added.
+SPLIT_RANGES=((0x46A2,0x46EB),(0x5329,0x536C),(0x53CA,0x53E6),(0x53E7,0x53F6))
+SPLIT_OWN={i.address:i for a,b in SPLIT_RANGES for i in shared.MD.disasm(IMAGE[a:b],a)}
+SPLIT_EXTRA=((0x5569,0x55B6),(0x53F6,0x53FB),(0x5401,0x5417),(0x5418,0x5424),(0x4DEF,0x4DF7),(0x4DF8,0x4E37))
+SPLIT_INS=SPLIT_OWN|rows.INS|ports.INS|{i.address:i for a,b in SPLIT_EXTRA for i in shared.MD.disasm(IMAGE[a:b],a)}
+SPLIT_EDGES=shared.direct_jump_edges(SPLIT_OWN)
+SPLIT_REPORT=BUILD/'split-palette-differential.json'
+
+def split_cases():
+    specs=[]
+    for entry in (0,1):
+        for mode in (2,4,0x104):
+            for first,second in ((0,0),(0,1),(1,0),(1,1)):
+                for count in (1,7,16):specs.append(dict(name=f'pair-e{entry}-m{mode}-{first}{second}-n{count}',kind='pair',entry=entry,mode=mode,first=first,second=second,count=count))
+    for kind in ('pair','upper','refresh','fade'):
+        for mode in (2,4,0x104):
+            for patch in ('none','sp-zero','sp-ffff','data-a20','df'):
+                specs.append(dict(name=f'{kind}-m{mode}-'+patch,kind=kind,entry=0,mode=mode,patch=patch))
+    for entry in (0,1):
+        for patch in ('saved-marker','mode-flip','stack-alias','table-high'):
+            specs.append(dict(name=f'pair-e{entry}-'+patch,kind='pair',entry=entry,patch=patch))
+    specs += [dict(name='pair-frame-alias',kind='pair',entry=0,patch='frame-alias',expected=5),dict(name='pair-saved-count',kind='pair',entry=1,patch='saved-count',second=1),
+        dict(name='pair-unchecked-target',kind='pair',entry=1,bx=0xFF01),
+        dict(name='pair-unchecked-second-target',kind='pair',entry=1,bx=0x01FF,second=1),
+        dict(name='refresh-saved-port',kind='refresh',patch='saved-port'),
+        dict(name='refresh-low-wrap',kind='refresh',base_port=0x3FC),
+        dict(name='refresh-base-flip',kind='refresh',patch='base-flip')]
+    for mode in (2,4):
+        for first,second in ((0,0),(0,1),(1,0),(1,1)):
+            specs.append(dict(name=f'fade-m{mode}-{first}{second}',kind='fade',mode=mode,first=first,second=second))
+        for kind in ('upper','refresh','fade'):
+            specs.append(dict(name=f'{kind}-m{mode}-no-input',kind=kind,mode=mode,missing_in=True,control=0,expected=1))
+            specs.append(dict(name=f'{kind}-m{mode}-no-output',kind=kind,mode=mode,missing_out=True,expected=2))
+        specs.append(dict(name=f'fade-m{mode}-no-clear-bus',kind='fade',mode=mode,missing_clear=True,expected=7))
+    for kind,entry,ret,depth in (('pair',0,0x5330,4),('pair',0,0x5341,4),('pair',1,0x5352,6),('pair',1,0x5362,4),
+             ('refresh',0,0x46D2,4),('refresh',0,0x46E9,2),('fade',0,0x46A5,2),('fade',0,0x46AB,2),('fade',0,0x46B4,2)):
+        specs.append(dict(name=f'split-changed-{ret:04x}',kind=kind,entry=entry,frame=(ret,depth),expected=5))
+    for mode,ret,depth,expected in ((2,0x564E,8,4),(2,0x567C,10,3),(4,0x56ED,6,4)):
+        specs.append(dict(name=f'split-inner-{ret:04x}',kind='pair',mode=mode,frame=(ret,depth),expected=expected))
+    # Full zero-count witnesses exercise first-count forwarding and actual saved
+    # DX->CX forwarding. Only core repeats: ordinary cases test the outer RET.
+    for mode in (2,4):
+        specs += [dict(name=f'pair-m{mode}-zero-first',kind='pair',mode=mode,entry=0,count=0,zero=True),
+                  dict(name=f'pair-m{mode}-zero-second',kind='pair',mode=mode,entry=1,count=1,dx=0,zero=True)]
+    return [dict(entry=0,mode=2,first=0,second=0,count=2,dx=2,load=shared.LOADS[n%3],seed=0x532900+n,patch='none',flags=0x2D7)|c for n,c in enumerate(specs)]
+
+def split_setup(c):
+    memory,device=shared.initial_memory(c);ds=0xFFFF if c['patch']=='data-a20' else 0x4000
+    start=shared.physical(ds,0);end=start+65536
+    if end<=shared.SIZE:memory[start:end]=bytes(65536)
+    else:memory[start:]=bytes(shared.SIZE-start);memory[:end-shared.SIZE]=bytes(end-shared.SIZE)
+    r=shared.default_regs(c['load'],c['seed'],ds=ds,ss=0x7000,sp=0 if c['patch']=='sp-zero' else 65535 if c['patch']=='sp-ffff' else 0x8000,flags=c['flags']|(0x400 if c['patch']=='df' else 0))
+    r.update(ip={'pair':0x5329 if c['entry']==0 else 0x534B,'upper':0x53CA,'refresh':0x46B9,'fade':0x46A2}[c['kind']],cx=c['count'],dx=c['dx'],bx=c.get('bx',0x0201),ax=0xB000)
+    ptrs=(0x3000,0x4000,0x5000,0x6000,0x6100,0x6200,0x6300,0x7000)
+    for table in (0x52D4,0x52E4):
+        for slot,ptr in enumerate(ptrs):shared.put16(memory,r['cs'],table+2*slot,ptr,device)
+    for ptr,value in ((0x3000,c['first']),(0x3100,c['first']),(0x7000,c['second'])):
+        for n in range(128):shared.sync_memory_byte(memory,device,ds,ptr+n,value)
+    shared.put16(memory,ds,0x1F7C,c['mode'],device);shared.put16(memory,ds,0x1FDA,c.get('base_port',0x3D4),device)
+    shared.sync_memory_byte(memory,device,ds,0x200C,c.get('control',255))
+    if c['patch'] in ('stack-alias','frame-alias'):r.update(ss=ds,sp=0x3004 if c['patch']=='frame-alias' else 0x7002)
+    shared.put16(memory,r['ss'],r['sp'],0xEED1,device)
+    return memory,r,device
+
+class SplitAccess(shared.BusAccess):
+    def __init__(self,c,memory,r,device):
+        super().__init__(c,memory,r,device,max_events=6_000_000 if c.get('zero') else 500_000,packed_events=True)
+        self.port_index=0;self.slot_reads=0;self.first_output=False
+    def access(self,kind,address,flags,mask=shared.FLAGS,value=None):
+        c=self.c;r=self.r;patch=c['patch'];slot=shared.physical(r['ss'],(r['sp']-2)&65535)
+        if kind=='read' and address==slot and patch=='saved-marker':
+            self.slot_reads+=1
+            if self.slot_reads==2:self.patch(r['ss'],(r['sp']-2)&65535,0x357E,'saved-marker')
+        if kind=='read' and address==shared.physical(r['ss'],(r['sp']-4)&65535) and patch=='saved-count' and patch not in self.providers:
+            self.patch(r['ss'],(r['sp']-4)&65535,1,'saved-count')
+        if kind=='read' and patch=='mode-flip' and patch not in self.providers and address==shared.physical(r['ss'],(r['sp']-(4 if c['entry']==0 else 6))&65535):
+            self.patch(r['ds'],0x1F7C,4 if c['mode']!=4 else 2,patch)
+        got=super().access(kind,address,flags,mask,value)
+        if c.get('frame') and 'frame' not in self.providers:
+            expected,depth=c['frame'];at=shared.physical(r['ss'],(r['sp']-depth)&65535)
+            if kind=='write' and address==at and value==(expected&255):self.patch(r['ss'],(r['sp']-depth)&65535,(expected&0xFF00)|1,'frame')
+        if kind=='read' and patch=='table-high' and patch not in self.providers and address==shared.physical(r['cs'],0x52E4 if c['mode']==4 else 0x52D4):
+            self.patch(r['cs'],(0x52E4 if c['mode']==4 else 0x52D4)+1,0x31,patch,word=False)
+        return got
+    def inp(self,port,flags,mask=shared.FLAGS):
+        if port==0x3C5:value=0x93
+        else:
+            shared.check(self.port_index<24000,'finite split palette status schedule exhausted')
+            value=(0,9,9,0)[self.port_index%4];self.port_index+=1
+        self.cursor+=1;self.emit('in',port,value,flags,mask);return value
+    def out(self,port,value,flags,mask=shared.FLAGS):
+        self.emit('out8',port,value,flags,mask)
+        if not self.first_output:
+            self.first_output=True
+            if self.c['patch']=='saved-port':self.patch(self.r['ss'],(self.r['sp']-2)&65535,0x3BA,'saved-port')
+            if self.c['patch']=='base-flip':self.patch(self.r['ds'],0x1FDA,0x3B4,'base-flip')
+    def out_word(self,port,value,flags,mask=shared.FLAGS):
+        shared.check(port in (0x3C4,0x3CE),'unexpected split palette word output')
+        self.emit('out',port,value,flags,mask);self.device.out(port,value,flags)
+
+class SplitMachine(shared.OriginalMachine):
+    def __init__(self,c,memory,r,device,core):
+        frames=[];failed=[]
+        def before(m,i):
+            if c.get('missing_clear') and i.address==0x4DF8:m.stop(7);return True
+            if i.mnemonic=='in' and c.get('missing_in'):m.stop(1);return True
+            if i.mnemonic=='out' and i.operands[-1].size==1 and c.get('missing_out'):m.stop(2);return True
+            if i.mnemonic=='call':frames.append((i.address,(i.address+i.size)&65535))
+            return False
+        def expected(m,off):
+            shared.check(bool(frames),'undeclared split-palette child return');f=frames.pop();failed[:]=[f];return {f[1]}
+        def changed(m,off):
+            owner=failed[-1][0]
+            return 5 if owner in SPLIT_OWN else 4 if owner in rows.LOCAL else 3
+        ends={'pair':{0x534A,0x536B},'upper':{0x5446,0x5506},'refresh':{0x46EA},'fade':{0x4E36}}
+        super().__init__(c,memory,r,device,core,instructions=SPLIT_INS,access=SplitAccess(c,memory,r,device),
+            outer_returns=lambda m,p:p in ends[c['kind']] and not frames,
+            child_returns={p:expected for p,i in SPLIT_INS.items() if i.mnemonic=='ret'},changed_return_status=changed,
+            before=before,max_steps=30_000_000 if c.get('zero') else 2_000_000)
+
+class SplitPublishResult(ctypes.Structure):
+    _fields_=[('registers',shared.Regs),('status',ctypes.c_uint16)]
+
+class SplitNative:
+    def __init__(self,directory,mutation=0):
+        self.lib=ctypes.CDLL(str(build(Path(directory)/f'split-palette-m{mutation}.dll',mutation,'palette_transition')))
+        self.functions={}
+        for kind,name in (('pair','step_split_palette'),('refresh','refresh_split_palette'),('fade','fade_split_palette')):
+            for core,suffix in ((True,'core'),(False,'adapter')):
+                fn=getattr(self.lib,'lmn_'+name+'_'+suffix);fn.restype=channels.Result
+                if core:fn.argtypes=[shared.MEM,ctypes.c_uint16,ctypes.POINTER(video.State)]+([ctypes.c_int] if kind=='pair' else [ctypes.POINTER(shared.Ports)])+[ctypes.POINTER(shared.Bus)]
+                else:fn.argtypes=[shared.MEM,ctypes.POINTER(shared.Regs)]+([ctypes.c_int] if kind=='pair' else [ctypes.POINTER(shared.Ports)])+[ctypes.POINTER(shared.Bus)]
+                self.functions[kind,core]=fn
+        for core,suffix in ((True,'core'),(False,'adapter')):
+            fn=getattr(self.lib,'lmn_publish_palette_'+suffix);fn.restype=SplitPublishResult
+            # Explicit 30-byte register/status API; shared provides the CPU packet.
+            self.functions['upper',core]=fn
+    def run(self,c,memory,r,device,core):
+        import copy
+        memory,device=bytearray(memory),copy.deepcopy(device);access=SplitAccess(c,memory,r,device);cb=shared.NativeCallbacks(access,missing_in=c.get('missing_in'),missing_out=c.get('missing_out'))
+        if c.get('missing_clear'):cb.bus.out_word=shared.OUT()
+        mem=(ctypes.c_uint8*shared.SIZE).from_buffer(memory);regs=shared.Regs(**r)
+        if c['kind']=='upper':
+            fn=self.functions['upper',core];fn.argtypes=[shared.MEM,ctypes.POINTER(shared.Regs),ctypes.c_int,ctypes.POINTER(shared.Ports),ctypes.POINTER(shared.Bus)]
+            out=fn(mem,ctypes.byref(regs),4,ctypes.byref(cb.ports),ctypes.byref(cb.bus));actual={n:getattr(out.registers,n) for n in shared.REG_NAMES}
+        else:
+            fn=self.functions[c['kind'],core];arg=c['entry'] if c['kind']=='pair' else ctypes.byref(cb.ports)
+            if core:out=fn(mem,r['cs'],ctypes.byref(video.to_state(r)),arg,ctypes.byref(cb.bus));actual=dict(video.state_dict(out.state),cs=out.code_segment,ip=out.continuation)
+            else:out=fn(mem,ctypes.byref(regs),arg,ctypes.byref(cb.bus));actual={n:getattr(regs,n) for n in shared.REG_NAMES}
+        return dict(regs=actual,status=out.status,memory=memory,device=device,events=access.events,providers=access.providers,cursor=access.cursor)
+
+def split_compare(native,c,core):
+    import copy
+    memory,r,device=split_setup(c);ref=SplitMachine(c,bytearray(memory),dict(r),copy.deepcopy(device),core).run()
+    shared.check(ref['status']==c.get('expected',0),c['name']+': unexpected split status')
+    if not ref['status'] and c['kind']=='pair' and c['patch']=='none' and not c.get('zero') and 'bx' not in c:
+        changed=bool(c['first'] or c['second']);shared.check(bool(ref['regs']['flags']&64)!=changed,'split pair OR/ZF differs')
+        shared.check((ref['regs']['ax']&255)==int(changed),'split pair AL marker differs')
+    if c['patch']=='saved-marker':shared.check(ref['regs']['bx']==0x357E,'split final POP BX not live')
+    if c.get('frame'):shared.check('frame' in ref['providers'],'split frame mutation not exercised')
+    if native:shared.compare_states(c['name'],native.run(c,memory,r,device,core),ref)
+    return ref
+
+SPLIT_MUTANTS=((101,'split-changed-5330'),(102,'pair-e0-saved-marker'),(103,'pair-saved-count'),
+    (104,'pair-e1-m2-00-n1'),(105,'refresh-saved-port'),(106,'refresh-low-wrap'),(107,'refresh-m2-none'),
+    (108,'upper-m4-none'),(109,'upper-m2-none'),(110,'fade-m2-11'),(111,'refresh-m2-none'),
+    (112,'pair-unchecked-second-target'),(113,'fade-m2-none'))
+
+def split_worker(directory):
+    before=input_hashes(True);native=SplitNative(directory);sites=set();edges=set();observations=[]
+    for c in split_cases():
+        for core in ((True,) if c.get('zero') else (False,True)):
+            ref=split_compare(native,c,core);sites.update(ref['sites']);edges.update(ref['edges'])
+            observations.append(dict(case=c['name'],core=core,steps=ref['steps'],events=len(ref['events']),status=ref['status']))
+            del ref;gc.collect()
+        print('CHECKED '+c['name'],flush=True)
+    shared.check(set(SPLIT_OWN)<=sites,'split palette sites missing')
+    shared.check(SPLIT_EDGES<=edges,'split palette outcomes missing')
+    mutants=[];lookup={c['name']:c for c in split_cases()}
+    for mutation,name in SPLIT_MUTANTS:
+        try:split_compare(SplitNative(directory,mutation),lookup[name],True)
+        except shared.Mismatch as error:mutants.append(dict(mutation=mutation,case=name,completed=True,mismatch=str(error)))
+        else:raise shared.OracleFailure(f'split palette mutant{mutation} survived')
+        gc.collect()
+    shared.check(before==input_hashes(True),'split palette inputs changed')
+    write_json(SPLIT_REPORT,dict(image='main',image_sha256=sha(IMAGE),case_count=len(split_cases()),comparison_count=len(observations),
+        own_known_bytes=sum(i.size for i in SPLIT_OWN.values()),known_connected_bytes=sum(i.size for i in SPLIT_INS.values()),
+        native_code_ranges=[list(r) for r in SPLIT_RANGES],executed_instruction_addresses=sorted(sites),own_executed_instruction_addresses=sorted(set(SPLIT_OWN)&sites),
+        branch_edges=sorted(edges),own_branch_edges=sorted(SPLIT_EDGES),instruction_steps=sum(r['steps'] for r in observations),ordered_bus_events=sum(r['events'] for r in observations),
+        mutation_count=len(mutants),mutations=mutants,input_hashes=before,rows=observations,
+        limits=dict(worker_seconds=720,process_tree_commit_mib=384,instructions_each=2_000_000,events_each=500_000,zero_instructions_each=30_000_000,zero_events_each=6_000_000,status_inputs_each=24000),
+        domain='Native5329/534B row pairs,53CA upper-eight writer,46B9 raster split and46A2 fade->clear tail; shared verification.py exact original execution/bus/callback/comparison. Full zero-count forwarding,live DS/ES/SS/flags/actual RET,changed frames,opaque finite ports and explicit clear-bus seam. No hardware timing,IRQ or complete level-start claim.'))
+    print(f'PASS split palette: {len(observations)} comparisons,{len(set(SPLIT_OWN)&sites)} own sites,{len(SPLIT_EDGES)} outcomes,{len(mutants)} mutants',flush=True)
+
 if __name__=='__main__':
     args=sys.argv[1:]
-    if len(args)==3 and args[0]=='--worker':worker(None if args[1]=='-' else args[1],int(args[2]))
+    if len(args)==2 and args[0]=='--split-worker':split_worker(args[1])
+    elif len(args)==3 and args[0]=='--worker':worker(None if args[1]=='-' else args[1],int(args[2]))
     elif args==['--original-only']:run(True)
     elif not args:run()
     else:raise SystemExit('Unexpected palette transition arguments')

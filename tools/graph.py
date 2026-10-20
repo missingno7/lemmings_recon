@@ -8,6 +8,7 @@ import argparse
 from bisect import bisect_right
 from common import ROOT,read_json
 from explore import analyze
+from coverage import translated_code_bytes
 from where import address,rows
 
 CALLS={'call','far_call','indirect_call'}
@@ -57,6 +58,14 @@ def routine_views(analysis,ledger):
                 ranges=[(entry,entry+size)]
             allowed={p for a,b in ranges for p in range(a,b)}
         views[entry]=body(entry,instructions,outgoing,frontiers,allowed)|dict(symbol=row,callers=callers.get(entry,set()))
+    # Bodies follow branch tails, including bytes already owned by native C.
+    main=[s for s in ledger if s['segment']==0]
+    limit=max((r['address']+r['size'] for r in analysis['instructions']),default=0)
+    native_bytes=translated_code_bytes(main,analysis['instructions'],limit)
+    for view in views.values():
+        view['existing_c_bytes']=sum(instructions[p]['size'] for p in view['sites']
+            if all(b in native_bytes for b in range(p,p+instructions[p]['size'])))
+        view['outside_c_bytes']=view['bytes']-view['existing_c_bytes']
     return views
 
 def dependency_order(root,views):
@@ -77,7 +86,10 @@ def tag(entry,views):
     view=views.get(entry)
     if view is None:return f'{entry:04X} UNRECOVERED'
     row=view['symbol'];native=' C-domain' if row.get('c_implementation') else ''
-    return f'{entry:04X} {row["symbol_name"]} {row["verification_status"]}{native} ({view["bytes"]} decoded bytes/{len(view["sites"])} sites)'
+    overlap=''
+    if not native and view.get('existing_c_bytes'):
+        overlap=f'; {view["existing_c_bytes"]} already-C bytes/{view["outside_c_bytes"]} outside C ranges'
+    return f'{entry:04X} {row["symbol_name"]} {row["verification_status"]}{native} ({view["bytes"]} decoded bytes/{len(view["sites"])} sites{overlap})'
 
 def details(entry,views):
     view=views[entry];print(tag(entry,views))

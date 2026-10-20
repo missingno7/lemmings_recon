@@ -1098,3 +1098,15 @@ while384MiB and per-invocation caps remain unchanged. Unresolved BP alternatives
 platform/game bodies and aggregate acceptance remain open. Fresh4566/5329 views
 select palette callers and level-start ownership next; keep the existing197D
 RAM-only service contract explicit. See code-entry.md and next-work.md.
+
+The split-palette/briefing cluster adds183 unique bytes, taking the main C union
+to30,195. Native5329/534B preserve live row-pair packets and flags;53CA publishes
+upper8,46B9 retains its two palette phases and60 status cycles, and46A2 composes
+them before tail-clearing. New shared-engine evidence passes185 fixtures /366
+comparisons,88 own sites /25 outcomes and13 completed mutants, including four
+full-zero witnesses. Legacy1191x2 transition regressions/six mutants,all83 unit
+tests and exact ASM pass. Fresh graph views now show already-C overlap using the
+coverage instruction-union validator, preventing shared tails from inflating
+new-work estimates. 4C17 exposes9 new bytes and5447 exposes43;7EB2 remains587
+untranslated bytes. Hardware timing,remaining level/game/platform seams and
+aggregate acceptance remain open. See split-palette.md and next-work.md.

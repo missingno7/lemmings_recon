@@ -67,7 +67,7 @@ SUITES = (
     Suite('palette_rows', 660, 384),
     Suite('palette_ports', 390, 384),
     Suite('palette_row_select', 720, 384),
-    Suite('palette_transition', 720, 384),
+    Suite('palette_transition', 1440, 384),
     Suite('retry_input', 180, 384),
     Suite('cache_allocation', 180, 384),
     Suite('video_restore', 180, 384),

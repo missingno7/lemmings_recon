@@ -32,6 +32,16 @@ class SourcePlanningTests(unittest.TestCase):
             self.assertIn('-DMAIN_MENU_MUTATION=0',argv)
             self.assertEqual(run.call_args.kwargs['timeout'],60)
             self.assertEqual(run.call_args.kwargs['memory_mib'],256)
+    def test_palette_manifest_pins_used_symbols_without_status_annotations(self):
+        sys.path.insert(0,str(ROOT/'tests'))
+        import palette_transition
+        paths=palette_transition.input_hashes(True)
+        self.assertNotIn('metadata/symbols.json',paths)
+        for path in ('c/lemmings_sym.h','src/palette_frontends.asm',
+                     'src/input_menu_and_retry.asm','metadata/oracle.json',
+                     'tests/verification.py','c/palette_transition.c'):
+            self.assertIn(path,paths)
+
     def test_unknown_cluster_fails_before_planning(self):
         with self.assertRaises(ValueError):cbuild.source_files('unidentified_game')
 

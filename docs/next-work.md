@@ -2,7 +2,19 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 30,012 bytes. The 353 new unique
+The main-image translated-code ledger union is 30,195 bytes. The 183 new unique
+bytes connect 5329/534B split-palette row pairs, 53CA upper-eight publication,
+46B9 raster refresh and the 46A2 fade -> native clear tail. Their shared-engine
+campaign passes 185 fixtures / 366 comparisons, 88 own sites / 25 outcomes and
+13 completed mutants, including four full zero-count witnesses. The unchanged
+1191x2 transition regressions and six mutants also pass. All 83 unit tests and
+exact ASM/relocation checks pass. Native work stays under 384 MiB with finite
+instruction/access/status schedules and owned build contexts. Real device timing,
+IRQ delivery and the remaining level-start/game/platform bodies remain open.
+Graph views now separate already-C shared-tail bytes from decoded body extent.
+See split-palette.md; no aggregate acceptance or stale-report renewal is claimed.
+
+The preceding main-image translated-code ledger union was 30,012 bytes. The 353 new unique
 bytes connect 488C formatting, the 503B text bridge, the 4C7E editor and the
 4967 validation screen through existing native children. Editor graph extent
 206 includes 50 shared tail bytes; physical editor prefix is 156, not 206 new
@@ -181,23 +193,23 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue the 454C level-start / 4566 briefing and game transition. Fresh
-   4566 tree / 5329 bottom-up views select the small 5329/534B palette callers
-   above native SelectAndStepPaletteRow. Preserve their unusual POP CX / POP BX,
-   live child flags and OR result; they do not restore ordinary argument packets.
-   Extend the existing palette transition campaign. The 53CA indexed upper-eight
-   writer prefix and 4C17 partial-page clear are related small dependencies.
-   Keep their UNKNOWN padding and all alternate hardware paths explicit.
-   The 197D full resource selector is already native but has a declared RAM-only
-   DOS/retry/fatal boundary and no raster-bus argument; retain or migrate that
-   contract deliberately before composing 454C. Preserve DS->actual ES and the
-   DF-sensitive 0FCA-byte clear, header/record aliases and the final JMP00FB.
-   The broad 4566 graph is not an independent leaf; see code-entry.md's static
-   frontier and level-header-ownership.md. Keep 4CC9/4D18 alternate target domains,
-   42A5, artificial VGA-stack budget failure, RETF selector-EA wrap at SP FFFE/FFFF,
-   earlier AH1B/protection consumers, 04D0 and remaining game bodies scoped.
-   Correct the main-menu report's conservative shared-boundary byte filter when
-   next changing that campaign; current source hashes and raw evidence stay intact.
+1. Continue the 454C level-start / 4566 briefing and game transition above
+   the accepted split-palette cluster. Fresh graph views expose shared-tail
+   overlap: 4C17 has nine new prefix bytes over 63 native clear bytes; 5447 has
+   43 bytes outside existing C ranges over its native palette writers. The 7EB2
+   VGA sampling/conversion body remains 587 decoded bytes / 278 sites with no
+   borrowed C bytes. Prioritize its live VGA read-map/plane operations, SS mirror
+   writes, source/destination geometry and returned DS; never snapshot its
+   overlapping VRAM sources into a shadow image. Inspect the 4B5C text-field
+   wrapper and remaining publication paths while composing the briefing prefix.
+   The existing 197D selector retains its declared RAM-only DOS/retry/fatal seam;
+   add the required shared bus capability deliberately before broader 454C claims.
+   Preserve DS->actual ES, the DF-sensitive 0FCA-byte clear, header/record aliases,
+   division faults/byte wrap in briefing arithmetic and final JMP00FB.
+   Keep alternate 4CC9/4D18 and 42A5 domains, artificial VGA-stack budget failure,
+   RETF selector-EA wrap at SP FFFE/FFFF, AH1B/protection consumers, 04D0 and other
+   game bodies scoped. Correct the main-menu report's conservative boundary-byte
+   filter when next changing that campaign; current raw evidence stays intact.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

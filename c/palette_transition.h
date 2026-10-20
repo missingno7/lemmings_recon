@@ -16,7 +16,9 @@ typedef enum LmnPaletteTransitionStatus {
     LMN_PALETTE_TRANSITION_MISSING_OUTPUT = 2,
     LMN_PALETTE_TRANSITION_ROW_CHANNEL_STOP = 3,
     LMN_PALETTE_TRANSITION_ROW_CHANGED_RETURN = 4,
-    LMN_PALETTE_TRANSITION_CHANGED_RETURN = 5
+    LMN_PALETTE_TRANSITION_CHANGED_RETURN = 5,
+    LMN_PALETTE_TRANSITION_MISSING_WORD_OUTPUT = 6,
+    LMN_PALETTE_TRANSITION_MISSING_CLEAR_BUS = 7
 } LmnPaletteTransitionStatus;
 
 typedef struct LmnPaletteTransitionResult {
@@ -44,4 +46,22 @@ void lmn_transition_palette_adapter(uint8_t *memory, LmnRegs *registers,
     enum LmnPaletteTransitionEntry entry, const LmnRasterBytePorts *ports,
     const LmnRasterBus *bus);
 
+typedef enum LmnSplitPaletteStepEntry {
+    LMN_SPLIT_PALETTE_TO_SLOT1, LMN_SPLIT_PALETTE_TO_TARGETS
+} LmnSplitPaletteStepEntry;
+/* 5329/534B use actual saved words and two native5569 row calls. */
+LmnPaletteTransitionResult lmn_step_split_palette_core(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,LmnSplitPaletteStepEntry entry,const LmnRasterBus *bus);
+LmnPaletteTransitionResult lmn_step_split_palette_adapter(uint8_t *memory,LmnRegs *registers,
+    LmnSplitPaletteStepEntry entry,const LmnRasterBus *bus);
+/* 46B9 status-bit/raster palette sequence; 46A2 repeats it with upper-half
+   publication and native row steps, then tail-enters the native page clear. */
+LmnPaletteTransitionResult lmn_refresh_split_palette_core(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnPaletteTransitionResult lmn_fade_split_palette_core(uint8_t *memory,uint16_t cs,
+    const LmnVideoRestoreState *input,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnPaletteTransitionResult lmn_refresh_split_palette_adapter(uint8_t *memory,LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnPaletteTransitionResult lmn_fade_split_palette_adapter(uint8_t *memory,LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
 #endif

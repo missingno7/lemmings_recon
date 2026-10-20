@@ -245,8 +245,8 @@
 #define CS_ChooseInputController 0x43CEu
 #define CS_EnterMainMenu 0x43F2u
 #define CS_sub_4566 0x4566u
-#define CS_sub_46A2 0x46A2u
-#define CS_sub_46B9 0x46B9u
+#define CS_FadeAndClearSplitPalette 0x46A2u
+#define CS_RefreshRasterSplitPalette 0x46B9u
 #define CS_sub_482F 0x482Fu
 #define CS_FormatSelectedLevelAndGroup 0x488Cu
 #define CS_sub_48BD 0x48BDu
@@ -305,11 +305,11 @@
 #define CS_DecodeLevelCode 0x51A2u
 #define CS_sub_52F4 0x52F4u
 #define CS_TransitionPaletteToSlot1 0x531Eu
-#define CS_sub_5329 0x5329u
-#define CS_sub_534B 0x534Bu
+#define CS_StepSplitPaletteToSlot1 0x5329u
+#define CS_StepSplitPaletteToTargets 0x534Bu
 #define CS_TransitionPaletteToSlot2 0x536Cu
 #define CS_sub_5377 0x5377u
-#define CS_sub_53CA 0x53CAu
+#define CS_PublishUpperEightPaletteColors 0x53CAu
 #define CS_PublishEightPaletteColors 0x53F6u
 #define CS_PublishMenuPalette 0x53FCu
 #define CS_PublishSixteenPaletteColors 0x53FEu
@@ -1173,4 +1173,20 @@
 #define SEG09A9_CodeRatingNameRows 0x4C01u
 #define SEG09A9_CodeAcceptedText 0x4DFEu
 #define SEG09A9_CodeRejectedText 0x4E27u
+#define CS_SplitPaletteAfterFirstStep5330 0x5330u
+#define CS_SplitPaletteAfterSecondStep5341 0x5341u
+#define CS_SplitPaletteSlot1Return534A 0x534Au
+#define CS_SplitPaletteAfterFirstStep5352 0x5352u
+#define CS_SplitPaletteAfterSecondStep5362 0x5362u
+#define CS_SplitPaletteTargetsReturn536B 0x536Bu
+#define CS_SplitPaletteAfterTopPublish46D2 0x46D2u
+#define CS_SplitPaletteAfterBottomPublish46E9 0x46E9u
+#define CS_SplitPaletteRasterReturn46EA 0x46EAu
+#define CS_SplitPaletteFadeAfterRefresh46A5 0x46A5u
+#define CS_SplitPaletteFadeAfterUpper46AB 0x46ABu
+#define CS_SplitPaletteFadeAfterStep46B4 0x46B4u
+#define CS_SplitPaletteVerticalHighInput46C0 0x46C0u
+#define CS_SplitPaletteVerticalLowInput46C5 0x46C5u
+#define CS_SplitPaletteHorizontalLowInput46D7 0x46D7u
+#define CS_SplitPaletteHorizontalHighInput46DC 0x46DCu
 #endif

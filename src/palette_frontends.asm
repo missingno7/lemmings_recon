@@ -29,10 +29,13 @@ TransitionPaletteToSlot1:
     mov cx,0x10 ; @05320
     mov bx,0x100 ; @05323
     jmp PaletteTransitionSharedBody ; @05326
-sub_5329:
+; First0->1 uses incomingCX; second7->1 forces16. POPCX consumes savedDX,
+; POPBX restores first change marker; OR AL,BL defines caller completionZF.
+StepSplitPaletteToSlot1:
     push dx ; @05329
     mov bx,0x100 ; @0532A
     call SelectAndStepPaletteRow ; @0532D
+SplitPaletteAfterFirstStep5330:
     mov bl,0x1 ; @05330
     jnz loc_5336 ; @05332
     dec bl ; @05334
@@ -42,18 +45,23 @@ loc_5336:
     mov cx,0x10 ; @05338
     mov bx,0x107 ; @0533B
     call SelectAndStepPaletteRow ; @0533E
+SplitPaletteAfterSecondStep5341:
     mov al,0x1 ; @05341
     jnz loc_5347 ; @05343
     dec al ; @05345
 loc_5347:
     pop bx ; @05347
     db 0x0a,0xc3 ; ENCODED: or al,bl (NASM chooses a different encoding) ; @05348
+SplitPaletteSlot1Return534A:
     ret ; @0534A
-sub_534B:
+; SaveBX/DX; first0->incomingBH usesCX, second7->incomingBL uses savedDX asCX.
+; FinalPOPBX consumes saved liveDX/first-marker, not originalBX. Actualframes.
+StepSplitPaletteToTargets:
     push bx ; @0534B
     push dx ; @0534C
     mov bl,0x0 ; @0534D
     call SelectAndStepPaletteRow ; @0534F
+SplitPaletteAfterFirstStep5352:
     pop cx ; @05352
     pop bx ; @05353
     mov dl,0x1 ; @05354
@@ -64,12 +72,14 @@ loc_535A:
     db 0x8a,0xfb ; ENCODED: mov bh,bl (NASM chooses a different encoding) ; @0535B
     mov bl,0x7 ; @0535D
     call SelectAndStepPaletteRow ; @0535F
+SplitPaletteAfterSecondStep5362:
     mov al,0x1 ; @05362
     jnz loc_5368 ; @05364
     dec al ; @05366
 loc_5368:
     pop bx ; @05368
     db 0x0a,0xc3 ; ENCODED: or al,bl (NASM chooses a different encoding) ; @05369
+SplitPaletteTargetsReturn536B:
     ret ; @0536B
 TransitionPaletteToSlot2:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0536C
@@ -109,7 +119,9 @@ loc_53A1:
     jnz loc_53C9 ; @053C7
 loc_53C9:
     ret ; @053C9
-sub_53CA:
+; CH8/CL8; unchecked liveCS selector, full modeword4 onlyRGB. Packedsource+8
+; orRGBsource+24 then tailJMP writer with inherited caller RET; UNKNOWN53E6.
+PublishUpperEightPaletteColors:
     mov cx,0x808 ; @053CA
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @053CD
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @053CF

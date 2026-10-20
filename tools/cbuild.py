@@ -133,6 +133,7 @@ def source_files(cluster="checksum"):
     if cluster == 'input_poll':
         sources = [ROOT / 'c/input_poll.c', ROOT / 'c/port_io.c', ROOT / 'c/interrupt_service.c']
     if cluster=="main_menu":sources += list(source_files("menu_timer"))+[ROOT/"c/decimal_field.c"]
+    if ROOT/"c/palette_transition.c" in sources:sources += [ROOT/"c"/(n+".c") for n in ("palette_row_select","display_pages","vga_clear")]
     return tuple(dict.fromkeys(sources))
 
 
@@ -175,7 +176,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="display_pages":defines=["-DDISPLAY_PAGES_MUTATION="+str(mutation)]
     if cluster=="retry_ui":defines=["-DRETRY_UI_MUTATION="+str(mutation)]
     if cluster=="retry_input":defines=["-DRETRY_INPUT_MUTATION="+str(mutation)]
-    if cluster=="palette_transition":defines=["-DPALETTE_TRANSITION_MUTATION="+str(mutation)]
+    if cluster=="palette_transition":defines=["-DPALETTE_TRANSITION_MUTATION="+str(mutation if mutation<100 else 0),"-DSPLIT_PALETTE_MUTATION="+str(mutation-100 if mutation>=100 else 0)]
     if cluster=="palette_row_select":defines=["-DPALETTE_ROW_SELECT_MUTATION="+str(mutation)]
     if cluster=="palette_ports":defines=["-DPALETTE_PORTS_MUTATION="+str(mutation)]
     if cluster=="palette_rows":defines=["-DPALETTE_ROWS_MUTATION="+str(mutation)]
