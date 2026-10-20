@@ -228,7 +228,7 @@ TESTED C, decoded leaf and apparent normal execution are not readiness proofs.
 | Game loop 43F2/4401 -> 454C/4551 -> 00FB -> 46EB, retry screen 4B1C | READY and translated in the IRQ-at-poll domain | Real 4C47/17C7/16D4 delivery at polls (tests/game_loop.py). 004A FF producer, preemption inside children, sound bodies, startup/protection remain. |
 | Startup/protection 054E..13DB | NOT READY as a whole | Dynamic protected views, gap 098C..0D9D and segment/allocation provenance. |
 | Complete executable sound engines | NOT READY as a whole | Only scoped entries/latches/PC routines translated; unresolved dispatch and unclassified payload remain. |
-| Native whole game/platform/SDL3 | NOT READY | No connected full startup/frame core or proven scheduler; SDL3 is outside this realignment. |
+| Native whole game/platform/SDL3 | CONDITIONAL | Headless host runs the verified loop with parity (tests/host_journey.py); startup is constructed, sound muted, SDL3 not started. |
 
 Working loop: choose the highest-cost guess -> inspect binary/callers/state ->
 record the semantic contract in ASM/ledger -> exact gate -> readiness decision ->

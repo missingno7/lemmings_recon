@@ -301,7 +301,7 @@ class Native:
         frames=session.frame.Services(ct.pointer(cb.ports),ct.pointer(cb.bus),ptr(0x60),ptr(0x61),ptr(0x21),ptr(0x1A),None,None,ct.pointer(foreground),r['ds'])
         game=session.Services(ct.pointer(init),ct.pointer(frames),None,OBSERVE())
         screen=result.Services(ct.pointer(cb.ports),ct.pointer(cb.bus),ct.pointer(video),ct.pointer(foreground),r['ds'])
-        services=Services(ct.pointer(video),ptr(0x21),ct.pointer(cb.ports),ct.pointer(cb.bus),ct.pointer(foreground),
+        services=Services(None if c.get('retry_stop') else ct.pointer(video),ptr(0x21),ct.pointer(cb.ports),ct.pointer(cb.bus),ct.pointer(foreground),
             ct.pointer(loader),ct.pointer(game),ct.pointer(screen),None,observe,r['ds'],r['cs'])
         out=self.fn(mem,ct.byref(v.Regs(**r)),ct.byref(services))
         if errors:
@@ -313,7 +313,7 @@ class Native:
             raise errors[0]
         if c.get('retry_stop'):
             state={n:getattr(out.registers,n) for n in v.REG_NAMES}
-            v.require(out.status==2 and state['ip']==0x4B1C,'retry entry was not retained')
+            v.require(out.status==5 and state['ip']==0x4B1C,'unbound retry entry was not retained')
             v.require(compare(state,'retry')==RETRY_BOUNDARY,'original missed retry entry')
             return dict(rows=rows,steps=reference.machine.steps,sites=sorted(reference.machine.sites),edges=sorted(reference.machine.edges))
         if c.get('stop_poll'):return dict(rows=rows)
@@ -367,7 +367,7 @@ def poll_stop_helpers(native):
     return rows
 
 def input_hashes():
-    paths=set(source_files('game_loop'))|{p for p in (ROOT/'c').glob('*.h') if p.name!='resource_retry.h'}
+    paths=set(source_files('game_loop'))|{p for p in (ROOT/'c').glob('*.h') if p.name!='pklite_unpack.h'}
     paths|={Path(m.__file__).resolve() for m in tuple(sys.modules.values()) if getattr(m,'__file__',None)
         and Path(m.__file__).suffix=='.py' and Path(m.__file__).resolve().parent in (ROOT/'tests',ROOT/'tools')}
     paths.update(ROOT/p for p in ('metadata/symbols.json','metadata/oracle.json','assets/vgalemmi.exe','assets/main.dat'))

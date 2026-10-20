@@ -36,7 +36,14 @@ typedef struct LmnGameLoopResult {
    explicit platform handoffs. No outer RET and no internal step/frame cap.
    Every stop retains live registers/RAM/stack. Poll cancellation is a core
    stop, not a resumable coroutine for cores with pending internal CALLs.
-   See build/worker-loop-report.md for the proposed ASM/ledger annotation;
+   DAT retry callbacks run the native 4B1C screen on live RAM/registers and
+   resume the saved-register re-probe/reload tails on an intact near RET.
+   The void callback still needs setjmp/longjmp for unbound UI services,
+   child/poll stops or changed returns; stopped packets retain the exact site.
+   A raw 4B1C driver entry has no suspended DAT parent and remains an explicit
+   RESOURCE_RETRY stop. No retry count or synthetic successful probe is added.
+   See build/worker-retryroute-report.md for the caller contract proposal and
+   build/worker-loop-report.md for the underlying loop annotation;
    this batch is deliberately forbidden from editing either source. */
 LmnGameLoopResult lmn_game_loop_core(uint8_t *,const LmnRegs *,const LmnGameLoopServices *);
 #endif

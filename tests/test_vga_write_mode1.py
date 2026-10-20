@@ -43,13 +43,20 @@ class WriteModeOneTests(unittest.TestCase):
             vga.write(memory, VGA_BASE + 0x202, 0x55, 2)
             self.assertEqual([p[0x202] for p in vga.planes], list(range(0xa1, 0xa5)))
 
-    def test_unsupported_modes_still_fail(self):
+    def test_write_modes_two_and_three_vectors(self):
+        # Hand-computed IBM VGA vectors: replace function, all planes enabled.
         memory = bytearray(1 << 20)
         vga = MinimapVga(0x4def)
-        for mode in (2, 3):
-            vga.gc[5] = mode
-            with self.assertRaisesRegex(AssertionError, 'write modes 0 and 1'):
-                vga.write(memory, VGA_BASE, 0, 2)
+        vga.seq[2] = 15; vga.gc[3] = 0
+        latched = [0x0f, 0x33, 0x55, 0xaa]
+        # Mode 2: CPU bit n expands to plane n; bit mask F0 keeps latch low nibble.
+        vga.gc[5] = 2; vga.gc[8] = 0xf0; vga.latches = list(latched)
+        vga.write(memory, VGA_BASE + 0x10, 0b0101, 2)
+        self.assertEqual([p[0x10] for p in vga.planes], [0xff, 0x03, 0xf5, 0x0a])
+        # Mode 3: set/reset 0011 is the source; rotated CPU byte 3C ANDs mask F0 -> 30.
+        vga.gc[5] = 3; vga.gc[0] = 0b0011; vga.gc[8] = 0xf0; vga.latches = list(latched)
+        vga.write(memory, VGA_BASE + 0x11, 0x3c, 2)
+        self.assertEqual([p[0x11] for p in vga.planes], [0x3f, 0x33, 0x45, 0x8a])
 
 
 if __name__ == '__main__': unittest.main()

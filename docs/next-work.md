@@ -7,44 +7,44 @@ loop and physical source map. Old checkpoints are in convergence-history.md.
 
 ## Immediate mode
 
-The menu -> level -> session -> result loop is native and continuous:
-c/game_loop.c follows the actual JMP transfers between EnterMainMenu/4401,
-454C/4551 (resources, briefing), the 00FB session and the 46EB result, with
-c/hardware_irq.c delivering the live IVT08 target (menu 4C47 or game 17C7) and
-IRQ09 at LmnForegroundPoll sites in every wait loop. tests/game_loop.py replays
-a scripted multi-level journey (cheat pass -> next level, time-up -> retry,
-menu return) into the original handlers. Explicit loop stops remain: fatal
-cleanup 04D0, DOS exit 04F7, and resource retry 4B1C (now native in
-c/resource_retry.c but entered from the DAT layer's void retry callback, which
-the driver still stops at). No SDL3 in this phase.
+The game is playable headless in native C: host/ (platform_host.c, main.c)
+supplies VGA planar/DAC/CRTC, a virtual-time PIT/PIC INT08 scheduler at the
+recorded cadence, IRQ09/port 60, INT33, INT21 file/vector services, BIOS
+INT10/1A and the PKLITE unpack (c/pklite_unpack.c) with no Python or Unicorn,
+under c/game_loop.c (menu -> level -> session -> result, DAT retry routed into
+c/resource_retry.c). tests/host_journey.py matches the original journey at every
+loop boundary and poll; tools/host_smoke.py renders menu/briefing/gameplay PPMs.
+Sound INT60/61 is an explicit muted sink. The post-startup state is still built
+by a C constructor from documented producers, not by translated startup code.
 
 ## Priorities
 
-1. **Platform layer over the native loop.** Define the explicit platform
-   services the loop consumes (VGA planes/CRTC/DAC, PIT/PIC timing, mouse INT33,
-   keyboard IRQ09, DOS file I/O, BIOS video) as one C interface and a host
-   implementation with a real-time INT08 schedule derived from the recorded
-   cadence (display-locked, tick after five IRQs). Route the DAT retry callback
-   into lmn_resource_retry_screen_core instead of stopping. Keep the original
-   verification domains; this is the step before SDL3.
-2. **Record/graphics lifecycle and callback writers (30A6,1F19,3150,3634,706F).**
+1. **Native startup 0000..00FA.** Replace the host's post-startup constructor
+   with the translated startup sequence (checksums, memory/vector setup, video
+   probe, sound driver init 054E, mouse hooks, timer calibration, resource load)
+   through the JMP to EnterMainMenu, resolving the protection/allocation seams it
+   needs (priority 4 below) only as far as this path requires.
+2. **SDL3 presentation over host/.** Interactive window, real-time scheduling,
+   mouse/keyboard mapping and audio output once sound engines exist; the host
+   interface is the boundary. Keep headless parity runs as the acceptance gate.
+3. **Record/graphics lifecycle and callback writers (30A6,1F19,3150,3634,706F).**
    Trace the same 2D-byte record from per-level clear through creation, action,
    state transitions and drawing. Preserve shared +20/+26/+27 roles and sample
    order +2C then +2B; establish allocation/slot and callback-source invariants
    from producers. Resolve the domain of 715B before narrowing raw adapters or
    treating the nine initialized callbacks as an exhaustive target proof. The
    source now names key fields; broader lifetime closure is still CONDITIONAL.
-3. **Startup/protection/allocation (054E..13DB).** Recover service and segment
+4. **Startup/protection/allocation (054E..13DB).** Recover service and segment
    provenance and investigate the 1,042-byte 098C..0D9D UNKNOWN gap by its actual
    writers/users. Keep canonical/protected views distinct. Do not linear-sweep
    or call unreferenced bytes dead. These paths determine valid runtime memory
    domains and can remove many future translation guesses.
-4. **Executable sound engines.** Follow AdLib 01EA, Tandy 02BB and PC-speaker 0196
+5. **Executable sound engines.** Follow AdLib 01EA, Tandy 02BB and PC-speaker 0196
    dynamic dispatch, tables, initialization and command formats in their separate
    images. Classify executable versus stream data with evidence. The tiny scoped
    C entries/latches are not full alternative-hardware support; this is required
    game completion work, not an optional backend polish task.
-5. **Unify the composition adapters.** The frame parent dispatches thirteen
+6. **Unify the composition adapters.** The frame parent dispatches thirteen
    differently shaped child adapters. Consolidate packet/helper duplication only
    where a concrete consumer changes and equivalence is checked by its suite.
 

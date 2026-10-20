@@ -1,14 +1,17 @@
 #include "game_loop.h"
 #include "lemmings_sym.h"
+#include "resource_retry.h"
 #include <setjmp.h>
 #ifndef GAME_LOOP_MUTATION
 #define GAME_LOOP_MUTATION 0
 #endif
 
-/* The legacy typed retry callback has no stop result. Catch that *callee
-   entry* here, before invoking any UI: all real saved/CALL words are already
-   in canonical RAM and the packet contains the live twelve CPU roles. This
-   is a portable C call-boundary escape, never a game-state/CPU interpreter.
+/* The legacy typed retry callback can return only AX/BX/BP/FLAGS. Its callers
+   pop the actual near CALL word and restore SI/DI/DS/ES/CX/DX from live RAM,
+   then re-probe (1D20 -> 1CEE) or reload (1BA7 -> 1B79). Run the UI on that
+   same state; leave the caller's POP transport to those maintained cores.
+   Only a stopped UI or changed return escapes this void callback, which has
+   no status/full-state result with which to unwind its resource parents.
    The setjmp lives in invoke_start; the changed packet lives in its caller,
    so no modified automatic local is read after longjmp. */
 typedef struct StartBoundary {
@@ -20,6 +23,8 @@ typedef struct StartBoundary {
     LmnLevelStartEntry entry;
     const LmnForegroundPoll *poll;
     const LmnDatFileServices *files;
+    const LmnGameLoopServices *loop;
+    uint16_t stop_status,core_status,child_status,service_status;
     LmnLevelStartServices services;
     LmnLevelStartResult result;
 } StartBoundary;
@@ -33,12 +38,51 @@ static void retry_attributes(void *context,uint8_t *memory,uint16_t segment,uint
     StartBoundary *s=context;
     s->files->attributes(s->files->context,memory,segment,filename,flags,out);
 }
-static void retry_stop(void *context,uint8_t *memory,const LmnDatFileCall *call,LmnDatRetryResult *out) {
-    StartBoundary *s=context;(void)memory;(void)out;
+static uint16_t retry_word(uint8_t *memory,uint16_t segment,uint16_t offset,
+    uint16_t flags,const LmnRasterBus *bus) {
+    uint32_t at=(((uint32_t)segment<<4)+offset)&0xFFFFFu;
+    uint8_t low=bus&&bus->read_byte?bus->read_byte(bus->context,memory,at,flags):memory[at];
+    at=(at+1u)&0xFFFFFu;
+    uint8_t high=bus&&bus->read_byte?bus->read_byte(bus->context,memory,at,flags):memory[at];
+    return (uint16_t)(low|((uint16_t)high<<8));
+}
+static void retry_screen(void *context,uint8_t *memory,const LmnDatFileCall *call,LmnDatRetryResult *out) {
+    StartBoundary *s=context;const LmnGameLoopServices *loop=s->loop;
     s->stopped=(LmnRegs){call->value,call->handle,call->count,call->filename_offset,
         call->source_cursor,call->output_cursor,call->base_cursor,call->stack_offset,
         s->input->cs,call->segment,call->extra_segment,call->stack_segment,CS_ShowResourceRetryScreen,call->flags};
-    longjmp(s->escape,1);
+    s->stop_status=LMN_GAME_LOOP_UNBOUND_SERVICE;
+    if(!loop->video||!loop->video->set_mode||!s->poll||!s->poll->poll)longjmp(s->escape,1);
+    /* Reading the entry word here is control-flow validation, not an emulated
+       bus read. The actual RET below reads its then-live bytes through the bus. */
+    uint16_t expected=retry_word(memory,call->stack_segment,call->stack_offset,call->flags,0);
+    if(expected!=CS_DatAfterFileRetry&&expected!=CS_DatAfterResourceRetry) {
+        s->core_status=LMN_RESOURCE_RETRY_CHANGED_RETURN;
+        s->stop_status=LMN_GAME_LOOP_UNSUPPORTED_TRANSFER;longjmp(s->escape,1);
+    }
+    LmnVideoRestoreState input={call->value,call->handle,call->count,call->filename_offset,
+        call->source_cursor,call->output_cursor,call->base_cursor,call->segment,
+        call->extra_segment,call->stack_segment,call->stack_offset,call->flags};
+    LmnResourceRetryResult result=lmn_resource_retry_screen_core(memory,s->input->cs,
+        s->game_ds,&input,loop->video,loop->bus,loop->ports,s->poll);
+    LmnVideoRestoreState *v=&result.state;LmnRegs *r=&s->stopped;
+    *r=(LmnRegs){v->value,v->base_value,v->count,v->argument,v->source_cursor,
+        v->output_cursor,v->frame_cursor,v->stack_offset,result.code_segment,
+        v->data_segment,v->extra_segment,v->stack_segment,result.continuation,v->flags};
+    s->core_status=(uint16_t)result.status;s->child_status=result.child_status;
+    s->service_status=result.status==LMN_RESOURCE_RETRY_POLL_STOP?result.child_status:0;
+    s->stop_status=result.status==LMN_RESOURCE_RETRY_POLL_STOP?LMN_GAME_LOOP_CORE_STOP:
+        result.status==LMN_RESOURCE_RETRY_WAITING?LMN_GAME_LOOP_UNBOUND_SERVICE:
+        result.status==LMN_RESOURCE_RETRY_CHANGED_RETURN?LMN_GAME_LOOP_UNSUPPORTED_TRANSFER:
+        LMN_GAME_LOOP_RESOURCE_RETRY;
+    if(result.status!=LMN_RESOURCE_RETRY_READY)longjmp(s->escape,1);
+    r->ip=retry_word(memory,r->ss,r->sp,r->flags,loop->bus);r->sp=(uint16_t)(r->sp+2u);
+    if(r->ip!=expected||r->cs!=s->input->cs||r->ss!=call->stack_segment||
+       r->sp!=(uint16_t)(call->stack_offset+2u)) {
+        s->core_status=LMN_RESOURCE_RETRY_CHANGED_RETURN;
+        s->stop_status=LMN_GAME_LOOP_UNSUPPORTED_TRANSFER;longjmp(s->escape,1);
+    }
+    *out=(LmnDatRetryResult){r->ax,r->bx,r->bp,r->flags};
 }
 static int invoke_start(StartBoundary *s) {
     if(setjmp(s->escape))return 0;
@@ -55,7 +99,7 @@ static int start_level(StartBoundary *s,const LmnLevelStartServices *services) {
     const LmnResourceSelectionServices *selection=full?full->selection:0;
     s->files=selection?selection->files:0;
     if(!s->files||!s->files->open_readonly||!s->files->attributes)return invoke_start(s);
-    LmnDatFileServices files={s,retry_open,retry_attributes,retry_stop};
+    LmnDatFileServices files={s,retry_open,retry_attributes,retry_screen};
     LmnResourceSelectionServices selected=*selection;selected.files=&files;
     LmnResourceSelectionFullServices bound=*full;bound.selection=&selected;
     s->services.resources=&bound;
@@ -69,6 +113,7 @@ LmnGameLoopResult lmn_game_loop_core(uint8_t *memory,const LmnRegs *registers,
         if(!s){out.status=LMN_GAME_LOOP_UNBOUND_SERVICE;return out;}
         if(r->cs!=s->code_segment){out.status=LMN_GAME_LOOP_UNSUPPORTED_TRANSFER;return out;}
         if(r->ip==0x04D0){out.status=LMN_GAME_LOOP_FATAL_CLEANUP;return out;}
+        /* A raw retry entry has no suspended DAT parent to resume after RET. */
         if(r->ip==0x4B1C){out.status=LMN_GAME_LOOP_RESOURCE_RETRY;return out;}
         if(r->ip==CS_CleanupTerminateInterrupt||r->ip==CS_CleanupAfterTerminate) {
             out.status=LMN_GAME_LOOP_DOS_EXIT;return out;
@@ -103,9 +148,11 @@ LmnGameLoopResult lmn_game_loop_core(uint8_t *memory,const LmnRegs *registers,
         case CS_MainMenuStartLevel:case CS_LoadAndStartSelectedLevel: {
             StartBoundary boundary={0};boundary.memory=memory;boundary.input=r;boundary.game_ds=s->game_data_segment;
             boundary.entry=r->ip==CS_MainMenuStartLevel||GAME_LOOP_MUTATION==3?LMN_LEVEL_START_FROM_MENU:LMN_LEVEL_START_COMMON;
-            boundary.poll=s->poll;
+            boundary.poll=s->poll;boundary.loop=s;
             if(!start_level(&boundary,s->start)) {
-                *r=boundary.stopped;out.status=LMN_GAME_LOOP_RESOURCE_RETRY;return out;
+                *r=boundary.stopped;out.status=boundary.stop_status;
+                out.core_status=boundary.core_status;out.child_status=boundary.child_status;
+                out.service_status=boundary.service_status;return out;
             }
             LmnLevelStartResult c=boundary.result;
             *r=c.registers;out.core_status=c.status;out.child_status=c.child_status;out.service_status=c.detail;break;

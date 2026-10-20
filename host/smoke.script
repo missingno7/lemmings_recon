@@ -1,0 +1,6 @@
+# milliseconds  mouse x y buttons | key decimal-set1-scan
+0 mouse 150 100 0
+1000 key 59
+1150 key 187
+5000 mouse 150 100 1
+5150 mouse 150 100 0

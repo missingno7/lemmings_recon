@@ -11,8 +11,9 @@ import verification as v
 import display_setup as setup_oracle
 import level_result as result_suite
 import main_menu as menus
+import game_loop as loop_suite
 from bounded_process import temporary_build_directory
-from cbuild import build
+from cbuild import build,source_files
 from common import BUILD,sha,write_json
 
 START, BUTTON, SCAN, END = 0x4B3B,0x4B40,0x4B48,0x4B50
@@ -102,7 +103,8 @@ def setup(c):
 
 class Native:
     def __init__(self,output,mutation):
-        self.lib=ct.CDLL(str(build(Path(output)/f'resource-retry-{mutation}.dll',mutation,'resource_retry')))
+        self.lib=ct.CDLL(str(build(Path(output)/f'resource-retry-{mutation}.dll',mutation,
+            'resource_retry' if mutation else 'game_loop')))
         self.fn=self.lib.lmn_resource_retry_input_core;self.fn.restype=Result
         self.fn.argtypes=[v.MEM,ct.POINTER(v.Regs),ct.POINTER(v.Bus),ct.POINTER(v.ForegroundPoll)]
         self.screen=self.lib.lmn_resource_retry_screen_core;self.screen.restype=ScreenResult
@@ -111,8 +113,11 @@ class Native:
         self.screen_adapter=self.lib.lmn_resource_retry_screen_adapter;self.screen_adapter.restype=None
         self.screen_adapter.argtypes=[v.MEM,ct.POINTER(v.Regs),ct.c_uint16,ct.c_void_p,
             ct.POINTER(v.Bus),ct.POINTER(v.Ports),ct.POINTER(v.ForegroundPoll)]
+        if not mutation:
+            self.loop=self.lib.lmn_game_loop_core;self.loop.restype=loop_suite.Result
+            self.loop.argtypes=[v.MEM,ct.POINTER(v.Regs),ct.POINTER(loop_suite.Services)]
     def close(self):
-        self.fn=None
+        self.fn=None;self.screen=None;self.screen_adapter=None;self.loop=None
         if self.lib is not None:
             ct.windll.kernel32.FreeLibrary(ct.c_void_p(self.lib._handle))
             self.lib._handle=0
@@ -265,8 +270,161 @@ def run_parent_prefix(native):
     v.compare_states('parent-missing-bios',out,want)
     v.require((result.child_entry,result.continuation)==(0x4BE7,0x4BF2),'parent child stop boundary differs')
 
+class RoutedAccess(RetryScreenAccess):
+    """The inherited DAT children use their typed RAM ABI; the UI uses the bus."""
+    def __init__(self,*args):
+        super().__init__(*args);self.quiet=False;self.omitted=0
+    def emit(self,kind,address,value,flags,mask=v.FLAGS):
+        if self.quiet and kind in ('read','write'):
+            v.check(not v.VGA_BASE<=address<v.VGA_END,'typed DAT child reached VGA')
+            self.omitted+=1;v.check(self.omitted<=2_000_000,'routed DAT access budget exhausted');return
+        super().emit(kind,address,value,flags,mask)
+    def poll(self,r,site):
+        v.check(len(self.retry_polls)<16,'routed retry poll budget exhausted')
+        if self.c.get('stop')==site:
+            self.retry_polls.append((site,1,r['flags']));return 0xCA11
+        status=super().poll(r,site)
+        if self.c.get('changed_return') and 'retry-return' not in self.providers:
+            self.patch(r['ss'],r['sp'],0xD234,'retry-return')
+        return status
+
+class RoutedProvider(loop_suite.start.Provider):
+    def file(self,function,seg,off,flags):
+        result=super().file(function,seg,off,flags)
+        if function==0x3D and self.case.get('open_critical') and not getattr(self,'failed_open',False):
+            self.failed_open=True
+            v.put8(self.mem,seg,loop_suite.resources.field('DatCriticalErrorFlag'),1)
+        return result
+
+def routed_cases():
+    base=next(c for c in loop_suite.start.cases() if c['name']=='resources-order-1')
+    rows=[dict(name='route-attribute-button',input='button'),
+          dict(name='route-attribute-scan',input='scan',load=v.LOADS[1]),
+          dict(name='route-open-critical-button',input='button',attribute_errors=0,open_critical=True),
+          dict(name='route-repeat-attribute',input='scan',attribute_errors=2),
+          dict(name='route-stop-button',input='button',stop=BUTTON),
+          dict(name='route-stop-scan',input='scan',stop=SCAN),
+          dict(name='route-changed-return',input='button',changed_return=True),
+          dict(name='route-unbound-video',input='button',unbound_video=True)]
+    return [dict(base,flags=0x202,attribute_errors=1)|row for row in rows]
+
+def run_routed(native,c):
+    start=loop_suite.start;resources=loop_suite.resources
+    memory,r,device,payloads,record=start.setup(c)
+    v.put8(memory,r['ds'],resources.field('DatRetryEnabled'),255)
+    instructions=start.INS|FULL_INS
+    ref_memory=bytearray(memory);ref_device=copy.deepcopy(device)
+    access=RoutedAccess(c,ref_memory,dict(r),ref_device)
+    provider=RoutedProvider(c,ref_memory,dict(r),r['ds'],payloads,record)
+    frames=[];retry_entries=[]
+    def before(machine,ins):
+        if ins.address==0x4566:machine.stop(5);return True
+        if ins.address==0x4B1C:
+            retry_entries.append(machine.state())
+            if c.get('unbound_video'):machine.stop(5);return True
+        if ins.address in (BUTTON,SCAN):
+            if access.poll(machine.state(),ins.address):machine.stop(0);return True
+        access.quiet=any(f['legacy'] for f in frames) and not any(f['retry'] for f in frames)
+        if ins.mnemonic=='ret' and frames and frames[-1]['legacy']:access.quiet=False
+        if ins.mnemonic in ('call','lcall'):
+            frames.append(dict(resume=ins.address+ins.size,far=ins.mnemonic=='lcall',
+                legacy=ins.address in start.LEGACY_CALLS,retry=ins.address in (0x1D17,0x1B9E)))
+        return False
+    def expected(machine,off):
+        v.check(bool(frames),'undeclared routed RET');frame=frames.pop()
+        access.quiet=any(f['legacy'] for f in frames) and not any(f['retry'] for f in frames)
+        return {(c['load'],frame['resume'])} if frame['far'] else {frame['resume']}
+    def interrupt(machine,number):
+        live=machine.state();fn=live['ax']>>8
+        if number==0x10:
+            live.update(menus.video_provider(access,{n:live[n] for n in menus.animation.FIELDS}))
+        else:
+            v.check(number==0x21 and len(provider.trace)<512,'routed DOS service budget exhausted')
+            if fn in (0x3D,0x43):
+                live['ax'],count,live['flags']=provider.file(fn,live['ds'],live['dx'],live['flags'])
+                if fn==0x43:live['cx']=count
+            elif fn==0x23:live['ax'],live['flags']=provider.query(live['ds'],live['dx'],live['flags'])
+            elif fn==0x3F:live['ax'],live['flags']=provider.read(live['bx'],live['ds'],live['dx'],live['cx'],live['flags'])
+            elif fn==0x3E:live['ax'],live['flags']=provider.close(live['bx'],live['ax'],live['flags'])
+            else:raise v.OracleFailure('undeclared routed DOS function')
+        machine.cpu.mem_write(0,bytes(ref_memory));machine.cpu.mem_write(v.SIZE,bytes(ref_memory))
+        machine.set_state(live);machine.mask=v.FLAGS;machine.flags=live['flags']
+    machine=v.OriginalMachine(c,ref_memory,dict(r),ref_device,False,instructions=instructions,
+        access=access,outer_returns=(),before=before,interrupt=interrupt,
+        child_returns={p:expected for p,i in instructions.items() if i.mnemonic=='ret'},
+        far_returns={p:expected for p,i in instructions.items() if i.mnemonic=='retf'},
+        changed_return_status=4,max_steps=4_000_000)
+    ref=machine.run();ref['services']=(access.service_events,provider.trace)
+    got_memory=bytearray(memory);got_access=RoutedAccess(c,got_memory,dict(r),copy.deepcopy(device))
+    callbacks=v.NativeCallbacks(got_access);mem=(ct.c_uint8*v.SIZE).from_buffer(got_memory)
+    p=RoutedProvider(c,got_memory,dict(r),r['ds'],payloads,record)
+    def guarded(fn,out,binding,*args):
+        try:
+            v.check(ct.addressof(binding.contents)==ct.addressof(mem),'routed provider RAM differs')
+            v.check(len(p.trace)<512,'native routed DOS budget exhausted')
+            for (name,_),value in zip(out.contents._fields_,fn(*args)):setattr(out.contents,name,value)
+        except BaseException as error:v.callback_failure(error)
+    opened=resources.FILE(lambda _,m,seg,off,f,out:guarded(p.file,out,m,0x3D,seg,off,f))
+    attributes=resources.FILE(lambda _,m,seg,off,f,out:guarded(p.file,out,m,0x43,seg,off,f))
+    query=resources.QUERY(lambda _,m,seg,off,f,out:guarded(p.query,out,m,seg,off,f))
+    read=resources.READ(lambda _,m,h,seg,off,n,f,out:guarded(p.read,out,m,h,seg,off,n,f))
+    retry=resources.RETRY_FN(lambda *args:v.callback_failure(v.OracleFailure('legacy retry service called')))
+    raw_open=resources.OPEN(lambda _,m,seg,off,f,out:guarded(
+        lambda *args:(lambda t:(t[0],t[2]))(p.file(0x3D,*args)),out,m,seg,off,f))
+    close=resources.OPEN(lambda _,m,h,value,f,out:guarded(p.close,out,m,h,value,f))
+    files=resources.Services(None,opened,attributes,retry);io=resources.Io(None,query,read)
+    raw=resources.RawServices(None,raw_open,read,close)
+    selection=resources.SelectionServices(ct.pointer(files),ct.pointer(io),ct.pointer(raw))
+    full=start.FullServices(ct.pointer(selection),None,None)
+    segments=start.Segments(*(v.get16(memory,r['cs'],resources.SYMS[name]['address']+delta) for name,delta in
+        (('CheckDatFile',0x33),('SelectCachedDatFile',0x50),('ReadDatBytes',8),('DatReadFailure',1))))
+    loader=start.Services(ct.pointer(segments),ct.pointer(full),None,ct.pointer(callbacks.bus),r['ds'])
+    @menus.VIDEO
+    def mode(_,binding,incoming,outgoing):
+        try:
+            v.check(ct.addressof(binding.contents)==ct.addressof(mem),'routed video RAM differs')
+            state=menus.video_provider(got_access,{n:getattr(incoming.contents,n) for n in menus.animation.FIELDS})
+            for name,value in state.items():setattr(outgoing.contents,name,value)
+        except BaseException as error:v.callback_failure(error)
+    video=menus.VideoServices(None,mode,menus.VIDEO())
+    handler=callbacks.foreground(lambda a,live,site:a.poll(live,site));poll=v.ForegroundPoll(None,handler)
+    services=loop_suite.Services(None if c.get('unbound_video') else ct.pointer(video),None,
+        ct.pointer(callbacks.ports),ct.pointer(callbacks.bus),ct.pointer(poll),ct.pointer(loader),
+        None,None,None,loop_suite.OBSERVE(),r['ds'],r['cs'])
+    result=native.loop(mem,ct.byref(v.Regs(**r)),ct.byref(services))
+    actual=dict(regs={n:getattr(result.registers,n) for n in v.REG_NAMES},status=result.status,
+        memory=got_memory,device=got_access.device,events=got_access.events,providers=got_access.providers,
+        cursor=got_access.cursor,services=(got_access.service_events,p.trace))
+    v.compare_states(c['name'],actual,ref)
+    v.require(got_access.retry_polls==access.retry_polls,c['name']+': routed poll schedule differs')
+    v.require(bool(retry_entries),c['name']+': retry path unused')
+    if c.get('stop'):
+        v.require((result.core_status,result.service_status,result.registers.ip)==(4,0xCA11,c['stop']),
+            'routed poll stop lost its diagnostics')
+    elif c.get('changed_return'):
+        v.require(result.registers.ip==0xD234 and result.core_status==2,'changed RET target/diagnostic was hidden')
+    elif not c.get('unbound_video'):
+        expected_return=0x1BA1 if c.get('open_critical') else 0x1D1A
+        v.require(expected_return in ref['sites'],'DAT caller did not execute its retry tail')
+        v.require(len(retry_entries)==max(1,c['attribute_errors']),'wrong retry count')
+        v.require(p.attributes>=2 and result.registers.ip==0x4566,'probe did not recover to briefing')
+        v.require(bytes(got_memory[v.physical(r['ds'],0xFCB+i)] for i in range(2048))==record,
+            'recovered resource data differs')
+        v.require(got_memory[v.physical(r['ds'],resources.field('DatCriticalErrorFlag'))]==0,
+            'retry UI did not clear the critical-error latch')
+    return dict(name=c['name'],status=result.status,final_ip=result.registers.ip,steps=ref['steps'],
+        sites=sorted(ref['sites']),edges=sorted(ref['edges']),retry_entries=retry_entries,
+        polls=access.retry_polls,services=ref['services'],legacy_ram_events=access.omitted)
+
+def input_hashes():
+    paths=set(source_files('game_loop'))|{p for p in (ROOT/'c').glob('*.h') if p.name!='pklite_unpack.h'}
+    paths|={Path(m.__file__).resolve() for m in tuple(sys.modules.values()) if getattr(m,'__file__',None)
+        and Path(m.__file__).suffix=='.py' and Path(m.__file__).resolve().parent in (ROOT/'tests',ROOT/'tools')}
+    paths.update(ROOT/p for p in ('metadata/symbols.json','metadata/oracle.json','assets/vgalemmi.exe','assets/main.dat'))
+    return {p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in sorted(paths)}
+
 def main():
-    summaries=[];screen_summaries=[]
+    summaries=[];screen_summaries=[];routed_summaries=[];before=input_hashes()
     with temporary_build_directory(prefix='resource-retry-',parent=BUILD) as directory:
         loaded=[]
         try:
@@ -278,6 +436,9 @@ def main():
             for c in full_screen_cases():
                 print('FULL '+c['name'],flush=True)
                 screen_summaries.append(run_full_screen(native,c))
+            for c in routed_cases():
+                print('ROUTED '+c['name'],flush=True)
+                routed_summaries.append(run_routed(native,c))
             native.close();loaded.remove(native);del native;gc.collect()
             witnesses={10:'button-third-bit',11:'button-upper-retained',12:'button-low'}
             mutants=[]
@@ -292,7 +453,9 @@ def main():
         finally:
             for native in loaded:native.close()
             loaded.clear();gc.collect()
+    v.check(before==input_hashes(),'resource-retry inputs changed during campaign')
     write_json(BUILD/'resource-retry-differential.json',dict(source=sha((ROOT/'c/resource_retry.c').read_bytes()),
-        input_cases=summaries,full_screen_cases=screen_summaries,mutants=mutants))
-    print(f'PASS resource retry input cases={len(summaries)} full-screen cases={len(screen_summaries)} mutants={len(mutants)}')
+        input_hashes=before,input_cases=summaries,full_screen_cases=screen_summaries,
+        routed_cases=routed_summaries,mutants=mutants))
+    print(f'PASS resource retry input cases={len(summaries)} full-screen cases={len(screen_summaries)} routed cases={len(routed_summaries)} mutants={len(mutants)}')
 if __name__=='__main__':main()

@@ -1,7 +1,7 @@
 """Independent VGA device fixture for the 796F minimap cluster.
 
 Models the unchained A0000-AFFFF planar aperture, Graphics Controller read
-modes 0/1 and write modes 0/1. This is a bounded device fixture, not a VGA card
+modes 0/1 and write modes 0..3. This is a bounded device fixture, not a VGA card
 or timing/scanout emulator; see docs/minimap-vga.md for the contract.
 """
 from __future__ import annotations
@@ -95,9 +95,6 @@ class MinimapVga:
         if VGA_BASE <= p < VGA_END:
             self._check_aperture()
             mode = self.gc[5] & 0x03
-            if mode not in (0, 1):
-                raise AssertionError('Fixture covers VGA write modes 0 and 1 only')
-
             offset = p - VGA_BASE
             if mode == 1:
                 # IBM VGA TRM, Figure2-76 (2-85): write the read latches.
@@ -114,12 +111,16 @@ class MinimapVga:
                 (value >> rotate) | (value << (8 - rotate))) & 0xFF
             operation = (self.gc[3] >> 3) & 3
             bit_mask = self.gc[8]
+            if mode == 3:
+                bit_mask &= rotated
             plane_mask = self.seq[2] & 0x0F
 
             for plane in range(4):
                 if not plane_mask & (1 << plane):
                     continue
-                if self.gc[1] & (1 << plane):
+                if mode == 2:
+                    source = 0xFF if value & (1 << plane) else 0
+                elif mode == 3 or self.gc[1] & (1 << plane):
                     source = 0xFF if self.gc[0] & (1 << plane) else 0
                 else:
                     source = rotated

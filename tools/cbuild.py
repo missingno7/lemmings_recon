@@ -17,9 +17,10 @@ def compiler():
 
 def source_files(cluster="checksum"):
     """Canonical ordered native source closure, including aliased clusters."""
+    if cluster == "pklite_unpack": return (ROOT/"c/pklite_unpack.c",)
     if cluster=="game_loop":
         return tuple(dict.fromkeys((ROOT/"c/game_loop.c",
-            *(p for d in ("game_session","level_start","level_result") for p in source_files(d)))))
+            *(p for d in ("game_session","level_start","level_result","resource_retry") for p in source_files(d)))))
     if cluster=="game_session":
         return tuple(dict.fromkeys((ROOT/'c/game_session.c',ROOT/'c/hardware_irq.c',
             *(p for d in ('game_initialize','game_frame','game_timer','keyboard_input') for p in source_files(d)))))

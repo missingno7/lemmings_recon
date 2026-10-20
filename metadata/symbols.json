@@ -35663,7 +35663,7 @@
         19292
       ]
     ],
-    "verification_evidence": "tests/resource_retry.py: original/native full parent 4B1C through actual outer RET 4B5B on button and scan exits; changed SetupDisplayModeAndLayout return stop; input reads 4B40/4B48 with finite IRQ-at-poll updates; 3 distinct-risk mutants. Shared input bytes 4B3B..4B4F keep their prior owner."
+    "verification_evidence": "tests/resource_retry.py: original/native full parent 4B1C through actual outer RET 4B5B on button and scan exits; changed SetupDisplayModeAndLayout return stop; input reads 4B40/4B48 with finite IRQ-at-poll updates; 3 distinct-risk mutants. Shared input bytes 4B3B..4B4F keep their prior owner. The game loop now routes the DAT retry callback into this core and resumes both original retry tails (tests/resource_retry.py routed cases)."
   },
   {
     "address": 19231,

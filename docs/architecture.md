@@ -32,9 +32,13 @@ The fresh graph's call tree and pending dependency order guide the next C cluste
 see [bottom-up convergence](bottom-up.md) for the source layout, record handoff,
 open native seams and working loop adapted from Pre2.
 
-c owns translated logic on a canonical DOS backing memory. host will own native
-platform services; it currently has no implementation. tests and bounded unpacker verification alone may use Unicorn.
-Tools require Python; the eventual release executable must not.
+c owns translated logic on a canonical DOS backing memory. The C11 headless
+[host](../host/README.md) now binds VGA, virtual PIT/PIC timing, keyboard/mouse,
+read-only DOS files and BIOS services beneath the verified loop. It constructs a
+declared post-startup handoff and runs the maintained MAIN.DAT producers; full
+startup and sound engines remain unsupported. The release runner loads the pinned
+EXE with the native PKLITE decoder and has no Python/Unicorn/SDL dependency.
+Only tests and bounded original verification use Unicorn; build tools use Python.
 
 External source references were reviewed as concept references only:
 [LemmixPlayer](https://github.com/AaronKelley/LemmixPlayer),
