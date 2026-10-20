@@ -113,3 +113,8 @@ these constructed-state comparisons. Inherited RETF selector-EA wrap at
 SPFFFE/FFFF and artificial VGA-stack masked-loop exhaustion remain unverified.
 Full original contracts and aggregate/native-host acceptance remain separate
 from this connected local milestone.
+
+The subsequent startup checkpoint connects43F2's prefix,palette publication
+and4AC5's media-gated resource check to this controller. Its146 additional bytes
+and expanded campaign are recorded in menu-startup.md. The earlier scoped
+controller results above remain historical for their recorded inputs.

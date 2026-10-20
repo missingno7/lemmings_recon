@@ -23952,8 +23952,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_43F2",
-    "aliases": [],
+    "symbol_name": "EnterMainMenu",
+    "aliases": [
+      "sub_43F2"
+    ],
     "callers": [],
     "callees": [
       798,
@@ -25274,8 +25276,28 @@
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 1627
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 1627,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        17394,
+        17571
+      ],
+      [
+        17572,
+        17578
+      ],
+      [
+        17579,
+        17641
+      ],
+      [
+        17644,
+        17740
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 17766,
@@ -27456,8 +27478,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4AC5",
-    "aliases": [],
+    "symbol_name": "CheckMenuResourceAvailability",
+    "aliases": [
+      "sub_4AC5"
+    ],
     "callers": [
       17406
     ],
@@ -27533,8 +27557,16 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 87
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 87,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        19141,
+        19228
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 19228,
@@ -31580,8 +31612,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_53F6",
-    "aliases": [],
+    "symbol_name": "PublishEightPaletteColors",
+    "aliases": [
+      "sub_53F6"
+    ],
     "callers": [
       18127,
       18150
@@ -31705,16 +31739,42 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 140
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 140,
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21494,
+        21499
+      ],
+      [
+        21505,
+        21527
+      ],
+      [
+        21528,
+        21540
+      ],
+      [
+        21541,
+        21575
+      ],
+      [
+        21700,
+        21767
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 21500,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_53FC",
-    "aliases": [],
+    "symbol_name": "PublishMenuPalette",
+    "aliases": [
+      "sub_53FC"
+    ],
     "callers": [
       17403,
       18161
@@ -31838,16 +31898,38 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 140
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 140,
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21500,
+        21527
+      ],
+      [
+        21528,
+        21540
+      ],
+      [
+        21541,
+        21575
+      ],
+      [
+        21700,
+        21767
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 21502,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_53FE",
-    "aliases": [],
+    "symbol_name": "PublishSixteenPaletteColors",
+    "aliases": [
+      "sub_53FE"
+    ],
     "callers": [
       17920
     ],
@@ -31970,8 +32052,28 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 138
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 138,
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21502,
+        21527
+      ],
+      [
+        21528,
+        21540
+      ],
+      [
+        21541,
+        21575
+      ],
+      [
+        21700,
+        21767
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 21541,
@@ -64828,7 +64930,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 8238,
@@ -65977,7 +66079,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 17499,
@@ -66013,7 +66115,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 17528,
@@ -66049,7 +66151,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 17740,
@@ -66389,7 +66491,7 @@
         17740
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:48 fixtures/50 comparisons,118 own sites/51 direct outcomes and9 completed mutants. Native refresh/frame/input children at three loads,finite release/keyboard/button schedules,pinned UI banks/text and actual JMP exits. One same-RAM menu -> input screen -> refresh ->454C handoff preserves selected mode. Exact byte guards/wrap,live CS table,group*30 in AH,RMW XOR flags,actual near/far/changed child returns.326 unique bytes;43F2 startup and destination bodies remain scoped; docs/main-menu.md."
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
   },
   {
     "address": 17502,
@@ -66500,6 +66602,379 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 21505,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "SelectAndPublishPalette",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/palette_ports.c",
+    "c_code_ranges": [
+      [
+        21505,
+        21527
+      ],
+      [
+        21528,
+        21540
+      ],
+      [
+        21541,
+        21575
+      ],
+      [
+        21700,
+        21767
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+  },
+  {
+    "address": 19227,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuResourceProbeReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20224,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "MenuResourceRetryText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 9524,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "MenuResourceProbeFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19206,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuResourceAfterOpen",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19214,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuResourceAfterClose",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17397,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall43F2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17400,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall43F5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17403,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall43F8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17406,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall43FB",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 17409,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall43FE",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC",
+    "verification_evidence": "tests/main_menu.py:123 fixtures/125 comparisons,169 own sites/66 direct outcomes and21 completed mutants in7069 known controller/child bytes;146 newly accepted code bytes. Startup at three loads,FD media sample distinct from1FDF error flag,actual open/close retries/AX-to-BX handle/AH preservation,live DS and moved INT21/IRET/caller frames,logical BIOS setup seam,timer installation,unchecked CS palette selectors and full65536-count loops. Retains controller/input handoff. Destination bodies,opaque services/scheduling and inherited reference limits remain explicit; docs/menu-startup.md."
+  },
+  {
+    "address": 19151,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4ACC",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19154,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4ACF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19157,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4AD2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19164,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4AD9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19167,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4ADC",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19170,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4ADF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19173,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4AE2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19176,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4AE5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19219,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4B10",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19222,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuStartupAfterCall4B13",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 8158,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "StartupFatIdByte1FDE",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0096 AH1B INT21,009A read returnedDS:BX,009C restoreDS,009D store1FDE;062B F8 comparison;4AC5 exactFD guard. Distinct from1FDF critical-error flag. Microsoft MS-DOS Encyclopedia sectionV AH1B; docs/menu-startup.md"
     ],
     "verification_status": "STATIC"
   }

@@ -13,20 +13,26 @@ import menu_scroll as scroll
 import menu_animation as animation
 import menu_cache as cache
 from bounded_process import run_bounded,temporary_build_directory
-from cbuild import build
+from cbuild import build,source_files
 from common import BUILD,sha,write_json
 check=base.check
 physical,put16,get16=base.physical,base.put16,base.get16
 ENTRIES=(0x4401,0x4453,0x445B,0x4478)
-RANGES=((0x4401,0x44A3),(0x44A4,0x44AA),(0x44AB,0x44E9),(0x44EC,0x454C))
+PUBLISH_ENTRIES=(0x53F6,0x53FC,0x53FE,0x5401)
+MENU_RANGES=((0x4401,0x44A3),(0x44A4,0x44AA),(0x44AB,0x44E9),(0x44EC,0x454C))
+PUBLISH_RANGES=((0x53F6,0x53FB),(0x53FC,0x5417),(0x5418,0x5424))
+RANGES=MENU_RANGES+PUBLISH_RANGES+((0x43F2,0x4401),(0x4AC5,0x4B1C))
 OWN={i.address:i for a,b in RANGES for i in base.MD.disasm(base.IMAGE[a:b],a)}
 EXITS=(0x4D0,0x4967,0x4A01,0x454C)
 BOUNDARY={p:next(base.MD.disasm(base.IMAGE[p:p+16],p)) for p in EXITS}
 PAGES={i.address:i for a,b in ((0x4DC2,0x4DF7),(0x4DF8,0x4E37)) for i in base.MD.disasm(base.IMAGE[a:b],a)}
 INS=keyboard.DOMAINS['reader']|keyboard.DISPLAY|keyboard.SWAP|PAGES|keyboard.text.INS|keyboard.background.INS|keyboard.palette.INS|scroll.INS|animation.INS|cache.INS|OWN|BOUNDARY
+EXTRA={i.address:i for a,b in ((0x4BE7,0x4C17),(0x8808,0x8822),(0x5028,0x503B)) for i in base.MD.disasm(base.IMAGE[a:b],a)}
+INS|=EXTRA
 EDGES=base.direct_jump_edges(OWN)
 REPORT=BUILD/'main-menu-differential.json'
-SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=480,384,4_000_000,2_000_000
+SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=900,384,4_000_000,2_000_000
+DOS_BINDING=(0x7100,0x210)
 FIXTURES=set()
 for module in tuple(sys.modules.values()):
     name=getattr(module,'__file__',None)
@@ -35,6 +41,23 @@ for module in tuple(sys.modules.values()):
     if path.suffix=='.py' and path.is_relative_to(ROOT) and path.parts[-2] in ('tests','tools'):FIXTURES.add(path.relative_to(ROOT).as_posix())
 class Result(ct.Structure):
     _fields_=[('registers',base.Regs),('status',ct.c_uint16),('child_status',ct.c_uint16)]
+class PublishResult(ct.Structure):
+    _fields_=[('registers',base.Regs),('status',ct.c_uint16)]
+VIDEO=ct.CFUNCTYPE(None,ct.c_void_p,base.MEM,ct.POINTER(animation.State),ct.POINTER(animation.State))
+class VideoServices(ct.Structure):
+    _fields_=[('context',ct.c_void_p),('set_mode',VIDEO),('set_page',VIDEO)]
+
+class PackedVgaTrace:
+    """Fixture storage adapter; the shared packed sequence retains all4 fields."""
+    def __init__(self,limit):self.events=base.PackedEvents();self.limit=limit
+    def append(self,row):
+        check(len(self)<self.limit,'VGA observation budget exhausted');self.events.append((*row,0))
+    def __len__(self):return len(self.events)
+    def __iter__(self):return (e[:4] for e in self.events)
+    def __getitem__(self,index):
+        if isinstance(index,slice):return [e[:4] for e in self.events[index]]
+        return self.events[index][:4]
+    def clear(self):self.events=base.PackedEvents()
 
 def cases():
     rows=[dict(name='frame-button',entry=2,keys=(None,)),dict(name='release-waits',entry=1,keys=(None,),release_samples=(1,3,8))]
@@ -63,7 +86,30 @@ def cases():
              dict(name='refresh-display-return',entry=0,keys=(None,),patch='display-return',expected=2),
              dict(name='late-group',keys=(0x8A,0x80),patch='group'),
              dict(name='frame-both-caches',entry=2,keys=(0x80,),sound_cache=2,group_cache=4)]
-    return [dict(name='case',entry=3,load=0x1010,seed=0x4401+i,flags=0xD7,group=1,option=0,toggle=0,driver=0xFF)|c for i,c in enumerate(rows)]
+    for entry in range(4):
+        for mode in (2,4,0x104):
+            for index in (0,2,7,255):rows.append(dict(name=f'publish-e{entry}-m{mode}-i{index}',kind='publish',entry=entry,mode=mode,index=index,count=0xA503))
+    rows += [dict(name='publish-df',kind='publish',entry=2,mode=4,index=1,flags=0x6D7),
+             dict(name='publish-core',kind='publish',entry=1,mode=4,index=0,core=True),
+             dict(name='publish-zero-attribute',kind='publish',entry=3,mode=2,index=0,count=0x7F00),
+             dict(name='publish-zero-mapped',kind='publish',entry=3,mode=4,index=0,count=0xFE00),
+             dict(name='publish-no-input',kind='publish',entry=1,mode=2,missing_in=True,expected=1),
+             dict(name='publish-no-output',kind='publish',entry=1,mode=4,missing_out=True,expected=2)]
+    for name,kw in (
+        ('skip',dict(media=0)),('media-fe',dict(media=0xFE,critical=0xFD)),
+        ('success',{}),('open-retry',dict(fail_open=1)),('close-retry',dict(fail_close=1)),
+        ('latch',dict(probe_wait='latch')),('waits',dict(probe_wait='delayed')),
+        ('returned-ds',dict(close_ds=0x6100)),('returned-stack',dict(close_stack=(0x6200,0x8000))),
+        ('iret-flags',dict(iret_flags=0x8000)),('unbound',dict(no_service=True,expected=3)),
+        ('provider-stop',dict(provider_stop=0x27,expected=4,child_status=0x27)),
+        ('changed-iret',dict(iret_ip=0xD234,expected=5)),('core',dict(core=True)),
+        ('changed-outer',dict(patch='probe-parent',expected=0,outer_ip=0xD234))):
+        rows.append(dict(name='probe-'+name,kind='probe',entry=0,media=0xFD,**kw) if 'media' not in kw else dict(name='probe-'+name,kind='probe',entry=0,**kw))
+    for load in base.LOADS:rows.append(dict(name=f'startup-{load:04x}',kind='startup',entry=0,load=load,keys=(None,),pinned=True))
+    rows += [dict(name='startup-resource',kind='startup',entry=0,keys=(None,),media=0xFD,pinned=True),
+             dict(name='startup-no-mode',kind='startup',entry=0,missing_mode=True,expected=1,child_status=1),
+             dict(name='startup-mode-ds',kind='startup',entry=0,mode_ds=0x3600,missing_out=True,expected=1,child_status=2)]
+    return [dict(name='case',kind='menu',entry=3,load=0x1010,seed=0x4401+i,flags=0xD7,group=1,option=0,toggle=0,driver=0xFF,keys=(0x80,))|c for i,c in enumerate(rows)]
 
 def setup(c):
     memory,device=base.initial_memory(c);ds=(c['load']+0x9A9)&65535
@@ -89,18 +135,45 @@ def setup(c):
             for i,v in enumerate(data):base.sync_memory_byte(memory,device,segment,i,v)
     else:base.sync_memory_byte(memory,device,ds,0x4AD9,0)
     put16(memory,r['ss'],r['sp'],0xD00D,device)
+    device.trace=PackedVgaTrace(c.get('reference_events',MAX_EVENTS))
+    if c['kind']=='publish':
+        r.update(ip=PUBLISH_ENTRIES[c['entry']],ax=0xBE00|c.get('index',1),cx=c.get('count',0xAD05))
+    elif c['kind']=='probe':r['ip']=0x4AC5
+    elif c['kind']=='startup':r['ip']=0x43F2
+    put16(memory,ds,0x1F7C,c.get('mode',2),device)
+    base.sync_memory_byte(memory,device,ds,0x1FDE,c.get('media',0))
+    base.sync_memory_byte(memory,device,ds,0x1FDF,c.get('critical',0x79))
+    if not c.get('pinned'):base.sync_memory_byte(memory,device,ds,0x4F00,0)
+    for frame in dict.fromkeys(v for v in (c.get('close_ds'),c.get('mode_ds')) if v is not None):
+        for a,b in ((0x14,0x16),(0x1D,0x2B),(0xF78,0xFCB),(0x1F6B,0x2012),(0x202E,0x2081),
+                    (0x2534,0x2540),(0x25A6,0x25A8),(0x2608,0x2680),(0x4920,0x49CE),(0x4F00,0x5000),(0x66F0,0x66F6)):
+            for off in range(a,b):base.sync_memory_byte(memory,device,frame,off,memory[physical(ds,off)])
+    put16(memory,0,0x84,DOS_BINDING[1],device);put16(memory,0,0x86,DOS_BINDING[0],device)
     return memory,r,device
 
 class Access(base.BusAccess):
     def __init__(self,c,memory,r,device):
-        super().__init__(c,memory,r,device,max_events=MAX_EVENTS,packed_events=True)
+        super().__init__(c,memory,r,device,max_events=c.get('reference_events',MAX_EVENTS),packed_events=True)
         self.display_cursor=0;self.input_index=int(c['entry']==3);self.release_cursor=0
+        self.probe_active=c['kind'] in ('probe','startup') and c.get('media',0)==0xFD
+        self.wait_reads=0;self.open_count=0;self.close_count=0;self.handles=set();self.live_ds=r['ds']
     def access(self,kind,address,flags,mask=base.FLAGS,value=None):
         phase=self.c.get('patch')
+        if kind=='read' and address==physical(self.live_ds,0x14) and (self.probe_active or self.c['kind']=='probe'):
+            self.wait_reads+=1;check(self.wait_reads<=16,'finite resource wait schedule exhausted')
+            mode=self.c.get('probe_wait','button')
+            value=0 if mode=='latch' and self.wait_reads==1 or mode=='delayed' and self.wait_reads<3 else 1
+            self.patch(self.live_ds,0x14,value,'probe-button-'+str(self.wait_reads))
+            if mode=='latch' and self.wait_reads==1:self.patch(self.live_ds,0x1FD0,0x77,'probe-latch',word=False)
         if kind=='read' and address==physical(self.r['ds'],0x14) and self.release_cursor<len(self.c.get('release_samples',())):
             v=self.c['release_samples'][self.release_cursor];self.release_cursor+=1
             self.patch(self.r['ds'],0x14,v,'release-'+str(self.release_cursor))
         got=super().access(kind,address,flags,mask,value)
+        if kind=='write' and value==0 and address in {physical(ds,0x1FDF) for ds in (self.r['ds'],self.live_ds)}:
+            self.probe_active=False
+            if self.c['kind']=='startup':self.patch(self.live_ds,0x14,0,'probe-input-release')
+        if phase=='probe-parent' and kind=='write' and address==physical(self.live_ds,0x1FDF) and phase not in self.providers:
+            self.patch(self.r['ss'],self.r['sp'],0xD234,phase)
         if phase in self.providers:return got
         if phase=='keyboard-return' and kind=='read' and address==physical(self.r['ds'],0xF78):
             self.patch(self.r['ss'],(self.r['sp']-2)&65535,0xD234,phase)
@@ -133,11 +206,58 @@ class Access(base.BusAccess):
         if phase=='display-return' and port==0x3D4:self.patch(self.r['ss'],(self.r['sp']-2)&65535,0xD234,phase)
         if phase=='scroll-far' and port in (0x3C4,0x3CE):self.patch(self.r['ss'],(self.r['sp']-6)&65535,0xD234,phase)
 
+def dos_provider(access,r):
+    """Finite DOS file service; transport and IRET belong to verification.py."""
+    c=access.c;entry=dict(r);operation=r['ax']>>8
+    check(len(access.service_events)<32,'finite DOS request budget exhausted')
+    if operation==0x3D:
+        check((r['ax']&255)==0 and r['dx']==0x2534,'unexpected resource open request')
+        name=[]
+        for i in range(64):
+            v=access.access('read',physical(r['ds'],(r['dx']+i)&65535),r['flags']);name.append(v)
+            if not v:break
+        check(name==list(b'vgagr0.dat\0'),'resource filename differs')
+        access.open_count+=1;failed=access.open_count<=c.get('fail_open',0)
+        r['ax']=5 if failed else 0x1233+access.open_count
+        if not failed:access.handles.add(r['ax'])
+    else:
+        check(operation==0x3E,'unexpected resource DOS function')
+        access.close_count+=1
+        failed=r['bx'] not in access.handles or access.close_count<=c.get('fail_close',0)
+        if not failed:access.handles.remove(r['bx'])
+        r['ax']=6 if failed else 0
+        if 'close_ds' in c:r['ds']=c['close_ds'];access.live_ds=r['ds']
+        if 'close_stack' in c:
+            words=[access.word_read(r['ss'],(r['sp']+2*i)&65535,r['flags']) for i in range(4)]
+            r['ss'],r['sp']=c['close_stack']
+            for i,v in enumerate(words):access.word_write(r['ss'],(r['sp']+2*i)&65535,v,r['flags'])
+    flags=access.word_read(r['ss'],(r['sp']+4)&65535,r['flags'])
+    flags=c.get('iret_flags',flags)
+    access.word_write(r['ss'],(r['sp']+4)&65535,(flags&~1)|int(failed),r['flags'])
+    if 'iret_ip' in c:access.word_write(r['ss'],r['sp'],c['iret_ip'],r['flags'])
+    access.service_events.append(dict(kind='dos',entry=entry,returned=dict(r),failed=failed))
+    return c.get('provider_stop',0)
+
+def video_provider(access,incoming):
+    """Existing display-setup logical INT10 boundary; no invented CPU frame."""
+    check(incoming['ax']==0x90,'unexpected setup mode request')
+    out=dict(incoming)
+    if 'mode_ds' in access.c:out['ds']=access.c['mode_ds'];access.live_ds=out['ds']
+    access.service_events.append(dict(kind='video',entry=dict(incoming),returned=dict(out)))
+    return out
+
 class Machine(base.OriginalMachine):
     def __init__(self,c,memory,r,device):
         self.child_status=0;frames=[];failed=[];self.calls=[]
         def before(m,i):
-            if i.address in EXITS:m.stop(0);return True
+            if c['kind'] in ('menu','startup') and i.address in EXITS:m.stop(0);return True
+            if c.get('missing_mode') and i.address==0x4BF2:m.child_status=1;m.stop(1);return True
+            missing_in=c.get('missing_in') and i.mnemonic=='in'
+            missing_out=c.get('missing_out') and i.mnemonic=='out' and i.operands[-1].size==1
+            if missing_in or missing_out:
+                status=1 if missing_in else 2
+                m.child_status=0 if c['kind']=='publish' else status
+                m.stop(status if c['kind']=='publish' else 1);return True
             if i.mnemonic in ('call','lcall'):
                 own=i.address in OWN;root=i.operands[0].imm if own else frames[-1]['root'] if frames else None
                 frames.append(dict(owner=i.address,root=root,resume=i.address+i.size,far=i.mnemonic=='lcall'))
@@ -153,28 +273,88 @@ class Machine(base.OriginalMachine):
             elif frame['root'] in (0x4F96,0x4FF8,0x4EEF,0x4F2B):self.child_status=2 if INS[off].mnemonic=='retf' else 3
             else:self.child_status=2
             return 1
-        super().__init__(c,memory,r,device,False,instructions=INS,access=Access(c,memory,r,device),outer_returns=set(),max_steps=MAX_STEPS,
+        access=Access(c,memory,r,device)
+        def interrupt(m,number):
+            if number==0x10:
+                state=m.state();out=video_provider(access,{n:state[n] for n in animation.FIELDS})
+                state.update(out);m.set_state(state);m.mask=base.FLAGS;m.flags=state['flags'];return
+            check(number==0x21,'unexpected menu startup interrupt')
+            m.software_interrupt(number,m.state()['ip'],DOS_BINDING,None if c.get('no_service') else dos_provider)
+            if m.stopped:m.status={1:3,2:4,3:5}[m.status]
+        outer={0x4B1B} if c['kind']=='probe' else {0x5446,0x5506} if c['kind']=='publish' else set()
+        super().__init__(c,memory,r,device,c.get('core',False),instructions=INS,access=access,outer_returns=outer,max_steps=c.get('reference_steps',MAX_STEPS),
             before=before,child_returns={p:expected for p,i in INS.items() if i.mnemonic=='ret'},
-            far_returns={p:expected for p,i in INS.items() if i.mnemonic=='retf'},changed_return_status=changed)
+            far_returns={p:expected for p,i in INS.items() if i.mnemonic=='retf'},changed_return_status=changed,
+            interrupt=interrupt if c['kind'] in ('probe','startup') else None)
     def run(self):
-        out=super().run();out['child_status']=self.child_status or self.service_status;out['service_status']=0;out['calls']=self.calls;return out
+        out=super().run();out['child_status']=self.child_status or self.service_status;out['service_status']=0;out['calls']=self.calls;out['services']=self.access.service_events;out['transport_events']=self.access.transport_events;return out
 
 class Native:
     def __init__(self,directory,mutation=0):
         self.lib=ct.CDLL(str(build(Path(directory)/f'main-menu-{mutation}.dll',mutation,'main_menu')))
         self.run_menu=self.lib.lmn_run_main_menu;self.run_menu.restype=Result
         self.run_menu.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.c_int,ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
+        self.publish={};self.probe={}
+        for core,suffix in ((True,'core'),(False,'adapter')):
+            fn=getattr(self.lib,'lmn_publish_palette_'+suffix);fn.restype=PublishResult
+            fn.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_int,ct.POINTER(base.Ports),ct.POINTER(base.Bus)];self.publish[core]=fn
+            fn=getattr(self.lib,'lmn_check_menu_resource_'+suffix);fn.restype=Result
+            fn.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.POINTER(base.InterruptService),ct.POINTER(base.Ports),ct.POINTER(base.Bus)];self.probe[core]=fn
+        self.startup=self.lib.lmn_enter_main_menu;self.startup.restype=Result
+        self.startup.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.POINTER(VideoServices),ct.POINTER(base.InterruptService),ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
     def run(self,c,memory,r,device,*,copy_state=True):
         if copy_state:memory,device=bytearray(memory),copy.deepcopy(device)
         access=Access(c,memory,r,device)
-        cb=base.NativeCallbacks(access,missing_in=c.get('missing_in',False));mem=(ct.c_uint8*base.SIZE).from_buffer(memory)
-        out=self.run_menu(mem,ct.byref(base.Regs(**r)),(c['load']+0x9A9)&65535,c['entry'],ct.byref(cb.ports),ct.byref(cb.bus))
-        return dict(regs={n:getattr(out.registers,n) for n in base.REG_NAMES},status=out.status,child_status=out.child_status,service_status=0,
-                    memory=memory,device=access.device,events=access.events,providers=access.providers,cursor=access.cursor)
+        cb=base.NativeCallbacks(access,missing_in=c.get('missing_in',False),missing_out=c.get('missing_out',False));mem=(ct.c_uint8*base.SIZE).from_buffer(memory)
+        @VIDEO
+        def mode(_,binding,incoming,outgoing):
+            try:
+                check(ct.addressof(binding.contents)==ct.addressof(mem),'video canonical memory binding differs')
+                state=video_provider(access,{n:getattr(incoming.contents,n) for n in animation.FIELDS})
+                for n,v in state.items():setattr(outgoing.contents,n,v)
+            except BaseException as error:base.callback_failure(error)
+        video=VideoServices(None,mode,VIDEO())
+        callback=cb.interrupt(dos_provider);service=base.InterruptService(None,callback,*DOS_BINDING)
+        dos=None if c.get('no_service') else ct.byref(service)
+        regs=ct.byref(base.Regs(**r));game_ds=(c['load']+0x9A9)&65535;tail=[ct.byref(cb.ports),ct.byref(cb.bus)]
+        if c['kind']=='publish':out=self.publish[c.get('core',False)](mem,regs,c['entry'],*tail)
+        elif c['kind']=='probe':out=self.probe[c.get('core',False)](mem,regs,game_ds,dos,*tail)
+        elif c['kind']=='startup':out=self.startup(mem,regs,game_ds,None if c.get('missing_mode') else ct.byref(video),dos,*tail)
+        else:out=self.run_menu(mem,regs,game_ds,c['entry'],*tail)
+        return dict(regs={n:getattr(out.registers,n) for n in base.REG_NAMES},status=out.status,child_status=0 if c['kind']=='publish' else out.child_status,service_status=0,
+                    memory=memory,device=access.device,events=access.events,providers=access.providers,cursor=access.cursor,services=access.service_events)
 
 def independent(c,r,ref):
     check(ref['status']==c.get('expected',0) and ref['child_status']==c.get('child_status',0),c['name']+': unexpected stop')
     if ref['status']:return
+    if c['kind']=='publish':
+        mode=c.get('mode',2);index=2 if c['entry']==1 else c.get('index',1)
+        table=0x52E4 if mode==4 else 0x52D4;at=physical(r['cs'],table+2*index)
+        reads=[e[1] for e in ref['events'] if e[0]=='read']
+        check(reads[2:4]==[at,(at+1)&base.MASK],'live CS palette selector differs')
+        count=8 if c['entry']==0 else 16 if c['entry']!=3 else c.get('count',0xAD05)&255
+        count=count or 65536
+        outputs=[e for e in ref['events'] if e[0]=='out8']
+        check(len(outputs)==(4*count if mode==4 else 2*count+1),'palette publication count differs')
+        check(ref['regs']['ip']==((0x5506 if mode==4 else 0x5446) if c.get('core') else 0xD00D),'palette inherited return differs')
+        return
+    if c['kind']=='probe':
+        check(ref['regs']['ip']==(0x4B1B if c.get('core') else c.get('outer_ip',0xD00D)),'resource probe return differs')
+        calls=[e for e in ref['services'] if e['kind']=='dos']
+        if c.get('media',0)!=0xFD:
+            check(not calls and ref['memory'][physical(r['ds'],0x1FDF)]==c.get('critical',0x79),'non-FD probe changed critical state')
+        else:
+            expected=[0x3D]*c.get('fail_open',0)+[op for _ in range(c.get('fail_close',0)) for op in (0x3D,0x3E)]+[0x3D,0x3E]
+            check([e['entry']['ax']>>8 for e in calls]==expected,'resource retry/open/close order differs')
+            ds=ref['regs']['ds'];check(ref['memory'][physical(ds,0x1FDF)]==0,'successful probe did not clear live critical flag')
+            check(ref['memory'][physical(r['ds'],0x1FDE)]==c['media'],'probe changed startup FAT ID')
+            if ds!=r['ds']:check(ref['memory'][physical(r['ds'],0x1FDF)]==c.get('critical',0x79),'probe cleared entry DS critical flag')
+        return
+    if c['kind']=='startup':
+        check(ref['calls'][:5]==[(0x43F2,0x4BE7),(0x43F5,0x4DEF),(0x43F8,0x5028),(0x43FB,0x53FC),(0x43FE,0x4AC5)],'startup child order differs')
+        check((get16(ref['memory'],0,0x20),get16(ref['memory'],0,0x22))==(0x4C47,c['load']),'startup did not install menu vector')
+        check(ref['regs']['ip']==0x454C,'startup did not reach level transition')
+        return
     first=c['keys'][0];dest={0x80:0x454C,0x81:0x4967,0x83:0x4A01,0x1B:0x4D0}.get(first,0x454C)
     check(ref['regs']['ip']==dest,'menu destination differs')
     if c['entry']==3 and first==0x82 and c.get('sound_cache',c['toggle'])!=2:
@@ -210,6 +390,10 @@ def compare(native,c):
 def hashes():
     paths=set(keyboard.hashes())|set(scroll.hashes())|set(animation.hashes())|set(cache.hashes())|FIXTURES
     paths|={'c/main_menu.c','c/main_menu.h','tests/main_menu.py','src/input_menu_and_retry.asm','tools/cbuild.py','tools/difftest.py'}
+    for p in source_files('main_menu'):
+        paths.add(p.relative_to(ROOT).as_posix())
+        if p.with_suffix('.h').is_file():paths.add(p.with_suffix('.h').relative_to(ROOT).as_posix())
+    paths|={'src/palette_frontends.asm','src/entry_services.asm'}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 
 def input_handoff(native,record):
@@ -251,7 +435,7 @@ def worker(directory,snapshot):
     sites=set();edges=set();rows=[]
     def record(name,ref):
         sites.update(ref['sites']);edges.update(ref['edges'])
-        rows.append(dict(case=name,steps=ref['steps'],events=len(ref['events']),far_return_events=ref['far_return_events']))
+        rows.append(dict(case=name,steps=ref['steps'],events=len(ref['events']),far_return_events=ref['far_return_events'],transport_events=ref.get('transport_events',0),service_calls=len(ref.get('services',[]))))
     for c in cases():
         ref=compare(native,c);record(c['name'],ref)
         gc.collect();print('CHECKED '+c['name'],flush=True)
@@ -259,7 +443,7 @@ def worker(directory,snapshot):
     check(set(OWN)<=sites,'main menu sites missing: '+str(sorted(set(OWN)-sites)))
     check(EDGES<=edges,'main menu outcomes missing: '+str(sorted(EDGES-edges)))
     mutants=[];lookup={c['name']:c for c in cases()}
-    for mutation,name in ((1,'sound-blocked'),(2,'sound-driver-fe'),(3,'sound-unexpected-index'),(4,'key-82'),(5,'group-8a-unexpected'),(6,'key-8a'),(7,'key-80'),(8,'wait-return'),(9,'key-82')):
+    for mutation,name in ((1,'sound-blocked'),(2,'sound-driver-fe'),(3,'sound-unexpected-index'),(4,'key-82'),(5,'group-8a-unexpected'),(6,'key-8a'),(7,'key-80'),(8,'wait-return'),(9,'key-82'),(11,'probe-media-fe'),(12,'probe-open-retry'),(13,'probe-close-retry'),(14,'probe-returned-ds'),(15,'probe-latch'),(16,'probe-success'),(17,'probe-media-fe'),(101,'publish-e0-m2-i0'),(102,'publish-e0-m2-i2'),(103,'publish-e2-m260-i7'),(104,'publish-e1-m2-i0'),(105,'publish-e1-m2-i0')):
         try:compare(Native(directory,mutation),lookup[name])
         except base.Mismatch as error:mutants.append(dict(mutation=mutation,case=name,completed=True,mismatch=str(error)))
         else:raise base.OracleFailure(f'main menu mutant{mutation} survived')
@@ -268,10 +452,10 @@ def worker(directory,snapshot):
     write_json(REPORT,dict(image='main',image_sha256=sha(base.IMAGE),own_known_bytes=sum(i.size for i in OWN.values()),known_connected_bytes=sum(i.size for p,i in INS.items() if p not in BOUNDARY),
         entry_code_ranges=[list(r) for r in RANGES],case_count=len(cases())+1,comparison_count=len(rows),handoff_count=1,
         executed_instruction_addresses=sorted(sites),own_executed_instruction_addresses=sorted(set(OWN)&sites),branch_edges=sorted(edges),own_branch_edges=sorted(EDGES),
-        instruction_steps=sum(r['steps'] for r in rows),ordered_bus_events=sum(r['events'] for r in rows),declared_far_return_events=sum(r['far_return_events'] for r in rows),
+        instruction_steps=sum(r['steps'] for r in rows),ordered_bus_events=sum(r['events'] for r in rows),declared_far_return_events=sum(r['far_return_events'] for r in rows),declared_interrupt_transport_events=sum(r['transport_events'] for r in rows),service_calls=sum(r['service_calls'] for r in rows),
         mutation_count=len(mutants),mutations=mutants,input_hashes=before,rows=rows,
-        limits=dict(timeout_seconds=SECONDS,outer_timeout_seconds=540,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
-        scope='4401 refresh,4453 release wait,445B active frame,4478 keyboard through actual JMP exits. Connected native children on canonical RAM;43F2 startup,destination bodies,scheduling and inherited reference limits remain open.'))
+        limits=dict(timeout_seconds=SECONDS,outer_timeout_seconds=960,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
+        scope='Connected43F2 startup,4AC5 FAT-ID-gated resource retry,53F6/53FC/53FE/5401 palette selectors and4401..454B controller. Real near/far/INT21/IRET frames,existing logical display-setup INT10 ABI,returned segments and actual JMP exits. Destination bodies,native scheduling/opaque services and inherited reference limits remain open.'))
     print(f'PASS main menu: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(EDGES)} outcomes,{len(mutants)} mutants',flush=True)
 def main():
     if len(sys.argv)==4 and sys.argv[1]=='--worker':worker(sys.argv[2],sys.argv[3]);return

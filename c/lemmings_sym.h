@@ -243,7 +243,7 @@
 #define CS_PollPort201ButtonsHigh 0x4359u
 #define CS_MeasurePort201Axes 0x4386u
 #define CS_ChooseInputController 0x43CEu
-#define CS_sub_43F2 0x43F2u
+#define CS_EnterMainMenu 0x43F2u
 #define CS_sub_4566 0x4566u
 #define CS_sub_46A2 0x46A2u
 #define CS_sub_46B9 0x46B9u
@@ -251,7 +251,7 @@
 #define CS_sub_488C 0x488Cu
 #define CS_sub_48BD 0x48BDu
 #define CS_sub_48F6 0x48F6u
-#define CS_sub_4AC5 0x4AC5u
+#define CS_CheckMenuResourceAvailability 0x4AC5u
 #define CS_ShowResourceRetryScreen 0x4B1Cu
 #define CS_sub_4B5C 0x4B5Cu
 #define CS_WriteDecimalByteField 0x4B68u
@@ -310,9 +310,9 @@
 #define CS_TransitionPaletteToSlot2 0x536Cu
 #define CS_sub_5377 0x5377u
 #define CS_sub_53CA 0x53CAu
-#define CS_sub_53F6 0x53F6u
-#define CS_sub_53FC 0x53FCu
-#define CS_sub_53FE 0x53FEu
+#define CS_PublishEightPaletteColors 0x53F6u
+#define CS_PublishMenuPalette 0x53FCu
+#define CS_PublishSixteenPaletteColors 0x53FEu
 #define CS_WriteAttributePalette 0x5425u
 #define CS_sub_5447 0x5447u
 #define CS_UpdateTimerPaletteBefore5473 0x5473u
@@ -1109,4 +1109,26 @@
 #define CS_MainMenuAfterCall4467 0x446Au
 #define CS_MainMenuAfterCall446A 0x446Du
 #define CS_MainMenuAfterCall4478 0x447Bu
+#define CS_SelectAndPublishPalette 0x5401u
+#define CS_MenuResourceProbeReturn 0x4B1Bu
+#define SEG09A9_MenuResourceRetryText 0x4F00u
+#define SEG09A9_MenuResourceProbeFilename 0x2534u
+#define CS_MenuResourceAfterOpen 0x4B06u
+#define CS_MenuResourceAfterClose 0x4B0Eu
+#define CS_MenuStartupAfterCall43F2 0x43F5u
+#define CS_MenuStartupAfterCall43F5 0x43F8u
+#define CS_MenuStartupAfterCall43F8 0x43FBu
+#define CS_MenuStartupAfterCall43FB 0x43FEu
+#define CS_MenuStartupAfterCall43FE 0x4401u
+#define CS_MenuStartupAfterCall4ACC 0x4ACFu
+#define CS_MenuStartupAfterCall4ACF 0x4AD2u
+#define CS_MenuStartupAfterCall4AD2 0x4AD5u
+#define CS_MenuStartupAfterCall4AD9 0x4ADCu
+#define CS_MenuStartupAfterCall4ADC 0x4ADFu
+#define CS_MenuStartupAfterCall4ADF 0x4AE2u
+#define CS_MenuStartupAfterCall4AE2 0x4AE5u
+#define CS_MenuStartupAfterCall4AE5 0x4AE8u
+#define CS_MenuStartupAfterCall4B10 0x4B13u
+#define CS_MenuStartupAfterCall4B13 0x4B16u
+#define SEG09A9_StartupFatIdByte1FDE 0x1FDEu
 #endif

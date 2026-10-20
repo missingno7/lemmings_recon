@@ -72,4 +72,19 @@ LmnTimerPaletteResult lmn_timer_palette_adapter(uint8_t *memory,
     const LmnRegs *registers, LmnTimerPaletteEntry entry,
     const LmnRasterBytePorts *ports, const LmnRasterBus *bus);
 
+typedef enum LmnPalettePublishEntry {
+    LMN_PALETTE_PUBLISH_EIGHT, LMN_PALETTE_PUBLISH_MENU,
+    LMN_PALETTE_PUBLISH_SIXTEEN, LMN_PALETTE_PUBLISH_KEEP_COUNT
+} LmnPalettePublishEntry;
+typedef LmnTimerPaletteResult LmnPalettePublishResult;
+/* 53F6/53FC/53FE/5401: zero-extend AL, double, read unchecked live CS
+   pointer table. Only mode word4 selects mapped DAC. Tail JMP shares the
+   writer's actual caller RET; no extra frame or shadow palette is created. */
+LmnPalettePublishResult lmn_publish_palette_core(uint8_t *memory,
+    const LmnRegs *registers,LmnPalettePublishEntry entry,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnPalettePublishResult lmn_publish_palette_adapter(uint8_t *memory,
+    const LmnRegs *registers,LmnPalettePublishEntry entry,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+
 #endif

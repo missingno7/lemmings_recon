@@ -1058,3 +1058,17 @@ the physical span stay unresolved. Fresh53FC/4AC5 views select palette-source
 publication and critical resource open/close retry before43F2 startup composition.
 The326-byte domain does not claim43F2's entire level/game body. See main-menu.md;
 full original-contract,aggregate and native-host acceptance remain separate.
+
+The startup/resource/palette-selector checkpoint adds146 bytes,taking the main
+C union to29,001. EnterMainMenu43F2 now composes display setup,actual timer
+installation,palette publication,media-gated resource retry and the controller.
+The expanded shared campaign passes123 fixtures/125 comparisons,169 own sites/
+66 outcomes and21 completed mutants. FAT sample1FDE is proven distinct from
+critical flag1FDF. Actual open/close CF/handle/AL,returned DS and moved INT/IRET
+frames remain live. Full zero-count palette loops complete; byte/word mode
+selection and unchecked CS pointers retain their original contracts. Source
+resolution now exposes the true deduplicated compiler closure; all320 unaffected
+source/define plans remain unchanged. Packed observations retain complete VGA
+traces within384MiB. Native timer/palette regressions pass. Fresh4C7E and5042/
+51A2 views select code-entry transforms/ownership next; unresolved reader
+transfers and level/game bodies remain explicit. See menu-startup.md.

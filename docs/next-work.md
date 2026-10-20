@@ -2,7 +2,18 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is28,855 bytes. The326-byte
+The main-image translated-code ledger union is29,001 bytes. The146 new
+startup/resource/palette-selector bytes now enter the accepted controller via
+declared BIOS-service,near/far,timer-vector and INT21/IRET contracts. The expanded
+menu campaign passes123 fixtures/125 comparisons,169 own sites/66 outcomes
+and21 completed mutants. Startup runs at three loads; FD media probing,open/
+close retries,returned DS/SS,full zero-count palettes and the input/refresh
+handoff complete within384MiB. FAT sample1FDE and critical flag1FDF are distinct.
+Native menu_timer/palette_timer regressions and81 unit tests pass. See
+menu-startup.md. Destination bodies,native services/scheduling and aggregate
+acceptance remain separate.
+
+The preceding main-image translated-code ledger union was28,855 bytes. The326-byte
 4401..454B menu controller composes refresh,scroll,animation,cached graphics,
 text,palette,page copy/display and keyboard in the original order. Its48 fixtures/
 50 comparisons cover118 own sites/51 outcomes and nine completed mutants.
@@ -147,16 +158,17 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Connect43F2's startup prefix to the accepted menu controller. Fresh53FC
-   bottom-up and4AC5 tree views put palette selection/publication and critical
-   resource availability above tested palette/display children. Audit53F6/53FC/
-   53FE's shared5401 tail and live CS pointer tables before translating its
-   prefix; keep mapped/attribute writer contracts. Audit4AC5's exactFD critical
-   flag1FDE,live keyboard/button wait,DS2534 filename,actual DOS open/close
-   register/segment/flag/handle effects and retry loop before connecting43F2.
-   Retain separate04D0/4967/4A01/454C destination contracts;43F2's level/game loop
-   is not accepted by its326-byte menu domain. Code transforms5042/51A2 and
-   code entry4C7E remain connected input obligations. Source layout closure
+1. Continue the code-entry destination4967 above the accepted menu. Fresh4C7E
+   tree and5042/51A2 bottom-up views identify the code transforms as leaf
+   uncertainties before input composition. Audit live DS4913 template,491D
+   payload,4D68 output,4DF2 input,1F74 special latch,byte rotations/checksum,
+   in-place failure effects and level-selection/group writes. Preserve the
+   reader's unresolved4CC9/4D18 transfer domains until their producers/targets
+   are proven;503B's text bridge also remains untranslated. The startup/media
+   checkpoint distinguishes sampled FAT ID1FDE from critical flag1FDF; it does
+   not translate the earlier AH1B producer or its protection consumers. Retain
+   separate04D0/4967/4A01/454C destination contracts and the remaining level/game
+   body; scoped EnterMainMenu acceptance does not complete those bodies. Source layout closure
    does not close broader allocation/initialization. Keep artificial VGA-stack budget failure and
    RETF selector-EA wrap atSPFFFE/FFFF explicitly unverified. Retain42A5 and
    UNKNOWN4C65/1696..16A8; no unsupported alternative is declared complete.

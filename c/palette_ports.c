@@ -7,6 +7,9 @@
 #ifndef PALETTE_TIMER_MUTATION
 #define PALETTE_TIMER_MUTATION 0
 #endif
+#ifndef PALETTE_PUBLISH_MUTATION
+#define PALETTE_PUBLISH_MUTATION 0
+#endif
 
 enum { CF = 0x0001, PF = 0x0004, AF = 0x0010, ZF = 0x0040,
        SF = 0x0080, IF = 0x0200, DF = 0x0400, OF = 0x0800,
@@ -750,6 +753,56 @@ LmnTimerPaletteResult lmn_timer_palette_adapter(uint8_t *memory,
         LmnPalettePortsState state = state_from_registers(&out.registers);
         out.registers.ip = pop_word(memory, bus, &state);
         apply_state(&out.registers, &state);
+    }
+    return out;
+}
+
+LmnPalettePublishResult lmn_publish_palette_core(uint8_t *memory,
+    const LmnRegs *registers,LmnPalettePublishEntry entry,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnPalettePortsState state=state_from_registers(registers);
+    uint16_t mode;
+    if(entry==LMN_PALETTE_PUBLISH_MENU) {
+#if PALETTE_PUBLISH_MUTATION != 4
+        state.value=(uint16_t)((state.value&0xff00u)|2u);
+#endif
+    }
+    if(entry!=LMN_PALETTE_PUBLISH_KEEP_COUNT) {
+        state.count=entry==LMN_PALETTE_PUBLISH_EIGHT?8u:16u;
+#if PALETTE_PUBLISH_MUTATION == 5
+        state.count=8u;
+#endif
+    }
+#if PALETTE_PUBLISH_MUTATION != 1
+    state.value&=0xffu;
+    logic8_flags(&state.flags,0u); /* XOR AH,AH */
+#endif
+    state.value=add16_flags(&state.flags,state.value,state.value);
+    mode=read_word(memory,bus,state.data_segment,SEG09A9_PaletteDisplayModeWord,state.flags);
+#if PALETTE_PUBLISH_MUTATION == 3
+    (void)sub8_flags(&state.flags,(uint8_t)mode,4u);mode&=0xffu;
+#else
+    (void)sub16_flags(&state.flags,mode,4u);
+#endif
+    state.source_cursor=mode==4u?CS_RgbPalettePointerTable:CS_PackedPalettePointerTable;
+    state.source_cursor=add16_flags(&state.flags,state.source_cursor,state.value);
+#if PALETTE_PUBLISH_MUTATION == 2
+    state.source_cursor=read_word(memory,bus,state.data_segment,state.source_cursor,state.flags);
+#else
+    state.source_cursor=read_word(memory,bus,registers->cs,state.source_cursor,state.flags);
+#endif
+    /* Both original branches tail-JMP: the writer owns the existing RET. */
+    return timer_child(memory,registers,&state,mode==4u?
+        LMN_PALETTE_PORTS_ENTRY_MAPPED_DAC:LMN_PALETTE_PORTS_ENTRY_ATTRIBUTE,ports,bus);
+}
+
+LmnPalettePublishResult lmn_publish_palette_adapter(uint8_t *memory,
+    const LmnRegs *registers,LmnPalettePublishEntry entry,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnPalettePublishResult out=lmn_publish_palette_core(memory,registers,entry,ports,bus);
+    if(out.status==0u) {
+        LmnPalettePortsState state=state_from_registers(&out.registers);
+        out.registers.ip=pop_word(memory,bus,&state);apply_state(&out.registers,&state);
     }
     return out;
 }

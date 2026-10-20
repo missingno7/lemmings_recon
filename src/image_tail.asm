@@ -5813,3 +5813,6 @@ MenuScrollPauseTicks equ GameDataImage+0x0023
 MenuScrollText equ GameDataImage+0x49CE
 MenuSoundOptionIndex equ GameDataImage+0x1F71
 MainMenuText equ GameDataImage+0x4AD9
+MenuResourceRetryText equ GameDataImage+0x4F00
+MenuResourceProbeFilename equ GameDataImage+0x2534
+StartupFatIdByte1FDE equ GameDataImage+0x1FDE

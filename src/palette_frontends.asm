@@ -1,7 +1,7 @@
 ; Palette pointers, byte-port writers and transition front ends, original52D4..563D.
 ; Native contracts: docs/palette-row-select.md and docs/palette-ports.md.
 ; Initial table bytes remain UNKNOWN; unchecked selectors and buffer ownership stay open.
-; Transition loops and sequential DAC writer548C are not yet translated.
+; Native transitions,ports and53F6/53FC/53FE selectors retain their scoped contracts.
 ; UNKNOWN: unresolved bytes
 PackedPalettePointerTable:
     db 0x38,0x26,0x08,0x26,0x20,0x49,0x13,0x1f,0xe8,0x25,0x0b,0x1f,0xa8,0x25,0x68,0x26 ; @052D4
@@ -128,16 +128,20 @@ loc_53E7:
     mov si,[cs:si] ; @053ED
     add si,byte +0x18 ; @053F0
     jmp WriteMappedDacPalette ; @053F3
-sub_53F6:
+PublishEightPaletteColors:
+; CX8 entry keeps incomingAL; MENU forcesAL2 before CX16. Shared body clearsAH,
+; doublesAX and selects a live unchecked CS pointer. Mode word must equal4 for
+; mapped DAC; all other words tail-JMP attribute writer. No new caller frame.
     mov cx,0x8 ; @053F6
     jmp short loc_5401 ; @053F9
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @053FB
-sub_53FC:
+PublishMenuPalette:
     mov al,0x2 ; @053FC
-sub_53FE:
+PublishSixteenPaletteColors:
     mov cx,0x10 ; @053FE
 loc_5401:
+SelectAndPublishPalette:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @05401
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @05403
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x4 ; @05405

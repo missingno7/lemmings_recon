@@ -6,6 +6,7 @@
 #include "background_drawing.h"
 #include "text_stream.h"
 #include "palette_transition.h"
+#include "timer_tail.h"
 
 #ifndef MAIN_MENU_MUTATION
 #define MAIN_MENU_MUTATION 0
@@ -75,12 +76,24 @@ static LmnVideoRestoreState from_display(const LmnDisplayStatusState *v) {
     LmnVideoRestoreState out={v->value,v->base_value,v->count,v->argument,v->source_cursor,v->output_cursor,
         v->frame_cursor,v->data_segment,v->extra_segment,v->stack_segment,v->stack_offset,v->flags};return out;
 }
+static int finish_child(Menu *s,uint16_t cs,uint16_t resume,uint16_t status) {
+    if(status){s->status=LMN_MAIN_MENU_CHILD_STOP;s->child_status=status;return 0;}
+    s->r.ip=pop(s);
+#if MAIN_MENU_MUTATION == 8
+    s->r.ip=resume;
+#endif
+    if(s->r.cs!=cs||s->r.ip!=resume){s->status=LMN_MAIN_MENU_CHANGED_CHILD_RETURN;return 0;}
+    return 1;
+}
 static int child(Menu *s,uint16_t target,uint16_t resume) {
     uint16_t cs=s->r.cs,child_cs=cs,ip=target,status=0;
     LmnVideoRestoreState in,out;
     push(s,resume);in=(LmnVideoRestoreState){INPUT_FIELDS(s)};
     if(target==CS_ReadKeyboardCharacter) {
         LmnKeyboardResult c=lmn_read_keyboard_character_core(s->memory,&s->r,s->bus);
+        s->r=c.registers;status=c.status;
+    } else if(target==CS_PublishMenuPalette) {
+        LmnPalettePublishResult c=lmn_publish_palette_core(s->memory,&s->r,LMN_PALETTE_PUBLISH_MENU,s->ports,s->bus);
         s->r=c.registers;status=c.status;
     } else {
         if(target==CS_WaitForDisplayStatusBit3Cycle) {
@@ -125,13 +138,7 @@ static int child(Menu *s,uint16_t target,uint16_t resume) {
         }
         apply(s,&out,child_cs,ip);
     }
-    if(status){s->status=LMN_MAIN_MENU_CHILD_STOP;s->child_status=status;return 0;}
-    s->r.ip=pop(s);
-#if MAIN_MENU_MUTATION == 8
-    s->r.ip=resume;
-#endif
-    if(s->r.cs!=cs||s->r.ip!=resume){s->status=LMN_MAIN_MENU_CHANGED_CHILD_RETURN;return 0;}
-    return 1;
+    return finish_child(s,cs,resume,status);
 }
 static LmnMainMenuResult result(Menu *s) {LmnMainMenuResult out={s->r,s->status,s->child_status};return out;}
 static void group_selection(Menu *s) {
@@ -253,4 +260,106 @@ start_level:
     s.r.ip=CS_MainMenuStartLevel;
 #endif
     return result(&s);
+}
+
+static int dos_call(Menu *s,uint16_t resume,const LmnInterruptService *dos) {
+    LmnInterruptResult call=lmn_interrupt_service(s->memory,&s->r,0x21u,resume,dos,s->bus);
+    if(call.status==LMN_INTERRUPT_RETURNED)return 1;
+    s->status=call.status==LMN_INTERRUPT_UNBOUND_SERVICE?LMN_MAIN_MENU_UNBOUND_DOS:
+        call.status==LMN_INTERRUPT_PROVIDER_STOP?LMN_MAIN_MENU_DOS_STOP:LMN_MAIN_MENU_CHANGED_IRET;
+    s->child_status=call.service_status;return 0;
+}
+static void resource_probe(Menu *s,const LmnInterruptService *dos) {
+#if MAIN_MENU_MUTATION == 14
+    uint16_t entry_ds=s->r.ds;
+#endif
+    #if MAIN_MENU_MUTATION == 17
+    uint8_t media=read8(s,SEG09A9_DatCriticalErrorFlag);
+#else
+    uint8_t media=read8(s,SEG09A9_StartupFatIdByte1FDE);
+#endif
+    cmp8(s,media,0xfdu);
+#if MAIN_MENU_MUTATION == 11
+    if(!media)goto ready;
+#else
+    if(!(s->r.flags&ZF))goto ready;
+#endif
+    if(!child(s,CS_TransitionPaletteToSlot1,CS_MenuStartupAfterCall4ACC))return;
+redraw:
+    if(!child(s,CS_ClearFullDrawingPage,CS_MenuStartupAfterCall4ACF)||
+       !child(s,CS_DrawScreenBackground,CS_MenuStartupAfterCall4AD2))return;
+    s->r.si=SEG09A9_MenuResourceRetryText;
+    if(!child(s,CS_DrawTextStream,CS_MenuStartupAfterCall4AD9)||
+       !child(s,CS_CopyDrawingPageToAlternate,CS_MenuStartupAfterCall4ADC)||
+       !child(s,CS_WaitForDisplayStatusBit3Cycle,CS_MenuStartupAfterCall4ADF)||
+       !child(s,CS_ProgramAlternateDisplayStart,CS_MenuStartupAfterCall4AE2)||
+       !child(s,CS_TransitionPaletteToSlot2,CS_MenuStartupAfterCall4AE5))return;
+    write8(s,SEG09A9_KeyboardScanCodeByte,0u);
+    for(;;) {
+        s->r.ax=read16(s,s->r.ds,SEG09A9_InputButtonsWord);(void)logic(s,s->r.ax&7u,0);
+        if(!(s->r.flags&ZF))break;
+        ah(s,read8(s,SEG09A9_KeyboardScanCodeByte));
+#if MAIN_MENU_MUTATION == 15
+        (void)logic(s,(uint8_t)s->r.ax,1);
+#else
+        (void)logic(s,s->r.ax>>8,1);
+#endif
+        if(!(s->r.flags&ZF))break;
+    }
+    s->r.dx=SEG09A9_MenuResourceProbeFilename;s->r.ax=0x3d00u;
+    if(!dos_call(s,CS_MenuResourceAfterOpen,dos))return;
+#if MAIN_MENU_MUTATION != 12
+    if(s->r.flags&CF)goto redraw;
+#endif
+    s->r.bx=s->r.ax;
+#if MAIN_MENU_MUTATION == 16
+    s->r.ax=0x3e00u;
+#else
+    ah(s,0x3eu);
+#endif
+    if(!dos_call(s,CS_MenuResourceAfterClose,dos))return;
+#if MAIN_MENU_MUTATION != 13
+    if(s->r.flags&CF)goto redraw;
+#endif
+    if(!child(s,CS_TransitionPaletteToSlot1,CS_MenuStartupAfterCall4B10)||
+       !child(s,CS_ClearFullDrawingPage,CS_MenuStartupAfterCall4B13))return;
+#if MAIN_MENU_MUTATION == 14
+    write_at(s,physical(entry_ds,SEG09A9_DatCriticalErrorFlag),0u);
+#else
+    write8(s,SEG09A9_DatCriticalErrorFlag,0u);
+#endif
+ready:
+    s->r.ip=CS_MenuResourceProbeReturn;
+}
+LmnMainMenuResult lmn_check_menu_resource_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};resource_probe(&s,dos);return result(&s);
+}
+LmnMainMenuResult lmn_check_menu_resource_adapter(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnMainMenuResult out=lmn_check_menu_resource_core(memory,registers,game_ds,dos,ports,bus);
+    if(out.status==0u){Menu s={memory,ports,bus,out.registers,game_ds,0u,0u};s.r.ip=pop(&s);out.registers=s.r;}
+    return out;
+}
+LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnVideoRestoreServices *video,const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};uint16_t cs=s.r.cs;
+    push(&s,CS_MenuStartupAfterCall43F2);
+    {
+        LmnVideoRestoreState in={INPUT_FIELDS(&s)};
+        LmnDisplaySetupResult c=lmn_setup_display_core(memory,cs,&in,LMN_DISPLAY_SETUP_ENTRY_FULL,video,bus);
+        apply(&s,&c.state,c.code_segment,c.continuation);
+        if(!finish_child(&s,cs,CS_MenuStartupAfterCall43F2,(uint16_t)c.status))return result(&s);
+    }
+    if(!child(&s,CS_ClearFullDrawingPage,CS_MenuStartupAfterCall43F5))return result(&s);
+    push(&s,CS_MenuStartupAfterCall43F8);
+    {
+        LmnTimerTailResult c=lmn_install_menu_timer_core(memory,&s.r,bus);s.r=c.registers;
+        if(!finish_child(&s,cs,CS_MenuStartupAfterCall43F8,c.status))return result(&s);
+    }
+    if(!child(&s,CS_PublishMenuPalette,CS_MenuStartupAfterCall43FB))return result(&s);
+    push(&s,CS_MenuStartupAfterCall43FE);resource_probe(&s,dos);
+    if(s.status||!finish_child(&s,cs,CS_MenuStartupAfterCall43FE,0u))return result(&s);
+    return lmn_run_main_menu(memory,&s.r,game_ds,LMN_MAIN_MENU_REFRESH,ports,bus);
 }

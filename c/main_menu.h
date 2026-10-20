@@ -4,6 +4,7 @@
 #include "menu_animation.h"
 #include "menu_cache.h"
 #include "keyboard_input.h"
+#include "display_setup.h"
 
 typedef enum LmnMainMenuEntry {
     LMN_MAIN_MENU_REFRESH, LMN_MAIN_MENU_RELEASE,
@@ -11,7 +12,8 @@ typedef enum LmnMainMenuEntry {
 } LmnMainMenuEntry;
 typedef enum LmnMainMenuStatus {
     LMN_MAIN_MENU_CONTINUATION, LMN_MAIN_MENU_CHILD_STOP,
-    LMN_MAIN_MENU_CHANGED_CHILD_RETURN
+    LMN_MAIN_MENU_CHANGED_CHILD_RETURN,
+    LMN_MAIN_MENU_UNBOUND_DOS,LMN_MAIN_MENU_DOS_STOP,LMN_MAIN_MENU_CHANGED_IRET
 } LmnMainMenuStatus;
 typedef struct LmnMainMenuResult {
     LmnRegs registers;
@@ -26,4 +28,18 @@ _Static_assert(sizeof(LmnMainMenuResult)==32u,"32-byte main-menu boundary");
 LmnMainMenuResult lmn_run_main_menu(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_data_segment,enum LmnMainMenuEntry entry,
     const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+
+/* 4AC5 availability/retry core stops before4B1B; adapter consumes that live
+   caller word only on READY. DOS uses the shared actual INT21/IRET transport. */
+LmnMainMenuResult lmn_check_menu_resource_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_check_menu_resource_adapter(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+/* 43F2's five real child calls, then fallthrough4401. BIOS retains the existing
+   display-setup service ABI; DOS and timer-vector writes remain explicit. */
+LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnVideoRestoreServices *video,
+    const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
 #endif

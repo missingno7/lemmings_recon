@@ -28,18 +28,25 @@ InputControllerChoiceReturn43ED:
 loc_43EE:
     mov cl,0x2 ; @043EE
     jmp short loc_43ED ; @043F0
-sub_43F2:
+EnterMainMenu:
+; Five real child calls precede fallthrough4401. BIOS keeps its existing logical
+; service ABI; DOS probe uses actual INT21/IRET frames. No extra menu-entry RET.
     call SetupDisplayModeAndLayout ; @043F2
+MenuStartupAfterCall43F2:
     call ClearFullDrawingPage ; @043F5
+MenuStartupAfterCall43F5:
     call InstallMenuTimerVector ; @043F8
-    call sub_53FC ; @043FB
-    call sub_4AC5 ; @043FE
+MenuStartupAfterCall43F8:
+    call PublishMenuPalette ; @043FB
+MenuStartupAfterCall43FB:
+    call CheckMenuResourceAvailability ; @043FE
 loc_4401:
 ; Connected refresh: actual near calls flow through returnedDS/ES/SS/flags.
 ; Reset origins,caches,toggle; option index1F71 and SoundOptionBits survive.
 ; Draw/copy both pages then release-wait. No nearRET: exits are actual JMPs.
 ; Scope4401..454B excludes three UNKNOWN table bytes and two UNKNOWN NOP bytes.
 MenuRefresh4401:
+MenuStartupAfterCall43FE:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04401
     mov word [AlternateDrawingOrigin-GameDataImage],0x6d60 ; @04407
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0440D
@@ -292,7 +299,7 @@ loc_45F2:
     jnz loc_45F2 ; @045FB
     mov al,0x1 ; @045FD
     nop ; @045FF
-    call sub_53FE ; @04600
+    call PublishSixteenPaletteColors ; @04600
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04603
     mov word [AlternateDrawingOrigin-GameDataImage],0x0 ; @04609
     call SwapDrawingOriginsAndDisplay ; @0460F
@@ -374,7 +381,7 @@ loc_46C5:
     push dx ; @046CB
     mov al,0x0 ; @046CC
     nop ; @046CE
-    call sub_53F6 ; @046CF
+    call PublishEightPaletteColors ; @046CF
     pop dx ; @046D2
     cli ; @046D3
     mov cx,0x3c ; @046D4
@@ -389,13 +396,13 @@ loc_46DC:
     loop loc_46D7 ; @046E1
     mov al,0x7 ; @046E3
     nop ; @046E5
-    call sub_53F6 ; @046E6
+    call PublishEightPaletteColors ; @046E6
     sti ; @046E9
     ret ; @046EA
 loc_46EB:
     call ClearFullDrawingPage ; @046EB
     call SetupDisplayModeAndLayout ; @046EE
-    call sub_53FC ; @046F1
+    call PublishMenuPalette ; @046F1
     call TransitionPaletteToSlot1 ; @046F4
     call ClearFullDrawingPage ; @046F7
     call InstallMenuTimerVector ; @046FA
@@ -816,19 +823,32 @@ loc_4AB5:
 loc_4ABD:
     mov byte [InputModeByte25A6-GameDataImage],0x0 ; @04ABD
     jmp loc_4401 ; @04AC2
-sub_4AC5:
-    cmp byte [0x1fde],0xfd ; @04AC5
+CheckMenuResourceAvailability:
+; 1FDE is the FAT-ID byte sampled from AH1B's returnedDS:BX at009A/009D,
+; not the neighboring INT24 critical-error flag1FDF. Only exactFD enters here.
+; Both DOS open and close CF failures redraw/retry with returnedDS/SS live.
+; AX open handle becomesBX; MOV AH,3E preservesAL. Success clears liveDS:1FDF.
+; Input waits test buttons low3 or AH latch; the whole keyboard byte is live.
+    cmp byte [StartupFatIdByte1FDE-GameDataImage],0xfd ; @04AC5
     jnz loc_4B1B ; @04ACA
     call TransitionPaletteToSlot1 ; @04ACC
 loc_4ACF:
+MenuStartupAfterCall4ACC:
     call ClearFullDrawingPage ; @04ACF
+MenuStartupAfterCall4ACF:
     call DrawScreenBackground ; @04AD2
-    lea si,[0x4f00] ; @04AD5
+MenuStartupAfterCall4AD2:
+    lea si,[MenuResourceRetryText-GameDataImage] ; @04AD5
     call DrawTextStream ; @04AD9
+MenuStartupAfterCall4AD9:
     call CopyDrawingPageToAlternate ; @04ADC
+MenuStartupAfterCall4ADC:
     call WaitForDisplayStatusBit3Cycle ; @04ADF
+MenuStartupAfterCall4ADF:
     call ProgramAlternateDisplayStart ; @04AE2
+MenuStartupAfterCall4AE2:
     call TransitionPaletteToSlot2 ; @04AE5
+MenuStartupAfterCall4AE5:
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @04AE8
 loc_4AED:
     mov ax,[InputButtonsWord-GameDataImage] ; @04AED
@@ -838,18 +858,23 @@ loc_4AED:
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM chooses a different encoding) ; @04AF9
     jz loc_4AED ; @04AFB
 loc_4AFD:
-    lea dx,[0x2534] ; @04AFD
+    lea dx,[MenuResourceProbeFilename-GameDataImage] ; @04AFD
     mov ax,0x3d00 ; @04B01
     int 0x21 ; @04B04
+MenuResourceAfterOpen:
     jc loc_4ACF ; @04B06
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @04B08
     mov ah,0x3e ; @04B0A
     int 0x21 ; @04B0C
+MenuResourceAfterClose:
     jc loc_4ACF ; @04B0E
     call TransitionPaletteToSlot1 ; @04B10
+MenuStartupAfterCall4B10:
     call ClearFullDrawingPage ; @04B13
+MenuStartupAfterCall4B13:
     mov byte [DatCriticalErrorFlag-GameDataImage],0x0 ; @04B16
 loc_4B1B:
+MenuResourceProbeReturn:
     ret ; @04B1B
 ShowResourceRetryScreen:
     call SetupDisplayModeAndLayout ; @04B1C

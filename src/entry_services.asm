@@ -63,7 +63,7 @@ ProgramEntry:
     int 0x21 ; @00098
     mov al,[bx] ; @0009A
     pop ds ; @0009C
-    mov [0x1fde],al ; @0009D
+    mov [StartupFatIdByte1FDE-GameDataImage],al ; @0009D
     mov ah,0xf ; @000A0
     int 0x10 ; @000A2
     mov [SavedVideoMode-GameDataImage],al ; @000A4
@@ -99,7 +99,7 @@ sub_00D8:
     db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @000F3
     out 0x40,al ; @000F5
     sti ; @000F7
-    jmp sub_43F2 ; @000F8
+    jmp EnterMainMenu ; @000F8
 loc_00FB:
     call sub_03E7 ; @000FB
     mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
@@ -671,7 +671,7 @@ loc_0626:
     mov al,0xff ; @00628
     ret ; @0062A
 sub_062B:
-    mov al,[0x1fde] ; @0062B
+    mov al,[StartupFatIdByte1FDE-GameDataImage] ; @0062B
     cmp al,0xf8 ; @0062E
     jnz loc_0635 ; @00630
     jmp loc_0E66 ; @00632
