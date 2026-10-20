@@ -18,6 +18,7 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('level_briefing', 960, 384),
     Suite('level_preview', 630, 384),
     Suite('main_menu', 1260, 384),
     Suite('menu_scroll', 600, 384),

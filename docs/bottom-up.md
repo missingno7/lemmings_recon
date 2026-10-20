@@ -1127,3 +1127,20 @@ now isolate7EB2..80FC without reordering or reclassification. Fresh4566 graph
 views select the4B5C/4C17/5447 wrappers and connected briefing path next, retaining
 197D RAM-only service scope. No new CPU/bus/comparison engine, runtime image copy
 or native platform closure is introduced. See level-preview.md and next-work.md.
+
+The connected 4566 briefing and 4B5C/4C17/5447 wrappers add 379 unique bytes,
+taking the main C union to 31,161. Their shared campaign passes 295 fixtures /
+590 comparisons, all 132 own sites / 29 outcomes and five completed mutants.
+Three full loads, nonempty terrain/preview/text flow, changing palette phases,
+all 256 percentages and the actual cancel POP/JMP run through native children.
+The first 588 comparisons passed but lacked two palette backedges; a constructed
+nonstable-palette witness closes them in the final complete run. Shared byte
+DIV flag validity has an actual-instruction unit check; all 84 unit tests pass.
+The 350.07-second suite stays under 384 MiB, keeps 148 matching input hashes
+and reaps DLL contexts. Full original contracts pass in 479.67 seconds with
+180 matching input hashes and exact ASM/relocations, separately from native
+aggregate acceptance.
+Known tails count once. UNKNOWN469A/5469, processor-fault handling, special/
+resource/fatal/IRQ/platform domains stay explicit. Fresh entry graphs guide
+canonical resource-bus composition and the 00FB game continuation next.
+See level-briefing.md and next-work.md.

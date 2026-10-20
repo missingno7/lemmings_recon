@@ -1,3 +1,5 @@
+; Maintained image span080FD..08237; remaining display/dirty suffix.
+; Physical order and UNKNOWN bytes are preserved.
 sub_80FD:
     mov dx,0x3c4 ; @080FD
     mov ax,0xf02 ; @08100

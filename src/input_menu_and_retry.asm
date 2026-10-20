@@ -233,9 +233,15 @@ loc_4551:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04559
     rep stosb ; @0455B
     call LoadSelectedLevelResources ; @0455D
-    call sub_4566 ; @04560
+    call ShowLevelBriefing ; @04560
     jmp loc_00FB ; @04563
-sub_4566:
+; BRIEFING: wrapped byte selection minus30*group, live header fields and byte DIV.
+; Zero divisor/quotient overflow remain processor-fault seams, never clamped.
+; Actual PUSH DS/POP ES owns the DF-sensitive32-byte title copy; rating row is unchecked.
+; Native redraw/preview feed the partial clear, background/text and split-palette wait.
+; Button/40h tail-fades with inherited RET;20h calls fade, POPs actual AX, JMPs4401.
+; New wrappers and parent use shared bounded verification; docs/level-briefing.md.
+ShowLevelBriefing:
     mov al,[MenuLevelGroupIndex-GameDataImage] ; @04566
     shl al,1 ; @04569
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @0456B
@@ -250,20 +256,25 @@ sub_4566:
     db 0x2a,0xc4 ; ENCODED: sub al,ah (NASM chooses a different encoding) ; @0457E
     lea si,[0x4b13] ; @04580
     call WriteDecimalBytePair ; @04584
+BriefingAfter4584:
     mov al,[0xfce] ; @04587
     lea si,[0x4b50] ; @0458A
     call WriteDecimalByteField ; @0458E
+BriefingAfter458E:
     mov al,[0xfd0] ; @04591
     mov cl,0x64 ; @04594
     mul cl ; @04596
     mov cl,[0xfce] ; @04598
+BriefingPercentDivide:
     div cl ; @0459C
     mov [0x41],al ; @0459E
     lea si,[0x4b57] ; @045A1
-    call sub_4B5C ; @045A5
+    call WritePercentageByteField ; @045A5
+BriefingAfter45A5:
     mov al,[0xfcc] ; @045A8
     lea si,[0x4b78] ; @045AB
     call WriteDecimalBytePair ; @045AF
+BriefingAfter45AF:
     mov al,[0xfd2] ; @045B2
     add al,0x30 ; @045B5
     mov [0x4b83],al ; @045B7
@@ -293,28 +304,38 @@ loc_45E5:
     loop loc_45E5 ; @045ED
     call ClearFullDrawingPage ; @045EF
 loc_45F2:
+BriefingAfter45EF:
     mov cx,0x10 ; @045F2
     mov dx,0x10 ; @045F5
     call StepSplitPaletteToSlot1 ; @045F8
+BriefingAfter45F8:
     jnz loc_45F2 ; @045FB
     mov al,0x1 ; @045FD
     nop ; @045FF
     call PublishSixteenPaletteColors ; @04600
+BriefingAfter4600:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04603
     mov word [AlternateDrawingOrigin-GameDataImage],0x0 ; @04609
     call SwapDrawingOriginsAndDisplay ; @0460F
+BriefingAfter460F:
     call RedrawLevel ; @04612
+BriefingAfter4612:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04615
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0461B
     call DrawLevelPreview ; @04621
+BriefingAfter4621:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @04624
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0462A
-    call sub_4C17 ; @04630
+    call ClearBelowLevelPreview ; @04630
+BriefingAfter4630:
     call SetupDisplayLayout ; @04633
+BriefingAfter4633:
     mov bx,0x4e ; @04636
     call DrawScreenBackgroundFromRow ; @04639
+BriefingAfter4639:
     lea si,[0x4b0a] ; @0463C
     call DrawTextStream ; @04640
+BriefingAfter4640:
     lea si,[0x4ba0] ; @04643
     cmp byte [InputModeByte25A6-GameDataImage],0x0 ; @04647
     jz loc_465D ; @0464C
@@ -325,22 +346,27 @@ loc_45F2:
 loc_465D:
     call DrawTextStream ; @0465D
 loc_4660:
+BriefingAfter465D:
     mov ax,[InputButtonsWord-GameDataImage] ; @04660
     test ax,0x7 ; @04663
     jnz loc_4660 ; @04666
 loc_4668:
     call RefreshRasterSplitPalette ; @04668
+BriefingAfter4668:
     mov al,0x0 ; @0466B
     nop ; @0466D
     call PublishUpperEightPaletteColors ; @0466E
+BriefingAfter466E:
     mov cx,0x10 ; @04671
     mov dx,0x10 ; @04674
     mov bx,0x302 ; @04677
     nop ; @0467A
     call StepSplitPaletteToTargets ; @0467B
+BriefingAfter467B:
     jnz loc_4668 ; @0467E
 loc_4680:
     call RefreshRasterSplitPalette ; @04680
+BriefingAfter4680:
     mov ax,[InputButtonsWord-GameDataImage] ; @04683
     test ax,0x7 ; @04686
     jnz FadeAndClearSplitPalette ; @04689
@@ -602,10 +628,10 @@ LevelGroupFormatReturn:
 sub_48BD:
     mov al,[StatusCompletionDisplayValue-GameDataImage] ; @048BD
     lea si,[0x4c5d] ; @048C0
-    call sub_4B5C ; @048C4
+    call WritePercentageByteField ; @048C4
     mov al,[0x41] ; @048C7
     lea si,[0x4c71] ; @048CA
-    call sub_4B5C ; @048CE
+    call WritePercentageByteField ; @048CE
     lea si,[0x4c77] ; @048D1
     cmp byte [InputModeByte25A6-GameDataImage],0x0 ; @048D5
     jz loc_48EB ; @048DA

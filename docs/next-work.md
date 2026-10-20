@@ -2,7 +2,20 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 30,782 bytes. DrawLevelPreview
+The main-image translated-code ledger union is 31,161 bytes. The 4566 briefing
+and its 4B5C percentage, 4C17 partial-clear and 5447 palette wrappers add 379
+unique known bytes. Their shared campaign passes 295 fixtures / 590 comparisons,
+all 132 own sites / 29 outcomes and five completed mutants. Three full loads,
+changing palette phases, native terrain/redraw/preview/text, cancel/button/idle
+input and all 256 percentage bytes run on canonical RAM. DIV faults and the
+special-resource stop remain explicit. All 84 unit tests pass. The selected
+suite completes in 350.07 seconds under 384 MiB, keeps 148 matching consumed
+hashes and reaps DLL contexts. The full original-contract gate passes in
+479.67 seconds after the shared DIV change, with 180 matching input hashes and
+exact ASM/relocations. This does not renew unrelated native reports or claim
+aggregate/full-game acceptance. See level-briefing.md.
+
+The preceding main-image translated-code ledger union was 30,782 bytes. DrawLevelPreview
 adds587 unique bytes and preserves four-plane bit sampling, OR destination
 latches, overlapping VRAM, live saved counts/cursors/port/DS, and actual RET.
 Its shared campaign passes25 fixtures /50 comparisons, all278 sites /six direct
@@ -204,23 +217,22 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue the 454C level-start / 4566 briefing and game transition above
-   the accepted split-palette cluster. Fresh graph views expose shared-tail
-   overlap: 4C17 has nine new prefix bytes over 63 native clear bytes; 5447 has
-   43 bytes outside existing C ranges over its native palette writers. The7EB2
-   DrawLevelPreview body is now native across587 bytes /278 sites; preserve its
-   live VGA/SS/OR-latch contract while connecting the parent. Its VGA-backed
-   stack/opaque-port domain remains unverified. Batch the4B5C percentage-field
-   wrapper,4C17 partial clear and5447 palette publication with the briefing
-   connection instead of creating individual harnesses for their tiny prefixes.
-   The existing 197D selector retains its declared RAM-only DOS/retry/fatal seam;
-   add the required shared bus capability deliberately before broader 454C claims.
-   Preserve DS->actual ES, the DF-sensitive 0FCA-byte clear, header/record aliases,
-   division faults/byte wrap in briefing arithmetic and final JMP00FB.
-   Keep alternate 4CC9/4D18 and 42A5 domains, artificial VGA-stack budget failure,
-   RETF selector-EA wrap at SP FFFE/FFFF, AH1B/protection consumers, 04D0 and other
-   game bodies scoped. Correct the main-menu report's conservative boundary-byte
-   filter when next changing that campaign; current raw evidence stays intact.
+1. Connect 454C/4551 level-start to the native briefing and its actual JMP00FB
+   game continuation. Preserve the briefing's cancel JMP4401 with its consumed
+   caller word instead of forcing a normal RET4563. Preserve the byte1F6D reset,
+   actual PUSH DS/POP ES,
+   DF-sensitive 0FCA-byte clear and returned resource state. The existing 197D
+   selector keeps its RAM-only DOS/retry/fatal seam; add the required canonical
+   bus capability deliberately before widening parent claims. Keep special
+   redraw, fatal/provider and processor-fault boundaries explicit. The 0041
+   percentage byte later feeds signed JNL at4724 and 48C7/48FB statistics paths;
+   do not normalize it to a host 0..100 range. Batch result wrappers48BD/48F6
+   with their controller when advancing that frontier. The preview's VGA-backed
+   stack/opaque-port domain remains unverified. Keep alternate4CC9/4D18 and42A5,
+   artificial VGA-stack budget failure, RETF selector-EA wrap atSP FFFE/FFFF,
+   AH1B/protection,04D0 and other game bodies scoped. Correct the main-menu
+   report's conservative boundary-byte filter when next changing that campaign;
+   current raw evidence stays intact.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

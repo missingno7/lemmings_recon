@@ -5,6 +5,23 @@ import verification as v
 
 
 class SharedVerificationTests(unittest.TestCase):
+    def test_actual_byte_division_makes_arithmetic_flags_undefined(self):
+        case=dict(load=0x1010,seed=1)
+        memory,device=v.initial_memory(case)
+        r=v.default_regs(case['load'],1,flags=0xAD7)
+        r.update(ip=0x459C,ax=5000,cx=100)
+        instructions={i.address:i for i in v.MD.disasm(v.IMAGE[0x459C:0x45A1],0x459C)}
+        def before(machine,instruction):
+            if instruction.address==0x459E:machine.stop(0);return True
+            return False
+        access=v.BusAccess(case,memory,r,device,max_events=1)
+        out=v.OriginalMachine(case,memory,r,device,True,instructions=instructions,
+            access=access,outer_returns=set(),max_steps=2,before=before).run()
+        self.assertEqual(out['regs']['ax'],50)
+        self.assertEqual(out['mask'],v.FLAGS&~0x8D5)
+        self.assertEqual(out['steps'],1)
+        self.assertEqual(out['regs']['flags']&0x600,r['flags']&0x600)
+
     def test_packed_observations_preserve_bus_order_masks_slices_and_budget_failures(self):
         rows=[]
         for packed in (False,True):

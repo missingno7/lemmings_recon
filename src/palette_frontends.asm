@@ -198,7 +198,10 @@ loc_5435:
     sti ; @05445
 AttributePaletteReturn5446:
     ret ; @05446
-sub_5447:
+; Live full modeword4: two direct DAC banks0/10 from the sameDS2608 source.
+; Modeword is reread before packed mode2; all others return at5455.
+; Actual first CALL5460, then inherited writer RET; UNKNOWN5469 stays unresolved.
+PublishBasePaletteBothBanks:
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x4 ; @05447
     jz loc_5456 ; @0544C
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x2 ; @0544E
@@ -208,6 +211,7 @@ loc_5456:
     lea si,[0x2608] ; @05456
     mov cx,0x8 ; @0545A
     call WriteSequentialDacPalette ; @0545D
+BasePaletteAfterFirstDac:
     lea si,[0x2608] ; @05460
     mov cx,0x1008 ; @05464
     jmp short WriteSequentialDacPalette ; @05467

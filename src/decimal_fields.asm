@@ -1,8 +1,11 @@
 ; Maintained image span 04B5C..04BE6; physical order and UNKNOWN bytes preserved.
 times -(($-$$) != 0x4b5c) db 0 ; module start assertion
-sub_4B5C:
+; Percent field: space at liveSI+3 before actual decimal CALL/RET, then percent at
+; returnedSI and forward INC. Changed child return stops before the store.
+WritePercentageByteField:
     mov byte [si+0x3],0x20 ; @04B5C
     call WriteDecimalByteField ; @04B60
+PercentageAfterDecimal:
     mov byte [si],0x25 ; @04B63
     inc si ; @04B66
     ret ; @04B67

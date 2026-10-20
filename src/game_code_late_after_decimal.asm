@@ -23,7 +23,9 @@ SetupDisplayLayout:
     call 0x0:SetDrawingLayout ; @04C11
 DisplaySetupAfterLayout:
     ret ; @04C16
-sub_4C17:
+; Preserve the top70 ordinary screen rows; DF remains live in the shared clear.
+; No added CALL frame: inherits caller RET4E36. docs/level-briefing.md.
+ClearBelowLevelPreview:
     mov di,0x15e0 ; @04C17
     mov cx,0x5780 ; @04C1A
     jmp ClearVgaBytes ; @04C1D

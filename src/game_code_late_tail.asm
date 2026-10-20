@@ -1,4 +1,4 @@
-; Maintained image span07C67..08237; mixed ownership remains provisional.
+; Maintained image span07C67..07EB1; terrain, scroll and background contracts.
 times -(($-$$) != 0x7c67) db 0 ; module start assertion
 ; TERRAIN: packed AX x/flags, BX signed-y/type; index low6 selects liveGROUNDrecord.
 ; Preserve live SS savedSI/coordinates, relocated farCALL frame, returnedDS/ES/flags.

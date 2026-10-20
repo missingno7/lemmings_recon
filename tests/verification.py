@@ -335,6 +335,7 @@ class OriginalMachine:
             elif old.mnemonic in ('inc','dec'):self.mask|=0x8D4
             elif old.mnemonic=='ror':self.mask|=0x801
             elif old.mnemonic=='mul':self.mask=(self.mask&~0xD4)|0x801
+            elif old.mnemonic=='div':self.mask&=~0x8D5
         expected=bytearray(self.loaded[off:off+ins.size])
         if off in self.mutable_operands:
             start,width=self.mutable_operands[off]

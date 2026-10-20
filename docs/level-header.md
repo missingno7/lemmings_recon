@@ -15,7 +15,7 @@ prefix has no stack access, call, return, or control-flow branch.
 The source header stays in the same memory image as the destinations. Each
 big-endian field is fetched by two separate bus reads, high byte first and low
 byte second. The first low byte is stored to both release-setting fields. The
-creation limit, unresolved word `+04`, adjusted countdown byte, and eight
+creation limit, word `+04` low byte, adjusted countdown byte, and eight
 action counts are byte stores. The view-origin path adds `0010` with 16-bit
 arithmetic, stores the full word, performs three individual logical right
 shifts, then stores the full shifted word. Word stores are two ordered byte
@@ -45,3 +45,8 @@ source-read order, an incorrect word store at the byte-only+04 destination,
 an incorrect view bias and incorrect final carry. Resource or oracle failures
 cannot count as mutant detections. Workers have a120-second timeout and512MiB
 process/768MiB tree ceiling; the outer parent owns disposable DLLs.
+
+The connected4566 briefing independently consumes raw header+04 as the numerator
+of its displayed percentage, using byte DIV and a live population reread. That
+role is now proven; the broader runtime0044 consumer domain stays open. See
+level-briefing.md and level-header-ownership.md. No host header copy is added.

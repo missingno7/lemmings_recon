@@ -299,7 +299,7 @@ loc_02C3:
     jz loc_02CD ; @002C8
     jmp loc_0105 ; @002CA
 loc_02CD:
-    call sub_5447 ; @002CD
+    call PublishBasePaletteBothBanks ; @002CD
     cmp byte [0x2010],0xff ; @002D0
     jz loc_02E3 ; @002D5
     test byte [0x25a7],0x1 ; @002D7
@@ -326,7 +326,7 @@ loc_0311:
     jmp loc_46EB ; @00311
 loc_0314:
     mov byte [StatusCompletionDisplayValue-GameDataImage],0x64 ; @00314
-    call sub_5447 ; @00319
+    call PublishBasePaletteBothBanks ; @00319
     jmp short loc_02C3 ; @0031C
 sub_031E:
     mov al,[0x4e] ; @0031E

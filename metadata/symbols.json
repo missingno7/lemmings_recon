@@ -25303,9 +25303,11 @@
     "address": 17766,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4566",
-    "aliases": [],
+    "size": 316,
+    "symbol_name": "ShowLevelBriefing",
+    "aliases": [
+      "sub_4566"
+    ],
     "callers": [
       17760
     ],
@@ -26988,12 +26990,34 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact byte arithmetic, live saved words and native child contracts; docs/level-briefing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 2021
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 2021,
+    "c_implementation": "c/level_briefing.c",
+    "c_core": "lmn_show_level_briefing_core",
+    "c_code_ranges": [
+      [
+        17766,
+        18074
+      ],
+      [
+        18075,
+        18105
+      ],
+      [
+        19951,
+        19959
+      ],
+      [
+        19960,
+        20023
+      ]
+    ],
+    "verification_evidence": "tests/level_briefing.py shared campaign:295 fixtures/590 core and actualRET comparisons,all132 owned sites/29 direct outcomes,379 new unique bytes across briefing and three wrappers;5 completed numeric mutants. All256 percent inputs,three full loads,native redraw/preview/background/text and changing split-palette phases,button/idle/cancel paths,live word/20-bit wrap,unchecked rating row,byte DIV zero/overflow and explicit special-service stop. 22,596,518 original steps/13,208,554 ordered events;148 consumed hashes match. New code inherits child RAM/provider/fatal/IRQ boundaries;454C resource composition,processor fault handling,full-game/native services and aggregate acceptance remain open. docs/level-briefing.md"
   },
   {
     "address": 18082,
@@ -27687,9 +27711,11 @@
     "address": 19292,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4B5C",
-    "aliases": [],
+    "size": 12,
+    "symbol_name": "WritePercentageByteField",
+    "aliases": [
+      "sub_4B5C"
+    ],
     "callers": [
       18628,
       18638,
@@ -27716,12 +27742,22 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact byte arithmetic, live saved words and native child contracts; docs/level-briefing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 12
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 12,
+    "c_implementation": "c/level_briefing.c",
+    "c_core": "lmn_briefing_helper_core",
+    "c_code_ranges": [
+      [
+        19292,
+        19304
+      ]
+    ],
+    "verification_evidence": "tests/level_briefing.py shared campaign:295 fixtures/590 core and actualRET comparisons,all132 owned sites/29 direct outcomes,379 new unique bytes across briefing and three wrappers;5 completed numeric mutants. All256 percent inputs,three full loads,native redraw/preview/background/text and changing split-palette phases,button/idle/cancel paths,live word/20-bit wrap,unchecked rating row,byte DIV zero/overflow and explicit special-service stop. 22,596,518 original steps/13,208,554 ordered events;148 consumed hashes match. New code inherits child RAM/provider/fatal/IRQ boundaries;454C resource composition,processor fault handling,full-game/native services and aggregate acceptance remain open. docs/level-briefing.md"
   },
   {
     "address": 19304,
@@ -28161,9 +28197,11 @@
     "address": 19479,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_4C17",
-    "aliases": [],
+    "size": 9,
+    "symbol_name": "ClearBelowLevelPreview",
+    "aliases": [
+      "sub_4C17"
+    ],
     "callers": [
       17968
     ],
@@ -28226,12 +28264,26 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact byte arithmetic, live saved words and native child contracts; docs/level-briefing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 72
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 72,
+    "c_implementation": "c/level_briefing.c",
+    "c_core": "lmn_briefing_helper_core",
+    "c_code_ranges": [
+      [
+        19479,
+        19488
+      ],
+      [
+        19960,
+        20023
+      ]
+    ],
+    "verification_evidence": "tests/level_briefing.py shared campaign:295 fixtures/590 core and actualRET comparisons,all132 owned sites/29 direct outcomes,379 new unique bytes across briefing and three wrappers;5 completed numeric mutants. All256 percent inputs,three full loads,native redraw/preview/background/text and changing split-palette phases,button/idle/cancel paths,live word/20-bit wrap,unchecked rating row,byte DIV zero/overflow and explicit special-service stop. 22,596,518 original steps/13,208,554 ordered events;148 consumed hashes match. New code inherits child RAM/provider/fatal/IRQ boundaries;454C resource composition,processor fault handling,full-game/native services and aggregate acceptance remain open. docs/level-briefing.md"
   },
   {
     "address": 19488,
@@ -32256,9 +32308,11 @@
     "address": 21575,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5447",
-    "aliases": [],
+    "size": 44,
+    "symbol_name": "PublishBasePaletteBothBanks",
+    "aliases": [
+      "sub_5447"
+    ],
     "callers": [
       717,
       793
@@ -32364,12 +32418,34 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact byte arithmetic, live saved words and native child contracts; docs/level-briefing.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 133
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 133,
+    "c_implementation": "c/level_briefing.c",
+    "c_core": "lmn_briefing_helper_core",
+    "c_code_ranges": [
+      [
+        21575,
+        21609
+      ],
+      [
+        21610,
+        21619
+      ],
+      [
+        21644,
+        21700
+      ],
+      [
+        21541,
+        21575
+      ]
+    ],
+    "verification_evidence": "tests/level_briefing.py shared campaign:295 fixtures/590 core and actualRET comparisons,all132 owned sites/29 direct outcomes,379 new unique bytes across briefing and three wrappers;5 completed numeric mutants. All256 percent inputs,three full loads,native redraw/preview/background/text and changing split-palette phases,button/idle/cancel paths,live word/20-bit wrap,unchecked rating row,byte DIV zero/overflow and explicit special-service stop. 22,596,518 original steps/13,208,554 ordered events;148 consumed hashes match. New code inherits child RAM/provider/fatal/IRQ boundaries;454C resource composition,processor fault handling,full-game/native services and aggregate acceptance remain open. docs/level-briefing.md"
   },
   {
     "address": 21619,
@@ -68088,5 +68164,518 @@
       "Pinned7EB2 sampling/OR-latch and live near-return boundary; docs/level-preview.md"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 17799,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4584",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17809,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter458E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17820,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingPercentDivide",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17832,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter45A5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17842,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter45AF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17906,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter45EF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17915,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter45F8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17923,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4600",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17938,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter460F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17941,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4612",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17956,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4621",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17971,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4630",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17974,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4633",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17980,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4639",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17987,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4640",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18016,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter465D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18027,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4668",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18033,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter466E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18046,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter467B",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18051,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BriefingAfter4680",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19299,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "PercentageAfterDecimal",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21600,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "BasePaletteAfterFirstDac",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live CALL return or byte-DIV boundary; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 65,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "BriefingPercentageByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md",
+      "459E derives the byte;4720 later compares completion with signed JNL,48C7/48FB consume it in result text. This does not close those untranslated controllers."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9736,
+    "segment": 2473,
+    "kind": "data",
+    "size": 48,
+    "symbol_name": "BasePaletteSource2608",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19219,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "BriefingLevelDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19225,
+    "segment": 2473,
+    "kind": "data",
+    "size": 32,
+    "symbol_name": "BriefingTitleBytes",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19280,
+    "segment": 2473,
+    "kind": "data",
+    "size": 3,
+    "symbol_name": "BriefingPopulationDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19287,
+    "segment": 2473,
+    "kind": "data",
+    "size": 4,
+    "symbol_name": "BriefingPercentDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19320,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "BriefingReleaseDigits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19331,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "BriefingTimeDigit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19339,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "BriefingTimePluralByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 19352,
+    "segment": 2473,
+    "kind": "data",
+    "size": 6,
+    "symbol_name": "BriefingGroupText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
   }
 ]

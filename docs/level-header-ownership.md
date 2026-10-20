@@ -62,8 +62,11 @@ X coordinate before adding `10`; `7A5A/7AAF` shift the same word for display
 addressing. `8130/81AE` add `0002` to source offset `4A40`. These observations
 support pixel/byte view-origin roles while retaining the explicit `+10` bias.
 
-Header `+04` is stored at `0044`, but this direct-operand search has not closed
-its downstream meaning. Missing a direct read is not evidence that it is dead:
+Header `+04` is stored at `0044`. The4566 briefing now proves a separate
+consumer of its raw low byte0FD0: multiply by100, divide by the population byte
+0FCE, store the byte percentage at0041 and format it into the briefing text.
+This explains the briefing numerator without closing every runtime consumer
+of the0044 copy; see level-briefing.md. Missing a direct read is not evidence that it is dead:
 indexed access, other segment ownership and unresolved code still require review.
 
 The apparent `DI=0044` at `7DE1` is a different owner: `7D1C` loads ES from the
