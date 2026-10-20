@@ -225,6 +225,7 @@ def report():
     level_start=read_json(BUILD/'level-start-differential.json')
     video_probe=read_json(BUILD/'video-probe-differential.json')
     game_prepare=read_json(BUILD/'game-prepare-differential.json')
+    game_initialize_prefix=read_json(BUILD/'game-initialize-prefix-differential.json')
     ui_commands=read_json(BUILD/'ui-commands-differential.json')
     input_poll=read_json(BUILD/'input-poll-differential.json')
     port_io=read_json(BUILD/'port-io-differential.json')
@@ -348,6 +349,11 @@ def report():
     entity_action_dispatch=read_json(BUILD/'entity-action-dispatch-differential.json')
     entity_batch=read_json(BUILD/'entity-batch-differential.json')
     entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
+    for path,digest in game_initialize_prefix['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale game initialization prefix differential report for '+path+'; run tools/difftest.py game_initialize_prefix')
+    if game_initialize_prefix['image_sha256']!=sha(image):
+        raise ValueError('Game initialization prefix oracle changed')
     for label,extra in (('game preparation',game_prepare),('video probe',video_probe),('level start',level_start),('level briefing',level_briefing),('level preview',level_preview),('split palette and briefing callers',split_palette),('main menu controller',main_menu),('menu scroll cluster',menu_scroll),('menu cache parents',menu_cache),('menu animation records',menu_animation),('keyboard producer lifecycle',keyboard_input),('timer installation lifecycle',timer_install),('menu timer lifecycle',menu_timer),('full game timer',game_timer),('game timer tail',timer_tail),('input commands',ui_commands),('connected input',input_poll),('port I/O leaves',port_io),('mouse IRQ bridge',mouse_irq_bridge),('VGA register mirrors',vga_mirrors),('fixed pattern copy',fixed_pattern_copy),('fixed pattern draw',fixed_pattern_draw),('fixed pattern update',fixed_pattern_update),('main resource sections',main_resources),('fixed word banks',fixed_word_banks),('resource planes to VGA',vga_plane_copy),('entity sprite bank transform',entity_sprite_banks),('five-byte sprite banks',sprite_wide_banks),('three-byte sprite banks',sprite_shift_banks),('sprite bank producer',sprite_bank),('entity drawing loop',entity_drawing),('entity sprite dispatch',entity_sprite_dispatch),('multiplane entity sprites',entity_sprite_planes),('wide entity sprite',entity_sprite_wide),('aligned entity sprite',entity_sprite_aligned),('shifted entity sprites',entity_sprite_shifted),('entity points',entity_points),('entity strip',entity_strip),('entity minimap',entity_minimap),('view visibility',view_visibility),('entity dirty',entity_dirty),('status copy',status_copy),('status initialize',status_initialize),('object drawing tick',object_drawing_tick),('object animation',object_animation),('status display',status_display),('status display full',status_display_full),('status text',status_text),('status count',status_count),('status glyph',status_glyph),
                         ('status icons',status_icons),('minimap viewport',minimap_viewport),
                         ('minimap status prefix',minimap_status),('decimal digits',decimal),('decimal fields',decimal_field),
@@ -496,12 +502,14 @@ def report():
     for extra in (dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap):executed.update(extra['executed_instruction_addresses'])
     for extra in (terrain_inputs,terrain,commands,streams,object_draw,redraw):executed.update(extra['executed_instruction_addresses'])
     reports=(d,dat,io,section,cache,files,resource,raw,rle,blit,setup,decimal,selection,objects,coordinates,cells,steel,state,clear,layout,drawing,sample,mmrow,mmcolumn,clip,dirty,inputs,dispatch,source,plan,opaque,render,masked,masked_render,protected,effects,readmask,aligned_render,shifted_effects,shifted_render,shifted_opaque,shifted_masked,shifted_protected,shifted_readmask,bitmap)
+    reports+=(game_initialize_prefix,)
     executed.update(menu_animation['executed_instruction_addresses'])
     executed.update(menu_cache['executed_instruction_addresses'])
     executed.update(level_briefing['executed_instruction_addresses'])
     executed.update(level_start['executed_instruction_addresses'])
     executed.update(video_probe['executed_instruction_addresses'])
     executed.update(game_prepare['executed_instruction_addresses'])
+    executed.update(game_initialize_prefix['executed_instruction_addresses'])
     executed.update(level_preview['executed_instruction_addresses'])
     executed.update(menu_scroll['executed_instruction_addresses'])
     executed.update(main_menu['executed_instruction_addresses'])

@@ -1,9 +1,30 @@
 # 03E7 initializer frontier
 
-This is a static contract for the next C connection, not an implementation or
-new execution claim. The exact 03E7..04CF controller has233 known bytes and72
-sites. Its direct children now have scoped native implementations. It is the
-first CALL from the still untranslated game entry00FB.
+The exact 03E7..04CF controller has233 known bytes and72 sites. Its direct
+children now have scoped native implementations. It is the first CALL from the
+still untranslated game entry00FB; the controller and full gameplay remain open.
+
+## Tested parent/child checkpoint (03E7..0464)
+
+The native `lmn_initialize_game_core` implements126 bytes of this controller
+and composes its actual0462 CALL/RET through the verified0FB2 video setup. It
+stops at0465 immediately before palette publication. Seventeen bounded
+comparisons cover34 state-prefix sites, the parent CALL and all17 executed
+child sites, with four completed numeric mutants. The paths preserve ordered
+DS stores, both live PUSH SS/POP ES frames, incoming DF, DS/SS aliases,
+20-bit physical wrap, planar VGA reads/writes and the BIOS interrupt frame.
+The two string clears retain their literal ranges and leave CX exhausted.
+
+Connected coverage is196 known bytes: the126 newly translated parent bytes
+plus the already translated70-byte child. The17 original/native comparisons
+execute318,042 original instructions and compare318,386 ordered bus events.
+When the forward clear wraps through physical address zero, it clears the live
+INT10 vector before the child call; the resulting unbound BIOS stop is preserved.
+
+The rest of the controller remains untranslated. Continue from0465 by
+composing palette publication and later children while carrying each live
+frame and platform service. This checkpoint does not initialize a complete
+game session.
 
 ## Memory ownership before the child calls
 

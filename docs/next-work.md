@@ -2,7 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is32,367 bytes. The620 new unique
+The main-image translated-code ledger union is32,493 bytes. The126 new unique
+bytes implement the 03E7 state stores and SS map clears through its actual0462
+CALL/RET to native0FB2 video setup, stopping before palette publication at0465.
+Seventeen bounded comparisons cover35 parent sites,17 child sites and four
+completed mutants, including actual PUSH SS/POP ES bus effects, live BIOS frame,
+DS/SS aliases,20-bit physical wrap and planar VGA state. The checkpoint executes
+318,042 original instructions and318,386 ordered bus events. The later
+controller, platform providers and scheduled timer waits remain open. See
+game-initialize.md.
+
+The previous main-image translated-code ledger union is32,367 bytes. The620 new unique
 bytes implement52F4/5377 palettes,482F sound selection,7900 backdrop,80FD dirty
 copies and81CC page setup with native status/far layout children. The shared
 gate passes577 fixtures/1154 comparisons,all237 own sites/34 outcomes,eight
@@ -249,11 +259,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Compose the actual00FB ->03E7 initializer now that its direct children
-   have native implementations. Preserve canonical DS/SS clears,full-register
-   video/calibration/mouse/timer services,level/status/object child domains,
-   actual child frames and final timer-chain calibration loops. Give those
-   waits explicit finite IRQ fixtures without inventing a game timeout.
+1. Continue the actual00FB ->03E7 initializer from0465. Compose palette
+   publication and its returned registers first, then advance through the
+   remaining drawing/status children. Preserve canonical DS/SS clears,
+   full-register video/calibration/mouse/timer services, level/status/object
+   child domains, actual child frames and final timer-chain calibration loops.
+   Give those waits explicit finite IRQ fixtures without inventing a game timeout.
    The shared SCAS/device-trace change requires the full original-contract
    gate; do not renew unrelated native evidence. Keep454C/4551 ->197D ->4566
    ->00FB/4401 intact,then advance the remaining actual frame/game controllers.

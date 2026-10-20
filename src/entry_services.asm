@@ -102,7 +102,7 @@ sub_00D8:
     jmp EnterMainMenu ; @000F8
 loc_00FB:
 EnterLoadedLevelGame:
-    call sub_03E7 ; @000FB
+    call InitializeGameSession ; @000FB
     mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
     nop ; @00104
 loc_0105:
@@ -428,7 +428,7 @@ sub_03D7:
     jnz loc_03D6 ; @003E2
     and al,0xfd ; @003E4
     ret ; @003E6
-sub_03E7:
+InitializeGameSession:
     mov word [0x0],0x218 ; @003E7
     mov word [0x2],0x43 ; @003ED
     mov byte [0x1a],0x0 ; @003F3
@@ -463,7 +463,13 @@ sub_03E7:
     mov cx,0x642 ; @0045B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0045E
     rep stosb ; @00460
+; CONTRACT: 03E7..0461 initializes live DS fields, then clears SS:0012..42B1
+; and SS:42B2..48F3 using the original DF-sensitive REP STOSB loops. The
+; tested native parent composes this 0462 CALL/RET through 0FB2; it stops at
+; 0465 before palette publication. Later providers and timer waits remain open.
+InitializeGameAfterStateClear:
     call SetupGameVideoAndSpriteCallbacks ; @00462
+InitializeGameAfterVideoSetup:
     call PublishGameBasePalette ; @00465
     call CalibrateGameTimerReload ; @00468
     call InitializeLevelFromRecord ; @0046B

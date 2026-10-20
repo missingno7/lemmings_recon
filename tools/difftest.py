@@ -18,6 +18,7 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('game_initialize_prefix', 180, 384),
     Suite('game_prepare', 960, 384),
     Suite('video_probe', 660, 384),
     Suite('level_start', 660, 384),
