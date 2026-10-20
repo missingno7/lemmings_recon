@@ -7,21 +7,27 @@ loop and physical source map. Old checkpoints are in convergence-history.md.
 
 ## Immediate mode
 
-Finish semantic readiness of the session and shared-state lifetimes before broad
-C expansion. Existing C/tests remain valuable and intact. The current C initializer
-stops at 046E, but the next job is understanding the enclosing operation, not
-turning that one branch into another isolated translation milestone. No SDL3
-integration is part of this phase.
+The foreground session operation is now understood and translated as one unit:
+InitializeGameSession 03E7..04CF, the frame controller 0105..031D, transition
+cues 031E..03E6 and selector/edge scroll 4085/414F (c/game_initialize.c,
+c/game_frame.c, c/game_transition.c, c/view_scroll.c). Its contract, timer
+handshake and readiness decision sit beside the ASM at 00FB/0186/0462 and in
+src/game_timer.asm; result/restart lifecycle at 46EB. The connected suites model
+an IRQ only as the tail's foreground-visible stores at explicit polls.
+No SDL3 integration is part of this phase.
 
 ## Priorities
 
-1. **Session/frame/timer contract (00FB..04CF,17C7/183E).** Use the named wait
-   producer/consumer and transition state to specify the scheduled INT08 edges,
-   signed tick gate, double action dispatch, page/map swaps, end/result path and
-   child-returned DS/ES/SS. Include the per-level 4551 clear versus 03E7/header
-   initialization. Decide which caller registers/flags are actually live. This
-   unblocks one coherent foreground controller instead of serial three-byte CALL
-   promotions. Readiness: full controller NOT READY until those seams are stated.
+1. **Native session runner with real INT08 delivery (00FB).** Compose
+   lmn_initialize_game_core and lmn_game_frame_core into the 00FB session and
+   deliver the native 17C7 handler (input poll 418C, commands 3E6F, mirrors,
+   EOI/BIOS chain) at the LmnForegroundPoll sites with a real hardware frame and
+   IF honoured; verify against original 17C7 delivery on the same schedule over
+   multi-frame scenarios with scripted mouse/keyboard input. This replaces the
+   minimal 1FCF/1FCD fixture, exercises IRQ-produced input end to end and is the
+   native core the platform/SDL layer will drive. Keep 004A's unknown FF
+   producer, preemption inside child bodies and sound-engine bodies explicit.
+   Then translate the 46EB result screen to close next-level/retry/menu.
 2. **Record/graphics lifecycle and callback writers (30A6,1F19,3150,3634,706F).**
    Trace the same 2D-byte record from per-level clear through creation, action,
    state transitions and drawing. Preserve shared +20/+26/+27 roles and sample
@@ -39,12 +45,9 @@ integration is part of this phase.
    images. Classify executable versus stream data with evidence. The tiny scoped
    C entries/latches are not full alternative-hardware support; this is required
    game completion work, not an optional backend polish task.
-5. **Resume C on a READY connected operation.** Once the session/lifetime gate
-   permits it, batch the known initializer/frame children and validate a constructed
-   resource -> level -> foreground-tick handoff. Preserve provider/fatal/changed
-   return seams. Use targeted suites plus focused parent cases; leave exhaustive
-   renderer/terrain matrices in their owning suites unless interaction changes.
-   Consolidate packet/helper duplication only where this operation proves it safe.
+5. **Unify the composition adapters.** The frame parent dispatches thirteen
+   differently shaped child adapters. Consolidate packet/helper duplication only
+   where a concrete consumer changes and equivalence is checked by its suite.
 
 ## Evidence and persistent open obligations
 

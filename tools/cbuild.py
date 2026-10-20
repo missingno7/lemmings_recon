@@ -17,7 +17,14 @@ def compiler():
 
 def source_files(cluster="checksum"):
     """Canonical ordered native source closure, including aliased clusters."""
-    if cluster=="game_initialize":return tuple(dict.fromkeys((ROOT/'c/game_initialize.c',*source_files('video_probe'),*source_files('game_prepare'),*source_files('level_initialize'))))
+    if cluster=="view_scroll":return (ROOT/'c/view_scroll.c',ROOT/'c/view_visibility.c')
+    if cluster=="game_transition":return tuple(dict.fromkeys((ROOT/'c/game_transition.c',ROOT/'c/interrupt_service.c',*source_files('palette_transition'))))
+    if cluster=="game_frame":
+        dependencies=('game_transition','view_scroll','game_prepare','fixed_pattern_update',
+            'entity_action_dispatch','entity_batch','object_animation','object_drawing_tick',
+            'entity_drawing','entity_select','status_display_full','timer_install','level_briefing')
+        return tuple(dict.fromkeys((ROOT/'c/game_frame.c',*(p for d in dependencies for p in source_files(d)))))
+    if cluster=="game_initialize":return tuple(dict.fromkeys((ROOT/'c/game_initialize.c',*source_files('video_probe'),*source_files('game_prepare'),*source_files('level_initialize'),*source_files('view_visibility'),*source_files('entity_create'),*source_files('timer_install'),*source_files('object_animation'),*source_files('object_drawing_tick'),*source_files('status_display_full'))))
     if cluster=="video_probe":return (ROOT/'c/video_probe.c',ROOT/'c/interrupt_service.c')
     if cluster=="game_prepare":
         return tuple(dict.fromkeys((ROOT/'c/game_prepare.c',ROOT/'c/palette_ports.c',ROOT/'c/drawing_layout.c',*source_files('status_initialize'))))
@@ -147,11 +154,23 @@ def source_files(cluster="checksum"):
     return tuple(dict.fromkeys(sources))
 
 
-def build(output=None, mutation=0, cluster="checksum"):
+def build(output=None, mutation=0, cluster="checksum", *, dependency_library=None):
     sources=source_files(cluster)
+    libraries=[]
+    if dependency_library is not None:
+        # Initializer mutants change only their parent translation. The bounded
+        # suite supplies its same-snapshot baseline DLL for unchanged children.
+        if cluster!='game_initialize' or not isinstance(mutation,int) or mutation==0:
+            raise ValueError('Dependency reuse requires a numeric initializer mutant')
+        dependency_library=Path(dependency_library)
+        if not dependency_library.is_file():raise FileNotFoundError(dependency_library)
+        sources=(ROOT/'c/game_initialize.c',)
+        libraries=[str(dependency_library)]
     out = Path(output) if output else ROOT / "build" / (cluster+".dll")
     out.parent.mkdir(parents=True, exist_ok=True)
     defines=["-DMUTATION="+str(mutation)] if cluster!="dat_section" else ["-DMUTATION=0","-DSECTION_MUTATION="+str(mutation)]
+    if cluster in ('view_scroll','game_transition','game_frame'):
+        defines=['-DMUTATION=0','-Wundef','-D'+cluster.upper()+'_MUTATION='+str(mutation)]
     if cluster=="level_start":defines=["-DLEVEL_START_MUTATION="+str(mutation)]
     if cluster=="video_probe":defines=["-DVIDEO_PROBE_MUTATION="+str(mutation)]
     if cluster=="game_prepare":defines=["-DGAME_PREPARE_MUTATION="+str(mutation)]
@@ -298,9 +317,9 @@ def build(output=None, mutation=0, cluster="checksum"):
     run_bounded([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
         "-shared", *defines,
-        "-I", str(ROOT / "c"), *map(str,sources),
+        "-I", str(ROOT / "c"), *map(str,sources), *libraries,
         "-o", str(out),
-    ], check=True, timeout=60, memory_mib=256)
+    ], check=True, timeout=120 if cluster=='game_frame' else 60, memory_mib=256)
     return out
 
 if __name__ == "__main__":

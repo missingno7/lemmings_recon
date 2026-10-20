@@ -3,11 +3,15 @@
 #include "video_probe.h"
 #include "game_prepare.h"
 #include "level_initialize.h"
+#include "foreground_poll.h"
 
 enum LmnGameInitializeStatus {
     LMN_GAME_INITIALIZE_AT_MOUSE_SERVICE_CHECK = 0,
     LMN_GAME_INITIALIZE_CHILD_STOP = 1,
-    LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN = 2
+    LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN = 2,
+    LMN_GAME_INITIALIZE_RETURNED = 3,
+    LMN_GAME_INITIALIZE_POLL_REQUIRED = 4,
+    LMN_GAME_INITIALIZE_POLL_STOP = 5
 };
 
 typedef struct LmnGameInitializeResult {
@@ -22,11 +26,17 @@ typedef struct LmnGameInitializeServices {
     const LmnRasterBus *bus;
     const LmnLevelInitializeServices *level;
     uint16_t game_data_segment;
+    /* Explicit compatibility checkpoint for prefix-only consumers. */
+    uint16_t stop_at_mouse_check;
+    const LmnInterruptService *mouse;
+    const LmnInterruptService *dos;
+    const LmnForegroundPoll *foreground;
 } LmnGameInitializeServices;
 
-/* Execute 03E7 state initialization, both live SS map clears, and the actual
-   0462/0465/0468/046B CALLs through level-record initialization. The ordinary
-   continuation is 046E. Child/provider stops and changed RETs remain live. */
+/* Execute 03E7..04CF, including the actual outer RET. Each child sees its
+   predecessor's returned state. NULL foreground stops before CMP at04AA;
+   nonzero poll results stop before that site's CMP with service_status live.
+   stop_at_mouse_check retains the old046E checkpoint/status. */
 LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
     const LmnRegs *registers,const LmnGameInitializeServices *services);
 

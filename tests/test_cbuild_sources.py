@@ -45,4 +45,18 @@ class SourcePlanningTests(unittest.TestCase):
     def test_unknown_cluster_fails_before_planning(self):
         with self.assertRaises(ValueError):cbuild.source_files('unidentified_game')
 
+    def test_initializer_mutants_reuse_only_the_declared_baseline_children(self):
+        with temporary_build_directory(prefix='cbuild-reuse-',parent=ROOT/'build') as directory:
+            baseline=Path(directory)/'baseline.dll';baseline.write_bytes(b'build-plan fixture')
+            with patch.object(cbuild,'compiler',return_value='compiler-fixture'),patch.object(cbuild,'run_bounded') as run:
+                cbuild.build(Path(directory)/'mutant.dll',12,'game_initialize',dependency_library=baseline)
+            argv=run.call_args.args[0]
+            self.assertEqual([Path(p) for p in argv if p.endswith('.c')],[ROOT/'c/game_initialize.c'])
+            self.assertIn(str(baseline),argv)
+            self.assertIn('-DGAME_INITIALIZE_MUTATION=12',argv)
+            self.assertTrue(run.call_args.kwargs['check'])
+            for cluster,mutation in (('game_initialize',0),('game_initialize','placeholder'),('video_probe',12)):
+                with self.assertRaises(ValueError):
+                    cbuild.build(Path(directory)/'invalid.dll',mutation,cluster,dependency_library=baseline)
+
 if __name__=='__main__':unittest.main()

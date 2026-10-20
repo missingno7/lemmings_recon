@@ -36,6 +36,9 @@ OUT=ct.CFUNCTYPE(None,ct.c_void_p,ct.c_uint16,ct.c_uint16,ct.c_uint16)
 OUT8=ct.CFUNCTYPE(None,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint8,ct.c_uint16)
 IN8=ct.CFUNCTYPE(ct.c_uint8,ct.c_void_p,MEM,ct.c_uint16,ct.c_uint16)
 INTERRUPT=ct.CFUNCTYPE(ct.c_uint16,ct.c_void_p,MEM,ct.POINTER(Regs),ct.c_void_p)
+FOREGROUND=ct.CFUNCTYPE(ct.c_uint16,ct.c_void_p,MEM,ct.POINTER(Regs),ct.c_uint16)
+class ForegroundPoll(ct.Structure):
+    _fields_=[('context',ct.c_void_p),('poll',FOREGROUND)]
 class Bus(ct.Structure):
     _fields_=[('context',ct.c_void_p),('read_byte',READ),('write_byte',WRITE),('out_word',OUT)]
 class Ports(ct.Structure):
@@ -257,6 +260,20 @@ class NativeCallbacks:
                 return status
             except BaseException as error:callback_failure(error)
         return INTERRUPT(call)
+
+    def foreground(self,provider):
+        """Guard a declared foreground scheduling point on canonical RAM."""
+        def call(_,memory,registers,site):
+            try:
+                address=ct.addressof((ct.c_uint8*len(self.access.memory)).from_buffer(self.access.memory))
+                check(ct.addressof(memory.contents)==address,'poll canonical RAM binding differs')
+                r={name:getattr(registers.contents,name) for name in REG_NAMES}
+                check(r['ip']==site,'poll IP differs from declared site')
+                status=provider(self.access,r,site)
+                for name in REG_NAMES:setattr(registers.contents,name,r[name])
+                return status
+            except BaseException as error:callback_failure(error)
+        return FOREGROUND(call)
 
 
 def compare_states(label,actual,reference):

@@ -126,9 +126,9 @@ EnterLoadedLevelGame:
 ; applies at most once until release reaches 31BE and clears the latch.
 ; REGISTERS: the controller reads only its own loads, the fade steps' AL/ZF,
 ; and AX after INT61 0200 at 02A1. Children get full predecessor state.
-; READINESS (0105..03E6 + 4085..417A): READY for C in the declared domain where
-; IRQs arrive only at the explicit polls 0171/0179, 01DF and the option-FF port
-; loops; INT60/61 via providers; children keep their scoped domains (3634 715B
+; READINESS (0105..03E6 + 4085..417A): READY and translated (c/game_frame.c,
+; game_transition.c, view_scroll.c) where IRQs arrive only at polls 0131/0179/
+; 01DF; INT60/61 via providers; children keep their scoped domains (3634 715B
 ; callbacks, sound bodies). Open: 004A FF producer, preemption interleavings.
     call InitializeGameSession ; @000FB
     mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
@@ -589,10 +589,10 @@ InitializeGameSession:
     rep stosb ; @00460
 ; CONTRACT: 03E7..0461 initializes live DS fields, then clears SS:0012..42B1
 ; and SS:42B2..48F3 using the original DF-sensitive REP STOSB loops. The
-; tested native parent composes the 0462/0465/0468/046B CALL/RETs through 0FB2,
-; 52F4, 15AD and 36B6. Level drawing/header setup reaches the declared missing-
-; special-service boundary at1A7B; the conditional mouse-service check remains open.
-; The measured timer path preserves its unbound dynamic probe target.
+; native parent composes every actual CALL/RET through the 04CF outer RET with
+; live child services, flags, segments and changed returns. READINESS: READY in
+; the normal-level domain; IRQ edges enter only at 04AA/04BA. Special-resource
+; 1A7B, dynamic probe 1407 and general preemption stay explicit boundaries.
 InitializeGameAfterStateClear:
     call SetupGameVideoAndSpriteCallbacks ; @00462
 InitializeGameAfterVideoSetup:
@@ -609,8 +609,8 @@ InitializeGameAfterLevelInitialization:
     mov dx,0x64 ; @0047B
     int 0x33 ; @0047E
 InitializeGameVisibilityAndStatus:
-; Full child sequence remains part of this controller, beyond its tested C prefix:
-; visibility/spawn/fade/sound/pages/status -> install IRQ08 -> draw initial frame.
+; Child sequence: visibility/first create/fade seed/sound id/pages/status ->
+; install IRQ08 -> object animation/draw, status backdrop/display (first frame).
 ; The following calibration needs two scheduled INT08 flag publications.
     call RebuildViewVisibilityMap ; @00480
 InitializeGameAfterVisibility:

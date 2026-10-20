@@ -225,7 +225,7 @@ TESTED C, decoded leaf and apparent normal execution are not readiness proofs.
 | Planar 8822..9A8F and terrain 374F/395F/7C67 | CONDITIONAL | Normal dispatcher/bodies understood; source allocation, code/stack aliases and hardware state need caller lifetime closure. |
 | Entity state/action blocks 1F19..368D | CONDITIONAL | Strong local transitions; whole-array bound, callback writer domain, shared roles and services prevent global READY. |
 | Record producer 30A6 and object 378A/7C0A | CONDITIONAL | Equality limits, stale slots and overlap understood; general segment/allocation/unchecked-index invariants unproved. |
-| Main session 00FB..04CF as a full controller | NOT READY for broad C expansion | Finish timer/foreground ownership, live child contracts, result path and schedule before another call-by-call wave. |
+| Main session 03E7..04CF, frame 0105..03E6, scroll 4085/414F | READY and translated in the declared IRQ-at-poll domain | Contract at 00FB/0186/0462. Real 17C7 delivery at polls, 004A FF producer, preemption inside children and the 46EB result screen remain. |
 | Startup/protection 054E..13DB | NOT READY as a whole | Dynamic protected views, gap 098C..0D9D and segment/allocation provenance. |
 | Complete executable sound engines | NOT READY as a whole | Only scoped entries/latches/PC routines translated; unresolved dispatch and unclassified payload remain. |
 | Native whole game/platform/SDL3 | NOT READY | No connected full startup/frame core or proven scheduler; SDL3 is outside this realignment. |

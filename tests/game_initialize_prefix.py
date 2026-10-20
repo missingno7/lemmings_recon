@@ -44,7 +44,9 @@ class LevelServices(ct.Structure):
 class GameServices(ct.Structure):
     _fields_=[('video',ct.POINTER(VideoServices)),('ports',ct.POINTER(v.Ports)),
               ('bus',ct.POINTER(v.Bus)),('level',ct.POINTER(LevelServices)),
-              ('game_data_segment',ct.c_uint16)]
+              ('game_data_segment',ct.c_uint16),('stop_at_mouse_check',ct.c_uint16),
+              ('mouse',ct.POINTER(v.InterruptService)),('dos',ct.POINTER(v.InterruptService)),
+              ('foreground',ct.c_void_p)]
 
 def cases():
     rows=[]
@@ -274,7 +276,13 @@ def original(case,memory,regs,device):
 
 class Native:
     def __init__(self,directory,mutation=0):
-        path=build(Path(directory)/f'game-initialize-{mutation}.dll',mutation,'game_initialize')
+        baseline=Path(directory)/'game-initialize-0.dll'
+        self.dependencies=None
+        if mutation:
+            if not baseline.is_file():build(baseline,0,'game_initialize')
+            self.dependencies=ct.CDLL(str(baseline))
+        path=build(Path(directory)/f'game-initialize-{mutation}.dll',mutation,'game_initialize',
+                   dependency_library=baseline if mutation else None)
         self.lib=ct.CDLL(str(path))
         self.fn=self.lib.lmn_initialize_game_core
         self.fn.restype=Result
@@ -294,7 +302,7 @@ class Native:
         services=GameServices(ct.pointer(video),ct.pointer(callbacks.ports),
                               ct.pointer(callbacks.bus),
                               None if level_services is None else ct.pointer(level_services),
-                              case.get('game_data_segment',0x7000))
+                              case.get('game_data_segment',0x7000),1,None,None,None)
         native_regs=v.Regs(**regs)
         result=self.fn((ct.c_uint8*v.SIZE).from_buffer(memory),ct.byref(native_regs),ct.byref(services))
         return dict(regs={name:getattr(result.registers,name) for name in v.REG_NAMES},
@@ -419,10 +427,12 @@ def compare(native,case):
 
 def hashes():
     paths={'tests/game_initialize_prefix.py','tests/video_probe.py','tests/verification.py','tests/minimap_vga.py',
-        'tools/cbuild.py','tools/difftest.py','tools/bounded_process.py','tools/common.py',
+        'tools/cbuild.py','tools/bounded_process.py','tools/common.py',
         'tools/unpack.py','metadata/oracle.json','metadata/toolchain-lock.json','assets/vgalemmi.exe',
         'src/entry_services.asm','src/palette_frontends.asm','docs/game-initialize.md'}
     paths.update(level.input_hashes())
+    # Registry additions do not change this suite's declared limits or inputs.
+    paths.discard('tools/difftest.py')
     pending=list(source_files('game_initialize'))
     while pending:
         path=pending.pop();name=path.relative_to(ROOT).as_posix()

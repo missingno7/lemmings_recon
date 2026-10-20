@@ -13,7 +13,7 @@ it does not independently certify toolchain freshness or manifest completeness.
 | Decoded main instructions | 15,417 sites / 35,826 bytes |
 | UNKNOWN main bytes | 37,138 in 115 runs; 2,032 bytes inside provisional code frame |
 | Static control-flow frontier | 7 transfers; known target sets remain conditional |
-| Main C implementation union | 32,502 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
+| Main C implementation union | 33,510 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
 | Semantic readiness | Scoped qualitative gate and subsystem matrix in [semantic audit](semantic-audit.md); no numeric semantic-completion claim |
 | Differential coverage | Per-suite scope and matching consumed hashes required; aggregate not evaluated by this inventory |
 | Whole-game integration | Not established by routine or byte totals; native startup/frame/platform completion remains open |

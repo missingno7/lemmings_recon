@@ -3,6 +3,9 @@ import ctypes
 import os
 import subprocess
 import tempfile
+import shutil
+import uuid
+from pathlib import Path
 import time
 from ctypes import wintypes
 from contextlib import contextmanager
@@ -14,13 +17,25 @@ DEFAULT_MEMORY_MIB = 512
 @contextmanager
 def temporary_build_directory(*, prefix, parent):
     """Remove owned DLLs, allowing a bounded Windows image-release delay."""
-    directory = tempfile.TemporaryDirectory(prefix=prefix, dir=parent)
+    # Python3.12's Windows mkdir(0700) replaces the inherited DACL. A restricted
+    # workspace token can then lose access to its own directory. Keep the
+    # workspace ACL on Windows; retain private tempfile permissions elsewhere.
+    directory = None
+    if os.name == 'nt':
+        path = Path(parent) / (prefix + uuid.uuid4().hex)
+        path.mkdir()
+    else:
+        directory = tempfile.TemporaryDirectory(prefix=prefix, dir=parent)
+        path = Path(directory.name)
     try:
-        yield directory.name
+        yield str(path)
     finally:
         for attempt in range(40):
             try:
-                directory.cleanup()
+                if directory is None:
+                    shutil.rmtree(path)
+                else:
+                    directory.cleanup()
                 break
             except PermissionError:
                 if attempt == 39:

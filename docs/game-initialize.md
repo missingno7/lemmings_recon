@@ -1,8 +1,33 @@
-# 03E7 initializer frontier
+# 03E7 session initializer
 
 The exact 03E7..04CF controller has233 known bytes and72 sites. Its direct
 children now have scoped native implementations. It is the first CALL from the
-still untranslated game entry00FB; the controller and full gameplay remain open.
+game entry00FB; full gameplay remains outside this initializer's scope.
+
+## Full native operation and readiness
+
+`lmn_initialize_game_core` executes through the actual outer RET at04CF.
+The explicit `stop_at_mouse_check` service option retains the prior046E
+checkpoint/status. Default execution performs the exact-FF mouse gate, INT33
+positioning through the interrupt transport, all eleven tail CALL/RETs and
+the two-edge wait calibration. Child stops and changed live return words
+retain their returned state.
+
+Readiness is CONDITIONAL in the declared child/provider domains. DS owns
+1FCF and1FFE/2000; timer189E produces the exactFF flag and foreground0164
+consumes the wait words. `LmnForegroundPoll` runs immediately before every
+04AA/04BA read with live IP/registers. An absent poll stops explicitly at04AA;
+a nonzero poll status preserves that pre-CMP boundary. There is no native
+timeout. Literal DEC CX / conditional DEC DX and ADD/ADC/NEG preserve16-bit
+wrap and final NEG flags.
+
+`tests/game_initialize.py` uses the shared engine and normal terrain-only
+fixture with the earlier4551 per-level clear as a precondition. Its declared
+IRQ projection publishes only189E's foreground-visible1FCF=FF store at chosen
+poll iterations, with IF required. It covers counter wrap, both carry outcomes,
+zero/nonzero NEG, mouse paths, provider stops and changed returns. It does not
+claim execution of the whole IRQ handler or general preemption scheduling.
+The prefix suite retains its alias/DF/provider cases.
 
 ## Tested parent/child checkpoint through the level call
 
@@ -22,7 +47,7 @@ packed/RGB palette output, timer reloads and the actual nested 36B9/374C stack
 words. In SS-alias cases, timer calibration still reaches the unbound dynamic
 display-probe target at1407. The level core's full terrain/object/minimap
 campaign remains independently scoped; this parent checkpoint does not
-initialize a complete game session.
+cover the later session children; those handoffs use the separate full suite.
 
 ## Memory ownership before the child calls
 
@@ -46,9 +71,9 @@ must remain live. Saved words can be changed by aliases; ES is the popped word.
 ## Child and platform sequence
 
 The near calls, in order, are0FB2,52F4,15AD,36B6; then410F,30A6,5377,482F,
-81CC,39CE,1644,3944,7BB8,7900,3AC8. The first three now compose with their
-actual CALL/RET words;36B6 now composes through its explicit missing-service
-and special-resource stop boundaries. Carry returned registers/segments and
+81CC,39CE,1644,3944,7BB8,7900,3AC8. All compose with their actual CALL/RET
+words;36B6 retains its explicit missing-service and special-resource stop
+boundaries. Carry returned registers/segments and
 bridge each declared boundary explicitly. The relocated game/visibility segment operands
 remain distinct from live DS/SS.
 

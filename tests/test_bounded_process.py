@@ -15,6 +15,16 @@ import bounded_process
 
 
 class BoundedProcessTests(unittest.TestCase):
+    def test_build_directory_is_writable_and_removed_after_failure(self):
+        with self.assertRaisesRegex(RuntimeError, 'constructed failure'):
+            with temporary_build_directory(prefix='build-acl-regression-',
+                                           parent=ROOT / 'build') as directory:
+                marker=Path(directory)/'writable'
+                marker.write_text('owned build file')
+                self.assertEqual(marker.read_text(),'owned build file')
+                raise RuntimeError('constructed failure')
+        self.assertFalse(Path(directory).exists())
+
     def test_success_and_nonzero_exit(self):
         result = run_bounded([sys.executable, '-c', 'print("finished")'],
                              timeout=5, stdout=subprocess.PIPE, text=True)

@@ -2,12 +2,12 @@
 import json
 from pathlib import Path
 import sys
-import tempfile
 import unittest
 from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import sound
+from bounded_process import temporary_build_directory
 
 
 class SoundScopeTests(unittest.TestCase):
@@ -39,7 +39,7 @@ class SoundScopeTests(unittest.TestCase):
                     sound.translated_scope(b'12345',analysis,rows)
 
     def test_bootstrap_cannot_overwrite_maintained_sound(self):
-        with tempfile.TemporaryDirectory(prefix='sound-scope-',dir=sound.BUILD) as directory:
+        with temporary_build_directory(prefix='sound-scope-',parent=sound.BUILD) as directory:
             root=Path(directory)
             (root/'src/sound').mkdir(parents=True)
             (root/'metadata').mkdir()

@@ -1,5 +1,12 @@
 #include "game_initialize.h"
 #include "lemmings_sym.h"
+#include "view_visibility.h"
+#include "entity_create.h"
+#include "status_initialize.h"
+#include "timer_tail.h"
+#include "object_animation.h"
+#include "object_drawing_tick.h"
+#include "status_display_full.h"
 
 #ifndef GAME_INITIALIZE_MUTATION
 #define GAME_INITIALIZE_MUTATION 0
@@ -79,6 +86,158 @@ static void stosb(uint8_t *memory,const LmnRasterBus *bus,LmnRegs *r){
         r->di=(uint16_t)(r->di+step);
         --r->cx;
     }
+}
+
+/* Only the original arithmetic widths; DEC preserves incoming CF. */
+static uint16_t arithmetic(LmnRegs *r,uint16_t a,uint16_t b,unsigned carry,
+                           int subtract,int byte){
+    uint32_t mask=byte?255u:65535u,sign=byte?128u:32768u;
+    uint32_t wide=subtract?(uint32_t)a-b-carry:(uint32_t)a+b+carry;
+    uint16_t value=(uint16_t)(wide&mask),f=0;
+    if(subtract?(uint32_t)a<(uint32_t)b+carry:wide>mask)f|=CF;
+    if((a^b^value)&16u)f|=AF;
+    if((subtract?(a^b):~(a^b))&(a^value)&sign)f|=OF;
+    if(!value)f|=ZF;
+    if(value&sign)f|=SF;
+    unsigned low=value&255u,parity=0;
+    for(unsigned i=0;i<8u;++i)parity^=(low>>i)&1u;
+    if(!parity)f|=PF;
+    r->flags=(uint16_t)((r->flags&~ARITH)|f);
+    return value;
+}
+
+static uint16_t decrement(LmnRegs *r,uint16_t value){
+    uint16_t cf=r->flags&CF;
+    value=arithmetic(r,value,1,0,1,0);
+    r->flags=(uint16_t)((r->flags&~CF)|cf);
+    return value;
+}
+
+static int foreground_poll(uint8_t *memory,LmnGameInitializeResult *out,
+                           const LmnForegroundPoll *poll,uint16_t site){
+    out->registers.ip=site;
+    if(!poll||!poll->poll){out->status=LMN_GAME_INITIALIZE_POLL_REQUIRED;return 0;}
+    uint16_t status=poll->poll(poll->context,memory,&out->registers,site);
+    if(status){out->status=LMN_GAME_INITIALIZE_POLL_STOP;out->service_status=status;return 0;}
+    return 1;
+}
+
+/* CONDITIONAL readiness: known03E7..04CF flow and child handoffs; canonical
+   DS owns the flag/wait words, INT08:189E produces FF and0164 consumes them.
+   Children retain their provider/alias domains. IRQ delivery is explicit only
+   at04AA/04BA; general preemption and whole-game scheduling remain open.
+   The maintained ASM contract is unchanged (see docs/game-initialize.md). */
+static LmnGameInitializeResult finish_session(uint8_t *memory,
+    LmnGameInitializeResult out,const LmnGameInitializeServices *services){
+    LmnRegs *r=&out.registers;
+    const LmnRasterBus *bus=services?services->bus:0;
+    const LmnRasterBytePorts *ports=services?services->ports:0;
+    uint8_t disabled=read_at(memory,bus,r->flags,
+        physical(r->ds,SEG09A9_MouseServicesDisabledByte));
+    (void)arithmetic(r,disabled,255,0,1,1);
+#if GAME_INITIALIZE_MUTATION == 9
+    if(!disabled){
+#else
+    if(!(r->flags&ZF)){
+#endif
+        r->ax=4;r->cx=150;r->dx=100;
+        LmnInterruptResult mouse=lmn_interrupt_service(memory,r,0x33,
+            CS_InitializeGameVisibilityAndStatus,services?services->mouse:0,bus);
+        if(mouse.status){
+            out.status=mouse.status==LMN_INTERRUPT_CHANGED_IRET?
+                LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN:LMN_GAME_INITIALIZE_CHILD_STOP;
+            out.child_status=mouse.status;out.service_status=mouse.service_status;return out;
+        }
+    }
+    static const uint16_t entries[]={CS_RebuildViewVisibilityMap,
+        CS_CreateEntityRecordIfDue,CS_SeedGameFadePalette,CS_SelectLevelSoundId,
+        CS_InitializeGameDrawingPages,CS_InitializeStatusDisplay,CS_InstallGameTimerVector,
+        CS_AdvanceLevelObjectAnimations,CS_DrawLevelObjectGraphics,
+        CS_CopyStatusBackdropToDrawingPage,CS_UpdateStatusDisplay};
+    static const uint16_t resumes[]={CS_InitializeGameAfterVisibility,
+        CS_InitializeGameAfterFirstCreate,CS_InitializeGameAfterFadeSeed,
+        CS_InitializeGameAfterSoundSelect,CS_InitializeGameAfterDrawingPages,
+        CS_InitializeGameAfterStatusInit,CS_InitializeGameAfterTimerInstall,
+        CS_InitializeGameAfterObjectAnimations,CS_InitializeGameAfterObjectGraphics,
+        CS_InitializeGameAfterStatusBackdrop,CS_InitializeGameAfterStatusDisplay};
+    for(unsigned n=0;n<11u;++n){
+        uint16_t cs=r->cs,status=0,service=0;int changed=0;
+        push_word(memory,bus,r,resumes[n]);r->ip=entries[n];
+        switch(n){
+        case 0:status=lmn_rebuild_view_visibility_map_live_adapter(memory,r,bus);break;
+        case 1:status=lmn_create_entity_record_adapter(memory,r,bus);break;
+        case 2:case 3:case 4:case 9:{
+            LmnGamePrepareEntry entry=n==2?LMN_GAME_PREPARE_FADE_PALETTE:
+                n==3?LMN_GAME_PREPARE_SOUND:n==4?LMN_GAME_PREPARE_DRAWING_PAGES:
+                LMN_GAME_PREPARE_STATUS_BACKDROP;
+            LmnGamePrepareResult child=lmn_game_prepare_adapter(memory,r,entry,ports,bus);
+            *r=child.registers;status=child.status;service=child.child_status;
+            changed=status==LMN_GAME_PREPARE_CHANGED_RETURN;break;
+        }
+        case 5:status=lmn_initialize_status_display_adapter(memory,r,bus);
+            changed=status==LMN_STATUS_INITIALIZE_CHANGED_CHILD_RETURN;break;
+        case 6:{
+            LmnTimerTailResult child=lmn_install_game_timer_adapter(memory,r,
+                services?services->dos:0,ports,bus);
+            *r=child.registers;status=child.status;service=child.service_status;
+            changed=status==LMN_TIMER_TAIL_CHANGED_INTERRUPT_RETURN||
+                status==LMN_TIMER_TAIL_CHANGED_CHILD_RETURN;break;
+        }
+        case 7:status=lmn_advance_level_object_animations_adapter(memory,r,bus);break;
+        case 8:status=lmn_draw_level_object_graphics_adapter(memory,r,
+            services?services->game_data_segment:0,bus,ports);
+            changed=status==LMN_OBJECT_DRAWING_TICK_CHANGED_CHILD_NEAR||
+                status==LMN_OBJECT_DRAWING_TICK_CHANGED_FAR_RETURN;break;
+        case 10:status=lmn_update_status_display_full_adapter(memory,r,bus);
+            changed=status==LMN_STATUS_DISPLAY_CHANGED_CHILD_RETURN;break;
+        }
+#if GAME_INITIALIZE_MUTATION == 10
+        if(n==6u)status=0;
+#endif
+        if(status){
+            out.status=changed?LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN:LMN_GAME_INITIALIZE_CHILD_STOP;
+            out.child_status=status;out.service_status=service;return out;
+        }
+#if GAME_INITIALIZE_MUTATION == 11
+        r->ip=resumes[n];
+#endif
+        if(r->cs!=cs||r->ip!=resumes[n]){
+            out.status=LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN;return out;
+        }
+    }
+    r->cx=0;r->flags=(uint16_t)((r->flags&~ARITH)|ZF|PF);
+    r->dx=0;r->flags=(uint16_t)((r->flags&~ARITH)|ZF|PF);
+    write8(memory,bus,r,SEG09A9_TimerChainFlag1FCF,0);
+    const LmnForegroundPoll *poll=services?services->foreground:0;
+    do{
+        if(!foreground_poll(memory,&out,poll,CS_GameWaitCalibrationFirstEdge))return out;
+        (void)arithmetic(r,read_at(memory,bus,r->flags,
+            physical(r->ds,SEG09A9_TimerChainFlag1FCF)),255,0,1,1);
+    }while(!(r->flags&ZF));
+    write8(memory,bus,r,SEG09A9_TimerChainFlag1FCF,0);
+    do{
+        r->cx=decrement(r,r->cx);
+#if GAME_INITIALIZE_MUTATION == 12
+        if(r->cx==65535u)r->dx=decrement(r,r->dx);
+#else
+        if(!r->cx)r->dx=decrement(r,r->dx);
+#endif
+        if(!foreground_poll(memory,&out,poll,CS_GameCheckCalibrationSecondEdge))return out;
+        (void)arithmetic(r,read_at(memory,bus,r->flags,
+            physical(r->ds,SEG09A9_TimerChainFlag1FCF)),255,0,1,1);
+    }while(!(r->flags&ZF));
+    r->cx=arithmetic(r,r->cx,r->cx,0,0,0);
+#if GAME_INITIALIZE_MUTATION == 13
+    r->flags&=(uint16_t)~CF;
+#endif
+    r->dx=arithmetic(r,r->dx,r->dx,r->flags&CF,0,0);
+#if GAME_INITIALIZE_MUTATION != 14
+    r->dx=arithmetic(r,0,r->dx,0,1,0);
+#endif
+    write16(memory,bus,r,SEG09A9_ForegroundWaitLowWord,r->cx);
+    write16(memory,bus,r,SEG09A9_ForegroundWaitHighWord,r->dx);
+    r->ip=pop_word(memory,bus,r);
+    out.status=LMN_GAME_INITIALIZE_RETURNED;return out;
 }
 
 LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
@@ -266,5 +425,6 @@ LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
         return out;
     }
     r->ip=level_resume;
-    return out;
+    if(services&&services->stop_at_mouse_check)return out;
+    return finish_session(memory,out,services);
 }

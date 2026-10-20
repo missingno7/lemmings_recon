@@ -2922,7 +2922,20 @@
     "evidence": [
       "Original foreground/session control-flow block at 0105. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        261,
+        386
+      ],
+      [
+        387,
+        390
+      ]
+    ],
+    "c_implementation": "c/game_frame.c",
+    "c_core": "lmn_game_frame_core",
+    "verification_evidence": "tests/game_frame.py; build/game-frame-differential.json: 66 connected boundaries, 2,004,700 original instructions / 3,082 connected sites / 456 connected branch outcomes; 181/183 own controller sites and 86/89 own outcomes; four completed mutants. Full live child state, actual CALL/RET/INT frames, literal split-word wait/watchdog, minimal IF-honoured timer-tail stores at explicit polls, FF CRTC path, countdown, two action dispatches, fade/cheat/quit and stop46EB. Exact gate passes on the host (worker sandbox could not start NASM)."
   },
   {
     "address": 288,
@@ -3082,7 +3095,20 @@
     "evidence": [
       "Original foreground/session control-flow block at 0186. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        390,
+        432
+      ],
+      [
+        438,
+        798
+      ]
+    ],
+    "c_implementation": "c/game_frame.c",
+    "c_core": "lmn_game_frame_core",
+    "verification_evidence": "Same connected game_frame evidence as GameFrameSwapAndPace; select entry with registers.ip=0186. Does not own the existing entity_batch 01B0..01B5 prefix. Remaining original sites023E/0240 and outcomes013B->0138,023C->023E,029A->02A1 were not executed; no dead-code claim."
   },
   {
     "address": 416,
@@ -3792,8 +3818,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 164
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 164,
+    "c_code_ranges": [
+      [
+        798,
+        961
+      ]
+    ],
+    "c_implementation": "c/game_transition.c",
+    "c_core": "lmn_game_transition_core",
+    "verification_evidence": "tests/game_transition.py; build/game-transition-differential.json: 234 core/adapter comparisons, all83 owned sites/all39 outcomes across201 unique bytes including both fade steps, three completed mutants. AL/child ZF through actual saved AX, early cue returns without publication, service-returned AX, option-FF repetitions and shared03D6 RET. ADVANCE entry."
   },
   {
     "address": 812,
@@ -4152,8 +4187,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 22
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 22,
+    "c_code_ranges": [
+      [
+        961,
+        983
+      ]
+    ],
+    "c_implementation": "c/game_transition.c",
+    "c_core": "lmn_game_transition_core",
+    "verification_evidence": "Same game_transition evidence; OPENING entry. Owns the shared03D6 RET once; closing and cue37 may enter it using their existing frame."
   },
   {
     "address": 977,
@@ -4208,8 +4252,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 17
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 17,
+    "c_code_ranges": [
+      [
+        983,
+        999
+      ]
+    ],
+    "c_implementation": "c/game_transition.c",
+    "c_core": "lmn_game_transition_core",
+    "verification_evidence": "Same game_transition evidence; CLOSING entry. Preserves AX on the live stack, consumes palette-child ZF after POP AX, and shares03D6 on the incomplete step."
   },
   {
     "address": 993,
@@ -4512,7 +4565,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons cover34 owned state-prefix sites in03E7..0461 and6 completed numeric mutants across the parent scope. The translated prefix covers132 unique parent bytes including the three separately ledgered CALL continuations. Literal DS stores, both actual PUSH SS/POP ES stack words, DF-sensitive REP clears, canonical RAM/VGA effects,20-bit wrap and live DS/SS aliases remain explicit; actual0462/0465/0468 CALLs are recorded at their continuation symbols."
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: Literal session stores and DF-sensitive live SS map clears; previous prefix evidence remains historical. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open. Prefix checkpoint retained: tests/game_initialize_prefix.py:24 bounded original/native comparisons cover34 owned state-prefix sites in03E7..0461 and6 completed numeric mutants across the parent scope. The translated prefix covers132 unique parent bytes including the three separately ledgered CALL continuations. Literal DS stores, both actual PUSH SS/POP ES stack words, DF-sensitive REP clears, canonical RAM/VGA effects,20-bit wrap and live DS/SS aliases remain explicit; actual0462/0465/0468 CALLs are recorded at their continuation symbols."
   },
   {
     "address": 1122,
@@ -4537,7 +4590,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0462 CALL/RET through native0FB2 video setup, then continue through palette and timer calibration to046B or preserve a child stop. One owned parent CALL site and17 video-child sites are included;6 completed numeric mutants cover the full parent. The live return, BIOS INT10 frame and returned registers remain exact; forward physical wrap can clear the live INT10 vector and cause the original unbound-service stop. See docs/game-initialize.md."
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: Actual0462 video CALL and live0465 return, including provider stops. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open. Prefix checkpoint retained: tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0462 CALL/RET through native0FB2 video setup, then continue through palette and timer calibration to046B or preserve a child stop. One owned parent CALL site and17 video-child sites are included;6 completed numeric mutants cover the full parent. The live return, BIOS INT10 frame and returned registers remain exact; forward physical wrap can clear the live INT10 vector and cause the original unbound-service stop. See docs/game-initialize.md."
   },
   {
     "address": 1125,
@@ -4562,7 +4615,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0465 CALL/RET through native52F4 base-palette setup, then continue through the timer call to046B. Packed attribute and RGB DAC paths, blanking control, missing byte-port stops and changed live returns are covered alongside the full parent scope. The parent contributes132 unique bytes; the connected scope is823 known bytes including already translated dependencies. See docs/game-initialize.md."
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: Actual0465 base-palette CALL and live0468 return. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open. Prefix checkpoint retained: tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0465 CALL/RET through native52F4 base-palette setup, then continue through the timer call to046B. Packed attribute and RGB DAC paths, blanking control, missing byte-port stops and changed live returns are covered alongside the full parent scope. The parent contributes132 unique bytes; the connected scope is823 known bytes including already translated dependencies. See docs/game-initialize.md."
   },
   {
     "address": 1128,
@@ -4587,7 +4640,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0468 CALL/RET through native15AD timer calibration, then stop at046B before level initialization. Fixed-option reload, the live changed timer return and the SS-alias stop at unresolved dynamic detector target1407 are represented;6 completed numeric mutants cover the parent. The routine measured paths remain independently covered by tests/video_probe.py. This continuation adds3 parent bytes to132 total and connects823 known bytes including translated video, detector, timer and palette dependencies. 451,671 original instructions and451,201 ordered bus events; later controller/platform/IRQ paths remain open. See docs/game-initialize.md."
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: Actual0468 timer calibration CALL and live046B return. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open. Prefix checkpoint retained: tests/game_initialize_prefix.py:24 bounded original/native comparisons execute the actual0468 CALL/RET through native15AD timer calibration, then stop at046B before level initialization. Fixed-option reload, the live changed timer return and the SS-alias stop at unresolved dynamic detector target1407 are represented;6 completed numeric mutants cover the parent. The routine measured paths remain independently covered by tests/video_probe.py. This continuation adds3 parent bytes to132 total and connects823 known bytes including translated video, detector, timer and palette dependencies. 451,671 original instructions and451,201 ordered bus events; later controller/platform/IRQ paths remain open. See docs/game-initialize.md."
   },
   {
     "address": 1131,
@@ -4612,7 +4665,7 @@
       ]
     ],
     "c_core": "lmn_initialize_game_core",
-    "verification_evidence": "tests/game_initialize_prefix.py bounds the actual046B CALL and preserves its live return, the level child's missing-raster stop, drawing/header fallthrough to the missing-special-service boundary, normal outer RET to046E, and a changed actual parent return. The full level caller and children retain their independent level-initialize campaign. See docs/game-initialize.md."
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: Actual046B level CALL and live046E return; original prefix retains special/raster stop cases. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open. Prefix checkpoint retained: tests/game_initialize_prefix.py bounds the actual046B CALL and preserves its live return, the level child's missing-raster stop, drawing/header fallthrough to the missing-special-service boundary, normal outer RET to046E, and a changed actual parent return. The full level caller and children retain their independent level-initialize campaign. See docs/game-initialize.md."
   },
   {
     "address": 1134,
@@ -4628,7 +4681,15 @@
     "evidence": [
       "Actual near RET from InitializeLevelFromRecord at046B resumes here before the conditional mouse-service check and mouse initialization block."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1134,
+        1152
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: ExactFF mouse gate; INT33 AX4/CX150/DX100 through actual stack/IVT/IRET transport; all returned registers live. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1152,
@@ -4644,7 +4705,15 @@
     "evidence": [
       "Original foreground/session control-flow block at 0480. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1152,
+        1155
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL410F with actual0483 return; changed parent word remains exposed. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1155,
@@ -4660,7 +4729,15 @@
     "evidence": [
       "Return continuation of the actual near CALL RebuildViewVisibilityMap at 0480 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1155,
+        1158
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL30A6 with actual0486 return and visibility-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1158,
@@ -4676,7 +4753,15 @@
     "evidence": [
       "Return continuation of the actual near CALL CreateEntityRecordIfDue at 0483 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1158,
+        1161
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL5377 with actual0489 return and creation-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1161,
@@ -4692,7 +4777,15 @@
     "evidence": [
       "Return continuation of the actual near CALL SeedGameFadePalette at 0486 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1161,
+        1164
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL482F with actual048C return and fade-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1164,
@@ -4708,7 +4801,15 @@
     "evidence": [
       "Return continuation of the actual near CALL SelectLevelSoundId at 0489 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1164,
+        1167
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL81CC with actual048F return and sound-selection-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1167,
@@ -4724,7 +4825,15 @@
     "evidence": [
       "Return continuation of the actual near CALL InitializeGameDrawingPages at 048C in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1167,
+        1170
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL39CE with actual0492 return and drawing-pages-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1170,
@@ -4740,7 +4849,15 @@
     "evidence": [
       "Return continuation of the actual near CALL InitializeStatusDisplay at 048F in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1170,
+        1173
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL1644 with actual0495 return, DOS vector/PIT services and provider-stop/changed-return evidence. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1173,
@@ -4756,7 +4873,15 @@
     "evidence": [
       "Return continuation of the actual near CALL InstallGameTimerVector at 0492 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1173,
+        1176
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL3944 with actual0498 return and timer-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1176,
@@ -4772,7 +4897,15 @@
     "evidence": [
       "Return continuation of the actual near CALL AdvanceLevelObjectAnimations at 0495 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1176,
+        1179
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL7BB8 with actual049B return and animation-returned state; empty-object fixture retains child domains. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1179,
@@ -4788,7 +4921,15 @@
     "evidence": [
       "Return continuation of the actual near CALL DrawLevelObjectGraphics at 0498 in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1179,
+        1182
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL7900 with actual049E return and object-draw-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1182,
@@ -4804,7 +4945,15 @@
     "evidence": [
       "Return continuation of the actual near CALL CopyStatusBackdropToDrawingPage at 049B in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1182,
+        1185
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: CALL3AC8 with actual04A1 return and status-backdrop-returned state. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1185,
@@ -4820,7 +4969,15 @@
     "evidence": [
       "Return continuation of the actual near CALL UpdateStatusDisplay at 049E in InitializeGameSession; the next instruction consumes the child-returned state."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1185,
+        1194
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: XOR CX/DX and canonical live DS:1FCF clear before calibration. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1194,
@@ -4836,7 +4993,15 @@
     "evidence": [
       "Original foreground/session control-flow block at 04AA. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1194,
+        1206
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: ExactFF first-edge loop and second clear; poll before every read, explicit absent/stopping-poll status. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1206,
@@ -4852,7 +5017,15 @@
     "evidence": [
       "Original foreground/session control-flow block at 04B6. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1206,
+        1210
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: Literal DEC CX; DEC DX only when CX becamezero, without a DX zero test; wrap preserved. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1210,
@@ -4868,7 +5041,15 @@
     "evidence": [
       "Original foreground/session control-flow block at 04BA. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1210,
+        1232
+      ]
+    ],
+    "c_implementation": "c/game_initialize.c",
+    "verification_evidence": "tests/game_initialize.py and build/game-initialize-differential.json: ExactFF second-edge loop, ADD CX,CX / ADC DX,DX / NEG DX, ordered1FFE/2000 stores and actual04CF RET with live NEG flags. Normal terrain-only declared domain; inherited child/provider seams and general IRQ scheduling remain open."
   },
   {
     "address": 1232,
@@ -28139,8 +28320,29 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 243
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 243,
+    "c_code_ranges": [
+      [
+        16517,
+        16526
+      ],
+      [
+        16527,
+        16533
+      ],
+      [
+        16534,
+        16563
+      ],
+      [
+        16564,
+        16655
+      ]
+    ],
+    "c_implementation": "c/view_scroll.c",
+    "c_core": "lmn_view_scroll_core",
+    "verification_evidence": "tests/view_scroll.py; build/view-scroll-differential.json: 216 core/adapter comparisons, all64 owned sites/all35 outcomes across179 own bytes, four completed mutants. Signed/wrapped guards, selector1->9/0A->2, exact right500 equality, double-speed left abort, shared410F visibility tail and live inherited RET. SELECTOR entry; existing410F..414E child bytes excluded."
   },
   {
     "address": 16527,
@@ -28421,7 +28623,16 @@
     "evidence": [
       "Origin pixels signed not greater than 10 rebuild unchanged; else -8, and -8 again with button bit1 unless 10 reached."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        16719,
+        16763
+      ]
+    ],
+    "c_implementation": "c/view_scroll.c",
+    "c_core": "lmn_view_scroll_core",
+    "verification_evidence": "Same view_scroll evidence; LEFT entry. Shared visibility core retains stable relocated4137 operand and live DS/ES/SS effects; no additional CALL frame."
   },
   {
     "address": 16746,
