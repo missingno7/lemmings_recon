@@ -13,6 +13,7 @@
 #define CS_InitializeGameSession 0x03E7u
 #define CS_InitializeGameAfterStateClear 0x0462u
 #define CS_InitializeGameAfterVideoSetup 0x0465u
+#define CS_InitializeGameAfterPalette 0x0468u
 #define CS_DatFatalTransfer 0x04D0u
 #define CS_CleanupAfterTimer 0x04D3u
 #define CS_CleanupAfterKeyboard 0x04D6u

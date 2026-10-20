@@ -1,6 +1,7 @@
 #ifndef LEMMINGS_GAME_INITIALIZE_H
 #define LEMMINGS_GAME_INITIALIZE_H
 #include "video_probe.h"
+#include "game_prepare.h"
 
 enum LmnGameInitializeStatus {
     LMN_GAME_INITIALIZE_AT_BASE_PALETTE = 0,
@@ -16,12 +17,13 @@ _Static_assert(sizeof(LmnGameInitializeResult)==34u,"34-byte game initialization
 
 typedef struct LmnGameInitializeServices {
     const LmnVideoProbeServices *video;
+    const LmnRasterBytePorts *ports;
     const LmnRasterBus *bus;
 } LmnGameInitializeServices;
 
 /* Execute 03E7 state initialization, both live SS map clears, and the actual
-   0462 CALL to the verified 0FB2 video setup. Stop at0465 before palette
-   publication. Child/provider stops and changed RET words remain live. */
+   0462/0465 CALLs to verified0FB2 video and52F4 palette setup. Stop at0468
+   before timer calibration. Child/provider stops and changed RETs remain live. */
 LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
     const LmnRegs *registers,const LmnGameInitializeServices *services);
 

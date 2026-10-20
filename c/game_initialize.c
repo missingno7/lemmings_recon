@@ -159,5 +159,30 @@ LmnGameInitializeResult lmn_initialize_game_core(uint8_t *memory,
         return out;
     }
     r->ip=resume;
+
+    /* CALL PublishGameBasePalette at0465; it returns to the next live word. */
+    const uint16_t palette_resume=CS_InitializeGameAfterPalette;
+    expected_cs=r->cs;
+    push_word(memory,bus,r,palette_resume);
+    r->ip=CS_PublishGameBasePalette;
+    LmnGamePrepareResult palette=lmn_game_prepare_core(memory,r,
+        LMN_GAME_PREPARE_BASE_PALETTE,services?services->ports:0,bus);
+    *r=palette.registers;
+    if(palette.status){
+        out.status=palette.status==LMN_GAME_PREPARE_CHANGED_RETURN
+            ?LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN:LMN_GAME_INITIALIZE_CHILD_STOP;
+        out.child_status=palette.status;
+        out.service_status=palette.child_status;
+        return out;
+    }
+    r->ip=pop_word(memory,bus,r);
+#if GAME_INITIALIZE_MUTATION == 5
+    r->ip=palette_resume;
+#endif
+    if(r->cs!=expected_cs||r->ip!=palette_resume){
+        out.status=LMN_GAME_INITIALIZE_CHANGED_CHILD_RETURN;
+        return out;
+    }
+    r->ip=palette_resume;
     return out;
 }

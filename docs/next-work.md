@@ -2,15 +2,15 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is32,493 bytes. The126 new unique
-bytes implement the 03E7 state stores and SS map clears through its actual0462
-CALL/RET to native0FB2 video setup, stopping before palette publication at0465.
-Seventeen bounded comparisons cover35 parent sites,17 child sites and four
-completed mutants, including actual PUSH SS/POP ES bus effects, live BIOS frame,
-DS/SS aliases,20-bit physical wrap and planar VGA state. The checkpoint executes
-318,042 original instructions and318,386 ordered bus events. The later
-controller, platform providers and scheduled timer waits remain open. See
-game-initialize.md.
+The main-image translated-code ledger union is32,496 bytes. The129 new unique
+bytes implement the 03E7 state stores and SS map clears through actual0462/0465
+CALL/RETs to native0FB2 video and52F4 palette setup, stopping before timer
+calibration at0468. Twenty-two bounded comparisons cover36 parent sites,84
+child sites and five completed mutants, including actual PUSH SS/POP ES bus
+effects, live BIOS frame, packed/RGB palette output, DS/SS aliases,20-bit
+physical wrap and planar VGA state. The checkpoint executes413,787 original
+instructions and413,341 ordered bus events. The later controller, platform
+providers and scheduled timer waits remain open. See game-initialize.md.
 
 The previous main-image translated-code ledger union is32,367 bytes. The620 new unique
 bytes implement52F4/5377 palettes,482F sound selection,7900 backdrop,80FD dirty
@@ -259,8 +259,8 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue the actual00FB ->03E7 initializer from0465. Compose palette
-   publication and its returned registers first, then advance through the
+1. Continue the actual00FB ->03E7 initializer from0468. Compose timer
+   calibration and level-record initialization next, then advance through the
    remaining drawing/status children. Preserve canonical DS/SS clears,
    full-register video/calibration/mouse/timer services, level/status/object
    child domains, actual child frames and final timer-chain calibration loops.
