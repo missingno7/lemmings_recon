@@ -1,5 +1,22 @@
 # Shared differential verification
 
+Choose the run by the behavior changed. ASM-only names/comments/offset expressions
+use the fast exact gate and affected static/accounting tests. C leaves use their
+own suites; connected operations add directly affected parent handoffs. Shared
+engine/service behavior requires affected consumers, and changed original
+contracts require `verify.py --contracts`. The full native campaign is an explicit
+aggregate acceptance event, not an edit-loop prerequisite. Existing test domains
+and strongest witnesses remain intact.
+
+`coverage.py --inventory` reports current classification and C ledger extents
+without executing or renewing native evidence. Retained static identity evidence
+requires matching image and recorded input hashes; it does not independently
+certify toolchain freshness or manifest completeness. Full `coverage.py` rejects stale
+aggregate evidence. Comments/names can stale coarse manifests even when executable
+bytes and C behavior are identical; that does not justify rerunning unrelated
+campaigns or treating old reports as freshly accepted. Semantic readiness is
+the separate scoped gate in semantic-audit.md.
+
 New focused suites use tests/verification.py. Suites declare instruction ranges,
 supported entries/returns, finite providers and independent expectations. They do
 not implement another CPU runner, memory bus, ctypes callback guard or full-state

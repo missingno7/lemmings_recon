@@ -5,6 +5,13 @@ loc_2EB2 equ EntityCountdownMaskedSoundReturn
 ; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
 AdvanceEntityRecords:
+; Partial record schema is anchored in image_tail.asm and the symbol ledger.
+; One DS record owns both simulation and sprite roles: +20 is countdown AND
+; strip selector; +27 is signed horizontal step AND frame-add gate; +26==FF
+; skips both update and drawing. Do not split these into independent host fields.
+; +08 is a bit word with first-match priority, not an exclusive skill enum.
+; Creation clears one2D-byte slot then initializes state0004. Transitions replace
+; callback/source/frame roles in place; no snapshot or whole-array bound exists.
 ; Simulation ownership contract (docs/entity-simulation.md): DS remains live.
 ; [0043] bounds slots, including inactive records; [0042] is the live pass
 ; counter. SI starts0088 and advances2D. No array extent is established.
@@ -28,11 +35,11 @@ EntityUpdateAfterReadbackCall:
     jmp loc_1FFF ; @01F38
 loc_1F3B:
     push es ; @01F3B
-    cmp byte [si+0x26],0xff ; @01F3C
+    cmp byte [si+EntityRecordInactiveMarker-EntityRecordsBase],0xff ; @01F3C
     jnz loc_1F45 ; @01F40
     jmp loc_1FEB ; @01F42
 loc_1F45:
-    mov al,[si+0x20] ; @01F45
+    mov al,[si+EntityRecordCountdown-EntityRecordsBase] ; @01F45
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01F48
     jz loc_1F54 ; @01F4A
     call AdvanceEntityCountdown ; @01F4C
@@ -40,12 +47,12 @@ EntityUpdateAfterCountdownCall:
     jnz loc_1F54 ; @01F4F
     jmp loc_1FEB ; @01F51
 loc_1F54:
-    mov al,[si+0x24] ; @01F54
+    mov al,[si+EntityRecordBehaviorFlags-EntityRecordsBase] ; @01F54
     test al,0x80 ; @01F57
     jz loc_1F5E ; @01F59
     jmp AdvanceEntityFlag80Override ; @01F5B
 loc_1F5E:
-    mov ax,[si+0x8] ; @01F5E
+    mov ax,[si+EntityRecordStateBits-EntityRecordsBase] ; @01F5E
     db 0x23,0xc0 ; ENCODED: and ax,ax (NASM chooses a different encoding) ; @01F61
     jnz loc_1F68 ; @01F63
     jmp loc_2047 ; @01F65
@@ -145,16 +152,16 @@ loc_2005:
     mul cx ; @02013
     add ax,0x88 ; @02015
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM chooses a different encoding) ; @02018
-    cmp byte [si+0x20],0x0 ; @0201A
+    cmp byte [si+EntityRecordCountdown-EntityRecordsBase],0x0 ; @0201A
     jnz loc_2037 ; @0201E
-    cmp byte [si+0x26],0xff ; @02020
+    cmp byte [si+EntityRecordInactiveMarker-EntityRecordsBase],0xff ; @02020
     jnz loc_202C ; @02024
     inc byte [EntityScanCursor-GameDataImage] ; @02026
     jmp short loc_2005 ; @0202A
 loc_202C:
-    test word [si+0x8],0x3 ; @0202C
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x3 ; @0202C
     jnz loc_2037 ; @02031
-    mov byte [si+0x20],0x4f ; @02033
+    mov byte [si+EntityRecordCountdown-EntityRecordsBase],0x4f ; @02033
 loc_2037:
     inc byte [EntityScanCursor-GameDataImage] ; @02037
 EntityUpdateScanCandidateReturn:
@@ -173,24 +180,24 @@ loc_2047:
 ; bounds select NEG+27 or actual CALL5DC6/RET206B. All row-pitch and
 ; record reads remain live. Shared20D6/20E2/2148 tails also serve peer states.
 ; C owns2047..20D5,20E9..2147,2169..21AF; tails have separate ownership.
-    mov al,[si+0x28] ; @02047
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02047
     inc al ; @0204A
     and al,0x7 ; @0204C
-    mov [si+0x28],al ; @0204E
-    mov al,[si+0x27] ; @02051
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @0204E
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02051
     cbw ; @02054
-    add [si],ax ; @02055
-    cmp word [si],byte +0x10 ; @02057
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02055
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02057
     jnl loc_205F ; @0205A
     jmp loc_2142 ; @0205C
 loc_205F:
-    cmp word [si],0x680 ; @0205F
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @0205F
     jl loc_2068 ; @02063
     jmp loc_2142 ; @02065
 loc_2068:
     call PrepareEntityPixelSample ; @02068
 EntityZeroStateAfterPixelCall:
-    mov bp,[si+0x2] ; @0206B
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @0206B
     mov al,[es:di] ; @0206E
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02071
     jnz loc_20E9 ; @02073
@@ -210,25 +217,25 @@ EntityZeroStateAfterPixelCall:
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02095
     jnz loc_20D6 ; @02097
     inc bp ; @02099
-    or word [si+0x8],byte +0x4 ; @0209A
-    mov word [si+0xa],0x0 ; @0209E
-    mov word [si+0xc],0xa42 ; @020A3
-    mov word [si+0x10],0x5a ; @020A8
-    mov word [si+0x12],0x3c ; @020AD
-    mov byte [si+0x28],0x0 ; @020B2
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @0209A
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @0209E
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @020A3
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @020A8
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @020AD
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @020B2
     mov byte [si+0x23],0x3 ; @020B6
-    mov word [si+0x4],0xfff8 ; @020BA
-    mov word [si+0x6],0xfff6 ; @020BF
-    mov byte [si+0x29],0x4 ; @020C4
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @020BA
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @020BF
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @020C4
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @020C8
-    mov [si+0x14],ax ; @020CB
-    mov byte [si+0x2a],0x0 ; @020CE
-    and byte [si+0x24],0x1 ; @020D2
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @020CB
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @020CE
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @020D2
 StoreEntityProbeHeight:
 loc_20D6:
 ; Shared JMP entry with BP=candidate Y. Store first, then signed compare B4.
 ; Peer entries:2D90/2D9F/2DAE/2DB2. No CALL frame around this continuation.
-    mov [si+0x2],bp ; @020D6
+    mov [si+EntityRecordY-EntityRecordsBase],bp ; @020D6
     cmp bp,0xb4 ; @020D9
     jnl loc_20E2 ; @020DD
     jmp loc_1FE8 ; @020DF
@@ -236,7 +243,7 @@ MarkEntityInactive:
 loc_20E2:
 ; Direct peer JMPs skip20D6 store/CMP; preserve incoming registers/FLAGS.
 ; +26=FF keeps the slot in [0043]'s bound and skips interactions this pass.
-    mov byte [si+0x26],0xff ; @020E2
+    mov byte [si+EntityRecordInactiveMarker-EntityRecordsBase],0xff ; @020E2
     jmp loc_1FEB ; @020E6
 loc_20E9:
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @020E9
@@ -273,47 +280,47 @@ loc_20E9:
     mov al,[es:di] ; @02135
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02138
     jz loc_2169 ; @0213A
-    test byte [si+0x24],0x1 ; @0213C
+    test byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0213C
     jnz loc_2179 ; @02140
 loc_2142:
-    neg byte [si+0x27] ; @02142
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02142
     jmp loc_1FE8 ; @02145
 FinishEntityStepHeight:
 loc_2148:
 ; Shared JMP entry: store BP, add live +06, signed <=0A selects clamp.
 ; Clamp rereads +06 after BP=9, writes Y, NEGs +27 and clears state bit0008.
 ; Peer entries:23E1/23F0/2634/2651/2690/27A2/27E5. Continue via1FE8.
-    mov [si+0x2],bp ; @02148
-    add bp,[si+0x6] ; @0214B
+    mov [si+EntityRecordY-EntityRecordsBase],bp ; @02148
+    add bp,[si+EntityRecordDrawingYBias-EntityRecordsBase] ; @0214B
     cmp bp,byte +0xa ; @0214E
     jng loc_2156 ; @02151
     jmp loc_1FE8 ; @02153
 loc_2156:
     mov bp,0x9 ; @02156
-    sub bp,[si+0x6] ; @02159
-    mov [si+0x2],bp ; @0215C
-    neg byte [si+0x27] ; @0215F
-    and word [si+0x8],byte -0x9 ; @02162
+    sub bp,[si+EntityRecordDrawingYBias-EntityRecordsBase] ; @02159
+    mov [si+EntityRecordY-EntityRecordsBase],bp ; @0215C
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @0215F
+    and word [si+EntityRecordStateBits-EntityRecordsBase],byte -0x9 ; @02162
     jmp loc_1FE8 ; @02166
 loc_2169:
-    or word [si+0x8],byte +0x8 ; @02169
-    mov byte [si+0x28],0x8 ; @0216D
-    mov bp,[si+0x2] ; @02171
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x8 ; @02169
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x8 ; @0216D
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @02171
     sub bp,byte +0x2 ; @02174
     jmp short loc_2148 ; @02177
 loc_2179:
-    mov byte [si+0x28],0x0 ; @02179
-    mov word [si+0xa],0x0 ; @0217D
-    mov word [si+0xc],0x39a ; @02182
-    or word [si+0x8],byte +0x20 ; @02187
-    mov word [si+0x10],0x48 ; @0218B
-    mov word [si+0x12],0x30 ; @02190
-    mov word [si+0x4],0xfff8 ; @02195
-    mov word [si+0x6],0xfff4 ; @0219A
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02179
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @0217D
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x39a ; @02182
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x20 ; @02187
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x48 ; @0218B
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x30 ; @02190
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02195
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff4 ; @0219A
     mov ax,[DrawingCallbackSlots-GameDataImage+0x2] ; @0219F
-    mov [si+0x14],ax ; @021A2
-    mov byte [si+0x2a],0xff ; @021A5
-    mov byte [si+0x29],0x8 ; @021A9
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @021A2
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @021A5
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x8 ; @021A9
     jmp loc_1FE8 ; @021AD
 AdvanceEntityState0004:
 loc_21B0:
@@ -323,33 +330,33 @@ loc_21B0:
 ; the first two20E2 exits skip the Y store, unlike the third exhaustion.
 ; Occupied sample stores Y before unsigned +23<=3C transition selection.
 ; Live callback/pitch/gate reads and optional INT61 frame remain explicit.
-    mov al,[si+0x28] ; @021B0
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @021B0
     inc al ; @021B3
     and al,0x3 ; @021B5
-    mov [si+0x28],al ; @021B7
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @021B7
     cmp byte [si+0x23],0x10 ; @021BA
     jna loc_2202 ; @021BE
     cmp byte [si+0x25],0x0 ; @021C0
     jz loc_2202 ; @021C4
-    mov word [si+0x8],0x400 ; @021C6
-    mov word [si+0xa],0x0 ; @021CB
-    mov word [si+0xc],0xbaa ; @021D0
-    mov word [si+0x10],0x80 ; @021D5
-    mov word [si+0x12],0x60 ; @021DA
-    mov byte [si+0x28],0x0 ; @021DF
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x400 ; @021C6
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @021CB
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xbaa ; @021D0
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x80 ; @021D5
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x60 ; @021DA
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @021DF
     mov word [si+0xe],0x0 ; @021E3
-    mov word [si+0x6],0xfff0 ; @021E8
-    mov byte [si+0x29],0x8 ; @021ED
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff0 ; @021E8
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x8 ; @021ED
     mov ax,[DrawingCallbackSlots-GameDataImage+0xc] ; @021F1
-    mov [si+0x14],ax ; @021F4
-    mov byte [si+0x2a],0xff ; @021F7
-    and byte [si+0x24],0x1 ; @021FB
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @021F4
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @021F7
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @021FB
     jmp loc_1FE8 ; @021FF
 loc_2202:
     call PrepareEntityPixelSample ; @02202
 EntityState0004AfterPixelCall:
 ; Actual near RET target; shared20E2/1FE8 JMPs acquire no extra frames.
-    mov bp,[si+0x2] ; @02205
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @02205
     mov al,[es:di] ; @02208
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0220B
     jnz loc_224D ; @0220D
@@ -373,29 +380,29 @@ loc_222E:
     jnz loc_224D ; @02237
     inc bp ; @02239
     add byte [si+0x23],0x3 ; @0223A
-    mov [si+0x2],bp ; @0223E
+    mov [si+EntityRecordY-EntityRecordsBase],bp ; @0223E
     cmp bp,0xb4 ; @02241
     jnl loc_224A ; @02245
     jmp loc_1FE8 ; @02247
 loc_224A:
     jmp loc_20E2 ; @0224A
 loc_224D:
-    mov [si+0x2],bp ; @0224D
+    mov [si+EntityRecordY-EntityRecordsBase],bp ; @0224D
     cmp byte [si+0x23],0x3c ; @02250
     jna loc_22A3 ; @02254
-    mov word [si+0x8],0x1 ; @02256
-    mov word [si+0xa],0x0 ; @0225B
-    mov word [si+0xc],0xc2a ; @02260
-    mov word [si+0x10],0x5a ; @02265
-    mov word [si+0x12],0x3c ; @0226A
-    mov byte [si+0x28],0x0 ; @0226F
-    mov byte [si+0x27],0x0 ; @02273
-    mov byte [si+0x20],0x0 ; @02277
-    mov byte [si+0x29],0x0 ; @0227B
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x1 ; @02256
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @0225B
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xc2a ; @02260
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02265
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @0226A
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @0226F
+    mov byte [si+EntityRecordHorizontalStep-EntityRecordsBase],0x0 ; @02273
+    mov byte [si+EntityRecordCountdown-EntityRecordsBase],0x0 ; @02277
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @0227B
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0227F
-    mov [si+0x14],ax ; @02282
-    mov byte [si+0x2a],0x0 ; @02285
-    and byte [si+0x24],0x1 ; @02289
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02282
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02285
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02289
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0228D
     jnz loc_22A0 ; @02292
     test byte [SoundOptionBits-GameDataImage],0x3 ; @02294
@@ -407,31 +414,31 @@ loc_22A0:
 ; Only a matching live INT61 CS:IP resumes here; DS/AX/FLAGS flow onward.
     jmp loc_1FE8 ; @022A0
 loc_22A3:
-    mov word [si+0x8],0x0 ; @022A3
-    mov word [si+0xa],0x0 ; @022A8
-    mov word [si+0xc],0x0 ; @022AD
-    mov word [si+0x10],0x5a ; @022B2
-    mov word [si+0x12],0x3c ; @022B7
-    mov byte [si+0x28],0x0 ; @022BC
-    mov word [si+0x4],0xfff8 ; @022C0
-    mov word [si+0x6],0xfff6 ; @022C5
-    mov byte [si+0x29],0x9 ; @022CA
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @022A3
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @022A8
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @022AD
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @022B2
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @022B7
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @022BC
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @022C0
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @022C5
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @022CA
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @022CE
-    mov [si+0x14],ax ; @022D1
-    mov byte [si+0x2a],0x0 ; @022D4
-    and byte [si+0x24],0x1 ; @022D8
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @022D1
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @022D4
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @022D8
     jmp loc_1FE8 ; @022DC
 AdvanceEntityState0001:
 loc_22DF:
 ; State0001 JMP entry: +28 modulo16; zero marks +26 inline, then1FEB.
-    mov al,[si+0x28] ; @022DF
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @022DF
     inc al ; @022E2
     and al,0xf ; @022E4
-    mov [si+0x28],al ; @022E6
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @022E6
     jz loc_22EE ; @022E9
     jmp loc_1FEB ; @022EB
 loc_22EE:
-    mov byte [si+0x26],0xff ; @022EE
+    mov byte [si+EntityRecordInactiveMarker-EntityRecordsBase],0xff ; @022EE
     jmp loc_1FEB ; @022F2
 AdvanceEntityState1000:
 loc_22F5:
@@ -439,20 +446,20 @@ loc_22F5:
 ; scale AX by8, sample at live X+offset/Y through actual CALL6141/RET2316.
 ; Then POP BX from live SS (not a cached delta), test pixel and conditionally
 ; ADD live X,BX with entry FLAGS on RMW writes. Continue1FEB; no local RET.
-    mov al,[si+0x28] ; @022F5
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @022F5
     inc al ; @022F8
     and al,0xf ; @022FA
-    mov [si+0x28],al ; @022FC
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @022FC
     jz loc_2323 ; @022FF
-    mov al,[si+0x27] ; @02301
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02301
     cbw ; @02304
     push ax ; @02305
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @02306
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @02308
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @0230A
-    mov cx,[si] ; @0230C
+    mov cx,[si+EntityRecordX-EntityRecordsBase] ; @0230C
     db 0x03,0xc8 ; ENCODED: add cx,ax (NASM chooses a different encoding) ; @0230E
-    mov bx,[si+0x2] ; @02310
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @02310
     call PrepareCoordinatePixelSample ; @02313
 EntityState1000AfterPixelCall:
 ; Original caller's signed-delta save is consumed only after actual child RET.
@@ -460,7 +467,7 @@ EntityState1000AfterPixelCall:
     mov al,[es:di] ; @02317
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0231A
     jnz loc_2320 ; @0231C
-    add [si],bx ; @0231E
+    add [si+EntityRecordX-EntityRecordsBase],bx ; @0231E
 loc_2320:
     jmp loc_1FEB ; @02320
 loc_2323:
@@ -469,22 +476,22 @@ AdvanceEntityState2000:
 loc_2326:
 ; State2000: +28 modulo8; zero INCs live DS0046 before marking +26 inline.
 ; The byte INC preserves CF; its resulting FLAGS reach the mark and1FEB.
-    mov al,[si+0x28] ; @02326
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02326
     inc al ; @02329
     and al,0x7 ; @0232B
-    mov [si+0x28],al ; @0232D
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @0232D
     jz loc_2335 ; @02330
     jmp loc_1FEB ; @02332
 loc_2335:
     inc byte [EntityCompletionCounter-GameDataImage] ; @02335
-    mov byte [si+0x26],0xff ; @02339
+    mov byte [si+EntityRecordInactiveMarker-EntityRecordsBase],0xff ; @02339
     jmp loc_1FEB ; @0233D
 AdvanceEntityState4000:
 loc_2340:
 ; State4000: memory INC +28, then fresh AL read and CMP0E; no modulo mask.
 ; RMW writes observe entry FLAGS. Equality JMPs20E2; otherwise1FEB.
-    inc byte [si+0x28] ; @02340
-    mov al,[si+0x28] ; @02343
+    inc byte [si+EntityRecordFrameSelector-EntityRecordsBase] ; @02340
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02343
     cmp al,0xe ; @02346
     jnz loc_234D ; @02348
     jmp loc_20E2 ; @0234A
@@ -499,9 +506,9 @@ loc_2350:
 ; map. Values9/5 skip drawing; other nibbles CALL5DF8 with its live bus effects.
 ; Actual child return words select continuation. No outer RET or interaction
 ; CALL is added here; normal exits JMP1FEB. UNKNOWN2382 remains unresolved.
-    mov al,[si+0x28] ; @02350
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02350
     inc al ; @02353
-    mov [si+0x28],al ; @02355
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02355
     cmp al,0x34 ; @02358
     jnz loc_235F ; @0235A
     jmp loc_20E2 ; @0235C
@@ -518,7 +525,7 @@ loc_2366:
     int 0x60 ; @02377
 EntityState0002AfterSound:
 loc_2379:
-    test word [si+0x8],0x100 ; @02379
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x100 ; @02379
     jnz loc_2383 ; @0237E
     jmp short loc_2386 ; @02380
 ; UNKNOWN: unresolved bytes
@@ -527,8 +534,8 @@ loc_2383:
     call CopyEntityPatternToInteractionMap ; @02383
 EntityState0002AfterPatternCall:
 loc_2386:
-    mov ax,[si] ; @02386
-    mov bx,[si+0x2] ; @02388
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @02386
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @02388
     sub bx,byte +0x10 ; @0238B
     shr ax,1 ; @0238E
     shr ax,1 ; @02390
@@ -565,22 +572,22 @@ loc_23BF:
 ; Both paths JMP2148 with BP and the flowing DS/ES/SS/FLAGS, without a frame.
     call PrepareEntityPixelSample ; @023BF
 EntityState0008AfterPixelCall:
-    dec word [si+0x2] ; @023C2
+    dec word [si+EntityRecordY-EntityRecordsBase] ; @023C2
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @023C5
     mov al,[es:di] ; @023C9
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @023CC
     jz loc_23E4 ; @023CE
-    dec word [si+0x2] ; @023D0
+    dec word [si+EntityRecordY-EntityRecordsBase] ; @023D0
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @023D3
     mov al,[es:di] ; @023D7
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @023DA
     jz loc_23E4 ; @023DC
-    mov bp,[si+0x2] ; @023DE
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @023DE
     jmp loc_2148 ; @023E1
 loc_23E4:
-    and word [si+0x8],byte -0x9 ; @023E4
-    mov byte [si+0x28],0x0 ; @023E8
-    mov bp,[si+0x2] ; @023EC
+    and word [si+EntityRecordStateBits-EntityRecordsBase],byte -0x9 ; @023E4
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @023E8
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @023EC
     inc bp ; @023EF
     jmp loc_2148 ; @023F0
 AdvanceEntityState0010:
@@ -595,29 +602,29 @@ loc_23F3:
 ; Nibble9 may request INT61 AX040A; only CS:24D0 resumes transition stores.
 ; DS callback002E is read after earlier stores. All exits are direct JMPs
 ; to1FEB,20E2 or1FE8; no outer frame is introduced by these state entries.
-    cmp byte [si+0x28],0x11 ; @023F3
+    cmp byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x11 ; @023F3
     jnz loc_23FC ; @023F7
     jmp loc_250C ; @023F9
 loc_23FC:
-    mov al,[si+0x28] ; @023FC
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @023FC
     inc al ; @023FF
     and al,0xf ; @02401
-    mov [si+0x28],al ; @02403
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02403
     jz loc_240F ; @02406
     cmp al,0x8 ; @02408
     jz loc_240F ; @0240A
     jmp loc_1FEB ; @0240C
 loc_240F:
-    mov bp,[si] ; @0240F
-    mov ax,[si+0x4] ; @02411
-    add [si],ax ; @02414
-    push word [si] ; @02416
+    mov bp,[si+EntityRecordX-EntityRecordsBase] ; @0240F
+    mov ax,[si+EntityRecordDrawingXBias-EntityRecordsBase] ; @02411
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02414
+    push word [si+EntityRecordX-EntityRecordsBase] ; @02416
     call PrepareEntityPixelSample ; @02418
 EntityState0010AfterFirstPixelCall:
-    mov [si],bp ; @0241B
-    inc word [si+0x2] ; @0241D
+    mov [si+EntityRecordX-EntityRecordsBase],bp ; @0241B
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @0241D
     pop cx ; @02420
-    mov bp,[si+0x2] ; @02421
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @02421
     cmp bp,0xb4 ; @02424
     jl loc_242D ; @02428
     jmp loc_20E2 ; @0242A
@@ -642,25 +649,25 @@ EntityState0010AfterFirstExchange:
     jnz loc_2491 ; @02448
     test ax,cx ; @0244A
     jnz loc_2491 ; @0244C
-    and word [si+0x8],byte -0x11 ; @0244E
-    or word [si+0x8],byte +0x4 ; @02452
-    mov word [si+0xa],0x0 ; @02456
-    mov word [si+0xc],0xa42 ; @0245B
-    mov word [si+0x10],0x5a ; @02460
-    mov word [si+0x12],0x3c ; @02465
-    mov byte [si+0x28],0x0 ; @0246A
+    and word [si+EntityRecordStateBits-EntityRecordsBase],byte -0x11 ; @0244E
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @02452
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02456
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @0245B
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02460
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02465
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @0246A
     mov byte [si+0x23],0x3 ; @0246E
-    mov word [si+0x4],0xfff8 ; @02472
-    mov word [si+0x6],0xfff6 ; @02477
-    mov byte [si+0x29],0x4 ; @0247C
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02472
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02477
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @0247C
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02480
-    mov [si+0x14],ax ; @02483
-    mov byte [si+0x2a],0x0 ; @02486
-    and byte [si+0x24],0x1 ; @0248A
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02483
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02486
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0248A
     jmp loc_1FE8 ; @0248E
 loc_2491:
-    mov ax,[si] ; @02491
-    mov bx,[si+0x2] ; @02493
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @02491
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @02493
     sub bx,byte +0x10 ; @02496
     shr ax,1 ; @02499
     shr ax,1 ; @0249B
@@ -689,31 +696,31 @@ loc_24BD:
     int 0x61 ; @024CE
 EntityState0010AfterSound:
 loc_24D0:
-    mov word [si+0x8],0x0 ; @024D0
-    mov word [si+0xa],0x0 ; @024D5
-    mov word [si+0xc],0x0 ; @024DA
-    mov word [si+0x10],0x5a ; @024DF
-    mov word [si+0x12],0x3c ; @024E4
-    mov byte [si+0x28],0x0 ; @024E9
-    mov word [si+0x4],0xfff8 ; @024ED
-    mov word [si+0x6],0xfff6 ; @024F2
-    mov byte [si+0x29],0x9 ; @024F7
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @024D0
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @024D5
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @024DA
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @024DF
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @024E4
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @024E9
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @024ED
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @024F2
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @024F7
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @024FB
-    mov [si+0x14],ax ; @024FE
-    mov byte [si+0x2a],0x0 ; @02501
-    and byte [si+0x24],0x1 ; @02505
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @024FE
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02501
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02505
     jmp loc_1FE8 ; @02509
 loc_250C:
-    push word [si] ; @0250C
-    push word [si+0x2] ; @0250E
-    mov ax,[si+0x4] ; @02511
-    add [si],ax ; @02514
-    sub word [si+0x2],byte +0x2 ; @02516
+    push word [si+EntityRecordX-EntityRecordsBase] ; @0250C
+    push word [si+EntityRecordY-EntityRecordsBase] ; @0250E
+    mov ax,[si+EntityRecordDrawingXBias-EntityRecordsBase] ; @02511
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02514
+    sub word [si+EntityRecordY-EntityRecordsBase],byte +0x2 ; @02516
     call PrepareEntityPixelSample ; @0251A
 EntityState0010AfterSpecialPixelCall:
-    mov cx,[si] ; @0251D
-    pop word [si+0x2] ; @0251F
-    pop word [si] ; @02522
+    mov cx,[si+EntityRecordX-EntityRecordsBase] ; @0251D
+    pop word [si+EntityRecordY-EntityRecordsBase] ; @0251F
+    pop word [si+EntityRecordX-EntityRecordsBase] ; @02522
     mov bx,0xff8 ; @02524
     mov dl,0x0 ; @02527
     and cx,byte +0x7 ; @02529
@@ -737,7 +744,7 @@ EntityState0010AfterSpecialFirstExchange:
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02541
     call ExchangeThreeEntityPixelBytes ; @02545
 EntityState0010AfterSpecialSecondExchange:
-    mov byte [si+0x28],0x0 ; @02548
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02548
     jmp loc_240F ; @0254C
 AdvanceEntityState0020:
 loc_254F:
@@ -749,26 +756,26 @@ loc_254F:
 ; residual AL before AND AL,AH. Transition stores clear bit0020, retain
 ; literal field order, and read callback002E late on the state0004 path.
 ; The state0040 path leaves callback+14 untouched and JMPs2148 with live BP.
-    mov al,[si+0x28] ; @0254F
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @0254F
     inc al ; @02552
     and al,0x7 ; @02554
-    mov [si+0x28],al ; @02556
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02556
     cmp al,0x3 ; @02559
     jg loc_2560 ; @0255B
     jmp loc_25E1 ; @0255D
 loc_2560:
-    dec word [si+0x2] ; @02560
-    mov ax,[si+0x2] ; @02563
-    add ax,[si+0x6] ; @02566
+    dec word [si+EntityRecordY-EntityRecordsBase] ; @02560
+    mov ax,[si+EntityRecordY-EntityRecordsBase] ; @02563
+    add ax,[si+EntityRecordDrawingYBias-EntityRecordsBase] ; @02566
     cmp ax,0xa ; @02569
     jna loc_2591 ; @0256C
-    mov bp,[si] ; @0256E
-    mov al,[si+0x27] ; @02570
+    mov bp,[si+EntityRecordX-EntityRecordsBase] ; @0256E
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02570
     cbw ; @02573
-    sub [si],ax ; @02574
+    sub [si+EntityRecordX-EntityRecordsBase],ax ; @02574
     call PrepareEntityPixelSample ; @02576
 EntityState0020AfterFirstPixelCall:
-    mov [si],bp ; @02579
+    mov [si+EntityRecordX-EntityRecordsBase],bp ; @02579
     mov dx,[EntityPixelRowPitchBytes-GameDataImage] ; @0257B
     shl dx,1 ; @0257F
     shl dx,1 ; @02581
@@ -779,55 +786,55 @@ EntityState0020AfterFirstPixelCall:
     jnz loc_2591 ; @0258C
     jmp loc_1FE8 ; @0258E
 loc_2591:
-    and word [si+0x8],byte -0x21 ; @02591
-    or word [si+0x8],byte +0x4 ; @02595
-    mov word [si+0xa],0x0 ; @02599
-    mov word [si+0xc],0xa42 ; @0259E
-    mov word [si+0x10],0x5a ; @025A3
-    mov word [si+0x12],0x3c ; @025A8
-    mov byte [si+0x28],0x0 ; @025AD
+    and word [si+EntityRecordStateBits-EntityRecordsBase],byte -0x21 ; @02591
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @02595
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02599
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @0259E
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @025A3
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @025A8
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @025AD
     mov byte [si+0x23],0x3 ; @025B1
-    mov word [si+0x4],0xfff8 ; @025B5
-    mov word [si+0x6],0xfff6 ; @025BA
-    mov byte [si+0x29],0x4 ; @025BF
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @025B5
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @025BA
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @025BF
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @025C3
-    mov [si+0x14],ax ; @025C6
-    mov byte [si+0x2a],0x0 ; @025C9
-    and byte [si+0x24],0x1 ; @025CD
-    mov al,[si+0x27] ; @025D1
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @025C6
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @025C9
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @025CD
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @025D1
     neg al ; @025D4
-    mov [si+0x27],al ; @025D6
+    mov [si+EntityRecordHorizontalStep-EntityRecordsBase],al ; @025D6
     cbw ; @025D9
-    add [si],ax ; @025DA
-    add [si],ax ; @025DC
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @025DA
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @025DC
     jmp loc_1FE8 ; @025DE
 loc_25E1:
-    mov bp,[si+0x2] ; @025E1
-    sub word [si+0x2],byte +0x7 ; @025E4
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @025E1
+    sub word [si+EntityRecordY-EntityRecordsBase],byte +0x7 ; @025E4
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @025E8
-    sub [si+0x2],ax ; @025EA
+    sub [si+EntityRecordY-EntityRecordsBase],ax ; @025EA
     call PrepareEntityPixelSample ; @025ED
 EntityState0020AfterSecondPixelCall:
-    mov [si+0x2],bp ; @025F0
+    mov [si+EntityRecordY-EntityRecordsBase],bp ; @025F0
     mov al,[es:di] ; @025F3
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @025F6
     jz loc_25FD ; @025F8
     jmp loc_1FE8 ; @025FA
 loc_25FD:
-    add word [si+0x2],byte +0x2 ; @025FD
-    mov al,[si+0x28] ; @02601
+    add word [si+EntityRecordY-EntityRecordsBase],byte +0x2 ; @025FD
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02601
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @02604
-    sub [si+0x2],ax ; @02606
-    and word [si+0x8],byte -0x21 ; @02609
-    or word [si+0x8],byte +0x40 ; @0260D
-    mov word [si+0xa],0x0 ; @02611
-    mov word [si+0xc],0x6b2 ; @02616
-    mov word [si+0x10],0x48 ; @0261B
-    mov word [si+0x12],0x30 ; @02620
-    mov byte [si+0x28],0x0 ; @02625
-    mov byte [si+0x29],0x8 ; @02629
-    and byte [si+0x24],0x1 ; @0262D
-    mov bp,[si+0x2] ; @02631
+    sub [si+EntityRecordY-EntityRecordsBase],ax ; @02606
+    and word [si+EntityRecordStateBits-EntityRecordsBase],byte -0x21 ; @02609
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x40 ; @0260D
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02611
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x6b2 ; @02616
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x48 ; @0261B
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x30 ; @02620
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02625
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x8 ; @02629
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0262D
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @02631
     jmp loc_2148 ; @02634
 AdvanceEntityState0040:
 loc_2637:
@@ -835,33 +842,33 @@ loc_2637:
 ; Zero performs ordered transition stores and a late DS002E callback read;
 ; values1..4 SUB Y,2 and reread BP; values5..7 JMP1FEB without a height step.
 ; The first two paths JMP2148 directly, carrying live DS/ES/SS and FLAGS.
-    mov al,[si+0x28] ; @02637
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02637
     inc al ; @0263A
     and al,0x7 ; @0263C
-    mov [si+0x28],al ; @0263E
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @0263E
     jz loc_2654 ; @02641
     cmp al,0x5 ; @02643
     jl loc_264A ; @02645
     jmp loc_1FEB ; @02647
 loc_264A:
-    sub word [si+0x2],byte +0x2 ; @0264A
-    mov bp,[si+0x2] ; @0264E
+    sub word [si+EntityRecordY-EntityRecordsBase],byte +0x2 ; @0264A
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @0264E
     jmp loc_2148 ; @02651
 loc_2654:
-    mov word [si+0x8],0x0 ; @02654
-    mov word [si+0xa],0x0 ; @02659
-    mov word [si+0xc],0x0 ; @0265E
-    mov word [si+0x10],0x5a ; @02663
-    mov word [si+0x12],0x3c ; @02668
-    mov byte [si+0x28],0x0 ; @0266D
-    mov word [si+0x4],0xfff8 ; @02671
-    mov word [si+0x6],0xfff6 ; @02676
-    mov byte [si+0x29],0x9 ; @0267B
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @02654
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02659
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @0265E
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02663
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02668
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @0266D
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02671
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02676
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @0267B
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0267F
-    mov [si+0x14],ax ; @02682
-    mov byte [si+0x2a],0x0 ; @02685
-    and byte [si+0x24],0x1 ; @02689
-    mov bp,[si+0x2] ; @0268D
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02682
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02685
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02689
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @0268D
     jmp loc_2148 ; @02690
 ; State0080 from1FB5; known2693..27E7 bytes exclude four UNKNOWN singletons.
 ; PhaseA reads unsigned +21<=3, saves actual AX/ES, requests PC0313 then
@@ -872,10 +879,10 @@ loc_2654:
 ; Ordered transitions read callback002E late and JMP2148 without a CALL frame.
 AdvanceEntityState0080:
 loc_2693:
-    mov al,[si+0x28] ; @02693
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02693
     inc al ; @02696
     and al,0xf ; @02698
-    mov [si+0x28],al ; @0269A
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @0269A
     jnz loc_26A2 ; @0269D
     jmp short loc_26E4 ; @0269F
 ; UNKNOWN: unresolved bytes
@@ -915,18 +922,18 @@ loc_26DE:
 EntityState0080AfterStrokeCall:
     jmp loc_1FEB ; @026E1
 loc_26E4:
-    mov al,[si+0x27] ; @026E4
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @026E4
     cbw ; @026E7
-    add [si],ax ; @026E8
-    dec word [si+0x2] ; @026EA
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @026E8
+    dec word [si+EntityRecordY-EntityRecordsBase] ; @026EA
     db 0x8b,0xe8 ; ENCODED: mov bp,ax (NASM chooses a different encoding) ; @026ED
-    cmp word [si],byte +0x10 ; @026EF
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @026EF
     jg loc_26F7 ; @026F2
     jmp short loc_2763 ; @026F4
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @026F6
 loc_26F7:
-    cmp word [si],0x680 ; @026F7
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @026F7
     jl loc_2700 ; @026FB
     jmp short loc_2763 ; @026FD
 ; UNKNOWN: unresolved bytes
@@ -938,7 +945,7 @@ EntityState0080AfterFirstPixelCall:
     mov al,[es:di] ; @02707
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @0270A
     jnz loc_2763 ; @0270C
-    add [si],bp ; @0270E
+    add [si+EntityRecordX-EntityRecordsBase],bp ; @0270E
     call PrepareEntityPixelSample ; @02710
 EntityState0080AfterSecondPixelCall:
     sub di,[EntityPixelRowPitchBytes-GameDataImage] ; @02713
@@ -949,12 +956,12 @@ EntityState0080AfterSecondPixelCall:
     jnz loc_2726 ; @02721
     jmp loc_27A5 ; @02723
 loc_2726:
-    push word [si] ; @02726
-    add [si],bp ; @02728
-    add [si],bp ; @0272A
+    push word [si+EntityRecordX-EntityRecordsBase] ; @02726
+    add [si+EntityRecordX-EntityRecordsBase],bp ; @02728
+    add [si+EntityRecordX-EntityRecordsBase],bp ; @0272A
     call PrepareEntityPixelSample ; @0272C
 EntityState0080AfterThirdPixelCall:
-    pop word [si] ; @0272F
+    pop word [si+EntityRecordX-EntityRecordsBase] ; @0272F
     push ax ; @02731
     mov ax,[EntityPixelRowPitchBytes-GameDataImage] ; @02732
     db 0x2b,0xf8 ; ENCODED: sub di,ax (NASM chooses a different encoding) ; @02735
@@ -966,12 +973,12 @@ EntityState0080AfterThirdPixelCall:
     mov al,[es:di] ; @02740
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02743
     jnz loc_2763 ; @02745
-    cmp word [si],byte +0x10 ; @02747
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02747
     jng loc_2763 ; @0274A
-    cmp word [si],0x680 ; @0274C
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @0274C
     jnl loc_2763 ; @02750
-    mov ax,[si+0x2] ; @02752
-    add ax,[si+0x6] ; @02755
+    mov ax,[si+EntityRecordY-EntityRecordsBase] ; @02752
+    add ax,[si+EntityRecordDrawingYBias-EntityRecordsBase] ; @02755
     cmp ax,0xa ; @02758
     jng loc_2760 ; @0275B
     jmp loc_1FE8 ; @0275D
@@ -980,39 +987,39 @@ loc_2760:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02762
 loc_2763:
-    neg byte [si+0x27] ; @02763
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02763
 loc_2766:
-    mov word [si+0x8],0x0 ; @02766
-    mov word [si+0xa],0x0 ; @0276B
-    mov word [si+0xc],0x0 ; @02770
-    mov word [si+0x10],0x5a ; @02775
-    mov word [si+0x12],0x3c ; @0277A
-    mov byte [si+0x28],0x0 ; @0277F
-    mov word [si+0x4],0xfff8 ; @02783
-    mov word [si+0x6],0xfff6 ; @02788
-    mov byte [si+0x29],0x9 ; @0278D
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @02766
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @0276B
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @02770
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02775
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @0277A
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @0277F
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02783
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02788
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @0278D
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02791
-    mov [si+0x14],ax ; @02794
-    mov byte [si+0x2a],0x0 ; @02797
-    and byte [si+0x24],0x1 ; @0279B
-    mov bp,[si+0x2] ; @0279F
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02794
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02797
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0279B
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @0279F
     jmp loc_2148 ; @027A2
 loc_27A5:
-    mov word [si+0x8],0x0 ; @027A5
-    mov word [si+0xa],0x8 ; @027AA
-    mov word [si+0xc],0x126b ; @027AF
-    mov word [si+0x10],0x5a ; @027B4
-    mov word [si+0x12],0x3c ; @027B9
-    mov byte [si+0x28],0x0 ; @027BE
-    mov word [si+0x4],0xfff8 ; @027C2
-    mov word [si+0x6],0xfff6 ; @027C7
-    mov byte [si+0x29],0x8 ; @027CC
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @027A5
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x8 ; @027AA
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x126b ; @027AF
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @027B4
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @027B9
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @027BE
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @027C2
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @027C7
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x8 ; @027CC
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @027D0
-    mov [si+0x14],ax ; @027D3
-    mov byte [si+0x2a],0x0 ; @027D6
-    and byte [si+0x24],0x1 ; @027DA
-    or byte [si+0x24],0x80 ; @027DE
-    mov bp,[si+0x2] ; @027E2
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @027D3
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @027D6
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @027DA
+    or byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x80 ; @027DE
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @027E2
     jmp loc_2148 ; @027E5
 ; State0100 from1FBD. INC/AND are separate live memory RMWs. The actual
 ; pixel RET27F2 precedes the ES sample; clear samples perform ordered record
@@ -1021,8 +1028,8 @@ loc_27A5:
 ; JMP1FEB; this state does not run2148 or the interaction tail.
 AdvanceEntityState0100:
 loc_27E8:
-    inc byte [si+0x28] ; @027E8
-    and byte [si+0x28],0xf ; @027EB
+    inc byte [si+EntityRecordFrameSelector-EntityRecordsBase] ; @027E8
+    and byte [si+EntityRecordFrameSelector-EntityRecordsBase],0xf ; @027EB
     call PrepareEntityPixelSample ; @027EF
 EntityState0100AfterPixelCall:
     mov al,[es:di] ; @027F2
@@ -1030,19 +1037,19 @@ EntityState0100AfterPixelCall:
     jz loc_27FC ; @027F7
     jmp loc_1FEB ; @027F9
 loc_27FC:
-    mov word [si+0x8],0x0 ; @027FC
-    mov word [si+0xa],0x0 ; @02801
-    mov word [si+0xc],0x0 ; @02806
-    mov word [si+0x10],0x5a ; @0280B
-    mov word [si+0x12],0x3c ; @02810
-    mov byte [si+0x28],0x0 ; @02815
-    mov word [si+0x4],0xfff8 ; @02819
-    mov word [si+0x6],0xfff6 ; @0281E
-    mov byte [si+0x29],0x9 ; @02823
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @027FC
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02801
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @02806
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @0280B
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02810
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02815
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02819
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @0281E
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @02823
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02827
-    mov [si+0x14],ax ; @0282A
-    mov byte [si+0x2a],0x0 ; @0282D
-    and byte [si+0x24],0x1 ; @02831
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @0282A
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @0282D
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02831
     call CopyEntityPatternToInteractionMap ; @02835
 EntityState0100AfterPatternCall:
     jmp loc_1FEB ; @02838
@@ -1060,8 +1067,8 @@ EntityState0100AfterPatternCall:
 ; Last defined arithmetic flags are ADD DI,019Dh at 2873. See entity-pattern.md.
 CopyEntityPatternToInteractionMap:
 sub_283B:
-    mov ax,[si] ; @0283B
-    mov bx,[si+0x2] ; @0283D
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @0283B
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @0283D
     sub ax,0x4 ; @02840
     sub bx,byte +0x6 ; @02843
     sub bx,byte +0x10 ; @02846
@@ -1106,9 +1113,9 @@ sub_283B:
 ; Scoped native parent/child verification is recorded in entity-simulation.md.
 AdvanceEntityState0200:
 loc_287D:
-    inc byte [si+0x28] ; @0287D
-    and byte [si+0x28],0x1f ; @02880
-    mov al,[si+0x28] ; @02884
+    inc byte [si+EntityRecordFrameSelector-EntityRecordsBase] ; @0287D
+    and byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x1f ; @02880
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02884
     and al,0xf ; @02887
     cmp al,0xb ; @02889
     jl loc_2890 ; @0288B
@@ -1126,15 +1133,15 @@ loc_289E:
     cbw ; @028A0
     call DrawTenRowEntityMask ; @028A1
 EntityState0200AfterMaskCall:
-    mov al,[si+0x28] ; @028A4
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @028A4
     cmp al,0x5 ; @028A7
     jz loc_28AE ; @028A9
     jmp loc_1FEB ; @028AB
 loc_28AE:
-    mov cx,[si] ; @028AE
-    mov bx,[si+0x2] ; @028B0
+    mov cx,[si+EntityRecordX-EntityRecordsBase] ; @028AE
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @028B0
     sub bx,byte +0x6 ; @028B3
-    mov al,[si+0x27] ; @028B6
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @028B6
     cbw ; @028B9
     db 0x8b,0xe8 ; ENCODED: mov bp,ax (NASM chooses a different encoding) ; @028BA
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM chooses a different encoding) ; @028BC
@@ -1172,27 +1179,27 @@ EntityState0200AfterFourthCoordinateCall:
     jz loc_28FE ; @028F9
     jmp loc_1FEB ; @028FB
 loc_28FE:
-    mov word [si+0x8],0x0 ; @028FE
-    mov word [si+0xa],0x0 ; @02903
-    mov word [si+0xc],0x0 ; @02908
-    mov word [si+0x10],0x5a ; @0290D
-    mov word [si+0x12],0x3c ; @02912
-    mov byte [si+0x28],0x0 ; @02917
-    mov word [si+0x4],0xfff8 ; @0291B
-    mov word [si+0x6],0xfff6 ; @02920
-    mov byte [si+0x29],0x9 ; @02925
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @028FE
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02903
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @02908
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @0290D
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02912
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02917
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @0291B
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02920
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @02925
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02929
-    mov [si+0x14],ax ; @0292C
-    mov byte [si+0x2a],0x0 ; @0292F
-    and byte [si+0x24],0x1 ; @02933
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @0292C
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @0292F
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02933
     jmp loc_1FEB ; @02937
 loc_293A:
-    mov al,[si+0x27] ; @0293A
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @0293A
     cbw ; @0293D
-    add [si],ax ; @0293E
-    cmp word [si],byte +0x10 ; @02940
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @0293E
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02940
     jl loc_29C1 ; @02943
-    cmp word [si],0x680 ; @02945
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @02945
     jnl loc_29C1 ; @02949
     call PrepareEntityPixelSample ; @0294B
 EntityState0200AfterPixelCall:
@@ -1201,56 +1208,56 @@ EntityState0200AfterPixelCall:
     jz loc_2958 ; @02953
     jmp loc_2A00 ; @02955
 loc_2958:
-    inc word [si+0x2] ; @02958
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02958
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @0295B
     mov al,[es:di] ; @0295F
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02962
     jz loc_2969 ; @02964
     jmp loc_2A00 ; @02966
 loc_2969:
-    inc word [si+0x2] ; @02969
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02969
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @0296C
     mov al,[es:di] ; @02970
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02973
     jz loc_297A ; @02975
     jmp loc_2A00 ; @02977
 loc_297A:
-    inc word [si+0x2] ; @0297A
-    or word [si+0x8],byte +0x4 ; @0297D
-    mov word [si+0xa],0x0 ; @02981
-    mov word [si+0xc],0xa42 ; @02986
-    mov word [si+0x10],0x5a ; @0298B
-    mov word [si+0x12],0x3c ; @02990
-    mov byte [si+0x28],0x0 ; @02995
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @0297A
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @0297D
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02981
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @02986
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @0298B
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02990
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02995
     mov byte [si+0x23],0x3 ; @02999
-    mov word [si+0x4],0xfff8 ; @0299D
-    mov word [si+0x6],0xfff6 ; @029A2
-    mov byte [si+0x29],0x4 ; @029A7
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @0299D
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @029A2
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @029A7
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @029AB
-    mov [si+0x14],ax ; @029AE
-    mov byte [si+0x2a],0x0 ; @029B1
-    and byte [si+0x24],0x1 ; @029B5
-    and word [si+0x8],0xfdff ; @029B9
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @029AE
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @029B1
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @029B5
+    and word [si+EntityRecordStateBits-EntityRecordsBase],0xfdff ; @029B9
     jmp loc_1FE8 ; @029BE
 loc_29C1:
-    neg byte [si+0x27] ; @029C1
-    mov word [si+0x8],0x0 ; @029C4
-    mov word [si+0xa],0x0 ; @029C9
-    mov word [si+0xc],0x0 ; @029CE
-    mov word [si+0x10],0x5a ; @029D3
-    mov word [si+0x12],0x3c ; @029D8
-    mov byte [si+0x28],0x0 ; @029DD
-    mov word [si+0x4],0xfff8 ; @029E1
-    mov word [si+0x6],0xfff6 ; @029E6
-    mov byte [si+0x29],0x9 ; @029EB
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @029C1
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @029C4
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @029C9
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @029CE
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @029D3
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @029D8
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @029DD
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @029E1
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @029E6
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @029EB
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @029EF
-    mov [si+0x14],ax ; @029F2
-    mov byte [si+0x2a],0x0 ; @029F5
-    and byte [si+0x24],0x1 ; @029F9
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @029F2
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @029F5
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @029F9
     jmp loc_1FE8 ; @029FD
 loc_2A00:
-    mov ax,[si] ; @02A00
-    mov bx,[si+0x2] ; @02A02
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @02A00
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @02A02
     sub bx,byte +0x10 ; @02A05
     shr ax,1 ; @02A08
     shr ax,1 ; @02A0A
@@ -1266,7 +1273,7 @@ loc_2A00:
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @02A1B
     add bx,byte +0x12 ; @02A1D
     sub bx,0x340 ; @02A20
-    mov al,[si+0x27] ; @02A24
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02A24
     cbw ; @02A27
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @02A28
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @02A2A
@@ -1276,7 +1283,7 @@ loc_2A00:
     jz loc_2A57 ; @02A33
     cmp al,0x7 ; @02A35
     jnz loc_2A43 ; @02A37
-    mov al,[si+0x27] ; @02A39
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02A39
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02A3C
     jns loc_29C1 ; @02A3E
     jmp loc_1FE8 ; @02A40
@@ -1285,7 +1292,7 @@ loc_2A43:
     jz loc_2A4A ; @02A45
     jmp loc_1FE8 ; @02A47
 loc_2A4A:
-    mov al,[si+0x27] ; @02A4A
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02A4A
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02A4D
     jns loc_2A54 ; @02A4F
     jmp loc_29C1 ; @02A51
@@ -1314,7 +1321,7 @@ loc_2A6D:
     mov bx,EntityState0400PairBase-GameDataImage ; @02A6D
     add bx,[si+0xe] ; @02A70
     mov al,[bx] ; @02A73
-    mov [si+0x28],al ; @02A75
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02A75
     mov al,[bx+0x1] ; @02A78
     add word [si+0xe],byte +0x2 ; @02A7B
     cbw ; @02A7F
@@ -1324,7 +1331,7 @@ loc_2A6D:
     jz loc_2ABE ; @02A86
     cmp al,0x1 ; @02A88
     jz loc_2ADC ; @02A8A
-    add [si+0x2],ax ; @02A8C
+    add [si+EntityRecordY-EntityRecordsBase],ax ; @02A8C
     jmp loc_2B28 ; @02A8F
 loc_2A92:
     call PrepareEntityPixelSample ; @02A92
@@ -1332,17 +1339,17 @@ EntityState0400AfterThreeProbePixelCall:
     mov al,[es:di] ; @02A95
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02A98
     jnz loc_2AEC ; @02A9A
-    inc word [si+0x2] ; @02A9C
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02A9C
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02A9F
     mov al,[es:di] ; @02AA3
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AA6
     jnz loc_2AEC ; @02AA8
-    inc word [si+0x2] ; @02AAA
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02AAA
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02AAD
     mov al,[es:di] ; @02AB1
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AB4
     jnz loc_2AEC ; @02AB6
-    inc word [si+0x2] ; @02AB8
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02AB8
     jmp short loc_2B28 ; @02ABB
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02ABD
@@ -1352,12 +1359,12 @@ EntityState0400AfterTwoProbePixelCall:
     mov al,[es:di] ; @02AC1
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AC4
     jnz loc_2AEC ; @02AC6
-    inc word [si+0x2] ; @02AC8
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02AC8
     add di,[EntityPixelRowPitchBytes-GameDataImage] ; @02ACB
     mov al,[es:di] ; @02ACF
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AD2
     jnz loc_2AEC ; @02AD4
-    inc word [si+0x2] ; @02AD6
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02AD6
     jmp short loc_2B28 ; @02AD9
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02ADB
@@ -1367,27 +1374,27 @@ EntityState0400AfterOneProbePixelCall:
     mov al,[es:di] ; @02ADF
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02AE2
     jnz loc_2AEC ; @02AE4
-    inc word [si+0x2] ; @02AE6
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02AE6
     jmp short loc_2B28 ; @02AE9
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02AEB
 loc_2AEC:
-    mov word [si+0x8],0x0 ; @02AEC
-    mov word [si+0xa],0x0 ; @02AF1
-    mov word [si+0xc],0x0 ; @02AF6
-    mov word [si+0x10],0x5a ; @02AFB
-    mov word [si+0x12],0x3c ; @02B00
-    mov byte [si+0x28],0x0 ; @02B05
-    mov word [si+0x4],0xfff8 ; @02B09
-    mov word [si+0x6],0xfff6 ; @02B0E
-    mov byte [si+0x29],0x9 ; @02B13
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @02AEC
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02AF1
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @02AF6
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02AFB
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02B00
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02B05
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02B09
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02B0E
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @02B13
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02B17
-    mov [si+0x14],ax ; @02B1A
-    mov byte [si+0x2a],0x0 ; @02B1D
-    and byte [si+0x24],0x1 ; @02B21
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02B1A
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02B1D
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02B21
     jmp loc_1FE8 ; @02B25
 loc_2B28:
-    cmp word [si+0x2],0xb4 ; @02B28
+    cmp word [si+EntityRecordY-EntityRecordsBase],0xb4 ; @02B28
     jnl loc_2B32 ; @02B2D
     jmp loc_1FE8 ; @02B2F
 loc_2B32:
@@ -1402,13 +1409,13 @@ loc_2B32:
 ; Optional INT61 AX040A returns2D0D; returned DS owns NEG and late callback.
 AdvanceEntityState0800:
 loc_2B35:
-    mov al,[si+0x28] ; @02B35
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02B35
     inc al ; @02B38
     cmp al,0x18 ; @02B3A
     jnz loc_2B40 ; @02B3C
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @02B3E
 loc_2B40:
-    mov [si+0x28],al ; @02B40
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02B40
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02B43
     jnz loc_2B4A ; @02B45
     jmp loc_2BE1 ; @02B47
@@ -1432,23 +1439,23 @@ loc_2B5D:
 EntityState0800AfterMaskCall:
     jmp loc_1FEB ; @02B63
 loc_2B66:
-    mov al,[si+0x27] ; @02B66
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02B66
     cbw ; @02B69
-    add [si],ax ; @02B6A
-    cmp word [si],byte +0x10 ; @02B6C
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02B6A
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02B6C
     jnl loc_2B74 ; @02B6F
     jmp loc_2CBB ; @02B71
 loc_2B74:
-    cmp word [si],0x680 ; @02B74
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @02B74
     jl loc_2B7D ; @02B78
     jmp loc_2CBB ; @02B7A
 loc_2B7D:
-    add [si],ax ; @02B7D
-    cmp word [si],byte +0x10 ; @02B7F
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02B7D
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02B7F
     jnl loc_2B87 ; @02B82
     jmp loc_2CBB ; @02B84
 loc_2B87:
-    cmp word [si],0x680 ; @02B87
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @02B87
     jl loc_2B90 ; @02B8B
     jmp loc_2CBB ; @02B8D
 loc_2B90:
@@ -1459,52 +1466,52 @@ EntityState0800AfterFirstPixelCall:
     jz loc_2B9D ; @02B98
     jmp loc_2C76 ; @02B9A
 loc_2B9D:
-    or word [si+0x8],byte +0x4 ; @02B9D
-    mov word [si+0xa],0x0 ; @02BA1
-    mov word [si+0xc],0xa42 ; @02BA6
-    mov word [si+0x10],0x5a ; @02BAB
-    mov word [si+0x12],0x3c ; @02BB0
-    mov byte [si+0x28],0x0 ; @02BB5
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @02B9D
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02BA1
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @02BA6
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02BAB
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02BB0
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02BB5
     mov byte [si+0x23],0x3 ; @02BB9
-    mov word [si+0x4],0xfff8 ; @02BBD
-    mov word [si+0x6],0xfff6 ; @02BC2
-    mov byte [si+0x29],0x4 ; @02BC7
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02BBD
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02BC2
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @02BC7
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02BCB
-    mov [si+0x14],ax ; @02BCE
-    mov byte [si+0x2a],0x0 ; @02BD1
-    and byte [si+0x24],0x1 ; @02BD5
-    and word [si+0x8],0xf7ff ; @02BD9
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02BCE
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02BD1
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02BD5
+    and word [si+EntityRecordStateBits-EntityRecordsBase],0xf7ff ; @02BD9
     jmp loc_1FE8 ; @02BDE
 loc_2BE1:
-    inc word [si+0x2] ; @02BE1
-    cmp word [si+0x2],0xb4 ; @02BE4
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02BE1
+    cmp word [si+EntityRecordY-EntityRecordsBase],0xb4 ; @02BE4
     jl loc_2BEE ; @02BE9
     jmp loc_20E2 ; @02BEB
 loc_2BEE:
     jmp loc_1FE8 ; @02BEE
 loc_2BF1:
-    mov al,[si+0x27] ; @02BF1
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02BF1
     cbw ; @02BF4
-    add [si],ax ; @02BF5
-    cmp word [si],byte +0x10 ; @02BF7
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02BF5
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02BF7
     jnl loc_2BFF ; @02BFA
     jmp loc_2CBB ; @02BFC
 loc_2BFF:
-    cmp word [si],0x680 ; @02BFF
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @02BFF
     jl loc_2C08 ; @02C03
     jmp loc_2CBB ; @02C05
 loc_2C08:
-    add [si],ax ; @02C08
-    cmp word [si],byte +0x10 ; @02C0A
+    add [si+EntityRecordX-EntityRecordsBase],ax ; @02C08
+    cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @02C0A
     jnl loc_2C12 ; @02C0D
     jmp loc_2CBB ; @02C0F
 loc_2C12:
-    cmp word [si],0x680 ; @02C12
+    cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @02C12
     jl loc_2C1B ; @02C16
     jmp loc_2CBB ; @02C18
 loc_2C1B:
-    inc word [si+0x2] ; @02C1B
-    cmp word [si+0x2],0xb4 ; @02C1E
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @02C1B
+    cmp word [si+EntityRecordY-EntityRecordsBase],0xb4 ; @02C1E
     jl loc_2C28 ; @02C23
     jmp loc_20E2 ; @02C25
 loc_2C28:
@@ -1513,25 +1520,25 @@ EntityState0800AfterSecondPixelCall:
     mov al,[es:di] ; @02C2B
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02C2E
     jnz loc_2C76 ; @02C30
-    or word [si+0x8],byte +0x4 ; @02C32
-    mov word [si+0xa],0x0 ; @02C36
-    mov word [si+0xc],0xa42 ; @02C3B
-    mov word [si+0x10],0x5a ; @02C40
-    mov word [si+0x12],0x3c ; @02C45
-    mov byte [si+0x28],0x0 ; @02C4A
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @02C32
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02C36
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @02C3B
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02C40
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02C45
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02C4A
     mov byte [si+0x23],0x3 ; @02C4E
-    mov word [si+0x4],0xfff8 ; @02C52
-    mov word [si+0x6],0xfff6 ; @02C57
-    mov byte [si+0x29],0x4 ; @02C5C
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02C52
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02C57
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @02C5C
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02C60
-    mov [si+0x14],ax ; @02C63
-    mov byte [si+0x2a],0x0 ; @02C66
-    and byte [si+0x24],0x1 ; @02C6A
-    and word [si+0x8],0xf7ff ; @02C6E
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02C63
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02C66
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02C6A
+    and word [si+EntityRecordStateBits-EntityRecordsBase],0xf7ff ; @02C6E
     jmp loc_1FE8 ; @02C73
 loc_2C76:
-    mov ax,[si] ; @02C76
-    mov bx,[si+0x2] ; @02C78
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @02C76
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @02C78
     sub bx,byte +0x10 ; @02C7B
     shr ax,1 ; @02C7E
     shr ax,1 ; @02C80
@@ -1552,7 +1559,7 @@ loc_2C76:
     jz loc_2CFA ; @02C9D
     cmp al,0x7 ; @02C9F
     jnz loc_2CAD ; @02CA1
-    mov al,[si+0x27] ; @02CA3
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02CA3
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02CA6
     jns loc_2CBB ; @02CA8
     jmp loc_1FE8 ; @02CAA
@@ -1561,24 +1568,24 @@ loc_2CAD:
     jz loc_2CB4 ; @02CAF
     jmp loc_1FE8 ; @02CB1
 loc_2CB4:
-    mov al,[si+0x27] ; @02CB4
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02CB4
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02CB7
     jns loc_2CBB ; @02CB9
 loc_2CBB:
-    neg byte [si+0x27] ; @02CBB
-    mov word [si+0x8],0x0 ; @02CBE
-    mov word [si+0xa],0x0 ; @02CC3
-    mov word [si+0xc],0x0 ; @02CC8
-    mov word [si+0x10],0x5a ; @02CCD
-    mov word [si+0x12],0x3c ; @02CD2
-    mov byte [si+0x28],0x0 ; @02CD7
-    mov word [si+0x4],0xfff8 ; @02CDB
-    mov word [si+0x6],0xfff6 ; @02CE0
-    mov byte [si+0x29],0x9 ; @02CE5
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02CBB
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @02CBE
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02CC3
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @02CC8
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02CCD
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02CD2
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02CD7
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02CDB
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02CE0
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @02CE5
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02CE9
-    mov [si+0x14],ax ; @02CEC
-    mov byte [si+0x2a],0x0 ; @02CEF
-    and byte [si+0x24],0x1 ; @02CF3
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02CEC
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02CEF
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02CF3
     jmp loc_1FE8 ; @02CF7
 loc_2CFA:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02CFA
@@ -1598,25 +1605,25 @@ loc_2D0D:
 ; three samples; clear probes INC BP, then JMP20D6 stores the live height.
 AdvanceEntityState8000:
 loc_2D0F:
-    mov al,[si+0x28] ; @02D0F
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02D0F
     inc al ; @02D12
     and al,0xf ; @02D14
-    mov [si+0x28],al ; @02D16
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02D16
     jnz loc_2D78 ; @02D19
-    or word [si+0x8],byte +0x2 ; @02D1B
-    mov word [si+0xa],0x8 ; @02D1F
-    mov word [si+0xc],0x180b ; @02D24
-    mov word [si+0x10],0x280 ; @02D29
-    mov word [si+0x12],0x1e0 ; @02D2E
-    mov byte [si+0x28],0x0 ; @02D33
-    mov word [si+0x6],0xffe7 ; @02D37
-    mov word [si+0x4],0xfff0 ; @02D3C
-    mov byte [si+0x29],0x0 ; @02D41
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x2 ; @02D1B
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x8 ; @02D1F
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x180b ; @02D24
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x280 ; @02D29
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x1e0 ; @02D2E
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02D33
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xffe7 ; @02D37
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff0 ; @02D3C
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @02D41
     mov ax,[DrawingCallbackSlots-GameDataImage+0xe] ; @02D45
-    mov [si+0x14],ax ; @02D48
-    mov byte [si+0x2a],0x0 ; @02D4B
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02D48
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02D4B
     mov byte [si+0x22],0xf ; @02D4F
-    and byte [si+0x24],0x1 ; @02D53
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02D53
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02D57
     jnz loc_2D6A ; @02D5C
     test byte [SoundOptionBits-GameDataImage],0x3 ; @02D5E
@@ -1625,7 +1632,7 @@ loc_2D0F:
     int 0x61 ; @02D68
 EntityState8000AfterSound:
 loc_2D6A:
-    test word [si+0x8],0x4 ; @02D6A
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x4 ; @02D6A
     jz loc_2D75 ; @02D6F
     mov byte [si+0x22],0x0 ; @02D71
 loc_2D75:
@@ -1638,7 +1645,7 @@ loc_2D78:
 loc_2D83:
     call PrepareEntityPixelSample ; @02D83
 EntityState8000AfterPixelCall:
-    mov bp,[si+0x2] ; @02D86
+    mov bp,[si+EntityRecordY-EntityRecordsBase] ; @02D86
     mov al,[es:di] ; @02D89
     db 0x22,0xc4 ; ENCODED: and al,ah (NASM chooses a different encoding) ; @02D8C
     jz loc_2D93 ; @02D8E
@@ -1666,27 +1673,27 @@ loc_2DB1:
 ; Nonzero JMPs1FEB. No new frame is added for either original JMP tail.
 AdvanceEntityFlag80Override:
 loc_2DB5:
-    mov al,[si+0x28] ; @02DB5
+    mov al,[si+EntityRecordFrameSelector-EntityRecordsBase] ; @02DB5
     inc al ; @02DB8
     and al,0x7 ; @02DBA
-    mov [si+0x28],al ; @02DBC
+    mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @02DBC
     jz loc_2DC4 ; @02DBF
     jmp loc_1FEB ; @02DC1
 loc_2DC4:
-    mov word [si+0x8],0x0 ; @02DC4
-    mov word [si+0xa],0x0 ; @02DC9
-    mov word [si+0xc],0x0 ; @02DCE
-    mov word [si+0x10],0x5a ; @02DD3
-    mov word [si+0x12],0x3c ; @02DD8
-    mov byte [si+0x28],0x0 ; @02DDD
-    mov word [si+0x4],0xfff8 ; @02DE1
-    mov word [si+0x6],0xfff6 ; @02DE6
-    mov byte [si+0x29],0x9 ; @02DEB
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @02DC4
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02DC9
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x0 ; @02DCE
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02DD3
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02DD8
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02DDD
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02DE1
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02DE6
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x9 ; @02DEB
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02DEF
-    mov [si+0x14],ax ; @02DF2
-    mov byte [si+0x2a],0x0 ; @02DF5
-    and byte [si+0x24],0x1 ; @02DF9
-    and byte [si+0x24],0x7f ; @02DFD
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02DF2
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02DF5
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02DF9
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x7f ; @02DFD
     jmp loc_1FE8 ; @02E01
 ; Countdown/transition contract (188 bytes/52 sites), scoped TESTED C.
 ; Live DS:SI points at a 2Dh record. DEC byte +20 wraps; its RMW callbacks
@@ -1707,23 +1714,23 @@ loc_2DC4:
 ; Field producers and platform/code-alias limits: entity-countdown.md.
 AdvanceEntityCountdown:
     mov al,0x1 ; @02E04
-    dec byte [si+0x20] ; @02E06
+    dec byte [si+EntityRecordCountdown-EntityRecordsBase] ; @02E06
     jnz loc_2E60 ; @02E09
-    test word [si+0x8],0x5404 ; @02E0B
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x5404 ; @02E0B
     jnz loc_2E63 ; @02E10
-    or word [si+0x8],0x8000 ; @02E12
-    mov word [si+0xa],0x8 ; @02E17
-    mov word [si+0xc],0x153b ; @02E1C
-    mov word [si+0x10],0x5a ; @02E21
-    mov word [si+0x12],0x3c ; @02E26
-    mov byte [si+0x28],0x0 ; @02E2B
-    mov word [si+0x4],0xfff8 ; @02E2F
-    mov word [si+0x6],0xfff6 ; @02E34
-    mov byte [si+0x29],0x0 ; @02E39
+    or word [si+EntityRecordStateBits-EntityRecordsBase],0x8000 ; @02E12
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x8 ; @02E17
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x153b ; @02E1C
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @02E21
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @02E26
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02E2B
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02E2F
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @02E34
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @02E39
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @02E3D
-    mov [si+0x14],ax ; @02E40
-    mov byte [si+0x2a],0x0 ; @02E43
-    and byte [si+0x24],0x1 ; @02E47
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02E40
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02E43
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02E47
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02E4B
     jnz loc_2E5E ; @02E50
     test byte [SoundOptionBits-GameDataImage],0x3 ; @02E52
@@ -1737,20 +1744,20 @@ loc_2E60:
 EntityCountdownReturn:
     ret ; @02E62
 loc_2E63:
-    or word [si+0x8],byte +0x2 ; @02E63
-    mov word [si+0xa],0x8 ; @02E67
-    mov word [si+0xc],0x180b ; @02E6C
-    mov word [si+0x10],0x280 ; @02E71
-    mov word [si+0x12],0x1e0 ; @02E76
-    mov byte [si+0x28],0x0 ; @02E7B
-    mov word [si+0x6],0xffe7 ; @02E7F
-    mov word [si+0x4],0xfff0 ; @02E84
-    mov byte [si+0x29],0x0 ; @02E89
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x2 ; @02E63
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x8 ; @02E67
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x180b ; @02E6C
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x280 ; @02E71
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x1e0 ; @02E76
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02E7B
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xffe7 ; @02E7F
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff0 ; @02E84
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @02E89
     mov ax,[DrawingCallbackSlots-GameDataImage+0xe] ; @02E8D
-    mov [si+0x14],ax ; @02E90
-    mov byte [si+0x2a],0x0 ; @02E93
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02E90
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @02E93
     mov byte [si+0x22],0xf ; @02E97
-    and byte [si+0x24],0x1 ; @02E9B
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02E9B
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02E9F
     jnz loc_2EB2 ; @02EA4
     test byte [SoundOptionBits-GameDataImage],0x3 ; @02EA6
@@ -1758,7 +1765,7 @@ loc_2E63:
     mov ax,0x40c ; @02EAD
     int 0x61 ; @02EB0
 EntityCountdownMaskedSoundReturn:
-    test word [si+0x8],0x4 ; @02EB2
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x4 ; @02EB2
     jz loc_2EBD ; @02EB7
     mov byte [si+0x22],0x0 ; @02EB9
 loc_2EBD:
@@ -1775,8 +1782,11 @@ EntityCountdownMaskedReturn:
 ; Preserve store/RMW flag phases, live0032/002E/003E callbacks, both sound-gate
 ; rereads, all returned INT registers and actual RET. UNKNOWN targets stay open.
 ApplyEntityCellInteractions:
-    mov ax,[si] ; @02EC0
-    mov bx,[si+0x2] ; @02EC2
+; Sample order is part of the contract: first SS cell -> +2C, then cursor
+; -0340+2*signed(+27) -> second SS cell -> +2B, then POP the saved first AX.
+; Record stores may alias that save; the popped dispatch value can change.
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @02EC0
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @02EC2
     cmp bx,0xb0 ; @02EC5
     jnl loc_2F3A ; @02EC9
     sub bx,byte +0x10 ; @02ECB
@@ -1795,14 +1805,14 @@ ApplyEntityCellInteractions:
     add bx,byte +0x12 ; @02EE3
     mov al,[ss:bx] ; @02EE6
     push ax ; @02EE9
-    mov [si+0x2c],al ; @02EEA
-    mov al,[si+0x27] ; @02EED
+    mov [si+EntityRecordFirstInteractionCell-EntityRecordsBase],al ; @02EEA
+    mov al,[si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02EED
     cbw ; @02EF0
     sub bx,0x340 ; @02EF1
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @02EF5
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @02EF7
     mov al,[ss:bx] ; @02EF9
-    mov [si+0x2b],al ; @02EFC
+    mov [si+EntityRecordSecondInteractionCell-EntityRecordsBase],al ; @02EFC
     pop ax ; @02EFF
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @02F00
     and al,0xf ; @02F02
@@ -1837,21 +1847,21 @@ loc_2F33:
 loc_2F3A:
     ret ; @02F3A
 loc_2F3B:
-    test word [si+0x8],0x4 ; @02F3B
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x4 ; @02F3B
     jnz loc_2F3A ; @02F40
-    mov word [si+0x8],0x2000 ; @02F42
-    mov word [si+0xa],0x0 ; @02F47
-    mov word [si+0xc],0xefa ; @02F4C
-    mov word [si+0x10],0x4e ; @02F51
-    mov word [si+0x12],0x34 ; @02F56
-    mov byte [si+0x28],0x0 ; @02F5B
-    mov word [si+0x4],0xfff8 ; @02F5F
-    mov word [si+0x6],0xfff3 ; @02F64
-    mov byte [si+0x29],0x0 ; @02F69
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x2000 ; @02F42
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @02F47
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xefa ; @02F4C
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x4e ; @02F51
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x34 ; @02F56
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @02F5B
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @02F5F
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff3 ; @02F64
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @02F69
     mov ax,[DrawingCallbackSlots-GameDataImage+0x4] ; @02F6D
-    mov [si+0x14],ax ; @02F70
-    mov byte [si+0x2a],0xff ; @02F73
-    and byte [si+0x24],0x1 ; @02F77
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @02F70
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @02F73
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @02F77
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02F7B
     jz loc_2F8E ; @02F80
     test byte [SoundOptionBits-GameDataImage],0x1 ; @02F82
@@ -1870,14 +1880,14 @@ EntityInteractionFirstSoundReturn:
 loc_2FA1:
     ret ; @02FA1
 loc_2FA2:
-    cmp byte [si+0x27],0xff ; @02FA2
+    cmp byte [si+EntityRecordHorizontalStep-EntityRecordsBase],0xff ; @02FA2
     jz loc_2F3A ; @02FA6
-    neg byte [si+0x27] ; @02FA8
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02FA8
     ret ; @02FAB
 loc_2FAC:
-    cmp byte [si+0x27],0x1 ; @02FAC
+    cmp byte [si+EntityRecordHorizontalStep-EntityRecordsBase],0x1 ; @02FAC
     jz loc_2F3A ; @02FB0
-    neg byte [si+0x27] ; @02FB2
+    neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02FB2
     ret ; @02FB5
 loc_2FB6:
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @02FB6
@@ -1891,7 +1901,7 @@ loc_2FB6:
     jmp loc_2F3A ; @02FCB
 loc_2FCE:
     or word [di],byte +0x2 ; @02FCE
-    mov byte [si+0x26],0xff ; @02FD1
+    mov byte [si+EntityRecordInactiveMarker-EntityRecordsBase],0xff ; @02FD1
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @02FD5
     jz loc_2FDF ; @02FDA
     jmp loc_2F3A ; @02FDC
@@ -1910,23 +1920,23 @@ loc_2FF3:
 EntityInteractionObjectSoundReturn:
     ret ; @02FF7
 loc_2FF8:
-    test word [si+0x8],0x1000 ; @02FF8
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x1000 ; @02FF8
     jz loc_3002 ; @02FFD
     jmp loc_2F3A ; @02FFF
 loc_3002:
-    mov word [si+0x8],0x1000 ; @03002
-    mov word [si+0xa],0x0 ; @03007
-    mov word [si+0xc],0x3e2 ; @0300C
-    mov word [si+0x10],0x5a ; @03011
-    mov word [si+0x12],0x3c ; @03016
-    mov byte [si+0x28],0x0 ; @0301B
-    mov word [si+0x4],0xfff8 ; @0301F
-    mov word [si+0x6],0xfff6 ; @03024
-    mov byte [si+0x29],0x0 ; @03029
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x1000 ; @03002
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @03007
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x3e2 ; @0300C
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @03011
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @03016
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @0301B
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @0301F
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @03024
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @03029
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0302D
-    mov [si+0x14],ax ; @03030
-    mov byte [si+0x2a],0x0 ; @03033
-    and byte [si+0x24],0x1 ; @03037
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @03030
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @03033
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @03037
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0303B
     jnz loc_304E ; @03040
     test byte [SoundOptionBits-GameDataImage],0x3 ; @03042
@@ -1937,23 +1947,23 @@ EntityInteractionSecondSoundReturn:
 loc_304E:
     ret ; @0304E
 loc_304F:
-    test word [si+0x8],0x4000 ; @0304F
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x4000 ; @0304F
     jz loc_3059 ; @03054
     jmp loc_2F3A ; @03056
 loc_3059:
-    mov word [si+0x8],0x4000 ; @03059
-    mov word [si+0xa],0x0 ; @0305E
-    mov word [si+0xc],0xf21 ; @03063
-    mov word [si+0x10],0x8c ; @03068
-    mov word [si+0x12],0x70 ; @0306D
-    mov byte [si+0x28],0x0 ; @03072
-    mov word [si+0x4],0xfff8 ; @03076
-    mov word [si+0x6],0xfff2 ; @0307B
-    mov byte [si+0x29],0x0 ; @03080
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x4000 ; @03059
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @0305E
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xf21 ; @03063
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x8c ; @03068
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x70 ; @0306D
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @03072
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @03076
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff2 ; @0307B
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @03080
     mov ax,[DrawingCallbackSlots-GameDataImage+0x10] ; @03084
-    mov [si+0x14],ax ; @03087
-    mov byte [si+0x2a],0xff ; @0308A
-    and byte [si+0x24],0x1 ; @0308E
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @03087
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @0308A
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0308E
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @03092
     jnz loc_30A5 ; @03097
     test byte [SoundOptionBits-GameDataImage],0x3 ; @03099
@@ -1964,7 +1974,7 @@ EntityInteractionThirdSoundReturn:
 loc_30A5:
     ret ; @030A5
 CreateEntityRecordIfDue:
-; Next independently audited leaf:30A6..314F,170 bytes/54 sites/13 outcomes.
+; Record producer for the update and drawing consumers above.
 ; Gate002B must differ from FF;0055 must equal FF. Byte DEC0048 wraps and
 ; only zero reloads0048 from live0049. Equality0047==0043 prevents creation;
 ; there is no upper-bound clamp. SI=0088+45*unsigned(bound), BX=0E98+4*(bound&3).
@@ -2008,26 +2018,26 @@ loc_30F3:
     inc di ; @030F6
     loop loc_30F3 ; @030F7
     mov ax,[bx] ; @030F9
-    mov [si],ax ; @030FB
+    mov [si+EntityRecordX-EntityRecordsBase],ax ; @030FB
     mov ax,[bx+0x2] ; @030FD
-    mov [si+0x2],ax ; @03100
-    mov byte [si+0x27],0x1 ; @03103
+    mov [si+EntityRecordY-EntityRecordsBase],ax ; @03100
+    mov byte [si+EntityRecordHorizontalStep-EntityRecordsBase],0x1 ; @03103
     mov byte [si+0x25],0x0 ; @03107
-    and byte [si+0x24],0x1 ; @0310B
-    or word [si+0x8],byte +0x4 ; @0310F
-    mov word [si+0xa],0x0 ; @03113
-    mov word [si+0xc],0xa42 ; @03118
-    mov word [si+0x10],0x5a ; @0311D
-    mov word [si+0x12],0x3c ; @03122
-    mov byte [si+0x28],0x0 ; @03127
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0310B
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x4 ; @0310F
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @03113
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xa42 ; @03118
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @0311D
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @03122
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @03127
     mov byte [si+0x23],0x3 ; @0312B
-    mov word [si+0x4],0xfff8 ; @0312F
-    mov word [si+0x6],0xfff6 ; @03134
-    mov byte [si+0x29],0x4 ; @03139
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @0312F
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @03134
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x4 ; @03139
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @0313D
-    mov [si+0x14],ax ; @03140
-    mov byte [si+0x2a],0x0 ; @03143
-    and byte [si+0x24],0x1 ; @03147
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @03140
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @03143
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @03147
     inc byte [EntitySlotBound-GameDataImage] ; @0314B
 EntityCreationReturn:
 loc_314F:

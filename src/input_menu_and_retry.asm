@@ -232,6 +232,9 @@ MainMenuStartLevel:
     mov byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @0454C
 loc_4551:
 LoadAndStartSelectedLevel:
+; Per-level state lifetime: DF-clear0000..0FC9 includes entity globals/records;
+; loaded record0FCB and resource globals above the clear retain separate owners.
+;03E7 later initializes session controls and SS maps, not this record array.
     push ds ; @04551
     pop es ; @04552
     mov di,0x0 ; @04553

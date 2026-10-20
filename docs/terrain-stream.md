@@ -1,12 +1,14 @@
 # Terrain command streams
 
-The complete bounded gate now passes 192 cases: all 80 pinned LEVEL streams at
+The retained bounded campaign recorded 192 cases: all 80 pinned LEVEL streams at
 both entries plus 32 constructed cases, with 32 auxiliary core comparisons and
 two completed mutation witnesses. Its recorded cases cover 1,383 integrated
 instruction sites and 195 edges, compare 358,815,156 bus events and perform
-23,324 independent body-plane checks. The fresh report is
+23,324 independent body-plane checks. Its historical report is
 `build/terrain-stream-differential.json`; acceptance remains tied to its exact
-input hashes and the domain below. This does not promote aggregate game coverage.
+input hashes and the domain below. Check those hashes before treating it as current
+acceptance; preserving this narrative does not refresh it. See completeness.md
+for the current inventory. This does not promote aggregate game coverage.
 
 ## Static boundary
 

@@ -46,7 +46,7 @@ to be supported by the original instructions. PKLITE research references include
 [Jason Summers' analysis](https://github.com/jsummers/pkla); the implemented decoder
 was derived directly from this binary's stub, not downloaded code.
 
-Normal translated C interfaces expose explicit inputs and results. For example,
+Current C interfaces mix semantic leaf inputs with register-role packets. For example,
 the entity interaction core takes live segments, record/object cursors, stack,
 count, auxiliary value and flags; it returns observed results and a continuation.
 Its entry overwrites AX/BX, while BP/ES are preserved by the body and composed
@@ -54,7 +54,16 @@ pinned sound prefixes, so those four registers are not inputs to that core.
 The oracle adapter reconstructs full machine state and performs the actual RET.
 Machine-register packets used by the INT60 connector describe its declared CPU
 boundary. They are transient values at that boundary, with canonical RAM still
-the only game-state owner; normal game logic composes through named C contracts.
+the only game-state owner. Entity-update and renderer packets still carry nearly
+complete machine state despite their role names. These are retained verification
+boundaries, not evidence that native game logic must expose every register forever.
+Reduce one only after proving its caller/lifetime contract and preserving the
+original adapter evidence; do not rewrite functioning C just for appearance.
+
+The scoped semantic-readiness gate in [semantic-audit.md](semantic-audit.md)
+precedes further C expansion. Current status is [completeness.md](completeness.md),
+derived by the existing coverage tool's fast `--inventory` mode. It separates
+implementation ranges from matching differential evidence and whole-game closure.
 
 ## Portable C and complete-game convergence
 
@@ -72,7 +81,7 @@ C keeps the original records, offset identities, wrap, signed predicates, shared
 tails, bugs and behavior-affecting memory. Returned DS/ES/SS, actual stack words,
 flags and code modifications remain explicit wherever the original consumes them.
 One memory image owns game state; no converted record copies are synchronized.
-No ES-only assumption is imported from Pre2. Shared C helpers must express proven
+Pre2's particular segment/stack contract is not imported. Shared C helpers express proven
 operations rather than interpret instructions or hide an unresolved transfer.
 
 Native C-to-C composition uses the same tested cores. Offset dispatch selects

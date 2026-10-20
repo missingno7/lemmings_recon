@@ -19,6 +19,37 @@ spec.loader.exec_module(coverage)
 
 
 class VerificationModeTests(unittest.TestCase):
+    def test_inventory_never_invokes_aggregate_acceptance(self):
+        with patch.object(coverage, 'inventory', return_value=({}, 'inventory')), patch.object(
+                coverage, 'report', side_effect=AssertionError('aggregate must stay explicit')) as full:
+            with contextlib.redirect_stdout(io.StringIO()):coverage.main(['--inventory'])
+            full.assert_not_called()
+
+    def test_static_inventory_rejects_stale_and_wrong_scope_evidence(self):
+        with tempfile.TemporaryDirectory(prefix='inventory-evidence-', dir=ROOT/'build') as directory:
+            folder=Path(directory);source=folder/'source.txt';source.write_bytes(b'accepted')
+            image=b'pinned image'
+            report=dict(verification_scope='static',bounded_unpacker_checks=True,canonical_sha256=coverage.sha(image),
+                byte_exact_asm_bytes=len(image),verification_inputs={'source.txt':coverage.sha(source.read_bytes())})
+            path=folder/'static-verification.json'
+            with patch.object(coverage,'BUILD',folder),patch.object(coverage,'ROOT',folder):
+                self.assertFalse(coverage.static_identity_evidence(image)['current'])
+                path.write_text(json.dumps(report))
+                self.assertTrue(coverage.static_identity_evidence(image)['current'])
+                report['bounded_unpacker_checks']=False
+                path.write_text(json.dumps(report))
+                self.assertFalse(coverage.static_identity_evidence(image)['current'])
+                del report['bounded_unpacker_checks']
+                path.write_text(json.dumps(report))
+                self.assertFalse(coverage.static_identity_evidence(image)['current'])
+                report['bounded_unpacker_checks']=True;path.write_text(json.dumps(report))
+                self.assertFalse(coverage.static_identity_evidence(b'other image')['current'])
+                source.write_bytes(b'changed')
+                self.assertEqual(coverage.static_identity_evidence(image)['stale_inputs'],['source.txt'])
+                source.write_bytes(b'accepted');report['verification_scope']='contracts'
+                path.write_text(json.dumps(report))
+                self.assertFalse(coverage.static_identity_evidence(image)['current'])
+
     def test_commands_select_only_the_requested_gate(self):
         for args, stub, contracts in (([], True, False),
                                       (['--contracts'], True, True),

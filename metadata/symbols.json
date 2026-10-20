@@ -2909,6 +2909,70 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 261,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameSwapAndPace",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 0105. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 288,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameRetryRasterSync",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 0120. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 356,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameWaitForTimer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 0164. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 390,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameTickGate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 0186. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 432,
     "segment": 0,
     "kind": "continuation",
@@ -2969,12 +3033,78 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 524,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameCountdownTick",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 020C. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 586,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameFrameCommands",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 024A. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 691,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "RequestGameFadeOut",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 02B3. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 707,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameEndWaitForFade",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 02C3. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 798,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_031E",
-    "aliases": [],
+    "symbol_name": "AdvanceGameTransitionEffects",
+    "aliases": [
+      "sub_031E"
+    ],
     "callers": [
       413
     ],
@@ -3094,8 +3224,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_03C1",
-    "aliases": [],
+    "symbol_name": "StepGameOpeningFade",
+    "aliases": [
+      "sub_03C1"
+    ],
     "callers": [
       812,
       829
@@ -3116,8 +3248,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_03D7",
-    "aliases": [],
+    "symbol_name": "StepGameClosingFade",
+    "aliases": [
+      "sub_03D7"
+    ],
     "callers": [
       845,
       862
@@ -3533,6 +3667,70 @@
     "confidence": "PROVEN",
     "evidence": [
       "Actual near RET from InitializeLevelFromRecord at046B resumes here before the conditional mouse-service check and mouse initialization block."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1152,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "InitializeGameVisibilityAndStatus",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 0480. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1194,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameWaitCalibrationFirstEdge",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 04AA. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1206,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameMeasureForegroundWait",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 04B6. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1210,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "GameCheckCalibrationSecondEdge",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Original foreground/session control-flow block at 04BA. Purpose follows its literal branch, stores and call sequence in src/entry_services.asm; no new routine or C extent is inferred."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -64929,6 +65127,38 @@
     "verification_status": "STATIC"
   },
   {
+    "address": 78,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "GameTransitionFlags",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0431 initializes01;031E tests bits01/02/04;03D4/03E4 clear opening/closing bits after palette-child ZF checks;02B8 ORs02 to request closing. Early sound exits bypass037C flag publication."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 79,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "GameEndRequested",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "043E initializes00;02B3 writesFF;01C8 tests exactFF before02C3 waits for transition bit02 to clear. This identifies the latch, not every producer domain."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 80,
     "segment": 2473,
     "kind": "data_field",
@@ -65719,6 +65949,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 133,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "GameCountdownTickCounter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0418 initializes11;0213 decrements modulo256 only when EntityUpdateGate differs fromFF; zero reloads from0086 before the ASCII time decrement."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 134,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "GameCountdownTickReload",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "041D initializes11;0219 reads the reload for0085. Unit is foreground countdown ticks; real-time cadence is not proved."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 136,
     "segment": 2473,
     "kind": "data_field",
@@ -65795,6 +66057,22 @@
     "confidence": "high",
     "evidence": [
       "First45-byte entity-record anchor only, base0088+06;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 144,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "EntityRecordStateBits",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First record0088+08:310F initializes0004;1F5E reads once and dispatches first matching state bit;actions3150..3633 and interactions2EC0 write transitions. Composite bits have priority; no historical skill enum or array bound inferred."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -65884,13 +66162,32 @@
     "kind": "data_field",
     "size": 1,
     "symbol_name": "EntityRecordStripSelector",
-    "aliases": [],
+    "aliases": [
+      "EntityRecordCountdown"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+20;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+20;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "Shared+20 lifetime: cleared by creation30F3, assigned4F by action31E1/scan2033, decremented by2E04 countdown, and loaded at drawing70F3 then tested at7118 as strip selector. The drawing name is not an independent field."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 172,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordBehaviorFlags",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First record0088+24:310B/3147 retain bit01;1F54 tests bit80 override;329B sets entire byte01;state/action tails mask it. Bit roles are conditional, not independent host booleans."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -65900,13 +66197,16 @@
     "kind": "data_field",
     "size": 1,
     "symbol_name": "EntityRecordDrawingSkipGate",
-    "aliases": [],
+    "aliases": [
+      "EntityRecordInactiveMarker"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "First2Dh record anchor0088+26;3634 skips drawing only when the live byte equalsFF. No complete schema/lifetime/extent claim. docs/entity-drawing.md"
+      "First2Dh record anchor0088+26;3634 skips drawing only when the live byte equalsFF. No complete schema/lifetime/extent claim. docs/entity-drawing.md",
+      "Same+26 inactive marker is tested by simulation1F3C and drawing3647;20E2 writesFF. Do not introduce separate simulation-active and drawing-visible host state."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -65916,13 +66216,16 @@
     "kind": "data_field",
     "size": 1,
     "symbol_name": "EntityRecordFrameAddGate",
-    "aliases": [],
+    "aliases": [
+      "EntityRecordHorizontalStep"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+27;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+27;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "Shared+27 lifetime:creation3103 writes01;zero state2051 sign-extends it into horizontal movement;2142 negates it;drawing70A5 tests exact01 before adding+29. Keep this signed direction/gate byte shared."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -65971,6 +66274,38 @@
     "confidence": "high",
     "evidence": [
       "First45-byte entity-record anchor only, base0088+2A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 179,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordSecondInteractionCell",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First record0088+2B:2EFC stores the second live SS map sample after subtracting0340 and adding twice signed+27 to the first sample cursor. Keep sample order and aliases with saved SS words."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 180,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "EntityRecordFirstInteractionCell",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "First record0088+2C:2EEA stores the first live SS map sample;actions320D/35AC consume its low nibble.2EFF pops the earlier saved AX after both record stores, which may alias its SS save."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67486,6 +67821,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8190,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 2,
+    "symbol_name": "ForegroundWaitLowWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "04C7 publishes CX after ADD CX,CX;0164 consumes it as DEC-CX foreground polling budget. Not a standalone32-bit host counter."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8192,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 2,
+    "symbol_name": "ForegroundWaitHighWord",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "04CB publishes NEG(DX) after ADC DX,DX;0168 consumes it,0174 checks zero and0178 decrements only after CX wraps to zero. SS/DS aliases and IRQ schedule remain open."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8194,
     "segment": 2473,
     "kind": "data",
@@ -67803,6 +68170,38 @@
     "confidence": "PROVEN",
     "evidence": [
       "36E2 stores low byte of header+06 word plus30;021F..0246 implements ASCII countdown borrow with20A9/20AA. This helper does not initialize the other digits."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8361,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "LevelCountdownTensDigit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0222 loads BL with tens and BH with ones;ASCII borrow021F..0246 resets tens to35 and ones to39;040E initializes30. Word at20A9 is little-endian adjacent digits, not a binary seconds value."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8362,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "LevelCountdownOnesDigit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0222 loads this byte into BH;0226 decrements it and compares2F before decimal borrow.0413 initializes30."
     ],
     "verification_status": "UNRESOLVED"
   },

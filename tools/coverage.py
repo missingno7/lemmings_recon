@@ -4,6 +4,101 @@ from common import ROOT,BUILD,read_json,write_json,sha
 from explore import analyze
 from unpack import unpack,ASSET,relocated
 
+def static_identity_evidence(image):
+    """Match the exact image and recorded hashes, without renewing acceptance.
+
+    This checks the report's input manifest, not toolchain freshness or whether
+    that manifest captured every dependency of the verifier.
+    """
+    path=BUILD/'static-verification.json'
+    if not path.exists():return dict(current=False,reason='no retained static gate')
+    result=read_json(path)
+    inputs=result.get('verification_inputs',{})
+    stale=[name for name,digest in inputs.items()
+           if not (ROOT/name).is_file() or sha((ROOT/name).read_bytes())!=digest]
+    valid=(result.get('verification_scope')=='static' and
+           result.get('bounded_unpacker_checks') is True and bool(inputs) and
+           result.get('canonical_sha256')==sha(image) and
+           result.get('byte_exact_asm_bytes')==len(image) and not stale)
+    return dict(current=valid,input_count=len(inputs),stale_inputs=stale,
+                reason='matching exact image and recorded inputs' if valid else 'missing, stale or mismatched static evidence')
+
+def inventory():
+    """Cheap current classification/C inventory, independent of aggregate acceptance.
+
+    This does not execute a routine, inspect stale native report totals, or claim
+    semantic completeness. The existing report() remains the full acceptance gate.
+    """
+    analysis=analyze();image,oracle=unpack(ASSET.read_bytes())
+    if oracle!=read_json(ROOT/'metadata/oracle.json'):
+        raise ValueError('Local executable differs from the pinned oracle')
+    if dict(regions=analysis['regions'],overlays=analysis['overlays'])!=read_json(ROOT/'metadata/regions.json'):
+        raise ValueError('Region inventory differs; investigate before reporting status')
+    symbols=[row for row in read_json(ROOT/'metadata/symbols.json') if row['segment']==0]
+    metrics=dict(analysis['metrics'])
+    metrics['canonical_sha256']=sha(image)
+    metrics['translated_main_code_bytes']=len(translated_code_bytes(symbols,analysis['instructions'],len(image)))
+    metrics['unresolved_image_bytes']=len(image)-metrics['classified_bytes']
+    limit=read_json(ROOT/'metadata/hints.json')['code_limit']
+    metrics['unresolved_provisional_code_bytes']=sum(min(row['end'],limit)-row['start']
+        for row in analysis['regions'] if row['classification']=='unresolved' and row['start']<limit)
+    from sound import sound_images,analyze_driver,translated_scope
+    components={};pins=read_json(ROOT/'metadata/sound-oracle.json')
+    for name,(component,description) in sound_images().items():
+        if description!=pins[name]:raise ValueError('Sound oracle differs: '+name)
+        decoded=analyze_driver(name,component)
+        if dict(regions=decoded['regions'],overlays=decoded['overlays'])!=read_json(ROOT/f'metadata/{name}-regions.json'):
+            raise ValueError('Sound region inventory differs: '+name)
+        _,c_bytes=translated_scope(component,decoded,read_json(ROOT/f'metadata/{name}-symbols.json'))
+        components[name]=dict(image_bytes=len(component),
+            classified_bytes=decoded['metrics']['classified_bytes'],
+            decoded_instruction_bytes=decoded['metrics']['decoded_instruction_bytes'],
+            translated_code_bytes=c_bytes,unresolved_transfers=decoded['metrics']['unresolved_transfers'])
+    metrics['sound_components']=components
+    component_rows='\n'.join(f"| {name} | {row['image_bytes']:,} | {row['classified_bytes']:,} | {row['decoded_instruction_bytes']:,} | {row['translated_code_bytes']:,} | {row['unresolved_transfers']} |"
+        for name,row in components.items())
+    identity=static_identity_evidence(image);metrics['static_identity_evidence']=identity
+    identity_text=(f"retained exact-image evidence ({len(image):,} main bytes; recorded input hashes match)"
+                   if identity['current'] else identity['reason']+'; run tools/verify.py')
+    text=f'''# Reconstruction status
+
+Current static inventory, reproducible with `tools/coverage.py --inventory`.
+This command does not run or renew behavioral campaigns.
+Retained identity evidence checks the image and the report's recorded inputs;
+it does not independently certify toolchain freshness or manifest completeness.
+
+| Evidence dimension | Current result |
+|---|---|
+| Main binary identity | {identity_text} |
+| Canonical main image | {len(image):,} bytes; SHA256 `{sha(image)}` |
+| Classified main bytes | {metrics['classified_bytes']:,}; classification is not semantic closure |
+| Decoded main instructions | {metrics['instructions']:,} sites / {metrics['decoded_instruction_bytes']:,} bytes |
+| UNKNOWN main bytes | {metrics['unresolved_image_bytes']:,} in {metrics['unresolved_byte_runs']} runs; {metrics['unresolved_provisional_code_bytes']:,} bytes inside provisional code frame |
+| Static control-flow frontier | {metrics['unresolved_transfers']} transfers; known target sets remain conditional |
+| Main C implementation union | {metrics['translated_main_code_bytes']:,} original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
+| Semantic readiness | Scoped qualitative gate and subsystem matrix in [semantic audit](semantic-audit.md); no numeric semantic-completion claim |
+| Differential coverage | Per-suite scope and matching consumed hashes required; aggregate not evaluated by this inventory |
+| Whole-game integration | Not established by routine or byte totals; native startup/frame/platform completion remains open |
+
+Loaded executable sound images have separate ledgers and incomplete decoded
+inventories; their C columns likewise describe implementation ranges only:
+
+| Component | Image bytes | Classified bytes | Decoded code bytes | C code union | Open transfers |
+|---|---:|---:|---:|---:|---:|
+{component_rows}
+
+Their exact byte identities and distinct code/data/CFG obligations are described in
+[executable.md](executable.md) and [sound-drivers.md](sound-drivers.md).
+
+`tools/coverage.py` without `--inventory` retains the strict full-contract and
+native-report checks. Only a successful complete acceptance run may publish its
+aggregate totals. Old reports remain historical for their recorded inputs;
+neither a preserved file nor a comment/name change renews their hashes. Current
+priorities live only in [next-work.md](next-work.md); prior checkpoint narratives
+are retained in [convergence-history.md](convergence-history.md).
+'''
+    return metrics,text
+
 def contract_verification():
     """Only a fresh complete contract report can support aggregate coverage."""
     verified=read_json(BUILD/'verification.json')
@@ -1064,11 +1159,14 @@ remain open. See object-drawing.md and level-redraw.md.
 '''
     return m,text
 
-if __name__=='__main__':
+def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--write-doc',action='store_true')
-    a=p.parse_args()
-    metrics,text=report()
+    p.add_argument('--inventory',action='store_true',help='current static/C ledger inventory; no aggregate behavioral claim')
+    a=p.parse_args(argv)
+    metrics,text=inventory() if a.inventory else report()
     if a.write_doc:
         (ROOT/'docs/completeness.md').write_text(text,encoding='utf-8')
     print(text)
+
+if __name__=='__main__':main()

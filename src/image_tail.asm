@@ -95,6 +95,19 @@ FirstObjectGraphicsWidth equ LevelObjectGraphicsRecords+0x04
 FirstObjectGraphicsHeight equ LevelObjectGraphicsRecords+0x05
 FirstObjectGraphicsMaskOffset equ LevelObjectGraphicsRecords+0x08
 FirstObjectGraphicsFrameOffset equ LevelObjectGraphicsRecords+0x17
+; Session lifetime and partial entity-field anchors; these equates emit no bytes.
+GameTransitionFlags equ GameDataImage+0x004E
+GameEndRequested equ GameDataImage+0x004F
+GameCountdownTickCounter equ GameDataImage+0x0085
+GameCountdownTickReload equ GameDataImage+0x0086
+ForegroundWaitLowWord equ GameDataImage+0x1FFE
+ForegroundWaitHighWord equ GameDataImage+0x2000
+LevelCountdownTensDigit equ GameDataImage+0x20A9
+LevelCountdownOnesDigit equ GameDataImage+0x20AA
+EntityRecordStateBits equ GameDataImage+0x0090
+EntityRecordBehaviorFlags equ GameDataImage+0x00AC
+EntityRecordSecondInteractionCell equ GameDataImage+0x00B3
+EntityRecordFirstInteractionCell equ GameDataImage+0x00B4
 ; Image from DS frame 09A9 onward; UNKNOWN is not a claim of passive data.
 GameDataImage:
 ; DATA: static_data
@@ -5867,3 +5880,8 @@ CodeAcceptedRatingField equ GameDataImage+0x4e1f
 CodeRatingNameRows equ GameDataImage+0x4c01
 CodeAcceptedText equ GameDataImage+0x4dfe
 CodeRejectedText equ GameDataImage+0x4e27
+
+; Simulation role aliases name the same storage as the drawing anchors.
+EntityRecordCountdown equ EntityRecordStripSelector
+EntityRecordHorizontalStep equ EntityRecordFrameAddGate
+EntityRecordInactiveMarker equ EntityRecordDrawingSkipGate

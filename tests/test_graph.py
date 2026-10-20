@@ -6,6 +6,27 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 from graph import body,dependency_order,routine_views,tag
 
 class GraphTests(unittest.TestCase):
+    def test_original_view_exposes_untranslated_suffix_and_follows_native_children(self):
+        analysis=dict(instructions=[dict(address=p,mnemonic=m,size=n) for p,m,n in
+            ((0,'nop',1),(1,'call',3),(4,'ret',1),(8,'ret',1))],
+            edges=[dict(source=a,target=b,kind=k) for a,b,k in
+                ((0,1,'fallthrough'),(1,8,'call'),(1,4,'fallthrough'))],
+            unresolved=[],routines=[0,8])
+        ledger=[dict(address=0,segment=0,kind='entry',size=None,symbol_name='Prefix',
+                    verification_status='TESTED',c_implementation='fixture.c',c_code_ranges=[[0,1]]),
+                dict(address=1,segment=0,kind='continuation',size=3,symbol_name='Suffix',verification_status='UNRESOLVED'),
+                dict(address=8,segment=0,kind='entry',size=1,symbol_name='Child',
+                    verification_status='TESTED',c_implementation='fixture.c')]
+        scoped=routine_views(analysis,ledger)
+        self.assertEqual(scoped[0]['sites'],{0})
+        self.assertNotIn(1,scoped)
+        views=routine_views(analysis,ledger,original=True)
+        self.assertEqual(views[0]['sites'],{0,1,4})
+        self.assertEqual(views[1]['callees'],{8})
+        self.assertEqual(dependency_order(0,views),([8,0],set()))
+        self.assertIn('ASM-body',tag(0,views));self.assertNotIn('TESTED C-domain',tag(0,views))
+        self.assertEqual((views[0]['existing_c_bytes'],views[0]['outside_c_bytes']),(1,4))
+
     def test_explicit_native_ranges_do_not_require_a_physical_entry_size(self):
         analysis=dict(instructions=[dict(address=0,mnemonic='nop',size=1),
                                     dict(address=1,mnemonic='ret',size=1)],

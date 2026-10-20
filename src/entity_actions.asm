@@ -3,6 +3,12 @@
 times -(($-$$) != 0x3150) db 0 ; module start assertion
 DispatchEntityAction:
 sub_3150:
+; DS:SI selects the same mutable2D-byte record used by simulation and drawing.
+; Selectors2..9 index the eight live action inventories; they are not +08 state
+; values. Assignment may change state bits, sprite callback/geometry and cadence
+; together. +20 countdown/strip and +27 direction/frame gate remain shared roles.
+; Field anchors name observed accesses only; +1F/+21/+23/+25 meanings vary by
+; state and remain numeric rather than inventing a complete historical struct.
 ; Action ownership:docs/entity-actions.md.1,221 known bytes/402 sites;
 ;31 UNKNOWN bytes remain unresolved. Gate002B/work guard0050/candidate0063
 ; failures leave the press latch untouched. Input bit0 clear reaches31BE;
@@ -77,13 +83,13 @@ ApplyEntityAction4:
 loc_31C4:
     cmp byte [LevelActionCount2-GameDataImage],0x0 ; @031C4
     jz loc_320C ; @031C9
-    cmp byte [si+0x20],0x0 ; @031CB
+    cmp byte [si+EntityRecordCountdown-EntityRecordsBase],0x0 ; @031CB
     jnz loc_320C ; @031CF
-    test word [si+0x8],0xc003 ; @031D1
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xc003 ; @031D1
     jnz loc_320C ; @031D6
     dec byte [LevelActionCount2-GameDataImage] ; @031D8
     mov byte [LevelActionCountRefreshCounter2-GameDataImage],0x0 ; @031DC
-    mov byte [si+0x20],0x4f ; @031E1
+    mov byte [si+EntityRecordCountdown-EntityRecordsBase],0x4f ; @031E1
 RequestEntityActionFeedback:
 ; Shared JMP/fallthrough entry,39 bytes/13 sites. No new nearCALL frame.
 ; PC gate is enabled!=FF/options&1; INT60 AX0313 returns31F8 with all live
@@ -119,36 +125,36 @@ ApplyEntityAction9:
 loc_320D:
     cmp byte [LevelActionCount7-GameDataImage],0x0 ; @0320D
     jz loc_3285 ; @03212
-    mov al,[si+0x2c] ; @03214
+    mov al,[si+EntityRecordFirstInteractionCell-EntityRecordsBase] ; @03214
     and al,0xf ; @03217
     cmp al,0x9 ; @03219
     jz loc_3285 ; @0321B
-    test word [si+0x8],0xf57f ; @0321D
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xf57f ; @0321D
     jnz loc_3271 ; @03222
 loc_3224:
     dec byte [LevelActionCount7-GameDataImage] ; @03224
     mov byte [LevelActionCountRefreshCounter7-GameDataImage],0x0 ; @03228
-    and word [si+0x8],0xf57f ; @0322D
-    or word [si+0x8],byte +0x10 ; @03232
-    mov word [si+0xa],0x0 ; @03236
-    mov word [si+0xc],0x32a ; @0323B
-    mov word [si+0x10],0x70 ; @03240
-    mov word [si+0x12],0x54 ; @03245
-    mov byte [si+0x28],0x11 ; @0324A
-    mov word [si+0x4],0xfff8 ; @0324E
-    mov word [si+0x6],0xfff4 ; @03253
-    mov byte [si+0x29],0x0 ; @03258
+    and word [si+EntityRecordStateBits-EntityRecordsBase],0xf57f ; @0322D
+    or word [si+EntityRecordStateBits-EntityRecordsBase],byte +0x10 ; @03232
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @03236
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x32a ; @0323B
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x70 ; @03240
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x54 ; @03245
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x11 ; @0324A
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @0324E
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff4 ; @03253
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @03258
     mov ax,[DrawingCallbackSlots-GameDataImage+0xa] ; @0325C
-    mov [si+0x14],ax ; @0325F
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @0325F
     mov byte [si+0x1f],0x8 ; @03262
-    mov byte [si+0x2a],0xff ; @03266
-    and byte [si+0x24],0x1 ; @0326A
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @03266
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @0326A
     jmp RequestEntityActionFeedback ; @0326E
 loc_3271:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03271
     jz loc_3285 ; @03276
     mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03278
-    test word [si+0x8],0xf57f ; @0327C
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xf57f ; @0327C
     jnz loc_3285 ; @03281
     jmp short loc_3224 ; @03283
 loc_3285:
@@ -173,12 +179,12 @@ ApplyEntityAction2:
 loc_329B:
     cmp byte [LevelActionCount0-GameDataImage],0x0 ; @0329B
     jz loc_32BA ; @032A0
-    test byte [si+0x24],0x1 ; @032A2
+    test byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @032A2
     jnz loc_32BA ; @032A6
-    test word [si+0x8],0x103 ; @032A8
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x103 ; @032A8
     jnz loc_32BA ; @032AD
     dec byte [LevelActionCount0-GameDataImage] ; @032AF
-    mov byte [si+0x24],0x1 ; @032B3
+    mov byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @032B3
     jmp RequestEntityActionFeedback ; @032B7
 loc_32BA:
     jmp EntityActionFailureReturn ; @032BA
@@ -190,29 +196,29 @@ ApplyEntityAction6:
 loc_32BD:
     cmp byte [LevelActionCount4-GameDataImage],0x0 ; @032BD
     jz loc_331F ; @032C2
-    mov ax,[si+0x2] ; @032C4
-    add ax,[si+0x6] ; @032C7
+    mov ax,[si+EntityRecordY-EntityRecordsBase] ; @032C4
+    add ax,[si+EntityRecordDrawingYBias-EntityRecordsBase] ; @032C7
     cmp ax,0xa ; @032CA
     jna loc_331F ; @032CD
-    test word [si+0x8],0xf5ef ; @032CF
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xf5ef ; @032CF
     jnz loc_3322 ; @032D4
 loc_32D6:
     dec byte [LevelActionCount4-GameDataImage] ; @032D6
     mov byte [LevelActionCountRefreshCounter4-GameDataImage],0x0 ; @032DA
-    mov word [si+0x8],0x80 ; @032DF
-    mov word [si+0x4],0xfff8 ; @032E4
-    mov word [si+0x6],0xfff3 ; @032E9
-    mov byte [si+0x28],0x0 ; @032EE
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x80 ; @032DF
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @032E4
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff3 ; @032E9
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @032EE
     mov byte [si+0x21],0xc ; @032F2
-    mov word [si+0xa],0x0 ; @032F6
-    mov word [si+0xc],0x6fa ; @032FB
-    mov word [si+0x10],0x68 ; @03300
-    mov word [si+0x12],0x4e ; @03305
-    mov byte [si+0x29],0x10 ; @0330A
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @032F6
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x6fa ; @032FB
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x68 ; @03300
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x4e ; @03305
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x10 ; @0330A
     mov ax,[DrawingCallbackSlots-GameDataImage+0x8] ; @0330E
-    mov byte [si+0x2a],0xff ; @03311
-    mov [si+0x14],ax ; @03315
-    and byte [si+0x24],0x1 ; @03318
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @03311
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @03315
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @03318
     jmp RequestEntityActionFeedback ; @0331C
 loc_331F:
     jmp EntityActionFailureReturn ; @0331F
@@ -220,7 +226,7 @@ loc_3322:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03322
     jz loc_331F ; @03327
     mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03329
-    test word [si+0x8],0xf5ef ; @0332D
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xf5ef ; @0332D
     jnz loc_331F ; @03332
     jmp short loc_32D6 ; @03334
 ApplyEntityAction5:
@@ -233,14 +239,14 @@ ApplyEntityAction5:
 loc_3336:
     cmp byte [LevelActionCount3-GameDataImage],0x0 ; @03336
     jz loc_3345 ; @0333B
-    mov ax,[si+0x8] ; @0333D
+    mov ax,[si+EntityRecordStateBits-EntityRecordsBase] ; @0333D
     and ax,0xf56f ; @03340
     jz loc_3348 ; @03343
 loc_3345:
     jmp EntityActionFailureReturn ; @03345
 loc_3348:
-    mov ax,[si] ; @03348
-    mov bx,[si+0x2] ; @0334A
+    mov ax,[si+EntityRecordX-EntityRecordsBase] ; @03348
+    mov bx,[si+EntityRecordY-EntityRecordsBase] ; @0334A
     sub ax,0x4 ; @0334D
     sub bx,byte +0x6 ; @03350
     sub bx,byte +0x10 ; @03353
@@ -343,19 +349,19 @@ loc_341B:
 loc_3422:
     dec byte [LevelActionCount3-GameDataImage] ; @03422
     mov byte [LevelActionCountRefreshCounter3-GameDataImage],0x0 ; @03426
-    mov word [si+0x8],0x100 ; @0342B
-    mov byte [si+0x28],0x0 ; @03430
-    mov word [si+0xa],0x8 ; @03434
-    mov word [si+0xc],0xf9b ; @03439
-    mov word [si+0x10],0x5a ; @0343E
-    mov word [si+0x12],0x3c ; @03443
-    mov byte [si+0x29],0x0 ; @03448
-    mov word [si+0x4],0xfff8 ; @0344C
-    mov word [si+0x6],0xfff6 ; @03451
+    mov word [si+EntityRecordStateBits-EntityRecordsBase],0x100 ; @0342B
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @03430
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x8 ; @03434
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0xf9b ; @03439
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x5a ; @0343E
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @03443
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x0 ; @03448
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @0344C
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @03451
     mov ax,[DrawingCallbackSlots-GameDataImage+0x0] ; @03456
-    mov [si+0x14],ax ; @03459
-    mov byte [si+0x2a],0x0 ; @0345C
-    and byte [si+0x24],0x1 ; @03460
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @03459
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0x0 ; @0345C
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @03460
 ; Save replaced interaction cells in this live record. BX is the candidate
 ; SS map offset checked at 3348..341F; ES becomes DS for STOSB below.
 ; DF=0 saves nine bytes at +16h..+1Eh; DF=1 decrements only the destination
@@ -416,13 +422,13 @@ ApplyEntityAction7:
 loc_34CE:
     cmp byte [LevelActionCount5-GameDataImage],0x0 ; @034CE
     jz loc_3540 ; @034D3
-    test word [si+0x8],0xf76f ; @034D5
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xf76f ; @034D5
     jnz loc_3543 ; @034DA
 loc_34DC:
-    mov al,[si+0x2b] ; @034DC
+    mov al,[si+EntityRecordSecondInteractionCell-EntityRecordsBase] ; @034DC
     and al,0xf ; @034DF
     mov ah,0x7 ; @034E1
-    cmp byte [si+0x27],0x1 ; @034E3
+    cmp byte [si+EntityRecordHorizontalStep-EntityRecordsBase],0x1 ; @034E3
     jz loc_34EB ; @034E7
     mov ah,0x8 ; @034E9
 loc_34EB:
@@ -434,20 +440,20 @@ loc_34EB:
 loc_34F6:
     dec byte [LevelActionCount5-GameDataImage] ; @034F6
     mov byte [LevelActionCountRefreshCounter5-GameDataImage],0x0 ; @034FA
-    and word [si+0x8],0xf56f ; @034FF
-    or word [si+0x8],0x200 ; @03504
-    mov word [si+0x4],0xfff8 ; @03509
-    mov word [si+0x6],0xfff6 ; @0350E
-    mov byte [si+0x28],0x0 ; @03513
-    mov word [si+0xa],0x0 ; @03517
-    mov word [si+0xc],0x7ca ; @0351C
-    mov word [si+0x10],0x50 ; @03521
-    mov word [si+0x12],0x3c ; @03526
-    mov byte [si+0x29],0x20 ; @0352B
-    mov byte [si+0x2a],0xff ; @0352F
+    and word [si+EntityRecordStateBits-EntityRecordsBase],0xf56f ; @034FF
+    or word [si+EntityRecordStateBits-EntityRecordsBase],0x200 ; @03504
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @03509
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff6 ; @0350E
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @03513
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @03517
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x7ca ; @0351C
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x50 ; @03521
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x3c ; @03526
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x20 ; @0352B
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @0352F
     mov ax,[DrawingCallbackSlots-GameDataImage+0x6] ; @03533
-    mov [si+0x14],ax ; @03536
-    and byte [si+0x24],0x1 ; @03539
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @03536
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @03539
     jmp RequestEntityActionFeedback ; @0353D
 loc_3540:
     jmp EntityActionFailureReturn ; @03540
@@ -455,7 +461,7 @@ loc_3543:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @03543
     jz loc_3540 ; @03548
     mov si,[EntityAlternateRecordOffset-GameDataImage] ; @0354A
-    test word [si+0x8],0xf76f ; @0354E
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xf76f ; @0354E
     jnz loc_3540 ; @03553
     jmp short loc_34DC ; @03555
 ApplyEntityAction3:
@@ -467,7 +473,7 @@ loc_3557:
     jz loc_357B ; @0355C
     cmp byte [si+0x25],0x0 ; @0355E
     jnz loc_357B ; @03562
-    test word [si+0x8],0x103 ; @03564
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0x103 ; @03564
     jnz loc_357B ; @03569
     mov byte [si+0x25],0xff ; @0356B
     dec byte [LevelActionCount1-GameDataImage] ; @0356F
@@ -490,20 +496,20 @@ loc_3598:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @035A1
 loc_35A2:
-    test word [si+0x8],0xfd6f ; @035A2
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xfd6f ; @035A2
     jz loc_35AC ; @035A7
     jmp short loc_361F ; @035A9
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @035AB
 loc_35AC:
-    mov al,[si+0x2c] ; @035AC
+    mov al,[si+EntityRecordFirstInteractionCell-EntityRecordsBase] ; @035AC
     and al,0xf ; @035AF
     cmp al,0x9 ; @035B1
     jz loc_361C ; @035B3
-    mov al,[si+0x2b] ; @035B5
+    mov al,[si+EntityRecordSecondInteractionCell-EntityRecordsBase] ; @035B5
     and al,0xf ; @035B8
     mov ah,0x7 ; @035BA
-    cmp byte [si+0x27],0x1 ; @035BC
+    cmp byte [si+EntityRecordHorizontalStep-EntityRecordsBase],0x1 ; @035BC
     jz loc_35C4 ; @035C0
     mov ah,0x8 ; @035C2
 loc_35C4:
@@ -515,21 +521,21 @@ loc_35C4:
 loc_35CF:
     dec byte [LevelActionCount6-GameDataImage] ; @035CF
     mov byte [LevelActionCountRefreshCounter6-GameDataImage],0x0 ; @035D3
-    and word [si+0x8],0xfd6f ; @035D8
-    or word [si+0x8],0x800 ; @035DD
-    mov word [si+0x4],0xfff8 ; @035E2
-    mov word [si+0x6],0xfff3 ; @035E7
-    mov byte [si+0x28],0x0 ; @035EC
-    mov word [si+0xa],0x0 ; @035F0
-    mov word [si+0xc],0x90a ; @035F5
-    mov word [si+0x10],0x68 ; @035FA
-    mov word [si+0x12],0x4e ; @035FF
-    mov byte [si+0x29],0x18 ; @03604
+    and word [si+EntityRecordStateBits-EntityRecordsBase],0xfd6f ; @035D8
+    or word [si+EntityRecordStateBits-EntityRecordsBase],0x800 ; @035DD
+    mov word [si+EntityRecordDrawingXBias-EntityRecordsBase],0xfff8 ; @035E2
+    mov word [si+EntityRecordDrawingYBias-EntityRecordsBase],0xfff3 ; @035E7
+    mov byte [si+EntityRecordFrameSelector-EntityRecordsBase],0x0 ; @035EC
+    mov word [si+EntityRecordSpriteSourceOffset-EntityRecordsBase],0x0 ; @035F0
+    mov word [si+EntityRecordSpriteParagraphOffset-EntityRecordsBase],0x90a ; @035F5
+    mov word [si+EntityRecordSpriteFrameStride-EntityRecordsBase],0x68 ; @035FA
+    mov word [si+EntityRecordSpriteMaskOffset-EntityRecordsBase],0x4e ; @035FF
+    mov byte [si+EntityRecordFrameAddend-EntityRecordsBase],0x18 ; @03604
     mov ax,[DrawingCallbackSlots-GameDataImage+0x8] ; @03608
-    mov [si+0x14],ax ; @0360B
-    mov byte [si+0x2a],0xff ; @0360E
-    and byte [si+0x24],0x1 ; @03612
-    inc word [si+0x2] ; @03616
+    mov [si+EntityRecordSpriteCallback-EntityRecordsBase],ax ; @0360B
+    mov byte [si+EntityRecordAlignmentGate-EntityRecordsBase],0xff ; @0360E
+    and byte [si+EntityRecordBehaviorFlags-EntityRecordsBase],0x1 ; @03612
+    inc word [si+EntityRecordY-EntityRecordsBase] ; @03616
     jmp RequestEntityActionFeedback ; @03619
 loc_361C:
     jmp EntityActionFailureReturn ; @0361C
@@ -537,7 +543,7 @@ loc_361F:
     cmp byte [EntityAlternateSlotIndex-GameDataImage],0xff ; @0361F
     jz loc_361C ; @03624
     mov si,[EntityAlternateRecordOffset-GameDataImage] ; @03626
-    test word [si+0x8],0xfd6f ; @0362A
+    test word [si+EntityRecordStateBits-EntityRecordsBase],0xfd6f ; @0362A
     jnz loc_361C ; @0362F
     jmp loc_35AC ; @03631
 times -(($-$$) != 0x3634) db 0 ; module end assertion

@@ -3,6 +3,7 @@
 Bodies follow branches/shared tails without following calls. Native ranges are
 the ledger's tested domains; outgoing tails/calls outside C remain visible.
 Neither a decoded leaf nor TESTED establishes whole-program semantic closure.
+--asm follows original decoded bodies even when a narrower C domain exists.
 """
 import argparse
 from bisect import bisect_right
@@ -36,7 +37,7 @@ def body(entry,instructions,outgoing,frontiers,allowed=None):
     return dict(sites=seen,callees=callees,boundaries=boundaries,problems=problems,services=services,
                 bytes=sum(instructions[p]['size'] for p in seen))
 
-def routine_views(analysis,ledger):
+def routine_views(analysis,ledger,*,original=False):
     instructions={r['address']:r for r in analysis['instructions']};outgoing={};frontiers={};callers={}
     for edge in analysis['edges']:
         outgoing.setdefault(edge['source'],[]).append(edge)
@@ -45,11 +46,11 @@ def routine_views(analysis,ledger):
     # A native span is a scoped view of an existing body, not a new discovery
     # seed or a claim that its containing function has been translated.
     symbols={s['address']:s for s in ledger if s['segment']==0 and
-             (s['kind']=='entry' or (s['kind']=='continuation' and s.get('c_implementation')))};views={}
+             (s['kind']=='entry' or (s['kind']=='continuation' and (original or s.get('c_implementation'))))};views={}
     for entry in sorted(set(analysis['routines'])|set(symbols)):
         row=symbols.get(entry,dict(symbol_name=f'entry_{entry:04X}',verification_status='UNRESOLVED'))
         allowed=None
-        if row.get('c_implementation'):
+        if row.get('c_implementation') and not original:
             ranges=row.get('c_code_ranges')
             if ranges is None:
                 size=row.get('size')
@@ -57,7 +58,8 @@ def routine_views(analysis,ledger):
                     raise ValueError('Missing native extent for '+row['symbol_name'])
                 ranges=[(entry,entry+size)]
             allowed={p for a,b in ranges for p in range(a,b)}
-        views[entry]=body(entry,instructions,outgoing,frontiers,allowed)|dict(symbol=row,callers=callers.get(entry,set()))
+        views[entry]=body(entry,instructions,outgoing,frontiers,allowed)|dict(
+            symbol=row,callers=callers.get(entry,set()),original_view=original)
     # Bodies follow branch tails, including bytes already owned by native C.
     main=[s for s in ledger if s['segment']==0]
     limit=max((r['address']+r['size'] for r in analysis['instructions']),default=0)
@@ -75,7 +77,8 @@ def dependency_order(root,views):
         if entry in active:cycles.add(entry);return
         if entry in done:return
         view=views.get(entry)
-        if view and view['symbol'].get('c_implementation'):done.add(entry);return
+        if view and view['symbol'].get('c_implementation') and not view.get('original_view'):
+            done.add(entry);return
         active.add(entry)
         if view:
             for target in sorted(view['callees']):visit(target)
@@ -85,11 +88,12 @@ def dependency_order(root,views):
 def tag(entry,views):
     view=views.get(entry)
     if view is None:return f'{entry:04X} UNRECOVERED'
-    row=view['symbol'];native=' C-domain' if row.get('c_implementation') else ''
+    row=view['symbol'];native=' C-domain' if row.get('c_implementation') and not view.get('original_view') else ''
     overlap=''
     if not native and view.get('existing_c_bytes'):
         overlap=f'; {view["existing_c_bytes"]} already-C bytes/{view["outside_c_bytes"]} outside C ranges'
-    return f'{entry:04X} {row["symbol_name"]} {row["verification_status"]}{native} ({view["bytes"]} decoded bytes/{len(view["sites"])} sites{overlap})'
+    status='ASM-body' if view.get('original_view') else row['verification_status']+native
+    return f'{entry:04X} {row["symbol_name"]} {status} ({view["bytes"]} decoded bytes/{len(view["sites"])} sites{overlap})'
 
 def details(entry,views):
     view=views[entry];print(tag(entry,views))
@@ -118,7 +122,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('target',nargs='?');parser.add_argument('--tree',action='store_true')
     parser.add_argument('--depth',type=int,default=3);parser.add_argument('--bottom-up',action='store_true')
-    args=parser.parse_args();views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'))
+    parser.add_argument('--asm',action='store_true',help='follow original CFG rather than clipping to C-tested ranges')
+    args=parser.parse_args();views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'),original=args.asm)
     if args.target is None:
         for entry in sorted(views):print(tag(entry,views))
         return
@@ -126,13 +131,14 @@ def main():
     if entry not in views:parser.error('Target is not a main-image routine entry or native span')
     if args.bottom_up:
         order,cycles=dependency_order(entry,views)
-        print('Pending investigation order; native dependencies retain their bounded seams:')
+        print('Original-body investigation order (C ranges do not stop traversal):' if args.asm else
+              'Pending investigation order; native dependencies retain their bounded seams:')
         for target in order:
             view=views.get(target);note=''
             if target in cycles:note=' [cycle: review as a cluster]'
             elif view and not any(view[k] for k in ('callees','boundaries','problems','services')):note=' [decoded leaf: contract review required]'
             print(tag(target,views)+note)
-        native={t for p in order if p in views for t in views[p]['callees']
+        native=set() if args.asm else {t for p in order if p in views for t in views[p]['callees']
                 if t in views and views[t]['symbol'].get('c_implementation')}
         for target in sorted(native):
             view=views[target]

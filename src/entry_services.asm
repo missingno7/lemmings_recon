@@ -102,19 +102,29 @@ sub_00D8:
     jmp EnterMainMenu ; @000F8
 loc_00FB:
 EnterLoadedLevelGame:
+; Session entry after resource loading/briefing. This is a JMP destination, not
+; an independently returning routine. Initialization precedes every frame.
+; Frame order: swap origin/map pairs -> raster/timer pacing -> transition/input
+; work -> dirty/background drawing -> action/create/simulate -> objects/entities
+; -> selection/status -> action again. The two action calls share the press latch.
+; DS is live across children; SS owns interaction/dirty maps as well as saves.
+; BIOS/DOS/sound and installed IRQ scheduling remain explicit dependencies.
     call InitializeGameSession ; @000FB
     mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
     nop ; @00104
-loc_0105:
+GameFrameSwapAndPace:
+; Swap the two drawing origins and their dirty-map offsets together. Option FF
+; additionally drives CRTC start-address writes and retrace polling here; the
+; timer handler owns the alternative display path. Do not merge the two owners.
     mov ax,[AlternateDrawingOrigin-GameDataImage] ; @00105
-    xchg [0x1f76],ax ; @00108
+    xchg [DrawingOrigin-GameDataImage],ax ; @00108
     mov [AlternateDrawingOrigin-GameDataImage],ax ; @0010C
     mov ax,[AlternateDrawingDirtyCellMapOffset-GameDataImage] ; @0010F
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @00112
     mov [AlternateDrawingDirtyCellMapOffset-GameDataImage],ax ; @00116
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00119
-    jnz loc_0164 ; @0011E
-loc_0120:
+    jnz GameFrameWaitForTimer ; @0011E
+GameFrameRetryRasterSync:
     mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @00120
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @00125
     add dl,0x6 ; @00129
@@ -128,7 +138,7 @@ loc_0138:
     in al,dx ; @00138
     test al,0x8 ; @00139
     jz loc_0138 ; @0013B
-    jmp short loc_0120 ; @0013D
+    jmp short GameFrameRetryRasterSync ; @0013D
 loc_013F:
     sub dl,0x6 ; @0013F
     cli ; @00142
@@ -148,9 +158,12 @@ loc_015C:
     test al,0x8 ; @0015D
     jz loc_015C ; @0015F
     call UpdateFixedWordPattern ; @00161
-loc_0164:
-    mov cx,[0x1ffe] ; @00164
-    mov dx,[0x2000] ; @00168
+GameFrameWaitForTimer:
+; Budget produced by InitializeGameSession. DEC CX only borrows into DX at CX=0;
+; a zero DX at that point reinstalls INT08. A live timer FF flag ends polling.
+; This is the literal split-word loop, not a host timeout or a 32-bit decrement.
+    mov cx,[ForegroundWaitLowWord-GameDataImage] ; @00164
+    mov dx,[ForegroundWaitHighWord-GameDataImage] ; @00168
     mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @0016C
 loc_0171:
     dec cx ; @00171
@@ -161,20 +174,22 @@ loc_0171:
 loc_0179:
     cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @00179
     jnz loc_0171 ; @0017E
-    jmp short loc_0186 ; @00180
+    jmp short GameFrameTickGate ; @00180
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00182
 loc_0183:
     call InstallGameTimerVector ; @00183
-loc_0186:
+GameFrameTickGate:
+; JNG below compares AL as signed against4. IRQ17C7 increments the shared byte;
+; at an accepted tick the foreground clears it and the keyboard scan snapshot.
     mov al,[TimerForegroundCounter1FCD-GameDataImage] ; @00186
     mov cl,0x4 ; @00189
     db 0x3a,0xc1 ; ENCODED: cmp al,cl (NASM chooses a different encoding) ; @0018B
-    jng loc_0164 ; @0018D
+    jng GameFrameWaitForTimer ; @0018D
     mov byte [TimerForegroundCounter1FCD-GameDataImage],0x0 ; @0018F
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @00194
     inc byte [ForegroundCounter1FD3-GameDataImage] ; @00199
-    call sub_031E ; @0019D
+    call AdvanceGameTransitionEffects ; @0019D
     call sub_4085 ; @001A0
     inc byte [ForegroundCounter0052-GameDataImage] ; @001A3
     call CopyDirtyLevelRowsToDrawingPage ; @001A7
@@ -194,9 +209,9 @@ EntityBatchNextCaller:
     call SelectEntityCandidate ; @001BF
     call UpdateStatusDisplay ; @001C2
     call DispatchEntityAction ; @001C5
-    cmp byte [0x4f],0xff ; @001C8
+    cmp byte [GameEndRequested-GameDataImage],0xff ; @001C8
     jnz loc_01D2 ; @001CD
-    jmp loc_02C3 ; @001CF
+    jmp GameEndWaitForFade ; @001CF
 loc_01D2:
     cmp byte [0x4a],0xff ; @001D2
     jnz loc_01E7 ; @001D7
@@ -208,29 +223,32 @@ loc_01DF:
     jz loc_01DF ; @001E3
     loop loc_01DC ; @001E5
 loc_01E7:
-    mov al,[0x43] ; @001E7
+    mov al,[EntitySlotBound-GameDataImage] ; @001E7
     cmp al,[LevelCreationLimit-GameDataImage] ; @001EA
     jnz loc_01FA ; @001EE
     mov al,[EntityDrawingPassCount-GameDataImage] ; @001F0
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @001F3
     jnz loc_01FA ; @001F5
-    jmp loc_02B3 ; @001F7
+    jmp RequestGameFadeOut ; @001F7
 loc_01FA:
     mov al,[0x20a7] ; @001FA
-    or al,[0x20a9] ; @001FD
-    or al,[0x20aa] ; @00201
+    or al,[LevelCountdownTensDigit-GameDataImage] ; @001FD
+    or al,[LevelCountdownOnesDigit-GameDataImage] ; @00201
     cmp al,0x30 ; @00205
-    jnz loc_020C ; @00207
-    jmp loc_02B3 ; @00209
-loc_020C:
-    cmp byte [0x2b],0xff ; @0020C
-    jz loc_024A ; @00211
-    dec byte [0x85] ; @00213
-    jnz loc_024A ; @00217
-    mov al,[0x86] ; @00219
-    mov [0x85],al ; @0021C
+    jnz GameCountdownTick ; @00207
+    jmp RequestGameFadeOut ; @00209
+GameCountdownTick:
+; Pausing (update gate FF) preserves the countdown divider. Otherwise byte DEC
+; wraps; only zero reloads it and decrements the three ASCII time digits. The
+; word at20A9 packs tens in BL and ones in BH. Borrow resets to5/9, then0:00.
+    cmp byte [EntityUpdateGate-GameDataImage],0xff ; @0020C
+    jz GameFrameCommands ; @00211
+    dec byte [GameCountdownTickCounter-GameDataImage] ; @00213
+    jnz GameFrameCommands ; @00217
+    mov al,[GameCountdownTickReload-GameDataImage] ; @00219
+    mov [GameCountdownTickCounter-GameDataImage],al ; @0021C
     mov al,[0x20a7] ; @0021F
-    mov bx,[0x20a9] ; @00222
+    mov bx,[LevelCountdownTensDigit-GameDataImage] ; @00222
     dec bh ; @00226
     cmp bh,0x2f ; @00228
     jnz loc_0243 ; @0022B
@@ -246,9 +264,9 @@ loc_020C:
     mov bx,0x3030 ; @00240
 loc_0243:
     mov [0x20a7],al ; @00243
-    mov [0x20a9],bx ; @00246
-loc_024A:
-    mov ax,[0x1fc7] ; @0024A
+    mov [LevelCountdownTensDigit-GameDataImage],bx ; @00246
+GameFrameCommands:
+    mov ax,[InputKeyMask1FC7-GameDataImage] ; @0024A
     cmp byte [0x1f74],0xff ; @0024D
     jnz loc_025C ; @00252
     test ax,0x8000 ; @00254
@@ -258,68 +276,70 @@ loc_025C:
     test ax,0x80 ; @0025C
     jz loc_02A1 ; @0025F
     push ax ; @00261
-    cmp byte [0x2010],0xff ; @00262
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00262
     jz loc_0275 ; @00267
-    test byte [0x25a7],0x1 ; @00269
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @00269
     jz loc_0275 ; @0026E
     mov ax,0x100 ; @00270
     int 0x60 ; @00273
 loc_0275:
-    cmp byte [0x2010],0xff ; @00275
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00275
     jz loc_0288 ; @0027A
-    test byte [0x25a7],0x1 ; @0027C
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @0027C
     jz loc_0288 ; @00281
     mov ax,0x0 ; @00283
     int 0x60 ; @00286
 loc_0288:
     pop ax ; @00288
-    mov byte [0x25a7],0x0 ; @00289
-    cmp byte [0x2010],0xff ; @0028E
+    mov byte [SoundOptionBits-GameDataImage],0x0 ; @00289
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0028E
     jnz loc_02A1 ; @00293
-    test byte [0x25a7],0x3 ; @00295
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @00295
     jz loc_02A1 ; @0029A
     mov ax,0x200 ; @0029C
     int 0x61 ; @0029F
 loc_02A1:
     test ax,0x100 ; @002A1
     jz loc_02AB ; @002A4
-    mov byte [0x25a7],0x3 ; @002A6
+    mov byte [SoundOptionBits-GameDataImage],0x3 ; @002A6
 loc_02AB:
     test ax,0x20 ; @002AB
-    jnz loc_02B3 ; @002AE
-    jmp loc_0105 ; @002B0
-loc_02B3:
-    mov byte [0x4f],0xff ; @002B3
-    mov al,[0x4e] ; @002B8
+    jnz RequestGameFadeOut ; @002AE
+    jmp GameFrameSwapAndPace ; @002B0
+RequestGameFadeOut:
+; Latch end request and closing bit02. Frames continue until transition work
+; clears that bit; then timer cleanup and the result-screen JMP execute.
+    mov byte [GameEndRequested-GameDataImage],0xff ; @002B3
+    mov al,[GameTransitionFlags-GameDataImage] ; @002B8
     or al,0x2 ; @002BB
-    mov [0x4e],al ; @002BD
-    jmp loc_0105 ; @002C0
-loc_02C3:
-    mov al,[0x4e] ; @002C3
+    mov [GameTransitionFlags-GameDataImage],al ; @002BD
+    jmp GameFrameSwapAndPace ; @002C0
+GameEndWaitForFade:
+    mov al,[GameTransitionFlags-GameDataImage] ; @002C3
     test al,0x2 ; @002C6
     jz loc_02CD ; @002C8
-    jmp loc_0105 ; @002CA
+    jmp GameFrameSwapAndPace ; @002CA
 loc_02CD:
     call PublishBasePaletteBothBanks ; @002CD
-    cmp byte [0x2010],0xff ; @002D0
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @002D0
     jz loc_02E3 ; @002D5
-    test byte [0x25a7],0x1 ; @002D7
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @002D7
     jz loc_02E3 ; @002DC
     mov ax,0x100 ; @002DE
     int 0x60 ; @002E1
 loc_02E3:
-    cmp byte [0x2010],0xff ; @002E3
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @002E3
     jz loc_02F6 ; @002E8
-    test byte [0x25a7],0x1 ; @002EA
+    test byte [SoundOptionBits-GameDataImage],0x1 ; @002EA
     jz loc_02F6 ; @002EF
     mov ax,0x0 ; @002F1
     int 0x60 ; @002F4
 loc_02F6:
     mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0x0 ; @002F6
     call RestoreTimerState ; @002FB
-    cmp byte [0x2010],0xff ; @002FE
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @002FE
     jnz loc_0311 ; @00303
-    test byte [0x25a7],0x3 ; @00305
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @00305
     jz loc_0311 ; @0030A
     mov ax,0x200 ; @0030C
     int 0x61 ; @0030F
@@ -328,15 +348,21 @@ loc_0311:
 loc_0314:
     mov byte [StatusCompletionDisplayValue-GameDataImage],0x64 ; @00314
     call PublishBasePaletteBothBanks ; @00319
-    jmp short loc_02C3 ; @0031C
-sub_031E:
-    mov al,[0x4e] ; @0031E
+    jmp short GameEndWaitForFade ; @0031C
+AdvanceGameTransitionEffects:
+; GameTransitionFlags:01 opening fade,02 closing fade,04 delayed opening sound
+; sequence. Only the ordinary037C path publishes AL back to the shared byte.
+; Opening takes precedence if both fade bits are set. Option FF repeats a
+; palette step with raster/timer updates; other options perform one step/tick.
+; Delayed sound thresholds use live ForegroundCounter0052 (0F/23/37). Sound
+; branches can RET early with service-returned AX; do not promise AL=flags.
+    mov al,[GameTransitionFlags-GameDataImage] ; @0031E
     test al,0x1 ; @00321
     jz loc_0342 ; @00323
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00325
     jnz loc_033D ; @0032A
 loc_032C:
-    call sub_03C1 ; @0032C
+    call StepGameOpeningFade ; @0032C
     push ax ; @0032F
     call WaitForDisplayStatusBit3Cycle ; @00330
     call UpdateTimerPaletteAfter553D ; @00333
@@ -345,7 +371,7 @@ loc_032C:
     jnz loc_032C ; @00339
     jmp short loc_0361 ; @0033B
 loc_033D:
-    call sub_03C1 ; @0033D
+    call StepGameOpeningFade ; @0033D
     jmp short loc_0361 ; @00340
 loc_0342:
     test al,0x2 ; @00342
@@ -353,7 +379,7 @@ loc_0342:
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @00346
     jnz loc_035E ; @0034B
 loc_034D:
-    call sub_03D7 ; @0034D
+    call StepGameClosingFade ; @0034D
     push ax ; @00350
     call WaitForDisplayStatusBit3Cycle ; @00351
     call UpdateTimerPaletteAfter553D ; @00354
@@ -362,7 +388,7 @@ loc_034D:
     jnz loc_034D ; @0035A
     jmp short loc_0361 ; @0035C
 loc_035E:
-    call sub_03D7 ; @0035E
+    call StepGameClosingFade ; @0035E
 loc_0361:
     test al,0x4 ; @00361
     jz loc_037C ; @00363
@@ -376,12 +402,12 @@ loc_0361:
     jc loc_037C ; @00378
     and al,0xfb ; @0037A
 loc_037C:
-    mov [0x4e],al ; @0037C
+    mov [GameTransitionFlags-GameDataImage],al ; @0037C
     ret ; @0037F
 loc_0380:
-    cmp byte [0x2010],0xff ; @00380
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00380
     jnz loc_0393 ; @00385
-    test byte [0x25a7],0x3 ; @00387
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @00387
     jz loc_0393 ; @0038C
     mov ax,0x403 ; @0038E
     int 0x61 ; @00391
@@ -389,16 +415,16 @@ loc_0393:
     ret ; @00393
 loc_0394:
     mov byte [EntityCreationGate-GameDataImage],0xff ; @00394
-    cmp byte [0x2010],0xff ; @00399
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @00399
     jnz loc_03AC ; @0039E
-    test byte [0x25a7],0x3 ; @003A0
+    test byte [SoundOptionBits-GameDataImage],0x3 ; @003A0
     jz loc_03AC ; @003A5
     mov ax,0x402 ; @003A7
     int 0x61 ; @003AA
 loc_03AC:
     ret ; @003AC
 loc_03AD:
-    test byte [0x25a7],0x2 ; @003AD
+    test byte [SoundOptionBits-GameDataImage],0x2 ; @003AD
     jz loc_03D6 ; @003B2
     mov al,[LevelSoundId-GameDataImage] ; @003B4
     mov ah,0x3 ; @003B7
@@ -406,7 +432,10 @@ loc_03AD:
     mov ax,0x0 ; @003BB
     int 0x61 ; @003BE
     ret ; @003C0
-sub_03C1:
+StepGameOpeningFade:
+; AL carries transition flags. Set04 before saving AX; palette child's ZF must
+; survive POP AX. Clear01 only on completed palette change.03D6 is a shared RET,
+; also entered by the sound guard at03B2 without a new stack save.
     or al,0x4 ; @003C1
     push ax ; @003C3
     mov bx,0x604 ; @003C4
@@ -419,7 +448,9 @@ sub_03C1:
     and al,0xfe ; @003D4
 loc_03D6:
     ret ; @003D6
-sub_03D7:
+StepGameClosingFade:
+; Preserve AL around the palette step and consume its returned ZF after POP AX;
+; clear02 on completion. No independent IRQ or complete fade scheduler here.
     push ax ; @003D7
     mov cx,0x10 ; @003D8
     mov dx,0x8 ; @003DB
@@ -429,25 +460,31 @@ sub_03D7:
     and al,0xfd ; @003E4
     ret ; @003E6
 InitializeGameSession:
-    mov word [0x0],0x218 ; @003E7
-    mov word [0x2],0x43 ; @003ED
+; Session state producer: initial transition01/end00, countdown divider11,
+; pointer150/100 and action selector2. Level-record initialization later replaces
+; the provisional view origin and creation limit from the loaded header.
+; Earlier4551 clears DS:0000..0FC9 (DF clear) before loading the level at0FCB;
+; it resets slot/count/record storage. This entry does not clear that array.
+; Startup's0000..2011 clear is a third, process-wide initialization lifetime.
+    mov word [LevelViewOriginPixels-GameDataImage],0x218 ; @003E7
+    mov word [LevelViewOriginBytes-GameDataImage],0x43 ; @003ED
     mov byte [0x1a],0x0 ; @003F3
     mov word [PointerX-GameDataImage],0x96 ; @003F8
     mov word [PointerY-GameDataImage],0x64 ; @003FE
     mov byte [LevelCreationLimit-GameDataImage],0xc8 ; @00404
     mov byte [0x4a],0x0 ; @00409
-    mov byte [0x20a9],0x30 ; @0040E
-    mov byte [0x20aa],0x30 ; @00413
-    mov byte [0x85],0x11 ; @00418
-    mov byte [0x86],0x11 ; @0041D
+    mov byte [LevelCountdownTensDigit-GameDataImage],0x30 ; @0040E
+    mov byte [LevelCountdownOnesDigit-GameDataImage],0x30 ; @00413
+    mov byte [GameCountdownTickCounter-GameDataImage],0x11 ; @00418
+    mov byte [GameCountdownTickReload-GameDataImage],0x11 ; @0041D
     mov byte [EntityActionSelector-GameDataImage],0x2 ; @00422
     mov byte [StatusIconDisplaySnapshot-GameDataImage],0x3 ; @00427
     mov byte [EntityPointCount-GameDataImage],0x50 ; @0042C
-    mov byte [0x4e],0x1 ; @00431
+    mov byte [GameTransitionFlags-GameDataImage],0x1 ; @00431
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00436
     mov [InputActionSnapshot1FD4-GameDataImage],al ; @00438
     mov [ForegroundCounter1FD3-GameDataImage],al ; @0043B
-    mov [0x4f],al ; @0043E
+    mov [GameEndRequested-GameDataImage],al ; @0043E
     mov [DrawingDirtyCellsEnabledByte-GameDataImage],al ; @00441
     mov [ForegroundCounter0052-GameDataImage],al ; @00444
     mov [EntityCreationGate-GameDataImage],al ; @00447
@@ -479,12 +516,15 @@ InitializeGameAfterTimerCalibration:
     call InitializeLevelFromRecord ; @0046B
 InitializeGameAfterLevelInitialization:
     cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0046E
-    jz loc_0480 ; @00473
+    jz InitializeGameVisibilityAndStatus ; @00473
     mov ax,0x4 ; @00475
     mov cx,0x96 ; @00478
     mov dx,0x64 ; @0047B
     int 0x33 ; @0047E
-loc_0480:
+InitializeGameVisibilityAndStatus:
+; Full child sequence remains part of this controller, beyond its tested C prefix:
+; visibility/spawn/fade/sound/pages/status -> install IRQ08 -> draw initial frame.
+; The following calibration needs two scheduled INT08 flag publications.
     call RebuildViewVisibilityMap ; @00480
     call CreateEntityRecordIfDue ; @00483
     call SeedGameFadePalette ; @00486
@@ -499,22 +539,27 @@ loc_0480:
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004A1
     db 0x33,0xd2 ; ENCODED: xor dx,dx (NASM chooses a different encoding) ; @004A3
     mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @004A5
-loc_04AA:
+GameWaitCalibrationFirstEdge:
+; First edge aligns the measurement; second edge terminates the decrement loop.
+; Timer tail183E writes exactFF to live DS:1FCF. An unbound IRQ schedule hangs
+; the original too; verification must bound its fixture, not change this code.
     cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @004AA
-    jnz loc_04AA ; @004AF
+    jnz GameWaitCalibrationFirstEdge ; @004AF
     mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @004B1
-loc_04B6:
+GameMeasureForegroundWait:
     dec cx ; @004B6
-    jnz loc_04BA ; @004B7
+    jnz GameCheckCalibrationSecondEdge ; @004B7
     dec dx ; @004B9
-loc_04BA:
+GameCheckCalibrationSecondEdge:
     cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @004BA
-    jnz loc_04B6 ; @004BF
+    jnz GameMeasureForegroundWait ; @004BF
+; Literal result: ADD CX,CX, ADC DX,DX, NEG DX. There is no low-word NEG and no
+; carry propagation after NEG DX; preserve this producer with its0164 consumer.
     db 0x03,0xc9 ; ENCODED: add cx,cx (NASM chooses a different encoding) ; @004C1
     db 0x13,0xd2 ; ENCODED: adc dx,dx (NASM chooses a different encoding) ; @004C3
     neg dx ; @004C5
-    mov [0x1ffe],cx ; @004C7
-    mov [0x2000],dx ; @004CB
+    mov [ForegroundWaitLowWord-GameDataImage],cx ; @004C7
+    mov [ForegroundWaitHighWord-GameDataImage],dx ; @004CB
     ret ; @004CF
 loc_04D0:
 ; Nonreturning cleanup continuation. Keep each child CALL/actual RET word live.
@@ -2150,11 +2195,11 @@ loc_1763:
 loc_176A:
     test al,0x80 ; @0176A
     jnz loc_1774 ; @0176C
-    or [0x1fc7],cx ; @0176E
+    or [InputKeyMask1FC7-GameDataImage],cx ; @0176E
     jmp short loc_177F ; @01772
 loc_1774:
     not cx ; @01774
-    and [0x1fc7],cx ; @01776
+    and [InputKeyMask1FC7-GameDataImage],cx ; @01776
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @0177A
 loc_177F:
     pop ax ; @0177F
