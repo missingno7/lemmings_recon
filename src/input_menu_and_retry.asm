@@ -40,9 +40,9 @@ MenuRefresh4401:
     mov word [AlternateDrawingOrigin-GameDataImage],0x6d60 ; @04407
     mov word [DrawingPageByteOffset-GameDataImage],0x0 ; @0440D
     call ProgramAlternateDisplayStart ; @04413
-    mov byte [0x1f6f],0xff ; @04416
-    mov byte [0x1f72],0xff ; @0441B
-    mov byte [0x1f70],0x0 ; @04420
+    mov byte [MenuLevelGroupRedrawCache-GameDataImage],0xff ; @04416
+    mov byte [MenuSoundRedrawCache-GameDataImage],0xff ; @0441B
+    mov byte [MenuSoundRedrawToggle-GameDataImage],0x0 ; @04420
     call TransitionPaletteToSlot1 ; @04425
     call ClearFullDrawingPage ; @04428
     call DrawScreenBackground ; @0442B
@@ -52,8 +52,8 @@ MenuRefresh4401:
     call DrawMenuDecorationRows ; @04437
     lea si,[0x4ad9] ; @0443A
     call DrawTextStream ; @0443E
-    call sub_4EA2 ; @04441
-    call sub_4E37 ; @04444
+    call RefreshMenuLevelGroupGraphic ; @04441
+    call RefreshMenuSoundGraphic ; @04444
     call CopyDrawingPageToAlternate ; @04447
     call WaitForDisplayStatusBit3Cycle ; @0444A
     call ProgramAlternateDisplayStart ; @0444D
@@ -66,8 +66,8 @@ loc_445B:
     call WaitForDisplayStatusBit3Cycle ; @0445B
     call sub_7D0D ; @0445E
     call AdvanceMenuAnimations ; @04461
-    call sub_4EA2 ; @04464
-    call sub_4E37 ; @04467
+    call RefreshMenuLevelGroupGraphic ; @04464
+    call RefreshMenuSoundGraphic ; @04467
     call SwapDrawingOriginsAndDisplay ; @0446A
     mov ax,[InputButtonsWord-GameDataImage] ; @0446D
     test ax,0x7 ; @04470
@@ -111,9 +111,9 @@ loc_44AD:
 loc_44B0:
     jmp loc_4A01 ; @044B0
 loc_44B3:
-    cmp byte [0x1f72],0x2 ; @044B3
+    cmp byte [MenuSoundRedrawCache-GameDataImage],0x2 ; @044B3
     jz loc_445B ; @044B8
-    xor byte [0x1f70],0xff ; @044BA
+    xor byte [MenuSoundRedrawToggle-GameDataImage],0xff ; @044BA
     mov al,[0x1f71] ; @044BF
     inc al ; @044C2
     mov ah,0x3 ; @044C4
@@ -135,17 +135,17 @@ loc_44D5:
 ; UNKNOWN: unresolved bytes
     db 0x00,0x01,0x03 ; @044E9
 loc_44EC:
-    cmp byte [0x1f6f],0x4 ; @044EC
+    cmp byte [MenuLevelGroupRedrawCache-GameDataImage],0x4 ; @044EC
     jnz loc_44F6 ; @044F1
     jmp loc_445B ; @044F3
 loc_44F6:
-    mov al,[0x1f6e] ; @044F6
+    mov al,[MenuLevelGroupIndex-GameDataImage] ; @044F6
     cmp al,0x3 ; @044F9
     jnz loc_4500 ; @044FB
     jmp loc_445B ; @044FD
 loc_4500:
     inc al ; @04500
-    mov [0x1f6e],al ; @04502
+    mov [MenuLevelGroupIndex-GameDataImage],al ; @04502
     shl al,1 ; @04505
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @04507
     shl al,1 ; @04509
@@ -157,17 +157,17 @@ loc_4500:
     mov [LevelResourceSelectionByte-GameDataImage],ah ; @04515
     jmp loc_445B ; @04519
 loc_451C:
-    cmp byte [0x1f6f],0x4 ; @0451C
+    cmp byte [MenuLevelGroupRedrawCache-GameDataImage],0x4 ; @0451C
     jnz loc_4526 ; @04521
     jmp loc_445B ; @04523
 loc_4526:
-    mov al,[0x1f6e] ; @04526
+    mov al,[MenuLevelGroupIndex-GameDataImage] ; @04526
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04529
     jnz loc_4530 ; @0452B
     jmp loc_445B ; @0452D
 loc_4530:
     dec al ; @04530
-    mov [0x1f6e],al ; @04532
+    mov [MenuLevelGroupIndex-GameDataImage],al ; @04532
     shl al,1 ; @04535
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @04537
     shl al,1 ; @04539
@@ -191,7 +191,7 @@ loc_4551:
     call sub_4566 ; @04560
     jmp loc_00FB ; @04563
 sub_4566:
-    mov al,[0x1f6e] ; @04566
+    mov al,[MenuLevelGroupIndex-GameDataImage] ; @04566
     shl al,1 ; @04569
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @0456B
     shl al,1 ; @0456D
@@ -234,7 +234,7 @@ loc_45C2:
     pop es ; @045CF
     mov cx,0x10 ; @045D0
     rep movsw ; @045D3
-    mov al,[0x1f6e] ; @045D5
+    mov al,[MenuLevelGroupIndex-GameDataImage] ; @045D5
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @045D8
     mov cx,0x6 ; @045DA
     mul cx ; @045DD
@@ -385,7 +385,7 @@ loc_4729:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04735
     mov cl,0x1e ; @04737
     div cl ; @04739
-    mov [0x1f6e],al ; @0473B
+    mov [MenuLevelGroupIndex-GameDataImage],al ; @0473B
     cmp byte [LevelResourceSelectionByte-GameDataImage],0x78 ; @0473E
     jc loc_4748 ; @04743
     jmp loc_47E0 ; @04745
@@ -472,7 +472,7 @@ loc_480A:
 loc_481F:
     call TransitionPaletteToSlot1 ; @0481F
     mov byte [LevelResourceSelectionByte-GameDataImage],0x0 ; @04822
-    mov byte [0x1f6e],0x0 ; @04827
+    mov byte [MenuLevelGroupIndex-GameDataImage],0x0 ; @04827
     jmp loc_4401 ; @0482C
 sub_482F:
     cmp byte [0x2010],0x0 ; @0482F

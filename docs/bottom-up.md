@@ -1019,3 +1019,17 @@ still fails its original instruction budget and has no parity/mutation credit.
 The long distinct-DS fixture does complete its256-shift behavior. Next close
 4E37/4EA2's cached two-page drawing ownership and CS4EE7 table before broader
 43F2 composition; see menu-animation.md,next-work.md and verification.md.
+
+The4E37/4EA2 cache parents add176 bytes,taking the main C union to28,087.
+Their focused shared-engine campaign passes571 fixtures/1,202 comparisons,
+60 own sites/16 outcomes and seven completed mutants in4,921 known bytes.
+Six same-RAM handoffs compose actual display swaps and compare both updated
+pages at three loads. Original cache bytes retain their marker2/4 phases,
+full-byte equality,live reread,AH and literal unchecked CS source lookup.
+No new verifier engine or game-state copy is introduced. Section3's source
+geometry now closes atF210; loader execution and broader initialization stay
+open. Fresh43F2 tree and7CBC bottom-up views select7D8D then7E65 and their
+scroll/copy parents,with buffer1FF0 andDS001D/001F/0021/0023 ownership requiring
+static audit first. See menu-cache.md and next-work.md. Reference wrap and
+VGA-stack limitations remain explicit; full-game and aggregate acceptance
+are separate from this local checkpoint.

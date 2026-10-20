@@ -2,7 +2,16 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is27,911 bytes. The155-byte
+The main-image translated-code ledger union is28,087 bytes. The176-byte
+4E37/4EA2 menu cache parents now compose the native renderer and actual display
+swaps on canonical RAM. Their571 fixtures/1,202 comparisons cover60 own sites/
+16 outcomes and seven completed mutants in4,921 known connected bytes. Six
+same-RAM two-page handoffs at three loads preserve the marker2/4 handshake,
+complete-byte equality,AH,live group reread and unchecked CS table,exactFF sound
+gate,dirty/changed child returns and actual frames. See menu-cache.md. This is
+local evidence; retained aggregate reports require their matching consumed hashes.
+
+The preceding checkpoint's main-image translated-code ledger union was27,911 bytes. The155-byte
 4EEF/4F2B/4F4A/4F6E drawing cluster now composes backdrop layers,live-CS source
 rows,saved bitmap wrappers and native renderer returns in the existing menu
 module/campaign. Its112 fixtures/841 comparisons cover118 own sites/15 outcomes
@@ -118,12 +127,14 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue43F2's connected menu drawing/state domains. Fresh4E37 tree and4EA2
-   bottom-up views identify two bitmap parents above the accepted renderer. Audit
-   producers and two-page cache ownership of1F70/1F72 and1F6E/1F6F, inputs25A7/2010,
-   and the liveCS:4EE7 source table before translating them. Their source geometry
-   also closes the static section3 boundaryEA50..F210; retain broader allocation
-   and initialization obligations. Keep artificial VGA-stack budget failure and
+1. Continue43F2's connected menu drawing/state domains. Fresh43F2 tree and7CBC
+   bottom-up views identify7D8D's42-byte copy leaf,7E65's renderer wrapper and
+   their7CBC/7CE6/7D0D parents. Before translating, audit1FF0 buffer ownership,
+   DS001D/001F/0021/0023 initialization/scroll state,section4 source4C10,live saved
+   DS/DI/CX and DF/segment effects. Preserve7CE6's shared7E2F tail and literal
+   unchecked glyph/table behavior; do not infer a host text model. The completed
+   caches close section3's source-layout boundaryEA50..F210, but broader allocation
+   and initialization obligations remain. Keep artificial VGA-stack budget failure and
    RETF selector-EA wrap atSPFFFE/FFFF explicitly unverified. Retain42A5 and
    UNKNOWN4C65/1696..16A8; no unsupported alternative is declared complete.
 2. Connect startup/resource/level/frame coordination, complete the remaining

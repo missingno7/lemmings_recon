@@ -160,7 +160,8 @@ Together with the background's two-plane320x104 prefix0000..2080, the backdrop
 2080..9488 and six decorations9488..EA50, these dimensions partition section3's
 full decoded extent. This is source-layout evidence, not execution coverage of
 4E37 or closure of every interpretation of those bytes. Its two-page cache
-bytes1F70/1F72 and4EA2's1F6E/1F6F remain the next native parent contracts.
+bytes1F70/1F72 and4EA2's1F6E/1F6F were the next native parent contracts at this
+checkpoint; their subsequent connected acceptance is recorded in menu-cache.md.
 
 Compact observation storage in tests/verification.py retains every event as five
 uint32 words, including its kind, address, value, flags and defined-mask value.

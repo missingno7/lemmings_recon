@@ -5802,3 +5802,7 @@ MenuAnimationResetWord equ GameDataImage+0x4962
 MenuAnimationLeftWord equ GameDataImage+0x4964
 MenuAnimationTopWord equ GameDataImage+0x4966
 MenuAnimationSourceWord equ GameDataImage+0x4968
+MenuSoundRedrawToggle equ GameDataImage+0x1f70
+MenuSoundRedrawCache equ GameDataImage+0x1f72
+MenuLevelGroupIndex equ GameDataImage+0x1f6e
+MenuLevelGroupRedrawCache equ GameDataImage+0x1f6f

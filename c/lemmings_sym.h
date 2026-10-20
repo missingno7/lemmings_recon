@@ -289,8 +289,8 @@
 #define CS_ClearFullDrawingPage 0x4DEFu
 #define CS_ClearVgaBytes 0x4DF8u
 #define CS_ClearVgaReturn 0x4E36u
-#define CS_sub_4E37 0x4E37u
-#define CS_sub_4EA2 0x4EA2u
+#define CS_RefreshMenuSoundGraphic 0x4E37u
+#define CS_RefreshMenuLevelGroupGraphic 0x4EA2u
 #define CS_DrawMenuBackdropLayers 0x4EEFu
 #define CS_DrawMenuDecorationRows 0x4F2Bu
 #define CS_DrawMenuDecorationRow 0x4F4Au
@@ -1054,4 +1054,12 @@
 #define CS_MenuDecorationAfterBitmap 0x4F84u
 #define CS_MenuDecorationBitmapReturn 0x4F89u
 #define CS_MenuDecorationSourceTable 0x4F8Au
+#define SEG09A9_MenuSoundRedrawToggle 0x1F70u
+#define SEG09A9_MenuSoundRedrawCache 0x1F72u
+#define SEG09A9_MenuLevelGroupIndex 0x1F6Eu
+#define SEG09A9_MenuLevelGroupRedrawCache 0x1F6Fu
+#define CS_MenuLevelGroupGraphicSources 0x4EE7u
+#define CS_MenuSoundIconReturn 0x4E83u
+#define CS_MenuSoundBackgroundReturn 0x4EA1u
+#define CS_MenuLevelGroupReturn 0x4EE6u
 #endif

@@ -370,17 +370,20 @@ ClearVgaBytes:
     rep stosb ; @04E34
 ClearVgaReturn:
     ret ; @04E36
-sub_4E37:
-    mov al,[0x1f72] ; @04E37
+; Live toggle/cache use marker2 for two page updates, then exact-byte equality.
+; Low sound bits select B120 background or EA50/EE30 icons; gate2010 is exactFF.
+; AH survives the no-draw return; actual frames/DS/ES/flags stay live.
+RefreshMenuSoundGraphic:
+    mov al,[MenuSoundRedrawCache-GameDataImage] ; @04E37
     cmp al,0x2 ; @04E3A
     jnz loc_4E46 ; @04E3C
-    mov al,[0x1f70] ; @04E3E
-    mov [0x1f72],al ; @04E41
+    mov al,[MenuSoundRedrawToggle-GameDataImage] ; @04E3E
+    mov [MenuSoundRedrawCache-GameDataImage],al ; @04E41
     jmp short loc_4E51 ; @04E44
 loc_4E46:
-    cmp [0x1f70],al ; @04E46
+    cmp [MenuSoundRedrawToggle-GameDataImage],al ; @04E46
     jz loc_4E83 ; @04E4A
-    mov byte [0x1f72],0x2 ; @04E4C
+    mov byte [MenuSoundRedrawCache-GameDataImage],0x2 ; @04E4C
 loc_4E51:
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04E51
     mov [GraphicsResourceSegment-GameDataImage],ax ; @04E54
@@ -401,6 +404,7 @@ loc_4E6F:
     mov bp,0x1 ; @04E7B
     call 0x0:0x8822 ; @04E7E
 loc_4E83:
+MenuSoundIconReturn:
     ret ; @04E83
 loc_4E84:
     mov bx,0x78 ; @04E84
@@ -412,26 +416,30 @@ loc_4E84:
     db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04E96
     add di,0xab9 ; @04E98
     call 0x0:0x8822 ; @04E9C
+MenuSoundBackgroundReturn:
     ret ; @04EA1
-sub_4EA2:
-    mov al,[0x1f6f] ; @04EA2
+; Marker4 handshake; reread live group index after selector publication.
+; BL is zero-extended then doubled; CS source table indexing is unchecked.
+; See docs/menu-cache.md for producers and two-page handoffs.
+RefreshMenuLevelGroupGraphic:
+    mov al,[MenuLevelGroupRedrawCache-GameDataImage] ; @04EA2
     cmp al,0x4 ; @04EA5
     jnz loc_4EB1 ; @04EA7
-    mov al,[0x1f6e] ; @04EA9
-    mov [0x1f6f],al ; @04EAC
+    mov al,[MenuLevelGroupIndex-GameDataImage] ; @04EA9
+    mov [MenuLevelGroupRedrawCache-GameDataImage],al ; @04EAC
     jmp short loc_4EBC ; @04EAF
 loc_4EB1:
-    cmp [0x1f6e],al ; @04EB1
+    cmp [MenuLevelGroupIndex-GameDataImage],al ; @04EB1
     jz loc_4EE6 ; @04EB5
-    mov byte [0x1f6f],0x4 ; @04EB7
+    mov byte [MenuLevelGroupRedrawCache-GameDataImage],0x4 ; @04EB7
 loc_4EBC:
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04EBC
     add ax,0x1000 ; @04EBF
     mov [GraphicsResourceSegment-GameDataImage],ax ; @04EC2
-    mov bl,[0x1f6e] ; @04EC5
+    mov bl,[MenuLevelGroupIndex-GameDataImage] ; @04EC5
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @04EC9
     shl bx,1 ; @04ECB
-    mov si,[cs:bx+0x4ee7] ; @04ECD
+    mov si,[cs:bx+MenuLevelGroupGraphicSources] ; @04ECD
     mov ax,0x1e6 ; @04ED2
     mov bx,0x91 ; @04ED5
     mov dx,0x48 ; @04ED8
@@ -439,8 +447,10 @@ loc_4EBC:
     mov bp,0x1 ; @04EDE
     call 0x0:0x8822 ; @04EE1
 loc_4EE6:
+MenuLevelGroupReturn:
     ret ; @04EE6
 ; UNKNOWN: unresolved bytes
+MenuLevelGroupGraphicSources:
     db 0xf4,0x57,0x28,0x54,0x5c,0x50,0x90,0x4c ; @04EE7
 ; Two direct bitmap calls share the live UI selector; no parent saves.
 ; Actual relocated far returns and renderer DS/ES/flags feed the second call.
@@ -880,7 +890,7 @@ loc_520E:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @0529B
     mov cl,0x1e ; @0529D
     div cl ; @0529F
-    mov [0x1f6e],al ; @052A1
+    mov [MenuLevelGroupIndex-GameDataImage],al ; @052A1
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @052A4
     mov al,[si] ; @052A6
     shr al,1 ; @052A8
