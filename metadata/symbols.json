@@ -25297,7 +25297,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 17766,
@@ -27220,8 +27220,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_488C",
-    "aliases": [],
+    "symbol_name": "FormatSelectedLevelAndGroup",
+    "aliases": [
+      "sub_488C"
+    ],
     "callers": [
       18248,
       18849
@@ -27245,12 +27247,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned typed editor,actual frames and screen JMP contracts; docs/code-entry.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 36
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 36,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        18572,
+        18608
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py expanded967 fixtures/978 comparisons,601 own sites/130 direct outcomes and46 completed mutants; seven handoffs including three menu81->4967->real editor/decoder->4401 refresh->454C sequences. All new160 sites/43 outcomes,live formatter reads/CX,byte wrap,20-cycle blink,signed saved bounds,full last slot/deferred erase,actual stack/RET,knownBP503B with explicit stops at unresolved4CC9/4D18 alternatives,decoderZF,unchecked ratingrowFF,DF and three result-input predicates. Supplemental full-screen mode4/0104 comparisons pass. 353 new unique code bytes; graph editor206 includes50 shared text-tail bytes. Native scheduling,resource/platform seams and full game remain open; docs/code-entry.md."
   },
   {
     "address": 18621,
@@ -27566,7 +27577,7 @@
         19228
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 19228,
@@ -28660,12 +28671,21 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Pinned typed editor,actual frames and screen JMP contracts; docs/code-entry.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 206
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 206,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        19582,
+        19738
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py expanded967 fixtures/978 comparisons,601 own sites/130 direct outcomes and46 completed mutants; seven handoffs including three menu81->4967->real editor/decoder->4401 refresh->454C sequences. All new160 sites/43 outcomes,live formatter reads/CX,byte wrap,20-cycle blink,signed saved bounds,full last slot/deferred erase,actual stack/RET,knownBP503B with explicit stops at unresolved4CC9/4D18 alternatives,decoderZF,unchecked ratingrowFF,DF and three result-input predicates. Supplemental full-screen mode4/0104 comparisons pass. 353 new unique code bytes; graph editor206 includes50 shared text-tail bytes. Native scheduling,resource/platform seams and full game remain open; docs/code-entry.md."
   },
   {
     "address": 19738,
@@ -30100,10 +30120,23 @@
     "confidence": "PROVEN",
     "evidence": [
       "Signature-matched legacy entry lead",
-      "4C88 explicitly loads callback into BP;4CC9 CALL and4D18 tail JMP route to it in bounded original caller fixtures"
+      "4C88 explicitly loads callback into BP;4CC9 CALL and4D18 tail JMP route to it in bounded original caller fixtures",
+      "Pinned typed editor,actual frames and screen JMP contracts; docs/code-entry.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 50
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 50,
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        20539,
+        20546
+      ],
+      [
+        19789,
+        19832
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py expanded967 fixtures/978 comparisons,601 own sites/130 direct outcomes and46 completed mutants; seven handoffs including three menu81->4967->real editor/decoder->4401 refresh->454C sequences. All new160 sites/43 outcomes,live formatter reads/CX,byte wrap,20-cycle blink,signed saved bounds,full last slot/deferred erase,actual stack/RET,knownBP503B with explicit stops at unresolved4CC9/4D18 alternatives,decoderZF,unchecked ratingrowFF,DF and three result-input predicates. Supplemental full-screen mode4/0104 comparisons pass. 353 new unique code bytes; graph editor206 includes50 shared text-tail bytes. Native scheduling,resource/platform seams and full game remain open; docs/code-entry.md."
   },
   {
     "address": 20546,
@@ -30526,7 +30559,7 @@
         20898
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:671 fixtures/676 comparisons,441 own sites/87 direct outcomes and31 completed mutants in7727 known bytes. New5042/51A2 transform pair:545 focused cases,551 comparisons including three same-RAM encode/submission/decode handoffs,272 own sites/21 outcomes,ten completed contract mutants. All256 selections,three loads,live template,DF,stack/physical wrap,input/template aliases,changed saved SI,special-latch-before-validation and both failure stages. Actual near RET,byte rotation/checksum,early selection store,unsigned group and four-bit payload retained. Keyboard editor/text bridge/4967 screen and native scheduling/platform remain separate; docs/level-code.md."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 20898,
@@ -30917,7 +30950,7 @@
         21204
       ]
     ],
-    "verification_evidence": "tests/main_menu.py:671 fixtures/676 comparisons,441 own sites/87 direct outcomes and31 completed mutants in7727 known bytes. New5042/51A2 transform pair:545 focused cases,551 comparisons including three same-RAM encode/submission/decode handoffs,272 own sites/21 outcomes,ten completed contract mutants. All256 selections,three loads,live template,DF,stack/physical wrap,input/template aliases,changed saved SI,special-latch-before-validation and both failure stages. Actual near RET,byte rotation/checksum,early selection store,unsigned group and four-bit payload retained. Keyboard editor/text bridge/4967 screen and native scheduling/platform remain separate; docs/level-code.md."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 21236,
@@ -31786,7 +31819,7 @@
         21767
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 21500,
@@ -31941,7 +31974,7 @@
         21767
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 21502,
@@ -32095,7 +32128,7 @@
         21767
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 21541,
@@ -64952,7 +64985,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 8238,
@@ -66101,7 +66134,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 17499,
@@ -66137,7 +66170,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 17528,
@@ -66173,7 +66206,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 17740,
@@ -66194,7 +66227,7 @@
   {
     "address": 18791,
     "segment": 0,
-    "kind": "label",
+    "kind": "continuation",
     "size": null,
     "symbol_name": "MainMenuCodeTransition",
     "aliases": [],
@@ -66203,9 +66236,18 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md",
+      "Pinned typed editor,actual frames and screen JMP contracts; docs/code-entry.md"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_implementation": "c/main_menu.c",
+    "c_code_ranges": [
+      [
+        18791,
+        18945
+      ]
+    ],
+    "verification_evidence": "tests/main_menu.py expanded967 fixtures/978 comparisons,601 own sites/130 direct outcomes and46 completed mutants; seven handoffs including three menu81->4967->real editor/decoder->4401 refresh->454C sequences. All new160 sites/43 outcomes,live formatter reads/CX,byte wrap,20-cycle blink,signed saved bounds,full last slot/deferred erase,actual stack/RET,knownBP503B with explicit stops at unresolved4CC9/4D18 alternatives,decoderZF,unchecked ratingrowFF,DF and three result-input predicates. Supplemental full-screen mode4/0104 comparisons pass. 353 new unique code bytes; graph editor206 includes50 shared text-tail bytes. Native scheduling,resource/platform seams and full game remain open; docs/code-entry.md."
   },
   {
     "address": 8049,
@@ -66513,7 +66555,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 17502,
@@ -66661,7 +66703,7 @@
         21767
       ]
     ],
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 19227,
@@ -66822,7 +66864,7 @@
       "Pinned53F6..5423 selector and43F2/4AC5 startup/resource probe; live table/INT21/RET contracts; docs/menu-startup.md"
     ],
     "verification_status": "STATIC",
-    "verification_evidence": "Retained startup/controller/resource/palette contracts in tests/main_menu.py expanded671-fixture/676-comparison campaign,441 own sites/87 direct outcomes and31 completed mutants. See docs/menu-startup.md for the retained domain and docs/level-code.md for the658 newly translated bytes. Destination/platform and original-only/aggregate gates remain separate."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
   },
   {
     "address": 19151,
@@ -67109,6 +67151,566 @@
     "confidence": "PROVEN",
     "evidence": [
       "4C7E keyboard input;51A2 compares and rotates same ten-byte live buffer"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18607,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelGroupFormatReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19657,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeInputDrawCall4CC9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19736,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeInputDrawTail4D18",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18794,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4967",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18797,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall496A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18800,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall496D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18803,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4970",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18806,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4973",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18826,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4987",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18829,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall498A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18832,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall498D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18835,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4990",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18838,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4993",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18841,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4996",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18844,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4999",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18852,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49A1",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18860,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49A9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18889,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49C6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18892,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49C9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18898,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49CF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18931,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49F0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18934,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49F3",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18940,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall49F9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19624,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4CA5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19659,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4CC9",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19662,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4CCB",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19665,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CodeEntryAfterCall4CCE",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned code-entry/editor actual near-call continuation and live BP target contract; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18718,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "CodeInputBlinkCountdown",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19951,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "CodeInputText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19937,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "CodeEntryPromptText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19984,
+    "segment": 2473,
+    "kind": "data",
+    "size": 3,
+    "symbol_name": "CodeAcceptedLevelField",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19999,
+    "segment": 2473,
+    "kind": "data",
+    "size": 6,
+    "symbol_name": "CodeAcceptedRatingField",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19457,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "CodeRatingNameRows",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 19966,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "CodeAcceptedText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20007,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "CodeRejectedText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
     ],
     "verification_status": "STATIC"
   }

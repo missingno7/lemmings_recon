@@ -132,7 +132,7 @@ def source_files(cluster="checksum"):
         sources = [ROOT / 'c/ui_commands.c', ROOT / 'c/view_visibility.c', ROOT / 'c/interrupt_service.c']
     if cluster == 'input_poll':
         sources = [ROOT / 'c/input_poll.c', ROOT / 'c/port_io.c', ROOT / 'c/interrupt_service.c']
-    if cluster=="main_menu":sources += list(source_files("menu_timer"))
+    if cluster=="main_menu":sources += list(source_files("menu_timer"))+[ROOT/"c/decimal_field.c"]
     return tuple(dict.fromkeys(sources))
 
 
@@ -180,7 +180,7 @@ def build(output=None, mutation=0, cluster="checksum"):
     if cluster=="palette_ports":defines=["-DPALETTE_PORTS_MUTATION="+str(mutation)]
     if cluster=="palette_rows":defines=["-DPALETTE_ROWS_MUTATION="+str(mutation)]
     if cluster=="palette_channels":defines=["-DPALETTE_CHANNELS_MUTATION="+str(mutation)]
-    if cluster=="main_menu":defines=["-DMAIN_MENU_MUTATION="+str(mutation if mutation<100 else 0),"-DPALETTE_PUBLISH_MUTATION="+str(mutation-100 if 100<=mutation<200 else 0),"-DLEVEL_CODE_MUTATION="+str(mutation-200 if 200<=mutation<300 else 0)]
+    if cluster=="main_menu":defines=["-DMAIN_MENU_MUTATION="+str(mutation if mutation<100 else 0),"-DPALETTE_PUBLISH_MUTATION="+str(mutation-100 if 100<=mutation<200 else 0),"-DLEVEL_CODE_MUTATION="+str(mutation-200 if 200<=mutation<300 else 0),"-DCODE_ENTRY_MUTATION="+str(mutation-300 if 300<=mutation<400 else 0)]
     if cluster=="menu_scroll":defines=["-DMENU_SCROLL_MUTATION="+str(mutation)]
     if cluster=="menu_cache":defines=["-DMENU_CACHE_MUTATION="+str(mutation)]
     if cluster=="menu_animation":defines=["-DMENU_ANIMATION_MUTATION="+str(mutation)]

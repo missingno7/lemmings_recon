@@ -2,7 +2,20 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 29,659 bytes. The 658 new bytes
+The main-image translated-code ledger union is 30,012 bytes. The 353 new unique
+bytes connect 488C formatting, the 503B text bridge, the 4C7E editor and the
+4967 validation screen through existing native children. Editor graph extent
+206 includes 50 shared tail bytes; physical editor prefix is 156, not 206 new
+bytes. The shared campaign passes 967 fixtures / 978 comparisons, all 601 own
+sites / 130 outcomes and 46 completed mutants. Three same-RAM menu -> real code
+editor/decoder -> menu refresh -> 454C journeys run at three loads, with four
+earlier handoffs retained. Supplemental full-screen mode 4 / 0104 comparisons
+and all 81 unit tests pass. Native limits retain 384 MiB and the per-call caps.
+Live stack/bounds/pointers, byte wrap, blink, deferred backspace, unchecked
+rating row and DF remain explicit. Alternate BP target domains and native
+platform/full-game/aggregate obligations remain open. See code-entry.md.
+
+The preceding main-image translated-code ledger union was 29,659 bytes. The 658 new bytes
 implement the 5042 encoder and 51A2 decoder in the existing menu C module and
 shared campaign. All 256 selections, actual stack words, live template, byte
 rotation/checksum and failure side effects are retained. The expanded campaign
@@ -168,20 +181,23 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Connect the code-entry destination 4967 above the accepted codec pair.
-   Fresh 4C7E and 503B trees select the input editor and seven-byte text bridge,
-   with existing display/keyboard/text cores. The indirect hints already identify
-   503B as the known BP target at 4CC9 and 4D18; retain alternate live-stack/alias
-   targets as explicit unresolved domains. Preserve byte 491E's 20-cycle cursor
-   blink, signed ASCII bounds, final-slot replacement, deferred backspace erase,
-   actual saved registers and final JMP rather than an invented RET. The 488C
-   level/rating formatter rereads selection after byte-wrap increment and MUL;
-   selection FF returns AX=FF1E under stable memory. See level-code.md.
-   Then compose both 4967 validation paths and their actual 4401 continuation.
-   Keep earlier AH1B/protection consumers, 04D0/454C and level/game bodies scoped.
-   Artificial VGA-stack budget failure, RETF selector-EA wrap at SP FFFE/FFFF,
-   callback 42A5 and UNKNOWN 4C65/1696..16A8 remain open. No unsupported
-   alternative is declared complete.
+1. Continue the 454C level-start / 4566 briefing and game transition. Fresh
+   4566 tree / 5329 bottom-up views select the small 5329/534B palette callers
+   above native SelectAndStepPaletteRow. Preserve their unusual POP CX / POP BX,
+   live child flags and OR result; they do not restore ordinary argument packets.
+   Extend the existing palette transition campaign. The 53CA indexed upper-eight
+   writer prefix and 4C17 partial-page clear are related small dependencies.
+   Keep their UNKNOWN padding and all alternate hardware paths explicit.
+   The 197D full resource selector is already native but has a declared RAM-only
+   DOS/retry/fatal boundary and no raster-bus argument; retain or migrate that
+   contract deliberately before composing 454C. Preserve DS->actual ES and the
+   DF-sensitive 0FCA-byte clear, header/record aliases and the final JMP00FB.
+   The broad 4566 graph is not an independent leaf; see code-entry.md's static
+   frontier and level-header-ownership.md. Keep 4CC9/4D18 alternate target domains,
+   42A5, artificial VGA-stack budget failure, RETF selector-EA wrap at SP FFFE/FFFF,
+   earlier AH1B/protection consumers, 04D0 and remaining game bodies scoped.
+   Correct the main-menu report's conservative shared-boundary byte filter when
+   next changing that campaign; current source hashes and raw evidence stay intact.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

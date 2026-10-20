@@ -19,21 +19,22 @@ check=base.check
 physical,put16,get16=base.physical,base.put16,base.get16
 ENTRIES=(0x4401,0x4453,0x445B,0x4478)
 CODE_ENTRIES=(0x5042,0x51A2)
+EDITOR_RANGES=((0x488C,0x48B0),(0x4967,0x4A01),(0x4C7E,0x4D1A),(0x503B,0x5042))
 CODE_RANGES=((0x5042,0x52D4),)
 PUBLISH_ENTRIES=(0x53F6,0x53FC,0x53FE,0x5401)
 MENU_RANGES=((0x4401,0x44A3),(0x44A4,0x44AA),(0x44AB,0x44E9),(0x44EC,0x454C))
 PUBLISH_RANGES=((0x53F6,0x53FB),(0x53FC,0x5417),(0x5418,0x5424))
-RANGES=CODE_RANGES+MENU_RANGES+PUBLISH_RANGES+((0x43F2,0x4401),(0x4AC5,0x4B1C))
+RANGES=EDITOR_RANGES+CODE_RANGES+MENU_RANGES+PUBLISH_RANGES+((0x43F2,0x4401),(0x4AC5,0x4B1C))
 OWN={i.address:i for a,b in RANGES for i in base.MD.disasm(base.IMAGE[a:b],a)}
 EXITS=(0x4D0,0x4967,0x4A01,0x454C)
 BOUNDARY={p:next(base.MD.disasm(base.IMAGE[p:p+16],p)) for p in EXITS}
 PAGES={i.address:i for a,b in ((0x4DC2,0x4DF7),(0x4DF8,0x4E37)) for i in base.MD.disasm(base.IMAGE[a:b],a)}
 INS=keyboard.DOMAINS['reader']|keyboard.DISPLAY|keyboard.SWAP|PAGES|keyboard.text.INS|keyboard.background.INS|keyboard.palette.INS|scroll.INS|animation.INS|cache.INS|OWN|BOUNDARY
 EXTRA={i.address:i for a,b in ((0x4BE7,0x4C17),(0x8808,0x8822),(0x5028,0x503B)) for i in base.MD.disasm(base.IMAGE[a:b],a)}
-INS|=EXTRA
-EDGES=base.direct_jump_edges(OWN)
+INS|=EXTRA|{i.address:i for i in base.MD.disasm(base.IMAGE[0x4B68:0x4BBE],0x4B68)}
+EDGES=base.direct_jump_edges(OWN,external_transfers=(0x4D18,))|{(0x4D18,0x503B)}
 REPORT=BUILD/'main-menu-differential.json'
-SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=900,384,4_000_000,2_000_000
+SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=1200,384,4_000_000,2_000_000
 DOS_BINDING=(0x7100,0x210)
 FIXTURES=set()
 for module in tuple(sys.modules.values()):
@@ -107,6 +108,33 @@ def code_cases():
              dict(name='code-selection-fail',kind='decode',entry=0,corrupt='selection',initial_selection=0xA5)]
     return rows
 
+def editor_cases():
+    rows=[dict(name=f'format-{n:03}',kind='format',entry=0,selection=n) for n in range(256)]
+    rows += [dict(name='format-saved-cx',kind='format',entry=0,selection=59,patch='format-saved-cx'),dict(name='format-core',kind='format',entry=0,selection=29,core=True),
+             dict(name='format-stack-wrap',kind='format',entry=0,selection=255,sp=1),
+             dict(name='format-live-selection',kind='format',entry=0,selection=29,patch='format-live'),
+             dict(name='format-stack-alias',kind='format',entry=0,selection=255,format_alias=True)]
+    for name,kw in (
+        ('empty',{}),('core',dict(core=True)),('bounds',dict(editor_keys=(0x40,0x41,0x5A,0x5B,0x80,0xFE,13))),
+        ('last-slot',dict(editor_keys=tuple(b'ABCDEFGHIJK')+(13,))),
+        ('backspace',dict(editor_keys=(0x7F,65,66,0x7F,0x7F,13))),
+        ('blink',dict(editor_keys=(None,)*40+(13,))),('initial',dict(initial_input=b'ABCDEFGHIJ')),
+        ('stack-wrap',dict(sp=0)),('changed-wait',dict(patch='editor-wait-return',expected=2)),
+        ('unknown-call',dict(patch='editor-call-bp',expected=6)),('unknown-tail',dict(patch='editor-tail-bp',expected=6)),
+        ('end-pointer',dict(patch='editor-end-pointer',editor_keys=(65,13))),
+        ('missing-input',dict(missing_in=True,expected=1,child_status=1)),('bx-bound',dict(patch='editor-bx-bound',editor_keys=(65,90,13))),('signed-bound',dict(patch='editor-signed-bound',editor_keys=(65,13)))):
+        rows.append(dict(name='editor-'+name,kind='editor',entry=0,**kw))
+    for load in base.LOADS:
+        rows.append(dict(name=f'editor-load-{load:04x}',kind='editor',entry=0,load=load,editor_keys=(65,90,13)))
+        rows.append(dict(name=f'code-screen-valid-{load:04x}',kind='code_screen',entry=0,load=load,selection=59,payload=3,completion=97,pinned=True))
+    for name,kw in (('empty',dict(editor_keys=(13,),invalid=True)),('special',dict(editor_keys=tuple(b'BILLANDTED')+(13,),invalid=True)),
+                    ('button',dict(leave=1)),('key20',dict(leave=0x20)),('key40',dict(leave=0x40)),
+                    ('unknown-call',dict(patch='editor-call-bp',expected=6)),('changed-wait',dict(patch='editor-wait-return',expected=2)),
+                    ('selection-wrap',dict(selection=255,rating_row=b'WRAP!!')),('df',dict(flags=0x6D7,blank_text=True))):
+        rows.append(dict(name='code-screen-'+name,kind='code_screen',entry=0,payload=15,completion=100,**(dict(selection=119)|kw)))
+    rows += [dict(name='code-text',kind='code_text',entry=0),dict(name='code-text-core',kind='code_text',entry=0,core=True)]
+    return rows
+
 def cases():
     rows=[dict(name='frame-button',entry=2,keys=(None,)),dict(name='release-waits',entry=1,keys=(None,),release_samples=(1,3,8))]
     for key in (0x80,0x81,0x83,0x1B,0,0x42,0x8A,0x60,0x8B,0x2D,0x82):
@@ -157,7 +185,7 @@ def cases():
     rows += [dict(name='startup-resource',kind='startup',entry=0,keys=(None,),media=0xFD,pinned=True),
              dict(name='startup-no-mode',kind='startup',entry=0,missing_mode=True,expected=1,child_status=1),
              dict(name='startup-mode-ds',kind='startup',entry=0,mode_ds=0x3600,missing_out=True,expected=1,child_status=2)]
-    return [dict(name='case',kind='menu',entry=3,load=0x1010,seed=0x4401+i,flags=0xD7,group=1,option=0,toggle=0,driver=0xFF,keys=(0x80,))|c for i,c in enumerate(rows+code_cases())]
+    return [dict(name='case',kind='menu',entry=3,load=0x1010,seed=0x4401+i,flags=0xD7,group=1,option=0,toggle=0,driver=0xFF,keys=(0x80,))|c for i,c in enumerate(rows+code_cases()+editor_cases())]
 
 def setup(c):
     memory,device=base.initial_memory(c);ds=(c['load']+0x9A9)&65535
@@ -196,6 +224,19 @@ def setup(c):
             base.sync_memory_byte(memory,device,ds,off,v)
         if c.get('stack_alias'):r['ss']=ds;r['sp']=0x4DF4 if c['stack_alias']=='input' else 0x4915
         put16(memory,r['ss'],r['sp'],0xD00D,device)
+    if c['kind'] in ('format','editor','code_screen','code_text'):
+        r['ip']={'format':0x488C,'editor':0x4C7E,'code_screen':0x4967,'code_text':0x503B}[c['kind']]
+        base.sync_memory_byte(memory,device,ds,0x1F6B,c.get('selection',37))
+        base.sync_memory_byte(memory,device,ds,0x491D,c.get('payload',6))
+        put16(memory,ds,0x1FC7,0xFFFF,device)
+        base.sync_memory_byte(memory,device,ds,0x1F74,0x39)
+        if c.get('blank_text'):
+            for off in (0x4DE1,0x4DEF,0x4DFE,0x4E27):base.sync_memory_byte(memory,device,ds,off,0)
+        if c.get('rating_row'):
+            for i,v in enumerate(c['rating_row']):base.sync_memory_byte(memory,device,ds,0x51FB+i,v)
+        for i,v in enumerate(c.get('initial_input',b'.'*10)):base.sync_memory_byte(memory,device,ds,0x4DF2+i,v)
+        if c.get('format_alias'):r['ss']=ds;r['sp']=0x1F6D;put16(memory,r['ss'],r['sp'],0xD00D,device)
+        if c.get('patch')=='editor-end-pointer':base.sync_memory_byte(memory,device,ds,0x4DFD,13)
     if c['kind']=='publish':
         r.update(ip=PUBLISH_ENTRIES[c['entry']],ax=0xBE00|c.get('index',1),cx=c.get('count',0xAD05))
     elif c['kind']=='probe':r['ip']=0x4AC5
@@ -214,13 +255,18 @@ def setup(c):
 class Access(base.BusAccess):
     def __init__(self,c,memory,r,device):
         super().__init__(c,memory,r,device,max_events=c.get('reference_events',MAX_EVENTS),packed_events=True)
+        self.editor_cursor=0;self.validation_cursor=0;self.format_reads=0
         self.display_cursor=0;self.input_index=int(c['entry']==3);self.release_cursor=0
         self.probe_active=c['kind'] in ('probe','startup') and c.get('media',0)==0xFD
         self.wait_reads=0;self.open_count=0;self.close_count=0;self.handles=set();self.live_ds=r['ds']
     def access(self,kind,address,flags,mask=base.FLAGS,value=None):
         if self.c.get('patch')=='code-saved-si' and 'code-saved-si' not in self.providers and kind=='read' and address==physical(self.r['ss'],(self.r['sp']-2)&65535):
             self.patch(self.r['ss'],(self.r['sp']-2)&65535,0x4D68,'code-saved-si')
+        if self.c.get('patch')=='format-saved-cx' and 'format-saved-cx' not in self.providers and kind=='read' and address==physical(self.r['ss'],(self.r['sp']-2)&65535):self.patch(self.r['ss'],(self.r['sp']-2)&65535,0x1234,'format-saved-cx')
         phase=self.c.get('patch')
+        if phase=='format-live' and kind=='read' and address==physical(self.r['ds'],0x1F6B):
+            self.format_reads+=1
+            if self.format_reads==2:self.patch(self.r['ds'],0x1F6B,255,'format-second-read',word=False)
         if kind=='read' and address==physical(self.live_ds,0x14) and (self.probe_active or self.c['kind']=='probe'):
             self.wait_reads+=1;check(self.wait_reads<=16,'finite resource wait schedule exhausted')
             mode=self.c.get('probe_wait','button')
@@ -250,6 +296,27 @@ class Access(base.BusAccess):
         root=get16(self.memory,self.r['ss'],(self.r['sp']-2)&65535)
         if self.c.get('patch')=='wait-return' and 'wait-return' not in self.providers:
             self.patch(self.r['ss'],(self.r['sp']-2)&65535,0xD234,'wait-return')
+        if self.display_cursor%4==0 and self.c['kind'] in ('editor','code_screen'):
+            bias=2 if self.c['kind']=='code_screen' else 0
+            editing=(self.c['kind']=='editor' or root==0x4999) and get16(self.memory,self.r['ss'],(self.r['sp']-24-bias)&65535)==0x4CA8
+            if editing:
+                keys=self.c.get('editor_keys',(13,) if self.c['kind']=='editor' else tuple(expected_code(self.c.get('selection',37),self.c.get('payload',6),self.c.get('completion',83)))+(13,))
+                check(self.editor_cursor<len(keys),'finite editor input schedule exhausted')
+                key=keys[self.editor_cursor];self.editor_cursor+=1
+                self.patch(self.r['ds'],0xF79,0 if key is None else 0x94,'editor-state-'+str(self.editor_cursor),word=False)
+                if key is not None:self.patch(self.r['ds'],0x202F,key,'editor-key-'+str(self.editor_cursor),word=False)
+                phase=self.c.get('patch')
+                if phase not in self.providers:
+                    if phase=='editor-wait-return':self.patch(self.r['ss'],(self.r['sp']-24-bias)&65535,0xD234,phase)
+                    if phase=='editor-call-bp':self.patch(self.r['ss'],(self.r['sp']-22-bias)&65535,0xD234,phase)
+                    if phase=='editor-tail-bp':self.patch(self.r['ss'],(self.r['sp']-12-bias)&65535,0xD234,phase)
+                    if phase=='editor-signed-bound':self.patch(self.r['ss'],(self.r['sp']-6-bias)&65535,0x5A80,phase)
+                    if phase=='editor-bx-bound':self.patch(self.r['ss'],(self.r['sp']-6-bias)&65535,0x5A5A,phase)
+                    if phase=='editor-end-pointer':self.patch(self.r['ss'],(self.r['sp']-4-bias)&65535,0x4DFC,phase)
+            if root==0x49D2:
+                self.validation_cursor+=1;leave=self.c.get('leave',0)
+                self.patch(self.r['ds'],0x14,1 if leave==1 else 0,'validation-button-'+str(self.validation_cursor))
+                self.patch(self.r['ds'],0x1FC7,leave if leave!=1 else 0,'validation-key-'+str(self.validation_cursor))
         if self.display_cursor%4==0 and root==0x445E:
             check(self.input_index<len(self.c['keys']),'finite menu key schedule exhausted')
             key=self.c['keys'][self.input_index];self.input_index+=1
@@ -312,6 +379,8 @@ class Machine(base.OriginalMachine):
     def __init__(self,c,memory,r,device):
         self.child_status=0;frames=[];failed=[];self.calls=[]
         def before(m,i):
+            if c['kind']=='code_screen' and i.address==0x4401:m.stop(0);return True
+            if i.address in (0x4CC9,0x4D18) and m.state()['bp']!=0x503B:m.stop(6);return True
             if c['kind'] in ('menu','startup') and i.address in EXITS:m.stop(0);return True
             if c.get('missing_mode') and i.address==0x4BF2:m.child_status=1;m.stop(1);return True
             missing_in=c.get('missing_in') and i.mnemonic=='in'
@@ -321,7 +390,7 @@ class Machine(base.OriginalMachine):
                 m.child_status=0 if c['kind']=='publish' else status
                 m.stop(status if c['kind']=='publish' else 1);return True
             if i.mnemonic in ('call','lcall'):
-                own=i.address in OWN;root=i.operands[0].imm if own else frames[-1]['root'] if frames else None
+                own=i.address in OWN;root=(m.state()['bp'] if i.address==0x4CC9 else i.operands[0].imm) if own else frames[-1]['root'] if frames else None
                 frames.append(dict(owner=i.address,root=root,resume=i.address+i.size,far=i.mnemonic=='lcall'))
                 if own:self.calls.append((i.address,root))
             return False
@@ -344,6 +413,8 @@ class Machine(base.OriginalMachine):
             m.software_interrupt(number,m.state()['ip'],DOS_BINDING,None if c.get('no_service') else dos_provider)
             if m.stopped:m.status={1:3,2:4,3:5}[m.status]
         outer={0x51A1 if c['kind']=='encode' else 0x52D3} if c['kind'] in ('encode','decode') else {0x4B1B} if c['kind']=='probe' else {0x5446,0x5506} if c['kind']=='publish' else set()
+        if c['kind']=='format':outer={0x48AF}
+        if c['kind'] in ('editor','code_text'):outer=lambda m,off:off==0x4D77 and not frames
         super().__init__(c,memory,r,device,c.get('core',False),instructions=INS,access=access,outer_returns=outer,max_steps=c.get('reference_steps',MAX_STEPS),
             before=before,child_returns={p:expected for p,i in INS.items() if i.mnemonic=='ret'},
             far_returns={p:expected for p,i in INS.items() if i.mnemonic=='retf'},changed_return_status=changed,
@@ -356,6 +427,14 @@ class Native:
         self.lib=ct.CDLL(str(build(Path(directory)/f'main-menu-{mutation}.dll',mutation,'main_menu')))
         self.run_menu=self.lib.lmn_run_main_menu;self.run_menu.restype=Result
         self.run_menu.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.c_int,ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
+        self.editor={}
+        for kind,name in (('format','format_selected_level'),('editor','read_code_input'),('code_text','draw_code_input')):
+            for core,suffix in ((True,'core'),(False,'adapter')):
+                fn=getattr(self.lib,'lmn_'+name+'_'+suffix);fn.restype=Result
+                fn.argtypes=[base.MEM,ct.POINTER(base.Regs)]+([] if kind=='format' else [ct.c_uint16,ct.POINTER(base.Ports)])+[ct.POINTER(base.Bus)]
+                self.editor[kind,core]=fn
+        self.screen=self.lib.lmn_show_code_entry;self.screen.restype=Result
+        self.screen.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.POINTER(base.Ports),ct.POINTER(base.Bus)]
         self.publish={};self.probe={};self.code={}
         for kind in ('encode','decode'):
             for core,suffix in ((True,'core'),(False,'adapter')):
@@ -383,7 +462,10 @@ class Native:
         callback=cb.interrupt(dos_provider);service=base.InterruptService(None,callback,*DOS_BINDING)
         dos=None if c.get('no_service') else ct.byref(service)
         regs=ct.byref(base.Regs(**r));game_ds=(c['load']+0x9A9)&65535;tail=[ct.byref(cb.ports),ct.byref(cb.bus)]
-        if c['kind'] in ('encode','decode'):out=self.code[c['kind'],c.get('core',False)](mem,regs,ct.byref(cb.bus))
+        if c['kind']=='format':out=self.editor['format',c.get('core',False)](mem,regs,ct.byref(cb.bus))
+        elif c['kind'] in ('editor','code_text'):out=self.editor[c['kind'],c.get('core',False)](mem,regs,game_ds,*tail)
+        elif c['kind']=='code_screen':out=self.screen(mem,regs,game_ds,*tail)
+        elif c['kind'] in ('encode','decode'):out=self.code[c['kind'],c.get('core',False)](mem,regs,ct.byref(cb.bus))
         elif c['kind']=='publish':out=self.publish[c.get('core',False)](mem,regs,c['entry'],*tail)
         elif c['kind']=='probe':out=self.probe[c.get('core',False)](mem,regs,game_ds,dos,*tail)
         elif c['kind']=='startup':out=self.startup(mem,regs,game_ds,None if c.get('missing_mode') else ct.byref(video),dos,*tail)
@@ -394,6 +476,31 @@ class Native:
 def independent(c,r,ref):
     check(ref['status']==c.get('expected',0) and ref['child_status']==c.get('child_status',0),c['name']+': unexpected stop')
     if ref['status']:return
+    if c['kind'] in ('format','editor','code_text','code_screen'):
+        if c['kind']=='format':
+            if not c.get('format_alias') and c.get('patch')!='format-live':
+                selection=c.get('selection',37);value=(selection+1)&255;group,level=divmod(value,30)
+                if level==0:level=30;group=(group-1)&255
+                check(ref['regs']['ax']==group*256+level,'formatter byte wrap/group differs')
+            if c.get('patch')=='format-live':check(ref['regs']['ax']==0x1E2,'formatter elided live second selection read')
+            check(ref['regs']['cx']==(0x1234 if c.get('patch')=='format-saved-cx' else r['cx']) or c.get('format_alias'),'formatter did not restore live CX')
+        if c['kind'] in ('editor','code_screen'):
+            if c['kind']=='editor':
+                expected={'editor-empty':b'.'*10,'editor-bounds':b'AZ........','editor-last-slot':b'ABCDEFGHIK',
+                    'editor-backspace':b'A.........','editor-initial':b'.BCDEFGHIJ','editor-blink':b'.'*10,'editor-bx-bound':b'Z.........','editor-signed-bound':b'A.........'}.get(c['name'])
+                at=physical(r['ds'],0x4DF2)
+                if expected:check(bytes(ref['memory'][at:at+10])==expected,'editor cursor/overwrite/backspace differs')
+                if c['name']=='editor-blink':check(ref['memory'][physical(r['ds'],0x491E)]==19,'cursor blink period differs')
+            if c['kind']=='code_screen':
+                if c.get('invalid'):check(ref['memory'][physical(r['ds'],0x1F74)]==(255 if c['name']=='code-screen-special' else 0x39),'invalid screen changed special latch')
+                else:
+                    check(ref['memory'][physical(r['ds'],0x1F6B)]==c.get('selection',37),'screen lost decoded selection')
+                    check(ref['memory'][physical(r['ds'],0x1F6E)]==c.get('selection',37)//30,'screen lost decoded group')
+                    if c.get('rating_row'):
+                        at=physical(r['ds'],0x4E1F);check(bytes(ref['memory'][at:at+6])==c['rating_row'],'screen clamped unchecked rating row')
+            check(get16(ref['memory'],r['ds'],0x1FC7)==(c.get('leave',0) if c['kind']=='code_screen' and not c.get('invalid') and c.get('leave')!=1 else 0),'editor submit/action word differs')
+            if c['kind']=='code_screen':check(ref['regs']['ip']==0x4401,'code screen did not JMP refresh')
+        return
     if c['kind'] in ('encode','decode'):
         ds=r['ds'];mem=ref['memory'];at=lambda off:physical(ds,off)
         end=(0x51A1 if c['kind']=='encode' else 0x52D3) if c.get('core') else 0xD00D
@@ -547,6 +654,34 @@ def code_handoffs(native,record):
         del ref,actual,decoded;gc.collect()
     print('CHECKED three same-memory code handoffs',flush=True)
 
+def editor_handoffs(native,record):
+    for load in base.LOADS:
+        c=next(c for c in cases() if c['name']=='key-81')|dict(load=load,pinned=True)
+        memory,r,device=setup(c);actual_memory,actual_device=bytearray(memory),copy.deepcopy(device)
+        ref=Machine(c,memory,dict(r),device).run();independent(c,r,ref)
+        actual=native.run(c,actual_memory,dict(r),actual_device,copy_state=False)
+        base.compare_states('editor-handoff-enter',actual,ref);record('editor-handoff-enter-'+hex(load),ref)
+        check(ref['regs']['ip']==0x4967,'menu did not enter code screen')
+        for outcome in (ref,actual):outcome['device'].trace.clear()
+        screen=dict(c,name='editor-handoff-screen-'+hex(load),kind='code_screen',entry=0,selection=59,payload=3,completion=97,leave=0x20)
+        r=dict(ref['regs']);next_ref=Machine(screen,ref['memory'],r,ref['device']).run();independent(screen,r,next_ref)
+        next_actual=native.run(screen,actual['memory'],actual['regs'],actual['device'],copy_state=False)
+        base.compare_states(screen['name'],next_actual,next_ref);record(screen['name'],next_ref)
+        del ref,actual
+        for outcome in (next_ref,next_actual):outcome['device'].trace.clear()
+        c=dict(c,name='editor-handoff-refresh-'+hex(load),kind='menu',entry=0,keys=(None,))
+        r=dict(next_ref['regs']);ref=Machine(c,next_ref['memory'],r,next_ref['device']).run();independent(c,r,ref)
+        actual=native.run(c,next_actual['memory'],next_actual['regs'],next_actual['device'],copy_state=False)
+        base.compare_states(c['name'],actual,ref);record(c['name'],ref)
+        check(ref['regs']['ip']==0x454C and ref['memory'][physical(r['ds'],0x1F6B)]==59,'code selection did not reach level transition')
+        del ref,actual,next_ref,next_actual;gc.collect()
+    print('CHECKED three menu/editor/validation/refresh handoffs',flush=True)
+
+EDITOR_MUTANTS=((301,'format-255'),(302,'format-live-selection'),(303,'editor-blink'),
+    (304,'editor-empty'),(305,'editor-backspace'),(306,'editor-last-slot'),(307,'editor-signed-bound'),
+    (308,'editor-unknown-call'),(309,'editor-unknown-tail'),(310,'editor-empty'),(311,'code-screen-button'),
+    (312,'code-screen-df'),(313,'code-screen-selection-wrap'),(314,'code-screen-key40'),(315,'format-saved-cx'))
+
 CODE_MUTANTS=((201,'code-encode-000'),(202,'code-encode-template-live'),(203,'code-decode-037'),
     (204,'code-special-5'),(205,'code-selection-fail'),(206,'code-decode-037'),
     (207,'code-decode-119'),(208,'code-decode-037'),(209,'code-checksum-fail'),(210,'code-decode-saved-si'))
@@ -562,22 +697,23 @@ def worker(directory,snapshot):
         gc.collect();print('CHECKED '+c['name'],flush=True)
     input_handoff(native,record)
     code_handoffs(native,record)
+    editor_handoffs(native,record)
     check(set(OWN)<=sites,'main menu sites missing: '+str(sorted(set(OWN)-sites)))
     check(EDGES<=edges,'main menu outcomes missing: '+str(sorted(EDGES-edges)))
     mutants=[];lookup={c['name']:c for c in cases()}
-    for mutation,name in ((1,'sound-blocked'),(2,'sound-driver-fe'),(3,'sound-unexpected-index'),(4,'key-82'),(5,'group-8a-unexpected'),(6,'key-8a'),(7,'key-80'),(8,'wait-return'),(9,'key-82'),(11,'probe-media-fe'),(12,'probe-open-retry'),(13,'probe-close-retry'),(14,'probe-returned-ds'),(15,'probe-latch'),(16,'probe-success'),(17,'probe-media-fe'),(101,'publish-e0-m2-i0'),(102,'publish-e0-m2-i2'),(103,'publish-e2-m260-i7'),(104,'publish-e1-m2-i0'),(105,'publish-e1-m2-i0'))+CODE_MUTANTS:
+    for mutation,name in ((1,'sound-blocked'),(2,'sound-driver-fe'),(3,'sound-unexpected-index'),(4,'key-82'),(5,'group-8a-unexpected'),(6,'key-8a'),(7,'key-80'),(8,'wait-return'),(9,'key-82'),(11,'probe-media-fe'),(12,'probe-open-retry'),(13,'probe-close-retry'),(14,'probe-returned-ds'),(15,'probe-latch'),(16,'probe-success'),(17,'probe-media-fe'),(101,'publish-e0-m2-i0'),(102,'publish-e0-m2-i2'),(103,'publish-e2-m260-i7'),(104,'publish-e1-m2-i0'),(105,'publish-e1-m2-i0'))+CODE_MUTANTS+EDITOR_MUTANTS:
         try:compare(Native(directory,mutation),lookup[name])
         except base.Mismatch as error:mutants.append(dict(mutation=mutation,case=name,completed=True,mismatch=str(error)))
         else:raise base.OracleFailure(f'main menu mutant{mutation} survived')
         gc.collect()
     check(before==hashes(),'main menu inputs changed')
     write_json(REPORT,dict(image='main',image_sha256=sha(base.IMAGE),own_known_bytes=sum(i.size for i in OWN.values()),known_connected_bytes=sum(i.size for p,i in INS.items() if p not in BOUNDARY),
-        entry_code_ranges=[list(r) for r in RANGES],case_count=len(cases())+4,comparison_count=len(rows),handoff_count=4,
+        entry_code_ranges=[list(r) for r in RANGES],case_count=len(cases())+7,comparison_count=len(rows),handoff_count=7,
         executed_instruction_addresses=sorted(sites),own_executed_instruction_addresses=sorted(set(OWN)&sites),branch_edges=sorted(edges),own_branch_edges=sorted(EDGES),
         instruction_steps=sum(r['steps'] for r in rows),ordered_bus_events=sum(r['events'] for r in rows),declared_far_return_events=sum(r['far_return_events'] for r in rows),declared_interrupt_transport_events=sum(r['transport_events'] for r in rows),service_calls=sum(r['service_calls'] for r in rows),
         mutation_count=len(mutants),mutations=mutants,input_hashes=before,rows=rows,
-        limits=dict(timeout_seconds=SECONDS,outer_timeout_seconds=960,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
-        scope='5042 encoder/51A2 decoder and same-RAM code-submission handoffs; actual keyboard editor remains separate. Connected43F2 startup,4AC5 FAT-ID-gated resource retry,53F6/53FC/53FE/5401 palette selectors and4401..454B controller. Real near/far/INT21/IRET frames,existing logical display-setup INT10 ABI,returned segments and actual JMP exits. Destination bodies,native scheduling/opaque services and inherited reference limits remain open.'))
+        limits=dict(timeout_seconds=SECONDS,outer_timeout_seconds=1260,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
+        scope='488C live wrap formatter,503B text tail,4C7E editor with declared known503B BP target and explicit unsupported alternatives,4967 validation screen to actual4401 JMP; three native menu/editor/validation/refresh handoffs. 5042 encoder/51A2 decoder and earlier same-RAM code-submission handoffs. Connected43F2 startup,4AC5 FAT-ID-gated resource retry,53F6/53FC/53FE/5401 palette selectors and4401..454B controller. Real near/far/INT21/IRET frames,existing logical display-setup INT10 ABI,returned segments and actual JMP exits. Destination bodies,native scheduling/opaque services and inherited reference limits remain open.'))
     print(f'PASS main menu: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(EDGES)} outcomes,{len(mutants)} mutants',flush=True)
 def main():
     if len(sys.argv)==4 and sys.argv[1]=='--worker':worker(sys.argv[2],sys.argv[3]);return

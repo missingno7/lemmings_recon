@@ -5821,3 +5821,11 @@ LevelCodePayloadByte equ GameDataImage+0x491d
 GeneratedLevelCode equ GameDataImage+0x4d68
 EnteredLevelCode equ GameDataImage+0x4df2
 SpecialLevelCodeLatch equ GameDataImage+0x1f74
+CodeInputBlinkCountdown equ GameDataImage+0x491e
+CodeInputText equ GameDataImage+0x4def
+CodeEntryPromptText equ GameDataImage+0x4de1
+CodeAcceptedLevelField equ GameDataImage+0x4e10
+CodeAcceptedRatingField equ GameDataImage+0x4e1f
+CodeRatingNameRows equ GameDataImage+0x4c01
+CodeAcceptedText equ GameDataImage+0x4dfe
+CodeRejectedText equ GameDataImage+0x4e27

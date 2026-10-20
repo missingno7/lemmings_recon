@@ -7,12 +7,16 @@
 #include "text_stream.h"
 #include "palette_transition.h"
 #include "timer_tail.h"
+#include "decimal_field.h"
 
 #ifndef MAIN_MENU_MUTATION
 #define MAIN_MENU_MUTATION 0
 #endif
 #ifndef LEVEL_CODE_MUTATION
 #define LEVEL_CODE_MUTATION 0
+#endif
+#ifndef CODE_ENTRY_MUTATION
+#define CODE_ENTRY_MUTATION 0
 #endif
 enum { CF=1,PF=4,ZF=64,SF=128,OF=2048,ARITH=0x8d5 };
 typedef struct Menu {
@@ -92,7 +96,21 @@ static int child(Menu *s,uint16_t target,uint16_t resume) {
     uint16_t cs=s->r.cs,child_cs=cs,ip=target,status=0;
     LmnVideoRestoreState in,out;
     push(s,resume);in=(LmnVideoRestoreState){INPUT_FIELDS(s)};
-    if(target==CS_ReadKeyboardCharacter) {
+    if(target==CS_ReadCodeInput||target==CS_DrawCodeInputText||target==CS_DecodeLevelCode||target==CS_FormatSelectedLevelAndGroup) {
+        LmnMainMenuResult c=target==CS_ReadCodeInput?
+            lmn_read_code_input_core(s->memory,&s->r,s->game_ds,s->ports,s->bus):target==CS_DrawCodeInputText?
+            lmn_draw_code_input_core(s->memory,&s->r,s->game_ds,s->ports,s->bus):target==CS_DecodeLevelCode?
+            lmn_decode_level_code_core(s->memory,&s->r,s->bus):lmn_format_selected_level_core(s->memory,&s->r,s->bus);
+        s->r=c.registers;
+        if(c.status){s->status=c.status;s->child_status=c.child_status;return 0;}
+    } else if(target==CS_WriteDecimalByteField) {
+        LmnDecimalFieldCall call={s->r.ds,s->r.ax,s->r.bx,s->r.si,s->r.flags};
+        LmnDecimalFieldResult c=lmn_write_decimal_field_core(s->memory,&call,s->bus);
+        s->r.ax=c.value;s->r.bx=c.prefix_value;s->r.si=c.cursor;s->r.flags=c.flags;
+    } else if(target==CS_InitializeDisplayOrigins) {
+        LmnDisplaySetupResult c=lmn_setup_display_core(s->memory,cs,&in,LMN_DISPLAY_SETUP_ENTRY_INITIALIZE,0,s->bus);
+        apply(s,&c.state,c.code_segment,c.continuation);status=(uint16_t)c.status;
+    } else if(target==CS_ReadKeyboardCharacter) {
         LmnKeyboardResult c=lmn_read_keyboard_character_core(s->memory,&s->r,s->bus);
         s->r=c.registers;status=c.status;
     } else if(target==CS_PublishMenuPalette) {
@@ -509,4 +527,196 @@ LmnMainMenuResult lmn_encode_level_code_adapter(uint8_t *memory,const LmnRegs *r
 }
 LmnMainMenuResult lmn_decode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
     return code_return(memory,lmn_decode_level_code_core(memory,registers,bus),bus);
+}
+static uint16_t incdec16(Menu *s,uint16_t v,int dec) {
+    uint16_t cf=s->r.flags&CF;v=arithmetic(s,v,1u,dec,0);s->r.flags=(uint16_t)((s->r.flags&~CF)|cf);return v;
+}
+LmnMainMenuResult lmn_draw_code_input_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};s.r.si=SEG09A9_CodeInputText;
+    LmnTextStreamState in={INPUT_FIELDS(&s)};
+    LmnTextStreamResult c=lmn_draw_text_stream_core(memory,s.r.cs,game_ds,&in,bus,ports);
+    apply(&s,&c.state,c.code_segment,c.continuation);
+    if(c.status){s.status=LMN_MAIN_MENU_CHILD_STOP;s.child_status=(uint16_t)c.status;}
+    return result(&s);
+}
+LmnMainMenuResult lmn_draw_code_input_adapter(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnMainMenuResult out=lmn_draw_code_input_core(memory,registers,game_ds,ports,bus);
+    return out.status?out:code_return(memory,out,bus);
+}
+LmnMainMenuResult lmn_format_selected_level_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
+    Menu s={memory,0,bus,*registers,0u,0u,0u};
+#if CODE_ENTRY_MUTATION == 2
+    uint8_t first_selection;
+#endif
+    push(&s,s.r.cx);cl(&s,30u);
+    al(&s,read8(&s,SEG09A9_LevelResourceSelectionByte));
+#if CODE_ENTRY_MUTATION == 2
+    first_selection=(uint8_t)s.r.ax;
+#endif
+    al(&s,incdec8(&s,(uint8_t)s.r.ax,0));ah(&s,(uint8_t)logic(&s,0u,1));
+#if CODE_ENTRY_MUTATION == 1
+    if(!(uint8_t)s.r.ax)ah(&s,1u);
+#endif
+    {uint16_t value=s.r.ax;al(&s,(uint8_t)(value/(uint8_t)s.r.cx));ah(&s,(uint8_t)(value%(uint8_t)s.r.cx));}
+    ch(&s,(uint8_t)s.r.ax);s.r.ax=(uint16_t)((uint8_t)s.r.ax*(uint8_t)s.r.cx);
+    s.r.flags=(uint16_t)((s.r.flags&~(CF|OF))|(s.r.ax>255u?CF|OF:0u));
+#if CODE_ENTRY_MUTATION == 2
+    cl(&s,first_selection);
+#else
+    cl(&s,read8(&s,SEG09A9_LevelResourceSelectionByte));
+#endif
+    cl(&s,incdec8(&s,(uint8_t)s.r.cx,0));
+    cl(&s,(uint8_t)arithmetic(&s,(uint8_t)s.r.cx,(uint8_t)s.r.ax,1,1));s.r.ax=s.r.cx;
+    (void)logic(&s,(uint8_t)s.r.ax,1);
+    if(s.r.flags&ZF){al(&s,30u);ah(&s,incdec8(&s,(uint8_t)(s.r.ax>>8),1));}
+    s.r.cx=pop(&s);
+#if CODE_ENTRY_MUTATION == 15
+    s.r.cx=registers->cx;
+#endif
+    s.r.ip=CS_LevelGroupFormatReturn;return result(&s);
+}
+LmnMainMenuResult lmn_format_selected_level_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
+    return code_return(memory,lmn_format_selected_level_core(memory,registers,bus),bus);
+}
+LmnMainMenuResult lmn_read_code_input_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};
+    s.r.si=SEG09A9_EnteredLevelCode;s.r.cx=10u;s.r.bx=0x5a41u;s.r.bp=CS_DrawCodeInputText;
+    s.r.di=s.r.si;s.r.dx=s.r.si;s.r.dx=arithmetic(&s,s.r.dx,s.r.cx,0,0);s.r.cx=0x5f2eu;
+    #if CODE_ENTRY_MUTATION == 3
+    write8(&s,SEG09A9_CodeInputBlinkCountdown,19u);
+#else
+    write8(&s,SEG09A9_CodeInputBlinkCountdown,20u);
+#endif
+outer:
+    push(&s,s.r.si);push(&s,s.r.di);push(&s,s.r.bx);push(&s,s.r.cx);push(&s,s.r.dx);push(&s,s.r.bp);
+wait:
+    push(&s,s.r.di);push(&s,s.r.si);push(&s,s.r.cx);push(&s,s.r.dx);push(&s,s.r.bp);
+    if(!child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_CodeEntryAfterCall4CA5))return result(&s);
+    s.r.bp=pop(&s);s.r.dx=pop(&s);s.r.cx=pop(&s);s.r.si=pop(&s);s.r.di=pop(&s);
+    {
+        uint16_t incoming=s.r.flags,next;uint8_t v=read8(&s,SEG09A9_CodeInputBlinkCountdown);
+        v=incdec8(&s,v,1);next=s.r.flags;
+#if CODE_ENTRY_MUTATION != 4
+        s.r.flags=incoming;
+#else
+        (void)incoming;
+#endif
+        write8(&s,SEG09A9_CodeInputBlinkCountdown,v);s.r.flags=next;
+    }
+    if(s.r.flags&ZF) {
+        write8(&s,SEG09A9_CodeInputBlinkCountdown,20u);al(&s,read8(&s,s.r.di));cmp8(&s,(uint8_t)s.r.ax,(uint8_t)s.r.cx);
+        write8(&s,s.r.di,(uint8_t)(s.r.flags&ZF?s.r.cx>>8:s.r.cx));
+    }
+    push(&s,s.r.di);push(&s,s.r.si);push(&s,s.r.cx);push(&s,s.r.dx);push(&s,s.r.bp);
+#if CODE_ENTRY_MUTATION == 8
+    s.r.bp=CS_DrawCodeInputText;
+#endif
+    if(s.r.bp!=CS_DrawCodeInputText){s.r.ip=CS_CodeInputDrawCall4CC9;s.status=LMN_MAIN_MENU_UNSUPPORTED_CODE_CALLBACK;return result(&s);}
+    if(!child(&s,s.r.bp,CS_CodeEntryAfterCall4CC9)||!child(&s,CS_SwapDrawingOriginsAndDisplay,CS_CodeEntryAfterCall4CCB)||
+       !child(&s,CS_ReadKeyboardCharacter,CS_CodeEntryAfterCall4CCE))return result(&s);
+    s.r.bp=pop(&s);s.r.dx=pop(&s);s.r.cx=pop(&s);s.r.si=pop(&s);s.r.di=pop(&s);
+    cmp8(&s,(uint8_t)s.r.ax,255u);if(s.r.flags&ZF)goto wait;
+    s.r.bp=pop(&s);s.r.dx=pop(&s);s.r.cx=pop(&s);s.r.bx=pop(&s);s.r.di=pop(&s);s.r.si=pop(&s);
+    cmp8(&s,(uint8_t)s.r.ax,0x7fu);if(s.r.flags&ZF)goto backspace;
+    cmp8(&s,(uint8_t)s.r.ax,13u);if(s.r.flags&ZF)goto submit;
+    cmp8(&s,(uint8_t)s.r.ax,(uint8_t)s.r.bx);
+#if CODE_ENTRY_MUTATION == 7
+    if((uint8_t)s.r.ax<(uint8_t)s.r.bx)goto outer;
+#else
+    if(!!(s.r.flags&SF)!=!!(s.r.flags&OF))goto outer;
+#endif
+    cmp8(&s,(uint8_t)s.r.ax,(uint8_t)(s.r.bx>>8));if(!(s.r.flags&ZF)&&!!(s.r.flags&SF)==!!(s.r.flags&OF))goto outer;
+    (void)arithmetic(&s,s.r.di,s.r.dx,1,0);if(s.r.flags&ZF)goto outer;
+    write8(&s,s.r.di,(uint8_t)s.r.ax);s.r.di=incdec16(&s,s.r.di,0);cl(&s,read8(&s,s.r.di));
+    (void)arithmetic(&s,s.r.di,s.r.dx,1,0);if(!(s.r.flags&ZF))goto outer;
+#if CODE_ENTRY_MUTATION != 6
+    s.r.di=incdec16(&s,s.r.di,1);cl(&s,read8(&s,s.r.di));
+#endif
+    goto outer;
+backspace:
+    write8(&s,s.r.di,0x2eu);cl(&s,0x2eu);(void)arithmetic(&s,s.r.di,s.r.si,1,0);if(s.r.flags&ZF)goto outer;
+    s.r.di=incdec16(&s,s.r.di,1);
+#if CODE_ENTRY_MUTATION == 5
+    write8(&s,s.r.di,0x2eu);
+#endif
+    cl(&s,read8(&s,s.r.di));goto outer;
+submit:
+#if CODE_ENTRY_MUTATION == 10
+    write8(&s,SEG09A9_InputKeyMask1FC7,0u);
+#else
+    write16(&s,SEG09A9_InputKeyMask1FC7,0u);
+#endif
+    write8(&s,s.r.di,(uint8_t)s.r.cx);
+#if CODE_ENTRY_MUTATION == 9
+    s.r.bp=CS_DrawCodeInputText;
+#endif
+    if(s.r.bp!=CS_DrawCodeInputText){s.r.ip=CS_CodeInputDrawTail4D18;s.status=LMN_MAIN_MENU_UNSUPPORTED_CODE_CALLBACK;return result(&s);}
+    return lmn_draw_code_input_core(memory,&s.r,game_ds,ports,bus);
+}
+LmnMainMenuResult lmn_read_code_input_adapter(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    LmnMainMenuResult out=lmn_read_code_input_core(memory,registers,game_ds,ports,bus);
+    return out.status?out:code_return(memory,out,bus);
+}
+LmnMainMenuResult lmn_show_code_entry(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};
+    if(!child(&s,CS_ClearFullDrawingPage,CS_CodeEntryAfterCall4967)||!child(&s,CS_InitializeDisplayOrigins,CS_CodeEntryAfterCall496A)||
+       !child(&s,CS_TransitionPaletteToSlot1,CS_CodeEntryAfterCall496D)||!child(&s,CS_ClearFullDrawingPage,CS_CodeEntryAfterCall4970)||
+       !child(&s,CS_DrawScreenBackground,CS_CodeEntryAfterCall4973))return result(&s);
+    s.r.si=SEG09A9_EnteredLevelCode;s.r.cx=10u;
+    do {write8(&s,s.r.si,0x2eu);s.r.si=incdec16(&s,s.r.si,0);--s.r.cx;}while(s.r.cx);
+    s.r.si=SEG09A9_CodeEntryPromptText;
+    if(!child(&s,CS_DrawTextStream,CS_CodeEntryAfterCall4987)||!child(&s,CS_CopyDrawingPageToAlternate,CS_CodeEntryAfterCall498A)||
+       !child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_CodeEntryAfterCall498D)||!child(&s,CS_ProgramAlternateDisplayStart,CS_CodeEntryAfterCall4990)||
+       !child(&s,CS_TransitionPaletteToSlot2,CS_CodeEntryAfterCall4993)||!child(&s,CS_ReadCodeInput,CS_CodeEntryAfterCall4996)||
+       !child(&s,CS_DecodeLevelCode,CS_CodeEntryAfterCall4999))return result(&s);
+#if CODE_ENTRY_MUTATION == 11
+    if(s.r.flags&ZF)goto rejected;
+#else
+    if(!(s.r.flags&ZF))goto rejected;
+#endif
+    al(&s,read8(&s,SEG09A9_LevelResourceSelectionByte));
+    if(!child(&s,CS_FormatSelectedLevelAndGroup,CS_CodeEntryAfterCall49A1))return result(&s);
+    push(&s,s.r.ax);s.r.si=SEG09A9_CodeAcceptedLevelField;
+    if(!child(&s,CS_WriteDecimalByteField,CS_CodeEntryAfterCall49A9))return result(&s);
+    s.r.ax=pop(&s);al(&s,(uint8_t)(s.r.ax>>8));
+#if CODE_ENTRY_MUTATION == 13
+    if((uint8_t)s.r.ax>3u)al(&s,3u);
+#endif
+    s.r.di=SEG09A9_CodeAcceptedRatingField;s.r.si=SEG09A9_CodeRatingNameRows;
+    push(&s,s.r.ds);s.r.es=pop(&s);s.r.cx=6u;s.r.ax=(uint16_t)((uint8_t)s.r.ax*(uint8_t)s.r.cx);
+    s.r.flags=(uint16_t)((s.r.flags&~(CF|OF))|(s.r.ax>255u?CF|OF:0u));s.r.si=arithmetic(&s,s.r.si,s.r.ax,0,0);
+    while(s.r.cx) {
+        uint8_t v=read8(&s,s.r.si);write_at(&s,physical(s.r.es,s.r.di),v);
+#if CODE_ENTRY_MUTATION == 12
+        ++s.r.si;++s.r.di;
+#else
+        s.r.si=(uint16_t)(s.r.si+(s.r.flags&0x400u?-1:1));s.r.di=(uint16_t)(s.r.di+(s.r.flags&0x400u?-1:1));
+#endif
+        --s.r.cx;
+    }
+    s.r.si=SEG09A9_CodeAcceptedText;
+    if(!child(&s,CS_DrawTextStream,CS_CodeEntryAfterCall49C6)||!child(&s,CS_SwapDrawingOriginsAndDisplay,CS_CodeEntryAfterCall49C9))return result(&s);
+    s.r.cx=120u;
+    do {
+        if(!child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_CodeEntryAfterCall49CF))return result(&s);
+        s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);(void)logic(&s,s.r.ax&7u,0);if(!(s.r.flags&ZF))break;
+        s.r.ax=read16(&s,s.r.ds,SEG09A9_InputKeyMask1FC7);(void)logic(&s,s.r.ax&0x20u,0);if(!(s.r.flags&ZF))break;
+#if CODE_ENTRY_MUTATION == 14
+        (void)logic(&s,0u,0);
+#else
+        (void)logic(&s,s.r.ax&0x40u,0);if(!(s.r.flags&ZF))break;
+#endif
+        --s.r.cx;
+    }while(s.r.cx);
+    s.r.ip=CS_MenuRefresh4401;return result(&s);
+rejected:
+    s.r.si=SEG09A9_CodeRejectedText;
+    if(!child(&s,CS_DrawTextStream,CS_CodeEntryAfterCall49F0)||!child(&s,CS_SwapDrawingOriginsAndDisplay,CS_CodeEntryAfterCall49F3))return result(&s);
+    s.r.cx=60u;do {if(!child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_CodeEntryAfterCall49F9))return result(&s);--s.r.cx;}while(s.r.cx);
+    s.r.ip=CS_MenuRefresh4401;return result(&s);
 }

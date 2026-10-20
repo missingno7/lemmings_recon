@@ -435,7 +435,7 @@ loc_4729:
     jc loc_4748 ; @04743
     jmp loc_47E0 ; @04745
 loc_4748:
-    call sub_488C ; @04748
+    call FormatSelectedLevelAndGroup ; @04748
     lea si,[0x4d5d] ; @0474B
     call WriteDecimalByteField ; @0474F
     call EncodeLevelCode ; @04752
@@ -560,7 +560,9 @@ loc_4866:
     db 0x06,0x07,0x08,0x0a,0x0b,0x04,0x0c,0x0d,0x0e,0x0f,0x05,0x10,0x11,0x12,0x13,0x14 ; @04877
 ; UNKNOWN: unresolved bytes
     db 0x15,0x01,0x09,0x03,0x02 ; @04887
-sub_488C:
+; Actual savedCX; byteINC selection beforeDIV30, then reread selection afterMUL.
+; Zero remainder ->level30 and DECgroup; FF wraps toAXFF1E. No normalization.
+FormatSelectedLevelAndGroup:
     push cx ; @0488C
     mov cl,0x1e ; @0488D
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @0488F
@@ -579,6 +581,7 @@ sub_488C:
     dec ah ; @048AC
 loc_48AE:
     pop cx ; @048AE
+LevelGroupFormatReturn:
     ret ; @048AF
 ; UNKNOWN: unresolved bytes
     db 0x51,0xb1,0x1e,0x8a,0xe8,0x8a,0xc4,0xf6,0xe1,0x02,0xc5,0x59,0xc3 ; @048B0
@@ -646,48 +649,68 @@ loc_494D:
 ; UNKNOWN: unresolved bytes
     db 0x7a,0x51 ; @04965
 loc_4967:
+; Entry4967 composes editor/decoder and returns via JMP4401. Valid result uses
+; byte-wrap formatter,actualDS->ES save and six DF-sensitive string copies.
+; Success waits<=120 cycles/three live input predicates; invalid waits60 cycles.
 MainMenuCodeTransition:
     call ClearFullDrawingPage ; @04967
+CodeEntryAfterCall4967:
     call InitializeDisplayOrigins ; @0496A
+CodeEntryAfterCall496A:
     call TransitionPaletteToSlot1 ; @0496D
+CodeEntryAfterCall496D:
     call ClearFullDrawingPage ; @04970
+CodeEntryAfterCall4970:
     call DrawScreenBackground ; @04973
+CodeEntryAfterCall4973:
     lea si,[0x4df2] ; @04976
     mov cx,0xa ; @0497A
 loc_497D:
     mov byte [si],0x2e ; @0497D
     inc si ; @04980
     loop loc_497D ; @04981
-    lea si,[0x4de1] ; @04983
+    lea si,[CodeEntryPromptText-GameDataImage] ; @04983
     call DrawTextStream ; @04987
+CodeEntryAfterCall4987:
     call CopyDrawingPageToAlternate ; @0498A
+CodeEntryAfterCall498A:
     call WaitForDisplayStatusBit3Cycle ; @0498D
+CodeEntryAfterCall498D:
     call ProgramAlternateDisplayStart ; @04990
+CodeEntryAfterCall4990:
     call TransitionPaletteToSlot2 ; @04993
+CodeEntryAfterCall4993:
     call ReadCodeInput ; @04996
+CodeEntryAfterCall4996:
     call DecodeLevelCode ; @04999
+CodeEntryAfterCall4999:
     jnz loc_49EC ; @0499C
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @0499E
-    call sub_488C ; @049A1
+    call FormatSelectedLevelAndGroup ; @049A1
+CodeEntryAfterCall49A1:
     push ax ; @049A4
-    lea si,[0x4e10] ; @049A5
+    lea si,[CodeAcceptedLevelField-GameDataImage] ; @049A5
     call WriteDecimalByteField ; @049A9
+CodeEntryAfterCall49A9:
     pop ax ; @049AC
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @049AD
-    lea di,[0x4e1f] ; @049AF
-    lea si,[0x4c01] ; @049B3
+    lea di,[CodeAcceptedRatingField-GameDataImage] ; @049AF
+    lea si,[CodeRatingNameRows-GameDataImage] ; @049B3
     push ds ; @049B7
     pop es ; @049B8
     mov cx,0x6 ; @049B9
     mul cl ; @049BC
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @049BE
     rep movsb ; @049C0
-    lea si,[0x4dfe] ; @049C2
+    lea si,[CodeAcceptedText-GameDataImage] ; @049C2
     call DrawTextStream ; @049C6
+CodeEntryAfterCall49C6:
     call SwapDrawingOriginsAndDisplay ; @049C9
+CodeEntryAfterCall49C9:
     mov cx,0x78 ; @049CC
 loc_49CF:
     call WaitForDisplayStatusBit3Cycle ; @049CF
+CodeEntryAfterCall49CF:
     mov ax,[InputButtonsWord-GameDataImage] ; @049D2
     test ax,0x7 ; @049D5
     jnz loc_49E9 ; @049D8
@@ -700,12 +723,15 @@ loc_49CF:
 loc_49E9:
     jmp loc_4401 ; @049E9
 loc_49EC:
-    lea si,[0x4e27] ; @049EC
+    lea si,[CodeRejectedText-GameDataImage] ; @049EC
     call DrawTextStream ; @049F0
+CodeEntryAfterCall49F0:
     call SwapDrawingOriginsAndDisplay ; @049F3
+CodeEntryAfterCall49F3:
     mov cx,0x3c ; @049F6
 loc_49F9:
     call WaitForDisplayStatusBit3Cycle ; @049F9
+CodeEntryAfterCall49F9:
     loop loc_49F9 ; @049FC
     jmp loc_4401 ; @049FE
 loc_4A01:

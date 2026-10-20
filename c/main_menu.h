@@ -13,7 +13,8 @@ typedef enum LmnMainMenuEntry {
 typedef enum LmnMainMenuStatus {
     LMN_MAIN_MENU_CONTINUATION, LMN_MAIN_MENU_CHILD_STOP,
     LMN_MAIN_MENU_CHANGED_CHILD_RETURN,
-    LMN_MAIN_MENU_UNBOUND_DOS,LMN_MAIN_MENU_DOS_STOP,LMN_MAIN_MENU_CHANGED_IRET
+    LMN_MAIN_MENU_UNBOUND_DOS,LMN_MAIN_MENU_DOS_STOP,LMN_MAIN_MENU_CHANGED_IRET,
+    LMN_MAIN_MENU_UNSUPPORTED_CODE_CALLBACK
 } LmnMainMenuStatus;
 typedef struct LmnMainMenuResult {
     LmnRegs registers;
@@ -49,4 +50,19 @@ LmnMainMenuResult lmn_encode_level_code_core(uint8_t *memory,const LmnRegs *regi
 LmnMainMenuResult lmn_encode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
 LmnMainMenuResult lmn_decode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
 LmnMainMenuResult lmn_decode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
+/* Editor and text bridge share TextStreamReturn; core leaves that RET live.
+   Changed BP stops before unresolved CALL/JMP with all actual saves intact. */
+LmnMainMenuResult lmn_draw_code_input_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_draw_code_input_adapter(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_read_code_input_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_read_code_input_adapter(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_format_selected_level_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
+LmnMainMenuResult lmn_format_selected_level_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus);
+/* 4967 validation screen stops at its actual JMP4401; no parent RET exists. */
+LmnMainMenuResult lmn_show_code_entry(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
 #endif

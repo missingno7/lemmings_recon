@@ -1085,3 +1085,16 @@ and per-call limits; no new engine or harness was added. Fresh 4C7E/503B views
 select editor/text composition and the 488C wrap-sensitive formatter before the
 4967 screen. See level-code.md; aggregate and full native-host acceptance remain
 separate from this scoped milestone.
+
+The code-entry connection adds353 unique bytes, taking the main C union to30,012.
+ReadCodeInput's206-byte graph includes50 shared text-tail bytes; its own physical
+prefix is156. Native488C,503B,4C7E and4967 compose through real saves/RET/JMP,
+signed bounds, cursor timing, byte wrap, decoderZF and six DF-sensitive rating
+copies. The shared campaign passes967 fixtures /978 comparisons,601 own sites /
+130 outcomes and46 completed mutants. Three same-RAM menu/editor/validation/
+refresh handoffs join the four earlier sequences; full-screen mode4/0104 checks
+and all81 unit tests pass. Worker time expands to1200 seconds for measured work,
+while384MiB and per-invocation caps remain unchanged. Unresolved BP alternatives,
+platform/game bodies and aggregate acceptance remain open. Fresh4566/5329 views
+select palette callers and level-start ownership next; keep the existing197D
+RAM-only service contract explicit. See code-entry.md and next-work.md.
