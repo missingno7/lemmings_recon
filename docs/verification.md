@@ -92,6 +92,13 @@ change; existing reports are not renewed by preserving or editing hashes.
 
 ## Declared original RETF observation
 
+Shared SCAS flag tracking preserves the incoming definition mask for zero-count
+REP, and defines comparison flags only after an iteration executes. This keeps
+dirty-map scans honest without a second instruction model. PackedDeviceTrace
+provides bounded lossless four-field device storage over the same packed event
+sequence. Its device-state/order/deep-copy/budget and SCAS flag tests are in
+test_verification_infrastructure.py. Consumers can migrate incrementally.
+
 The shared OriginalMachine can now declare plain RETF sites and expected CS:IP
 continuations. It observes the four actual frame bytes through BusAccess, suspends
 only Unicorn's memory-read hook, then executes the unchanged original opcode.

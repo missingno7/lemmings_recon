@@ -1,6 +1,9 @@
-; Maintained7900..796E display preparation; untranslated.
+; Maintained7900..796E status backdrop preparation; docs/game-prepare.md.
 times -(($-$$) != 0x7900) db 0 ; module start assertion
-sub_7900:
+; Clear13 bytes on all planes,then copy19 contiguous13-byte source rows
+; to44-byte destination pitch,using write-mode1 latches. Live DF/BP/SS mirrors
+; and actualRET remain observable; no restored VGA mode or synthetic frame.
+CopyStatusBackdropToDrawingPage:
     mov bp,ds ; @07900
     mov di,[DrawingOrigin-GameDataImage] ; @07902
     add di,0x2172 ; @07906

@@ -177,8 +177,8 @@ loc_0186:
     call sub_031E ; @0019D
     call sub_4085 ; @001A0
     inc byte [ForegroundCounter0052-GameDataImage] ; @001A3
-    call sub_80FD ; @001A7
-    call sub_7900 ; @001AA
+    call CopyDirtyLevelRowsToDrawingPage ; @001A7
+    call CopyStatusBackdropToDrawingPage ; @001AA
     call DispatchEntityAction ; @001AD
 CreateAndAdvanceEntityRecords:
 ; Scoped two-CALL prefix:actual returns01B3/01B6 remain live SS words.
@@ -400,7 +400,7 @@ loc_03AC:
 loc_03AD:
     test byte [0x25a7],0x2 ; @003AD
     jz loc_03D6 ; @003B2
-    mov al,[0x54] ; @003B4
+    mov al,[LevelSoundId-GameDataImage] ; @003B4
     mov ah,0x3 ; @003B7
     int 0x61 ; @003B9
     mov ax,0x0 ; @003BB
@@ -464,7 +464,7 @@ sub_03E7:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0045E
     rep stosb ; @00460
     call SetupGameVideoAndSpriteCallbacks ; @00462
-    call sub_52F4 ; @00465
+    call PublishGameBasePalette ; @00465
     call CalibrateGameTimerReload ; @00468
     call InitializeLevelFromRecord ; @0046B
     cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0046E
@@ -476,14 +476,14 @@ sub_03E7:
 loc_0480:
     call RebuildViewVisibilityMap ; @00480
     call CreateEntityRecordIfDue ; @00483
-    call sub_5377 ; @00486
-    call sub_482F ; @00489
-    call sub_81CC ; @0048C
+    call SeedGameFadePalette ; @00486
+    call SelectLevelSoundId ; @00489
+    call InitializeGameDrawingPages ; @0048C
     call InitializeStatusDisplay ; @0048F
     call InstallGameTimerVector ; @00492
     call AdvanceLevelObjectAnimations ; @00495
     call DrawLevelObjectGraphics ; @00498
-    call sub_7900 ; @0049B
+    call CopyStatusBackdropToDrawingPage ; @0049B
     call UpdateStatusDisplay ; @0049E
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004A1
     db 0x33,0xd2 ; ENCODED: xor dx,dx (NASM chooses a different encoding) ; @004A3

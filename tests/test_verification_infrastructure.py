@@ -5,6 +5,40 @@ import verification as v
 
 
 class SharedVerificationTests(unittest.TestCase):
+    def test_shared_device_trace_preserves_vga_order_state_and_budget(self):
+        plain=v.new_device(0x80FD);packed=copy.deepcopy(plain);packed.trace=v.PackedDeviceTrace(4)
+        memories=[bytearray(v.SIZE),bytearray(v.SIZE)]
+        for dev,memory in zip((plain,packed),memories):
+            dev.out(0x3C4,0x0F02,0x2D7);dev.out(0x3CE,0x0005,0xA02)
+            dev.write(memory,0xA0003,0x96,0x6D7);dev.read(memory,0xA0003,0x202)
+        self.assertEqual(memories[0],memories[1]);self.assertEqual(plain.state(),packed.state())
+        self.assertEqual(list(packed.trace),plain.trace)
+        clone=copy.deepcopy(packed.trace);clone.clear();self.assertEqual(len(clone),0)
+        self.assertEqual(list(packed.trace),plain.trace)
+        with self.assertRaises(v.OracleFailure):packed.trace.append(('write',0,0,0))
+
+    def test_rep_scas_defines_flags_only_when_a_comparison_executes(self):
+        for count in (0,1):
+            with self.subTest(count=count):
+                case=dict(load=0x1010,seed=0x8143)
+                memory,device=v.initial_memory(case)
+                r=v.default_regs(case['load'],1,ds=0x3000,es=0x3000)
+                r.update(ip=0x8143,cx=count,ax=0,di=0x2000)
+                v.put8(memory,0x3000,0x2000,0x0F)
+                instructions={i.address:i for i in v.MD.disasm(v.IMAGE[0x8143:0x8147],0x8143)}
+                def before(machine,instruction):
+                    if instruction.address==0x8145:machine.stop(0);return True
+                    return False
+                access=v.BusAccess(case,memory,r,device,max_events=2)
+                machine=v.OriginalMachine(case,memory,r,device,True,instructions=instructions,
+                    access=access,outer_returns=(),max_steps=4,before=before)
+                machine.mask=v.FLAGS&~0x10
+                out=machine.run()
+                self.assertEqual(out['regs']['di'],0x2000+count)
+                self.assertEqual(out['mask'],v.FLAGS if count else v.FLAGS&~0x10)
+                if count:self.assertTrue(out['regs']['flags']&0x10)
+                else:self.assertEqual(out['regs']['flags'],r['flags'])
+
     def test_actual_byte_division_makes_arithmetic_flags_undefined(self):
         case=dict(load=0x1010,seed=1)
         memory,device=v.initial_memory(case)

@@ -162,6 +162,20 @@ class PackedEvents(Sequence):
             yield (self.kinds[self.words[p]],*self.words[p+1:p+5])
 
 
+class PackedDeviceTrace(Sequence):
+    """Lossless bounded four-field device observations over shared storage."""
+    def __init__(self,max_events):self.events=PackedEvents();self.max_events=max_events
+    def append(self,event):
+        check(len(self)<self.max_events,'device event budget exhausted')
+        self.events.append((*event,0))
+    def __len__(self):return len(self.events)
+    def __iter__(self):return (e[:4] for e in self.events)
+    def __getitem__(self,index):
+        if isinstance(index,slice):return [e[:4] for e in self.events[index]]
+        return self.events[index][:4]
+    def clear(self):self.events=PackedEvents()
+
+
 class BusAccess:
     """One canonical RAM image and bounded, ordered observations on either side."""
     def __init__(self, case, memory, registers, device, *, max_events, packed_events=False):
@@ -295,7 +309,7 @@ class OriginalMachine:
         self.cpu.mem_write(0,bytes(memory));self.cpu.mem_write(SIZE,bytes(memory))
         self.access.sync=self.cpu.mem_write
         self.mask=FLAGS;self.flags=registers['flags'];self.steps=0;self.sites=set();self.edges=set()
-        self.previous=None;self.pending=False;self.executing_boundary=False
+        self.previous=None;self.previous_count=0;self.pending=False;self.executing_boundary=False
         self.status=0;self.service_status=0;self.stopped=False
         self.far_return_events=0
         self.loaded=loaded_image(case['load'])
@@ -336,6 +350,9 @@ class OriginalMachine:
             elif old.mnemonic=='ror':self.mask|=0x801
             elif old.mnemonic=='mul':self.mask=(self.mask&~0xD4)|0x801
             elif old.mnemonic=='div':self.mask&=~0x8D5
+            elif old.mnemonic.split()[-1] in ('scasb','scasw'):
+                # A zero-count REP performs no comparison and defines no flags.
+                if not old.mnemonic.startswith('rep') or self.previous_count:self.mask=FLAGS
         expected=bytearray(self.loaded[off:off+ins.size])
         if off in self.mutable_operands:
             start,width=self.mutable_operands[off]
@@ -360,7 +377,8 @@ class OriginalMachine:
                 self.service_status=self.c.get('missing_service_status',0)
                 self.stop(self.c.get('missing_port_status',1));return
         self.flags=u.reg_read(REG_IDS['flags'])&0xFFFF
-        self.previous=ins;self.sites.add(off);self.steps+=1
+        self.previous=ins;self.previous_count=u.reg_read(REG_IDS['cx'])&0xFFFF
+        self.sites.add(off);self.steps+=1
         if self.steps>self.max_steps:raise OracleFailure('original instruction budget exhausted')
 
     def read(self,u,kind,address,size,value,_):

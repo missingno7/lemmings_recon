@@ -87,6 +87,13 @@ Record ownership and preserved quirks are documented in object-records.md.
 
 ## Resource and state handoff
 
+The remaining03E7 setup helpers now have native palette/sound/backdrop/dirty
+and page-initialization bodies. The81CC parent composes native status39CE and
+far layout8808 on the same memory. Raw sound bytes,DF/SCAS flags,208/44-byte
+copy pitches,live map swaps and actual frames are retained. Its620 new unique
+instruction bytes are separate from1498 connected bytes; UNKNOWN remains
+explicit. See game-prepare.md. The next step is the actual03E7 controller.
+
 The 03E7 setup dependency cluster now has native 0FB2 video/sprite-slot setup
 and 15AD calibration through all four13DC probe callbacks and1602 raster/PIT
 measurement. Actual BIOS frames, raw pairs/tables, signed selection and old

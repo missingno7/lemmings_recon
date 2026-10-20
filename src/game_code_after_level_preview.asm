@@ -1,6 +1,11 @@
 ; Maintained image span080FD..08237; remaining display/dirty suffix.
-; Physical order and UNKNOWN bytes are preserved.
-sub_80FD:
+; Physical order and UNKNOWN bytes are preserved; native docs/game-prepare.md.
+; DIRTY COPY: leading ES:map flag selects full160x44 copy; otherwise20 rows
+; of40 SCAS flags. Only exact byte1 matches; REPE consumes first clean byte.
+; Each run copies8 pixel rows at208-byte source/44-byte destination pitches.
+; Actual saved counts/cursors/AX/ES/DS stay live; clear800 map bytes afterward.
+; DF affects every SCAS/string,while explicit INC remainsforward. UNKNOWN8122.
+CopyDirtyLevelRowsToDrawingPage:
     mov dx,0x3c4 ; @080FD
     mov ax,0xf02 ; @08100
     mov [ss:0x8],ax ; @08103
@@ -108,7 +113,10 @@ loc_81BD:
     jnz loc_81BD ; @081C7
     mov ds,bp ; @081C9
     ret ; @081CB
-sub_81CC:
+; PAGE SETUP: initialize both live maps/origins,first dirty copy,actual swaps,
+; native39CE status,second dirty copy,far layout and final pattern offsets.
+; No snapshot map fields or fake child returns; docs/game-prepare.md.
+InitializeGameDrawingPages:
     mov word [DrawingOrigin-GameDataImage],0x0 ; @081CC
     mov word [AlternateDrawingOrigin-GameDataImage],0x2520 ; @081D2
     mov word [DrawingPageByteOffset-GameDataImage],0x2c0 ; @081D8
@@ -119,7 +127,7 @@ sub_81CC:
     mov bx,[AlternateDrawingDirtyCellMapOffset-GameDataImage] ; @081F2
     mov byte [ss:bx],0xff ; @081F6
     mov byte [DrawingDirtyCellsEnabledByte-GameDataImage],0xff ; @081FA
-    call sub_80FD ; @081FF
+    call CopyDirtyLevelRowsToDrawingPage ; @081FF
     mov ax,[AlternateDrawingOrigin-GameDataImage] ; @08202
     xchg [DrawingOrigin-GameDataImage],ax ; @08205
     mov [AlternateDrawingOrigin-GameDataImage],ax ; @08209
@@ -127,7 +135,7 @@ sub_81CC:
     xchg [DrawingDirtyCellMapOffset-GameDataImage],ax ; @0820F
     mov [AlternateDrawingDirtyCellMapOffset-GameDataImage],ax ; @08213
     call InitializeStatusDisplay ; @08216
-    call sub_80FD ; @08219
+    call CopyDirtyLevelRowsToDrawingPage ; @08219
     mov ax,0x160 ; @0821C
     mov bx,0xa0 ; @0821F
     mov dx,[DrawingOrigin-GameDataImage] ; @08222

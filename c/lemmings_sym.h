@@ -247,7 +247,7 @@
 #define CS_ShowLevelBriefing 0x4566u
 #define CS_FadeAndClearSplitPalette 0x46A2u
 #define CS_RefreshRasterSplitPalette 0x46B9u
-#define CS_sub_482F 0x482Fu
+#define CS_SelectLevelSoundId 0x482Fu
 #define CS_FormatSelectedLevelAndGroup 0x488Cu
 #define CS_sub_48BD 0x48BDu
 #define CS_sub_48F6 0x48F6u
@@ -303,12 +303,12 @@
 #define CS_DrawCodeInputText 0x503Bu
 #define CS_EncodeLevelCode 0x5042u
 #define CS_DecodeLevelCode 0x51A2u
-#define CS_sub_52F4 0x52F4u
+#define CS_PublishGameBasePalette 0x52F4u
 #define CS_TransitionPaletteToSlot1 0x531Eu
 #define CS_StepSplitPaletteToSlot1 0x5329u
 #define CS_StepSplitPaletteToTargets 0x534Bu
 #define CS_TransitionPaletteToSlot2 0x536Cu
-#define CS_sub_5377 0x5377u
+#define CS_SeedGameFadePalette 0x5377u
 #define CS_PublishUpperEightPaletteColors 0x53CAu
 #define CS_PublishEightPaletteColors 0x53F6u
 #define CS_PublishMenuPalette 0x53FCu
@@ -400,7 +400,7 @@
 #define CS_DrawStatusGlyph 0x7708u
 #define CS_DrawStatusIconOutline 0x780Du
 #define CS_RestoreStatusIcon 0x789Eu
-#define CS_sub_7900 0x7900u
+#define CS_CopyStatusBackdropToDrawingPage 0x7900u
 #define CS_UpdateMinimapColumn 0x796Fu
 #define CS_MinimapColumnAfterRow 0x79FBu
 #define CS_AccumulateMinimapRow 0x7A25u
@@ -424,8 +424,8 @@
 #define CS_BackgroundSecondAfterBitmap 0x7EAAu
 #define CS_BackgroundReturn 0x7EB1u
 #define CS_DrawLevelPreview 0x7EB2u
-#define CS_sub_80FD 0x80FDu
-#define CS_sub_81CC 0x81CCu
+#define CS_CopyDirtyLevelRowsToDrawingPage 0x80FDu
+#define CS_InitializeGameDrawingPages 0x81CCu
 #define CS_BlitSpecialResourceStrip0 0x8238u
 #define CS_BlitSpecialResourceStrip1 0x8243u
 #define CS_BlitSpecialResourceStrip2 0x8249u
@@ -1234,4 +1234,8 @@
 #define SEG09A9_EgaProbeEnableByte 0x2016u
 #define SEG09A9_ColorCrtcProbeEnableByte 0x2019u
 #define SEG09A9_MonoCrtcProbeEnableByte 0x201Cu
+#define CS_LevelSoundSequenceIds 0x4877u
+#define CS_SpecialLevelSoundIds 0x4888u
+#define SEG09A9_LevelSoundId 0x0054u
+#define SEG09A9_LevelSoundCycleIndex 0x1F6Cu
 #endif

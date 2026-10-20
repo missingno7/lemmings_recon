@@ -27301,9 +27301,11 @@
     "address": 18479,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_482F",
-    "aliases": [],
+    "size": 72,
+    "symbol_name": "SelectLevelSoundId",
+    "aliases": [
+      "sub_482F"
+    ],
     "callers": [
       1161
     ],
@@ -27398,12 +27400,27 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Palette/sound/dirty-page ownership,DF/SCAS flags and native status/layout composition; docs/game-prepare.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 71
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 71,
+    "c_implementation": "c/game_prepare.c",
+    "c_core": "lmn_game_prepare_core",
+    "c_entry": "LMN_GAME_PREPARE_SOUND",
+    "c_code_ranges": [
+      [
+        18479,
+        18495
+      ],
+      [
+        18496,
+        18551
+      ]
+    ],
+    "verification_evidence": "tests/game_prepare.py shared campaign:577 fixtures/1154 core and actualRET comparisons,237 owned sites/34 direct outcomes,8 completed numeric mutants,620 new unique known bytes in1498 connected bytes. All256 special/cycle values,three loads,live CS/SS/map/count fields,full/partial/status plane models with overlaps,DF/wrap,exact mode/full-byte tests,native status and far layout,changed near/far/child/outer returns. 479,466 original instructions/757,480 ordered events;42 consumed hashes match. UNKNOWN483F/531D/8122 and tables,child/IRQ/RETF reference limits,03E7/platform/full-game/aggregate scopes remain open. docs/game-prepare.md"
   },
   {
     "address": 18572,
@@ -31174,9 +31191,11 @@
     "address": 21236,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_52F4",
-    "aliases": [],
+    "size": 41,
+    "symbol_name": "PublishGameBasePalette",
+    "aliases": [
+      "sub_52F4"
+    ],
     "callers": [
       1125
     ],
@@ -31281,12 +31300,31 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Palette/sound/dirty-page ownership,DF/SCAS flags and native status/layout composition; docs/game-prepare.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 131
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 131,
+    "c_implementation": "c/game_prepare.c",
+    "c_core": "lmn_game_prepare_core",
+    "c_entry": "LMN_GAME_PREPARE_BASE_PALETTE",
+    "c_code_ranges": [
+      [
+        21236,
+        21277
+      ],
+      [
+        21541,
+        21575
+      ],
+      [
+        21644,
+        21700
+      ]
+    ],
+    "verification_evidence": "tests/game_prepare.py shared campaign:577 fixtures/1154 core and actualRET comparisons,237 owned sites/34 direct outcomes,8 completed numeric mutants,620 new unique known bytes in1498 connected bytes. All256 special/cycle values,three loads,live CS/SS/map/count fields,full/partial/status plane models with overlaps,DF/wrap,exact mode/full-byte tests,native status and far layout,changed near/far/child/outer returns. 479,466 original instructions/757,480 ordered events;42 consumed hashes match. UNKNOWN483F/531D/8122 and tables,child/IRQ/RETF reference limits,03E7/platform/full-game/aggregate scopes remain open. docs/game-prepare.md"
   },
   {
     "address": 21278,
@@ -31601,9 +31639,11 @@
     "address": 21367,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_5377",
-    "aliases": [],
+    "size": 83,
+    "symbol_name": "SeedGameFadePalette",
+    "aliases": [
+      "sub_5377"
+    ],
     "callers": [
       1158
     ],
@@ -31762,12 +31802,23 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Palette/sound/dirty-page ownership,DF/SCAS flags and native status/layout composition; docs/game-prepare.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 83
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 83,
+    "c_implementation": "c/game_prepare.c",
+    "c_core": "lmn_game_prepare_core",
+    "c_entry": "LMN_GAME_PREPARE_FADE_PALETTE",
+    "c_code_ranges": [
+      [
+        21367,
+        21450
+      ]
+    ],
+    "verification_evidence": "tests/game_prepare.py shared campaign:577 fixtures/1154 core and actualRET comparisons,237 owned sites/34 direct outcomes,8 completed numeric mutants,620 new unique known bytes in1498 connected bytes. All256 special/cycle values,three loads,live CS/SS/map/count fields,full/partial/status plane models with overlaps,DF/wrap,exact mode/full-byte tests,native status and far layout,changed near/far/child/outer returns. 479,466 original instructions/757,480 ordered events;42 consumed hashes match. UNKNOWN483F/531D/8122 and tables,child/IRQ/RETF reference limits,03E7/platform/full-game/aggregate scopes remain open. docs/game-prepare.md"
   },
   {
     "address": 21450,
@@ -46861,9 +46912,11 @@
     "address": 30976,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_7900",
-    "aliases": [],
+    "size": 111,
+    "symbol_name": "CopyStatusBackdropToDrawingPage",
+    "aliases": [
+      "sub_7900"
+    ],
     "callers": [
       426,
       1179
@@ -46959,12 +47012,23 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Palette/sound/dirty-page ownership,DF/SCAS flags and native status/layout composition; docs/game-prepare.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 111
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 111,
+    "c_implementation": "c/game_prepare.c",
+    "c_core": "lmn_game_prepare_core",
+    "c_entry": "LMN_GAME_PREPARE_STATUS_BACKDROP",
+    "c_code_ranges": [
+      [
+        30976,
+        31087
+      ]
+    ],
+    "verification_evidence": "tests/game_prepare.py shared campaign:577 fixtures/1154 core and actualRET comparisons,237 owned sites/34 direct outcomes,8 completed numeric mutants,620 new unique known bytes in1498 connected bytes. All256 special/cycle values,three loads,live CS/SS/map/count fields,full/partial/status plane models with overlaps,DF/wrap,exact mode/full-byte tests,native status and far layout,changed near/far/child/outer returns. 479,466 original instructions/757,480 ordered events;42 consumed hashes match. UNKNOWN483F/531D/8122 and tables,child/IRQ/RETF reference limits,03E7/platform/full-game/aggregate scopes remain open. docs/game-prepare.md"
   },
   {
     "address": 31087,
@@ -48947,9 +49011,11 @@
     "address": 33021,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_80FD",
-    "aliases": [],
+    "size": 207,
+    "symbol_name": "CopyDirtyLevelRowsToDrawingPage",
+    "aliases": [
+      "sub_80FD"
+    ],
     "callers": [
       423,
       33279,
@@ -49094,20 +49160,37 @@
         "size": 1
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Palette/sound/dirty-page ownership,DF/SCAS flags and native status/layout composition; docs/game-prepare.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 206
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 206,
+    "c_implementation": "c/game_prepare.c",
+    "c_core": "lmn_game_prepare_core",
+    "c_entry": "LMN_GAME_PREPARE_DIRTY_ROWS",
+    "c_code_ranges": [
+      [
+        33021,
+        33058
+      ],
+      [
+        33059,
+        33228
+      ]
+    ],
+    "verification_evidence": "tests/game_prepare.py shared campaign:577 fixtures/1154 core and actualRET comparisons,237 owned sites/34 direct outcomes,8 completed numeric mutants,620 new unique known bytes in1498 connected bytes. All256 special/cycle values,three loads,live CS/SS/map/count fields,full/partial/status plane models with overlaps,DF/wrap,exact mode/full-byte tests,native status and far layout,changed near/far/child/outer returns. 479,466 original instructions/757,480 ordered events;42 consumed hashes match. UNKNOWN483F/531D/8122 and tables,child/IRQ/RETF reference limits,03E7/platform/full-game/aggregate scopes remain open. docs/game-prepare.md"
   },
   {
     "address": 33228,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_81CC",
-    "aliases": [],
+    "size": 108,
+    "symbol_name": "InitializeGameDrawingPages",
+    "aliases": [
+      "sub_81CC"
+    ],
     "callers": [
       1164
     ],
@@ -49270,12 +49353,23 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Palette/sound/dirty-page ownership,DF/SCAS flags and native status/layout composition; docs/game-prepare.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 108
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 108,
+    "c_implementation": "c/game_prepare.c",
+    "c_core": "lmn_game_prepare_core",
+    "c_entry": "LMN_GAME_PREPARE_DRAWING_PAGES",
+    "c_code_ranges": [
+      [
+        33228,
+        33336
+      ]
+    ],
+    "verification_evidence": "tests/game_prepare.py shared campaign:577 fixtures/1154 core and actualRET comparisons,237 owned sites/34 direct outcomes,8 completed numeric mutants,620 new unique known bytes in1498 connected bytes. All256 special/cycle values,three loads,live CS/SS/map/count fields,full/partial/status plane models with overlaps,DF/wrap,exact mode/full-byte tests,native status and far layout,changed near/far/child/outer returns. 479,466 original instructions/757,480 ordered events;42 consumed hashes match. UNKNOWN483F/531D/8122 and tables,child/IRQ/RETF reference limits,03E7/platform/full-game/aggregate scopes remain open. docs/game-prepare.md"
   },
   {
     "address": 33336,
@@ -69006,6 +69100,70 @@
     "confidence": "PROVEN",
     "evidence": [
       "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18551,
+    "segment": 0,
+    "kind": "lookup_table",
+    "size": 17,
+    "symbol_name": "LevelSoundSequenceIds",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "482F raw byte selection,live1F6C success increment and03B4 INT61 consumer; docs/game-prepare.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18568,
+    "segment": 0,
+    "kind": "lookup_table",
+    "size": 4,
+    "symbol_name": "SpecialLevelSoundIds",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "482F raw byte selection,live1F6C success increment and03B4 INT61 consumer; docs/game-prepare.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 84,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelSoundId",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "482F raw byte selection,live1F6C success increment and03B4 INT61 consumer; docs/game-prepare.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8044,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelSoundCycleIndex",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "482F raw byte selection,live1F6C success increment and03B4 INT61 consumer; docs/game-prepare.md"
     ],
     "verification_status": "UNRESOLVED"
   }

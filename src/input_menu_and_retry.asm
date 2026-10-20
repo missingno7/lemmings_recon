@@ -158,7 +158,7 @@ loc_44B3:
     mov al,[MenuSoundOptionIndex-GameDataImage] ; @044BF
     inc al ; @044C2
     mov ah,0x3 ; @044C4
-    cmp byte [0x2010],0xff ; @044C6
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @044C6
     jz loc_44CF ; @044CB
     mov ah,0x2 ; @044CD
 loc_44CF:
@@ -567,8 +567,14 @@ loc_481F:
     mov byte [LevelResourceSelectionByte-GameDataImage],0x0 ; @04822
     mov byte [MenuLevelGroupIndex-GameDataImage],0x0 ; @04827
     jmp loc_4401 ; @0482C
-sub_482F:
-    cmp byte [0x2010],0x0 ; @0482F
+; SOUND ID: any nonzero2010 enables selection. Special byte uses unchecked
+; decremented index. Normal success increments1F6C,wraps only exact17 tozero.
+; Without success AL remainszero,so select first ID rather than cached1F6C.
+; Normal PUSH AX/POP AX is live and can alias output54. UNKNOWN tables remain
+; explicit; original-byte lookup is canonical data,not an opcode fallback.
+; Native connected setup and all256 byte inputs: docs/game-prepare.md.
+SelectLevelSoundId:
+    cmp byte [ExternalSoundDriverEnabled-GameDataImage],0x0 ; @0482F
     jz loc_4865 ; @04834
     mov al,[LevelSpecialGraphicsSetByte-GameDataImage] ; @04836
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04839
@@ -579,35 +585,38 @@ sub_482F:
 loc_4840:
     cmp byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @04840
     jz loc_4855 ; @04845
-    mov al,[0x1f6c] ; @04847
+    mov al,[LevelSoundCycleIndex-GameDataImage] ; @04847
     inc al ; @0484A
     cmp al,0x11 ; @0484C
     jnz loc_4852 ; @0484E
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04850
 loc_4852:
-    mov [0x1f6c],al ; @04852
+    mov [LevelSoundCycleIndex-GameDataImage],al ; @04852
 loc_4855:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04855
     push ax ; @04857
-    lea bx,[0x4877] ; @04858
+    lea bx,[LevelSoundSequenceIds] ; @04858
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @0485C
     mov al,[cs:bx] ; @0485E
-    mov [0x54],al ; @04861
+    mov [LevelSoundId-GameDataImage],al ; @04861
     pop ax ; @04864
 loc_4865:
     ret ; @04865
 loc_4866:
     dec al ; @04866
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04868
-    lea bx,[0x4888] ; @0486A
+    lea bx,[SpecialLevelSoundIds] ; @0486A
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM chooses a different encoding) ; @0486E
     mov al,[cs:bx] ; @04870
-    mov [0x54],al ; @04873
+    mov [LevelSoundId-GameDataImage],al ; @04873
     ret ; @04876
 ; UNKNOWN: unresolved bytes
+LevelSoundSequenceIds:
     db 0x06,0x07,0x08,0x0a,0x0b,0x04,0x0c,0x0d,0x0e,0x0f,0x05,0x10,0x11,0x12,0x13,0x14 ; @04877
 ; UNKNOWN: unresolved bytes
-    db 0x15,0x01,0x09,0x03,0x02 ; @04887
+    db 0x15 ; @04887
+SpecialLevelSoundIds:
+    db 0x01,0x09,0x03,0x02 ; @04888
 ; Actual savedCX; byteINC selection beforeDIV30, then reread selection afterMUL.
 ; Zero remainder ->level30 and DECgroup; FF wraps toAXFF1E. No normalization.
 FormatSelectedLevelAndGroup:

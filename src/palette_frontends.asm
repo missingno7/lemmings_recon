@@ -8,7 +8,10 @@ PackedPalettePointerTable:
 ; UNKNOWN: unresolved bytes
 RgbPalettePointerTable:
     db 0x38,0x26,0x08,0x26,0x30,0x49,0x3b,0x1f,0xf0,0x25,0x23,0x1f,0xb8,0x25,0x68,0x26 ; @052E4
-sub_52F4:
+; GAME BASE: full modeword4 onlyRGB. First eight DAC colors then CH16/CL8
+; continue from actual advanced SI; first actualCALL5317,then inheritedRET.
+; Packed mode uses CS slot1 and attribute tail. UNKNOWN531D stays excluded.
+PublishGameBasePalette:
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x4 ; @052F4
     jz loc_5309 ; @052F9
     lea si,[PackedPalettePointerTable] ; @052FB
@@ -86,7 +89,11 @@ TransitionPaletteToSlot2:
     mov cx,0x10 ; @0536E
     mov bx,0x200 ; @05371
     jmp PaletteTransitionSharedBody ; @05374
-sub_5377:
+; GAME FADE SEED: live CS slots6/5 own DI/SI; actual PUSH DS/POP ES,DF words.
+; Duplicate source color0 into color7,then copy8 colors to rows8..15.
+; RGB uses3-byte colors and12 MOVSWs,packed uses4. Preserve final CMP/RET sites.
+; Full native contracts: docs/game-prepare.md.
+SeedGameFadePalette:
     cmp word [PaletteDisplayModeWord-GameDataImage],byte +0x4 ; @05377
     jz loc_53A1 ; @0537C
     push ds ; @0537E

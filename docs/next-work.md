@@ -2,7 +2,18 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 31,747 bytes. The560 new unique
+The main-image translated-code ledger union is32,367 bytes. The620 new unique
+bytes implement52F4/5377 palettes,482F sound selection,7900 backdrop,80FD dirty
+copies and81CC page setup with native status/far layout children. The shared
+gate passes577 fixtures/1154 comparisons,all237 own sites/34 outcomes,eight
+completed mutants,and42 matching hashes. All256 sound bytes,three loads,
+independent plane models,live frames/maps/counts,DF/SCAS and child/far stops
+are covered. All86 unit tests pass. The shared engine adds correct SCAS flag
+tracking and bounded packed device traces. UNKNOWN and child/platform/IRQ
+scopes remain explicit;03E7/game/aggregate acceptance remain open. See
+game-prepare.md.
+
+The preceding checkpoint had31,747 main-image translated-code bytes. The560 new unique
 bytes connect video/sprite-slot setup0FB2,13DC detection with all four native
 probe callbacks,and15AD calibration through1602 raster/PIT measurement.
 The shared campaign passes93 fixtures/186 comparisons,all228 sites/69 outcomes,
@@ -238,12 +249,14 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue the actual00FB ->03E7 initializer. The video/detection/calibration
-   cluster is now native; preserve its full BIOS/stack and raw timer contracts.
-   Batch52F4/5377 palette initialization with482F sound selection,then the
-   7900 and80FD/81CC status/dirty-page preparation before composing03E7.
-   Resolve live SS row buffers,DF scan/copy loops,raw sound indexes and actual
-   shared returns. Keep454C/4551 ->197D ->4566 ->00FB/4401 intact.
+1. Compose the actual00FB ->03E7 initializer now that its direct children
+   have native implementations. Preserve canonical DS/SS clears,full-register
+   video/calibration/mouse/timer services,level/status/object child domains,
+   actual child frames and final timer-chain calibration loops. Give those
+   waits explicit finite IRQ fixtures without inventing a game timeout.
+   The shared SCAS/device-trace change requires the full original-contract
+   gate; do not renew unrelated native evidence. Keep454C/4551 ->197D ->4566
+   ->00FB/4401 intact,then advance the remaining actual frame/game controllers.
    Selector-own bus support does not widen DAT/raw RAM/DOS/retry contracts.
    Preserve the actual1F6D outcome producers and actual parent frames. Keep special
    redraw, fatal/provider and processor-fault boundaries explicit. The 0041
