@@ -1033,3 +1033,16 @@ scroll/copy parents,with buffer1FF0 andDS001D/001F/0021/0023 ownership requiring
 static audit first. See menu-cache.md and next-work.md. Reference wrap and
 VGA-stack limitations remain explicit; full-game and aggregate acceptance
 are separate from this local checkpoint.
+
+The7CBC..7E75 scroll/copy cluster adds442 bytes,taking the main C union to28,529.
+Six entries now share the native renderer and real display swaps. Its102 fixtures/
+500 comparisons cover193 own sites/30 outcomes and nine completed mutants in
+5,187 known bytes. Three same-RAM sequences include the complete100-tick pause
+and CR restart. No shadow text/buffer state is introduced; DS0021's later prompt
+pointer role,DF,late phase/pause reads,shared edge fallthrough,actual saved words
+and DEC write flags remain explicit. A preliminary accumulated observation list
+hit the384MiB cap and earned no credit. Traces are now consumed only after each
+complete comparison,without resetting device/game state. Fresh43F2 views and its
+445B call order select the active menu controller above scroll/animation/cache/
+keyboard children next. Keep its startup,code-entry and game-loop exits scoped;
+see menu-scroll.md and next-work.md. SDL3 and full-game acceptance remain open.

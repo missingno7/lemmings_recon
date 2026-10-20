@@ -45,25 +45,33 @@ TerrainPieceAfterBitmap:
     pop si ; @07CBA
 TerrainPieceReturn:
     ret ; @07CBB
-sub_7CBC:
-    lea ax,[0x49ce] ; @07CBC
-    mov [0x1d],ax ; @07CC0
-    mov [0x1f],ax ; @07CC3
-    mov word [0x21],0x4 ; @07CC6
-    mov word [0x23],0x0 ; @07CCC
-    mov es,[0x1ff0] ; @07CD2
+; One canonical level-graphics buffer, four70x16 byte planes (stride0460).
+; DS001D/001F own live text start/cursor;0021 is phase here but prompt pointer48EB.
+; Initialize35 two-byte columns with real savedAX/CX/DS and fall through to draw.
+; No host page/text copy; sourceUI+1000:4C10, incomingDF affects MOVSW. menu-scroll.md.
+InitializeMenuScroll:
+    lea ax,[MenuScrollText-GameDataImage] ; @07CBC
+    mov [MenuScrollTextStart-GameDataImage],ax ; @07CC0
+    mov [MenuScrollTextCursor-GameDataImage],ax ; @07CC3
+    mov word [UiScrollPhaseOrPromptPointer-GameDataImage],0x4 ; @07CC6
+    mov word [MenuScrollPauseTicks-GameDataImage],0x0 ; @07CCC
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @07CD2
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @07CD6
     mov cx,0x23 ; @07CD8
 loc_7CDB:
     push cx ; @07CDB
     push ax ; @07CDC
-    call sub_7D8D ; @07CDD
+    call CopyMenuScrollTile ; @07CDD
+MenuScrollInitializeAfterTile:
     pop ax ; @07CE0
     pop cx ; @07CE1
     inc al ; @07CE2
     loop loc_7CDB ; @07CE4
-sub_7CE6:
-    mov ax,[0x1ff0] ; @07CE6
+; Draw560x16 center from live LevelGraphicsSegment, then publish UI+1000.
+; Shared7E2F tail draws two48x16 edges, rereading phase after the first child.
+; Actual near/far frames, returnedDS/ES and all flags remain live.
+DrawMenuScroll:
+    mov ax,[LevelGraphicsSegment-GameDataImage] ; @07CE6
     mov [GraphicsResourceSegment-GameDataImage],ax ; @07CE9
     db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @07CEC
     mov ax,0x30 ; @07CEE
@@ -72,42 +80,51 @@ sub_7CE6:
     mov cx,0x410 ; @07CF7
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @07CFA
     call 0x0:0x8822 ; @07CFC
+MenuScrollAfterBitmap:
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @07D01
     add ax,0x1000 ; @07D04
     mov [GraphicsResourceSegment-GameDataImage],ax ; @07D07
     jmp loc_7E2F ; @07D0A
-sub_7D0D:
-    call sub_7CE6 ; @07D0D
-    mov ax,[0x23] ; @07D10
+; Draw first. Nonzero0023 decrements in memory and returns without shifting.
+; Otherwise phase+=4; every low-nibble zero inserts a tile and one live text byte.
+; FF sets pause100 and consumes exactly one next byte; CR reloads001D once.
+; Four plane/16 row/70 byte backward loops shift by4 with BL nibble carry.
+AdvanceMenuScroll:
+    call DrawMenuScroll ; @07D0D
+MenuScrollAfterDraw:
+    mov ax,[MenuScrollPauseTicks-GameDataImage] ; @07D10
     db 0x23,0xc0 ; ENCODED: and ax,ax (NASM chooses a different encoding) ; @07D13
     jz loc_7D1C ; @07D15
-    dec word [0x23] ; @07D17
+    dec word [MenuScrollPauseTicks-GameDataImage] ; @07D17
+MenuScrollPauseReturn:
     ret ; @07D1B
 loc_7D1C:
-    mov es,[0x1ff0] ; @07D1C
-    mov ax,[0x21] ; @07D20
+    mov es,[LevelGraphicsSegment-GameDataImage] ; @07D1C
+    mov ax,[UiScrollPhaseOrPromptPointer-GameDataImage] ; @07D20
     add ax,0x4 ; @07D23
-    mov [0x21],ax ; @07D26
+    mov [UiScrollPhaseOrPromptPointer-GameDataImage],ax ; @07D26
     and ax,0xf ; @07D29
     jnz loc_7D54 ; @07D2C
     mov al,0x22 ; @07D2E
-    call sub_7D8D ; @07D30
-    mov si,[0x1f] ; @07D33
+    call CopyMenuScrollTile ; @07D30
+MenuScrollAfterTile:
+    mov si,[MenuScrollTextCursor-GameDataImage] ; @07D33
     lodsb ; @07D37
     cmp al,0xff ; @07D38
     jnz loc_7D44 ; @07D3A
-    mov word [0x23],0x64 ; @07D3C
+    mov word [MenuScrollPauseTicks-GameDataImage],0x64 ; @07D3C
     jmp short loc_7D4C ; @07D42
 loc_7D44:
     cmp al,0xd ; @07D44
     jnz loc_7D4D ; @07D46
-    mov si,[0x1d] ; @07D48
+    mov si,[MenuScrollTextStart-GameDataImage] ; @07D48
 loc_7D4C:
     lodsb ; @07D4C
 loc_7D4D:
-    mov [0x1f],si ; @07D4D
-    call sub_7DB7 ; @07D51
+    mov [MenuScrollTextCursor-GameDataImage],si ; @07D4D
+    call InsertMenuScrollGlyph ; @07D51
 loc_7D54:
+MenuScrollAfterGlyph:
     mov di,0x45 ; @07D54
     mov cx,0x4 ; @07D57
 loc_7D5A:
@@ -139,8 +156,12 @@ loc_7D66:
     pop cx ; @07D85
     add di,0x460 ; @07D86
     loop loc_7D5A ; @07D8A
+MenuScrollTickReturn:
     ret ; @07D8C
-sub_7D8D:
+; AL indexes an unchecked two-byte column. PUSH DS precedes selector read;
+; MOVSW source is linear4x16 words; destination stride70/plane1120; preserve DF.
+; Actual savedDI/CX/DS words are reread; stack aliases may change them.
+CopyMenuScrollTile:
     push ds ; @07D8D
     mov si,0x4c10 ; @07D8E
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @07D91
@@ -163,8 +184,12 @@ loc_7DA7:
     add di,0x460 ; @07DAF
     loop loc_7DA2 ; @07DB3
     pop ds ; @07DB5
+MenuScrollTileReturn:
     ret ; @07DB6
-sub_7DB7:
+; Space only saves/restoresDS and CMP flags. OtherAL wraps after SUB21.
+; Source5BC0+96*index,masksource+40; three OR passes then one mask-only plane.
+; STOSB follows DF, while explicit source INCs remain forward. Live savedBX/DI/CX.
+InsertMenuScrollGlyph:
     push ds ; @07DB7
     cmp al,0x20 ; @07DB8
     jz loc_7E2D ; @07DBA
@@ -229,10 +254,12 @@ loc_7E16:
     loop loc_7E16 ; @07E2B
 loc_7E2D:
     pop ds ; @07E2D
+MenuScrollGlyphReturn:
     ret ; @07E2E
 loc_7E2F:
+DrawMenuScrollEdges:
     mov si,0x1c10 ; @07E2F
-    mov ax,[0x21] ; @07E32
+    mov ax,[UiScrollPhaseOrPromptPointer-GameDataImage] ; @07E32
     shr ax,1 ; @07E35
     shr ax,1 ; @07E37
     and ax,0xf ; @07E39
@@ -241,9 +268,10 @@ loc_7E2F:
     shr ax,1 ; @07E40
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @07E42
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @07E44
-    call sub_7E65 ; @07E46
+    call DrawMenuScrollEdge ; @07E46
+MenuScrollAfterFirstEdge:
     mov si,0x1c10 ; @07E49
-    mov ax,[0x21] ; @07E4C
+    mov ax,[UiScrollPhaseOrPromptPointer-GameDataImage] ; @07E4C
     shr ax,1 ; @07E4F
     shr ax,1 ; @07E51
     and ax,0xf ; @07E53
@@ -253,12 +281,13 @@ loc_7E2F:
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @07E5C
     add si,0x1800 ; @07E5E
     mov ax,0x250 ; @07E62
-sub_7E65:
+DrawMenuScrollEdge:
     db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @07E65
     mov dx,0x30 ; @07E67
     mov cx,0x410 ; @07E6A
     mov bx,0x14e ; @07E6D
     call 0x0:0x8822 ; @07E70
+MenuScrollEdgeReturn:
     ret ; @07E75
 ; Publish the UI graphics segment once, then two320x104/two-plane calls per row.
 ; Saved BX,CX,BX remain live: dirty/stack aliases can change rows and loop count.

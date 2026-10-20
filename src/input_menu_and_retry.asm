@@ -46,7 +46,7 @@ MenuRefresh4401:
     call TransitionPaletteToSlot1 ; @04425
     call ClearFullDrawingPage ; @04428
     call DrawScreenBackground ; @0442B
-    call sub_7CBC ; @0442E
+    call InitializeMenuScroll ; @0442E
     call InitializeMenuAnimations ; @04431
     call DrawMenuBackdropLayers ; @04434
     call DrawMenuDecorationRows ; @04437
@@ -64,7 +64,7 @@ loc_4453:
     jnz loc_4453 ; @04459
 loc_445B:
     call WaitForDisplayStatusBit3Cycle ; @0445B
-    call sub_7D0D ; @0445E
+    call AdvanceMenuScroll ; @0445E
     call AdvanceMenuAnimations ; @04461
     call RefreshMenuLevelGroupGraphic ; @04464
     call RefreshMenuSoundGraphic ; @04467
@@ -419,7 +419,7 @@ loc_4797:
     call sub_48F6 ; @04798
     pop si ; @0479B
     call DrawTextStream ; @0479C
-    mov si,[0x21] ; @0479F
+    mov si,[UiScrollPhaseOrPromptPointer-GameDataImage] ; @0479F
     call DrawTextStream ; @047A3
     call TransitionPaletteToSlot2 ; @047A6
 loc_47A9:
@@ -552,7 +552,7 @@ sub_48BD:
     jz loc_48EB ; @048E5
     lea si,[0x4cb9] ; @048E7
 loc_48EB:
-    mov [0x21],si ; @048EB
+    mov [UiScrollPhaseOrPromptPointer-GameDataImage],si ; @048EB
     lea si,[0x4c4e] ; @048EF
     jmp DrawTextStream ; @048F3
 sub_48F6:

@@ -2,7 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is28,087 bytes. The176-byte
+The main-image translated-code ledger union is28,529 bytes. The442-byte
+7CBC..7E75 scroll/copy cluster connects six entries and the existing renderer/
+display swap. Its102 fixtures/500 comparisons cover193 own sites/30 outcomes
+and nine completed mutants in5,187 known connected bytes. Three same-RAM
+initializer/tick/swap sequences include a complete100-tick pause and CR restart.
+Live text/phase/pause ownership,DS0021's prompt-pointer alias,DF,shared edge tail,
+actual frames and DEC bus-flag order stay explicit. The initial accumulated-trace
+memory failure earned no credit; complete traces are now consumed after each
+stage comparison while RAM/device state persists. See menu-scroll.md.
+
+The preceding main-image translated-code ledger union was28,087 bytes. The176-byte
 4E37/4EA2 menu cache parents now compose the native renderer and actual display
 swaps on canonical RAM. Their571 fixtures/1,202 comparisons cover60 own sites/
 16 outcomes and seven completed mutants in4,921 known connected bytes. Six
@@ -127,14 +137,15 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue43F2's connected menu drawing/state domains. Fresh43F2 tree and7CBC
-   bottom-up views identify7D8D's42-byte copy leaf,7E65's renderer wrapper and
-   their7CBC/7CE6/7D0D parents. Before translating, audit1FF0 buffer ownership,
-   DS001D/001F/0021/0023 initialization/scroll state,section4 source4C10,live saved
-   DS/DI/CX and DF/segment effects. Preserve7CE6's shared7E2F tail and literal
-   unchecked glyph/table behavior; do not infer a host text model. The completed
-   caches close section3's source-layout boundaryEA50..F210, but broader allocation
-   and initialization obligations remain. Keep artificial VGA-stack budget failure and
+1. Connect43F2's active menu controller. Fresh43F2 tree/bottom-up views and the
+   literal445B call order now place native scroll,animation,cache,display-swap
+   and keyboard children beneath its loop. Audit4401 refresh/445B iteration,
+   sound-cycle byte1F71 and liveCS44E9 table,button-release waits and cache guards
+   before translating a connected bounded domain. Preserve actual transitions
+   to04D0/4967/4A01/454C; scoped acceptance must not claim the whole43F2 startup/
+   level/game loop. The43F2 prefix still depends on53FC/4AC5; code transforms
+   5042/51A2 and code entry4C7E remain later connected input obligations. Source
+   layout closure does not close broader allocation/initialization. Keep artificial VGA-stack budget failure and
    RETF selector-EA wrap atSPFFFE/FFFF explicitly unverified. Retain42A5 and
    UNKNOWN4C65/1696..16A8; no unsupported alternative is declared complete.
 2. Connect startup/resource/level/frame coordination, complete the remaining

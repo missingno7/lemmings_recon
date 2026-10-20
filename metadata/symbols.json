@@ -47467,8 +47467,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_7CBC",
-    "aliases": [],
+    "symbol_name": "InitializeMenuScroll",
+    "aliases": [
+      "sub_7CBC"
+    ],
     "callers": [
       17454
     ],
@@ -47579,16 +47581,30 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 152
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 152,
+    "c_implementation": "c/menu_scroll.c",
+    "c_code_ranges": [
+      [
+        31932,
+        32013
+      ],
+      [
+        32303,
+        32374
+      ]
+    ],
+    "verification_evidence": "tests/menu_scroll.py:102 fixtures/500 comparisons,193 own sites/30 direct outcomes and9 completed mutants. Three same-RAM initializer/tick/display-swap sequences at three loads, including complete100-tick pause and CR restart. Live DS/ES/SS,DF,actual saved words/near/far returns,shared fallthrough,late phase/pause,unchecked glyphs and precise DEC bus flags.442 unique main-image code bytes; docs/menu-scroll.md. Inherited reference wrap/VGA-stack limits remain open."
   },
   {
     "address": 31974,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_7CE6",
-    "aliases": [],
+    "symbol_name": "DrawMenuScroll",
+    "aliases": [
+      "sub_7CE6"
+    ],
     "callers": [
       32013
     ],
@@ -47650,16 +47666,30 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 110
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 110,
+    "c_implementation": "c/menu_scroll.c",
+    "c_code_ranges": [
+      [
+        31974,
+        32013
+      ],
+      [
+        32303,
+        32374
+      ]
+    ],
+    "verification_evidence": "tests/menu_scroll.py:102 fixtures/500 comparisons,193 own sites/30 direct outcomes and9 completed mutants. Three same-RAM initializer/tick/display-swap sequences at three loads, including complete100-tick pause and CR restart. Live DS/ES/SS,DF,actual saved words/near/far returns,shared fallthrough,late phase/pause,unchecked glyphs and precise DEC bus flags.442 unique main-image code bytes; docs/menu-scroll.md. Inherited reference wrap/VGA-stack limits remain open."
   },
   {
     "address": 32013,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_7D0D",
-    "aliases": [],
+    "symbol_name": "AdvanceMenuScroll",
+    "aliases": [
+      "sub_7D0D"
+    ],
     "callers": [
       17502
     ],
@@ -47778,16 +47808,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 128
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 128,
+    "c_implementation": "c/menu_scroll.c",
+    "c_code_ranges": [
+      [
+        32013,
+        32141
+      ]
+    ],
+    "verification_evidence": "tests/menu_scroll.py:102 fixtures/500 comparisons,193 own sites/30 direct outcomes and9 completed mutants. Three same-RAM initializer/tick/display-swap sequences at three loads, including complete100-tick pause and CR restart. Live DS/ES/SS,DF,actual saved words/near/far returns,shared fallthrough,late phase/pause,unchecked glyphs and precise DEC bus flags.442 unique main-image code bytes; docs/menu-scroll.md. Inherited reference wrap/VGA-stack limits remain open."
   },
   {
     "address": 32141,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_7D8D",
-    "aliases": [],
+    "symbol_name": "CopyMenuScrollTile",
+    "aliases": [
+      "sub_7D8D"
+    ],
     "callers": [
       32048,
       31965
@@ -47823,16 +47863,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 42
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 42,
+    "c_implementation": "c/menu_scroll.c",
+    "c_code_ranges": [
+      [
+        32141,
+        32183
+      ]
+    ],
+    "verification_evidence": "tests/menu_scroll.py:102 fixtures/500 comparisons,193 own sites/30 direct outcomes and9 completed mutants. Three same-RAM initializer/tick/display-swap sequences at three loads, including complete100-tick pause and CR restart. Live DS/ES/SS,DF,actual saved words/near/far returns,shared fallthrough,late phase/pause,unchecked glyphs and precise DEC bus flags.442 unique main-image code bytes; docs/menu-scroll.md. Inherited reference wrap/VGA-stack limits remain open."
   },
   {
     "address": 32183,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_7DB7",
-    "aliases": [],
+    "symbol_name": "InsertMenuScrollGlyph",
+    "aliases": [
+      "sub_7DB7"
+    ],
     "callers": [
       32081
     ],
@@ -47963,16 +48013,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 120
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 120,
+    "c_implementation": "c/menu_scroll.c",
+    "c_code_ranges": [
+      [
+        32183,
+        32303
+      ]
+    ],
+    "verification_evidence": "tests/menu_scroll.py:102 fixtures/500 comparisons,193 own sites/30 direct outcomes and9 completed mutants. Three same-RAM initializer/tick/display-swap sequences at three loads, including complete100-tick pause and CR restart. Live DS/ES/SS,DF,actual saved words/near/far returns,shared fallthrough,late phase/pause,unchecked glyphs and precise DEC bus flags.442 unique main-image code bytes; docs/menu-scroll.md. Inherited reference wrap/VGA-stack limits remain open."
   },
   {
     "address": 32357,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_7E65",
-    "aliases": [],
+    "symbol_name": "DrawMenuScrollEdge",
+    "aliases": [
+      "sub_7E65"
+    ],
     "callers": [
       32326
     ],
@@ -47984,8 +48044,16 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 17
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 17,
+    "c_implementation": "c/menu_scroll.c",
+    "c_code_ranges": [
+      [
+        32357,
+        32374
+      ]
+    ],
+    "verification_evidence": "tests/menu_scroll.py:102 fixtures/500 comparisons,193 own sites/30 direct outcomes and9 completed mutants. Three same-RAM initializer/tick/display-swap sequences at three loads, including complete100-tick pause and CR restart. Live DS/ES/SS,DF,actual saved words/near/far returns,shared fallthrough,late phase/pause,unchecked glyphs and precise DEC bus flags.442 unique main-image code bytes; docs/menu-scroll.md. Inherited reference wrap/VGA-stack limits remain open."
   },
   {
     "address": 32374,
@@ -65580,6 +65648,278 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned4E37/4EA2 two-page cache consumers and43F2/52A1 producers; docs/menu-cache.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 29,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuScrollTextStart",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 31,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuScrollTextCursor",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 33,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "UiScrollPhaseOrPromptPointer",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 35,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "MenuScrollPauseTicks",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 18894,
+    "segment": 2473,
+    "kind": "data",
+    "size": null,
+    "symbol_name": "MenuScrollText",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32001,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32016,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollAfterDraw",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32027,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollPauseReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32051,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollAfterTile",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32084,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollAfterGlyph",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32140,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollTickReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32182,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollTileReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32302,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollGlyphReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32303,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "DrawMenuScrollEdges",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32329,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollAfterFirstEdge",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 32373,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollEdgeReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 31968,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuScrollInitializeAfterTile",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned7CBC..7E75 scroll/copy consumers;1007 allocation,48EB prompt alias and section4 source geometry; docs/menu-scroll.md"
     ],
     "verification_status": "STATIC"
   }

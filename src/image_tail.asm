@@ -5806,3 +5806,8 @@ MenuSoundRedrawToggle equ GameDataImage+0x1f70
 MenuSoundRedrawCache equ GameDataImage+0x1f72
 MenuLevelGroupIndex equ GameDataImage+0x1f6e
 MenuLevelGroupRedrawCache equ GameDataImage+0x1f6f
+MenuScrollTextStart equ GameDataImage+0x001D
+MenuScrollTextCursor equ GameDataImage+0x001F
+UiScrollPhaseOrPromptPointer equ GameDataImage+0x0021
+MenuScrollPauseTicks equ GameDataImage+0x0023
+MenuScrollText equ GameDataImage+0x49CE
