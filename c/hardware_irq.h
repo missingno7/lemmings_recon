@@ -23,7 +23,7 @@ typedef struct LmnHardwareIrqResult {
    For IRQ09 the platform supplies its pending scan code through the real
    port60 provider (and owns its consumption). Read the live IVT after the
    real FLAGS/CS/IP pushes,
-   clearing IF/TF after saving FLAGS. Only the declared relocated17C7/16D4
+   clearing IF/TF after saving FLAGS. Only the declared relocated17C7/4C47/16D4
    bindings are implemented; unsupported vectors stop with the live frame.
    Adapters execute IRET; a changed return is reported, never repaired.
    No nested delivery or scheduling inside handlers/children is implied. */

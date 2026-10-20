@@ -1,13 +1,14 @@
 #ifndef LEMMINGS_LEVEL_BRIEFING_H
 #define LEMMINGS_LEVEL_BRIEFING_H
 #include "level_redraw.h"
+#include "foreground_poll.h"
 #include "palette_transition.h"
 
 typedef enum LmnBriefingStatus {
     LMN_BRIEFING_CONTINUATION=0,
     LMN_BRIEFING_CHILD_STOP=1,
     LMN_BRIEFING_CHANGED_RETURN=2,
-    LMN_BRIEFING_DIVIDE_ERROR=3
+    LMN_BRIEFING_DIVIDE_ERROR=3, LMN_BRIEFING_POLL_STOP=4
 } LmnBriefingStatus;
 typedef struct LmnBriefingResult {
     LmnRegs registers;
@@ -37,4 +38,8 @@ LmnBriefingResult lmn_show_level_briefing_core(uint8_t *memory,const LmnRegs *re
     uint16_t game_data_segment,const LmnBriefingServices *services);
 LmnBriefingResult lmn_show_level_briefing_adapter(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_data_segment,const LmnBriefingServices *services);
+/* Poll immediately before button4660/4683 and action-word468B reads;
+   POLL_STOP carries the service status in child_status, with saves live. */
+LmnBriefingResult lmn_show_level_briefing_core_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnBriefingServices *services,const LmnForegroundPoll *poll);
 #endif

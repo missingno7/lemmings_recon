@@ -1,6 +1,7 @@
 #ifndef LEMMINGS_KEYBOARD_INPUT_H
 #define LEMMINGS_KEYBOARD_INPUT_H
 #include "port_io.h"
+#include "foreground_poll.h"
 #include "interrupt_service.h"
 
 typedef struct LmnKeyboardResult {
@@ -11,7 +12,7 @@ enum LmnKeyboardStatus {
     LMN_KEYBOARD_READY=0, LMN_KEYBOARD_MISSING_INPUT=1,
     LMN_KEYBOARD_MISSING_OUTPUT=2, LMN_KEYBOARD_CHILD_STOP=3,
     LMN_KEYBOARD_CHANGED_CHILD_RETURN=4, LMN_KEYBOARD_UNBOUND_SERVICE=5,
-    LMN_KEYBOARD_PROVIDER_STOP=6, LMN_KEYBOARD_CHANGED_INTERRUPT_RETURN=7
+    LMN_KEYBOARD_PROVIDER_STOP=6, LMN_KEYBOARD_CHANGED_INTERRUPT_RETURN=7, LMN_KEYBOARD_POLL_STOP=8
 };
 /* INT09 entry16D4, with actual hardware frame at live SS:SP.
    Core before17B3; adapter consumes hardware IRET. Relocated16D9 stays live. */
@@ -57,4 +58,23 @@ LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers
    Reuses live canonical child state and actual CALL/RET frames. */
 LmnKeyboardResult lmn_show_input_selection(uint8_t *memory,const LmnRegs *registers,
     const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+/* Optional foreground polls at each4D23 scan read and43CE controller latch
+   read. Polled menu wrappers forward the same service through actual CALLs;
+   POLL_STOP retains every pending save/return and the service's status. */
+LmnKeyboardResult lmn_read_keyboard_character_core_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_read_keyboard_character_adapter_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_choose_input_controller_core_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_choose_input_controller_adapter_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_select_input_scale_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_select_input_controller_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_select_input_mode_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnKeyboardResult lmn_show_input_selection_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
 #endif

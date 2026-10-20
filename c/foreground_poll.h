@@ -4,7 +4,9 @@
 
 /* Platform seam for foreground loops that read bytes owned by the INT08 tail
    (TimerChainFlag1FCF, TimerForegroundCounter1FCD): 0179/01DF in the frame and
-   04AA/04BA in session initialization. `poll` runs immediately before the
+   04AA/04BA in session initialization. The menu/briefing/result polled APIs
+   also expose button/key reads (sites are listed in their public contracts).
+   `poll` runs immediately before the
    original instruction at `site` reads that byte; registers hold the complete
    live state with IP=site. A native platform delivers any pending hardware
    INT08 there (only when FLAGS.IF is set), e.g. by pushing the real FLAGS/CS/IP

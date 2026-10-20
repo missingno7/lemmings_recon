@@ -25,6 +25,7 @@ typedef struct Menu {
     const LmnRasterBus *bus;
     LmnRegs r;
     uint16_t game_ds,status,child_status;
+    const LmnForegroundPoll *poll;
 } Menu;
 static uint32_t physical(uint16_t seg,uint16_t off) {return (((uint32_t)seg<<4)+off)&0xfffffu;}
 static uint8_t read_at(Menu *s,uint32_t at) {
@@ -83,6 +84,13 @@ static LmnVideoRestoreState from_display(const LmnDisplayStatusState *v) {
     LmnVideoRestoreState out={v->value,v->base_value,v->count,v->argument,v->source_cursor,v->output_cursor,
         v->frame_cursor,v->data_segment,v->extra_segment,v->stack_segment,v->stack_offset,v->flags};return out;
 }
+static int poll_at(Menu *s,uint16_t site) {
+    if(s->poll&&s->poll->poll) {
+        s->r.ip=site;uint16_t status=s->poll->poll(s->poll->context,s->memory,&s->r,site);
+        if(status){s->status=LMN_MAIN_MENU_POLL_STOP;s->child_status=status;return 0;}
+    }
+    return 1;
+}
 static int finish_child(Menu *s,uint16_t cs,uint16_t resume,uint16_t status) {
     if(status){s->status=LMN_MAIN_MENU_CHILD_STOP;s->child_status=status;return 0;}
     s->r.ip=pop(s);
@@ -98,7 +106,7 @@ static int child(Menu *s,uint16_t target,uint16_t resume) {
     push(s,resume);in=(LmnVideoRestoreState){INPUT_FIELDS(s)};
     if(target==CS_ReadCodeInput||target==CS_DrawCodeInputText||target==CS_DecodeLevelCode||target==CS_FormatSelectedLevelAndGroup) {
         LmnMainMenuResult c=target==CS_ReadCodeInput?
-            lmn_read_code_input_core(s->memory,&s->r,s->game_ds,s->ports,s->bus):target==CS_DrawCodeInputText?
+            lmn_read_code_input_core_polled(s->memory,&s->r,s->game_ds,s->ports,s->bus,s->poll):target==CS_DrawCodeInputText?
             lmn_draw_code_input_core(s->memory,&s->r,s->game_ds,s->ports,s->bus):target==CS_DecodeLevelCode?
             lmn_decode_level_code_core(s->memory,&s->r,s->bus):lmn_format_selected_level_core(s->memory,&s->r,s->bus);
         s->r=c.registers;
@@ -111,8 +119,11 @@ static int child(Menu *s,uint16_t target,uint16_t resume) {
         LmnDisplaySetupResult c=lmn_setup_display_core(s->memory,cs,&in,LMN_DISPLAY_SETUP_ENTRY_INITIALIZE,0,s->bus);
         apply(s,&c.state,c.code_segment,c.continuation);status=(uint16_t)c.status;
     } else if(target==CS_ReadKeyboardCharacter) {
-        LmnKeyboardResult c=lmn_read_keyboard_character_core(s->memory,&s->r,s->bus);
+        LmnKeyboardResult c=lmn_read_keyboard_character_core_polled(s->memory,&s->r,s->bus,s->poll);
         s->r=c.registers;status=c.status;
+        if(c.status==LMN_KEYBOARD_POLL_STOP) {
+            s->status=LMN_MAIN_MENU_POLL_STOP;s->child_status=c.service_status;return 0;
+        }
     } else if(target==CS_PublishMenuPalette) {
         LmnPalettePublishResult c=lmn_publish_palette_core(s->memory,&s->r,LMN_PALETTE_PUBLISH_MENU,s->ports,s->bus);
         s->r=c.registers;status=c.status;
@@ -173,9 +184,9 @@ static void group_selection(Menu *s) {
     write8(s,SEG09A9_LevelResourceSelectionByte,(uint8_t)(s->r.ax>>8));
 #endif
 }
-LmnMainMenuResult lmn_run_main_menu(uint8_t *memory,const LmnRegs *registers,
-    uint16_t game_ds,enum LmnMainMenuEntry entry,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};
+LmnMainMenuResult lmn_run_main_menu_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,enum LmnMainMenuEntry entry,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u,poll};
     if(entry==LMN_MAIN_MENU_FRAME)goto frame;
     if(entry==LMN_MAIN_MENU_KEYBOARD)goto keyboard;
     if(entry==LMN_MAIN_MENU_RELEASE)goto release;
@@ -200,7 +211,7 @@ LmnMainMenuResult lmn_run_main_menu(uint8_t *memory,const LmnRegs *registers,
        !child(&s,CS_ProgramAlternateDisplayStart,CS_MainMenuAfterCall444D)||
        !child(&s,CS_TransitionPaletteToSlot2,CS_MainMenuAfterCall4450))return result(&s);
 release:
-    do {s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);(void)logic(&s,s.r.ax&7u,0);} while(!(s.r.flags&ZF));
+    do {if(!poll_at(&s,0x4453))return result(&s);s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);(void)logic(&s,s.r.ax&7u,0);} while(!(s.r.flags&ZF));
 frame:
     if(!child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_MainMenuAfterCall445B)||
        !child(&s,CS_AdvanceMenuScroll,CS_MainMenuAfterCall445E)||
@@ -208,6 +219,7 @@ frame:
        !child(&s,CS_RefreshMenuLevelGroupGraphic,CS_MainMenuAfterCall4464)||
        !child(&s,CS_RefreshMenuSoundGraphic,CS_MainMenuAfterCall4467)||
        !child(&s,CS_SwapDrawingOriginsAndDisplay,CS_MainMenuAfterCall446A))return result(&s);
+    if(!poll_at(&s,0x446D))return result(&s);
     s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);(void)logic(&s,s.r.ax&7u,0);
     if(!(s.r.flags&ZF))goto start_level;
 keyboard:
@@ -317,8 +329,10 @@ redraw:
        !child(s,CS_TransitionPaletteToSlot2,CS_MenuStartupAfterCall4AE5))return;
     write8(s,SEG09A9_KeyboardScanCodeByte,0u);
     for(;;) {
+        if(!poll_at(s,0x4AED))return;
         s->r.ax=read16(s,s->r.ds,SEG09A9_InputButtonsWord);(void)logic(s,s->r.ax&7u,0);
         if(!(s->r.flags&ZF))break;
+        if(!poll_at(s,0x4AF5))return;
         ah(s,read8(s,SEG09A9_KeyboardScanCodeByte));
 #if MAIN_MENU_MUTATION == 15
         (void)logic(s,(uint8_t)s->r.ax,1);
@@ -354,18 +368,18 @@ ready:
 }
 LmnMainMenuResult lmn_check_menu_resource_core(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_ds,const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};resource_probe(&s,dos);return result(&s);
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u,0};resource_probe(&s,dos);return result(&s);
 }
 LmnMainMenuResult lmn_check_menu_resource_adapter(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_ds,const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
     LmnMainMenuResult out=lmn_check_menu_resource_core(memory,registers,game_ds,dos,ports,bus);
-    if(out.status==0u){Menu s={memory,ports,bus,out.registers,game_ds,0u,0u};s.r.ip=pop(&s);out.registers=s.r;}
+    if(out.status==0u){Menu s={memory,ports,bus,out.registers,game_ds,0u,0u,0};s.r.ip=pop(&s);out.registers=s.r;}
     return out;
 }
-LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
+LmnMainMenuResult lmn_enter_main_menu_polled(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_ds,const LmnVideoRestoreServices *video,const LmnInterruptService *dos,
-    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};uint16_t cs=s.r.cs;
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u,poll};uint16_t cs=s.r.cs;
     push(&s,CS_MenuStartupAfterCall43F2);
     {
         LmnVideoRestoreState in={INPUT_FIELDS(&s)};
@@ -382,7 +396,7 @@ LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
     if(!child(&s,CS_PublishMenuPalette,CS_MenuStartupAfterCall43FB))return result(&s);
     push(&s,CS_MenuStartupAfterCall43FE);resource_probe(&s,dos);
     if(s.status||!finish_child(&s,cs,CS_MenuStartupAfterCall43FE,0u))return result(&s);
-    return lmn_run_main_menu(memory,&s.r,game_ds,LMN_MAIN_MENU_REFRESH,ports,bus);
+    return lmn_run_main_menu_polled(memory,&s.r,game_ds,LMN_MAIN_MENU_REFRESH,ports,bus,poll);
 }
 static void cl(Menu *s,uint8_t v) {s->r.cx=(uint16_t)((s->r.cx&0xff00u)|v);}
 static void ch(Menu *s,uint8_t v) {s->r.cx=(uint16_t)((s->r.cx&0xffu)|((uint16_t)v<<8));}
@@ -418,7 +432,7 @@ static void rotate_code(Menu *s,int right) {
     } while(!(s->r.flags&SF));
 }
 LmnMainMenuResult lmn_encode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
-    Menu s={memory,0,bus,*registers,0u,0u,0u};
+    Menu s={memory,0,bus,*registers,0u,0u,0u,0};
     dl(&s,read8(&s,SEG09A9_LevelResourceSelectionByte));dh(&s,read8(&s,SEG09A9_LevelCodePayloadByte));
     cl(&s,read8(&s,SEG09A9_StatusCompletionDisplayValue));s.r.si=SEG09A9_LevelCodeTemplate;s.r.di=SEG09A9_GeneratedLevelCode;
     s.r.ax=s.r.dx;ch(&s,(uint8_t)s.r.cx);s.r.ax=logic(&s,s.r.ax&0x101u,0);ch(&s,(uint8_t)logic(&s,(s.r.cx>>8)&1u,1));
@@ -452,7 +466,7 @@ LmnMainMenuResult lmn_encode_level_code_core(uint8_t *memory,const LmnRegs *regi
     s.r.si=(uint16_t)(SEG09A9_GeneratedLevelCode+6u);rotate_code(&s,1);s.r.ip=CS_LevelCodeEncodeReturn;return result(&s);
 }
 LmnMainMenuResult lmn_decode_level_code_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
-    Menu s={memory,0,bus,*registers,0u,0u,0u};s.r.si=SEG09A9_EnteredLevelCode;
+    Menu s={memory,0,bus,*registers,0u,0u,0u,0};s.r.si=SEG09A9_EnteredLevelCode;
 #if LEVEL_CODE_MUTATION == 9
     write8(&s,SEG09A9_SpecialLevelCodeLatch,0u);
 #endif
@@ -520,7 +534,7 @@ done:
     s.r.ip=CS_LevelCodeDecodeReturn;return result(&s);
 }
 static LmnMainMenuResult code_return(uint8_t *memory,LmnMainMenuResult out,const LmnRasterBus *bus) {
-    Menu s={memory,0,bus,out.registers,0u,0u,0u};s.r.ip=pop(&s);out.registers=s.r;return out;
+    Menu s={memory,0,bus,out.registers,0u,0u,0u,0};s.r.ip=pop(&s);out.registers=s.r;return out;
 }
 LmnMainMenuResult lmn_encode_level_code_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
     return code_return(memory,lmn_encode_level_code_core(memory,registers,bus),bus);
@@ -533,7 +547,7 @@ static uint16_t incdec16(Menu *s,uint16_t v,int dec) {
 }
 LmnMainMenuResult lmn_draw_code_input_core(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};s.r.si=SEG09A9_CodeInputText;
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u,0};s.r.si=SEG09A9_CodeInputText;
     LmnTextStreamState in={INPUT_FIELDS(&s)};
     LmnTextStreamResult c=lmn_draw_text_stream_core(memory,s.r.cs,game_ds,&in,bus,ports);
     apply(&s,&c.state,c.code_segment,c.continuation);
@@ -546,7 +560,7 @@ LmnMainMenuResult lmn_draw_code_input_adapter(uint8_t *memory,const LmnRegs *reg
     return out.status?out:code_return(memory,out,bus);
 }
 LmnMainMenuResult lmn_format_selected_level_core(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
-    Menu s={memory,0,bus,*registers,0u,0u,0u};
+    Menu s={memory,0,bus,*registers,0u,0u,0u,0};
 #if CODE_ENTRY_MUTATION == 2
     uint8_t first_selection;
 #endif
@@ -580,9 +594,9 @@ LmnMainMenuResult lmn_format_selected_level_core(uint8_t *memory,const LmnRegs *
 LmnMainMenuResult lmn_format_selected_level_adapter(uint8_t *memory,const LmnRegs *registers,const LmnRasterBus *bus) {
     return code_return(memory,lmn_format_selected_level_core(memory,registers,bus),bus);
 }
-LmnMainMenuResult lmn_read_code_input_core(uint8_t *memory,const LmnRegs *registers,
-    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};
+LmnMainMenuResult lmn_read_code_input_core_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u,poll};
     s.r.si=SEG09A9_EnteredLevelCode;s.r.cx=10u;s.r.bx=0x5a41u;s.r.bp=CS_DrawCodeInputText;
     s.r.di=s.r.si;s.r.dx=s.r.si;s.r.dx=arithmetic(&s,s.r.dx,s.r.cx,0,0);s.r.cx=0x5f2eu;
     #if CODE_ENTRY_MUTATION == 3
@@ -661,9 +675,9 @@ LmnMainMenuResult lmn_read_code_input_adapter(uint8_t *memory,const LmnRegs *reg
     LmnMainMenuResult out=lmn_read_code_input_core(memory,registers,game_ds,ports,bus);
     return out.status?out:code_return(memory,out,bus);
 }
-LmnMainMenuResult lmn_show_code_entry(uint8_t *memory,const LmnRegs *registers,
-    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    Menu s={memory,ports,bus,*registers,game_ds,0u,0u};
+LmnMainMenuResult lmn_show_code_entry_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    Menu s={memory,ports,bus,*registers,game_ds,0u,0u,poll};
     if(!child(&s,CS_ClearFullDrawingPage,CS_CodeEntryAfterCall4967)||!child(&s,CS_InitializeDisplayOrigins,CS_CodeEntryAfterCall496A)||
        !child(&s,CS_TransitionPaletteToSlot1,CS_CodeEntryAfterCall496D)||!child(&s,CS_ClearFullDrawingPage,CS_CodeEntryAfterCall4970)||
        !child(&s,CS_DrawScreenBackground,CS_CodeEntryAfterCall4973))return result(&s);
@@ -704,7 +718,9 @@ LmnMainMenuResult lmn_show_code_entry(uint8_t *memory,const LmnRegs *registers,
     s.r.cx=120u;
     do {
         if(!child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_CodeEntryAfterCall49CF))return result(&s);
+        if(!poll_at(&s,0x49D2))return result(&s);
         s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);(void)logic(&s,s.r.ax&7u,0);if(!(s.r.flags&ZF))break;
+        if(!poll_at(&s,0x49DA))return result(&s);
         s.r.ax=read16(&s,s.r.ds,SEG09A9_InputKeyMask1FC7);(void)logic(&s,s.r.ax&0x20u,0);if(!(s.r.flags&ZF))break;
 #if CODE_ENTRY_MUTATION == 14
         (void)logic(&s,0u,0);
@@ -719,4 +735,25 @@ rejected:
     if(!child(&s,CS_DrawTextStream,CS_CodeEntryAfterCall49F0)||!child(&s,CS_SwapDrawingOriginsAndDisplay,CS_CodeEntryAfterCall49F3))return result(&s);
     s.r.cx=60u;do {if(!child(&s,CS_WaitForDisplayStatusBit3Cycle,CS_CodeEntryAfterCall49F9))return result(&s);--s.r.cx;}while(s.r.cx);
     s.r.ip=CS_MenuRefresh4401;return result(&s);
+}
+
+LmnMainMenuResult lmn_run_main_menu(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,enum LmnMainMenuEntry entry,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    return lmn_run_main_menu_polled(memory,registers,game_ds,entry,ports,bus,0);
+}
+
+LmnMainMenuResult lmn_enter_main_menu(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnVideoRestoreServices *video,const LmnInterruptService *dos,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    return lmn_enter_main_menu_polled(memory,registers,game_ds,video,dos,ports,bus,0);
+}
+
+LmnMainMenuResult lmn_read_code_input_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    return lmn_read_code_input_core_polled(memory,registers,game_ds,ports,bus,0);
+}
+
+LmnMainMenuResult lmn_show_code_entry(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
+    return lmn_show_code_entry_polled(memory,registers,game_ds,ports,bus,0);
 }

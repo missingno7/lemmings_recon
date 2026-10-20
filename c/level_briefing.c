@@ -67,6 +67,13 @@ static void apply(Briefing *s,const LmnVideoRestoreState *v,uint16_t cs,uint16_t
         v->frame_cursor,v->stack_offset,cs,v->data_segment,v->extra_segment,v->stack_segment,ip,v->flags};
 }
 static LmnBriefingResult result(const Briefing *s) {LmnBriefingResult r={s->r,s->status,s->child_status};return r;}
+static int poll_at(Briefing *s,const LmnForegroundPoll *poll,uint16_t site) {
+    if(poll&&poll->poll) {
+        s->r.ip=site;uint16_t status=poll->poll(poll->context,s->memory,&s->r,site);
+        if(status){s->status=LMN_BRIEFING_POLL_STOP;s->child_status=status;return 0;}
+    }
+    return 1;
+}
 static int stopped(Briefing *s,uint16_t status) {
     if(!status)return 0;
     s->status=LMN_BRIEFING_CHILD_STOP;s->child_status=status;return 1;
@@ -172,8 +179,8 @@ static int child(Briefing *s,uint16_t target,uint16_t resume) {
     }
     return returned(s,cs,resume);
 }
-LmnBriefingResult lmn_show_level_briefing_core(uint8_t *memory,const LmnRegs *registers,
-    uint16_t game_ds,const LmnBriefingServices *services) {
+LmnBriefingResult lmn_show_level_briefing_core_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnBriefingServices *services,const LmnForegroundPoll *poll) {
     Briefing s={memory,*registers,services?services->bus:0,services?services->ports:0,game_ds,0,0,services?services->redraw:0};
     al(&s,read8(&s,SEG09A9_MenuLevelGroupIndex));al(&s,shl(&s,(uint8_t)s.r.ax));ah(&s,(uint8_t)s.r.ax);
     al(&s,shl(&s,(uint8_t)s.r.ax));ah(&s,(uint8_t)arithmetic(&s,s.r.ax>>8,(uint8_t)s.r.ax,0,1));
@@ -227,7 +234,7 @@ LmnBriefingResult lmn_show_level_briefing_core(uint8_t *memory,const LmnRegs *re
     s.r.si=0x4BA0;{uint8_t mode=read8(&s,SEG09A9_InputModeByte25A6);(void)arithmetic(&s,mode,0,1,1);
         if(!(s.r.flags&ZF)){s.r.si=0x4BC3;mode=read8(&s,SEG09A9_InputModeByte25A6);(void)arithmetic(&s,mode,1,1,1);if(!(s.r.flags&ZF))s.r.si=0x4BE5;}}
     if(!child(&s,CS_DrawTextStream,CS_BriefingAfter465D))return result(&s);
-    do {s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);logic(&s,s.r.ax&7u);}while(!(s.r.flags&ZF));
+    do {if(!poll_at(&s,poll,0x4660))return result(&s);s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);logic(&s,s.r.ax&7u);}while(!(s.r.flags&ZF));
     do {
         if(!child(&s,CS_RefreshRasterSplitPalette,CS_BriefingAfter4668))return result(&s);
         al(&s,0);if(!child(&s,CS_PublishUpperEightPaletteColors,CS_BriefingAfter466E))return result(&s);
@@ -236,8 +243,10 @@ LmnBriefingResult lmn_show_level_briefing_core(uint8_t *memory,const LmnRegs *re
     }while(!(s.r.flags&ZF));
     for(;;) {
         if(!child(&s,CS_RefreshRasterSplitPalette,CS_BriefingAfter4680))return result(&s);
+        if(!poll_at(&s,poll,0x4683))return result(&s);
         s.r.ax=read16(&s,s.r.ds,SEG09A9_InputButtonsWord);logic(&s,s.r.ax&7u);
         if(!(s.r.flags&ZF))break;
+        if(!poll_at(&s,poll,0x468B))return result(&s);
         s.r.ax=read16(&s,s.r.ds,0x1FC7);logic(&s,s.r.ax&0x20u);
         if(!(s.r.flags&ZF)) {
             if(!child(&s,CS_FadeAndClearSplitPalette,CS_ShowLevelBriefing+0x138u))return result(&s);
@@ -261,3 +270,6 @@ LmnBriefingResult lmn_show_level_briefing_adapter(uint8_t *memory,const LmnRegs 
     LmnBriefingResult out=lmn_show_level_briefing_core(memory,registers,game_ds,services);
     if(!out.status&&out.registers.ip==CS_ClearVgaReturn){Briefing s={memory,out.registers,services?services->bus:0,services?services->ports:0,game_ds,0,0,0};s.r.ip=pop(&s);out=result(&s);}return out;
 }
+
+LmnBriefingResult lmn_show_level_briefing_core(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,const LmnBriefingServices *services) {return lmn_show_level_briefing_core_polled(memory,registers,game_ds,services,0);}

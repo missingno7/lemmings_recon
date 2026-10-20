@@ -2915,7 +2915,7 @@
     ],
     "c_core": "lmn_game_session_core",
     "c_implementation": "c/game_session.c",
-    "verification_evidence": "tests/game_session.py; build/game-session-differential.json: all3 owned sites/10 bytes,391 exact-frame/poll checkpoints,7008684 connected original instructions/4405 sites/652 outcomes, three IRQ09 helper comparisons and four completed numeric mutants. Real native/original INT08/09 delivery through live IVT and SS:SP at explicit polls; full RAM/register/bus/VGA equality. Inherited child/platform domains remain conditional. Exact gate passes on the host."
+    "verification_evidence": "tests/game_session.py; build/game-session-differential.json: all3 owned sites/10 bytes,391 exact-frame/poll checkpoints,7008684 connected original instructions/4405 sites/652 outcomes, three IRQ09 helper comparisons and four completed numeric mutants. Real native/original INT08/09 delivery through live IVT and SS:SP at explicit polls; full RAM/register/bus/VGA equality. Inherited child/platform domains remain conditional. Exact gate passes on the host. Native game loop: continuous real-level menu/session/result handoffs; retain existing child/platform seams"
   },
   {
     "address": 261,
@@ -29490,7 +29490,7 @@
         17394
       ]
     ],
-    "verification_evidence": "tests/keyboard_input.py:extended same campaign through live43CE choice and4A4E..4ABC native text/swap/port calibration/scale composition;all256 choice bytes,late latch,actual child frames,asymmetric counters,full pinned text with glyph rendering,missing/changed stops,and same-RAM calibration-to-input handoff. 125 new unique code bytes (existing22-byte scale span counted once). Surrounding43F2/4401 and RETF selector-EA wrap reference limitation stay open; docs/keyboard-input.md"
+    "verification_evidence": "tests/keyboard_input.py:extended same campaign through live43CE choice and4A4E..4ABC native text/swap/port calibration/scale composition;all256 choice bytes,late latch,actual child frames,asymmetric counters,full pinned text with glyph rendering,missing/changed stops,and same-RAM calibration-to-input handoff. 125 new unique code bytes (existing22-byte scale span counted once). Surrounding43F2/4401 and RETF selector-EA wrap reference limitation stay open; docs/keyboard-input.md Native game loop: c/keyboard_input.h; pending-RET poll-stop checks; poll sites 43CE"
   },
   {
     "address": 17389,
@@ -30858,7 +30858,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance. Native game loop: tests/game_loop.py; build/game-loop-differential.json; actual fallthrough into4401 and live menu IVT08"
   },
   {
     "address": 17397,
@@ -30958,7 +30958,7 @@
         17740
       ]
     ],
-    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance. Native game loop: c/main_menu.h polled API contract; poll sites 4453,446D"
   },
   {
     "address": 17409,
@@ -33274,7 +33274,7 @@
         20023
       ]
     ],
-    "verification_evidence": "tests/level_briefing.py shared campaign:295 fixtures/590 core and actualRET comparisons,all132 owned sites/29 direct outcomes,379 new unique bytes across briefing and three wrappers;5 completed numeric mutants. All256 percent inputs,three full loads,native redraw/preview/background/text and changing split-palette phases,button/idle/cancel paths,live word/20-bit wrap,unchecked rating row,byte DIV zero/overflow and explicit special-service stop. 22,596,518 original steps/13,208,554 ordered events;148 consumed hashes match. New code inherits child RAM/provider/fatal/IRQ boundaries;454C resource composition,processor fault handling,full-game/native services and aggregate acceptance remain open. docs/level-briefing.md"
+    "verification_evidence": "tests/level_briefing.py shared campaign:295 fixtures/590 core and actualRET comparisons,all132 owned sites/29 direct outcomes,379 new unique bytes across briefing and three wrappers;5 completed numeric mutants. All256 percent inputs,three full loads,native redraw/preview/background/text and changing split-palette phases,button/idle/cancel paths,live word/20-bit wrap,unchecked rating row,byte DIV zero/overflow and explicit special-service stop. 22,596,518 original steps/13,208,554 ordered events;148 consumed hashes match. New code inherits child RAM/provider/fatal/IRQ boundaries;454C resource composition,processor fault handling,full-game/native services and aggregate acceptance remain open. docs/level-briefing.md Native game loop: c/level_briefing.h polled API contract; poll sites 4660,4683,468B"
   },
   {
     "address": 17799,
@@ -33925,7 +33925,7 @@
     ],
     "c_core": "lmn_level_result_core",
     "c_implementation": "c/level_result.c",
-    "verification_evidence": "tests/level_result.py; build/level-result-differential.json; bounded result operation, explicit foreground input polls and existing child domains"
+    "verification_evidence": "tests/level_result.py; build/level-result-differential.json; bounded result operation, explicit foreground input polls and existing child domains Native game loop: next-level, fail/retry and menu-return handoffs; live menu/game IVT08 selection"
   },
   {
     "address": 18217,
@@ -34551,7 +34551,7 @@
         18945
       ]
     ],
-    "verification_evidence": "tests/main_menu.py expanded967 fixtures/978 comparisons,601 own sites/130 direct outcomes and46 completed mutants; seven handoffs including three menu81->4967->real editor/decoder->4401 refresh->454C sequences. All new160 sites/43 outcomes,live formatter reads/CX,byte wrap,20-cycle blink,signed saved bounds,full last slot/deferred erase,actual stack/RET,knownBP503B with explicit stops at unresolved4CC9/4D18 alternatives,decoderZF,unchecked ratingrowFF,DF and three result-input predicates. Supplemental full-screen mode4/0104 comparisons pass. 353 new unique code bytes; graph editor206 includes50 shared text-tail bytes. Native scheduling,resource/platform seams and full game remain open; docs/code-entry.md."
+    "verification_evidence": "tests/main_menu.py expanded967 fixtures/978 comparisons,601 own sites/130 direct outcomes and46 completed mutants; seven handoffs including three menu81->4967->real editor/decoder->4401 refresh->454C sequences. All new160 sites/43 outcomes,live formatter reads/CX,byte wrap,20-cycle blink,signed saved bounds,full last slot/deferred erase,actual stack/RET,knownBP503B with explicit stops at unresolved4CC9/4D18 alternatives,decoderZF,unchecked ratingrowFF,DF and three result-input predicates. Supplemental full-screen mode4/0104 comparisons pass. 353 new unique code bytes; graph editor206 includes50 shared text-tail bytes. Native scheduling,resource/platform seams and full game remain open; docs/code-entry.md. Native game loop: c/main_menu.h polled API contract; poll sites 4D23,49D2,49DA"
   },
   {
     "address": 18794,
@@ -35368,7 +35368,7 @@
         19228
       ]
     ],
-    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance."
+    "verification_evidence": "Retained contracts in tests/main_menu.py expanded967-fixture/978-comparison campaign,601 own sites/130 outcomes and46 completed mutants; seven same-RAM handoffs. See docs/menu-startup.md and docs/level-code.md for earlier domains; docs/code-entry.md for the353 newly accepted unique bytes. Scope excludes unresolved alternatives/native platform/game bodies and aggregate acceptance. Native game loop: c/main_menu.h polled API contract; poll sites 4AED,4AF5"
   },
   {
     "address": 19151,
@@ -35649,8 +35649,21 @@
       "Static direct call target",
       "Pinned insert-disk prompt and eleven live child calls; docs/retry-ui.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 64
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 64,
+    "c_implementation": "c/resource_retry.c",
+    "c_core": "lmn_resource_retry_screen_core",
+    "c_code_ranges": [
+      [
+        19228,
+        19259
+      ],
+      [
+        19280,
+        19292
+      ]
+    ],
+    "verification_evidence": "tests/resource_retry.py: original/native full parent 4B1C through actual outer RET 4B5B on button and scan exits; changed SetupDisplayModeAndLayout return stop; input reads 4B40/4B48 with finite IRQ-at-poll updates; 3 distinct-risk mutants. Shared input bytes 4B3B..4B4F keep their prior owner."
   },
   {
     "address": 19231,
@@ -37279,7 +37292,7 @@
         19789
       ]
     ],
-    "verification_evidence": "tests/keyboard_input.py:extended existing producer campaign through4D1A repeat/character reader and scoped4A9F..4AB4 scale loop;1938 comparisons/11 completed mutants,all152 cluster sites/49 outcomes. 73 new bytes; surrounding43F2 menu/4401 continuation remain untranslated. Live83-byte states,second reads,zero-underflow/86 reload/93 emission,overlapping202E XLAT,AH,actual RET/CALL words and unsigned31..34 scale filtering. Same-RAM IRQ/character output/repeat/menu handoff at three loads; no scheduler/platform-body proof. docs/keyboard-input.md"
+    "verification_evidence": "tests/keyboard_input.py:extended existing producer campaign through4D1A repeat/character reader and scoped4A9F..4AB4 scale loop;1938 comparisons/11 completed mutants,all152 cluster sites/49 outcomes. 73 new bytes; surrounding43F2 menu/4401 continuation remain untranslated. Live83-byte states,second reads,zero-underflow/86 reload/93 emission,overlapping202E XLAT,AH,actual RET/CALL words and unsigned31..34 scale filtering. Same-RAM IRQ/character output/repeat/menu handoff at three loads; no scheduler/platform-body proof. docs/keyboard-input.md Native game loop: c/keyboard_input.h; pending-RET poll-stop checks; poll sites 4D23"
   },
   {
     "address": 19757,

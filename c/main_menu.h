@@ -1,6 +1,7 @@
 #ifndef LEMMINGS_MAIN_MENU_H
 #define LEMMINGS_MAIN_MENU_H
 #include "menu_scroll.h"
+#include "foreground_poll.h"
 #include "menu_animation.h"
 #include "menu_cache.h"
 #include "keyboard_input.h"
@@ -14,7 +15,7 @@ typedef enum LmnMainMenuStatus {
     LMN_MAIN_MENU_CONTINUATION, LMN_MAIN_MENU_CHILD_STOP,
     LMN_MAIN_MENU_CHANGED_CHILD_RETURN,
     LMN_MAIN_MENU_UNBOUND_DOS,LMN_MAIN_MENU_DOS_STOP,LMN_MAIN_MENU_CHANGED_IRET,
-    LMN_MAIN_MENU_UNSUPPORTED_CODE_CALLBACK
+    LMN_MAIN_MENU_UNSUPPORTED_CODE_CALLBACK, LMN_MAIN_MENU_POLL_STOP
 } LmnMainMenuStatus;
 typedef struct LmnMainMenuResult {
     LmnRegs registers;
@@ -65,4 +66,18 @@ LmnMainMenuResult lmn_format_selected_level_adapter(uint8_t *memory,const LmnReg
 /* 4967 validation screen stops at its actual JMP4401; no parent RET exists. */
 LmnMainMenuResult lmn_show_code_entry(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus);
+/* Optional IRQ/cancellation polls before4453/446D, keyboard scan4D23,
+   resource probe4AED/4AF5 and code acceptance49D2/49DA reads. Existing APIs
+   bind NULL and keep their prior ABI. Stops retain pending child/save frames;
+   these entry APIs do not resume an arbitrary interrupted internal CALL. */
+LmnMainMenuResult lmn_run_main_menu_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,enum LmnMainMenuEntry entry,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnMainMenuResult lmn_enter_main_menu_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnVideoRestoreServices *video,
+    const LmnInterruptService *dos,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnMainMenuResult lmn_read_code_input_core_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
+LmnMainMenuResult lmn_show_code_entry_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_data_segment,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll);
 #endif

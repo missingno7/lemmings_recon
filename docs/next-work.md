@@ -7,25 +7,26 @@ loop and physical source map. Old checkpoints are in convergence-history.md.
 
 ## Immediate mode
 
-The level session is native end to end: EnterLoadedLevelGame 00FB
-(c/game_session.c) runs InitializeGameSession 03E7..04CF and the frame
-0105..03E6 (game_frame/game_transition/view_scroll) to the result screen 46EB
-(c/level_result.c), whose exits JMP to 4551 (next/retry) or 4401 (menu).
-c/hardware_irq.c delivers the real native INT08/IRQ09 handlers at the explicit
-LmnForegroundPoll sites; tests/game_session.py checks this against original
-handler delivery with scripted mouse/keyboard play. Contracts sit beside the ASM
-at 00FB/0186/0462/46EB and in src/game_timer.asm. No SDL3 in this phase.
+The menu -> level -> session -> result loop is native and continuous:
+c/game_loop.c follows the actual JMP transfers between EnterMainMenu/4401,
+454C/4551 (resources, briefing), the 00FB session and the 46EB result, with
+c/hardware_irq.c delivering the live IVT08 target (menu 4C47 or game 17C7) and
+IRQ09 at LmnForegroundPoll sites in every wait loop. tests/game_loop.py replays
+a scripted multi-level journey (cheat pass -> next level, time-up -> retry,
+menu return) into the original handlers. Explicit loop stops remain: fatal
+cleanup 04D0, DOS exit 04F7, and resource retry 4B1C (now native in
+c/resource_retry.c but entered from the DAT layer's void retry callback, which
+the driver still stops at). No SDL3 in this phase.
 
 ## Priorities
 
-1. **Native menu -> level -> session -> result loop.** Main menu 43F2/4401,
-   level start 454C/4551, the session and the result screen all have native
-   cores. Compose them into one driver from EnterMainMenu with startup state
-   constructed from the documented 0000..00FA producers, delivering IRQs only at
-   poll sites, and verify a scripted multi-level run (pass -> next level, fail
-   -> retry, menu return) against the original. This is the native core the
-   platform/SDL layer drives. Keep 004A's FF producer, preemption inside child
-   bodies, 715B callbacks and sound-engine bodies explicit.
+1. **Platform layer over the native loop.** Define the explicit platform
+   services the loop consumes (VGA planes/CRTC/DAC, PIT/PIC timing, mouse INT33,
+   keyboard IRQ09, DOS file I/O, BIOS video) as one C interface and a host
+   implementation with a real-time INT08 schedule derived from the recorded
+   cadence (display-locked, tick after five IRQs). Route the DAT retry callback
+   into lmn_resource_retry_screen_core instead of stopping. Keep the original
+   verification domains; this is the step before SDL3.
 2. **Record/graphics lifecycle and callback writers (30A6,1F19,3150,3634,706F).**
    Trace the same 2D-byte record from per-level clear through creation, action,
    state transitions and drawing. Preserve shared +20/+26/+27 roles and sample

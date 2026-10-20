@@ -20,6 +20,7 @@ typedef struct KeyboardState {
     const LmnRasterBus *bus;
     LmnRegs r;
     uint16_t entry_cs,status,child_status,service_status;
+    const LmnForegroundPoll *poll;
 } KeyboardState;
 
 static uint32_t physical(uint16_t seg,uint16_t off) {
@@ -91,10 +92,17 @@ static void shift_cx(KeyboardState *s) {
 static void al(KeyboardState *s,uint8_t v) {s->r.ax=(uint16_t)((s->r.ax&0xff00u)|v);}
 static KeyboardState state(uint8_t *m,const LmnRegs *r,
     const LmnRasterBytePorts *p,const LmnRasterBus *b) {
-    KeyboardState s={m,p,b,*r,r->cs,0,0,0};return s;
+    KeyboardState s={m,p,b,*r,r->cs,0,0,0,0};return s;
 }
 static LmnKeyboardResult result(const KeyboardState *s) {
     LmnKeyboardResult out={s->r,s->status,s->child_status,s->service_status};return out;
+}
+static int poll_at(KeyboardState *s,uint16_t site) {
+    if(s->poll&&s->poll->poll) {
+        s->r.ip=site;uint16_t status=s->poll->poll(s->poll->context,s->memory,&s->r,site);
+        if(status){s->status=LMN_KEYBOARD_POLL_STOP;s->service_status=status;return 0;}
+    }
+    return 1;
 }
 static int in_byte(KeyboardState *s,uint16_t port,uint16_t ip) {
     s->r.ip=ip;
@@ -262,12 +270,13 @@ LmnKeyboardResult lmn_install_keyboard_adapter(uint8_t *memory,const LmnRegs *re
     return out;
 }
 
-LmnKeyboardResult lmn_read_keyboard_character_core(uint8_t *memory,
-    const LmnRegs *registers,const LmnRasterBus *bus) {
-    KeyboardState s=state(memory,registers,0,bus);
+LmnKeyboardResult lmn_read_keyboard_character_core_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    KeyboardState s=state(memory,registers,0,bus);s.poll=poll;
     s.r.si=SEG09A9_KeyboardStateBytes0F78;s.r.bx=0u;logic(&s,0u,16);
     s.r.cx=0x53u;
     for(;;) {
+        if(!poll_at(&s,0x4D23))return result(&s);
         uint16_t at=(uint16_t)(s.r.bx+s.r.si);
         uint8_t v=read8(&s,s.r.ds,at);
         logic(&s,v&0x80u,8);
@@ -306,16 +315,16 @@ LmnKeyboardResult lmn_read_keyboard_character_core(uint8_t *memory,
     s.r.ip=CS_KeyboardCharacterReadyReturn4D4C;return result(&s);
 }
 
-LmnKeyboardResult lmn_read_keyboard_character_adapter(uint8_t *memory,
-    const LmnRegs *registers,const LmnRasterBus *bus) {
-    LmnKeyboardResult out=lmn_read_keyboard_character_core(memory,registers,bus);
-    KeyboardState s=state(memory,&out.registers,0,bus);
-    s.r.ip=pop16(&s);out.registers=s.r;return out;
+LmnKeyboardResult lmn_read_keyboard_character_adapter_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    LmnKeyboardResult out=lmn_read_keyboard_character_core_polled(memory,registers,bus,poll);
+    if(!out.status){KeyboardState s=state(memory,&out.registers,0,bus);
+        s.r.ip=pop16(&s);out.registers=s.r;}return out;
 }
 
-LmnKeyboardResult lmn_select_input_scale(uint8_t *memory,const LmnRegs *registers,
-    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    KeyboardState s=state(memory,registers,ports,bus);
+LmnKeyboardResult lmn_select_input_scale_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    KeyboardState s=state(memory,registers,ports,bus);s.poll=poll;
     for(;;) {
         LmnKeyboardResult character;
         push16(&s,CS_InputScaleAfterWait4AA2);
@@ -329,7 +338,8 @@ LmnKeyboardResult lmn_select_input_scale(uint8_t *memory,const LmnRegs *register
         }
         push16(&s,CS_InputScaleAfterCharacter4AA5);
         s.r.ip=CS_ReadKeyboardCharacter;
-        character=lmn_read_keyboard_character_adapter(memory,&s.r,bus);s.r=character.registers;
+        character=lmn_read_keyboard_character_adapter_polled(memory,&s.r,bus,poll);s.r=character.registers;
+        if(character.status)return character;
         if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputScaleAfterCharacter4AA5) {
             s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);
         }
@@ -347,10 +357,11 @@ LmnKeyboardResult lmn_select_input_scale(uint8_t *memory,const LmnRegs *register
     }
 }
 
-LmnKeyboardResult lmn_choose_input_controller_core(uint8_t *memory,
-    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    KeyboardState s=state(memory,registers,ports,bus);
+LmnKeyboardResult lmn_choose_input_controller_core_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    KeyboardState s=state(memory,registers,ports,bus);s.poll=poll;
     for(;;) {
+        if(!poll_at(&s,0x43CE))return result(&s);
         uint8_t v=read8(&s,s.r.ds,SEG09A9_KeyboardScanCodeByte);
         al(&s,v);logic(&s,v,8);
         if(v!=0u) {
@@ -374,9 +385,9 @@ LmnKeyboardResult lmn_choose_input_controller_core(uint8_t *memory,
     }
 }
 
-LmnKeyboardResult lmn_choose_input_controller_adapter(uint8_t *memory,
-    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    LmnKeyboardResult out=lmn_choose_input_controller_core(memory,registers,ports,bus);
+LmnKeyboardResult lmn_choose_input_controller_adapter_polled(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    LmnKeyboardResult out=lmn_choose_input_controller_core_polled(memory,registers,ports,bus,poll);
     if(out.status==0u){KeyboardState s=state(memory,&out.registers,ports,bus);s.r.ip=pop16(&s);out.registers=s.r;}
     return out;
 }
@@ -459,16 +470,16 @@ static int input_screen_child(KeyboardState *s,uint16_t resume,uint16_t entry) {
     return 1;
 }
 
-LmnKeyboardResult lmn_select_input_controller(uint8_t *memory,const LmnRegs *registers,
-    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    KeyboardState s=state(memory,registers,ports,bus);
+LmnKeyboardResult lmn_select_input_controller_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    KeyboardState s=state(memory,registers,ports,bus);s.poll=poll;
     LmnKeyboardResult choice;
     LmnPortIoResult sample;
     uint16_t resume;
     s.r.si=SEG09A9_ControllerChoiceText4E85;
     if(!menu_text(&s,CS_ControllerMenuAfterText4A55)||!menu_swap(&s,CS_ControllerMenuAfterSwap4A58))return result(&s);
     push16(&s,CS_ControllerMenuAfterChoice4A5B);s.r.ip=CS_ChooseInputController;
-    choice=lmn_choose_input_controller_adapter(memory,&s.r,ports,bus);s.r=choice.registers;
+    choice=lmn_choose_input_controller_adapter_polled(memory,&s.r,ports,bus,poll);s.r=choice.registers;
     if(choice.status){s.status=LMN_KEYBOARD_CHILD_STOP;s.child_status=choice.status;return result(&s);}
     if(s.r.cs!=s.entry_cs||s.r.ip!=CS_ControllerMenuAfterChoice4A5B){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
     cmp8(&s,(uint8_t)s.r.cx,2u);
@@ -499,12 +510,12 @@ LmnKeyboardResult lmn_select_input_controller(uint8_t *memory,const LmnRegs *reg
 #endif
     s.r.si=SEG09A9_ControllerScaleText4EA9;
     if(!menu_text(&s,CS_ControllerMenuAfterScaleText4A9C)||!menu_swap(&s,CS_SelectInputScale4A9F))return result(&s);
-    return lmn_select_input_scale(memory,&s.r,ports,bus);
+    return lmn_select_input_scale_polled(memory,&s.r,ports,bus,poll);
 }
 
-LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers,
-    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    KeyboardState s=state(memory,registers,ports,bus);
+LmnKeyboardResult lmn_select_input_mode_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    KeyboardState s=state(memory,registers,ports,bus);s.poll=poll;
     for(;;) {
         LmnKeyboardResult character;
         push16(&s,CS_InputModeAfterWait4A31);
@@ -514,7 +525,8 @@ LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers
         if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputModeAfterWait4A31){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
         push16(&s,CS_InputModeAfterCharacter4A34);
         s.r.ip=CS_ReadKeyboardCharacter;
-        character=lmn_read_keyboard_character_adapter(memory,&s.r,bus);s.r=character.registers;
+        character=lmn_read_keyboard_character_adapter_polled(memory,&s.r,bus,poll);s.r=character.registers;
+        if(character.status)return character;
         if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputModeAfterCharacter4A34){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
         cmp8(&s,read8(&s,s.r.ds,SEG09A9_MouseServicesDisabledByte),0xffu);
 #if KEYBOARD_INPUT_MUTATION == 14
@@ -526,7 +538,7 @@ LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers
             if(s.r.flags&ZF){write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,0u);s.r.ip=CS_MenuRefresh4401;return result(&s);}
         }
         cmp8(&s,(uint8_t)s.r.ax,0x32u);
-        if(s.r.flags&ZF)return lmn_select_input_controller(memory,&s.r,ports,bus);
+        if(s.r.flags&ZF)return lmn_select_input_controller_polled(memory,&s.r,ports,bus,poll);
         cmp8(&s,(uint8_t)s.r.ax,0x33u);
         if(s.r.flags&ZF){write8(&s,s.r.ds,SEG09A9_InputModeByte25A6,2u);s.r.ip=CS_MenuRefresh4401;return result(&s);}
         cmp8(&s,(uint8_t)s.r.ax,0x1bu);
@@ -539,9 +551,9 @@ LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers
     }
 }
 
-LmnKeyboardResult lmn_show_input_selection(uint8_t *memory,const LmnRegs *registers,
-    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {
-    KeyboardState s=state(memory,registers,ports,bus);
+LmnKeyboardResult lmn_show_input_selection_polled(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus,const LmnForegroundPoll *poll) {
+    KeyboardState s=state(memory,registers,ports,bus);s.poll=poll;
     if(!input_screen_child(&s,CS_InputScreenAfterClear4A04,CS_ClearFullDrawingPage)||
        !input_screen_child(&s,CS_InputScreenAfterLayout4A07,CS_InitializeDisplayOrigins)||
        !input_screen_child(&s,CS_InputScreenAfterPalette1_4A0A,CS_TransitionPaletteToSlot1)||
@@ -564,5 +576,30 @@ LmnKeyboardResult lmn_show_input_selection(uint8_t *memory,const LmnRegs *regist
     if(s.r.cs!=s.entry_cs||s.r.ip!=CS_InputScreenAfterWait4A28){s.status=LMN_KEYBOARD_CHANGED_CHILD_RETURN;return result(&s);}
     if(!menu_display(&s,CS_InputScreenAfterDisplay4A2B,LMN_DISPLAY_START_ENTRY_SAVED)||
        !input_screen_child(&s,CS_SelectInputMode4A2E,CS_TransitionPaletteToSlot2))return result(&s);
-    return lmn_select_input_mode(memory,&s.r,ports,bus);
+    return lmn_select_input_mode_polled(memory,&s.r,ports,bus,poll);
 }
+
+LmnKeyboardResult lmn_read_keyboard_character_core(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus) {return lmn_read_keyboard_character_core_polled(memory,registers,bus,0);}
+
+LmnKeyboardResult lmn_read_keyboard_character_adapter(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBus *bus) {return lmn_read_keyboard_character_adapter_polled(memory,registers,bus,0);}
+
+LmnKeyboardResult lmn_choose_input_controller_core(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {return lmn_choose_input_controller_core_polled(memory,registers,ports,bus,0);}
+
+LmnKeyboardResult lmn_choose_input_controller_adapter(uint8_t *memory,
+    const LmnRegs *registers,const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {return lmn_choose_input_controller_adapter_polled(memory,registers,ports,bus,0);}
+
+LmnKeyboardResult lmn_select_input_scale(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {return lmn_select_input_scale_polled(memory,registers,ports,bus,0);}
+
+LmnKeyboardResult lmn_select_input_controller(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {return lmn_select_input_controller_polled(memory,registers,ports,bus,0);}
+
+LmnKeyboardResult lmn_select_input_mode(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {return lmn_select_input_mode_polled(memory,registers,ports,bus,0);}
+
+LmnKeyboardResult lmn_show_input_selection(uint8_t *memory,const LmnRegs *registers,
+    const LmnRasterBytePorts *ports,const LmnRasterBus *bus) {return lmn_show_input_selection_polled(memory,registers,ports,bus,0);}
+

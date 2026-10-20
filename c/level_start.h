@@ -31,4 +31,6 @@ _Static_assert(sizeof(LmnLevelStartResult)==34u,"34-byte level-start boundary");
    retain ordinary-RAM, preserving DOS and intact internal-return contracts. */
 LmnLevelStartResult lmn_start_selected_level(uint8_t *memory,const LmnRegs *registers,
     uint16_t game_data_segment,LmnLevelStartEntry entry,const LmnLevelStartServices *services);
+LmnLevelStartResult lmn_start_selected_level_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,LmnLevelStartEntry entry,const LmnLevelStartServices *services,const LmnForegroundPoll *poll);
 #endif

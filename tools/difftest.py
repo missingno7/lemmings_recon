@@ -201,6 +201,8 @@ SUITES = (
     Suite('view_scroll', 180, 384),
     Suite('game_frame', 600, 512),
     Suite('game_session', 1800, 768),
+    Suite('game_loop', 3600, 768),
+    Suite('resource_retry', 300, 512),
 )
 
 

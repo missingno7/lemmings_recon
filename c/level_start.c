@@ -47,8 +47,8 @@ static int resource_binding(const LmnLevelStartServices *s) {
     return v->files&&v->files->open_readonly&&v->files->attributes&&v->files->retry_ui&&
         v->io&&v->io->query_size&&v->io->read&&v->raw&&v->raw->open_readonly&&v->raw->read&&v->raw->close;
 }
-LmnLevelStartResult lmn_start_selected_level(uint8_t *memory,const LmnRegs *registers,
-    uint16_t game_ds,LmnLevelStartEntry entry,const LmnLevelStartServices *services) {
+LmnLevelStartResult lmn_start_selected_level_polled(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,LmnLevelStartEntry entry,const LmnLevelStartServices *services,const LmnForegroundPoll *poll) {
     Start s={memory,services?services->bus:0,{*registers,0,0,0}};LmnRegs *r=&s.out.registers;
     if(entry==LMN_LEVEL_START_FROM_MENU) {
 #if LEVEL_START_MUTATION != 1
@@ -77,7 +77,7 @@ LmnLevelStartResult lmn_start_selected_level(uint8_t *memory,const LmnRegs *regi
     push(&s,CS_LevelStartAfterBriefing);r->ip=CS_ShowLevelBriefing;
     if(!services->briefing){s.out.status=LMN_LEVEL_START_UNBOUND_BRIEFING;return s.out;}
     LmnBriefingServices binding=*services->briefing;binding.bus=s.bus;
-    LmnBriefingResult briefing=lmn_show_level_briefing_core(memory,r,game_ds,&binding);
+    LmnBriefingResult briefing=lmn_show_level_briefing_core_polled(memory,r,game_ds,&binding,poll);
     *r=briefing.registers;
     if(briefing.status){s.out.status=LMN_LEVEL_START_BRIEFING_STOP;s.out.child_status=briefing.status;s.out.detail=briefing.child_status;return s.out;}
     if(r->ip==CS_MenuRefresh4401) {
@@ -89,3 +89,6 @@ LmnLevelStartResult lmn_start_selected_level(uint8_t *memory,const LmnRegs *regi
     if(!returned(&s,CS_LevelStartAfterBriefing))return s.out;
     r->ip=CS_EnterLoadedLevelGame;return s.out;
 }
+
+LmnLevelStartResult lmn_start_selected_level(uint8_t *memory,const LmnRegs *registers,
+    uint16_t game_ds,LmnLevelStartEntry entry,const LmnLevelStartServices *services) {return lmn_start_selected_level_polled(memory,registers,game_ds,entry,services,0);}

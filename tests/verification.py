@@ -308,7 +308,7 @@ class OriginalMachine:
     def __init__(self,case,memory,registers,device,core,*,instructions,access,
                  outer_returns,child_returns=None,max_steps=100000,
                  changed_return_status=4,before=None,interrupt=None,
-                 mutable_operands=(), far_calls=None, far_returns=None):
+                 mutable_operands=(), far_calls=None, far_returns=None, unhooked_movsb=()):
         self.c,self.memory,self.r,self.device,self.core=case,memory,registers,device,core
         self.instructions=instructions;self.access=access
         self.outer_returns=outer_returns if callable(outer_returns) else set(outer_returns)
@@ -316,6 +316,10 @@ class OriginalMachine:
         self.changed_return_status=changed_return_status;self.before=before;self.interrupt=interrupt
         self.far_calls=far_calls or {}
         self.far_returns=far_returns or {}
+        self.unhooked_movsb=set(unhooked_movsb)
+        for off in self.unhooked_movsb:
+            check(off in instructions and bytes(instructions[off].bytes)==b'\xf3\xa4',
+                  'unhooked string is not an identified REP MOVSB')
         for off in self.far_calls:
             check(off in instructions and instructions[off].id==capstone.x86_const.X86_INS_LJMP,
                   'external chain is not an identified far JMP')
@@ -328,7 +332,7 @@ class OriginalMachine:
         self.mask=FLAGS;self.flags=registers['flags'];self.steps=0;self.sites=set();self.edges=set()
         self.previous=None;self.previous_count=0;self.pending=False;self.executing_boundary=False
         self.status=0;self.service_status=0;self.stopped=False
-        self.pending_hardware=None;self.hardware_frames=[]
+        self.pending_hardware=None;self.hardware_frames=[];self.pending_movsb=None
         self.far_return_events=0
         self.loaded=loaded_image(case['load'])
         self.code_bytes={physical(case['load'],p+d) for p,i in instructions.items() for d in range(i.size)}
@@ -342,7 +346,7 @@ class OriginalMachine:
             self.code_bytes.difference_update(physical(case['load'],start+d) for d in range(width))
         self.cpu.hook_add(UC_HOOK_CODE,self.code)
         self.read_hook=self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
-        self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
+        self.write_hook=self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
         self.cpu.hook_add(UC_HOOK_INSN,self.inp,None,1,0,x.UC_X86_INS_IN)
         self.cpu.hook_add(UC_HOOK_INSN,self.out,None,1,0,x.UC_X86_INS_OUT)
         self.cpu.hook_add(UC_HOOK_INTR,self.on_interrupt)
@@ -387,6 +391,8 @@ class OriginalMachine:
             # Observe the completed predecessor's defined flags/edge even when
             # the core boundary leaves this RET itself unexecuted.
             self.previous=None;self.pending=True;u.emu_stop();return
+        if off in self.unhooked_movsb and not self.executing_boundary:
+            self.previous=None;self.pending_movsb=off;u.emu_stop();return
         if self.before and self.before(self,ins):return
         if ins.mnemonic in ('in','out'):
             missing=(self.c.get('missing_in') if ins.mnemonic=='in' else
@@ -492,6 +498,35 @@ class OriginalMachine:
                 self.previous=None;self.set_state(r);continue
             if self.pending_fetch is not None:
                 self.cpu.ctl_remove_cache(0,SIZE*2)
+                continue
+            if self.pending_movsb is not None:
+                # Pinned Unicorn corrupts AF inside REP MOVSB whenever either
+                # memory hook is active, even a no-op hook. Like RETF below,
+                # execute the unchanged instruction without those hooks. Bus
+                # observations bracket one real iteration; Unicorn owns every
+                # register, flag, count, direction and control-flow effect.
+                self.pending_movsb=None;r=self.state();source=physical(r['ds'],r['si'])
+                dest=physical(r['es'],r['di']);active=r['cx']!=0
+                if active:
+                    check(dest not in self.code_bytes,'undeclared code write')
+                    value=self.access.access('read',source,r['flags'],self.mask)
+                    self.cpu.mem_write(source,bytes((value,)))
+                    self.cpu.mem_write(source+SIZE,bytes((value,)))
+                self.cpu.hook_del(self.read_hook);self.cpu.hook_del(self.write_hook)
+                self.executing_boundary=True
+                try:self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=1)
+                finally:
+                    self.executing_boundary=False
+                    self.read_hook=self.cpu.hook_add(UC_HOOK_MEM_READ,self.read)
+                    self.write_hook=self.cpu.hook_add(UC_HOOK_MEM_WRITE,self.write)
+                if active:
+                    written=bytes(self.cpu.mem_read((r['es']<<4)+r['di'],1))[0]
+                    self.access.access('write',dest,r['flags'],self.mask,written)
+                    # Restore staged read bytes from live canonical RAM,
+                    # including provider writes and source/destination aliases.
+                    for at in (source,dest):
+                        byte=bytes((self.memory[at],))
+                        self.cpu.mem_write(at,byte);self.cpu.mem_write(at+SIZE,byte)
                 continue
             check(self.pending,'original did not reach bounded return/chain boundary')
             off=self.state()['ip']
