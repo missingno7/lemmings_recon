@@ -33695,6 +33695,118 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 18217,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ResultLevelPassed",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "StatusCompletionDisplayValue signed >= required byte DS:0041: success byte FF, INC LevelResourceSelectionByte (next level), group index = selection DIV 1E; selection >= 78 reaches AllLevelsCompletedScreen."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18296,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ResultLevelFailed",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Completion below requirement: success byte 00 and the selection is unchanged, so a later start replays the same level."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18345,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ResultWaitButtonsReleased",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Spins until InputButtonsWord bits 0..2 are clear (IRQ/mouse-produced)."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18353,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ResultWaitChoice",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Button bit0 starts the selected level (47D7); button bit1 or key mask 0020/0040 returns to the main menu (47CB)."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18379,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ResultToMainMenu",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Palette to slot1, clear page, display setup, JMP 4401 main-menu refresh."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18391,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "ResultStartSelectedLevel",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Palette to slot1, clear page, JMP LoadAndStartSelectedLevel 4551: next level after success, same level after failure; success byte survives for the sound sequence."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18400,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "AllLevelsCompletedScreen",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Selection reached 78 (120 levels): final text, wait for button/key, reset selection and group to 0, JMP 4401."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 18479,
     "segment": 0,
     "kind": "entry",

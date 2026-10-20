@@ -452,6 +452,11 @@ SplitPaletteRasterReturn46EA:
     ret ; @046EA
 loc_46EB:
 LevelResultScreen:
+; SESSION EXIT (JMP from 0311 after the timer is restored): menu video/palette/
+; timer, time-up or all-out text by the 0:00 test, then pass/fail by signed
+; completion >= DS:0041. Passed advances the selection; failed keeps it. After
+; buttons are released: button0 -> 4551 reloads (clear 0000..0FC9) -> 00FB a
+; new session; button1/keys 20/40 -> main menu 4401; 120 levels -> final screen.
     call ClearFullDrawingPage ; @046EB
     call SetupDisplayModeAndLayout ; @046EE
     call PublishMenuPalette ; @046F1
@@ -476,6 +481,7 @@ loc_471A:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04728
 loc_4729:
+ResultLevelPassed:
     mov byte [LevelOutcomeSuccessByte-GameDataImage],0xff ; @04729
     inc byte [LevelResourceSelectionByte-GameDataImage] ; @0472E
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @04732
@@ -503,6 +509,7 @@ loc_4748:
 loc_4776:
     jmp short loc_4797 ; @04776
 loc_4778:
+ResultLevelFailed:
     mov byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @04778
     lea bx,[0x4cd3] ; @0477D
     cmp byte [InputModeByte25A6-GameDataImage],0x0 ; @04781
@@ -520,10 +527,12 @@ loc_4797:
     call DrawTextStream ; @047A3
     call TransitionPaletteToSlot2 ; @047A6
 loc_47A9:
+ResultWaitButtonsReleased:
     mov ax,[InputButtonsWord-GameDataImage] ; @047A9
     test ax,0x7 ; @047AC
     jnz loc_47A9 ; @047AF
 loc_47B1:
+ResultWaitChoice:
     mov ax,[InputButtonsWord-GameDataImage] ; @047B1
     test ax,0x1 ; @047B4
     jnz loc_47D7 ; @047B7
@@ -535,15 +544,18 @@ loc_47B1:
     test ax,0x40 ; @047C6
     jz loc_47B1 ; @047C9
 loc_47CB:
+ResultToMainMenu:
     call TransitionPaletteToSlot1 ; @047CB
     call ClearFullDrawingPage ; @047CE
     call SetupDisplayModeAndLayout ; @047D1
     jmp loc_4401 ; @047D4
 loc_47D7:
+ResultStartSelectedLevel:
     call TransitionPaletteToSlot1 ; @047D7
     call ClearFullDrawingPage ; @047DA
     jmp loc_4551 ; @047DD
 loc_47E0:
+AllLevelsCompletedScreen:
     call DrawScreenBackground ; @047E0
     lea si,[0x51cb] ; @047E3
     call DrawTextStream ; @047E7

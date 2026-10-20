@@ -608,6 +608,13 @@
 #define CS_SplitPaletteAfterBottomPublish46E9 0x46E9u
 #define CS_SplitPaletteRasterReturn46EA 0x46EAu
 #define CS_LevelResultScreen 0x46EBu
+#define CS_ResultLevelPassed 0x4729u
+#define CS_ResultLevelFailed 0x4778u
+#define CS_ResultWaitButtonsReleased 0x47A9u
+#define CS_ResultWaitChoice 0x47B1u
+#define CS_ResultToMainMenu 0x47CBu
+#define CS_ResultStartSelectedLevel 0x47D7u
+#define CS_AllLevelsCompletedScreen 0x47E0u
 #define CS_SelectLevelSoundId 0x482Fu
 #define CS_LevelSoundSequenceIds 0x4877u
 #define CS_SpecialLevelSoundIds 0x4888u
