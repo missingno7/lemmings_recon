@@ -613,16 +613,27 @@ InitializeGameVisibilityAndStatus:
 ; visibility/spawn/fade/sound/pages/status -> install IRQ08 -> draw initial frame.
 ; The following calibration needs two scheduled INT08 flag publications.
     call RebuildViewVisibilityMap ; @00480
+InitializeGameAfterVisibility:
     call CreateEntityRecordIfDue ; @00483
+InitializeGameAfterFirstCreate:
     call SeedGameFadePalette ; @00486
+InitializeGameAfterFadeSeed:
     call SelectLevelSoundId ; @00489
+InitializeGameAfterSoundSelect:
     call InitializeGameDrawingPages ; @0048C
+InitializeGameAfterDrawingPages:
     call InitializeStatusDisplay ; @0048F
+InitializeGameAfterStatusInit:
     call InstallGameTimerVector ; @00492
+InitializeGameAfterTimerInstall:
     call AdvanceLevelObjectAnimations ; @00495
+InitializeGameAfterObjectAnimations:
     call DrawLevelObjectGraphics ; @00498
+InitializeGameAfterObjectGraphics:
     call CopyStatusBackdropToDrawingPage ; @0049B
+InitializeGameAfterStatusBackdrop:
     call UpdateStatusDisplay ; @0049E
+InitializeGameAfterStatusDisplay:
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @004A1
     db 0x33,0xd2 ; ENCODED: xor dx,dx (NASM chooses a different encoding) ; @004A3
     mov byte [TimerChainFlag1FCF-GameDataImage],0x0 ; @004A5

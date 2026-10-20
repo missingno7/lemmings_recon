@@ -4647,6 +4647,182 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 1155,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterVisibility",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL RebuildViewVisibilityMap at 0480 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1158,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterFirstCreate",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL CreateEntityRecordIfDue at 0483 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1161,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterFadeSeed",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL SeedGameFadePalette at 0486 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1164,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterSoundSelect",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL SelectLevelSoundId at 0489 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1167,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterDrawingPages",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL InitializeGameDrawingPages at 048C in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1170,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterStatusInit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL InitializeStatusDisplay at 048F in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1173,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterTimerInstall",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL InstallGameTimerVector at 0492 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1176,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterObjectAnimations",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL AdvanceLevelObjectAnimations at 0495 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1179,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterObjectGraphics",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL DrawLevelObjectGraphics at 0498 in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1182,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterStatusBackdrop",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL CopyStatusBackdropToDrawingPage at 049B in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 1185,
+    "segment": 0,
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "InitializeGameAfterStatusDisplay",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Return continuation of the actual near CALL UpdateStatusDisplay at 049E in InitializeGameSession; the next instruction consumes the child-returned state."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 1194,
     "segment": 0,
     "kind": "label",

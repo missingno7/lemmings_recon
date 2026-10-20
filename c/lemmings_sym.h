@@ -85,6 +85,17 @@
 #define CS_InitializeGameAfterTimerCalibration 0x046Bu
 #define CS_InitializeGameAfterLevelInitialization 0x046Eu
 #define CS_InitializeGameVisibilityAndStatus 0x0480u
+#define CS_InitializeGameAfterVisibility 0x0483u
+#define CS_InitializeGameAfterFirstCreate 0x0486u
+#define CS_InitializeGameAfterFadeSeed 0x0489u
+#define CS_InitializeGameAfterSoundSelect 0x048Cu
+#define CS_InitializeGameAfterDrawingPages 0x048Fu
+#define CS_InitializeGameAfterStatusInit 0x0492u
+#define CS_InitializeGameAfterTimerInstall 0x0495u
+#define CS_InitializeGameAfterObjectAnimations 0x0498u
+#define CS_InitializeGameAfterObjectGraphics 0x049Bu
+#define CS_InitializeGameAfterStatusBackdrop 0x049Eu
+#define CS_InitializeGameAfterStatusDisplay 0x04A1u
 #define CS_GameWaitCalibrationFirstEdge 0x04AAu
 #define CS_GameMeasureForegroundWait 0x04B6u
 #define CS_GameCheckCalibrationSecondEdge 0x04BAu
