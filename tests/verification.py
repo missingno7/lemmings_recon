@@ -8,6 +8,8 @@ import ctypes as ct
 import os
 import random
 import sys
+from array import array
+from collections.abc import Sequence
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -135,11 +137,37 @@ def initial_memory(case):
     return memory, device
 
 
+class PackedEvents(Sequence):
+    """Lossless ordered observations with five uint32 words per event.
+
+    This changes storage only. Callers retain the same tuple interface, masks,
+    slicing and hard event-budget failure; no observations are sampled/dropped.
+    """
+    def __init__(self):
+        self.words=array('I');self.kinds=[];self.kind_ids={}
+    def __len__(self):return len(self.words)//5
+    def append(self,event):
+        kind,address,value,flags,mask=event
+        if kind not in self.kind_ids:
+            self.kind_ids[kind]=len(self.kinds);self.kinds.append(kind)
+        self.words.extend((self.kind_ids[kind],address,value,flags,mask))
+    def __getitem__(self,index):
+        if isinstance(index,slice):return [self[i] for i in range(*index.indices(len(self)))]
+        if index<0:index+=len(self)
+        if not 0<=index<len(self):raise IndexError(index)
+        p=index*5
+        return (self.kinds[self.words[p]],*self.words[p+1:p+5])
+    def __iter__(self):
+        for p in range(0,len(self.words),5):
+            yield (self.kinds[self.words[p]],*self.words[p+1:p+5])
+
+
 class BusAccess:
     """One canonical RAM image and bounded, ordered observations on either side."""
-    def __init__(self, case, memory, registers, device, *, max_events):
+    def __init__(self, case, memory, registers, device, *, max_events, packed_events=False):
         self.c,self.memory,self.r,self.device=case,memory,registers,device
-        self.events=[];self.providers=set();self.cursor=0;self.sync=None
+        self.events=PackedEvents() if packed_events else []
+        self.providers=set();self.cursor=0;self.sync=None
         self.max_events=max_events
         self.service_events=[];self.transport_events=0
 

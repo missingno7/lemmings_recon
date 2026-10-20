@@ -109,3 +109,95 @@ pending independent evidence. Byte `+10`, upstream allocation/graphics extents,
 broader menu initialization, native scheduling and SDL3 services remain open.
 Only the 129 unique code bytes enter the C ledger; this is a connected local
 checkpoint, not aggregate coverage or whole-game acceptance.
+
+
+## Connected backdrop and decoration drawing
+
+The same maintained C module and shared campaign now include4EEF..4F89:
+DrawMenuBackdropLayers, DrawMenuDecorationRows, DrawMenuDecorationRow and
+DrawMenuDecorationBitmap. The physical union adds155 code bytes. The saved
+bitmap wrapper is shared by the row parent; no new verifier engine or native
+suite is introduced for its small entry.
+
+The backdrop publishes the live UI selector1FEE to graphics selector1FE4. It
+makes two actual far8822 calls: (AX,BX,BP)=(0,20,0F42) then(8,10,2), both with
+CX045E,DX0278,SI2080,DI7786. No parent saves restore the first child's returned
+DS/ES/registers/flags before the second set of original MOVs. Geometry is632x94;
+plane size1D02 and the mask-source difference5706 is three plane extents. Four
+planes end exactly atUI:9488, the first decoration source.
+
+The six little-endian words at liveCS:4F8A are9488,A2D4,B120,BF6C,CDB8,DC04.
+Their0E4C spacing equals four120x61 planes of0393 bytes. The mask cursor is source
+plus0AB9, three plane extents. The final four-plane source ends atEA50, within
+section3'sF210 bytes. This is a proven layout interpretation; table storage
+remains UNKNOWN, and unchecked adjacent table reads retain their original values.
+Animation's first source,UI+0800 paragraphs+7210, equalsUI:F210: the physical start
+of section4 at the normal wrappedUI+0F21 selector. These coordinates explain the
+relationship without assuming allocation bounds, non-aliasing or initialization.
+
+4F2B first CALLs the row withAX0044,BX0078,CX4,DI4F8A. After its actual nearRET,
+MOVs supplyAX00C4,BX00C5,CX2 and fall directly through into the row. There is no
+second game CALL frame. Each row iteration pushesCX, reads the next source via
+CS, advancesDI by2, pushesAX/BX, and draws at(x-8,y+8,BP0F43). The actual POPBX/
+POPAX then feed a second draw at(x,y,BP3). POPCX and ADDAX,80 precede LOOP. Live
+CS table changes and overwritten saved words cannot be replaced with host lists.
+EntryCX0 still executes the body; a bounded provider changes its saved count to1
+in that fixture. The complete unmodified65,536-iteration zero-count run is not
+claimed as executed evidence.
+
+4F6E pushesAX,BX,BP,SI,DI in that order, setsCX043D/DX0078, derivesDI=SI+0AB9,
+and makes its actual far call. POPDI/SI/BP/BX/AX read live words; CX,DX,DS,ES and
+flags are left as actually returned. A changed nested nearRET stops at its real
+continuation. The separate far-return and renderer-stop statuses remain intact.
+Core and adapter tests include ordinary and pinned decoded section3/4 banks;
+static decoding stays in memory, creates no asset dump, and does not execute the
+upstream loader or boot the game.
+
+
+The adjacent4E37 caller provides a further static boundary: its two64x31,
+four-plane sources atEA50 andEE30 each occupy03E0 bytes, ending exactly atF210.
+Together with the background's two-plane320x104 prefix0000..2080, the backdrop
+2080..9488 and six decorations9488..EA50, these dimensions partition section3's
+full decoded extent. This is source-layout evidence, not execution coverage of
+4E37 or closure of every interpretation of those bytes. Its two-page cache
+bytes1F70/1F72 and4EA2's1F6E/1F6F remain the next native parent contracts.
+
+Compact observation storage in tests/verification.py retains every event as five
+uint32 words, including its kind, address, value, flags and defined-mask value.
+Indexing, slicing and comparison still expose the same tuples. It is opt-in;
+existing consumers keep list storage. Both paths keep the same hard exhaustion
+failure. The drawing fixtures use1,500,000 instructions/750,000 events, with an
+explicit20,000,000/5,000,000 allowance for the long distinct-DS shift fixture.
+The worker retains384MiB and570 seconds inside a600-second outer envelope,
+leaving time for parent-owned DLL cleanup after an inner timeout. The long fixture actually completes
+6,724,921 instructions/3,157,223 events; it preserves an original zero-byte
+shift count's256 iterations through the relocated game scratch frame.
+
+An artificial SS=A000 bitmap-wrapper fixture exhausted1,500,000 original
+instructions at89A3. Its exact input is retained in UNVERIFIED_CASES and a failed
+original-only diagnostic in build/menu-vga-stack-frontier.json. It has no completed
+native comparison or mutation credit and is excluded from accepted case totals.
+VGA-plane stack aliasing remains open; no C shortcut or claimed dead path hides
+that failure. The selector-EA wrap frontier atSPFFFE/FFFF also remains open.
+
+The intact relocated same-CS:8822 operand precondition applies to4F0A,4F25 and
+4F7F as well as4FEB. Instruction fetches are not invented data-bus reads.
+
+The first expanded campaign hit its420-second outer timeout and earned no report
+or mutation credit. Its killed worker tree was reaped and its exact owned DLL
+directory removed. The revised campaign avoids replaying identical drawing bodies
+at both public boundaries for every data variant: every fixture retains adapter
+comparison, while every entry,ordinary core and changed-return stop also gets a
+direct core comparison. Instruction sites/outcomes and native mutations stay
+mandatory; this reduces redundant execution without accepting incomplete calls.
+
+
+The accepted expanded local campaign passes112 fixtures/841 comparisons,all118
+own sites/15 direct outcomes,1,357 integrated sites/190 outcomes and nine completed
+mutants in4,990 known bytes. It executes27,151,440 original instructions and
+compares15,214,969 events,including2,144 separately counted far-return observations.
+Four new witnesses detect cached wrapper AX,wrong table segment,an omitted second
+row and wrong UI selector publication. The failed VGA-stack fixture is outside
+those accepted totals. Only155 new unique main-image code bytes are added; the
+main translated union is27,911. Full original contracts and fresh affected native
+reports remain separate from complete aggregate coverage and full-game acceptance.

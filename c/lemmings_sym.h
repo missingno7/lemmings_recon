@@ -291,10 +291,10 @@
 #define CS_ClearVgaReturn 0x4E36u
 #define CS_sub_4E37 0x4E37u
 #define CS_sub_4EA2 0x4EA2u
-#define CS_sub_4EEF 0x4EEFu
-#define CS_sub_4F2B 0x4F2Bu
-#define CS_sub_4F4A 0x4F4Au
-#define CS_sub_4F6E 0x4F6Eu
+#define CS_DrawMenuBackdropLayers 0x4EEFu
+#define CS_DrawMenuDecorationRows 0x4F2Bu
+#define CS_DrawMenuDecorationRow 0x4F4Au
+#define CS_DrawMenuDecorationBitmap 0x4F6Eu
 #define CS_AdvanceMenuAnimations 0x4F96u
 #define CS_InitializeMenuAnimations 0x4FF8u
 #define CS_DrawScreenBackground 0x5017u
@@ -1045,4 +1045,13 @@
 #define SEG09A9_MenuAnimationLeftWord 0x4964u
 #define SEG09A9_MenuAnimationTopWord 0x4966u
 #define SEG09A9_MenuAnimationSourceWord 0x4968u
+#define CS_MenuBackdropAfterFirstBitmap 0x4F0Fu
+#define CS_MenuBackdropReturn 0x4F2Au
+#define CS_MenuRowsAfterFirstRow 0x4F41u
+#define CS_MenuRowAfterFirstBitmap 0x4F5Fu
+#define CS_MenuRowAfterSecondBitmap 0x4F67u
+#define CS_MenuDecorationRowReturn 0x4F6Du
+#define CS_MenuDecorationAfterBitmap 0x4F84u
+#define CS_MenuDecorationBitmapReturn 0x4F89u
+#define CS_MenuDecorationSourceTable 0x4F8Au
 #endif

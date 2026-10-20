@@ -5,6 +5,38 @@ import verification as v
 
 
 class SharedVerificationTests(unittest.TestCase):
+    def test_packed_observations_preserve_bus_order_masks_slices_and_budget_failures(self):
+        rows=[]
+        for packed in (False,True):
+            memory=bytearray(v.SIZE)
+            access=v.BusAccess({},memory,{},v.new_device(7),max_events=7,packed_events=packed)
+            access.word_write(0xFFFF,0xF,0xABCD,0xFD7)
+            access.word_read(0xFFFF,0xF,0x246,0xFC7)
+            access.access('write',0xA0000,0x202,value=0x81)
+            access.emit('out',0x3CE,0xFFFF,0x6D7,0xFC7)
+            access.emit('in',0x201,0xEF,2)
+            rows.append(list(access.events))
+            self.assertEqual(access.events[-1],rows[-1][-1])
+            self.assertEqual(access.events[::-2],rows[-1][::-2])
+            self.assertEqual(list(copy.deepcopy(access.events)),rows[-1])
+            with self.assertRaises(IndexError):_ = access.events[7]
+            with self.assertRaises(v.OracleFailure):access.emit('in',0x201,0,2)
+            self.assertEqual(len(access.events),7)
+        self.assertEqual(*rows)
+
+    def test_packed_comparator_still_detects_every_ordered_difference(self):
+        class Device:
+            trace=[]
+            def state(self):return ()
+        events=v.PackedEvents();events.append(('out',0x3CE,0x1234,0x246,v.FLAGS))
+        ref=dict(regs={n:0 for n in v.REG_NAMES},status=0,memory=bytearray(1),
+                 device=Device(),events=events,mask=v.FLAGS)
+        actual=copy.deepcopy(ref);actual['events']=list(events)
+        v.compare_states('packed/list',actual,ref)
+        actual['events'][0]=('out',0x3CE,0x1235,0x246,v.FLAGS)
+        with self.assertRaises(v.Mismatch):v.compare_states('packed mismatch',actual,ref)
+        self.assertEqual(events.words.itemsize*len(events.words),20)
+
     def test_original_retf_executes_actual_words_with_offset_and_physical_wrap(self):
         site=0x953D
         instruction=next(v.MD.disasm(v.IMAGE[site:site+1],site))

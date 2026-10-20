@@ -1006,3 +1006,16 @@ reset, without copying game records. BP1 bypasses clipping; extreme coordinates
 retain original wrapped drawing. The final record byte and upstream bank extents
 remain unresolved. Next audit4F6E/4F4A/4F2B plus4EEF drawing parents and their
 CS4F8A table before composing more of43F2; see menu-animation.md and next-work.md.
+
+
+The4EEF/4F2B/4F4A/4F6E menu drawing cluster adds155 bytes,taking the main C union
+to27,911. It reuses the existing menu module and shared suite:112 fixtures/841
+comparisons cover118 own sites/15 outcomes and nine mutants in4,990 known bytes.
+Actual near/far frames,the second row's fallthrough,live CS words and saved AX/CX
+remain explicit. Decoded pinned section3/4 bytes now feed the native drawing.
+Compact optional shared traces preserve every event within384MiB; ten shared
+native suites regress the storage/default paths. The artificial VGA-stack fixture
+still fails its original instruction budget and has no parity/mutation credit.
+The long distinct-DS fixture does complete its256-shift behavior. Next close
+4E37/4EA2's cached two-page drawing ownership and CS4EE7 table before broader
+43F2 composition; see menu-animation.md,next-work.md and verification.md.

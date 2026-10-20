@@ -2,14 +2,20 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is27,756 bytes. The129-byte menu
-animation initializer4FF8 and tick4F96 now compose native bitmap rendering in
-4,835 known bytes. The shared-engine campaign passes70 fixtures/791 comparisons,
-all54 own sites/13 direct outcomes and five completed mutants. Three same-RAM
-initialization/218-tick cycles verify actual countdowns, eight frame pairs and
-reset values for all enabled pinned records. Returned segments, live SI/CX saves,
-8000/FFEF behavior and the caller's deliberately unclipped control1 stay explicit.
-Bank production, enclosing43F2/4401 and scheduling remain open. See menu-animation.md.
+The main-image translated-code ledger union is27,911 bytes. The155-byte
+4EEF/4F2B/4F4A/4F6E drawing cluster now composes backdrop layers,live-CS source
+rows,saved bitmap wrappers and native renderer returns in the existing menu
+module/campaign. Its112 fixtures/841 comparisons cover118 own sites/15 outcomes
+and nine completed mutants in4,990 known connected bytes, including the retained
+animation cycles. Pinned section3/4 bytes,actual frames,two-row fallthrough and
+DS/flags are checked. A distinct-DS call completes6.7million instructions and its
+original256-shift quirk. Artificial VGA-stack aliasing is an explicit failed
+verification frontier with no completed native comparison. See menu-animation.md.
+
+The preceding animation checkpoint added129 bytes,taking the union to27,756.
+Its70 fixtures/791 comparisons covered54 own sites/13 outcomes and five mutants,
+including three same-RAM initialization/218-tick cycles. The current expanded
+campaign retains those contracts and reuses the same shared verification engine.
 
 The preceding screen checkpoint added45 unique bytes, taking the union to27,627.
 The complete196-byte input-selection domain4A01..4AC4 composes native clear,
@@ -112,14 +118,14 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Continue43F2's connected menu drawing domains. Fresh4EEF tree and4F2B
-   bottom-up views put4F6E's saved bitmap wrapper beneath4F4A's table-driven rows
-   and4F2B's combined caller;4EEF composes two direct8822 draws. Audit liveCS:4F8A
-   table interpretation, initialized UI source/mask extents and all actual save/
-   return frames, then translate/connect that drawing cluster in shared fixtures.
-   Retain42A5 and UNKNOWN4C65/1696..16A8. Before accepting far-return selector-EA
-   wrap atSPFFFE/FFFF, obtain an independent oracle: pinned Unicorn's real-mode
-   selector load uses a non-wrapped linear EA.
+1. Continue43F2's connected menu drawing/state domains. Fresh4E37 tree and4EA2
+   bottom-up views identify two bitmap parents above the accepted renderer. Audit
+   producers and two-page cache ownership of1F70/1F72 and1F6E/1F6F, inputs25A7/2010,
+   and the liveCS:4EE7 source table before translating them. Their source geometry
+   also closes the static section3 boundaryEA50..F210; retain broader allocation
+   and initialization obligations. Keep artificial VGA-stack budget failure and
+   RETF selector-EA wrap atSPFFFE/FFFF explicitly unverified. Retain42A5 and
+   UNKNOWN4C65/1696..16A8; no unsupported alternative is declared complete.
 2. Connect startup/resource/level/frame coordination, complete the remaining
    executable dependencies, then supply native platform services and SDL3.
 

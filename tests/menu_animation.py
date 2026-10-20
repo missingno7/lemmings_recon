@@ -7,6 +7,7 @@ import copy
 import ctypes as ct
 import gc
 import json
+from functools import lru_cache
 import sys
 from pathlib import Path
 
@@ -17,18 +18,23 @@ import text_glyph as glyph
 from bounded_process import run_bounded,temporary_build_directory
 from cbuild import build
 from common import BUILD,sha,write_json
+from resources import decode_section,section_spans
 
 check=base.check
 physical,put16,get16=base.physical,base.put16,base.get16
-RANGES=((0x4F96,0x4FF8),(0x4FF8,0x5017))
+RANGES=((0x4F96,0x4FF8),(0x4FF8,0x5017),(0x4EEF,0x4F8A))
 OWN={i.address:i for a,b in RANGES for i in base.MD.disasm(base.IMAGE[a:b],a)}
 RENDER={p:i for p,i in glyph.INS.items() if p>=0x8822}
 INS=OWN|RENDER
 EDGES=base.direct_jump_edges(OWN)
 RETURNS=(0x5016,0x4FF7)
-SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=300,384,200_000,100_000
+DRAW_ENTRIES=(0x4EEF,0x4F2B,0x4F4A,0x4F6E)
+DRAW_RETURNS=(0x4F2A,0x4F6D,0x4F6D,0x4F89)
+SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=570,384,200_000,100_000
+DRAW_STEPS,DRAW_EVENTS=1_500_000,750_000
 REPORT=BUILD/'menu-animation-differential.json'
 FIELDS=('ax','bx','cx','dx','si','di','bp','ds','es','ss','sp','flags')
+UNVERIFIED_CASES=({'load': 4112, 'seed': 20480, 'flags': 215, 'name': 'drawing-bitmap-vga-stack', 'kind': 'drawing', 'entry': 3, 'ss': 40960},)
 PINNED=base.IMAGE[0x9A90+0x4960:0x9A90+0x49CE]
 FIXTURES=set()
 for module in tuple(sys.modules.values()):
@@ -80,13 +86,37 @@ def cases():
             ('word-ffff',{'sp':0xFFFF}),('df',{'flags':0x6D7,'counters':{0:0}}),
         ):rows.append(dict(name=f'e{entry}-'+n,entry=entry,**kw))
         for load in base.LOADS:rows.append(dict(name=f'e{entry}-load-{load:04x}',entry=entry,load=load,counters={0:0}))
+    for entry,name in enumerate(('backdrop','rows','row','bitmap')):
+        rows += [dict(name='drawing-'+name+'-'+n,kind='drawing',entry=entry,**kw) for n,kw in (
+            ('ordinary',{}),('pinned-banks',{'pinned_banks':True}),
+            ('stack-wrap',{'sp':1}),('df',{'flags':0x6D7}),
+        )]
+        for load in base.LOADS:rows.append(dict(name=f'drawing-{name}-load-{load:04x}',kind='drawing',entry=entry,load=load))
+    rows += [dict(name='drawing-'+n,kind='drawing',**kw) for n,kw in (
+        ('row-one',{'entry':2,'count':1}),
+        ('row-zero-live-count',{'entry':2,'count':0,'draw_patch':'row-count'}),
+        ('row-live-table',{'entry':2,'draw_patch':'table-next'}),
+        ('row-table-word-ffff',{'entry':2,'count':1,'table':0xFFFF}),
+        ('bitmap-live-ax',{'entry':3,'draw_patch':'saved-ax'}),
+        ('row-live-ax',{'entry':2,'count':1,'draw_patch':'row-ax'}),
+        ('bitmap-far-ip',{'entry':3,'draw_patch':'far-ip','expected':2}),
+        ('row-wrapper-near',{'entry':2,'count':1,'draw_patch':'wrapper-near','expected':3}),
+        ('rows-parent-near',{'entry':1,'draw_patch':'parent-near','expected':3}),
+        ('backdrop-far-ip',{'entry':0,'draw_patch':'far-ip','expected':2}),
+        ('bitmap-physical-wrap',{'entry':3,'ss':0xFFFF,'sp':0x1F}),
+        ('bitmap-data-segment',{'entry':3,'ds':0x3000,'long_shift':True,'reference_steps':20_000_000,'reference_events':5_000_000}),
+        ('bitmap-data-aligned',{'entry':3,'ds':0x3000,'left':64}),
+        ('rows-selector-wrap',{'entry':1,'bank':0xFC00}),
+    )]
     return [dict(load=0x1010,seed=0x4F96+i,flags=0xD7)|c for i,c in enumerate(rows)]
 
 def setup(c):
     memory,device=base.initial_memory(c);game_ds=(c['load']+0x9A9)&0xFFFF
     ds=c.get('ds',game_ds)
     r=base.default_regs(c['load'],c['seed'],ds=ds,ss=c.get('ss',0x6000),sp=c.get('sp',0x9000),flags=c['flags'])
-    r['ip']=RANGES[1-c['entry']][0]
+    drawing=c.get('kind')=='drawing'
+    r['ip']=DRAW_ENTRIES[c['entry']] if drawing else RANGES[1-c['entry']][0]
+    if drawing:r.update(ax=c.get('left',68),bx=c.get('top',120),cx=c.get('count',2),si=c.get('source',0x9488),di=c.get('table',0x4F8A),bp=3)
     for frame in dict.fromkeys((ds,game_ds)):
         for i in range(10):
             start=0x4960+11*i
@@ -100,11 +130,27 @@ def setup(c):
                       (0x66F0,350),(0x66F2,640),(0x66F4,80),(0x26,0x2000)):
             put16(memory,frame,off,v,device)
         base.sync_memory_byte(memory,device,frame,0x2A,c.get('dirty',0))
+    if drawing:
+        for frame in dict.fromkeys((ds,game_ds)):
+            put16(memory,frame,0x1F7A,0,device)
+            if c['entry']>=2:put16(memory,frame,0x1FE4,c.get('bank',0x4000),device)
+        if 'table' in c:put16(memory,c['load'],c['table'],0x9488,device)
+    if c.get('pinned_banks'):
+        for segment,data in zip((c.get('bank',0x4000),(c.get('bank',0x4000)+0xF21)&0xFFFF),resource_banks()):
+            for i,v in enumerate(data):base.sync_memory_byte(memory,device,segment,i,v)
     put16(memory,r['ss'],r['sp'],0xD00D,device)
     return memory,r,device
 
+@lru_cache(maxsize=1)
+def resource_banks():
+    data=(ROOT/'assets/main.dat').read_bytes();spans=section_spans(data)
+    result=tuple(decode_section(data[a:b])[0] for a,b in spans[3:5])
+    check(tuple(map(len,result))==(0xF210,0x8CF0),'pinned UI section sizes differ')
+    check(tuple(sha(b) for b in result)==('05fa1758775e601d38b00c6120cc597ffae6c598b04caac921bb59d76a80c805','6880c756be51fd97314e8f2c615baef9218134c58e66eff25a6e3dbab6f0a5f7'),'pinned UI sections differ')
+    return result
+
 class Access(base.BusAccess):
-    def __init__(self,c,memory,r,device):super().__init__(c,memory,r,device,max_events=MAX_EVENTS)
+    def __init__(self,c,memory,r,device):super().__init__(c,memory,r,device,max_events=c.get('reference_events',DRAW_EVENTS if c.get('kind')=='drawing' else MAX_EVENTS),packed_events=c.get('kind')=='drawing')
     def access(self,kind,address,flags,mask=base.FLAGS,value=None):
         v=super().access(kind,address,flags,mask,value)
         phase=self.c.get('patch')
@@ -115,6 +161,15 @@ class Access(base.BusAccess):
         return v
     def out_word(self,port,value,flags,mask=base.FLAGS):
         self.emit('out',port,value,flags,mask);self.device.out(port,value,flags)
+        draw=self.c.get('draw_patch')
+        if draw and draw not in self.providers:
+            entry=self.c['entry']
+            if draw=='table-next':self.patch(self.c['load'],0x4F8C,0xB120,draw)
+            else:
+                delta,value={'saved-ax':(-2,0x1234),'row-ax':(-4,0x1234),'row-count':(-2,1),
+                    'wrapper-near':(-8,0xD234),'parent-near':(-2,0xD234),
+                    'far-ip':(-4 if entry==0 else -14,0xD234)}[draw]
+                self.patch(self.r['ss'],(self.r['sp']+delta)&0xFFFF,value,draw)
         phase=self.c.get('patch')
         if phase in ('si','far-ip','far-cs') and phase not in self.providers:
             delta,value={'si':(-4,0x4960-11),'far-ip':(-8,0xD234),'far-cs':(-6,0x4321)}[phase]
@@ -124,16 +179,21 @@ class Access(base.BusAccess):
 
 class Machine(base.OriginalMachine):
     def __init__(self,c,memory,r,device,core):
-        self.requests=[]
+        self.requests=[];far_frames=[]
+        def expected_far(m,off):
+            check(bool(far_frames),'undeclared far caller');return {(c['load'],far_frames.pop())}
+        def outer(m,off):
+            return off==DRAW_RETURNS[c['entry']] and m.state()['sp']==r['sp']
         def before(m,i):
+            if i.mnemonic=='lcall':far_frames.append(i.address+i.size)
             if i.address==0x8822:
                 live=m.state();m.requests.append(tuple(live[n] for n in ('ax','bx','cx','dx','si','di','bp')))
             return False
         super().__init__(c,memory,r,device,core,instructions=INS,access=Access(c,memory,r,device),
-            outer_returns={RETURNS[c['entry']]},max_steps=MAX_STEPS,before=before,
-            child_returns={0x99E7:{0x884F},0x9A0B:{0x884F},0x9A14:{0x884F},0x9A8E:{0x885E}},
-            far_returns={p:{(c['load'],0x4FF0)} for p,i in RENDER.items() if i.mnemonic=='retf'},
-            changed_return_status=lambda m,off:2 if off in RENDER and RENDER[off].mnemonic=='retf' else 1)
+            outer_returns=outer if c.get('kind')=='drawing' else {RETURNS[c['entry']]},max_steps=c.get('reference_steps',DRAW_STEPS if c.get('kind')=='drawing' else MAX_STEPS),before=before,
+            child_returns={0x99E7:{0x884F},0x9A0B:{0x884F},0x9A14:{0x884F},0x9A8E:{0x885E},0x4F89:{0x4F5F,0x4F67},0x4F6D:{0x4F41}},
+            far_returns={p:expected_far for p,i in RENDER.items() if i.mnemonic=='retf'},
+            changed_return_status=lambda m,off:3 if off in (0x4F89,0x4F6D) else 2 if off in RENDER and RENDER[off].mnemonic=='retf' else 1)
 
     def run(self):
         out=super().run();out['requests']=self.requests;return out
@@ -147,19 +207,47 @@ class Native:
         self.adapter=self.lib.lmn_menu_animation_adapter
         self.adapter.argtypes=[base.MEM,ct.POINTER(base.Regs),ct.c_uint16,ct.c_int,ct.POINTER(base.Bus),ct.POINTER(base.Ports)]
         self.adapter.restype=Result
+        self.draw_core=self.lib.lmn_menu_drawing_core;self.draw_core.argtypes=self.core.argtypes;self.draw_core.restype=Result
+        self.draw_adapter=self.lib.lmn_menu_drawing_adapter;self.draw_adapter.argtypes=self.adapter.argtypes;self.draw_adapter.restype=Result
     def run(self,c,memory,r,device,core,*,copy_state=True):
         if copy_state:memory,device=bytearray(memory),copy.deepcopy(device)
         access=Access(c,memory,r,device);cb=base.NativeCallbacks(access)
         game_ds=(c['load']+0x9A9)&0xFFFF;mem=(ct.c_uint8*base.SIZE).from_buffer(memory)
         tail=[c['entry'],ct.byref(cb.bus),ct.byref(cb.ports)]
-        if core:out=self.core(mem,r['cs'],game_ds,ct.byref(State(**{n:r[n] for n in FIELDS})),*tail)
-        else:out=self.adapter(mem,ct.byref(base.Regs(**r)),game_ds,*tail)
+        core_fn=self.draw_core if c.get('kind')=='drawing' else self.core
+        adapter_fn=self.draw_adapter if c.get('kind')=='drawing' else self.adapter
+        if core:out=core_fn(mem,r['cs'],game_ds,ct.byref(State(**{n:r[n] for n in FIELDS})),*tail)
+        else:out=adapter_fn(mem,ct.byref(base.Regs(**r)),game_ds,*tail)
         regs={n:getattr(out.state,n) for n in FIELDS}|dict(cs=out.code_segment,ip=out.continuation)
         return dict(regs=regs,status=out.status,memory=memory,device=access.device,events=access.events,
                     providers=access.providers,cursor=access.cursor)
 
+def independent_drawing(c,memory,r,ref):
+    if ref['status'] or c.get('draw_patch'):return
+    expected=[]
+    def request(x,y,source,control):
+        expected.append((x&0xFFFF,y&0xFFFF,0x43D,0x78,source,(source+0xAB9)&0xFFFF,control))
+    entry=c['entry']
+    if entry==0:
+        expected=[(0,20,0x45E,0x278,0x2080,0x7786,0xF42),(8,10,0x45E,0x278,0x2080,0x7786,2)]
+    elif entry==3:request(r['ax'],r['bx'],r['si'],r['bp'])
+    else:
+        table=r['di'] if entry==2 else 0x4F8A
+        groups=((r['ax'],r['bx'],r['cx']),) if entry==2 else ((68,120,4),(196,197,2))
+        for x,y,count in groups:
+            for i in range(count):
+                source=get16(memory,r['cs'],table)
+                request(x-8,y+8,source,0xF43);request(x,y,source,3)
+                x=(x+128)&0xFFFF;table=(table+2)&0xFFFF
+    check(ref['requests']==expected,c['name']+': independent menu drawing requests differ')
+    if entry<=1:
+        check(get16(ref['memory'],r['ds'],0x1FE4)==get16(memory,r['ds'],0x1FEE),'menu UI selector publication differs')
+
+
 def independent(c,memory,r,ref):
     check(ref['status']==c.get('expected',0),c['name']+': unexpected stop')
+    if c.get('kind')=='drawing':
+        independent_drawing(c,memory,r,ref);return
     if ref['status'] or c.get('alias') or c.get('patch') or r['ds']!=((c['load']+0x9A9)&0xFFFF):return
     ds=r['ds'];got=ref['memory']
     expected_requests=[]
@@ -187,7 +275,7 @@ def hashes():
     paths=FIXTURES|{'tests/menu_animation.py','tools/cbuild.py','tools/bounded_process.py','tools/difftest.py',
         'c/menu_animation.c','c/menu_animation.h','c/lemmings_sym.h','c/video_restore.h','c/regs.h',
         'c/special_blit.h','metadata/oracle.json','metadata/toolchain-lock.json',
-        'src/game_code_late_after_decimal.asm','src/planar_drawing.asm'}
+        'src/game_code_late_after_decimal.asm','src/planar_drawing.asm','assets/main.dat'}
     paths|={'c/'+n+ext for n in glyph.SOURCES[1:] for ext in ('.c','.h')}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 
@@ -225,7 +313,7 @@ def worker(directory,snapshot):
         sites.update(ref['sites']);edges.update(ref['edges'])
         rows.append(dict(case=name,core=core,steps=ref['steps'],events=len(ref['events']) if not isinstance(ref['events'],int) else ref['events'],far_return_events=ref['far_return_events']))
     for c in cases():
-        for core in (True,False):record(c['name'],core,compare(native,c,core))
+        for core in ((True,False) if c.get('kind')!='drawing' or c['name'].endswith('ordinary') or c.get('expected',0) else (False,)):record(c['name'],core,compare(native,c,core))
         gc.collect();print('CHECKED '+c['name'],flush=True)
     for load in base.LOADS:
         for name,ref in handoff(native,load):record(name,False,ref)
@@ -233,7 +321,7 @@ def worker(directory,snapshot):
     check(set(OWN)<=sites,'animation sites missing: '+str(sorted(set(OWN)-sites)))
     check(EDGES<=edges,'animation outcomes missing: '+str(sorted(EDGES-edges)))
     mutants=[];lookup={c['name']:c for c in cases()}
-    for mutation,name in ((1,'initialize-pinned'),(2,'tick-counter-fff1'),(3,'tick-counter-0000'),(4,'tick-live-count'),(5,'tick-far-ip-changed')):
+    for mutation,name in ((1,'initialize-pinned'),(2,'tick-counter-fff1'),(3,'tick-counter-0000'),(4,'tick-live-count'),(5,'tick-far-ip-changed'),(6,'drawing-bitmap-live-ax'),(7,'drawing-row-ordinary'),(8,'drawing-rows-ordinary'),(9,'drawing-backdrop-ordinary')):
         try:compare(Native(directory,mutation),lookup[name],True)
         except base.Mismatch as error:mutants.append(dict(mutation=mutation,case=name,completed=True,mismatch=str(error)))
         else:raise base.OracleFailure(f'animation mutant{mutation} survived')
@@ -246,8 +334,11 @@ def worker(directory,snapshot):
         branch_edges=sorted(edges),own_branch_edges=sorted(EDGES),instruction_steps=sum(r['steps'] for r in rows),
         ordered_bus_events=sum(r['events'] for r in rows),declared_far_return_events=sum(r['far_return_events'] for r in rows),
         mutation_count=len(mutants),mutations=mutants,input_hashes=before,rows=rows,
-        limits=dict(timeout_seconds=SECONDS,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS),
-        scope='4FF8 initializer and4F96 countdown/renderer parent, actual frame/segment/flag effects and three same-RAM218-tick cycles. Constructed graphics banks; no upstream allocation/bank-production, selector-EA wrap at SPFFFE/FFFF, scheduling or whole-menu proof.'))
+        limits=dict(timeout_seconds=SECONDS,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS,drawing_instructions=DRAW_STEPS,drawing_events=DRAW_EVENTS,long_shift_instructions=20_000_000,long_shift_events=5_000_000),
+        unverified_fixture_domains=[dict(case=c,reason='Original instruction budget exhausted with VGA stack; no completed differential or mutation credit') for c in UNVERIFIED_CASES],
+        entry_offsets=dict(initialize=0x4FF8,tick=0x4F96,backdrop=0x4EEF,rows=0x4F2B,row=0x4F4A,bitmap=0x4F6E),
+        pinned_ui_sections=[dict(index=i,decoded_bytes=len(b),sha256=sha(b)) for i,b in zip((3,4),resource_banks())],
+        scope='4EEF/4F2B/4F4A/4F6E connected menu drawing,4FF8 initializer and4F96 countdown/renderer parent, actual frame/segment/flag effects and three same-RAM218-tick cycles. Constructed and pinned decoded graphics banks; no upstream allocation/loader execution, selector-EA wrap at SPFFFE/FFFF, scheduling or whole-menu proof.'))
     print(f'PASS menu animation: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(EDGES)} outcomes,{len(mutants)} mutants',flush=True)
 
 def main():

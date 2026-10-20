@@ -442,7 +442,9 @@ loc_4EE6:
     ret ; @04EE6
 ; UNKNOWN: unresolved bytes
     db 0xf4,0x57,0x28,0x54,0x5c,0x50,0x90,0x4c ; @04EE7
-sub_4EEF:
+; Two direct bitmap calls share the live UI selector; no parent saves.
+; Actual relocated far returns and renderer DS/ES/flags feed the second call.
+DrawMenuBackdropLayers:
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04EEF
     mov [GraphicsResourceSegment-GameDataImage],ax ; @04EF2
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04EF5
@@ -454,6 +456,7 @@ sub_4EEF:
     mov si,0x2080 ; @04F04
     mov di,0x7786 ; @04F07
     call 0x0:0x8822 ; @04F0A
+MenuBackdropAfterFirstBitmap:
     mov ax,0x8 ; @04F0F
     mov bx,0xa ; @04F12
     mov bp,0x2 ; @04F15
@@ -463,19 +466,25 @@ sub_4EEF:
     mov si,0x2080 ; @04F1F
     mov di,0x7786 ; @04F22
     call 0x0:0x8822 ; @04F25
+MenuBackdropReturn:
     ret ; @04F2A
-sub_4F2B:
+; First CALL draws four table entries; second two-entry row is fallthrough.
+; Six CS source words remain live UNKNOWN storage. docs/menu-animation.md.
+DrawMenuDecorationRows:
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @04F2B
     mov [GraphicsResourceSegment-GameDataImage],ax ; @04F2E
     mov bx,0x78 ; @04F31
     mov ax,0x44 ; @04F34
     mov cx,0x4 ; @04F37
-    lea di,[0x4f8a] ; @04F3A
-    call sub_4F4A ; @04F3E
+    lea di,[MenuDecorationSourceTable] ; @04F3A
+    call DrawMenuDecorationRow ; @04F3E
+MenuRowsAfterFirstRow:
     mov bx,0xc5 ; @04F41
     mov ax,0xc4 ; @04F44
     mov cx,0x2 ; @04F47
-sub_4F4A:
+; Actual CX/AX/BX saves, two near wrapper calls, ADD AX,80 and LOOP.
+; CX zero still enters the body; flags and overwritten saves remain observable.
+DrawMenuDecorationRow:
     push cx ; @04F4A
     mov si,[cs:di] ; @04F4B
     add di,byte +0x2 ; @04F4E
@@ -484,16 +493,21 @@ sub_4F4A:
     push bx ; @04F55
     sub ax,0x8 ; @04F56
     add bx,byte +0x8 ; @04F59
-    call sub_4F6E ; @04F5C
+    call DrawMenuDecorationBitmap ; @04F5C
+MenuRowAfterFirstBitmap:
     pop bx ; @04F5F
     pop ax ; @04F60
     mov bp,0x3 ; @04F61
-    call sub_4F6E ; @04F64
+    call DrawMenuDecorationBitmap ; @04F64
+MenuRowAfterSecondBitmap:
     pop cx ; @04F67
     add ax,0x80 ; @04F68
-    loop sub_4F4A ; @04F6B
+    loop DrawMenuDecorationRow ; @04F6B
+MenuDecorationRowReturn:
     ret ; @04F6D
-sub_4F6E:
+; Push AX/BX/BP/SI/DI; source+AB9 mask,43D/78 geometry, actual far CALL.
+; POPs reread live words; CX/DX/DS/ES/flags are not restored by this wrapper.
+DrawMenuDecorationBitmap:
     push ax ; @04F6E
     push bx ; @04F6F
     push bp ; @04F70
@@ -504,13 +518,16 @@ sub_4F6E:
     db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @04F79
     add di,0xab9 ; @04F7B
     call 0x0:0x8822 ; @04F7F
+MenuDecorationAfterBitmap:
     pop di ; @04F84
     pop si ; @04F85
     pop bp ; @04F86
     pop bx ; @04F87
     pop ax ; @04F88
+MenuDecorationBitmapReturn:
     ret ; @04F89
 ; UNKNOWN: unresolved bytes
+MenuDecorationSourceTable:
     db 0x88,0x94,0xd4,0xa2,0x20,0xb1,0x6c,0xbf,0xb8,0xcd,0x04,0xdc ; @04F8A
 ; Ten11-byte DS4960 records: +0 live countdown,+2 reset,+4 x,+6 y,+8 source.
 ; Entry8000 disables; decrement toFFEF reloads +2 without drawing. Other negative

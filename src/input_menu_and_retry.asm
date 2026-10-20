@@ -48,8 +48,8 @@ MenuRefresh4401:
     call DrawScreenBackground ; @0442B
     call sub_7CBC ; @0442E
     call InitializeMenuAnimations ; @04431
-    call sub_4EEF ; @04434
-    call sub_4F2B ; @04437
+    call DrawMenuBackdropLayers ; @04434
+    call DrawMenuDecorationRows ; @04437
     lea si,[0x4ad9] ; @0443A
     call DrawTextStream ; @0443E
     call sub_4EA2 ; @04441

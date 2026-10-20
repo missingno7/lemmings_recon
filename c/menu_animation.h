@@ -10,7 +10,8 @@ typedef enum LmnMenuAnimationEntry {
 typedef enum LmnMenuAnimationStatus {
     LMN_MENU_ANIMATION_READY = 0,
     LMN_MENU_ANIMATION_RENDERER_STOP = 1,
-    LMN_MENU_ANIMATION_CHANGED_RETURN = 2
+    LMN_MENU_ANIMATION_CHANGED_RETURN = 2,
+    LMN_MENU_ANIMATION_CHANGED_NEAR_RETURN = 3
 } LmnMenuAnimationStatus;
 typedef struct LmnMenuAnimationResult {
     LmnVideoRestoreState state;
@@ -31,4 +32,23 @@ LmnMenuAnimationResult lmn_menu_animation_core(uint8_t *memory,
 LmnMenuAnimationResult lmn_menu_animation_adapter(uint8_t *memory, const LmnRegs *registers,
     uint16_t game_data_segment, enum LmnMenuAnimationEntry entry,
     const LmnRasterBus *bus, const LmnRasterBytePorts *ports);
+
+/* The connected 4EEF/4F2B/4F4A/4F6E drawing cluster uses the same transient
+   state and bitmap-return contract. ROWS falls through to its second row;
+   ROW's zero CX retains do/LOOP semantics, including live saved-count changes. */
+typedef enum LmnMenuDrawingEntry {
+    LMN_MENU_DRAWING_BACKDROP = 0,
+    LMN_MENU_DRAWING_ROWS = 1,
+    LMN_MENU_DRAWING_ROW = 2,
+    LMN_MENU_DRAWING_BITMAP = 3
+} LmnMenuDrawingEntry;
+typedef LmnMenuAnimationResult LmnMenuDrawingResult;
+LmnMenuDrawingResult lmn_menu_drawing_core(uint8_t *memory,
+    uint16_t code_segment, uint16_t game_data_segment,
+    const LmnVideoRestoreState *input, enum LmnMenuDrawingEntry entry,
+    const LmnRasterBus *bus, const LmnRasterBytePorts *ports);
+LmnMenuDrawingResult lmn_menu_drawing_adapter(uint8_t *memory,
+    const LmnRegs *registers, uint16_t game_data_segment,
+    enum LmnMenuDrawingEntry entry, const LmnRasterBus *bus,
+    const LmnRasterBytePorts *ports);
 #endif

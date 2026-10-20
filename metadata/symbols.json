@@ -29490,8 +29490,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4EEF",
-    "aliases": [],
+    "symbol_name": "DrawMenuBackdropLayers",
+    "aliases": [
+      "sub_4EEF"
+    ],
     "callers": [
       17460
     ],
@@ -29520,16 +29522,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 60
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 60,
+    "c_implementation": "c/menu_animation.c",
+    "c_code_ranges": [
+      [
+        20207,
+        20267
+      ]
+    ],
+    "verification_evidence": "tests/menu_animation.py:112 fixtures/841 comparisons,118 own sites/15 outcomes and9 completed mutants in4,990 known connected bytes, including animation regressions. Live CS table,actual save/near/far frames,two-row fallthrough,pinned resource3/4 banks,DS/flags and full256-shift distinct-DS quirk.155 new unique code bytes. Artificial VGA-stack fixture remains an explicit budget-failed frontier with no native comparison credit; docs/menu-animation.md."
   },
   {
     "address": 20267,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4F2B",
-    "aliases": [],
+    "symbol_name": "DrawMenuDecorationRows",
+    "aliases": [
+      "sub_4F2B"
+    ],
     "callers": [
       17463
     ],
@@ -29575,16 +29587,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 67
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 67,
+    "c_implementation": "c/menu_animation.c",
+    "c_code_ranges": [
+      [
+        20267,
+        20334
+      ]
+    ],
+    "verification_evidence": "tests/menu_animation.py:112 fixtures/841 comparisons,118 own sites/15 outcomes and9 completed mutants in4,990 known connected bytes, including animation regressions. Live CS table,actual save/near/far frames,two-row fallthrough,pinned resource3/4 banks,DS/flags and full256-shift distinct-DS quirk.155 new unique code bytes. Artificial VGA-stack fixture remains an explicit budget-failed frontier with no native comparison credit; docs/menu-animation.md."
   },
   {
     "address": 20298,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4F4A",
-    "aliases": [],
+    "symbol_name": "DrawMenuDecorationRow",
+    "aliases": [
+      "sub_4F4A"
+    ],
     "callers": [
       20286
     ],
@@ -29605,16 +29627,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 36
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 36,
+    "c_implementation": "c/menu_animation.c",
+    "c_code_ranges": [
+      [
+        20298,
+        20334
+      ]
+    ],
+    "verification_evidence": "tests/menu_animation.py:112 fixtures/841 comparisons,118 own sites/15 outcomes and9 completed mutants in4,990 known connected bytes, including animation regressions. Live CS table,actual save/near/far frames,two-row fallthrough,pinned resource3/4 banks,DS/flags and full256-shift distinct-DS quirk.155 new unique code bytes. Artificial VGA-stack fixture remains an explicit budget-failed frontier with no native comparison credit; docs/menu-animation.md."
   },
   {
     "address": 20334,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_4F6E",
-    "aliases": [],
+    "symbol_name": "DrawMenuDecorationBitmap",
+    "aliases": [
+      "sub_4F6E"
+    ],
     "callers": [
       20316,
       20324
@@ -29627,8 +29659,16 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 28
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 28,
+    "c_implementation": "c/menu_animation.c",
+    "c_code_ranges": [
+      [
+        20334,
+        20362
+      ]
+    ],
+    "verification_evidence": "tests/menu_animation.py:112 fixtures/841 comparisons,118 own sites/15 outcomes and9 completed mutants in4,990 known connected bytes, including animation regressions. Live CS table,actual save/near/far frames,two-row fallthrough,pinned resource3/4 banks,DS/flags and full256-shift distinct-DS quirk.155 new unique code bytes. Artificial VGA-stack fixture remains an explicit budget-failed frontier with no native comparison credit; docs/menu-animation.md."
   },
   {
     "address": 20374,
@@ -65248,6 +65288,150 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned4FF8 initializer/4F96 tick: ten eleven-byte records, live words and renderer frames; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20239,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuBackdropAfterFirstBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20266,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuBackdropReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20289,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuRowsAfterFirstRow",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20319,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuRowAfterFirstBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20327,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuRowAfterSecondBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20333,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuDecorationRowReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20356,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuDecorationAfterBitmap",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20361,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "MenuDecorationBitmapReturn",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 20362,
+    "segment": 0,
+    "kind": "data",
+    "size": 12,
+    "symbol_name": "MenuDecorationSourceTable",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned menu4EEF/4F2B/4F4A/4F6E actual child frames and live CS source table; docs/menu-animation.md"
     ],
     "verification_status": "STATIC"
   }
