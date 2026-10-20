@@ -222,10 +222,16 @@ loc_4530:
     db 0x02,0xe0 ; ENCODED: add ah,al (NASM chooses a different encoding) ; @04543
     mov [LevelResourceSelectionByte-GameDataImage],ah ; @04545
     jmp loc_445B ; @04549
+; LEVEL START: reset1F6D only at454C;47DD enters common4551 without resetting it.
+; Actual PUSH DS/POP ES owns the DF-sensitive0FCA-byte clear; AH remains live.
+; Real CALL197D returns through4560,then CALL4566 through4563 before JMP00FB.
+; Briefing20h consumes its caller word intoAX and JMPs4401; no second POP/RET.
+; Native selector-own bus retains DAT/raw RAM/DOS/retry/fatal seams; docs/level-start.md.
 loc_454C:
 MainMenuStartLevel:
-    mov byte [0x1f6d],0x0 ; @0454C
+    mov byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @0454C
 loc_4551:
+LoadAndStartSelectedLevel:
     push ds ; @04551
     pop es ; @04552
     mov di,0x0 ; @04553
@@ -233,7 +239,9 @@ loc_4551:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04559
     rep stosb ; @0455B
     call LoadSelectedLevelResources ; @0455D
+LevelStartAfterResources:
     call ShowLevelBriefing ; @04560
+LevelStartAfterBriefing:
     jmp loc_00FB ; @04563
 ; BRIEFING: wrapped byte selection minus30*group, live header fields and byte DIV.
 ; Zero divisor/quotient overflow remain processor-fault seams, never clamped.
@@ -464,7 +472,7 @@ loc_471A:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04728
 loc_4729:
-    mov byte [0x1f6d],0xff ; @04729
+    mov byte [LevelOutcomeSuccessByte-GameDataImage],0xff ; @04729
     inc byte [LevelResourceSelectionByte-GameDataImage] ; @0472E
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @04732
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04735
@@ -491,7 +499,7 @@ loc_4748:
 loc_4776:
     jmp short loc_4797 ; @04776
 loc_4778:
-    mov byte [0x1f6d],0x0 ; @04778
+    mov byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @04778
     lea bx,[0x4cd3] ; @0477D
     cmp byte [InputModeByte25A6-GameDataImage],0x0 ; @04781
     jz loc_4797 ; @04786
@@ -569,7 +577,7 @@ sub_482F:
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0483F
 loc_4840:
-    cmp byte [0x1f6d],0x0 ; @04840
+    cmp byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @04840
     jz loc_4855 ; @04845
     mov al,[0x1f6c] ; @04847
     inc al ; @0484A

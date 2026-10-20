@@ -12,8 +12,11 @@ static uint32_t physical(uint16_t segment, uint16_t offset) {
     return (((uint32_t)segment << 4) + offset) & 0xfffffu;
 }
 
-static void put8(uint8_t *mem, uint16_t segment, uint16_t offset, uint8_t value) {
-    mem[physical(segment,offset)]=value;
+static void put8(uint8_t *mem,uint16_t segment,uint16_t offset,uint8_t value,
+    uint16_t flags,const LmnRasterBus *bus) {
+    uint32_t at=physical(segment,offset);
+    if(bus&&bus->write_byte)bus->write_byte(bus->context,mem,at,value,flags);
+    else mem[at]=value;
 }
 
 static uint16_t add8_flags(uint16_t flags, uint8_t left, uint8_t right) {
@@ -30,8 +33,8 @@ static uint16_t add8_flags(uint16_t flags, uint8_t left, uint8_t right) {
     return (uint16_t)((flags&(uint16_t)~ARITH)|arithmetic);
 }
 
-LmnDecimalDigitsResult lmn_write_decimal_digits_core(uint8_t *mem,
-    uint16_t segment, uint16_t cursor, uint8_t number, uint16_t flags) {
+LmnDecimalDigitsResult lmn_write_decimal_digits_bus_core(uint8_t *mem,
+    uint16_t segment,uint16_t cursor,uint8_t number,uint16_t flags,const LmnRasterBus *bus) {
     uint8_t hundreds,tens,units;
     LmnDecimalDigitsResult out;
 #if DECIMAL_MUTATION == 1
@@ -40,16 +43,16 @@ LmnDecimalDigitsResult lmn_write_decimal_digits_core(uint8_t *mem,
     hundreds=(uint8_t)(number/100u);
     tens=(uint8_t)((number/10u)%10u);
     units=(uint8_t)(number%10u);
-    put8(mem,segment,cursor,(uint8_t)(hundreds+'0'));
+    put8(mem,segment,cursor,(uint8_t)(hundreds+'0'),add8_flags(flags,(uint8_t)(hundreds+1u),0x2Fu),bus);
 #if DECIMAL_MUTATION == 3
     if(flags&DF) {
-        put8(mem,segment,(uint16_t)(cursor-1u),(uint8_t)(tens+'0'));
-        put8(mem,segment,(uint16_t)(cursor-2u),(uint8_t)(units+'0'));
+        put8(mem,segment,(uint16_t)(cursor-1u),(uint8_t)(tens+'0'),add8_flags(flags,(uint8_t)(tens+1u),0x2Fu),bus);
+        put8(mem,segment,(uint16_t)(cursor-2u),(uint8_t)(units+'0'),add8_flags(flags,units,0x30u),bus);
     } else
 #endif
     {
-        put8(mem,segment,(uint16_t)(cursor+1u),(uint8_t)(tens+'0'));
-        put8(mem,segment,(uint16_t)(cursor+2u),(uint8_t)(units+'0'));
+        put8(mem,segment,(uint16_t)(cursor+1u),(uint8_t)(tens+'0'),add8_flags(flags,(uint8_t)(tens+1u),0x2Fu),bus);
+        put8(mem,segment,(uint16_t)(cursor+2u),(uint8_t)(units+'0'),add8_flags(flags,units,0x30u),bus);
     }
     out.value=(uint16_t)(((uint16_t)(tens+'0')<<8)|(uint16_t)(units+'0'));
     out.cursor=(uint16_t)(cursor+2u);
@@ -59,6 +62,11 @@ LmnDecimalDigitsResult lmn_write_decimal_digits_core(uint8_t *mem,
     /* The leaf's last arithmetic instruction is ADD AL,30h. */
     out.flags=add8_flags(flags,units,0x30u);
     return out;
+}
+
+LmnDecimalDigitsResult lmn_write_decimal_digits_core(uint8_t *mem,
+    uint16_t segment,uint16_t cursor,uint8_t number,uint16_t flags) {
+    return lmn_write_decimal_digits_bus_core(mem,segment,cursor,number,flags,0);
 }
 
 void lmn_write_decimal_digits_adapter(uint8_t *mem, LmnRegs *r) {

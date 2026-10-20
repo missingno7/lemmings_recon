@@ -1223,4 +1223,9 @@
 #define SEG09A9_BriefingTimeDigit 0x4B83u
 #define SEG09A9_BriefingTimePluralByte 0x4B8Bu
 #define SEG09A9_BriefingGroupText 0x4B98u
+#define CS_EnterLoadedLevelGame 0x00FBu
+#define CS_LoadAndStartSelectedLevel 0x4551u
+#define CS_LevelStartAfterResources 0x4560u
+#define CS_LevelStartAfterBriefing 0x4563u
+#define SEG09A9_LevelOutcomeSuccessByte 0x1F6Du
 #endif

@@ -87,6 +87,13 @@ Record ownership and preserved quirks are documented in object-records.md.
 
 ## Resource and state handoff
 
+The 454C/4551 level-start parent now connects the scoped selector to the native
+briefing, then JMPs 00FB or preserves cancellation's consumed word/JMP4401.
+Both entries share the DF-sensitive clear and actual live stack/segment effects.
+Its shared campaign includes the selector's own bus accesses and all decimal
+store flags, while retaining ordinary-RAM DAT/raw and typed DOS/retry seams.
+The game body and platform remain open. See level-start.md.
+
 `LoadSelectedLevelResources` (197D) reads an unchecked selection byte at DS:1F6B
 through order bytes at 54EE. After wrapping decrement, the high nibble selects
 the LEVEL filename group, bits1..3 select its section, and bit0 selects odd-table

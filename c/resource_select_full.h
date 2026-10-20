@@ -36,6 +36,11 @@ LmnResourceSelectionFullResult lmn_load_selected_resources_full_core(
     uint8_t *memory, uint16_t error_main_data_segment,
     const LmnDatFileCall *input, const LmnDatLoadSegments *segments,
     const LmnResourceSelectionFullServices *services);
+/* Bus-aware selector and fatal tails; RAM-only DAT/raw child domains remain. */
+LmnResourceSelectionFullResult lmn_load_selected_resources_full_bus_core(
+    uint8_t *memory,uint16_t error_main_data_segment,const LmnDatFileCall *input,
+    const LmnDatLoadSegments *segments,const LmnResourceSelectionFullServices *services,
+    const LmnRasterBus *bus);
 
 /* Reads the four relocated DAT segment operands and the 194B main-data
    operand, maps all twelve CPU fields, and consumes the actual outer RET only

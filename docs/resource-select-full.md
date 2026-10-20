@@ -19,9 +19,13 @@ effects remain live through termination, missing providers or changed returns.
 Its adapter reads the four relocated DAT operands and the separate 194B error
 printer data-segment operand. A logical caller supplies these values explicitly.
 
-This composition uses RAM throughout. The prefix still requires the existing
+The legacy entry uses RAM throughout. A new optional bus entry exposes selector
+accesses and forwards the same bus to printer/cleanup tails; the normal legacy
+entry is its null-bus wrapper. DAT/raw descendants retain their existing RAM
+domains. See level-start.md for the shared selector/briefing connection.
+The prefix still requires the existing
 preserving DOS service contracts, intact internal DAT returns and the explicit
-4B1C retry UI seam. It does not claim a general raster-bus interface, native
+4B1C retry UI seam. It does not claim a general raster-bus interface inside those children, native
 DOS/BIOS ownership, IRQ delivery or complete gameplay. The historical result
 API retains its intact immediate-child return precondition; new connections use
 the execution result instead. No UNKNOWN bytes are newly translated.

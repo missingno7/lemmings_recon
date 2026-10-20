@@ -73,13 +73,12 @@ static enum LmnResourceSelectionFullStatus cleanup_status(
     }
 }
 
-LmnResourceSelectionFullResult lmn_load_selected_resources_full_core(
+LmnResourceSelectionFullResult lmn_load_selected_resources_full_bus_core(
     uint8_t *memory, uint16_t error_main_data_segment,
     const LmnDatFileCall *input, const LmnDatLoadSegments *segments,
-    const LmnResourceSelectionFullServices *services) {
+    const LmnResourceSelectionFullServices *services,const LmnRasterBus *bus) {
     LmnResourceSelectionExecution selection =
-        lmn_load_selected_resources_execution_core(memory, input, segments,
-                                                   services->selection);
+        lmn_load_selected_resources_bus_execution_core(memory,input,segments,services->selection,bus);
     LmnResourceSelectionFullState state = state_from_selection(&selection.state);
     enum LmnResourceSelectionStatus transfer = selection.status;
 
@@ -107,15 +106,21 @@ LmnResourceSelectionFullResult lmn_load_selected_resources_full_core(
 
     if (transfer == LMN_RESOURCE_SELECTION_FILE_ERROR) {
         LmnFileErrorResult child = lmn_file_error_core(memory,
-            error_main_data_segment, &state, services->file_error, NULL);
+            error_main_data_segment, &state, services->file_error,bus);
         return full_result(&child.state, child.continuation,
                            file_error_status(child.status));
     } else {
         LmnFatalCleanupResult child = lmn_fatal_cleanup_core(memory, &state,
-            0, services->cleanup, NULL);
+            0, services->cleanup,bus);
         return full_result(&child.state, child.continuation,
                            cleanup_status(child.status));
     }
+}
+
+LmnResourceSelectionFullResult lmn_load_selected_resources_full_core(
+    uint8_t *memory,uint16_t error_main_data_segment,const LmnDatFileCall *input,
+    const LmnDatLoadSegments *segments,const LmnResourceSelectionFullServices *services) {
+    return lmn_load_selected_resources_full_bus_core(memory,error_main_data_segment,input,segments,services,0);
 }
 
 static void apply_state(LmnRegs *registers,

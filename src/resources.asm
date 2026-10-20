@@ -94,6 +94,9 @@ FileErrorCleanupTail:
 ; now connect through c/resource_select_full.c with original live fatal frames.
 ; The execution API consumes all8 immediatechildRETs and surfaces changedtargets;
 ; normal VGAGR/VGASPEC cores stop before their separate1A59/1A7A outerRETs.
+; Selector-own bus observes XOR BH/CH before reads/saves,decimal ADD store flags,
+; separate live DS:1FF0 reads and each immediate-child CALL/RET word.
+; DAT/raw descendants retain their ordinary-RAM/intact-internal-return domains.
 LoadSelectedLevelResources:
     mov bl,[LevelResourceSelectionByte-GameDataImage] ; @0197D
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @01981

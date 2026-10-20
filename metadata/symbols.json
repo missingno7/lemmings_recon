@@ -66374,8 +66374,8 @@
   {
     "address": 17740,
     "segment": 0,
-    "kind": "label",
-    "size": null,
+    "kind": "entry",
+    "size": 26,
     "symbol_name": "MainMenuStartLevel",
     "aliases": [],
     "callers": [],
@@ -66383,9 +66383,19 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md"
+      "Pinned4401..454B menu state,actual call words and JMP exits; docs/main-menu.md",
+      "Menu JMP entry454C resets success byte,falls through4551,real calls197D/4566 then JMP00FB; docs/level-start.md"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_implementation": "c/level_start.c",
+    "c_core": "lmn_start_selected_level",
+    "c_code_ranges": [
+      [
+        17740,
+        17766
+      ]
+    ],
+    "verification_evidence": "tests/level_start.py shared campaign:286 comparisons,all10 parent sites/one jump outcome,26 new unique bytes,four completed numeric mutants;three-load resource->briefing->game/menu jumps,both entries,live ES/DF/wrap,changed actual returns and DIV stop. All256 decimal inputs plusDF/cursor/physical wrap verify store flags. DAT/raw original instructions execute under explicit ordinary-RAM/preserving-DOS/intact-internal-return scope,with bounded RAM-event projection. Gameplay00FB,retry UI,platform and aggregate acceptance remain open; docs/level-start.md"
   },
   {
     "address": 18791,
@@ -68675,6 +68685,95 @@
     "confidence": "PROVEN",
     "evidence": [
       "Live4566 briefing destination/base palette consumer, not separate storage; docs/level-briefing.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 251,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "EnterLoadedLevelGame",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17745,
+    "segment": 0,
+    "kind": "entry",
+    "size": 21,
+    "symbol_name": "LoadAndStartSelectedLevel",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
+    ],
+    "verification_status": "TESTED",
+    "c_implementation": "c/level_start.c",
+    "c_core": "lmn_start_selected_level",
+    "c_code_ranges": [
+      [
+        17745,
+        17766
+      ]
+    ],
+    "verification_evidence": "tests/level_start.py shared campaign:286 comparisons,all10 parent sites/one jump outcome,26 new unique bytes,four completed numeric mutants;three-load resource->briefing->game/menu jumps,both entries,live ES/DF/wrap,changed actual returns and DIV stop. All256 decimal inputs plusDF/cursor/physical wrap verify store flags. DAT/raw original instructions execute under explicit ordinary-RAM/preserving-DOS/intact-internal-return scope,with bounded RAM-event projection. Gameplay00FB,retry UI,platform and aggregate acceptance remain open; docs/level-start.md"
+  },
+  {
+    "address": 17760,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelStartAfterResources",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 17763,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "LevelStartAfterBriefing",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8045,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelOutcomeSuccessByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
     ],
     "verification_status": "UNRESOLVED"
   }

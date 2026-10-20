@@ -2,7 +2,17 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 31,161 bytes. The 4566 briefing
+The main-image translated-code ledger union is 31,187 bytes. The 26 new unique
+bytes at454C/4551 connect native resource loading,briefing and actual JMP00FB
+or cancellation JMP4401. The shared campaign passes286 comparisons,all10 own
+sites/one jump outcome and four completed mutants,including all256 decimal
+store inputs and three loads. Selector-own bus access is explicit; DAT/raw
+children retain ordinary-RAM,preserving-DOS,intact-internal-return and retry
+seams. All84 unit tests,exact ASM/relocations and affected270/59/72x4 legacy
+regressions pass. Gameplay00FB,platform and aggregate acceptance remain open.
+See level-start.md.
+
+The preceding checkpoint had 31,161 main-image translated-code bytes. The 4566 briefing
 and its 4B5C percentage, 4C17 partial-clear and 5447 palette wrappers add 379
 unique known bytes. Their shared campaign passes 295 fixtures / 590 comparisons,
 all 132 own sites / 29 outcomes and five completed mutants. Three full loads,
@@ -217,13 +227,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Connect 454C/4551 level-start to the native briefing and its actual JMP00FB
-   game continuation. Preserve the briefing's cancel JMP4401 with its consumed
-   caller word instead of forcing a normal RET4563. Preserve the byte1F6D reset,
-   actual PUSH DS/POP ES,
-   DF-sensitive 0FCA-byte clear and returned resource state. The existing 197D
-   selector keeps its RAM-only DOS/retry/fatal seam; add the required canonical
-   bus capability deliberately before widening parent claims. Keep special
+1. Advance the actual00FB game-entry frontier through its03E7 initializer.
+   Use fresh graph views and resolve0FB2,15AD/1602 device/setup ownership before
+   composing the already native timer,level/status/visibility and object children.
+   Keep the accepted454C/4551 ->197D ->4566 ->00FB/4401 milestone intact.
+   Selector-own bus support does not widen DAT/raw RAM/DOS/retry contracts.
+   Preserve the actual1F6D outcome producers and actual parent frames. Keep special
    redraw, fatal/provider and processor-fault boundaries explicit. The 0041
    percentage byte later feeds signed JNL at4724 and 48C7/48FB statistics paths;
    do not normalize it to a host 0..100 range. Batch result wrappers48BD/48F6

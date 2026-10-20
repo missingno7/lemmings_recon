@@ -2,6 +2,7 @@
 #define LEMMINGS_RESOURCE_SELECT_H
 #include "dat_load.h"
 #include "resource_raw.h"
+#include "special_blit.h"
 
 typedef struct LmnResourceSelectionCall {
     uint16_t main_data_segment,stack_segment,stack_offset,flags,base_cursor;
@@ -34,6 +35,12 @@ typedef struct LmnResourceSelectionExecution {
 LmnResourceSelectionExecution lmn_load_selected_resources_execution_core(
     uint8_t *,const LmnDatFileCall *,const LmnDatLoadSegments *,
     const LmnResourceSelectionServices *);
+/* Selector-owned reads/writes/saves and decimal stores use this bus. DAT/raw
+   children retain their documented ordinary-RAM/DOS/retry domains. This does
+   not claim arbitrary VGA input/heap/stack support inside those children. */
+LmnResourceSelectionExecution lmn_load_selected_resources_bus_execution_core(
+    uint8_t *,const LmnDatFileCall *,const LmnDatLoadSegments *,
+    const LmnResourceSelectionServices *,const LmnRasterBus *);
 
 /* Legacy result API: callers must provide intact immediate child return words.
    Its five-field input preserves the historical zero initialization of the

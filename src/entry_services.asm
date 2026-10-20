@@ -101,6 +101,7 @@ sub_00D8:
     sti ; @000F7
     jmp EnterMainMenu ; @000F8
 loc_00FB:
+EnterLoadedLevelGame:
     call sub_03E7 ; @000FB
     mov byte [cs:MouseIrqMirrorGate83BE],0x0 ; @000FE
     nop ; @00104

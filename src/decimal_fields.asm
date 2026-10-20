@@ -72,6 +72,8 @@ WriteDecimalBytePair:
 ; Writes are live and increment forwards even withDF set. Other registers/segments
 ; are unchanged; final ADD AL,30 defines arithmetic flags, preserves control flags.
 ; Native C and active-return alias checks: tests/decimal_digits_c.py.
+; Optional bus exposes each digit store after its actual ADD flags;
+; all256 values and wrapped/DF stores rechecked in tests/level_start.py.
 ; Separate original-only contract check: tests/decimal_digits.py; docs/decimal-digits.md.
 WriteDecimalByteDigits:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04BC2

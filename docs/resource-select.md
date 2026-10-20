@@ -53,6 +53,14 @@ and override bytes also have independent expected checks. Three compiled mutants
 clamp a zero order byte, restore an overwritten DS, or reject ignored close carry;
 all are detected. Dependencies compile without their separate mutations.
 
+The optional bus execution entry now exposes the selector's own accesses,
+saved words, immediate CALL/RET words and decimal stores with their actual
+defined flags. Legacy entries retain their ABI through a null-bus wrapper.
+DAT/raw children still require their original RAM-only contracts; the bus does
+not widen their domains. The shared level-start campaign executes their original
+instructions with a bounded RAM-event projection and composes the selector with
+the native briefing. See level-start.md for that separate scope.
+
 The original comparison is confined to identified routine intervals, with a
 ten-million-instruction budget per case and a 120-second suite process limit.
 DOS providers and the rendering/input retry callee at 4B1C remain declared seams.
