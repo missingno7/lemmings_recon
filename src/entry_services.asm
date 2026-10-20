@@ -78,7 +78,7 @@ ProgramEntry:
     mov ah,0x9 ; @000C0
     lea dx,[0x2200] ; @000C2
     int 0x21 ; @000C6
-    call sub_15AD ; @000C8
+    call CalibrateGameTimerReload ; @000C8
     mov al,0x36 ; @000CB
     out 0x43,al ; @000CD
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @000CF
@@ -463,9 +463,9 @@ sub_03E7:
     mov cx,0x642 ; @0045B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0045E
     rep stosb ; @00460
-    call sub_0FB2 ; @00462
+    call SetupGameVideoAndSpriteCallbacks ; @00462
     call sub_52F4 ; @00465
-    call sub_15AD ; @00468
+    call CalibrateGameTimerReload ; @00468
     call InitializeLevelFromRecord ; @0046B
     cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0046E
     jz loc_0480 ; @00473
@@ -1169,7 +1169,10 @@ RestorePrivateVectorInterrupt:
     pop ds ; @00FB0
 RestorePrivateVectorReturn:
     ret ; @00FB1
-sub_0FB2:
+; GAME VIDEO: CLI,full bound INT10 mode008D,live returned DS/SS,word OUT1613,STI.
+; Nine literal MOV words initialize canonical DrawingCallbackSlots for native sprites.
+; No mode/DS restore or invented RET; docs/video-probe.md.
+SetupGameVideoAndSpriteCallbacks:
     cli ; @00FB2
     mov ax,0x8d ; @00FB3
     int 0x10 ; @00FB6
@@ -1563,10 +1566,10 @@ loc_1312:
 ; UNKNOWN: unresolved bytes
     db 0xc7,0x06,0x7c,0x1f,0x08,0x00,0xeb,0xdf,0xc7,0x06,0x7c,0x1f,0x00,0x00,0xeb,0xd7 ; @0131A
 loc_132A:
-    mov word [0x2011],0xc8 ; @0132A
+    mov word [RasterMeasurementMode2011-GameDataImage],0xc8 ; @0132A
     jmp short loc_1301 ; @01330
 loc_1332:
-    mov word [0x2011],0x190 ; @01332
+    mov word [RasterMeasurementMode2011-GameDataImage],0x190 ; @01332
     jmp short loc_1301 ; @01338
 loc_133A:
     mov byte [0x200a],0xff ; @0133A
@@ -1636,13 +1639,18 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
+; VIDEO PROBES: four live three-byte DS rows,LODS follows DF; first flag is caller-owned.
+; Actual SI/CX saves surround CALL AX; native bodies implement1410/1462/1490/14A0.
+; Unrecognized targets stop before CALL,never execute UNKNOWN or a fallback CPU.
+; Raw CS lookup indexes are unchecked;signed pair ordering may invoke BIOS0F/swap.
+; Full INT10/IRET and returned registers/stack remain live; docs/video-probe.md.
 DetectVideoAdapters:
-    lea di,[0x2006] ; @013DC
+    lea di,[PrimaryDetectedAdapterPair-GameDataImage] ; @013DC
     mov word [di],0x0 ; @013E0
     mov word [di+0x2],0x0 ; @013E4
-    mov byte [0x2019],0xff ; @013E9
-    mov byte [0x2016],0xff ; @013EE
-    mov byte [0x201c],0xff ; @013F3
+    mov byte [ColorCrtcProbeEnableByte-GameDataImage],0xff ; @013E9
+    mov byte [EgaProbeEnableByte-GameDataImage],0xff ; @013EE
+    mov byte [MonoCrtcProbeEnableByte-GameDataImage],0xff ; @013F3
     mov cx,0x4 ; @013F8
     lea si,[DisplayProbeRecords-GameDataImage] ; @013FB
 loc_13FF:
@@ -1677,9 +1685,9 @@ loc_1431:
     db 0x03,0xdb ; ENCODED: add bx,bx (NASM chooses a different encoding) ; @01431
     mov ax,[cs:bx+BiosDisplayPairLookup] ; @01433
     mov [di],ax ; @01438
-    mov byte [0x2019],0x0 ; @0143A
-    mov byte [0x2016],0x0 ; @0143F
-    mov byte [0x201c],0x0 ; @01444
+    mov byte [ColorCrtcProbeEnableByte-GameDataImage],0x0 ; @0143A
+    mov byte [EgaProbeEnableByte-GameDataImage],0x0 ; @0143F
+    mov byte [MonoCrtcProbeEnableByte-GameDataImage],0x0 ; @01444
     lea bx,[di] ; @01449
     cmp byte [bx],0x1 ; @0144B
     jz loc_1458 ; @0144E
@@ -1688,10 +1696,10 @@ loc_1431:
     jnz loc_1461 ; @01456
 loc_1458:
     mov word [bx],0x0 ; @01458
-    mov byte [0x201c],0xff ; @0145C
+    mov byte [MonoCrtcProbeEnableByte-GameDataImage],0xff ; @0145C
 loc_1461:
     ret ; @01461
-sub_1462:
+ProbeEgaConfiguration:
     mov bl,0x10 ; @01462
     mov ah,0x12 ; @01464
     int 0x10 ; @01466
@@ -1703,27 +1711,27 @@ sub_1462:
     cs xlatb ; @01475
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @01477
     mov al,0x3 ; @01479
-    call sub_1523 ; @0147B
+    call StoreDetectedAdapterPair ; @0147B
     cmp ah,0x1 ; @0147E
     jz loc_148A ; @01481
-    mov byte [0x2019],0x0 ; @01483
+    mov byte [ColorCrtcProbeEnableByte-GameDataImage],0x0 ; @01483
     jmp short loc_148F ; @01488
 loc_148A:
-    mov byte [0x201c],0x0 ; @0148A
+    mov byte [MonoCrtcProbeEnableByte-GameDataImage],0x0 ; @0148A
 loc_148F:
     ret ; @0148F
 ProbeColorCrtc:
     mov dx,0x3d4 ; @01490
-    call sub_14E0 ; @01493
+    call ProbeCrtcRegister0F ; @01493
     jc loc_149F ; @01496
     mov al,0x2 ; @01498
     mov ah,0x2 ; @0149A
-    call sub_1523 ; @0149C
+    call StoreDetectedAdapterPair ; @0149C
 loc_149F:
     ret ; @0149F
-sub_14A0:
+ProbeMonochromeCrtc:
     mov dx,0x3b4 ; @014A0
-    call sub_14E0 ; @014A3
+    call ProbeCrtcRegister0F ; @014A3
     jc loc_14DF ; @014A6
     mov dl,0xba ; @014A8
     in al,dx ; @014AA
@@ -1738,7 +1746,7 @@ loc_14B2:
     jnz loc_14C2 ; @014B9
     mov al,0x1 ; @014BB
     mov ah,0x1 ; @014BD
-    jmp short sub_1523 ; @014BF
+    jmp short StoreDetectedAdapterPair ; @014BF
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @014C1
 loc_14C2:
@@ -1755,10 +1763,10 @@ loc_14C2:
     mov al,0x82 ; @014D8
     mov ah,0x3 ; @014DA
 loc_14DC:
-    call sub_1523 ; @014DC
+    call StoreDetectedAdapterPair ; @014DC
 loc_14DF:
     ret ; @014DF
-sub_14E0:
+ProbeCrtcRegister0F:
     mov al,0xf ; @014E0
     out dx,al ; @014E2
     inc dx ; @014E3
@@ -1797,7 +1805,7 @@ loc_1519:
     mov [di],ax ; @01520
 loc_1522:
     ret ; @01522
-sub_1523:
+StoreDetectedAdapterPair:
     lea bx,[di] ; @01523
     cmp byte [bx],0x0 ; @01525
     jz loc_152D ; @01528
@@ -1872,7 +1880,11 @@ RestoreKeyboardVectorReturn:
     db 0x1e,0x33,0xc0,0x8e,0xd8,0xc7,0x06,0x24,0x00,0xd4,0x16,0x8c,0x0e,0x26,0x00,0xc7 ; @01592
 ; UNKNOWN: unresolved bytes
     db 0x06,0x20,0x00,0xc7,0x17,0x8c,0x0e,0x22,0x00,0x1f,0xc3 ; @015A2
-sub_15AD:
+; CALIBRATION: only full option byteFF chooses4000. Word2011 selects200/400
+; or real detector output;signed primary high byte selects160/320 scanlines.
+; CLI measurement yields BP=FFFF-CX;stored reload is then overridden by actual
+; popped nonzero old word,followed by unconditional STI. No host-clock estimate.
+CalibrateGameTimerReload:
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @015AD
     jnz loc_15BB ; @015B2
     mov word [0x1fc9],0x4000 ; @015B4
@@ -1881,7 +1893,7 @@ loc_15BB:
     mov ax,[0x1fc9] ; @015BB
     push ax ; @015BE
     mov bx,0x140 ; @015BF
-    mov ax,[0x2011] ; @015C2
+    mov ax,[RasterMeasurementMode2011-GameDataImage] ; @015C2
     db 0x23,0xc0 ; ENCODED: and ax,ax (NASM chooses a different encoding) ; @015C5
     jz loc_15D5 ; @015C7
     cmp ax,0x190 ; @015C9
@@ -1892,14 +1904,14 @@ loc_15BB:
 loc_15D5:
     call DetectVideoAdapters ; @015D5
     mov bx,0x140 ; @015D8
-    lea di,[0x2006] ; @015DB
+    lea di,[PrimaryDetectedAdapterPair-GameDataImage] ; @015DB
     mov al,[di+0x1] ; @015DF
     cmp al,0x3 ; @015E2
     jnl loc_15E9 ; @015E4
     mov bx,0xa0 ; @015E6
 loc_15E9:
     cli ; @015E9
-    call sub_1602 ; @015EA
+    call MeasureRasterPitCounter ; @015EA
     mov ax,0xffff ; @015ED
     db 0x2b,0xc1 ; ENCODED: sub ax,cx (NASM chooses a different encoding) ; @015F0
     db 0x8b,0xe8 ; ENCODED: mov bp,ax (NASM chooses a different encoding) ; @015F2
@@ -1911,7 +1923,11 @@ loc_15E9:
 loc_1600:
     sti ; @01600
     ret ; @01601
-sub_1602:
+; PIT MEASUREMENT: ADD DL,6 wraps only low byte;bit3 set/clear precedes PIT
+; programming30/FFFF,then BX raster bit0 clear/set cycles (zero means65536).
+; Commands06/36 precede two counter reads;LOOPs retain TEST flags.
+; Native polling has no game timeout;only verification workers have limits.
+MeasureRasterPitCounter:
     mov cx,0xffff ; @01602
     mov dx,[DisplayControllerBasePort-GameDataImage] ; @01605
     add dl,0x6 ; @01609

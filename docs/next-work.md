@@ -2,7 +2,18 @@
 
 ## Current checkpoint
 
-The main-image translated-code ledger union is 31,187 bytes. The 26 new unique
+The main-image translated-code ledger union is 31,747 bytes. The560 new unique
+bytes connect video/sprite-slot setup0FB2,13DC detection with all four native
+probe callbacks,and15AD calibration through1602 raster/PIT measurement.
+The shared campaign passes93 fixtures/186 comparisons,all228 sites/69 outcomes,
+eight completed mutants and21 matching consumed hashes. BIOS-returned registers,
+segments/stack/flags,raw indexes,signed classes,DF,old reloads and overwritten
+callback-slot RETs stay live. Full65536/32768 polling counts pass. All84 unit
+tests and exact ASM/relocations pass. Unknown14C1 and the dynamic callback
+boundary remain explicit;03E7,device timing/platform and aggregate/full-game
+acceptance stay open. See video-probe.md.
+
+The preceding checkpoint had 31,187 main-image translated-code bytes. The 26 new unique
 bytes at454C/4551 connect native resource loading,briefing and actual JMP00FB
 or cancellation JMP4401. The shared campaign passes286 comparisons,all10 own
 sites/one jump outcome and four completed mutants,including all256 decimal
@@ -227,10 +238,12 @@ explicitly incomplete. See input-poll.md and verification.md.
 
 ## Next connected subsystem
 
-1. Advance the actual00FB game-entry frontier through its03E7 initializer.
-   Use fresh graph views and resolve0FB2,15AD/1602 device/setup ownership before
-   composing the already native timer,level/status/visibility and object children.
-   Keep the accepted454C/4551 ->197D ->4566 ->00FB/4401 milestone intact.
+1. Continue the actual00FB ->03E7 initializer. The video/detection/calibration
+   cluster is now native; preserve its full BIOS/stack and raw timer contracts.
+   Batch52F4/5377 palette initialization with482F sound selection,then the
+   7900 and80FD/81CC status/dirty-page preparation before composing03E7.
+   Resolve live SS row buffers,DF scan/copy loops,raw sound indexes and actual
+   shared returns. Keep454C/4551 ->197D ->4566 ->00FB/4401 intact.
    Selector-own bus support does not widen DAT/raw RAM/DOS/retry contracts.
    Preserve the actual1F6D outcome producers and actual parent frames. Keep special
    redraw, fatal/provider and processor-fault boundaries explicit. The 0041

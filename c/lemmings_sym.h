@@ -35,7 +35,7 @@
 #define CS_RestorePrivateVector 0x0FA0u
 #define CS_RestorePrivateVectorInterrupt 0x0FAEu
 #define CS_RestorePrivateVectorReturn 0x0FB1u
-#define CS_sub_0FB2 0x0FB2u
+#define CS_SetupGameVideoAndSpriteCallbacks 0x0FB2u
 #define CS_RestoreVideoModeAndPage 0x0FF8u
 #define CS_RestoreVideoModeInterrupt 0x0FFDu
 #define CS_RestoreVideoAfterMode 0x0FFFu
@@ -51,11 +51,11 @@
 #define CS_sub_13A8 0x13A8u
 #define CS_DetectVideoAdapters 0x13DCu
 #define CS_ProbeDisplayCombination 0x1410u
-#define CS_sub_1462 0x1462u
+#define CS_ProbeEgaConfiguration 0x1462u
 #define CS_ProbeColorCrtc 0x1490u
-#define CS_sub_14A0 0x14A0u
-#define CS_sub_14E0 0x14E0u
-#define CS_sub_1523 0x1523u
+#define CS_ProbeMonochromeCrtc 0x14A0u
+#define CS_ProbeCrtcRegister0F 0x14E0u
+#define CS_StoreDetectedAdapterPair 0x1523u
 #define CS_DisplayConfigLookup 0x1530u
 #define CS_BiosDisplayPairLookup 0x1536u
 #define CS_WaitForDisplayStatusBit3Cycle 0x1550u
@@ -66,8 +66,8 @@
 #define CS_RestoreKeyboardVector 0x1582u
 #define CS_RestoreKeyboardVectorInterrupt 0x158Eu
 #define CS_RestoreKeyboardVectorReturn 0x1591u
-#define CS_sub_15AD 0x15ADu
-#define CS_sub_1602 0x1602u
+#define CS_CalibrateGameTimerReload 0x15ADu
+#define CS_MeasureRasterPitCounter 0x1602u
 #define CS_InstallGameTimerVector 0x1644u
 #define CS_RestoreTimerState 0x16A9u
 #define CS_TimerRestoreControlPort 0x16ADu
@@ -1228,4 +1228,10 @@
 #define CS_LevelStartAfterResources 0x4560u
 #define CS_LevelStartAfterBriefing 0x4563u
 #define SEG09A9_LevelOutcomeSuccessByte 0x1F6Du
+#define SEG09A9_PrimaryDetectedAdapterPair 0x2006u
+#define SEG09A9_SecondaryDetectedAdapterPair 0x2008u
+#define SEG09A9_RasterMeasurementMode2011 0x2011u
+#define SEG09A9_EgaProbeEnableByte 0x2016u
+#define SEG09A9_ColorCrtcProbeEnableByte 0x2019u
+#define SEG09A9_MonoCrtcProbeEnableByte 0x201Cu
 #endif

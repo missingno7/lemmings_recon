@@ -4548,9 +4548,11 @@
     "address": 4018,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_0FB2",
-    "aliases": [],
+    "size": 70,
+    "symbol_name": "SetupGameVideoAndSpriteCallbacks",
+    "aliases": [
+      "sub_0FB2"
+    ],
     "callers": [
       1122
     ],
@@ -4637,12 +4639,23 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 70
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 70,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_GAME_SETUP",
+    "c_code_ranges": [
+      [
+        4018,
+        4088
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 4088,
@@ -5543,7 +5556,7 @@
     "address": 5084,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 52,
     "symbol_name": "DetectVideoAdapters",
     "aliases": [
       "sub_13DC"
@@ -5687,18 +5700,33 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 93
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 93,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_DETECT",
+    "c_code_ranges": [
+      [
+        5084,
+        5136
+      ],
+      [
+        5370,
+        5411
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5136,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 82,
     "symbol_name": "ProbeDisplayCombination",
     "aliases": [
       "sub_1410"
@@ -5816,18 +5844,31 @@
     "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
-      "Original table word at DS:2014; routine uses BIOS AX1A00 and visible CS:1536 display pair table"
+      "Original table word at DS:2014; routine uses BIOS AX1A00 and visible CS:1536 display pair table",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 82
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 82,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_DCC",
+    "c_code_ranges": [
+      [
+        5136,
+        5218
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5218,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1462",
-    "aliases": [],
+    "size": 46,
+    "symbol_name": "ProbeEgaConfiguration",
+    "aliases": [
+      "sub_1462"
+    ],
     "callers": [
       5127
     ],
@@ -5860,18 +5901,29 @@
         "size": 1
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 46
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 46,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_EGA",
+    "c_code_ranges": [
+      [
+        5218,
+        5264
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5264,
     "segment": 0,
     "kind": "entry",
-    "size": null,
+    "size": 16,
     "symbol_name": "ProbeColorCrtc",
     "aliases": [
       "sub_1490"
@@ -5887,18 +5939,31 @@
     "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
-      "Original table word at DS:201A; routine tests color CRTC through14E0 and stores display kind through1523"
+      "Original table word at DS:201A; routine tests color CRTC through14E0 and stores display kind through1523",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 16
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 16,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_COLOR",
+    "c_code_ranges": [
+      [
+        5264,
+        5280
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5280,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_14A0",
-    "aliases": [],
+    "size": 64,
+    "symbol_name": "ProbeMonochromeCrtc",
+    "aliases": [
+      "sub_14A0"
+    ],
     "callers": [
       5127
     ],
@@ -5940,40 +6005,74 @@
         "size": 2
       }
     ],
-    "confidence": "HYPOTHESIS",
+    "confidence": "PROVEN",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 76
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 76,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_MONO",
+    "c_code_ranges": [
+      [
+        5280,
+        5313
+      ],
+      [
+        5314,
+        5344
+      ],
+      [
+        5411,
+        5424
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5344,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_14E0",
-    "aliases": [],
+    "size": 26,
+    "symbol_name": "ProbeCrtcRegister0F",
+    "aliases": [
+      "sub_14E0"
+    ],
     "callers": [
       5283,
       5267
     ],
     "callees": [],
     "data_references": [],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 26
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 26,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_CRTC",
+    "c_code_ranges": [
+      [
+        5344,
+        5370
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5411,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1523",
-    "aliases": [],
+    "size": 13,
+    "symbol_name": "StoreDetectedAdapterPair",
+    "aliases": [
+      "sub_1523"
+    ],
     "callers": [
       5340,
       5276,
@@ -6014,12 +6113,23 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 13
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 13,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_STORE",
+    "c_code_ranges": [
+      [
+        5411,
+        5424
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5424,
@@ -6294,9 +6404,11 @@
     "address": 5549,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_15AD",
-    "aliases": [],
+    "size": 85,
+    "symbol_name": "CalibrateGameTimerReload",
+    "aliases": [
+      "sub_15AD"
+    ],
     "callers": [
       200,
       1128
@@ -6371,20 +6483,33 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 85
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 85,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_CALIBRATE",
+    "c_code_ranges": [
+      [
+        5549,
+        5634
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5634,
     "segment": 0,
     "kind": "entry",
-    "size": null,
-    "symbol_name": "sub_1602",
-    "aliases": [],
+    "size": 66,
+    "symbol_name": "MeasureRasterPitCounter",
+    "aliases": [
+      "sub_1602"
+    ],
     "callers": [
       5610
     ],
@@ -6399,12 +6524,23 @@
         "size": 2
       }
     ],
-    "confidence": "STRONGLY_SUPPORTED",
+    "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 66
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 66,
+    "c_implementation": "c/video_probe.c",
+    "c_core": "lmn_video_probe_core",
+    "c_entry": "LMN_VIDEO_MEASURE",
+    "c_code_ranges": [
+      [
+        5634,
+        5700
+      ]
+    ],
+    "verification_evidence": "tests/video_probe.py shared campaign:93 fixtures/186 core and actualRET comparisons,all228 sites/69 direct outcomes,8 completed numeric mutants,560 unique known bytes excluding14C1. Three loads,full zero-count raster/mono loops,signed/raw lookup classes,live DF/SS/return words,full INT10/IRET and returned segments/stack/flags,live vector/unknown callback/missing-port stops,and sprite-slot outerRET alias. 1,796,255 original instructions/486,690 ordered events;21 consumed hashes match. External IRQ/TF/device-timing and03E7/platform/aggregate scopes remain open; docs/video-probe.md"
   },
   {
     "address": 5700,
@@ -68774,6 +68910,102 @@
     "confidence": "PROVEN",
     "evidence": [
       "Pinned level-start resource/briefing frames and outcome producers454C/4729/4778; docs/level-start.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8198,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "PrimaryDetectedAdapterPair",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8200,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "SecondaryDetectedAdapterPair",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8209,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "RasterMeasurementMode2011",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8214,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "EgaProbeEnableByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8217,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "ColorCrtcProbeEnableByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8220,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "MonoCrtcProbeEnableByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
     ],
     "verification_status": "UNRESOLVED"
   }

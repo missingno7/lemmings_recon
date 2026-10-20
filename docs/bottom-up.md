@@ -87,6 +87,13 @@ Record ownership and preserved quirks are documented in object-records.md.
 
 ## Resource and state handoff
 
+The 03E7 setup dependency cluster now has native 0FB2 video/sprite-slot setup
+and 15AD calibration through all four13DC probe callbacks and1602 raster/PIT
+measurement. Actual BIOS frames, raw pairs/tables, signed selection and old
+reload restoration remain canonical. Its560 unique instruction bytes exclude
+UNKNOWN14C1 and retain the unresolved callback boundary. See video-probe.md;
+03E7's remaining palette/drawing/status coordination and the platform stay open.
+
 The 454C/4551 level-start parent now connects the scoped selector to the native
 briefing, then JMPs 00FB or preserves cancellation's consumed word/JMP4401.
 Both entries share the DF-sensitive clear and actual live stack/segment effects.
