@@ -6,7 +6,7 @@ from cbuild import ROOT,compiler,source_files
 
 def sources():
     return tuple(dict.fromkeys((ROOT/'host/platform_host.c',ROOT/'c/pklite_unpack.c',
-        *source_files('game_loop'),*source_files('resource_retry'),*source_files('main_resources'))))
+        *source_files('game_loop'),*source_files('resource_retry'),*source_files('main_resources'),*source_files('startup'))))
 
 def build_host(output,*,dll=False):
     output=Path(output)

@@ -23,6 +23,9 @@ struct LmnHost {
     uint8_t pit_write,pit_read,pit_latched,pit_control,port61,scan,automatic,pending08;
     uint8_t pic_mask,pic_in_service,mouse_visible;
     uint16_t mouse_min_x,mouse_max_x,mouse_min_y,mouse_max_y;
+    uint16_t mouse_mickeys_x,mouse_mickeys_y,mouse_callback_mask,mouse_callback_cs,mouse_callback_ip;
+    enum LmnHostMediaPolicy media_policy;
+    int dos_exited;
     uint32_t bios_clock;
     LmnHostEvent events[EVENT_CAP]; size_t event_count,event_cursor;
     HostFile files[FILE_CAP]; uint16_t current_handle;
@@ -42,6 +45,9 @@ struct LmnHost {
     LmnVideoProbeServices probe; LmnLevelInitializeServices level;
     LmnGameInitializeServices initialize; LmnGameFrameServices frame;
     LmnGameSessionServices session; LmnLevelResultServices result; LmnGameLoopServices loop;
+    LmnSoundDriverInitServices sound_init;
+    LmnProtectionServices protection;
+    LmnStartupServices startup;
 };
 static uint32_t phys(uint16_t seg,uint16_t off) { return (((uint32_t)seg<<4)+off)&MASK; }
 static uint16_t word(const uint8_t *m,uint16_t seg,uint16_t off) {
@@ -282,6 +288,7 @@ static uint16_t bios_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bu
     else if((r->ax>>8)==0x0f){r->ax=(uint16_t)(0x5000|h->vga.mode);r->bx&=255;}
     else if(!(r->ax>>8))video_mode(h,(uint8_t)r->ax);
     else if((r->ax>>8)==5){h->vga.crtc[12]=0;h->vga.crtc[13]=0;}
+    else if((r->ax>>8)==2){/* headless text cursor; no graphics effect */}
     else fail(h,"unbound INT10 function");
     return h->error[0]?1:0;
 }
@@ -295,14 +302,22 @@ static uint16_t clock_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *b
 static uint16_t dos_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
     LmnHost *h=ctx;unsigned fn=r->ax>>8,n=r->ax&255;LmnDatDosResult d;LmnDatFileServiceResult f;
     uint16_t flags=word(m,r->ss,(uint16_t)(r->sp+4));size_t i;(void)bus;
-    if(fn==0x25){putword(m,0,(uint16_t)(n*4),r->dx);putword(m,0,(uint16_t)(n*4+2),r->ds);}
+    if(fn==0x25){
+        putword(m,0,(uint16_t)(n*4),r->dx);putword(m,0,(uint16_t)(n*4+2),r->ds);
+        /* Explicit muted service for the installed MAIN.DAT PC-speaker entry.
+           Other live vectors still have to match their bound providers. */
+        if(n==0x60 && r->ds==(uint16_t)(h->load+0x842) && r->dx==0x182){h->mute60.code_segment=r->ds;h->mute60.instruction_pointer=r->dx;}
+    }
     else if(fn==0x35){r->bx=word(m,0,(uint16_t)(n*4));r->es=word(m,0,(uint16_t)(n*4+2));}
+    else if(fn==0x1b){r->ds=0x600;r->bx=0x100;}
+    else if(fn==7){fail(h,"headless startup requires preset display/options command");}
     else if(fn==0x3d || fn==0x43){file_service(h,m,r->ds,r->dx,flags,&f,fn==0x43);r->ax=f.value;if(fn==0x43)r->cx=f.count;saved_flags(m,r,f.flags);}
     else if(fn==0x3f){read_file(h,m,r->bx,r->ds,r->dx,r->cx,flags,&d);r->ax=d.value;saved_flags(m,r,d.flags);}
     else if(fn==0x3e){close_file(h,m,r->bx,r->ax,flags,&d);r->ax=d.value;saved_flags(m,r,d.flags);}
     else if(fn==0x23){query_file(h,m,r->ds,r->dx,flags,&d);r->ax=d.value;saved_flags(m,r,d.flags);}
     else if(fn==0x48){
-        uint32_t end=0x8000;for(i=0;i<h->arena_count;i++)end=(uint32_t)h->arenas[i].segment+h->arenas[i].paragraphs;
+        uint32_t end=0x3000;for(i=0;i<h->arena_count;i++)end=(uint32_t)h->arenas[i].segment+h->arenas[i].paragraphs;
+        if(end<0x3000)end=0x3000;
         if(h->arena_count==ARENA_CAP || end+r->bx>0x9000){r->ax=8;r->bx=(uint16_t)(0x9000-end);saved_flags(m,r,dosflags(flags,1));}
         else {h->arenas[h->arena_count++]=(HostArena){(uint16_t)end,r->bx};r->ax=(uint16_t)end;saved_flags(m,r,dosflags(flags,0));}
     } else if(fn==0x49 || fn==0x4a){
@@ -313,7 +328,8 @@ static uint16_t dos_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus
             h->arenas[i].paragraphs=r->bx;saved_flags(m,r,dosflags(flags,0));
         }else {r->ax=8;saved_flags(m,r,dosflags(flags,1));}
     } else if(fn==0x09 || fn==2){/* headless DOS console, no game-state effects */}
-    else if(fn==0x4c)fail(h,"DOS termination requested");
+    else if(fn==0x3c || fn==0x40){r->ax=5;saved_flags(m,r,dosflags(flags,1));} /* read-only filesystem */
+    else if(fn==0x4c)h->dos_exited=1;
     else fail(h,"unbound INT21 function");
     return h->error[0]?1:0;
 }
@@ -326,12 +342,26 @@ static uint16_t mouse_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *b
     case 4:h->mouse_x=r->cx;h->mouse_y=r->dx;break;
     case 7:h->mouse_min_x=r->cx;h->mouse_max_x=r->dx;break;
     case 8:h->mouse_min_y=r->cx;h->mouse_max_y=r->dx;break;
-    case 0x0c:if(r->cx)fail(h,"INT33 asynchronous callback unsupported");break;
+    case 15:h->mouse_mickeys_x=r->cx;h->mouse_mickeys_y=r->dx;break;
+    case 0x0c:
+        if(r->cx && (r->cx!=0x7f || r->es!=h->load || r->dx!=0xf6f))fail(h,"INT33 callback outside native RETF profile");
+        else {h->mouse_callback_mask=r->cx;h->mouse_callback_cs=r->es;h->mouse_callback_ip=r->dx;}
+        break;
     default:fail(h,"unbound INT33 function");break;
     }return h->error[0]?1:0;
 }
 static uint16_t muted_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
     LmnHost *h=ctx;(void)m;(void)r;(void)bus;h->sound_requests++;return 0;
+}
+static uint16_t media_probe(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
+    LmnHost *h=ctx;(void)m;(void)bus;
+    if(h->media_policy==LMN_HOST_MEDIA_UNSUPPORTED)return LMN_MEDIA_UNSUPPORTED;
+    /* Named semantic profile: preserved segments/saved registers, zero drive,
+       recognized first signature or early BIOS failure. No decoded body runs;
+       its discarded internal stack residue is outside this host service ABI. */
+    r->dx=0;r->flags=(uint16_t)((r->flags&~0xDD5u)|0x244u);
+    if(h->media_policy==LMN_HOST_MEDIA_REJECT){r->ax=0;r->bx=0;r->flags|=1;r->ip=0xE3C;return LMN_MEDIA_FAIL;}
+    r->ax=0x581C;r->bx=0xA9F2;r->ip=0xE49;return LMN_MEDIA_PASS;
 }
 static uint16_t chain_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
     LmnHost *h=ctx;(void)bus;h->bios_clock++;putword(m,0x40,0x6c,(uint16_t)h->bios_clock);putword(m,0x40,0x6e,(uint16_t)(h->bios_clock>>16));out8(h,m,0x20,0x20,r->flags);return 0;
@@ -420,6 +450,9 @@ static void bind(LmnHost *h) {
     h->session=(LmnGameSessionServices){&h->initialize,&h->frame,h,observe_frame};
     h->result=(LmnLevelResultServices){&h->ports,&h->bus,&h->video,&h->poll,h->ds};
     h->loop=(LmnGameLoopServices){&h->video,&h->dos,&h->ports,&h->bus,&h->poll,&h->start,&h->session,&h->result,h,observe_loop,h->ds,h->load};
+    h->sound_init=(LmnSoundDriverInitServices){&h->dos,&h->bios,&h->mute61,&h->files_service,&h->io};
+    h->protection=(LmnProtectionServices){&h->dos,&h->bios,&h->clock,&h->mouse,&h->ports,&h->bus,h,media_probe};
+    h->startup=(LmnStartupServices){&h->dos,&h->bios,&h->clock,&h->mouse,&h->ports,&h->bus,&h->files_service,&h->io,&h->sound_init,&h->protection};
 }
 LmnHost *lmn_host_create(const char *assets) {
     LmnHost *h=calloc(1,sizeof(*h));if(!h)return NULL;
@@ -466,76 +499,45 @@ int lmn_host_load_image(LmnHost *h,const char *path,uint16_t load) {
     for(i=0;i<count;i++){uint32_t p=(uint32_t)load*16+relocations[i];uint16_t w=(uint16_t)(h->memory[p]|(h->memory[p+1]<<8));w=(uint16_t)(w+load);h->memory[p]=(uint8_t)w;h->memory[p+1]=(uint8_t)(w>>8);}
     h->load=load;h->ds=(uint16_t)(load+0x9a9);bind(h);return 1;
 }
-/* The maintained DAT decoder loads MAIN.DAT UI sections3/4. Temporary
-   compressed stream and decoder stack occupy otherwise unused startup RAM. */
-static int ui_banks(LmnHost *h) {
-    char path[1152];FILE *fp;unsigned index;uint8_t header[10];uint32_t packed;
-    snprintf(path,sizeof(path),"%s/main.dat",h->assets);fp=fopen(path,"rb");if(!fp){fail(h,"cannot open MAIN.DAT");return 0;}
-    h->files[0]=(HostFile){fp,6,NULL,0,0};
-    for(index=0;index<5;index++) {
-        long pos=ftell(fp);if(fread(header,1,10,fp)!=10){fail(h,"short MAIN.DAT section");break;}
-        packed=((uint32_t)header[6]<<24)|((uint32_t)header[7]<<16)|((uint32_t)header[8]<<8)|header[9];
-        if(packed<10 || packed>65535){fail(h,"unsupported MAIN.DAT section size");break;}
-        if(index>=3) {
-            LmnDatSectionCall call={6,0x6000,0,index==3?0x4000:0x4f21,0,0x9000,0x8000,0x202};LmnDatSectionResult out;
-            if(fseek(fp,pos,SEEK_SET)){fail(h,"MAIN.DAT seek failed");break;}
-            out=lmn_dat_section_core(h->memory,h->ds,h->ds,&call,&h->io);
-            if(out.failed_read || !(out.flags&0x40)){fail(h,"MAIN.DAT UI decode failed");break;}
-        }
-        if(fseek(fp,pos+(long)packed,SEEK_SET)){fail(h,"MAIN.DAT seek failed");break;}
-    }
-    fclose(fp);h->files[0].file=NULL;memset(h->memory+0x60000,0,65536);memset(h->memory+0x97f00,0,256);
-    return !h->error[0];
-}
-int lmn_host_post_startup(LmnHost *h,uint16_t load,LmnRegs *r) {
-    char path[1152];uint16_t ds;unsigned i;static const uint16_t offsets[]={0x1fee,0x1ff0,0x1fe4,0x1ff4,0x1fda,0x1f7c,0x1fc9,0x1fbe,0x1fc0};
-    static const uint16_t values[]={0x4000,0x7000,0x5000,0x7fff,0x3d4,4,0x4567,0x700,0xb000};
-    memset(h->memory,0,sizeof(h->memory));snprintf(path,sizeof(path),"%s/vgalemmi.exe",h->assets);
-    if(!lmn_host_load_image(h,path,load))return 0;
-    ds=h->ds;
-    memset(h->memory+phys(ds,0),0,0x2012); /* startup0027..0031 */
-    if(!ui_banks(h))return 0;
-    for(i=0;i<sizeof(offsets)/sizeof(offsets[0]);i++)putword(h->memory,ds,offsets[i],values[i]);
-    h->memory[phys(ds,0x200c)]=255;h->memory[phys(ds,0x200f)]=255;
-    /* These tables remain outside the startup clear; source bytes are the
-       pinned keyboard defaults at image BAAF..BB10, not generated bindings. */
-    memcpy(h->memory+phys(ds,0x201f),h->memory+(uint32_t)load*16+0xbaaf,16);
-    memcpy(h->memory+phys(ds,0x202e),h->memory+(uint32_t)load*16+0xbabe,83);
-    h->memory[phys(load,0x83be)]=255;
-    h->memory[phys(ds,SEG09A9_DatCacheEnabled)]=0;h->memory[phys(ds,SEG09A9_DatCacheSelected)]=0;
-    h->memory[phys(ds,SEG09A9_DatCacheRecordCount)]=0;h->memory[phys(ds,SEG09A9_DatRetryEnabled)]=255;
-    h->memory[phys(ds,SEG09A9_DatCriticalErrorFlag)]=0;
-    /* Preserve original static palettes. The verifier's artificial constant
-       palette/animation poison is not a startup producer. Menu4401 invokes
-       the maintained4FF8 initializer before consuming animation records. */
-    h->memory[phys(ds,0x25a7)]=0;putword(h->memory,ds,0x66f0,350);putword(h->memory,ds,0x66f2,640);putword(h->memory,ds,0x66f4,80);
-    for(i=0;i<7;i++) {
-        static const uint8_t numbers[]={0x10,0x21,0x33,0x60,0x61,0x1a,8};
-        uint16_t ip=i==6?0x4c47:(uint16_t)((i+1)*0x100);if(i==5)ip=0x600;
-        putword(h->memory,0,(uint16_t)(numbers[i]*4),ip);putword(h->memory,0,(uint16_t)(numbers[i]*4+2),i==6?load:0xb000);
-    }
-    putword(h->memory,0,36,0x16d4);putword(h->memory,0,38,load);putword(h->memory,0x40,0x63,0x3d4);
+void lmn_host_bind_image(LmnHost *h,uint16_t load) {
+    h->load=load;h->ds=(uint16_t)(load+0x9A9);
     h->segments=(LmnDatLoadSegments){word(h->memory,load,CS_CheckDatFile+0x33),word(h->memory,load,CS_SelectCachedDatFile+0x50),word(h->memory,load,CS_ReadDatBytes+8),word(h->memory,load,CS_DatReadFailure+1)};
-    memset(r,0,sizeof(*r));r->cs=load;r->ds=ds;r->es=0x6400;r->ss=0x9000;r->sp=0x8000;r->ip=0x43f2;r->flags=0x202;
-    bind(h);return !h->error[0];
+    bind(h);
 }
-int lmn_host_prepare_resources(LmnHost *h,const LmnRegs *r) {
-    const uint16_t allocation=0x3000;
-    static const uint16_t offsets[]={0x1fe4,0x1ff0,0x1fe6,0x1fe8,0x1fea,0x1fec,0x1fee,0x1ff2,0x1ff4};
-    static const uint16_t deltas[]={0,0,0x1000,0x2d0c,0x2e72,0x2f02,0x2f7e,0x4771,0x4971};
-    LmnMainResourceSectionsCall call={0,0,0,0,0,0,0,r->cs,r->ds,r->es,r->ss,r->sp,0x202};
-    LmnMainResourceSectionsResult out;unsigned i;
-    if((uint32_t)h->load*16+82906>allocation*16u){fail(h,"resource arena overlaps image");return 0;}
-    /* Literal ADD sequence1007..1043; one5571-paragraph DOS allocation. */
-    for(i=0;i<sizeof(offsets)/sizeof(offsets[0]);i++)putword(h->memory,h->ds,offsets[i],(uint16_t)(allocation+deltas[i]));
-    h->arenas[0]=(HostArena){allocation,0x5571};h->arena_count=1;
-    out=lmn_load_main_resource_sections_core(h->memory,&call,&h->files_service,&h->io,&h->bus);
-    if(out.status){fail(h,"native MAIN.DAT resource producer stopped");return 0;}
-    /* Startup00E6..00F7 programs the measured reload before JMP43F2. */
-    out8(h,h->memory,0x43,0x36,0x202);
-    out8(h,h->memory,0x40,h->memory[phys(h->ds,0x1fc9)],0x202);
-    out8(h,h->memory,0x40,h->memory[phys(h->ds,0x1fca)],0x202);
-    return !h->error[0];
+const LmnStartupServices *lmn_host_startup_services(LmnHost *h){return &h->startup;}
+LmnStartupResult lmn_host_boot(LmnHost *h,uint16_t load,const char *command,enum LmnHostMediaPolicy policy) {
+    char path[1152];LmnRegs r={0};LmnStartupResult out={0};size_t length=command?strlen(command):0;
+    uint16_t psp=(uint16_t)(load-16u);unsigned i;
+    out.status=LMN_STARTUP_CHILD_STOP;
+    if(length>126 || (unsigned)policy>LMN_HOST_MEDIA_REJECT || load<0x100 || (uint32_t)psp+0x1911>0x3000){fail(h,"invalid DOS entry layout/command/media policy");return out;}
+    memset(h->memory,0,sizeof(h->memory));snprintf(path,sizeof(path),"%s/vgalemmi.exe",h->assets);
+    if(!lmn_host_load_image(h,path,load))return out;
+    h->media_policy=policy;h->dos_exited=0;
+    /* DOS owns one initial PSP block. ProgramEntry shrinks it via4A before
+       the5571-paragraph48 request.3000 is a conventional-memory free boundary. */
+    h->arenas[0]=(HostArena){psp,(uint16_t)(0x9000-psp)};h->arena_count=1;
+    h->memory[phys(psp,0)]=0xCD;h->memory[phys(psp,1)]=0x20;
+    putword(h->memory,psp,2,0x9000);h->memory[phys(psp,0x80)]=(uint8_t)length;
+    if(length)memcpy(h->memory+phys(psp,0x81),command,length);
+    h->memory[phys(psp,(uint16_t)(0x81+length))]=13;
+    for(i=0;i<7;i++) {
+        static const uint8_t numbers[]={0x10,0x21,0x33,0x60,0x61,0x1A,8};
+        putword(h->memory,0,(uint16_t)(numbers[i]*4),(uint16_t)((i+1)*0x100));
+        putword(h->memory,0,(uint16_t)(numbers[i]*4+2),0xB000);
+    }
+    for(i=0;i<3;i++) {
+        static const uint8_t numbers[]={9,12,0x74};
+        putword(h->memory,0,(uint16_t)(numbers[i]*4),(uint16_t)(0x700+numbers[i]));
+        putword(h->memory,0,(uint16_t)(numbers[i]*4+2),0xB000);
+    }
+    putword(h->memory,0x40,0x63,0x3D4);
+    putword(h->memory,0,0x78,0x100);putword(h->memory,0,0x7A,0x600);
+    h->memory[phys(0x600,0x100)]=0xF8; /* DOS fixed-disk FAT profile, read-only files */
+    r.cs=load;r.ds=psp;r.es=psp;r.ss=(uint16_t)(load+0x143E);r.sp=0x4AF4;r.flags=0x202;
+    lmn_host_bind_image(h,load);
+    out=lmn_startup_core(h->memory,&r,LMN_STARTUP_PROGRAM,&h->startup);
+    if(out.status==LMN_STARTUP_READY && out.registers.ip!=0x43F2)fail(h,"startup missed menu handoff");
+    return out;
 }
 static uint64_t hash_bytes(uint64_t value,const void *data,size_t size){const uint8_t *p=data;size_t i;for(i=0;i<size;i++){value^=p[i];value*=UINT64_C(1099511628211);}return value;}
 uint64_t lmn_host_hash(const LmnHost *h){uint64_t v=UINT64_C(14695981039346656037);v=hash_bytes(v,h->memory,sizeof(h->memory));v=hash_bytes(v,h->vga.planes,sizeof(h->vga.planes));v=hash_bytes(v,h->vga.dac,sizeof(h->vga.dac));return hash_bytes(v,h->vga.crtc,sizeof(h->vga.crtc));}

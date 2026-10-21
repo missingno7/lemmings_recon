@@ -31,6 +31,7 @@ static void observe(void *ctx,LmnHost *h,const LmnRegs *r,uint16_t kind) {
 }
 static int script(LmnHost *h,const char *path) {
     FILE *fp=fopen(path,"r");char line[256],kind[24];unsigned long long time;unsigned x,y,value;unsigned n=0;
+    uint64_t origin=lmn_host_time(h);
     if(!fp)return 0;
     while(fgets(line,sizeof(line),fp)) {
         LmnHostEvent e={0};int fields;n++;
@@ -39,19 +40,24 @@ static int script(LmnHost *h,const char *path) {
         if(fields==5 && !strcmp(kind,"mouse")){e.kind=LMN_HOST_EVENT_MOUSE;e.x=(uint16_t)x;e.y=(uint16_t)y;e.value=(uint16_t)value;}
         else if(fields==3 && !strcmp(kind,"key")){e.kind=LMN_HOST_EVENT_KEY;e.value=(uint16_t)x;}
         else {fprintf(stderr,"bad script line %u\n",n);fclose(fp);return 0;}
-        e.time=(uint64_t)time*LMN_HOST_PIT_HZ/1000;
+        e.time=origin+(uint64_t)time*LMN_HOST_PIT_HZ/1000;
         if(!lmn_host_enqueue(h,&e)){fclose(fp);return 0;}
     }
     return fclose(fp)==0;
 }
 int main(int argc,char **argv) {
-    LmnHost *h;LmnRegs r;LmnGameLoopResult out;Runner s={0};char path[1200];uint64_t frames;char *end;
-    if(argc<5 || argc>7){fputs("usage: lemmings-headless ASSETS SCRIPT FRAMES OUTPUT_DIR [STOP_POLL_HEX [SHOT_FRAMES_CSV]]\n",stderr);return 2;}
+    LmnHost *h;LmnRegs r;LmnGameLoopResult out;LmnStartupResult boot;Runner s={0};char path[1200];uint64_t frames;char *end;
+    enum LmnHostMediaPolicy policy;
+    if(argc<6 || argc>8){fputs("usage: lemmings-headless ASSETS SCRIPT FRAMES OUTPUT_DIR --media-probe=assume-original|reject|unsupported [STOP_POLL_HEX [SHOT_FRAMES_CSV]]\n",stderr);return 2;}
+    if(!strcmp(argv[5],"--media-probe=assume-original"))policy=LMN_HOST_MEDIA_ASSUME_ORIGINAL;
+    else if(!strcmp(argv[5],"--media-probe=reject"))policy=LMN_HOST_MEDIA_REJECT;
+    else if(!strcmp(argv[5],"--media-probe=unsupported"))policy=LMN_HOST_MEDIA_UNSUPPORTED;
+    else return 2;
     frames=strtoull(argv[3],&end,10);if(!frames || *end)return 2;
     s.gameplay_frame=frames<16?frames:16;
-    s.output=argv[4];if(argc>=6){s.stop_site=(uint16_t)strtoul(argv[5],&end,16);if(*end)return 2;}
-    if(argc==7){
-        const char *cursor=argv[6];
+    s.output=argv[4];if(argc>=7){s.stop_site=(uint16_t)strtoul(argv[6],&end,16);if(*end)return 2;}
+    if(argc==8){
+        const char *cursor=argv[7];
         do {uint64_t frame=strtoull(cursor,&end,10);if(!frame || end==cursor || s.shot_count==64)return 2;
             s.shots[s.shot_count++]=frame;if(!*end)break;if(*end!=',')return 2;cursor=end+1;
         }while(*cursor);
@@ -60,7 +66,9 @@ int main(int argc,char **argv) {
     snprintf(path,sizeof(path),"%s/frames.csv",s.output);s.log=fopen(path,"w");
     if(!s.log){lmn_host_destroy(h);return 2;}
     fputs("frame,pit_time,irq08,ip,fnv1a64_ram_planes_dac_crtc\n",s.log);
-    if(!lmn_host_post_startup(h,0x1010,&r) || !lmn_host_prepare_resources(h,&r) || !script(h,argv[2])){
+    boot=lmn_host_boot(h,0x1010,"/v /o /a",policy);r=boot.registers;
+    printf("startup=%u child=%u service=%u at=%04x:%04x media-policy=%s\n",boot.status,boot.child_status,boot.service_status,r.cs,r.ip,argv[5]);
+    if(boot.status!=LMN_STARTUP_READY || !script(h,argv[2])){
         fprintf(stderr,"host setup: %s\n",lmn_host_error(h));fclose(s.log);lmn_host_destroy(h);return 1;
     }
     lmn_host_set_limits(h,100000,500000000,frames);lmn_host_set_hooks(h,&s,poll_hook,observe);

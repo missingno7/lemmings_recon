@@ -1,8 +1,9 @@
-"""Bounded DOS-entry orchestration; protection is an explicit outcome fixture.
+"""Bounded DOS-entry orchestration through the native protection wrapper.
 
-No original game loop or protected instruction executes. Children execute their
-identified original bytes; DAT/checksum direct-RAM APIs retain their old bus
-projection. Full RAM, CPU, ordered observed bus, ports and service calls compare.
+No original game loop executes. Media fixtures run the original encoded probe
+separately; all wrapper/parent instructions execute continuously. DAT/checksum
+direct-RAM APIs retain their old bus projection. Full RAM, CPU, ordered observed
+bus, ports and service calls compare.
 """
 import copy
 import ctypes as ct
@@ -18,6 +19,7 @@ import video_probe as video
 import main_resources as resources
 import dat_files as files
 import dat_io_c as io
+import protection_native as protection
 from bounded_process import run_bounded,temporary_build_directory
 from cbuild import build,source_files
 from common import BUILD,sha,write_json
@@ -28,7 +30,7 @@ RANGES=((0,0xFB),(0x4EA,0x4F9),(0xF08,0xF6F),(0xFF8,0x113D),
 OWN={i.address:i for a,b in RANGES for i in v.MD.disasm(v.IMAGE[a:b],a)}
 def decoded(a,b):return {i.address:i for i in v.MD.disasm(v.IMAGE[a:b],a)}
 INS=(OWN|resources.MAIN_INS|video.INS|decoded(0x4F9,0x54E)|decoded(0x54E,0x62B)|
-    decoded(0x8343,0x8363)|decoded(0x1550,0x1592)|decoded(0x1ED1,0x1ED7))
+    decoded(0x8343,0x8363)|decoded(0x1550,0x1592)|decoded(0x1ED1,0x1ED7)|protection.INS)
 INS[0x43F2]=next(v.MD.disasm(v.IMAGE[0x43F2:0x43FA],0x43F2))
 # Direct-RAM children: their original instructions and final RAM still compare.
 # A core's caller RET is bus-observed; older adapters consume it directly.
@@ -37,7 +39,6 @@ DAT_CALLS={0x58E0,0x58F9,0x590F,0x594D,0x5960,0x5972,0x598A}
 SECONDS,MEMORY_MIB,MAX_STEPS,MAX_EVENTS=1440,768,20_000_000,3_000_000
 REPORT=BUILD/'startup-differential.json'
 ENTRY=(0,0x1293,0x106E,0x1007,0xF08)
-CHILD=ct.CFUNCTYPE(ct.c_uint16,ct.c_void_p,v.MEM,ct.POINTER(v.Regs),ct.c_void_p)
 class SoundServices(ct.Structure):
     _fields_=[('dos',ct.POINTER(v.InterruptService)),('bios',ct.POINTER(v.InterruptService)),
         ('sound',ct.POINTER(v.InterruptService)),('files',ct.POINTER(files.Services)),('io',ct.POINTER(io.Io))]
@@ -45,7 +46,7 @@ class Services(ct.Structure):
     _fields_=[(n,ct.POINTER(v.InterruptService)) for n in ('dos','bios','clock','mouse')]+[
         ('ports',ct.POINTER(v.Ports)),('bus',ct.POINTER(v.Bus)),
         ('files',ct.POINTER(files.Services)),('io',ct.POINTER(io.Io)),
-        ('child_context',ct.c_void_p),('sound',ct.POINTER(SoundServices)),('protection',CHILD)]
+        ('sound',ct.POINTER(SoundServices)),('protection',ct.POINTER(protection.Services))]
 class Result(ct.Structure):
     _fields_=[('registers',v.Regs)]+[(n,ct.c_uint16) for n in ('status','child_entry','child_status','service_status')]
 BINDINGS={0x10:(0xB000,0x100),0x21:(0xB000,0x200),0x1A:(0xB000,0x600),0x33:(0xB000,0x300)}
@@ -55,6 +56,8 @@ def cases():
     def add(name,**kw):rows.append(dict(name=name,**kw))
     for load in v.LOADS:
         add(f'program-menu-{load:04x}',load=load,full=True,protection=True,command=b'/v /o /a /4')
+    add('program-protection-fail',full=True,protection=True,outcome=1,command=b'/v /o /a')
+    add('program-counter-skip',full=True,protection=True,counter=0,command=b'/v /o /a')
     add('program-protection-seam',full=True,command=b'/e /d /n /a /i 12345 ')
     add('program-mouse-absent',full=True,protection=True,mouse=False,command=b'/v /o /a /2')
     for command in (b'',b'hello',b'/',b'/V /E /A /M /N /D /P /O /X /2 /4',
@@ -82,6 +85,7 @@ def cases():
     add('prefix-provider-stop',command=b'/v /o',provider_stop=True)
     return [dict(load=0x1010,seed=0xB000+i,entry=0,flags=0x202,command=b'/v /o /a',
         mode=4,keys=(),mouse=True,disabled=0,full=False,sound=False,protection=False,
+        counter=9,stale=0,outcome=0,fat=0xF8,open_error=False,read_error=False,short_read=False,create_error=False,write_error=False,close_error=False,critical=False,
         alloc_error=0,pit=0x1234,base=0x3D4,dcc=True,primary=7,secondary=0,
         ega=True,ega_config=0,color=True,mono=False,mono_id=0,option=0)|c for i,c in enumerate(rows)]
 
@@ -95,7 +99,8 @@ def setup(c):
     for number,(seg,off) in BINDINGS.items():v.put16(memory,0,number*4,off);v.put16(memory,0,number*4+2,seg)
     for number in (8,9,12,0x74):v.put16(memory,0,number*4,0x700+number);v.put16(memory,0,number*4+2,0xB000)
     v.put16(memory,0x40,0x63,0x3D4)
-    v.put8(memory,0x600,0x100,0xF8)
+    v.put8(memory,0x600,0x100,c['fat'])
+    v.put16(memory,0,0x78,0x120);v.put16(memory,0,0x7A,0x600);v.put8(memory,0,0x46C,0)
     if c['entry']:
         r['ds']=ds
         for off,value in ((0x1FF6,load-16),(0x1F7C,c['mode']),(0x1FDA,0x3D4),(0x1FC9,0),(0x1FC6,12)):
@@ -110,7 +115,7 @@ def setup(c):
 class Access(video.Access):
     def __init__(self,c,memory,r,device):
         super().__init__(c,memory,r,device);self.max_events=MAX_EVENTS
-        self.quiet=False;self.omitted=0;self.keys=0;self.outputs=[];self.fixture_calls=[]
+        self.quiet=False;self.omitted=0;self.keys=0;self.outputs=[];self.fixture_calls=[];self.fixtures=[];self.writes=[]
         self.dos=resources.DosProvider(dict(load_segment=c['load']),memory,r)
     def emit(self,kind,address,value,flags,mask=v.FLAGS):
         if self.quiet and kind in ('read','write'):
@@ -131,7 +136,8 @@ def provider(number):
         entry=dict(r);fn=r['ax']>>8;c=a.c
         v.check(len(a.service_events)<6000,'startup service budget exhausted')
         if number==0x1A:
-            v.check(fn==0,'clock function differs');r.update(cx=0x1234,dx=0x5678)
+            v.check(fn in (0,1),'clock function differs')
+            if fn==0:r.update(cx=0x1234,dx=0x5678)
         elif number==0x10:
             if fn==15:r['ax']=(r['ax']&0xFF00)|3;r['bx']=(r['bx']&255)|0x100
             elif fn in (0,2,5):pass
@@ -143,6 +149,7 @@ def provider(number):
             else:v.check(r['ax'] in (2,4,7,8,12,15),'mouse function differs')
             if c.get('iret_change'):a.word_write(r['ss'],r['sp'],0xD234,r['flags'])
         elif number==0x21:
+            if fn in (0x3D,0x3F,0x3C,0x40,0x3E):return protection.provider(number)(a,r)
             if fn==0x35:
                 n=r['ax']&255;r['bx']=v.get16(a.memory,0,4*n);r['es']=v.get16(a.memory,0,4*n+2)
             elif fn==0x25:
@@ -163,13 +170,6 @@ def provider(number):
         return 77 if c.get('provider_stop') or (c.get('stop_video') and number==0x10 and 0x13DC<=resume<0x1530) else 0
     return execute
 
-def protection(a,r):
-    v.check(v.get16(a.memory,r['ss'],r['sp'])==0xE3,'protection caller word differs')
-    # Declared no-change/pre-RET outcome. It proves tail composition only.
-    # Protection062B and its protected streams are neither run nor implemented.
-    a.fixture_calls.append(dict(entry=dict(r),outcome='unchanged-pre-RET'))
-    return 0
-
 class Machine(v.OriginalMachine):
     def __init__(self,c,memory,r,device):
         a=Access(c,memory,r,device);frames=[];self.frames=frames;self.child_status=0
@@ -178,17 +178,11 @@ class Machine(v.OriginalMachine):
             if i.address==0xAB and not(c['full'] or c['sound']):m.stop(5);return True
             if i.address==0xE0:
                 if not c['protection']:m.stop(4);return True
-            if i.address==0x62B:
-                raise v.OracleFailure('protected code escaped seam')
             # DAT cores leave the final RET to the bus-aware parent. Older
             # checksum/cache adapters include their RET in direct-RAM scope.
             bus_ret=i.address==0x1BAE and frames and frames[-1][0] in {p+3 for p in DAT_CALLS}
             a.quiet=any(f[1] for f in frames) and not bus_ret
             if i.mnemonic=='call':
-                if i.address==0xE0:
-                    # Execute only this real CALL; the shared before hook at
-                    # the next instruction supplies a declared child outcome.
-                    pass
                 frames.append((i.address+i.size,i.address in DIRECT_ADAPTERS or i.address in DAT_CALLS))
             return False
         def expected(m,off):
@@ -197,7 +191,7 @@ class Machine(v.OriginalMachine):
             return {resume}
         def interrupt(m,number):
             q=m.state();fn=q['ax']>>8
-            if number==0x21 and fn in (0x43,0x3D,0x3F,0x23):
+            if number==0x21 and fn in (0x43,0x3D,0x3F,0x23) and not 0xE66<=q['ip']<0xF08:
                 d=a.dos
                 if fn==0x23:
                     v.put16(memory,q['ds'],q['dx']+33,len(resources.MAIN_DATA));v.put16(memory,q['ds'],q['dx']+35,0)
@@ -214,21 +208,20 @@ class Machine(v.OriginalMachine):
                 if c.get('stop_video') and number==0x10 and 0x13DC<=q['ip']<0x1530:m.child_status=3;m.status=3
                 else:m.child_status=m.status;m.status=1
             elif number==0x21 and fn==0x4C:m.stop(7)
-        # Protection CALL is original; only the declared external pre-RET
-        # outcome and its actual live near-word consumption are supplied.
+        # The entire wrapper is original; only063E is an opaque media fixture.
         original_before=before
         def with_outcome(m,i):
-            if i.address==0x62B:
-                q=m.state();protection(a,q)
+            if i.address==0x63E:
+                q=m.state();protection.outcome(a,q,original=True)
                 # External child returns through its actual live near word.
                 q['ip']=a.word_read(q['ss'],q['sp'],q['flags'],m.mask);q['sp']=(q['sp']+2)&65535
-                frames.pop();m.set_state(q);m.previous=None;return True
+                frames.pop();m.set_state(q);m.previous=None;m.mask=v.FLAGS;return True
             return original_before(m,i)
         super().__init__(c,memory,r,device,c['entry']!=0,instructions=INS,access=a,
             outer_returns=lambda m,off:not frames,child_returns={p:expected for p,i in INS.items() if i.mnemonic=='ret'},
             before=with_outcome,interrupt=interrupt,changed_return_status=2,max_steps=MAX_STEPS)
-        # The seam address must be recognized, but no062B instruction executes.
-        self.instructions=dict(self.instructions);self.instructions[0x62B]=next(v.MD.disasm(v.IMAGE[0x62B:0x633],0x62B))
+        # Recognize063E as the explicit provider boundary.
+        self.instructions=dict(self.instructions);self.instructions[0x63E]=next(v.MD.disasm(v.IMAGE[0x63E:0x646],0x63E))
     def run(self):
         out=super().run();out.update(child_status=self.child_status,service_status=self.service_status,
             services=self.access.service_events,dos=self.access.dos.events,fixtures=self.access.fixture_calls)
@@ -238,8 +231,8 @@ class Native:
     def __init__(self,directory,mutation=0):
         self.lib=ct.CDLL(str(build(Path(directory)/f'startup-{mutation}.dll',mutation,'startup')))
         self.fn=self.lib.lmn_startup_core;self.fn.argtypes=[v.MEM,ct.POINTER(v.Regs),ct.c_int,ct.POINTER(Services)];self.fn.restype=Result
-    def run(self,c,memory,r,device):
-        memory,device=bytearray(memory),copy.deepcopy(device);a=Access(c,memory,r,device)
+    def run(self,c,memory,r,device,fixtures):
+        memory,device=bytearray(memory),copy.deepcopy(device);a=Access(c,memory,r,device);a.fixtures=fixtures
         cb=v.NativeCallbacks(a,missing_in=c.get('missing_in'))
         handlers={n:cb.interrupt(provider(n)) for n in BINDINGS}
         bindings={n:v.InterruptService(None,handlers[n],*BINDINGS[n]) for n in BINDINGS}
@@ -265,19 +258,20 @@ class Native:
             out.contents.value=value;out.contents.flags=flags
         query_cb=io.QUERY(guarded(query));read_cb=io.READ(guarded(read));io_services=io.Io(None,query_cb,read_cb)
         sound=SoundServices(ct.pointer(bindings[0x21]),ct.pointer(bindings[0x10]),None,ct.pointer(file_services),ct.pointer(io_services))
-        # NativeCallbacks guards the exact same pre-RET shape as the child seam.
-        fixture=CHILD(cb.interrupt(protection))
+        # The same original-built media fixture supplies pre-RET state.
+        fixture=protection.PROBE(cb.interrupt(lambda a,r:protection.outcome(a,r,original=False)))
+        protect=protection.Services(*(ct.pointer(bindings[n]) for n in (0x21,0x10,0x1A,0x33)),ct.pointer(cb.ports),ct.pointer(cb.bus),None,fixture)
         services=Services(*(ct.pointer(bindings[n]) for n in (0x21,0x10,0x1A,0x33)),ct.pointer(cb.ports),ct.pointer(cb.bus),
-            ct.pointer(file_services),ct.pointer(io_services),None,ct.pointer(sound) if c['full'] or c['sound'] else None,
-            fixture if c['protection'] else CHILD())
+            ct.pointer(file_services),ct.pointer(io_services),ct.pointer(sound) if c['full'] or c['sound'] else None,
+            ct.pointer(protect) if c['protection'] else None)
         regs=v.Regs(**r);out=self.fn((ct.c_uint8*v.SIZE).from_buffer(memory),ct.byref(regs),c['entry'],ct.byref(services))
         return dict(regs={n:getattr(out.registers,n) for n in v.REG_NAMES},status=out.status,child_status=out.child_status,
             service_status=out.service_status,memory=memory,device=device,events=a.events,providers=a.providers,cursor=a.cursor,
             services=a.service_events,dos=a.dos.events,fixtures=a.fixture_calls,child_entry=out.child_entry)
 
 def compare(native,c):
-    memory,r,device=setup(c);ref=Machine(c,bytearray(memory),dict(r),copy.deepcopy(device)).run()
-    actual=native.run(c,memory,r,device)
+    memory,r,device=setup(c);machine=Machine(c,bytearray(memory),dict(r),copy.deepcopy(device));ref=machine.run()
+    actual=native.run(c,memory,r,device,machine.access.fixtures)
     if actual['memory']!=ref['memory']:
         diffs=[(p,actual['memory'][p],ref['memory'][p]) for p in range(v.SIZE) if actual['memory'][p]!=ref['memory'][p]]
         raise v.Mismatch(c['name']+': RAM differs '+str(diffs[:15]))
@@ -308,7 +302,7 @@ def worker(directory,selected):
         if selected and c['name'] not in selected:continue
         ref=compare(native,c);sites|=ref['sites'];edges|=ref['edges']
         rows.append(dict(case=c['name'],steps=ref['steps'],events=len(ref['events']),status=ref['status']))
-        if c['full'] and c['protection']:
+        if c['full'] and c['protection'] and c['outcome']==0:
             ds=(c['load']+0x9A9)&65535;m=ref['memory']
             overlaps.append(dict(case=c['name'],allocation=c['allocation'],fields={f'{off:04x}':v.get16(m,ds,off) for off in
                 (0x1FE4,0x1FE6,0x1FE8,0x1FEA,0x1FEC,0x1FEE,0x1FF0,0x1FF2,0x1FF4,0x1FC9,0x1FDA,0x1F7C)}))
@@ -333,7 +327,7 @@ def worker(directory,selected):
         mutation_count=len(mutants),mutations=mutants,rows=rows,host_overlap=overlaps,input_hashes=before,
         instruction_steps=sum(r['steps'] for r in rows),ordered_bus_events=sum(r['events'] for r in rows),runtime_seconds=time.perf_counter()-start,
         limits=dict(seconds=SECONDS,memory_mib=MEMORY_MIB,instructions_each=MAX_STEPS,events_each=MAX_EVENTS),
-        domain='Constructed DOS entry to protection seam or JMP43F2; no protected instruction. Explicit unchanged-preRET outcome fixture; sound fallback with /a. Command/options prefix and raw focused leaves. Quiescent IRQs,TFclear,DFclear,ordinary RAM DAT/checksum children; typed DAT transport retains its prior ABI.'))
+        domain='Constructed DOS entry to protection seam or JMP43F2; native protection wrapper with explicit original-built media outcome fixtures; sound fallback with /a. Command/options prefix and raw focused leaves. Quiescent IRQs,TFclear,DFclear,ordinary RAM DAT/checksum children; typed DAT transport retains its prior ABI.'))
     print(f'PASS startup: {len(rows)} comparisons,{len(sites&set(OWN))} own sites,{len(mutants)} mutants',flush=True)
 def main():
     if len(sys.argv)>=3 and sys.argv[1]=='--worker':worker(sys.argv[2],sys.argv[3:]);return

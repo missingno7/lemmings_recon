@@ -308,7 +308,8 @@ class OriginalMachine:
     def __init__(self,case,memory,registers,device,core,*,instructions,access,
                  outer_returns,child_returns=None,max_steps=100000,
                  changed_return_status=4,before=None,interrupt=None,
-                 mutable_operands=(), far_calls=None, far_returns=None, unhooked_movsb=()):
+                 mutable_operands=(), far_calls=None, far_returns=None, unhooked_movsb=(),
+                 execution_views=None, writable_code=(), trap_returns=()):
         self.c,self.memory,self.r,self.device,self.core=case,memory,registers,device,core
         self.instructions=instructions;self.access=access
         self.outer_returns=outer_returns if callable(outer_returns) else set(outer_returns)
@@ -317,6 +318,11 @@ class OriginalMachine:
         self.far_calls=far_calls or {}
         self.far_returns=far_returns or {}
         self.unhooked_movsb=set(unhooked_movsb)
+        # Explicit state-specific original bytes, e.g. the protected stream.
+        # These are validation views, never bytes installed into the CPU image.
+        self.execution_views=execution_views or {}
+        self.writable_code=set(writable_code)
+        self.trap_returns=set(trap_returns)
         for off in self.unhooked_movsb:
             check(off in instructions and bytes(instructions[off].bytes)==b'\xf3\xa4',
                   'unhooked string is not an identified REP MOVSB')
@@ -375,7 +381,7 @@ class OriginalMachine:
             elif old.mnemonic.split()[-1] in ('scasb','scasw'):
                 # A zero-count REP performs no comparison and defines no flags.
                 if not old.mnemonic.startswith('rep') or self.previous_count:self.mask=FLAGS
-        expected=bytearray(self.loaded[off:off+ins.size])
+        expected=bytearray(self.execution_views.get(off,self.loaded[off:off+ins.size]))
         if off in self.mutable_operands:
             start,width=self.mutable_operands[off]
             value=bytes(self.memory[physical(self.c['load'],start+d)] for d in range(width))
@@ -413,7 +419,7 @@ class OriginalMachine:
     def write(self,u,kind,address,size,value,_):
         for d in range(size):
             p=(address+d)&MASK
-            check(p not in self.code_bytes,'undeclared code write')
+            check(p not in self.code_bytes or p in self.writable_code,'undeclared code write')
             self.access.access('write',p,self.flags,self.mask,(value>>(8*d))&255)
         for d in range(size):
             p=(address+d)&MASK;v=self.memory[p]
@@ -446,7 +452,7 @@ class OriginalMachine:
         self.set_state(r)
         self.external_iret(old_cs,resume,binding,provider)
 
-    def hardware_interrupt(self,number,*,returns):
+    def hardware_interrupt(self,number,*,returns,software=False):
         """Schedule real original ISR execution at the current instruction.
 
         Called only from a suite's declared before/poll hook. IF-clear requests
@@ -455,7 +461,7 @@ class OriginalMachine:
         handler and checks its actual IRET before resuming this instruction.
         `returns` names identified outer IRET sites, never a provider body.
         """
-        if not self.state()['flags']&0x200:return False
+        if not software and not self.state()['flags']&0x200:return False
         check(self.pending_hardware is None,'multiple pending hardware deliveries')
         check(all(p in self.instructions and self.instructions[p].mnemonic=='iret'
                   for p in returns),'hardware return is not an identified IRET')
@@ -483,9 +489,6 @@ class OriginalMachine:
         # phase ceiling also covers unexpectedly recursive/changed call graphs.
         for phase in range(self.max_steps+1):
             if self.stopped:break
-            r=self.state();self.pending=False;self.pending_fetch=None
-            self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=self.max_steps-self.steps+1)
-            if self.stopped:break
             if self.pending_hardware is not None:
                 number,returns=self.pending_hardware;self.pending_hardware=None
                 r=self.state();self.hardware_frames.append((r['cs'],r['ip'],returns))
@@ -495,7 +498,12 @@ class OriginalMachine:
                     if index==0:r['flags']&=~0x300
                 r['cs']=self.access.word_read(0,number*4+2,r['flags'],self.mask)
                 r['ip']=self.access.word_read(0,number*4,r['flags'],self.mask)
-                self.previous=None;self.set_state(r);continue
+                self.previous=None;self.set_state(r)
+            r=self.state();self.pending=False;self.pending_fetch=None
+            self.cpu.emu_start(physical(r['cs'],r['ip']),0,count=self.max_steps-self.steps+1)
+            if self.stopped:break
+            if self.pending_hardware is not None:
+                continue
             if self.pending_fetch is not None:
                 self.cpu.ctl_remove_cache(0,SIZE*2)
                 continue
@@ -594,6 +602,12 @@ class OriginalMachine:
             self.executing_boundary=True
             self.cpu.emu_start(physical(self.c['load'],off),0,count=1)
             self.executing_boundary=False
+            # Unicorn's count=1 near-RET boundary suppresses the postinstruction
+            # TF trap. Deliver that processor interrupt before the destination
+            # executes, using the same real frame/ISR/IRET machinery. IRET
+            # itself does not take this postinstruction trap.
+            if self.trap_returns and self.state()['flags']&0x100 and self.pending_hardware is None:
+                self.hardware_interrupt(1,returns=self.trap_returns,software=True)
             if outer:self.stopped=True;break
             check(off in self.child_returns,'undeclared child RET')
             expected=self.child_returns[off]

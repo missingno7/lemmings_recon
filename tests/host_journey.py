@@ -124,23 +124,73 @@ def provider(number):
         return base(a,r)
     return execute
 
+def startup_menu(directory,library):
+    """Handoff check: native DOS startup state -> original and native menu.
+
+    Full entry parity belongs to startup.py. This parent checks the returned
+    state/stack, generated banks, sound fallback and later menu consumers.
+    """
+    h=Host(directory,library);rows=[];errors=[]
+    try:
+        boot=h.call('boot',0x1010,b'/v /o /a',1)
+        v.check(boot.status==0,'host native startup stopped: '+str(h.call('error')))
+        r={n:getattr(boot.registers,n) for n in v.REG_NAMES};ds=r['ds']
+        v.check(h.memory[v.physical(ds,0x25A7)]==h.memory[v.physical(ds,0x1F71)]==1,'sound fallback producer differs')
+        c=g.setup()[0]|dict(name='host-native-startup-menu',game_data_segment=ds)
+        memory=bytearray(h.memory);d=v.new_device(0)
+        for i in range(4):d.planes[i][:]=h.vga.planes[i]
+        for name in ('latches','seq','gc'):getattr(d,name)[:]=getattr(h.vga,name)
+        d.si=h.vga.si;d.gi=h.vga.gi
+        reference=g.Reference(c,memory,r,copy.deepcopy(d));a=reference.access;p=a.platform
+        p.now=h.call('time');p.reload=v.get16(h.memory,ds,0x1FC9) or 65536;p.epoch=p.now
+        p.crtc[:]=h.vga.crtc;p.ci=h.vga.ci;p.attr[:]=h.vga.attr;p.ai=h.vga.ai;p.attr_data=bool(h.vga.attr_data)
+        p.dac[:]=bytes(h.vga.dac);p.mode=h.vga.mode;p.mask=h.vga.pel_mask
+        p.dw=h.vga.dac_write;p.dr=h.vga.dac_read;p.dc=h.vga.dac_component;p.rc=h.vga.dac_read_component
+        h.call('automatic_timer',0);h.call('set_limits',500,500_000_000,0)
+        def compare(registers,kind):
+            state={n:getattr(registers.contents,n) for n in v.REG_NAMES};ref=reference.advance()
+            actual=dict(regs=state,memory=bytes(h.memory),status=0,events=(),device=CheckpointVga(h.vga))
+            checkpoint=dict(regs=ref['regs'],memory=ref['memory'],status=0,events=(),device=CheckpointVga(a.device),mask=ref['mask'])
+            v.compare_states('startup->menu '+kind,actual,checkpoint)
+            v.require(bytes(h.vga.crtc)==p.crtc and bytes(h.vga.dac)==p.dac and bytes(h.vga.attr)==p.attr,'startup menu display differs')
+            v.require(h.call('time')==p.now,'startup menu clock differs')
+            rows.append(dict(kind=kind,site=state['ip'],steps=ref['steps'],ram_sha256=sha(bytes(h.memory)),planes_sha256=sha(b''.join(bytes(p) for p in h.vga.planes))))
+            a.reset_observations();reference.provider.trace=[]
+            return state,ref['status']
+        @POLL
+        def poll(_,host,registers,site):
+            try:
+                state,status=compare(registers,'poll');v.require(status==g.CHECKPOINT,'startup menu missed poll')
+                reference.resume_poll=True
+                return 0xCA11 if site==0x446D else 0
+            except v.Mismatch as error:errors.append(str(error));return 0xCA11
+            except BaseException as error:v.callback_failure(error)
+        @OBSERVE
+        def observe(_,host,registers,kind):
+            if kind or errors:return
+            try:
+                state,status=compare(registers,'boundary');v.require(status==g.BOUNDARY,'startup menu missed boundary');reference.resume_boundary=True
+            except v.Mismatch as error:errors.append(str(error))
+            except BaseException as error:v.callback_failure(error)
+        h.call('set_hooks',None,poll,observe)
+        out=h.call('run',ct.byref(boot.registers))
+        v.require(not errors,errors[0] if errors else '')
+        v.check(out.registers.ip==0x446D,'startup menu handoff incomplete');h.check()
+        return dict(accepted=True,rows=rows,steps=reference.machine.steps,sound_option=1,sound_index=1)
+    finally:h.close()
+
 def worker(directory):
     began=time.perf_counter()
     before=g.input_hashes()
-    extra=set(sources())|set((ROOT/'c').glob('*.h'))|{ROOT/'host/platform_host.h',Path(__file__),ROOT/'tests/host_support.py',ROOT/'tools/hostbuild.py'}
+    extra=set(sources())|set((ROOT/'c').glob('*.h'))|{ROOT/'host/platform_host.h',Path(__file__),ROOT/'tests/host_support.py',ROOT/'tools/hostbuild.py',ROOT/'assets/russell.dat'}
     before.update({p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in extra})
     h=Host(directory)
     c,memory,r,device=g.setup();h.memory[:]=memory
     for i in range(4):h.vga.planes[i][:]=device.planes[i]
     for name in ('latches','seq','gc'):getattr(h.vga,name)[:]=getattr(device,name)
     h.vga.si=device.si;h.vga.gi=device.gi
-    # Production constructor supplies the relocated DAT segment packet. Keep
-    # all seeded fixture RAM for the actual comparison, including stack poison.
-    seeded=bytes(memory);regs=v.Regs();assert h.call('post_startup',0x1010,ct.byref(regs)),h.call('error')
-    h.memory[:]=seeded
-    for i in range(4):h.vga.planes[i][:]=device.planes[i]
-    for name in ('latches','seq','gc'):getattr(h.vga,name)[:]=getattr(device,name)
-    h.vga.si=device.si;h.vga.gi=device.gi
+    # Bind relocated DAT selectors without touching the constructed reference.
+    h.call('bind_image',r['cs'])
     h.call('automatic_timer',0);h.call('set_limits',2500,500_000_000,0)
     original_access,original_provider,original_factory,original_video=g.Access,g.Provider,g.provider,g.menu.video_provider
     def video(a,incoming):a.platform.mode_set(incoming['ax']);return dict(incoming)
@@ -222,7 +272,8 @@ def worker(directory):
             [(0x454c,0,0),(0x4551,1,255),(0x4551,1,0)],'next/retry/outcome ownership differs')
         v.require(h.call('irqs')==sum(number==8 for number,_,_ in a.deliveries),'IRQ08 delivery count differs')
         m=reference.machine
-        report=dict(accepted=True,scope='game-loop-host-platform-profile',boundaries=rows,steps=m.steps,
+        boot_menu=startup_menu(directory,h.dll)
+        report=dict(accepted=True,scope='game-loop-host-platform-profile',boundaries=rows,steps=m.steps,startup_menu=boot_menu,
             polls=len(a.polls),sessions=a.sessions,results=a.results,seconds=time.perf_counter()-began,
             input_hashes=before,limits=dict(worker_seconds=2340,process_commit_mib=768,
                 original_instructions=g.MAX_STEPS,original_events=g.MAX_EVENTS,polls=2500,host_accesses=500_000_000))
@@ -239,6 +290,19 @@ def worker(directory):
         h.close();del h;gc.collect()
 
 def main():
+    if len(sys.argv)==3 and sys.argv[1]=='--menu-worker':
+        original_access,original_provider,original_factory,original_video=g.Access,g.Provider,g.provider,g.menu.video_provider
+        g.Access,g.Provider,g.provider=Access,Provider,provider
+        g.menu.video_provider=lambda a,incoming:(a.platform.mode_set(incoming['ax']) or dict(incoming))
+        try:
+            h=Host(sys.argv[2]);h.close()
+            print(startup_menu(sys.argv[2],h.dll),flush=True)
+        finally:g.Access,g.Provider,g.provider,g.menu.video_provider=original_access,original_provider,original_factory,original_video
+        return
+    if sys.argv[1:]==['--focus-menu']:
+        with temporary_build_directory(prefix='host-menu-',parent=BUILD) as directory:
+            run_bounded([sys.executable,__file__,'--menu-worker',directory],cwd=ROOT,timeout=180,memory_mib=768,check=True)
+        return
     if len(sys.argv)==3 and sys.argv[1]=='--worker':worker(sys.argv[2]);return
     with temporary_build_directory(prefix='host-journey-',parent=BUILD) as directory:
         run_bounded([sys.executable,__file__,'--worker',directory],cwd=ROOT,timeout=2340,memory_mib=768,check=True)

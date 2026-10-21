@@ -7,26 +7,21 @@ loop and physical source map. Old checkpoints are in convergence-history.md.
 
 ## Immediate mode
 
-The game is playable headless in native C: host/ (platform_host.c, main.c)
-supplies VGA planar/DAC/CRTC, a virtual-time PIT/PIC INT08 scheduler at the
-recorded cadence, IRQ09/port 60, INT33, INT21 file/vector services, BIOS
-INT10/1A and the PKLITE unpack (c/pklite_unpack.c) with no Python or Unicorn,
-under c/game_loop.c (menu -> level -> session -> result, DAT retry routed into
-c/resource_retry.c). tests/host_journey.py matches the original journey at every
-loop boundary and poll; tools/host_smoke.py renders menu/briefing/gameplay PPMs.
-Sound INT60/61 is an explicit muted sink. The post-startup state is still built
-by a C constructor from documented producers, not by translated startup code.
+The host boots the original program natively: host/ supplies only DOS entry
+inputs (unpacked image, PSP and command line, stack, IVT, services) and runs
+c/startup.c (with c/protection.c and c/sound_driver_init.c) into the verified
+menu -> level -> session -> result loop. The floppy media probe 063E is an
+explicit policy (`--media-probe=assume-original|reject|unsupported`). Parity:
+tests/startup.py, tests/protection.py, tests/host_journey.py, tests/game_loop.py.
+Sound is a muted sink; no SDL3 yet.
 
 ## Priorities
 
-1. **Boot the host through native startup.** c/startup.c now runs 0000..00FA
-   (command line, option screen, arena, sound driver load c/sound_driver_init.c,
-   mouse hooks, calibration, MAIN.DAT) to JMP 43F2, stopping at the protection
-   seam 062B. Translate the protection wrapper (russell.dat run counter, 0EC2
-   writer quirks, 0EDF failure) with the floppy media probe 063E as an explicit
-   PASS/FAIL/unsupported outcome provider, then replace host/'s post-startup
-   constructor with native startup (its 25A7/1F71=00 sound substitute differs
-   from the original fallback 01/01, likely the blank F3 menu sign).
+1. **Executable sound engines.** The INT60/61 targets (PC speaker 0182,
+   AdLib/Tandy driver images) are the remaining behavior-affecting runtime
+   dependency of the native game. Follow their dispatch, tables and command
+   formats in their separate images and translate them so the host can produce
+   audio instead of a muted sink.
 2. **SDL3 presentation over host/.** Interactive window, real-time scheduling,
    mouse/keyboard mapping and audio output once sound engines exist; the host
    interface is the boundary. Keep headless parity runs as the acceptance gate.
@@ -37,17 +32,11 @@ by a C constructor from documented producers, not by translated startup code.
    from producers. Resolve the domain of 715B before narrowing raw adapters or
    treating the nine initialized callbacks as an exhaustive target proof. The
    source now names key fields; broader lifetime closure is still CONDITIONAL.
-4. **Startup/protection/allocation (054E..13DB).** Recover service and segment
-   provenance and investigate the 1,042-byte 098C..0D9D UNKNOWN gap by its actual
-   writers/users. Keep canonical/protected views distinct. Do not linear-sweep
-   or call unreferenced bytes dead. These paths determine valid runtime memory
-   domains and can remove many future translation guesses.
-5. **Executable sound engines.** Follow AdLib 01EA, Tandy 02BB and PC-speaker 0196
-   dynamic dispatch, tables, initialization and command formats in their separate
-   images. Classify executable versus stream data with evidence. The tiny scoped
-   C entries/latches are not full alternative-hardware support; this is required
-   game completion work, not an optional backend polish task.
-6. **Unify the composition adapters.** The frame parent dispatches thirteen
+4. **Protected body and gap 098C..0D9D.** Startup is native except the encoded
+   INT1/INT3 media probe body, which stays a platform outcome. Its sector
+   buffers are runtime overlays and 0D9C..0D9D a proven decode seed; classify the
+   rest only from writer/user evidence. Never linear-sweep or call it dead.
+5. **Unify the composition adapters.** The frame parent dispatches thirteen
    differently shaped child adapters. Consolidate packet/helper duplication only
    where a concrete consumer changes and equivalence is checked by its suite.
 

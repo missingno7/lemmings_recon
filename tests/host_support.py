@@ -18,12 +18,14 @@ class Vga(ct.Structure):
         ('word_outputs',ct.c_uint32)]
 class Event(ct.Structure):
     _fields_=[('time',ct.c_uint64)]+[(n,ct.c_uint16) for n in ('kind','x','y','value')]
+class BootResult(ct.Structure):
+    _fields_=[('registers',v.Regs)]+[(n,ct.c_uint16) for n in ('status','child_entry','child_status','service_status')]
 POLL=ct.CFUNCTYPE(ct.c_uint16,ct.c_void_p,ct.c_void_p,ct.POINTER(v.Regs),ct.c_uint16)
 OBSERVE=ct.CFUNCTYPE(None,ct.c_void_p,ct.c_void_p,ct.POINTER(v.Regs),ct.c_uint16)
 
 class Host:
-    def __init__(self,directory):
-        self.dll=ct.CDLL(str(build_host(Path(directory)/'host.dll',dll=True)))
+    def __init__(self,directory,library=None):
+        self.dll=library or ct.CDLL(str(build_host(Path(directory)/'host.dll',dll=True)))
         self.bind('create',[ct.c_char_p],ct.c_void_p)
         self.bind('destroy',[],None)
         self.bind('memory',[],v.MEM)
@@ -38,8 +40,9 @@ class Host:
         self.bind('file_overlay',[ct.c_char_p,v.MEM,ct.c_size_t],ct.c_int)
         self.bind('set_time',[ct.c_uint64],ct.c_int)
         self.bind('deliver',[ct.POINTER(v.Regs),ct.c_uint16,ct.c_uint8],ct.c_uint16)
-        self.bind('post_startup',[ct.c_uint16,ct.POINTER(v.Regs)],ct.c_int)
-        self.bind('prepare_resources',[ct.POINTER(v.Regs)],ct.c_int)
+        self.bind('boot',[ct.c_uint16,ct.c_char_p,ct.c_int],BootResult)
+        self.bind('bind_image',[ct.c_uint16],None)
+        self.bind('startup_services',[],ct.c_void_p)
         self.bind('run',[ct.POINTER(v.Regs)],loop.Result)
         self.bind('read',[ct.c_uint32],ct.c_uint8)
         self.bind('write',[ct.c_uint32,ct.c_uint8],None)

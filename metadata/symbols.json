@@ -1550,7 +1550,7 @@
     ],
     "c_implementation": "c/startup.c",
     "c_core": "lmn_startup_core",
-    "verification_evidence": "tests/startup.py; build/startup-differential.json; CONDITIONAL service/child domain, stops before062B unless an explicit outcome fixture is supplied; JMP43F2 without menu execution"
+    "verification_evidence": "tests/startup.py; build/startup-differential.json; CONDITIONAL service/child domain, stops before062B unless an explicit outcome fixture is supplied; JMP43F2 without menu execution tests/startup.py now composes native062B wrapper; original-built063E PASS/FAIL fixtures; complete entry to43F2 and0EDF terminal path; host boots through native startup with named semantic media policy"
   },
   {
     "address": 216,
@@ -5683,8 +5683,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 150
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 150,
+    "c_code_ranges": [
+      [
+        1579,
+        1598
+      ]
+    ],
+    "c_implementation": "c/protection.c",
+    "c_core": "lmn_protection_core",
+    "verification_evidence": "tests/protection.py native wrapper campaign; explicit original-built063E fixtures; ordinary disjoint startup, TF/DFclear, quiescent probe boundary"
   },
   {
     "address": 1598,
@@ -6056,7 +6065,20 @@
     "evidence": [
       "F8 branch: opens DS:258A russell.dat, reads one byte to 252A, INC modulo 10 (09/0A/FE/FF->00), rewrites; zero or failed open invokes 063E media probe, otherwise RET 0EA9 without media check."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        3686,
+        3752
+      ],
+      [
+        3753,
+        3777
+      ]
+    ],
+    "c_implementation": "c/protection.c",
+    "c_core": "lmn_protection_core",
+    "verification_evidence": "F8 counter00..0A/FE/FF; unchecked read/create/write/close results; actual savedAX and live256-byte payload; both media outcomes/fatal tail"
   },
   {
     "address": 3778,
@@ -6096,8 +6118,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 29
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 29,
+    "c_code_ranges": [
+      [
+        3778,
+        3807
+      ]
+    ],
+    "c_implementation": "c/protection.c",
+    "c_core": "lmn_protection_core",
+    "verification_evidence": "hidden3C attributes2; returnedAX becomesBX even on failure;0100 liveDS bytes from252A; ignored results"
   },
   {
     "address": 3807,
@@ -6113,7 +6144,16 @@
     "evidence": [
       "Protection rejection: restore timer/keyboard/private/video/mouse, print 20D4, DOS 4C00. Nonreturning."
     ],
-    "verification_status": "UNRESOLVED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        3807,
+        3848
+      ]
+    ],
+    "c_implementation": "c/protection.c",
+    "c_core": "lmn_protection_core",
+    "verification_evidence": "composed native restore cores; original full frames; optional mouse, repeated keyboard restore,09 message and4C00 exit"
   },
   {
     "address": 3848,

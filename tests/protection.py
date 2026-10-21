@@ -169,4 +169,6 @@ def check():
     print(f'PASS protection: 19 constructed frames + {len(point_cases)} derived instruction points, full memory/register/flag comparison, {len(covered)} handler instruction sites')
     return result
 
-if __name__=='__main__':check()
+if __name__=='__main__':
+    from protection_native import main
+    main()

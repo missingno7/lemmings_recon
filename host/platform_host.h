@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "game_loop.h"
 #include "hardware_irq.h"
+#include "startup.h"
 
 /* Device storage, never a second copy of game state. Aperture bytes in RAM
    retain the last CPU bus value, independently of these four display planes. */
@@ -49,12 +50,16 @@ int lmn_host_set_time(LmnHost *,uint64_t);
 uint16_t lmn_host_deliver(LmnHost *,LmnRegs *,uint16_t irq,uint8_t scan);
 /* Load only the pinned EXE with the native PKLITE decoder and fixups. */
 int lmn_host_load_image(LmnHost *,const char *path,uint16_t load);
-/* Construct the declared post-startup domain, not the unresolved startup or
-   protection path. See host/README.md for every producer and chosen arena. */
-int lmn_host_post_startup(LmnHost *,uint16_t load,LmnRegs *);
-/* Replace the fixture's small isolated arenas by the complete1007 allocation
-   layout, then execute the maintained58D2 MAIN.DAT producer in native C. */
-int lmn_host_prepare_resources(LmnHost *,const LmnRegs *);
+enum LmnHostMediaPolicy { LMN_HOST_MEDIA_UNSUPPORTED, LMN_HOST_MEDIA_ASSUME_ORIGINAL,
+    LMN_HOST_MEDIA_REJECT };
+/* Establish only DOS/platform inputs, then run native ProgramEntry to43F2.
+   The explicit media policy is a semantic provider, not physical floppy proof.
+   Commands are the PSP byte string (at most126 bytes). No asset is written. */
+LmnStartupResult lmn_host_boot(LmnHost *,uint16_t load,const char *command,
+    enum LmnHostMediaPolicy);
+/* Read-only service/relocated-DAT binding for constructed verification inputs. */
+void lmn_host_bind_image(LmnHost *,uint16_t load);
+const LmnStartupServices *lmn_host_startup_services(LmnHost *);
 LmnGameLoopResult lmn_host_run(LmnHost *,const LmnRegs *);
 uint8_t lmn_host_read(LmnHost *,uint32_t);
 void lmn_host_write(LmnHost *,uint32_t,uint8_t);

@@ -846,8 +846,10 @@ CheckStartupProtection:
 ; opened. 0EC2 writes 0100 live DS bytes from 252A, results unchecked. 063E
 ; forces DL=0, uses restored INT3/INT1 protection and a CS-relative sector
 ; buffer; a completed probe zeroes only its chosen 512 bytes. Failure -> 0EDF
-; cleanup/exit; success RET 00E3. No pass latch. READINESS: wrapper READY;
-; media probe is an explicit PASS/FAIL/unsupported platform outcome.
+; cleanup/exit; success RET 00E3. No pass latch. READINESS: wrapper READY and
+; translated (c/protection.c, 0EDF via framed restore cores); 063E is an explicit
+; PASS/FAIL/UNSUPPORTED provider that must reproduce buffer/IVT/table restoration,
+; assuming TF/DF clear, disjoint memory and no asynchronous observer.
     mov al,[StartupFatIdByte1FDE-GameDataImage] ; @0062B
     cmp al,0xf8 ; @0062E
     jnz loc_0635 ; @00630

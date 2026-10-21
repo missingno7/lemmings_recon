@@ -19,7 +19,7 @@ def main():
         *(ROOT/'assets').iterdir()}
     before={q.relative_to(ROOT).as_posix():sha(q.read_bytes()) for q in sorted(paths) if q.is_file()}
     began=time.perf_counter()
-    result=run_bounded([str(exe),str(ROOT/'assets'),str(ROOT/'host/smoke.script'),'20',str(output)],
+    result=run_bounded([str(exe),str(ROOT/'assets'),str(ROOT/'host/smoke.script'),'20',str(output),'--media-probe=assume-original'],
         cwd=ROOT,timeout=60,memory_mib=256,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
     seconds=time.perf_counter()-began
     (output/'runner.log').write_text(result.stdout,encoding='utf-8')

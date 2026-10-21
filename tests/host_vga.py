@@ -8,13 +8,13 @@ from pathlib import Path
 sys.path[:0]=[str(Path(__file__).resolve().parents[1]/'tools')]
 from bounded_process import run_bounded,temporary_build_directory
 from common import BUILD,write_json,sha
-from host_support import Host,Event,ROOT,v,sources
+from host_support import Host,Event,ROOT,v,sources,loop as g
 from minimap_vga import MinimapVga,fixture_vectors
 
 def worker(directory):
     began=time.perf_counter()
     import game_loop as g
-    paths={*sources(),*(ROOT/'c').glob('*.h'),ROOT/'host/platform_host.h',Path(__file__),ROOT/'tests/minimap_vga.py',ROOT/'tests/host_support.py',ROOT/'tools/hostbuild.py'}
+    paths={*sources(),*(ROOT/'c').glob('*.h'),ROOT/'host/platform_host.h',Path(__file__),ROOT/'tests/minimap_vga.py',ROOT/'tests/host_support.py',ROOT/'tools/hostbuild.py',ROOT/'assets/russell.dat'}
     before=g.input_hashes();before.update({p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in paths})
     h=Host(directory);rng=random.Random(0x564741)
     model=MinimapVga(0x510);memory=bytearray(rng.randbytes(v.SIZE))
@@ -54,24 +54,51 @@ def worker(directory):
     h.call('out',0x3d4,0x120c,2);h.call('out',0x3d4,0x340d,2)
     assert list(h.vga.crtc[12:14])==[0x12,0x34]
     assert [h.call('in',0x3da) for _ in range(8)]==[0,0,0,0,0,1,1,0]
-    # Native post-startup resource and relocation binding, without booting.
-    regs=v.Regs();assert h.call('post_startup',0x1010,ct.byref(regs)),h.call('error')
-    _,expected,r,_=g.setup()
-    for segment,bank in zip((0x4000,0x4f21),g.menu.animation.resource_banks()):
-        assert bytes(h.memory[segment*16:segment*16+len(bank)])==bank
-    for off,size in ((0,0x2012),(0x201f,16),(0x202e,83),(0x25a7,1),(0x66f0,6)):
-        p=v.physical(r['ds'],off);assert bytes(h.memory[p:p+size])==expected[p:p+size],hex(off)
-    assert h.call('prepare_resources',ct.byref(regs)),h.call('error')
+    # Native entry, arena48 and MAIN.DAT producers; no constructor stores.
+    counter=(ct.c_uint8*1)(9)
+    assert h.call('file_overlay',b'russell.dat',counter,1)
+    boot=h.call('boot',0x1010,b'/v /o /a',1);assert boot.status==0,h.call('error')
+    assert h.call('file_overlay',b'russell.dat',None,0)
+    regs=boot.registers;ds=regs.ds
+    assert (regs.cs,regs.ip,regs.ss,regs.sp)==(0x1010,0x43F2,0x244E,0x4AF4)
+    assert v.get16(h.memory,ds,0x1FE4)==0x3000 and v.get16(h.memory,ds,0x1FF4)==0x7971
+    assert h.memory[v.physical(ds,0x25A7)]==h.memory[v.physical(ds,0x1F71)]==1
+    assert v.get16(h.memory,0,32)==0x700 and v.get16(h.memory,0,34)==0xB000
+    assert bytes(h.memory[v.physical(0x1010,0x98C):v.physical(0x1010,0xB8C)])==bytes(512)
+    assert v.get16(h.memory,0x1010,0xD9C)==0x9090
+    assert v.get16(h.memory,ds,0x1FF6)==0x1000
+    for off,expected in ((0x201F,g.session.keyboard.PINNED_BINDINGS),(0x202E,g.session.keyboard.PINNED_CHARACTERS)):
+        p=v.physical(ds,off);assert bytes(h.memory[p:p+len(expected)])==bytes(expected)
     # Independently recorded output of59BB on pinned MAIN.DAT section0.
     assert sha(bytes(h.memory[0x40000:0x594b8]))=='6bf0c6b5568796cf2d42daf057ca95078e79136a6ab97e7b8f829d40f464e6d6'
     for segment,bank in zip((0x5f7e,0x6e9f),g.menu.animation.resource_banks()):
         assert bytes(h.memory[segment*16:segment*16+len(bank)])==bank
     platform_vectors(h,regs)
+    policy_profiles(directory,h.dll)
     h.check();h.close();del h;gc.collect()
     assert before=={p:sha((ROOT/p).read_bytes()) for p in before},'host VGA inputs changed during campaign'
     write_json(BUILD/'host-vga.json',dict(accepted=True,traces=count,seconds=time.perf_counter()-began,
         input_hashes=before))
     print(f'PASS host_vga: {count} generated traces; modes0..3/read0..1, DAC/CRTC/clock/startup',flush=True)
+
+def policy_profiles(directory,library):
+    for policy,status in ((0,4),(2,7)):
+        h=Host(directory,library)
+        try:
+            counter=(ct.c_uint8*1)(9)
+            assert h.call('file_overlay',b'russell.dat',counter,1)
+            boot=h.call('boot',0x1010,b'/v /o /a',policy)
+            assert boot.status==status,(policy,boot.status,h.call('error'))
+            if policy==0:
+                assert boot.child_status==3 and boot.service_status==2
+                assert boot.registers.ip==0x63E
+            else:
+                assert boot.registers.ip==0xF08
+                assert v.get16(h.memory,boot.registers.ds,0x252A)&255==9
+                assert v.get16(h.memory,0,32)==0x700 and v.get16(h.memory,0,34)==0xB000
+                assert bytes(h.memory[v.physical(0x1010,0x98C):v.physical(0x1010,0xB8C)])==bytes(512)
+            h.check()
+        finally:h.close()
 
 def platform_vectors(h,regs):
     class InterruptResult(ct.Structure):_fields_=[('status',ct.c_uint16),('service_status',ct.c_uint16)]
@@ -103,6 +130,11 @@ def platform_vectors(h,regs):
     out=interrupt(0x21,s.dos,ax=0x4800,bx=16);assert not out.flags&1;allocated=out.ax
     out=interrupt(0x21,s.dos,ax=0x4a00,bx=8,es=allocated);assert not out.flags&1
     out=interrupt(0x21,s.dos,ax=0x4900,es=allocated);assert not out.flags&1
+    # Menu installs its timer after the43F2 handoff. Execute that native child
+    # before the isolated hardware-delivery vectors below.
+    install=h.dll.lmn_install_menu_timer_core
+    install.argtypes=[v.MEM,ct.POINTER(v.Regs),ct.POINTER(v.Bus)];install.restype=g.menu_timer.Result
+    installed=install(memory,ct.byref(regs),s.bus);assert installed.status==0
     h.call('automatic_timer',0)
     r=v.Regs.from_buffer_copy(regs);r.ip=0x4453;r.flags&=~0x200
     e=Event(h.call('time'),2,0,0,0x3b);assert h.call('enqueue',ct.byref(e))

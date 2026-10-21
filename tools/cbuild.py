@@ -20,7 +20,8 @@ def source_files(cluster="checksum"):
     if cluster=="startup":
         return tuple(dict.fromkeys((ROOT/"c/startup.c",
             ROOT/"c/sound_driver_init.c",
-            *(p for d in ("checksum","vga_mirrors","video_probe","main_resources","keyboard_input") for p in source_files(d)))))
+            *(p for d in ("checksum","vga_mirrors","video_probe","main_resources","keyboard_input","protection") for p in source_files(d)))))
+    if cluster=="protection":return (ROOT/"c/protection.c",ROOT/"c/interrupt_service.c",ROOT/"c/timer_restore.c",ROOT/"c/vector_restore.c",ROOT/"c/video_restore.c")
     if cluster=="sound_driver_init":return (ROOT/'c/sound_driver_init.c',ROOT/'c/interrupt_service.c',*source_files('dat_load'))
     if cluster == "pklite_unpack": return (ROOT/"c/pklite_unpack.c",)
     if cluster=="game_loop":
@@ -341,6 +342,7 @@ def build(output=None, mutation=0, cluster="checksum", *, dependency_library=Non
     if cluster=='object_drawing':defines=['-DMUTATION=0','-DOBJECT_DRAWING_MUTATION='+str(mutation)]
     if cluster=='level_redraw':defines=['-DMUTATION=0','-DLEVEL_REDRAW_MUTATION='+str(mutation)]
     if cluster=='resource_retry':defines=['-DRESOURCE_RETRY_MUTATION='+str(mutation)]
+    if cluster=='protection':defines=['-DPROTECTION_MUTATION='+str(mutation)]
     if cluster=='startup':defines=['-DSTARTUP_MUTATION='+str(mutation)]
     run_bounded([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",

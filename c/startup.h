@@ -4,20 +4,16 @@
 #include "main_resources.h"
 #include "keyboard_input.h"
 #include "sound_driver_init.h"
+#include "protection.h"
 
-/* A declared pre-RET outcome, never an implementation of protection. The
-   provider receives the real 00E3 near return at live SS:SP. Zero means that
-   the identified child reached its RET; all returned state remains live. */
-typedef uint16_t (*LmnStartupChild)(void *,uint8_t *,LmnRegs *,const LmnRasterBus *);
 typedef struct LmnStartupServices {
     const LmnInterruptService *dos,*bios,*clock,*mouse;
     const LmnRasterBytePorts *ports;
     const LmnRasterBus *bus;
     const LmnDatFileServices *files;
     const LmnDatIo *io;
-    void *child_context;
     const LmnSoundDriverInitServices *sound;
-    LmnStartupChild protection;
+    const LmnProtectionServices *protection;
 } LmnStartupServices;
 enum LmnStartupEntry {
     LMN_STARTUP_PROGRAM,LMN_STARTUP_COMMAND_LINE,LMN_STARTUP_OPTIONS,

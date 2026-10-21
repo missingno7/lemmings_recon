@@ -9,17 +9,17 @@ existing compiler source closures and bounded compiler launcher.
 ```
 .venv/Scripts/python.exe tools/hostbuild.py
 # Create the output directory first.
-build/lemmings-headless.exe assets host/smoke.script 20 build/host-smoke
+build/lemmings-headless.exe assets host/smoke.script 20 build/host-smoke --media-probe=assume-original
 # Or build, run with external limits, and check the three frames and cadence:
 .venv/Scripts/python.exe tools/host_smoke.py
 ```
 
 Runner arguments are assets directory, script, maximum session-frame count,
-existing output directory, optional stop-poll hex address, and optional CSV of
+existing output directory, required media-policy flag, optional stop-poll hex address, and optional CSV of
 additional session-frame captures (`0 5,10,20` for no stop-poll and those frames).
 Script lines are `MILLISECONDS mouse X Y BUTTONS` or
 `MILLISECONDS key DECIMAL_SET1_SCAN`; comments start with `#`. Events must be in
-nondecreasing time order. Make and break codes are separate events. At most8192
+nondecreasing time order, relative to the completed startup handoff. Make and break codes are separate events. At most8192
 events are retained. Captures are `menu.ppm`, `briefing.ppm`, `gameplay.ppm` (at
 frame16 or the requested limit if smaller), and requested `frame-NNNNNN.ppm`.
 `frames.csv` records each0105 observation, PIT-clock time, IP and a specified
@@ -27,41 +27,49 @@ FNV-1a64 hash of RAM, four planes, DAC and CRTC bytes. Capture failure fails the
 runner. A frame/poll stop is terminal for this invocation, not a coroutine save.
 Run this executable under `run_bounded` for external time/process-commit limits.
 
-## State construction and readiness
+## Native startup and media policy
 
-CONDITIONAL READY: the existing game-loop poll/provider domain, load1010 and a
-constructed post-startup handoff at43F2. The unresolved startup/protection paths
-are not executed or replaced with guessed instruction semantics. Scratch RAM and
-registers without a producer are deterministically zero, rather than fixture
-poison; no runtime dump is loaded. DS is relocated load+09A9, independently of
-SS. The selected stack is9000:8000, the same isolated constructed stack used in
-`tests/game_loop.py`, not a claim about startup's final SS:SP.
+The host loads the pinned EXE through the native PKLITE decoder and all63
+relocations. It establishes a DOS PSP at load-10h, a length-counted command line,
+entry DS/ES=PSP, SS:SP=load+143E:4AF4, external IVT services and BIOS inputs.
+`lmn_host_boot` then calls `lmn_startup_core` at0000 and admits the game loop only
+at43F2. There is no post-startup constructor or repeated MAIN.DAT load.
+The runner uses `/v /o /a`: VGA palette, preset options and the original01/01
+sound fallback. Other sound-driver/platform profiles remain bounded seams.
 
-`lmn_host_post_startup` constructs the fixture's documented producer fields:
+DOS owns the initial PSP allocation; native startup shrinks it with4A. Its48
+request allocates one5571-paragraph block at3000, below9000: graphics3000,
+sprites4000, generated graphics5D0C, patterns5E72, glyphs5F02, UI5F7E/6E9F,
+input7971 and end8571. Native1007 publishes every selector. Native startup owns
+clearing, configuration, vector saves, hooks, checksum patches, measured timer
+reload, keyboard tables, DAT cache/retry and58D2 MAIN.DAT generation. The host
+supplies the display/PIT inputs; it does not substitute a fixed reload.
 
-* Native PKLITE static image plus all returned relocation words, in stream order
-  (`docs/executable.md`). The decoder independently checks the pinned identity.
-* DS:0000..2011 clear from0027..0031, configuration/blanking gates, keyboard
-  defaults preserved at201F/202E (image BAAF/BABE), code83BE from00B4, canonical
-  IVT09 from1562 and the menu IVT08 target from5028. Opaque external services use
-  declared B000 entries; IRQ delivery always reads live IVT memory.
-* VGA CRTC base from0512 and selected BIOS geometry, input mode0 from static data,
-  saved timer chain from005D..0066, nonzero calibrated1FC9, disabled DAT cache
-  and enabled retry from00D8..00DB. The reload4567 is a chosen calibrated-machine
-  input, not a measurement of modern wall time.
-* MAIN.DAT sections3/4 decoded by the maintained native DAT decoder into the same
-  isolated UI fixture banks4000/4F21 used by `tests/main_menu.py`. Static palettes
-  are preserved: the fixture's constant palette poison is not a startup producer.
+The required flag is `--media-probe=assume-original`, `--media-probe=reject` or
+`--media-probe=unsupported`; the API uses matching named enum policies. There is
+no implicit admission policy. `assume-original` explicitly assumes recognized
+original media; it supplies the first recognized AX/BX signature and preserved
+register roles. `reject` supplies the original early BIOS-failure result and
+runs native0EDF cleanup/DOS exit. `unsupported` stops at063E when a probe is
+requested. No encoded INT1/INT3 body or physical-floppy test runs in the host.
+For either completed outcome the native wrapper clears the selected512-byte
+buffer, preserving the other buffer, decode seed, IVT/table and encoded code.
+The semantic provider does not reproduce discarded internal probe stack residue;
+raw probe parity belongs to the independently original-built test fixtures.
 
-The runner then calls `lmn_host_prepare_resources`: it chooses one conventional
-5571-paragraph allocation at3000 and publishes the literal1007..1043 selector
-arithmetic (`docs/main-resource-sections.md`). This replaces the fixture's
-isolated arenas with one consistent lifetime: graphics3000, sprites4000,
-generated graphics5D0C, patterns5E72, glyphs5F02, UI5F7E/6E9F, input7971, end8571.
-It composes the maintained58D2 MAIN.DAT loader and all its bank/plane/glyph
-producers in C. The fixture entry and complete resource preparation are separate
-APIs so the differential journey can retain its original seeded RAM unchanged.
-No bootstrap generator overwrites maintained source.
+DOS AH1B declares a fixed-disk FAT ID F8. The native wrapper opens the supplied
+`russell.dat`, reads one byte, increments/modulos the live counter, and performs
+its original unchecked create/write/close requests. Files are read-only:3C/40
+return access denied, and assets are never changed. The installed file's byte8
+therefore becomes9 and skips the probe on the standard smoke run. A zero cycle
+or open failure requests the explicitly selected media policy. Tests overlay a
+borrowed one-byte9 counter to exercise PASS, rejection and unsupported policies
+without changing an asset. The256-byte writer always uses live DS:252A.
+
+This is a CONDITIONAL native startup/game-loop domain: normal disjoint RAM,
+TF/DF clear, quiescent IRQs during startup, declared platform services and IRQs
+at foreground polls afterward. No global UNKNOWN closure or unrestricted
+raw-machine/protected-body equivalence is claimed.
 
 ## Devices and cadence
 
@@ -94,12 +102,15 @@ IRQs; the host never synthesizes those game-state writes. The saved BIOS provide
 increments0040:006C and acknowledges the PIC. Scripted verification disables the
 automatic scheduler and submits ordered IRQ08/09 events at explicit virtual times.
 
-INT33 implements reset/show/hide/query/position/ranges and callback disable.
+INT33 implements reset/show/hide/query/position/ranges, mickey ratios and the
+startup callback registration at CS:0F6F. That exact callback is a RETF with no
+body effects; other callback targets are unsupported. Private-vector installation
+remains native. Mouse/keyboard input and IRQs are delivered at declared polls.
 INT10 implements the reached mode/page and adapter-identification requests.
 INT1A implements tick get/set. INT21 supports read-only open/attributes/read/close,
 the reached FCB size query for the current file, get/set vector, bounded arena
 allocation/LIFO release/resize and headless console/termination. Basenames are
-restricted to one component; no create/write service exists. The file overlay API
+restricted to one component; create/write requests return access denied. The file overlay API
 is a borrowed read-only fixture input, used for the existing zero-minute second
 level case, never a patch to live game state or an asset file.
 
@@ -107,23 +118,26 @@ level case, never a patch to live game state or an asset file.
 
 INT60/61 are explicitly muted sinks: requests are counted, returned CPU state is
 preserved, and actual AdLib/Tandy/PC-speaker command semantics and audio are
-unsupported. A game-installed vector that does not match a bound provider stops;
+unsupported. The native-installed PC-speaker vector at (load+0842):0182 has an
+explicit muted binding; other installed vectors must match their own providers. A game-installed vector that does not match a bound provider stops;
 the host does not silently redirect it. Other video modes, chain4/odd-even memory,
-arbitrary BIOS/DOS calls, joystick ports, asynchronous mouse callbacks, nested
-IRQs, instruction-boundary preemption, cycle-exact timing and full native startup
-remain unsupported. The arena allocator is this constructed machine, not a full
+arbitrary BIOS/DOS calls, joystick ports, asynchronous callback bodies, nested
+IRQs, instruction-boundary preemption and cycle-exact timing remain unsupported. The arena allocator is this constructed machine, not a full
 DOS MCB/fragmentation implementation. PPM snapshots do not reproduce mid-screen
 palette changes. These limitations do not classify unresolved code as dead.
 
 `tools/difftest.py host_vga host_journey` runs bounded workers with temporary DLL
 directories under build and cleanup after failure. `host_vga` compares generated
 device traffic with `tests/minimap_vga.py`, known DAC/CRTC/clock/service vectors,
-the fixture constructor and independently recorded sprite-bank output hashes.
+native startup, forced probe-policy profiles and independently recorded sprite-bank output hashes.
 `host_journey` reuses `game_loop.setup`, `Access.script`, `Reference` and the shared
 original instruction engine; only its platform provider profile changes to these
 register devices and DOS/BIOS effects. It compares every loop boundary and poll,
 including canonical RAM, defined CPU state, planes/latches/registers, DAC and CRTC.
 It preserves the scripted cheat/next, time-up/retry and menu-return journey. Its
 report is scoped to that schedule, not equivalence to arbitrary hardware timing.
+The constructed journey keeps its established reference; an additional native
+startup-to-menu case compares every boundary/poll through446D against original
+menu instructions from the returned handoff state, including the01 sound fields.
 The host journey records checkpoint state rather than ordered C bus traffic;
 empty trace projections are explicit on both sides of the shared comparator.

@@ -276,12 +276,6 @@ static void mouse_hooks(Startup *s){
     if(!interrupt(s,0x21,0xF62)){return;}r->ds=pop(s);r->ip=0xF63;return;
 absent:byte(s,0x25A6,2);byte(s,SEG09A9_MouseServicesDisabledByte,255);r->ip=0xF6E;
 }
-static int provider_child(Startup *s,uint16_t entry,uint16_t resume,LmnStartupChild fn){
-    uint16_t cs=s->out.registers.cs;push(s,resume);s->out.registers.ip=entry;s->out.child_entry=entry;
-    uint16_t status=fn(s->services->child_context,s->mem,&s->out.registers,bus(s));
-    if(status){s->out.status=LMN_STARTUP_CHILD_STOP;s->out.child_status=status;return 0;}
-    return returned(s,cs,resume);
-}
 static int adapted(Startup *s,uint16_t cs,uint16_t resume,uint16_t status){
     if(status){s->out.status=LMN_STARTUP_CHILD_STOP;s->out.child_status=status;return 0;}
     if(s->out.registers.cs!=cs||s->out.registers.ip!=resume){s->out.status=LMN_STARTUP_CHANGED_RETURN;return 0;}return 1;
@@ -333,7 +327,16 @@ static void program(Startup *s){
     push(s,0xDB);s->out.child_entry=0x1ED1;lmn_dat_disable_cache_adapter(s->mem,r);if(!adapted(s,cs,0xDB,0)){return;}byte(s,SEG09A9_DatRetryEnabled,255);
     r->ip=0xE0;s->out.child_entry=0x62B;
     if(!s->services->protection){s->out.status=LMN_STARTUP_PROTECTION_SEAM;return;}
-    if(!provider_child(s,0x62B,0xE3,s->services->protection)){return;}
+    push(s,0xE3);r->ip=0x62B;
+    LmnProtectionResult protection=lmn_protection_core(s->mem,r,LMN_PROTECTION_CHECK,s->services->protection);
+    *r=protection.registers;s->out.child_status=protection.child_status;s->out.service_status=protection.service_status;
+    if(protection.status){
+        s->out.status=protection.status==LMN_PROTECTION_DOS_EXIT?LMN_STARTUP_DOS_EXIT:
+            protection.status==LMN_PROTECTION_PROBE_SEAM?LMN_STARTUP_PROTECTION_SEAM:LMN_STARTUP_CHILD_STOP;
+        if(!protection.child_status&&protection.status!=LMN_PROTECTION_DOS_EXIT)s->out.child_status=protection.status;
+        return;
+    }
+    if(!returned(s,cs,0xE3)){return;}
     push(s,0xE6);r->ip=0x1562;s->out.child_entry=0x1562;
     LmnKeyboardResult keyboard=lmn_install_keyboard_adapter(s->mem,r,s->services->dos,bus(s));*r=keyboard.registers;
     if(!adapted(s,cs,0xE6,keyboard.status)){s->out.service_status=keyboard.service_status;return;}
