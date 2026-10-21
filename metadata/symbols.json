@@ -1540,16 +1540,27 @@
     "evidence": [
       "Signature-matched legacy entry lead"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 1878
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 1878,
+    "c_code_ranges": [
+      [
+        0,
+        251
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "c_core": "lmn_startup_core",
+    "verification_evidence": "tests/startup.py; build/startup-differential.json; CONDITIONAL service/child domain, stops before062B unless an explicit outcome fixture is supplied; JMP43F2 without menu execution"
   },
   {
     "address": 216,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_00D8",
-    "aliases": [],
+    "symbol_name": "FinalizeStartupServicesAndEnterMenu",
+    "aliases": [
+      "sub_00D8"
+    ],
     "callers": [],
     "callees": [
       798,
@@ -5533,16 +5544,27 @@
     "evidence": [
       "054E..060B allocates driver memory, installs INT61, loads ADLIB.DAT then hardware-detected TANDYSND.DAT fallback"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 190
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 190,
+    "c_code_ranges": [
+      [
+        1358,
+        1548
+      ]
+    ],
+    "c_implementation": "c/sound_driver_init.c",
+    "c_core": "lmn_initialize_sound_driver_core",
+    "verification_evidence": "tests/sound_driver_init.py; build/sound-driver-init-differential.json: 301 comparisons, 96 total new sites, 12 direct outcomes, 4 completed mutants; CONDITIONAL bound DOS/BIOS/INT61 and existing direct-RAM DAT contract; 054E..060B only, INT60 untouched"
   },
   {
     "address": 1548,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_060C",
-    "aliases": [],
+    "symbol_name": "ProbeTandyVideoPage",
+    "aliases": [
+      "sub_060C"
+    ],
     "callers": [
       1461
     ],
@@ -5552,16 +5574,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 31
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 31,
+    "c_code_ranges": [
+      [
+        1548,
+        1579
+      ]
+    ],
+    "c_implementation": "c/sound_driver_init.c",
+    "verification_evidence": "Internal 060C..062A child composed by InitializeSoundDriver; tests/sound_driver_init.py covers both returned BX outcomes, saved BL BIOS quirk, full returned state and actual 05B8 RET; same scoped report"
   },
   {
     "address": 1579,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_062B",
-    "aliases": [],
+    "symbol_name": "CheckStartupProtection",
+    "aliases": [
+      "sub_062B"
+    ],
     "callers": [
       224
     ],
@@ -5659,8 +5691,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_063E",
-    "aliases": [],
+    "symbol_name": "ProbeOriginalFloppyMedia",
+    "aliases": [
+      "sub_063E"
+    ],
     "callers": [
       3737,
       3762,
@@ -5715,8 +5749,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_0659",
-    "aliases": [],
+    "symbol_name": "InstallProtectionInt3FromReturnAddress",
+    "aliases": [
+      "sub_0659"
+    ],
     "callers": [
       1622
     ],
@@ -5885,8 +5921,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_0DBD",
-    "aliases": [],
+    "symbol_name": "InstallProtectionInt1FromReturnAddress",
+    "aliases": [
+      "sub_0DBD"
+    ],
     "callers": [
       3514
     ],
@@ -6005,12 +6043,30 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 3686,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "CheckProtectionRunCounter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "F8 branch: opens DS:258A russell.dat, reads one byte to 252A, INC modulo 10 (09/0A/FE/FF->00), rewrites; zero or failed open invokes 063E media probe, otherwise RET 0EA9 without media check."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 3778,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_0EC2",
-    "aliases": [],
+    "symbol_name": "WriteProtectionCounterFile",
+    "aliases": [
+      "sub_0EC2"
+    ],
     "callers": [
       3729,
       3747,
@@ -6042,6 +6098,22 @@
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 29
+  },
+  {
+    "address": 3807,
+    "segment": 0,
+    "kind": "label",
+    "size": null,
+    "symbol_name": "StartupProtectionFailure",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Protection rejection: restore timer/keyboard/private/video/mouse, print 20D4, DOS 4C00. Nonreturning."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 3848,
@@ -6094,8 +6166,17 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 103
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 103,
+    "c_code_ranges": [
+      [
+        3848,
+        3951
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "c_core": "lmn_startup_core",
+    "verification_evidence": "shared startup suite; disabled/absent/present/full INT33 and DOS frames, actual live state, preRET boundary"
   },
   {
     "address": 3951,
@@ -6616,8 +6697,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1007",
-    "aliases": [],
+    "symbol_name": "AllocateStartupGraphicsArena",
+    "aliases": [
+      "sub_1007"
+    ],
     "callers": [
       174
     ],
@@ -6704,16 +6787,27 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 118
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 118,
+    "c_code_ranges": [
+      [
+        4103,
+        4206
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "c_core": "lmn_startup_core",
+    "verification_evidence": "shared startup suite; arena success and DOS errors7/8 through terminal04EA tail; real hex-helper frames and live SI stores"
   },
   {
     "address": 4206,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_106E",
-    "aliases": [],
+    "symbol_name": "SelectStartupDisplayAndOptions",
+    "aliases": [
+      "sub_106E"
+    ],
     "callers": [
       77
     ],
@@ -6984,16 +7078,35 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 425
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 425,
+    "c_code_ranges": [
+      [
+        4206,
+        4413
+      ],
+      [
+        4414,
+        4499
+      ],
+      [
+        4533,
+        4632
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "c_core": "lmn_startup_core",
+    "verification_evidence": "shared startup suite; palette/option/extended-key/exit paths and direct1194 shared tail; UNKNOWN113D/1193 excluded"
   },
   {
     "address": 4500,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1194",
-    "aliases": [],
+    "symbol_name": "MarkStartupOptionAndRedraw",
+    "aliases": [
+      "sub_1194"
+    ],
     "callers": [
       4624,
       4572
@@ -7031,16 +7144,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 33
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 33,
+    "c_code_ranges": [
+      [
+        4500,
+        4533
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "verification_evidence": "internal native child and direct shared tail with predecessor SI/DI and actual caller word"
   },
   {
     "address": 4632,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1218",
-    "aliases": [],
+    "symbol_name": "WriteZeroTerminatedDosText",
+    "aliases": [
+      "sub_1218"
+    ],
     "callers": [
       4263,
       4277,
@@ -7062,16 +7185,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 16
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 16,
+    "c_code_ranges": [
+      [
+        4632,
+        4648
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "verification_evidence": "internal native zero-terminated DOS02 printer; actual savedBX and callerRET"
   },
   {
     "address": 4648,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1228",
-    "aliases": [],
+    "symbol_name": "WriteHexWordAtLiveCursor",
+    "aliases": [
+      "sub_1228"
+    ],
     "callers": [
       4172
     ],
@@ -7100,16 +7233,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 40
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 40,
+    "c_code_ranges": [
+      [
+        4648,
+        4671
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "verification_evidence": "internal allocation-failure formatter; actual nested words and fallthrough123F"
   },
   {
     "address": 4671,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_123F",
-    "aliases": [],
+    "symbol_name": "WriteHexHighNibbleAtLiveCursor",
+    "aliases": [
+      "sub_123F"
+    ],
     "callers": [
       4653,
       4657,
@@ -7138,16 +7281,26 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 17
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 17,
+    "c_code_ranges": [
+      [
+        4671,
+        4688
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "verification_evidence": "internal formatter writes through liveDS:SI"
   },
   {
     "address": 4755,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1293",
-    "aliases": [],
+    "symbol_name": "ParsePspCommandLine",
+    "aliases": [
+      "sub_1293"
+    ],
     "callers": [
       74
     ],
@@ -7352,16 +7505,39 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 259
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 259,
+    "c_code_ranges": [
+      [
+        4755,
+        4826
+      ],
+      [
+        4827,
+        4841
+      ],
+      [
+        4842,
+        4890
+      ],
+      [
+        4906,
+        5032
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "c_core": "lmn_startup_core",
+    "verification_evidence": "shared startup suite; ASCII fold, recognized/unknown switches, length and wrapped decimal parsing; UNKNOWN12DA/12E9/131A..1329 excluded"
   },
   {
     "address": 5032,
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_13A8",
-    "aliases": [],
+    "symbol_name": "ParsePspTimerReloadDecimal",
+    "aliases": [
+      "sub_13A8"
+    ],
     "callers": [
       5011
     ],
@@ -7388,8 +7564,16 @@
     "evidence": [
       "Static direct call target"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 53
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 53,
+    "c_code_ranges": [
+      [
+        5032,
+        5084
+      ]
+    ],
+    "c_implementation": "c/startup.c",
+    "verification_evidence": "internal parsed reload child with actual1396 word; final-byte/drop/delimiter/count behavior"
   },
   {
     "address": 5084,
@@ -69572,6 +69756,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8178,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 2,
+    "symbol_name": "StartupArenaTailSegment1FF2",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "AllocateStartupGraphicsArena 1037 stores base+4771 paragraphs (wrapped ADD); purpose beyond allocation not inferred."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8180,
     "segment": 2473,
     "kind": "data",
@@ -69584,6 +69784,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A7B metadata/RLE source segment; 1A35/1A67 DAT output segment"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8182,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 2,
+    "symbol_name": "StartupPspSegment1FF6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PUSH ES 0005 / POP AX 0033 / store 0034 after the 0000..2011 clear; consumed by ParsePspCommandLine 1293."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69748,6 +69964,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8205,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "StartupOptionSelectionBypass200D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Command switch /o (1364) sets FF; consumers 108F/10EF skip the startup option screen."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8206,
     "segment": 2473,
     "kind": "data",
@@ -69762,6 +69994,22 @@
       "Startup clears byte; CLI -d/-x and interactive configuration writeFF at1200,11F9,135D,1370. ExactFF readers affect display waits, timer setup/polling and optionalMAINsection6. Neutral provenance name, semantic meaning and aliases remain open; docs/main-resource-sections.md"
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 8207,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "StartupOption200F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Startup 0045 and switch /m (1377) set FF; consumer purpose not inferred."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 8208,
@@ -70053,6 +70301,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 9514,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 1,
+    "symbol_name": "ProtectionRunCounterByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0E7C one-byte read from russell.dat; 0E89 modulo-10 increment; 0E9E/0EB7 set 9; 0EC2 writes 0100 live DS bytes starting here."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 9524,
     "segment": 2473,
     "kind": "data",
@@ -70209,6 +70473,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "19D1 filename oddtable.dat plusNUL"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9610,
+    "segment": 2473,
+    "kind": "data_reference",
+    "size": 12,
+    "symbol_name": "ProtectionCounterFilename",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stored russell.dat plus NUL; DOS filename for 0E66 open and 0EC2 create."
     ],
     "verification_status": "UNRESOLVED"
   },

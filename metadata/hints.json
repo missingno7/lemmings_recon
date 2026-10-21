@@ -65,6 +65,13 @@
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     },
     {
+      "start": 3484,
+      "end": 3486,
+      "class": "static_data",
+      "overlay": true,
+      "evidence": "ProtectionDecodeNextWord 0E20 uses word[nextIP-2]; nextIP 0D9E reads CS:0D9C 9090 and key DEDE exposes CC13 from CD12; two bounded original INT3 seed probes confirm dependence. Known data use only; alternative execution not excluded."
+    },
+    {
       "start": 3486,
       "end": 3507,
       "class": "state_specific_code",

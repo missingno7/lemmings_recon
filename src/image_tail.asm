@@ -99,6 +99,12 @@ FirstObjectGraphicsFrameOffset equ LevelObjectGraphicsRecords+0x17
 GameTransitionFlags equ GameDataImage+0x004E
 GameEndRequested equ GameDataImage+0x004F
 FrameDoubleWaitFlag004A equ GameDataImage+0x004A
+StartupPspSegment1FF6 equ GameDataImage+0x1FF6
+StartupArenaTailSegment1FF2 equ GameDataImage+0x1FF2
+StartupOptionSelectionBypass200D equ GameDataImage+0x200D
+StartupOption200F equ GameDataImage+0x200F
+ProtectionRunCounterByte equ GameDataImage+0x252A
+ProtectionCounterFilename equ GameDataImage+0x258A
 GameCountdownTickCounter equ GameDataImage+0x0085
 GameCountdownTickReload equ GameDataImage+0x0086
 ForegroundWaitLowWord equ GameDataImage+0x1FFE

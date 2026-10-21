@@ -19,11 +19,14 @@ by a C constructor from documented producers, not by translated startup code.
 
 ## Priorities
 
-1. **Native startup 0000..00FA.** Replace the host's post-startup constructor
-   with the translated startup sequence (checksums, memory/vector setup, video
-   probe, sound driver init 054E, mouse hooks, timer calibration, resource load)
-   through the JMP to EnterMainMenu, resolving the protection/allocation seams it
-   needs (priority 4 below) only as far as this path requires.
+1. **Boot the host through native startup.** c/startup.c now runs 0000..00FA
+   (command line, option screen, arena, sound driver load c/sound_driver_init.c,
+   mouse hooks, calibration, MAIN.DAT) to JMP 43F2, stopping at the protection
+   seam 062B. Translate the protection wrapper (russell.dat run counter, 0EC2
+   writer quirks, 0EDF failure) with the floppy media probe 063E as an explicit
+   PASS/FAIL/unsupported outcome provider, then replace host/'s post-startup
+   constructor with native startup (its 25A7/1F71=00 sound substitute differs
+   from the original fallback 01/01, likely the blank F3 menu sign).
 2. **SDL3 presentation over host/.** Interactive window, real-time scheduling,
    mouse/keyboard mapping and audio output once sound engines exist; the host
    interface is the boundary. Keep headless parity runs as the acceptance gate.

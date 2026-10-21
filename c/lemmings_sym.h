@@ -2,7 +2,7 @@
 #ifndef LEMMINGS_SYM_H
 #define LEMMINGS_SYM_H
 #define CS_ProgramEntry 0x0000u
-#define CS_sub_00D8 0x00D8u
+#define CS_FinalizeStartupServicesAndEnterMenu 0x00D8u
 #define CS_EnterLoadedLevelGame 0x00FBu
 #define CS_GameFrameSwapAndPace 0x0105u
 #define CS_GameFrameRetryRasterSync 0x0120u
@@ -113,15 +113,17 @@
 #define CS_InitializeVgaRegisterMirrors 0x04F9u
 #define CS_VgaMirrorInitializeReturn 0x054Du
 #define CS_InitializeSoundDriver 0x054Eu
-#define CS_sub_060C 0x060Cu
-#define CS_sub_062B 0x062Bu
-#define CS_sub_063E 0x063Eu
-#define CS_sub_0659 0x0659u
+#define CS_ProbeTandyVideoPage 0x060Cu
+#define CS_CheckStartupProtection 0x062Bu
+#define CS_ProbeOriginalFloppyMedia 0x063Eu
+#define CS_InstallProtectionInt3FromReturnAddress 0x0659u
 #define CS_ProtectionEncodedDiskEntry 0x066Du
 #define CS_ProtectionInt3Handler 0x0DB3u
-#define CS_sub_0DBD 0x0DBDu
+#define CS_InstallProtectionInt1FromReturnAddress 0x0DBDu
 #define CS_ProtectionEncodedInt1 0x0DFFu
-#define CS_sub_0EC2 0x0EC2u
+#define CS_CheckProtectionRunCounter 0x0E66u
+#define CS_WriteProtectionCounterFile 0x0EC2u
+#define CS_StartupProtectionFailure 0x0EDFu
 #define CS_InitializeMouseDriverHooks 0x0F08u
 #define CS_MouseEventReturn 0x0F6Fu
 #define CS_MouseIrqBridge 0x0F70u
@@ -140,14 +142,14 @@
 #define CS_RestoreVideoAfterMode 0x0FFFu
 #define CS_RestoreVideoPageInterrupt 0x1004u
 #define CS_RestoreVideoReturn 0x1006u
-#define CS_sub_1007 0x1007u
-#define CS_sub_106E 0x106Eu
-#define CS_sub_1194 0x1194u
-#define CS_sub_1218 0x1218u
-#define CS_sub_1228 0x1228u
-#define CS_sub_123F 0x123Fu
-#define CS_sub_1293 0x1293u
-#define CS_sub_13A8 0x13A8u
+#define CS_AllocateStartupGraphicsArena 0x1007u
+#define CS_SelectStartupDisplayAndOptions 0x106Eu
+#define CS_MarkStartupOptionAndRedraw 0x1194u
+#define CS_WriteZeroTerminatedDosText 0x1218u
+#define CS_WriteHexWordAtLiveCursor 0x1228u
+#define CS_WriteHexHighNibbleAtLiveCursor 0x123Fu
+#define CS_ParsePspCommandLine 0x1293u
+#define CS_ParsePspTimerReloadDecimal 0x13A8u
 #define CS_DetectVideoAdapters 0x13DCu
 #define CS_ProbeDisplayCombination 0x1410u
 #define CS_ProbeEgaConfiguration 0x1462u
@@ -1242,7 +1244,9 @@
 #define SEG09A9_StatusGlyphBufferSegment 0x1FECu
 #define SEG09A9_UiGraphicsBufferSegment 0x1FEEu
 #define SEG09A9_LevelGraphicsSegment 0x1FF0u
+#define SEG09A9_StartupArenaTailSegment1FF2 0x1FF2u
 #define SEG09A9_GraphicsResourceInputSegment 0x1FF4u
+#define SEG09A9_StartupPspSegment1FF6 0x1FF6u
 #define SEG09A9_ForegroundWaitLowWord 0x1FFEu
 #define SEG09A9_ForegroundWaitHighWord 0x2000u
 #define SEG09A9_PrivateIrqCounter2002 0x2002u
@@ -1253,7 +1257,9 @@
 #define SEG09A9_KeyboardControllerGate200A 0x200Au
 #define SEG09A9_MouseButtonSuppression200B 0x200Bu
 #define SEG09A9_PaletteBlankingControl 0x200Cu
+#define SEG09A9_StartupOptionSelectionBypass200D 0x200Du
 #define SEG09A9_ConfigurationOption200E 0x200Eu
+#define SEG09A9_StartupOption200F 0x200Fu
 #define SEG09A9_ExternalSoundDriverEnabled 0x2010u
 #define SEG09A9_RasterMeasurementMode2011 0x2011u
 #define SEG09A9_DisplayProbeRecords 0x2013u
@@ -1272,6 +1278,7 @@
 #define SEG09A9_ResourceReadErrorMessage 0x21A5u
 #define SEG09A9_ResourceCloseErrorMessage 0x21B6u
 #define SEG09A9_LastResourceFilenameOffset 0x2528u
+#define SEG09A9_ProtectionRunCounterByte 0x252Au
 #define SEG09A9_GraphicsDatFilename 0x2534u
 #define SEG09A9_MenuResourceProbeFilename 0x2534u
 #define SEG09A9_GraphicsFilenameSelector 0x2539u
@@ -1282,6 +1289,7 @@
 #define SEG09A9_SpecialResourceFilename 0x2559u
 #define SEG09A9_SpecialFilenameSelector 0x2560u
 #define SEG09A9_OddLevelOverrideFilename 0x2566u
+#define SEG09A9_ProtectionCounterFilename 0x258Au
 #define SEG09A9_SavedBiosClockHigh 0x259Cu
 #define SEG09A9_SavedBiosClockLow 0x259Eu
 #define SEG09A9_InputPollCallback 0x25A0u

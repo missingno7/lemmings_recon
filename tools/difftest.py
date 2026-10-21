@@ -18,6 +18,8 @@ class Suite(NamedTuple):
 
 # Preserve the complete campaign's order and existing process/tree limits.
 SUITES = (
+    Suite('startup', 1500, 768),
+    Suite('sound_driver_init', 600, 512),
     Suite('host_vga', 210, 512),
     Suite('host_journey', 2400, 768),
     Suite('level_result', 2100, 512),

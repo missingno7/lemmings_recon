@@ -2,6 +2,10 @@
 ; Static code frame 0000; semantic module boundaries remain under investigation.
 ; DOS entry: establishes relocated DATA; integrity checks precede initialization.
 ProgramEntry:
+; READINESS CONDITIONAL (c/startup.c): ES=PSP; 1A clock words 259C/259E survive
+; the DF-dependent clear 0000..2011; AH1B pointer is read before POP DS (1FDE).
+; BIOS 0F saves AL/BH after the option screen set mode 3. Protection at 00E0 is
+; an explicit seam; JMP 43F2 enters the menu with no invented outer RET.
     mov dx,0x9a9 ; @00000
     mov ds,dx ; @00003
     push es ; @00005
@@ -23,13 +27,13 @@ ProgramEntry:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0002F
     rep stosb ; @00031
     pop ax ; @00033
-    mov [0x1ff6],ax ; @00034
+    mov [StartupPspSegment1FF6-GameDataImage],ax ; @00034
     call InitializeVgaRegisterMirrors ; @00037
     mov word [0x1f7c],0xff ; @0003A
     mov byte [PrivateVectorNumber-GameDataImage],0xc ; @00040
-    mov byte [0x200f],0xff ; @00045
-    call sub_1293 ; @0004A
-    call sub_106E ; @0004D
+    mov byte [StartupOption200F-GameDataImage],0xff ; @00045
+    call ParsePspCommandLine ; @0004A
+    call SelectStartupDisplayAndOptions ; @0004D
     mov ax,0x3509 ; @00050
     int 0x21 ; @00053
     mov [SavedKeyboardVector-GameDataImage+2],es ; @00055
@@ -69,7 +73,7 @@ ProgramEntry:
     mov [SavedVideoMode-GameDataImage],al ; @000A4
     mov [SavedVideoPage-GameDataImage],bh ; @000A7
     call InitializeSoundDriver ; @000AB
-    call sub_1007 ; @000AE
+    call AllocateStartupGraphicsArena ; @000AE
     call InitializeMouseDriverHooks ; @000B1
     mov byte [cs:MouseIrqMirrorGate83BE],0xff ; @000B4
     nop ; @000BA
@@ -85,10 +89,12 @@ ProgramEntry:
     out 0x40,al ; @000D1
     out 0x40,al ; @000D3
     call LoadMainResourceSections ; @000D5
-sub_00D8:
+FinalizeStartupServicesAndEnterMenu:
+; Disable DAT cache, enable retry, protection 062B (seam), keyboard IRQ09,
+; CLI + PIT 36 reload from 1FC9, STI, JMP EnterMainMenu.
     call DisableDatCache ; @000D8
     mov byte [DatRetryEnabled-GameDataImage],0xff ; @000DB
-    call sub_062B ; @000E0
+    call CheckStartupProtection ; @000E0
     call InstallKeyboardVector ; @000E3
     cli ; @000E6
     mov cx,[0x1fc9] ; @000E7
@@ -722,6 +728,12 @@ CleanupAfterTerminate:
 VgaMirrorInitializeReturn:
     ret ; @0054D
 InitializeSoundDriver:
+; READINESS CONDITIONAL (c/sound_driver_init.c): 2010=FF (switch a) skips to
+; the 060B fallback. Else probe-allocate 5AD8, free, allocate 0567 (CF ignored),
+; install INT61 at AX:0000 before loading adlib.dat; writes 25A7=1/1F71=1
+; before INT61 AH=1 detection; success 2010=FF, 25A7=3, 1F71=2. Failed AdLib
+; tries the BIOS page probe 060C for Tandy (tandysnd.dat); negative frees the
+; block and leaves 2010=0, 25A7=1, 1F71=1. INT61 vector stays installed.
     cmp byte [0x2010],0xff ; @0054E
     jnz loc_0558 ; @00553
     jmp loc_05FC ; @00555
@@ -769,7 +781,7 @@ loc_0565:
     ret ; @005B3
 loc_05B4:
     push ax ; @005B4
-    call sub_060C ; @005B5
+    call ProbeTandyVideoPage ; @005B5
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @005B8
     pop ax ; @005BA
     jz loc_05F6 ; @005BB
@@ -806,7 +818,9 @@ loc_05FC:
     mov byte [0x25a7],0x1 ; @00601
     mov byte [0x1f71],0x1 ; @00606
     ret ; @0060B
-sub_060C:
+ProbeTandyVideoPage:
+; AH0F, save BX, AX=0580 BX=0; POP AX/MOV AH,05/XCHG gives AX=(saved BL<<8)|05,
+; discarding BH (quirk). Returned BX zero -> AL=0, else AL=FF.
     mov ah,0xf ; @0060C
     int 0x10 ; @0060E
     push bx ; @00610
@@ -825,18 +839,26 @@ loc_0626:
     int 0x10 ; @00626
     mov al,0xff ; @00628
     ret ; @0062A
-sub_062B:
+CheckStartupProtection:
+; Startup admission check. FAT id 1FDE != F8 probes original floppy media
+; (063E); F8 uses the russell.dat run counter (0E66): media checked only when
+; the incremented counter wraps to 0 (every tenth run) or the file can't be
+; opened. 0EC2 writes 0100 live DS bytes from 252A, results unchecked. 063E
+; forces DL=0, uses restored INT3/INT1 protection and a CS-relative sector
+; buffer; a completed probe zeroes only its chosen 512 bytes. Failure -> 0EDF
+; cleanup/exit; success RET 00E3. No pass latch. READINESS: wrapper READY;
+; media probe is an explicit PASS/FAIL/unsupported platform outcome.
     mov al,[StartupFatIdByte1FDE-GameDataImage] ; @0062B
     cmp al,0xf8 ; @0062E
     jnz loc_0635 ; @00630
     jmp loc_0E66 ; @00632
 loc_0635:
-    call sub_063E ; @00635
+    call ProbeOriginalFloppyMedia ; @00635
     jnc loc_063D ; @00638
     jmp loc_0EDF ; @0063A
 loc_063D:
     ret ; @0063D
-sub_063E:
+ProbeOriginalFloppyMedia:
     db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0063E
     push ds ; @00640
     push es ; @00641
@@ -853,8 +875,8 @@ loc_064A:
     jnz loc_064A ; @00652
     pushf ; @00654
     cli ; @00655
-    call sub_0659 ; @00656
-sub_0659:
+    call InstallProtectionInt3FromReturnAddress ; @00656
+InstallProtectionInt3FromReturnAddress:
     pop word [0xc] ; @00659
     add word [0xc],0x75a ; @0065D
     push cs ; @00663
@@ -1111,8 +1133,8 @@ ProtectionInt3Handler:
     push ds ; @00DB5
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @00DB6
     mov ds,ax ; @00DB8
-    call sub_0DBD ; @00DBA
-sub_0DBD:
+    call InstallProtectionInt1FromReturnAddress ; @00DBA
+InstallProtectionInt1FromReturnAddress:
     pop word [0x4] ; @00DBD
     add word [0x4],0x42 ; @00DC1
     push cs ; @00DC7
@@ -1157,33 +1179,34 @@ ProtectionEncodedInt1:
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x75,0x08,0x81,0xfb,0x8c,0x1a,0x75,0x02,0xf8,0xc3,0xf9,0xc3 ; @00E5A
 loc_0E66:
-    lea dx,[0x258a] ; @00E66
+CheckProtectionRunCounter:
+    lea dx,[ProtectionCounterFilename-GameDataImage] ; @00E66
     mov ax,0x3d00 ; @00E6A
     int 0x21 ; @00E6D
     jc loc_0EAA ; @00E6F
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @00E71
     mov ah,0x3f ; @00E73
-    lea dx,[0x252a] ; @00E75
+    lea dx,[ProtectionRunCounterByte-GameDataImage] ; @00E75
     mov cx,0x1 ; @00E79
     int 0x21 ; @00E7C
-    mov al,[0x252a] ; @00E7E
+    mov al,[ProtectionRunCounterByte-GameDataImage] ; @00E7E
     inc al ; @00E81
     cmp al,0xa ; @00E83
     jc loc_0E89 ; @00E85
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00E87
 loc_0E89:
-    mov [0x252a],al ; @00E89
+    mov [ProtectionRunCounterByte-GameDataImage],al ; @00E89
     push ax ; @00E8C
     mov ah,0x3e ; @00E8D
     int 0x21 ; @00E8F
-    call sub_0EC2 ; @00E91
+    call WriteProtectionCounterFile ; @00E91
     pop ax ; @00E94
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @00E95
     jnz loc_0EA9 ; @00E97
-    call sub_063E ; @00E99
+    call ProbeOriginalFloppyMedia ; @00E99
     jnc loc_0EA9 ; @00E9C
-    mov byte [0x252a],0x9 ; @00E9E
-    call sub_0EC2 ; @00EA3
+    mov byte [ProtectionRunCounterByte-GameDataImage],0x9 ; @00E9E
+    call WriteProtectionCounterFile ; @00EA3
     jmp short loc_0EDF ; @00EA6
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00EA8
@@ -1191,29 +1214,30 @@ loc_0EA9:
     ret ; @00EA9
 loc_0EAA:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00EAA
-    mov [0x252a],al ; @00EAC
-    call sub_0EC2 ; @00EAF
-    call sub_063E ; @00EB2
+    mov [ProtectionRunCounterByte-GameDataImage],al ; @00EAC
+    call WriteProtectionCounterFile ; @00EAF
+    call ProbeOriginalFloppyMedia ; @00EB2
     jnc loc_0EA9 ; @00EB5
-    mov byte [0x252a],0x9 ; @00EB7
-    call sub_0EC2 ; @00EBC
+    mov byte [ProtectionRunCounterByte-GameDataImage],0x9 ; @00EB7
+    call WriteProtectionCounterFile ; @00EBC
     jmp short loc_0EDF ; @00EBF
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00EC1
-sub_0EC2:
-    lea dx,[0x258a] ; @00EC2
+WriteProtectionCounterFile:
+    lea dx,[ProtectionCounterFilename-GameDataImage] ; @00EC2
     mov ah,0x3c ; @00EC6
     mov cx,0x2 ; @00EC8
     int 0x21 ; @00ECB
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @00ECD
     mov ah,0x40 ; @00ECF
     mov cx,0x100 ; @00ED1
-    lea dx,[0x252a] ; @00ED4
+    lea dx,[ProtectionRunCounterByte-GameDataImage] ; @00ED4
     int 0x21 ; @00ED8
     mov ah,0x3e ; @00EDA
     int 0x21 ; @00EDC
     ret ; @00EDE
 loc_0EDF:
+StartupProtectionFailure:
     call RestoreTimerState ; @00EDF
     call RestoreKeyboardVector ; @00EE2
     call RestorePrivateVector ; @00EE5
@@ -1231,6 +1255,9 @@ loc_0EF9:
     mov ax,0x4c00 ; @00F03
     int 0x21 ; @00F06
 InitializeMouseDriverHooks:
+; FF in 1F73 bypasses. Reset AX=0 returning 0 sets 25A6=2 and 1F73=FF.
+; Present: AX 15/7/8/4/2, callback 12 mask 007F at CS:0F6F, then DOS 25 hooks
+; vector [1FC6] to CS:0F70 with DS saved through the actual stack.
     cmp byte [MouseServicesDisabledByte-GameDataImage],0xff ; @00F08
     jz loc_0F64 ; @00F0D
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @00F0F
@@ -1360,7 +1387,11 @@ RestoreVideoPageInterrupt:
     int 0x10 ; @01004
 RestoreVideoReturn:
     ret ; @01006
-sub_1007:
+AllocateStartupGraphicsArena:
+; One 5571-paragraph DOS block: base->1FE4/1FF0, +1000 1FE6, +2D0C 1FE8,
+; +2E72 1FEA, +2F02 1FEC, +2F7E 1FEE, +4771 1FF2, +4971 1FF4 (wrapping ADDs).
+; Failure writes four hex digits through the uninitialized live DS:SI (1228),
+; prints ':' and 21C8 (error 7) or 21EA, then exits via 04EA.
     mov ah,0x48 ; @01007
     mov bx,0x5571 ; @01009
     int 0x21 ; @0100C
@@ -1378,7 +1409,7 @@ sub_1007:
     add ax,0x7c ; @0102E
     mov [UiGraphicsBufferSegment-GameDataImage],ax ; @01031
     add ax,0x17f3 ; @01034
-    mov [0x1ff2],ax ; @01037
+    mov [StartupArenaTailSegment1FF2-GameDataImage],ax ; @01037
     add ax,0x200 ; @0103A
     mov [0x1ff4],ax ; @0103D
     add ax,0xc00 ; @01040
@@ -1389,7 +1420,7 @@ loc_1044:
     call RestoreVideoModeAndPage ; @01046
     pop bx ; @01049
     db 0x8b,0xc3 ; ENCODED: mov ax,bx (NASM chooses a different encoding) ; @0104A
-    call sub_1228 ; @0104C
+    call WriteHexWordAtLiveCursor ; @0104C
     mov dl,0x3a ; @0104F
     mov ah,0x2 ; @01051
     int 0x21 ; @01053
@@ -1405,7 +1436,12 @@ loc_1067:
     mov ah,0x9 ; @01067
     int 0x21 ; @01069
     jmp ExitAfterKeyboardRestore ; @0106B
-sub_106E:
+SelectStartupDisplayAndOptions:
+; Mode 3 first; preset 1F7C plus any FF in 200A/200B/200D/200C returns at
+; once. Palette prompt 22E1 (1->4, 2->2, ESC exits). A/B/D flags tail-enter
+; 1194 with the caller's SI/DI unchanged (quirk: may overwrite parser rows).
+; Menu rows 0..4 by arrows; commit row 0:200E+200C 1:none 2:200A/IRQ74/3468
+; 3:200B+200E 4:exit. DOS 4C is terminal.
     mov ax,0x3 ; @0106E
     int 0x10 ; @01071
     cmp word [0x1f7c],0xff ; @01073
@@ -1418,7 +1454,7 @@ loc_1085:
     jnz loc_108F ; @0108A
     jmp loc_1227 ; @0108C
 loc_108F:
-    cmp byte [0x200d],0xff ; @0108F
+    cmp byte [StartupOptionSelectionBypass200D-GameDataImage],0xff ; @0108F
     jnz loc_1099 ; @01094
     jmp loc_1227 ; @01096
 loc_1099:
@@ -1427,11 +1463,11 @@ loc_1099:
     jmp loc_1227 ; @010A0
 loc_10A3:
     lea bx,[0x2260] ; @010A3
-    call sub_1218 ; @010A7
+    call WriteZeroTerminatedDosText ; @010A7
     cmp word [0x1f7c],0xff ; @010AA
     jnz loc_10DB ; @010B0
     mov bx,0x22e1 ; @010B2
-    call sub_1218 ; @010B5
+    call WriteZeroTerminatedDosText ; @010B5
 loc_10B8:
     mov ah,0x7 ; @010B8
     int 0x21 ; @010BA
@@ -1453,15 +1489,15 @@ loc_10D1:
 loc_10DB:
     cmp byte [0x200a],0xff ; @010DB
     jnz loc_10E5 ; @010E0
-    jmp sub_1194 ; @010E2
+    jmp MarkStartupOptionAndRedraw ; @010E2
 loc_10E5:
     cmp byte [0x200b],0xff ; @010E5
     jnz loc_10EF ; @010EA
-    jmp sub_1194 ; @010EC
+    jmp MarkStartupOptionAndRedraw ; @010EC
 loc_10EF:
-    cmp byte [0x200d],0xff ; @010EF
+    cmp byte [StartupOptionSelectionBypass200D-GameDataImage],0xff ; @010EF
     jnz loc_10F9 ; @010F4
-    jmp sub_1194 ; @010F6
+    jmp MarkStartupOptionAndRedraw ; @010F6
 loc_10F9:
     mov ah,0xf ; @010F9
     int 0x10 ; @010FB
@@ -1469,7 +1505,7 @@ loc_10F9:
     mov dx,0x100 ; @010FF
     int 0x10 ; @01102
     mov bx,0x2384 ; @01104
-    call sub_1218 ; @01107
+    call WriteZeroTerminatedDosText ; @01107
     db 0x32,0xdb ; ENCODED: xor bl,bl (NASM chooses a different encoding) ; @0110A
     lea di,[0x239f] ; @0110C
 loc_1110:
@@ -1540,11 +1576,11 @@ loc_1176:
     jz loc_11F4 ; @01186
     lea si,[0x23d2] ; @01188
     cmp bl,0x1 ; @0118C
-    jz sub_1194 ; @0118F
+    jz MarkStartupOptionAndRedraw ; @0118F
     jmp short loc_120C ; @01191
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01193
-sub_1194:
+MarkStartupOptionAndRedraw:
     mov word [di],0x2020 ; @01194
     mov word [si],0x3e2d ; @01198
     db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @0119C
@@ -1556,7 +1592,7 @@ sub_1194:
     mov dx,0x100 ; @011A6
     int 0x10 ; @011A9
     lea bx,[0x2384] ; @011AB
-    call sub_1218 ; @011AF
+    call WriteZeroTerminatedDosText ; @011AF
     pop bx ; @011B2
     pop di ; @011B3
     ret ; @011B4
@@ -1575,27 +1611,27 @@ loc_11B5:
     jz loc_11DC ; @011D6
     lea si,[0x248a] ; @011D8
 loc_11DC:
-    call sub_1194 ; @011DC
+    call MarkStartupOptionAndRedraw ; @011DC
     jmp loc_1110 ; @011DF
 loc_11E2:
     mov byte [0x200a],0xff ; @011E2
     mov byte [PrivateVectorNumber-GameDataImage],0x74 ; @011E7
     mov word [0x1fc9],0x3468 ; @011EC
-    jmp short sub_1194 ; @011F2
+    jmp short MarkStartupOptionAndRedraw ; @011F2
 loc_11F4:
     mov byte [0x200b],0xff ; @011F4
     mov byte [ConfigurationOption200E-GameDataImage],0xff ; @011F9
-    jmp short sub_1194 ; @011FE
+    jmp short MarkStartupOptionAndRedraw ; @011FE
 loc_1200:
     mov byte [ConfigurationOption200E-GameDataImage],0xff ; @01200
     mov byte [0x200c],0xff ; @01205
-    jmp short sub_1194 ; @0120A
+    jmp short MarkStartupOptionAndRedraw ; @0120A
 loc_120C:
     lea si,[0x248a] ; @0120C
-    call sub_1194 ; @01210
+    call MarkStartupOptionAndRedraw ; @01210
     mov ax,0x4c00 ; @01213
     int 0x21 ; @01216
-sub_1218:
+WriteZeroTerminatedDosText:
     mov dl,[bx] ; @01218
     inc bx ; @0121A
     db 0x22,0xd2 ; ENCODED: and dl,dl (NASM chooses a different encoding) ; @0121B
@@ -1604,23 +1640,23 @@ sub_1218:
     mov ah,0x2 ; @01220
     int 0x21 ; @01222
     pop bx ; @01224
-    jmp short sub_1218 ; @01225
+    jmp short WriteZeroTerminatedDosText ; @01225
 loc_1227:
     ret ; @01227
-sub_1228:
+WriteHexWordAtLiveCursor:
     push ax ; @01228
     mov cl,0x4 ; @01229
     shr ah,cl ; @0122B
-    call sub_123F ; @0122D
+    call WriteHexHighNibbleAtLiveCursor ; @0122D
     pop ax ; @01230
-    call sub_123F ; @01231
+    call WriteHexHighNibbleAtLiveCursor ; @01231
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @01234
     push ax ; @01236
     mov cl,0x4 ; @01237
     shr ah,cl ; @01239
-    call sub_123F ; @0123B
+    call WriteHexHighNibbleAtLiveCursor ; @0123B
     pop ax ; @0123E
-sub_123F:
+WriteHexHighNibbleAtLiveCursor:
     and ah,0xf ; @0123F
     db 0x8a,0xdc ; ENCODED: mov bl,ah (NASM chooses a different encoding) ; @01242
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @01244
@@ -1639,8 +1675,13 @@ sub_123F:
     db 0xff,0x75,0x08,0x80,0xfa,0x30,0x74,0x07,0x80,0xce,0xff,0x88,0x14,0x46,0xc3,0xb2 ; @01280
 ; UNKNOWN: unresolved bytes
     db 0x20,0xeb,0xf8 ; @01290
-sub_1293:
-    mov es,[0x1ff6] ; @01293
+ParsePspCommandLine:
+; READY: PSP length byte at ES:80, scan for '-'/'/', one switch byte, signed
+; A..Z fold only. a:2010=FF e/v:1F7C=2/4 n:1F73=FF d:200B=200E=FF p:200A=FF,
+; private IRQ 74, reload 3468, ports 3D4/3DA o:200D=200C=FF x:200E=FF m:200F=FF,
+; ports 3D4/3DA 2/4:word 2011=200/400 (writes 2012 past the clear). No token
+; validation; unknown switches fall through the final CMP 'x'.
+    mov es,[StartupPspSegment1FF6-GameDataImage] ; @01293
     mov si,0x80 ; @01297
     mov cl,[es:si] ; @0129A
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @0129D
@@ -1737,14 +1778,14 @@ loc_1358:
     mov byte [ConfigurationOption200E-GameDataImage],0xff ; @0135D
     jmp short loc_1301 ; @01362
 loc_1364:
-    mov byte [0x200d],0xff ; @01364
+    mov byte [StartupOptionSelectionBypass200D-GameDataImage],0xff ; @01364
     mov byte [0x200c],0xff ; @01369
     jmp short loc_1301 ; @0136E
 loc_1370:
     mov byte [ConfigurationOption200E-GameDataImage],0xff ; @01370
     jmp short loc_1301 ; @01375
 loc_1377:
-    mov byte [0x200f],0xff ; @01377
+    mov byte [StartupOption200F-GameDataImage],0xff ; @01377
     mov word [DisplayControllerBasePort-GameDataImage],0x3d4 ; @0137C
     mov word [0x1fdc],0x3da ; @01382
     jmp loc_1301 ; @01388
@@ -1752,7 +1793,7 @@ loc_138B:
     mov byte [MouseServicesDisabledByte-GameDataImage],0xff ; @0138B
     jmp loc_1301 ; @01390
 loc_1393:
-    call sub_13A8 ; @01393
+    call ParsePspTimerReloadDecimal ; @01393
     db 0x23,0xdb ; ENCODED: and bx,bx (NASM chooses a different encoding) ; @01396
     jz loc_139E ; @01398
     mov [0x1fc9],bx ; @0139A
@@ -1762,7 +1803,10 @@ loc_139E:
     jmp loc_12B0 ; @013A2
 loc_13A5:
     jmp loc_12AE ; @013A5
-sub_13A8:
+ParsePspTimerReloadDecimal:
+; READY: decrements/tests CX after loading a byte, so the last byte may be
+; read and discarded; BX=BX*10+digit mod 65536; first non-digit consumed;
+; only nonzero BX replaces reload 1FC9. Distinct returns 12B0/13DB.
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @013A8
     mov al,[es:si] ; @013AA
     inc si ; @013AD
@@ -1772,7 +1816,7 @@ sub_13A8:
     jmp loc_12B0 ; @013B3
 loc_13B6:
     cmp al,0x20 ; @013B6
-    jz sub_13A8 ; @013B8
+    jz ParsePspTimerReloadDecimal ; @013B8
 loc_13BA:
     cmp al,0x30 ; @013BA
     jl loc_13DB ; @013BC

@@ -17,6 +17,11 @@ def compiler():
 
 def source_files(cluster="checksum"):
     """Canonical ordered native source closure, including aliased clusters."""
+    if cluster=="startup":
+        return tuple(dict.fromkeys((ROOT/"c/startup.c",
+            ROOT/"c/sound_driver_init.c",
+            *(p for d in ("checksum","vga_mirrors","video_probe","main_resources","keyboard_input") for p in source_files(d)))))
+    if cluster=="sound_driver_init":return (ROOT/'c/sound_driver_init.c',ROOT/'c/interrupt_service.c',*source_files('dat_load'))
     if cluster == "pklite_unpack": return (ROOT/"c/pklite_unpack.c",)
     if cluster=="game_loop":
         return tuple(dict.fromkeys((ROOT/"c/game_loop.c",
@@ -336,6 +341,7 @@ def build(output=None, mutation=0, cluster="checksum", *, dependency_library=Non
     if cluster=='object_drawing':defines=['-DMUTATION=0','-DOBJECT_DRAWING_MUTATION='+str(mutation)]
     if cluster=='level_redraw':defines=['-DMUTATION=0','-DLEVEL_REDRAW_MUTATION='+str(mutation)]
     if cluster=='resource_retry':defines=['-DRESOURCE_RETRY_MUTATION='+str(mutation)]
+    if cluster=='startup':defines=['-DSTARTUP_MUTATION='+str(mutation)]
     run_bounded([
         compiler(), "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
         *( ["-Wundef"] if cluster=="resource_retry" else [] ),
