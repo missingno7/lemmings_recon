@@ -1104,6 +1104,50 @@
     "negative_evidence": {
       "method": "Imported main analyze(), protected ASM search, initial17 call operands, all standalone driver images and each top-level local asset plus unpacked main; exact16-byte windows starting everytailoffset0255..02E6.",
       "result": "No matching tail window in other inputs; no direct main target in08420..08715; only MOV AX0842 at1652/5967. This search is not exhaustive generic-pointer/alias/protected-provider closure and does not identify historical provenance."
+    },
+    "residue_audit": {
+      "method": "S18 static original instructions/loaded payload; no routine execution, new seed, classification or dispatch-domain expansion.",
+      "header_copy_overlap": [
+        {
+          "selector": 253,
+          "source_start": 65531,
+          "source_end_mod16": 10,
+          "evidence": "01B6 signed IMUL(-3,15),01B8 ADD0028 ->FFFB; fifteen explicit INC copies wrap through0009. Reads initial unknown0000/0003..0005/0007 only in this raw domain, with five preceding bytes outside payload."
+        },
+        {
+          "selector": 255,
+          "source_start": 25,
+          "source_end_mod16": 40,
+          "evidence": "Signed(-1)*15+0028=0019; fifteen explicit INC copies read0019..0027, including UNKNOWN0019/001C..001D and dispatch words. Copy-source role does not identify initial header fields."
+        }
+      ],
+      "raw_target_construction": {
+        "requests_ax": [
+          16001,
+          16129,
+          0
+        ],
+        "target": 385,
+        "evidence": "AX3E81 then3F01 write table0000 word001E/001F=0181 via01A6; subsequentAX0000 near-CALL0196 can execute0181 NOP then0182 dispatcher. Separate intact stack/code and no external writers required. This constructed raw request sequence is not a natural producer, entry/IRET contract, or role classification. Any16-bit offset can similarly be constructed."
+      },
+      "tail_candidates": [
+        {
+          "start": 599,
+          "end": 629,
+          "evidence": "0257 ADD SP,6;026B nearCALL A146;0271 MOV SP,BP/POP BP/RET. Missing incoming frame/callee/segment ownership. Not a seeded instruction region. DS0740 word increment belongs to this candidate."
+        },
+        {
+          "start": 630,
+          "end": 750,
+          "evidence": "0276 SUB AX,AX then arguments;0280/029B CALL6D90;02A7 LES local pointer, writes ES record+04/+05/+06/+08/+0A; DS0798/0836/275E/2760 references and02E7 CALLE1C lack established live owner/callee.0276 has no local frame setup. No inferred executable classification."
+        },
+        {
+          "start": 750,
+          "end": 758,
+          "evidence": "02EE PUSH BP;02EF MOV BP,SP;02F1 PUSH[BP+6];FF76 at02F4..02F5 needs displacement02F6 beyond the loaded component. No installation/continuation contract establishes this candidate."
+        }
+      ],
+      "decision": "Retain all seven UNKNOWN runs and unrestricted0196 frontier. Existing natural00/01/03 conditional closure remains unchanged. No provenance, padding, dead-code or silent-service inference."
     }
   },
   {

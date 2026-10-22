@@ -192,6 +192,12 @@ loc_4CC4:
     push cx ; @04CC6
     push dx ; @04CC7
     push bp ; @04CC8
+; S17 flow-state: For4C7E entry with fixed known edges, intact stack saves and no
+; asynchronous IRQ, the symbolic summary proves BP503B here and at4D18. Inner BP save is
+; entrySP-16h (4CC8 after the current frame is rebuilt); outer BP is entrySP-0Ch (4C9F).
+; Actual POP4CA8/4CD1/4CDA supplies the register; the text/renderer child need not
+; preserve BP. This is not a startup stack-range, dirty-map/nonalias or unrestricted-IRQ
+; certificate.
 CodeInputDrawCall4CC9:
 ; BP came from4CA8 (wait save), or intact prior4CD1 across another wait cycle.
 ; PUSH BP at4CC8 cannot change the already-live register target by alias alone.
@@ -245,6 +251,10 @@ loc_4D02:
 loc_4D10:
     mov word [0x1fc7],0x0 ; @04D10
     mov [di],cl ; @04D16
+; S17 flow-state: In the4C7E intact-save/known-edge/no-IRQ domain, BP503B and SP=entrySP
+; reach this JMP. The JMP pushes no continuation:503B ultimately consumes the inherited
+; caller return. Changing saved outer BP, code, SS or return words remains outside that
+; conditional proof; do not close this global target domain from the local BP result.
 CodeInputDrawTail4D18:
 ;4D10/4D16 stores cannot change latched BP; aliases CAN change inherited RET,
 ; text or code. JMP supplies no new frame:503B uses original caller return at P.

@@ -60,6 +60,10 @@ loc_83A7:
 loc_83A9:
     mov [cs:0x83ba],al ; @083A9
     mov al,0xff ; @083AD
+; S17 flow-state: The796F local flow-state contract inherits DF at797B; no global DF0
+; exclusion was established. DF1 clear83AF..83C2 intersects this instruction stream.
+; Treat any later execution as a modified view requiring its own provenance. No static
+; caller/reachability of8363 is supplied by this overlap.
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @083AF
     mov [cs:0x83b9],al ; @083B1
     jmp short loc_83A7 ; @083B5

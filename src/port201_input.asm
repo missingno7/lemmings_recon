@@ -4,6 +4,32 @@
 ; Pulse emits incoming AL. Loop is unbounded until whole masked BP is zero;
 ; counters wrap16 and CX/DI finish with signed SAR. CLI/STI and flags stay exact.
 ; See docs/port-io.md. No interpretation of UNKNOWN4395/4398 is added.
+;
+; S18 ALTERNATE-HARDWARE INVENTORY / scoped readiness CONDITIONAL:
+; 4A01 input menu key2 ->4A4E ->CALL43CE. Choice polls keyboard latch and
+; port201; latch77 returnsCL2 without IN/CLI/STI. Otherwise active-low upper
+; buttons30 chooseCL0, upperC0 alone choosesCL1, neither loops indefinitely.
+; CL2 ->4AB5 publishes keyboard mode2. CL0 ->4A68 installs4334, CL1 ->4A80
+; installs4359; both publish25A6=1 BEFORE measuring/storing25A2/25A4.
+; The first calibration call inheritsDL (not forced non-FF); ifFF, measurement
+; is skipped and old BX/CX can become the baselines. Calibration is not atomic.
+; 4A9F accepts ASCII1..4 into scale2005. Later mode1 polling418C/42A1 reads
+; live25A0 then CALL42A5; DLFF is the IRQ/menu buttons-only domain. DL!=FF
+; measures axes, subtracts live baselines, applies signed deadband[-8,+8]
+; and SARs: X shifts6/5/3/2, Y5/4/2/1 for scales1/2/3/4. Other scale bytes
+; take the scale1 chain. Adds wrap16 BEFORE signed bounds0008..0148/0008..00C8.
+; Low wrapper counts axes0/1,high wrapper2/3;button pairs are original4/5
+; and6/7 inverted. Both finishIF1, do not save the incoming BP, and leave
+; DF/segments untouched. Measure uses incomingAL forOUT201, not a constant.
+; Mouse menu key1 ->4ABD mode0 (prompt only if1F73!=FF); key3 or choice77
+; ->mode2. Neither restores25A0/baselines. Mouse reset failure or/n also
+; selects mode2 at0F64. Mode other than0/1 uses keyboard acceleration.
+; Known callback set4252/4334/4359 is conditional on slot/DS/stack ownership;
+; see42A1 for long GROUND, record, string, provider and SS-alias writers.
+; No joystick-present test, timeout or neutral substitute exists here. Timed
+; analog discharge and IRQ interleavings remain platform obligations. Native
+; unbound-port/target stops and the host's unbound joystick omit this behavior;
+; existing port_io/input_poll/keyboard_input evidence is only its stated domain.
 times -(($-$$) != 0x4334) db 0
 PollPort201ButtonsLow:
 ; CALLBACK PRODUCER:4A68 stores4334 before4A6D publishes mode1;4A70 calibrates

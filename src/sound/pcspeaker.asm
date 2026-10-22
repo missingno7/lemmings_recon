@@ -76,6 +76,28 @@
 ; closure still block whole-imagefreeze. Existing native dispatcher exitsbefore
 ; Tick;helperC success does not complete Tick bus/dispatcher composition. Muted/
 ; unbound sound omits this original behavior;hardware equivalence is unverified.
+;
+; S18 RESIDUE AUDIT (stored meaning stays UNKNOWN):
+; Header0000,0003..0005,0007,0019,001C..001D: no regular Tick/Stop/Load
+; field access establishes an owner. Raw read11..1F reaches0001..000F;
+; raw setters20..FF reach0000..00DF. Unchecked signed effectAL=FD starts
+; FFFB and explicitly INC-wraps through0009;AL=FF reads0019..0027, including
+; the three later unknown header bytes and the table. These copy/access roles
+; do not identify intended initial fields or make all header bytes runtime data.
+; Raw dispatch0196 is genuinely mutable, not just an unknown list of constants:
+; requests AX=3E81,3F01 rewrite command0's word to0181; AX=0000 can then
+; enter stored90 NOP and fall into0182 under a NEAR-CALL frame. This is a
+; constructed raw-domain path, not proof of a natural entry or a balanced
+; INT/IRET lifetime there. Setter bytes3E/3F can equally construct any nearIP,
+; including0255..02F5 or outside the payload. Keep the global frontier open.
+; Tail spelling evidence, not entries: starting0257 gives ADD SP,6 and uses
+; inherited BP;026B CALLA146 and0271 MOV SP,BP/POP BP/RET require unknown
+; caller ownership. Candidate0276 zeroesAX and pushes arguments before
+; 0280/029B CALL6D90;02E7 CALLE1C;02EE PUSHBP/MOVBP,SP ends with an
+; incomplete FF76 at02F4..02F5 whose displacement is OUTSIDE this component.
+; The referenced DS/ES records and callees have no established installer or
+; entry here. Opcode plausibility and compiler-looking frames cannot classify
+; the161 tail bytes, establish provenance, or prove padding/dead residue.
 bits 16
 org 0
 pcspeaker_CurrentEffect equ pcspeaker_PeriodStep
@@ -229,6 +251,10 @@ pcspeaker_InterruptEntry:
     sub ah,0x10 ; @0018F
     ja pcspeaker_loc_01A1 ; @00192
     shl bl,1 ; @00194
+; S17 flow-state: PC-speaker retains an independent flow-state report; main INT60 remains
+; undeclared until a real component/frame contract is supplied.
+; Mutable/zero/out-of-table0196 targets and0181/tail UNKNOWN bytes stay unresolved.
+; Native scoped dispatch or muted sound is not original closure.
     db 0xff,0x97,0x1e,0x00 ; ENCODED: call [bx+0x1e] (NASM selects different opcode/operand width) ; @00196
 pcspeaker_DispatchCallReturn019A:
 pcspeaker_loc_019A:

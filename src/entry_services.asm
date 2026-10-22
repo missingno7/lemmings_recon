@@ -1,3 +1,9 @@
+; S17 flow-state: The pinned footer establishes CS=load, SS=load+143E, SP=4AF4;
+; DOS/unpacker entry gives DS=ES=PSP. The footer encodes no DF/IF. Do not import
+; check_unpack fixture FLAGS=0002 as a DOS/startup guarantee. 0003 installs relocated09A9
+; as DS, but the first undeclared service at0016 already prevents a whole-program
+; DF/DS/SS guarantee. The decoded-edge analyzer leaves those service returns unknown;
+; protected views, code/stack aliases and unrestricted IRQs remain separate obligations.
 ; Maintained image span 00000..01915; reconstruction module, not a historical linker claim.
 ; Static code frame 0000; semantic module boundaries remain under investigation.
 ; DOS entry: establishes relocated DATA; integrity checks precede initialization.
@@ -757,6 +763,31 @@ CleanupAfterTerminate:
     mov [ss:VgaReadMapMirror-RuntimeStackFrame],ax ; @00549
 VgaMirrorInitializeReturn:
     ret ; @0054D
+; S18 SOUND-SELECTION INVENTORY (all paths retained):
+; 054E input2010==FF (/a),or initial5AD8-paragraph DOS48 failure055E,
+; ->05FC sets2010=0,25A7=1,menu1F71=1: PC speaker. Otherwise free probe
+; block,allocate0567 paragraphs (second CF unchecked),installINT61 AX:0,
+; decode ADLIB.DAT at058D,initialize speaker defaults0591/0596,queryAH1.
+; AL!=0 ->05A4 sets2010=FF,25A7=3,1F71=2 (AdLib).
+; AL==0 ->060C BIOS Tandy-page test via05B5. ReturnedBX==0 ->AL0 ->free
+; allocation05FA ->05FC speaker. NonzeroBX ->ALFF ->decodeTANDYSND.DAT
+; over same block05CA,setFF/3/2,INT61 sequence0301,00xx,0300,02xx,00xx.
+; xx is live returnedAL,not forced0. Both page-test branches restore with
+; AX=(savedBL<<8)|05,discarding savedBH; BIOS semantics remain a seam.
+; Tandy has no second presence query. Its image54C6 retains AdLib54C6..566C;
+; word5630 and byte5958 have distinct in/out-of-allocation roles (see drivers).
+; Fallback frees block WITHOUT restoringINT61. Saved/changed DOS allocation
+; state and INT61 lifetime remain obligations; later sound bits alone do not
+; prove live driver ownership. Failed resource paths retain retry/fatal edges.
+; MAIN.DAT section5 is ALWAYS decoded5972 over main8420..8715,even with
+; external sound.1644 installsINT60 at relocated0842:0182 along withINT08;
+; watchdog can reinstall without reload.16A9 restoresINT08,notINT60/61.
+; Timer185F selectsINT60 tick on odd phase when2010!=FF and25A7&1;
+; timer1872 selectsINT61 every enabled IRQ when2010==FF and25A7&3.
+; 1F71 menu ordinal maps through CS44E9 to nominal25A7 bits0/1/3; toggles
+; and separate music/effect gates remain original behavior,not driver unload.
+; Muted services omit original PIT/PSG/OPL behavior. Device/IRQ equivalence
+; and external-driver installation/free lifetime are not closed by native stubs.
 InitializeSoundDriver:
 ; READINESS CONDITIONAL (c/sound_driver_init.c): 2010=FF (switch a) skips to
 ; the 060B fallback. Else probe-allocate 5AD8, free, allocate 0567 (CF ignored),
@@ -1084,6 +1115,23 @@ ProtectionAbsoluteReadDecodeSeed:
     db 0xf6,0x8e,0xde,0x8f,0x44,0x12,0x83,0xee,0x02,0x83,0xfe,0xec,0x75,0xf5,0x51,0x9d ; @00973
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x5d,0x5f,0x5e,0x59,0x07,0x1f,0xe9,0xae,0x04 ; @00983
+; S18 stored-role audit: retain UNKNOWN098C..0D9B and084D..084F/087E..0880.
+; Owned stream.asm records an initial-byte reader on the DL>=2 absolute arm:
+; 06D7 calls0878 without prefill,ignores returnedCF,CRC06E0 reads selected
+; offsets00..FD andCMP06E3 reads+FE. An unchanged failing DOS read therefore
+; consumes initial first256 bytes; initial CRC90AA vs EFFE(primary),0508 vs
+;45D0(fallback) rejects them. Ordinary startup forcesDL0;floppy07BE fills
+;1234 first.094A zeros selected512;unselected512/gap16 retain entry bytes.
+; INT3 negates handler0DFF..0E39 only;INT1 patches actual interrupted farIP,
+; not a linear storage decrypt. No recovered edge/fixup enters1040 bytes.
+; 8363 reset/advance can checksum every byte here (8397);caller unresolved.
+; These roles neither identify initial meaning nor prove no executable view.
+; Same actual first-word transform at084D/084E yields90;C6460E03 and at
+;087E/087F yields90;C6460E26: candidateNOP/write-selector sequences sharing
+;0852/0883. No recovered incoming edge proves either producer. Key-data
+;0850/0851,0881/0882 overlap candidate operands; no classification expansion.
+; Absolute gate0DA6 ADD SP,2 changes CF before08AC retry test; returned
+; flags are not transparent DOS flags.06DA still consumes buffer regardless.
 ; Protected storage inventory, inclusive ranges (canonical bytes stay UNKNOWN):
 ; 098C..0B8B: 512-byte primary sector-buffer overlay.
 ; 0B8C..0B9B: 16 bytes outside both buffers; no specific protection role proved.
@@ -1844,6 +1892,27 @@ WriteHexHighNibbleAtLiveCursor:
     db 0xff,0x75,0x08,0x80,0xfa,0x30,0x74,0x07,0x80,0xce,0xff,0x88,0x14,0x46,0xc3,0xb2 ; @01280
 ; UNKNOWN: unresolved bytes
     db 0x20,0xeb,0xf8 ; @01290
+; S18 executable option paths: switches are one-byte case-folded selectors
+; after '-' or '/', not validated whole tokens. /e ->1F7C=2 attribute palette;
+; /v ->4 DAC palette.106E prompt key1 chooses4,key2 chooses2; no independent
+; display-renderer image is selected. Candidate131A/1322 store8/0 but have
+; no recovered incoming option branch; retain UNKNOWN and do not invent keys.
+; /2 writes word2011=00C8 (A0 raster cycles); /4 writes0190 (140 cycles).
+; /x ->200E=FF; /d ->200B=200E=FF; /o ->200D=200C=FF;
+; /p ->200A=FF,private vector74,reload3468,CRTC3D4,status3DA;
+; /m ->200F=FF,CRTC3D4,status3DA (200F alreadyFF at startup0045).
+; /i consumes following decimal into wrapped16 BX,only nonzero replaces1FC9.
+; 200B suppresses mouse button publication and changes keyboard controller
+; handling;200A gates keyboard controller acknowledgments;200C controls
+; palette sequencer blanking;200D bypasses startup options. Exact200E=FF
+; changes reload calibration,foreground/IRQ raster timing,palette transitions
+; and loads MAIN.DAT section6 at597D; not merely a display-name preference.
+; Menu row0 sets200E/200C,row1 no flags,row2 takes11E2 (/p state except
+; no explicit CRTC stores),row3 takes11F4 (/d),row4 exitsDOS4C. SI/DI marker
+; quirks1194 remain live; these are not proof of immutable display-probe rows.
+; /a premarks2010=FF but054E then FALLS BACK to speaker state2010=0,
+;25A7=1,1F71=1. /n disables mouse via1F73=FF and0F64 selects keyboard2.
+; Options change services/state within this executable, not asset variants.
 ParsePspCommandLine:
 ; READY: PSP length byte at ES:80, scan for '-'/'/', one switch byte, signed
 ; A..Z fold only. a:2010=FF e/v:1F7C=2/4 n:1F73=FF d:200B=200E=FF p:200A=FF,
@@ -2029,6 +2098,36 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
+; S18 ALTERNATE DISPLAY INVENTORY (main image, not separate CGA/EGA builds).
+; READINESS CONDITIONAL: original port/BIOS operations are understood locally;
+; hardware results, DS/DF/DI, live records/saves and writer closure stay open.
+; 1410 runs iff live2013 enable !=0 (stored0; detector does not set it).
+; INT10 AX1A00 must return AL1A; else no state store. Success maps BL/BH
+; through unchecked CS1536 word indexes into pairs2006/2008, clears later
+; enables2016/2019/201C, removes any pair with type-low1 and reenables201C.
+; 1462 runs iff current2016!=0 (13EE setsFF before traversal). INT10 AH12,
+; BL10 unchanged means absent. Otherwise CS1530[(CL>>1)] supplies high byte,
+; low3;1523 stores pair. High1 disables mono201C, others disable color2019.
+; 1490 runs iff current2019!=0 (13E9 setsFF). Probe14E0 writes/readbacks66
+; in CRTC0F at3D4/3D5, restores sampled old value; CF0 stores0202, CF1 none.
+; 14A0 runs iff current201C!=0 (13F3 setsFF). Same probe at3B4/3B5 must
+; pass.3BA bit7 sampled then <=8000h transition polls: no transition stores
+; 0101; transition reads status&70:10 ->0181,50 ->0382,other ->0180.
+; These raw mono/extended-mono types are retained, not discarded as non-VGA.
+; 1523 fills primary if its low byte0, otherwise overwrites secondary.14FA
+; may swap pairs: secondary nonzero,both signed type-low<4,and BIOS0F mode
+; low3==7 OR (mode!=7 and primary high==1). Lookup results are not validated.
+; Detector does not select a new video mode or rewrite1FDA from its pair.
+; 15AD uses primary high signed<3 for A0 measurement cycles,else140; /2
+; forcesA0,/4 forces140; exact200E=FF bypasses detector with reload4000.
+; BIOS/ports may change segments,flags,DI and live saves; no generic hardware
+; auto-adapter translation or provider success is implied by these branches.
+; 000BB uses BIOS000D,0FB2 uses008D (preserve-video-memory bit),4BE7 uses
+; 0090 (same bit plus mode10);106E uses0003. They are literal calls,not
+; alternate CGA/Hercules renderers.0FF8 restores saved mode then saved page.
+; Recovered BIOS/DCC/CRTC alternatives remain executable inventory even in
+; the primary VGA+AdLib configuration. Native provider lookup/timed-port
+; substitutions have unverified equivalence outside their declared domain.
 ; VIDEO PROBES /1407 TARGET CONTRACT:conditional four-record traversal.
 ; DS=relocated09A9,DF=0 at EVERY LODS, preserved loop saves and intact pointer
 ; bytes give rows2013:{enable,1410},2016:{enable,1462},2019:{enable,1490},
@@ -2080,6 +2179,13 @@ loc_13FF:
     jz loc_140B ; @01403
     push si ; @01405
     push cx ; @01406
+; S17 flow-state: No caller-independent DF/DS/SS invariant was proved. Undeclared
+; BIOS1413/1466 makes later loop iterations unknown even in serial intact-save analysis.
+; In the explicit sufficient domain (entry13DC DF0/game DS, fixed known edges, intact
+; saves, no IRQ; BIOS1413/1466/150D preserves DS/DI/caller stack and returns through
+; intact FLAGS/CS/IP), DF0 and game DS hold at every modeled1407 visit. This is a
+; conditional service declaration, not a verified BIOS ABI. Pointer-byte lifetime and
+; four-row traversal bounds remain S4 obligations; target_domain_complete=false.
     call ax ; @01407
     pop cx ; @01409
     pop si ; @0140A

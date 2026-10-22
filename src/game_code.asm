@@ -2205,6 +2205,12 @@ loc_30C3:
     mov al,[EntityCreationReload-GameDataImage] ; @030C3
     mov [EntityCreationCountdown-GameDataImage],al ; @030C6
     mov si,EntityRecordsBase-GameDataImage ; @030C9
+; S17 flow-state: From30A6 entry, IF is inherited at30CC,30D5 and314B; no local
+; CLI/POPF/IRET/SS load serializes limit sampling through publication. Thus entryIF1 with
+; an installed/unmasked game timer admits the S12 command4013 interleaving. The after30D5
+; case is sufficient; the full stale sampled-limit window begins after30CC. This analyzer
+; does not infer PIC masks, pending IRQ delivery, command eligibility, or survival of
+; later corrupted records from IF alone.
     mov al,[LevelCreationLimit-GameDataImage] ; @030CC
     mov ah,[EntitySlotBound-GameDataImage] ; @030CF
     db 0x3a,0xc4 ; ENCODED: cmp al,ah (NASM chooses a different encoding) ; @030D3

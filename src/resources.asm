@@ -517,6 +517,12 @@ sub_1BAD:
 ; saved BX/DS/return words remain ordinary writable memory, not cached values.
 DecodeDatSection:
     push bx ; @01BAF
+; S17 flow-state: In the fixed decoded stream, STD reaches CALL1BB9 with DF=1. Its
+; child1D2E executes CLD1D34 before DOS/cache selection, and the ordinary decoder exit
+; CLD1C78 precedes RET1C79. Thus this STD alone is not a demonstrated returning
+; foreground DF1 producer. Undeclared services, modified returns, protected views and
+; asynchronous entry still prevent a global DF0 theorem. No timer-installation lifetime
+; is inferred by the flow-state tool.
 ; S13 AdLib DF residual: STD remains set until the first ReadDatBytes1D34 CLD reached via1BB9;reverse decoder later uses explicit DECs. INT retainsDF;game17C7 ->1872 never clears interruptedDF. A valid song start withDF1 reverses headerLODS (H,H-2,H-4,H-5,H-6-2k),escaping pinned grammar. No whole-program IRQ/provider proof here establishes such a schedule or excludes it.
     std ; @01BB0
     push bx ; @01BB1

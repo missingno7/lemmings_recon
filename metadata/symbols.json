@@ -5861,7 +5861,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Runtime overlay only; canonical stored bytes remain UNKNOWN. CALL-next066E supplies0671; ADD031B gives098C; 067B forms SI=CS+0098, DI000C; low12(SI)<=0FDF selects this window. SS:BP+0A/+0C owns pointer; 08CB CLD REP STOSW0100 words fills, BIOS read/07E7/07F0/07F9 and CRC/bit-count consumers use it, 094A zeroes selected512 on cleanup. No permanent BSS or exclusion of another stored interpretation."
+      "Runtime overlay only; canonical stored bytes remain UNKNOWN. CALL-next066E supplies0671; ADD031B gives098C; 067B forms SI=CS+0098, DI000C; low12(SI)<=0FDF selects this window. SS:BP+0A/+0C owns pointer; 08CB CLD REP STOSW0100 words fills, BIOS read/07E7/07F0/07F9 and CRC/bit-count consumers use it, 094A zeroes selected512 on cleanup. No permanent BSS or exclusion of another stored interpretation.",
+      "Append S18 evidence to existing overlay contract; retain canonical UNKNOWN. On DL>=2 arm06D7->0878/0883->INT25 there is no08CB prefill.06DA reloads pointer regardless returnedCF;06E0 CRC reads offsets00..FD,06E3 reads word+FE. Failure leaving buffer unchanged exposes initial first256 bytes (or zeros from prior completed call). Initial primaryCRC90AA vs EFFE/fallbackCRC0508 vs45D0 rejects. Ordinary063E forcesDL0 and07BE fills1234 before all floppy validation.094A clears selected512;unselected buffer and0B8C..0B9B untouched in disjoint domain. No initial code/data ownership inferred.8363 reset/advance checksum can read entire run but has no static caller; actual indexed/SS/provider aliases remain."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -5877,7 +5878,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Runtime overlay only; canonical stored bytes remain UNKNOWN. low12(CS+0098)>0FDF adds0210 to DI000C, selecting physical alias CS:0B9C..0D9B. Same fill/read/process/clear lifetime as primary; exactly one512-byte window per ordinary call. Neither window includes0B8C..0B9B or0D9C..0D9D."
+      "Runtime overlay only; canonical stored bytes remain UNKNOWN. low12(CS+0098)>0FDF adds0210 to DI000C, selecting physical alias CS:0B9C..0D9B. Same fill/read/process/clear lifetime as primary; exactly one512-byte window per ordinary call. Neither window includes0B8C..0B9B or0D9C..0D9D.",
+      "Append S18 evidence to existing overlay contract; retain canonical UNKNOWN. On DL>=2 arm06D7->0878/0883->INT25 there is no08CB prefill.06DA reloads pointer regardless returnedCF;06E0 CRC reads offsets00..FD,06E3 reads word+FE. Failure leaving buffer unchanged exposes initial first256 bytes (or zeros from prior completed call). Initial primaryCRC90AA vs EFFE/fallbackCRC0508 vs45D0 rejects. Ordinary063E forcesDL0 and07BE fills1234 before all floppy validation.094A clears selected512;unselected buffer and0B8C..0B9B untouched in disjoint domain. No initial code/data ownership inferred.8363 reset/advance checksum can read entire run but has no static caller; actual indexed/SS/provider aliases remain."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -7850,7 +7852,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Static direct call target",
-      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md"
+      "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md",
+      "S17 flow-state: No caller-independent DF/DS/SS invariant was proved. Undeclared BIOS1413/1466 makes later loop iterations unknown even in serial intact-save analysis. In the explicit sufficient domain (entry13DC DF0/game DS, fixed known edges, intact saves, no IRQBIOS1413/1466/150D preserves DS/DI/caller stack and returns through intact FLAGS/CS/IP), DF0 and game DS hold at every modeled1407 visit. This is a conditional service declaration, not a verified BIOS ABI. Pointer-byte lifetime and four-row traversal bounds remain S4 obligationstarget_domain_complete=false."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 93,
@@ -21264,7 +21267,8 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "Static direct call target"
+      "Static direct call target",
+      "S17 flow-state: From30A6 entry, IF is inherited at30CC,30D5 and314Bno local CLI/POPF/IRET/SS load serializes limit sampling through publication. Thus entryIF1 with an installed/unmasked game timer admits the S12 command4013 interleaving. The after30D5 case is sufficientthe full stale sampled-limit window begins after30CC. This analyzer does not infer PIC masks, pending IRQ delivery, command eligibility, or survival of later corrupted records from IF alone."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 170,
@@ -23031,7 +23035,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Static3150 selector JMP target or shared nearRET; exact ordering and aliases in docs/entity-actions.md",
-      "S12: only decoded incoming319E from3150 (foreground CALL01AD/01C5); no CLD/POPF/INT before347F/3488. DF1 destination slots+16..0E overwrite callback high+15 with old map cell1, low+14 with cell2 after3459 installed002E. Valid empty cells yield0000. Main STD1BB0 is followed by read CLD1D34 and normal exit CLD1C78, not a returning gameplay DF1 source. Actual platform/saved-frame producer of foreground DF1 unproved; preserve conditional semantics and raw aliases."
+      "S12: only decoded incoming319E from3150 (foreground CALL01AD/01C5); no CLD/POPF/INT before347F/3488. DF1 destination slots+16..0E overwrite callback high+15 with old map cell1, low+14 with cell2 after3459 installed002E. Valid empty cells yield0000. Main STD1BB0 is followed by read CLD1D34 and normal exit CLD1C78, not a returning gameplay DF1 source. Actual platform/saved-frame producer of foreground DF1 unproved; preserve conditional semantics and raw aliases.",
+      "S17 flow-state: For entry3336, fixed known edges, intact saves and no asynchronous IRQ, DF at347F/3488 is exactly incoming DF and ES is incoming DSthe path does not normalize DF. With DF1 the displaced saves can replace callback high/low (+15/+14), while DF0 uses +16..+1E. These are conditional writersneither a real foreground DF1 origin nor global DF0 exclusion follows. Known target lists stay incomplete."
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/entity_action_map.c",
@@ -28883,7 +28888,8 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Static direct call target",
-      "Maintained exact ASM and bounded native logical-core/actual-RET gate; segment, flag, stack and provider seams remain explicit. docs/entity-display.md"
+      "Maintained exact ASM and bounded native logical-core/actual-RET gate; segment, flag, stack and provider seams remain explicit. docs/entity-display.md",
+      "S17 flow-state: Entry410F retains incoming DF and SS through both4119 and4131 and sets ES from incoming DS. 4119 has AX0,CX0068,DI0EA8: DF0 clears0EA8..0F77DF1 clears0DDA..0EA9. The following29-byte fill4131 also retains DF. Timer-local service changes to DF can affect this body before outer saved FLAGS are restoredan intact outer IRET does not export that change to foreground FLAGS. Global DF and writer closure remain open."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 64,
@@ -53229,7 +53235,8 @@
       "Static direct call target",
       "Maintained706F..715E parent:113 decoded sites, live descriptor field anchors, nine known callback domains plus optional6F7B;715B arbitrary targets remain unresolved. docs/entity-sprite-dispatch.md",
       "Bounded native core/adapter composition through actual child frames; arbitrary live callback targets and provider/IRQ timing remain open.",
-      "S12: only decoded CALL3675; DS inherited. No-strip path reaches715B with same DS; optional6F7B saves DS atS-12, sets strip source DS from CX supplied by1FE8, and POPs actual saved DS at6FE0.7157 instead restores sprite CX=(1FE6+BP)&FFFF. Near715B retains CS. Foreground SP P gives entry S=P-8; P4AF4 implies target save4AE6, strip DS save4ADA, disjoint low mirrors/normal maps through48F3 under canonical DS19B9/SS244E. This sufficient placement is not a full stack-lifetime proof; nine-set membership and target_domain_complete remain conditional. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness."
+      "S12: only decoded CALL3675; DS inherited. No-strip path reaches715B with same DS; optional6F7B saves DS atS-12, sets strip source DS from CX supplied by1FE8, and POPs actual saved DS at6FE0.7157 instead restores sprite CX=(1FE6+BP)&FFFF. Near715B retains CS. Foreground SP P gives entry S=P-8; P4AF4 implies target save4AE6, strip DS save4ADA, disjoint low mirrors/normal maps through48F3 under canonical DS19B9/SS244E. This sufficient placement is not a full stack-lifetime proof; nine-set membership and target_domain_complete remain conditional. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
+      "S17 flow-state: For706F entryS, current DS supplies the word sampled hereit is saved atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX at715B, including the strip path:7159 rereads the saved word, and715A removes alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment guarantee. No target-set membership follows."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 240,
@@ -57170,7 +57177,8 @@
     "evidence": [
       "Static direct call target",
       "Fresh static dependency graph establishes closed minimap routine bounds before C translation; actual segment/stack/device contracts are maintained beside source",
-      "Bounded full RAM/register/defined-flag native comparison; live CS scratch and SS CALL/save/RET aliases; minimap mode1 VGA/latch/plane contract and independent footprints documented in docs/minimap.md"
+      "Bounded full RAM/register/defined-flag native comparison; live CS scratch and SS CALL/save/RET aliases; minimap mode1 VGA/latch/plane contract and independent footprints documented in docs/minimap.md",
+      "S17 flow-state: From796F, fixed known edges/no IRQ/intact saves prove ES=incoming CS, AX0,CX000A,DI83C1 and DF=incoming DF at this REP STOSW. Therefore DF0 writes83C1..83D4; DF1 writes83AF..83C2 (word high bytes are forward physical bytes). No DF0 dominance at actual callers was provedthe backward footprint remains a possible conditional checksum-code overwrite, not an execution claim."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 182,
@@ -65456,7 +65464,8 @@
       "Static direct call target; physicalnormal-entrybody8822..9966,4421bytes/4411decodedbytes,ten UNKNOWNbytes excluded from C ranges without dead-code claims",
       "Native seven-site prologue and88AB no-draw RETF compose direct preparation/clip/dirty/dispatch/source/all12body cores on canonical RAM; LmnRegs confined to adapters, original segments/flags/livefarreturn preserved",
       "2147 bounded actual-entry cases/2424 integrated sites/378 edges/three compiled mutants; all12normalbody paths, liveprologue/save/stride aliases, wholeRAM/register/definedflags/orderedbus/VGA and independentpackedbit/wholeplanechecks",
-      "Changed child RET words stop at actual target before target execution; absent aligned969C byteprovider remains seam; intact executing code, constructeddevice and quiescentIRQ domains only; shared988B other incoming states/UNKNOWN/producer allocation/deviceownership/fullgame remain open"
+      "Changed child RET words stop at actual target before target execution; absent aligned969C byteprovider remains seam; intact executing code, constructeddevice and quiescentIRQ domains only; shared988B other incoming states/UNKNOWN/producer allocation/deviceownership/fullgame remain open",
+      "S17 flow-state: Flow-state preserves incoming DS/ES/SS as distinct provenances, not one conventional game frame. Shifted bodies explicitly load graphics DS and relocated09A9 scratch ES, then select scratch DS through live PUSH ES/POP DS and VGA ES=A000aligned paths temporarily load game DS for advances. Returned DS depends on actual saved words. No startup-wide stack, scratch allocation, width/count bounds, nonalias or IRQ-reentrancy theorem follows from the symbolic handoff."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 4411,

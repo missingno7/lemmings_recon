@@ -80,3 +80,25 @@ are masked and no initialized game snapshot is involved.
   372 stream and 29 INT1 instruction sites, independently checked using original
   handlers. Raw decoding remains blocked at these transitions; see protection.md.
   The canonical acceptance image remains unchanged.
+
+## Alternative paths inventory (freeze criterion 1)
+
+Every original alternative stays in the specification even though the primary
+native port is VGA + AdLib. Contracts live beside the ASM at the listed entries;
+this index only names each path, its selector and its open boundary.
+
+| Path | Selector / entry | Open boundary |
+|---|---|---|
+| Controller choice and joystick | input menu -> 43CE; callbacks 4334 (low) / 4359 (high), axis 4386, calibration 4A73/4A8B | real game-port timing; 42A5 callback lifetime |
+| Mouse / keyboard input modes | menu keys -> 4ABD (mode 0, INT33 4252) / 4AB5 (mode 2); `/n` or no mouse -> 0F64 | INT33 equivalence; 25A0 writers |
+| Display probes | 1407 over records 2013: 1410 combination, 1462 EGA, 1490 color CRTC, 14A0 mono variants; finalization 1523/14FA | BIOS/port equivalence; 1407 traversal domain |
+| BIOS video modes | startup 106E/00BB (03/0D), game 0FB2, menu 4BE7, restore 0FF8 | literal paths only; no alternate renderer proven |
+| Palette modes | `/e` -> 1F7C=2 attribute palette, `/v` or prompt -> 4 DAC palette | 131A/1322 candidates without incoming keys |
+| Raster/timer options | `/2` `/4` (2011 word), `/x` `/d` (200E=FF: foreground raster sync), `/p` `/m` `/o` `/n` `/i` | real timing; 1194 marker overlap on 2011/2013 |
+| AdLib driver | 054E: allocate 0567, INT61 at AX:0000, load adlib.dat, detect | allocation/vector lifetime |
+| Tandy driver | 05B4 after failed AdLib and BIOS page probe 060C | state at 5958 beyond its allocation; dangling INT61 |
+| PC-speaker driver | 05FC fallback (`/a`, allocation failure, no AdLib/Tandy); MAIN.DAT section 5 over 8420..8715, INT60 0842:0182 | no INT60/INT61 restore recovered; 0181/tail |
+| Protection media probe | 062B: FAT F8 counter wrapper 0E66 or direct 063E | protected stored bytes, alternate BIOS/DOS selectors |
+
+Native substitutions for these paths (unbound joystick, muted drivers, fixed
+BIOS answers, media policy) omit or alter original behavior; see AGENTS.md.

@@ -72,6 +72,16 @@ protected_loc_06C1:
     clc ; @006D4 tf_on
     jnc protected_loc_070E ; @006D5 tf_on
 protected_loc_06D7:
+; S18 initial-storage reader, distinct from the DL<2 floppy prefill path:
+; 0878/0883 issues INT25 without calling08CB. The helper's returned CF
+; is ignored here:06DA reloads the selected pointer,08D7 reads bytes00..FD,
+; and06E3 reads word+FE. If DOS leaves RAM unchanged on failure, these are
+; the INITIAL stored first256 bytes (or prior-call zeros), not fresh disk data.
+; Initial primary CRC90AA != EFFE;fallback0508 !=45D0, so unchanged initial
+; bytes fail06E3. These are static CRC calculations, not executed disk probes.
+; Startup063E forcesDL0, excluding this arm only in its ordinary caller domain.
+; Its retry branch08AC does not see DOS CF transparently:0DA6 ADD SP,2
+; changes arithmetic flags before INT3 reenables TF (see gate contract).
     call ReadProtectionAbsoluteSector ; @006D7 tf_on
     les si,[bp+0xa] ; @006DA tf_on
     mov ax,0xfe ; @006DD tf_on
@@ -255,6 +265,13 @@ ReadProtectionBiosSector:
 ; for 0852 reads word 0850..0851=030E; decoding 0853 also reads byte 0851.
 ; Thus 0850..0851 have a key-data role; 084D..084F have no specific role
 ; proved by this path. Keep all five canonical UNKNOWN and any code role open.
+; S18 alternate-state candidate: applying the actual first-word transform at
+; 084D exposes90 (NOP); after restoration,084E exposesC6460E03, MOV byte
+; [SS:BP+0E],03, then falls into0852. Thus the first three bytes have a
+; coherent encoded BIOS-write-selector interpretation using the SAME decoder,
+; not an alternate key algorithm. Neither084B nor any recovered edge enters
+; 084D/084E. This proves a candidate spelling, not a reachable write service;
+; leave UNKNOWN. Its immediate/key bytes0850/0851 have overlapping roles.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x7e,0xc5,0x44,0x0e,0x03 ; @0084D
 protected_loc_0852:
@@ -289,6 +306,11 @@ ReadProtectionAbsoluteSector:
 ; 087E..0882 is skipped. Decoder for 0883 reads word 0881..0882=260E;
 ; decoding 0884 also reads byte 0882. Last two bytes have a key-data role;
 ; first three remain unexplained. No direct entry or runtime writer is proved.
+; S18 same-rule candidate:087E ->90 NOP,087F ->C6460E26 MOV byte
+; [SS:BP+0E],26, then0883. Selector26 already has a real consumer08B2
+; and TF-off INT26 gate0DAC, but no recovered entry supplies this candidate
+; producer. Preserve UNKNOWN and the conditional absolute-write alternative;
+; raw linear decoding alone does not expose this interpretation.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x7e,0x59,0x44,0x0e,0x26 ; @0087E
 protected_loc_0883:
@@ -473,6 +495,19 @@ protected_loc_0976:
 ; 098C..0B8B primary512; 0B8C..0B9B unknown16; 0B9C..0D9B fallback512;
 ; 0D9C..0D9D decode seed2. Fills/read/validation/clear prove the buffer role,
 ; not initial stored meaning or global absence of code. Canonical UNKNOWN stays.
+; S18 stored-role boundary: INT3 negates ONLY0DFF..0E39, not this run; INT1
+; restores IVT0's previous word and patches the live interrupted far CS:IP.
+; It has no separate seed/cursor stream that linearly decrypts098C..0D9B.
+; JMP0989 executes with TF off and bypasses all1040 bytes, including the16
+; between the two buffers. No recovered main/protected edge or relocation
+; enters them. These negatives do not exclude other frames/aliases/entries.
+; Floppy07BE fills1234 before read/validation; absolute06D7 instead consumes
+; initial first256 bytes on unchanged failed reads (see06D7). Cleanup094A
+; zeros selected512 only. Unselected512 and gap16 retain their entry contents.
+; Checksum8363, if invoked through its reset/advance lifetime, reads every
+; byte here and both084D/087E gaps as CS data at8397; no static caller to8363
+; is known. Startup8343 reads188F..1898 only. Checksum coverage does not
+; classify the protected stored run or prove that it was initialized as code.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0xb5,0xa2,0x6b,0x88,0xd7,0x53,0xae,0xea,0x5c,0x18,0xb9,0x73,0x72,0x2a,0xe4,0x97 ; @0098C
 ; UNKNOWN: stored bytes outside the derived instruction graph

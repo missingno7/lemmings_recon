@@ -126,6 +126,12 @@ loc_70BE:
     shr dx,1 ; @070E9
     shr dx,1 ; @070EB
     mov cx,[di+EntityRecordDrawingYBias-EntityRecordsBase] ; @070ED
+; S17 flow-state: For706F entryS, current DS supplies the word sampled here; it is saved
+; atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX
+; at715B, including the strip path:7159 rereads the saved word, and715A removes
+; alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity
+; (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment
+; guarantee. No target-set membership follows.
     push word [di+EntityRecordSpriteCallback-EntityRecordsBase] ; @070F0
     mov al,[di+EntityRecordStripSelector-EntityRecordsBase] ; @070F3
     mov di,[di+EntityRecordY-EntityRecordsBase] ; @070F6
@@ -184,6 +190,11 @@ EntitySpriteStripResume:
 loc_7159:
     pop ax ; @07159
     pop dx ; @0715A
+; S17 flow-state: CALL AX keeps current CS and pushes715D; it does not use a far field in
+; record+14. The local transport proof excludes non-stack writes/IRQs aliasing saved
+; words; S1 rawS=000E still permits the SS:0008 mirror to replace the target. Actual
+; startup-wide stack placement, DF-sensitive record writers and returned DS/SS/provider
+; lifetime remain unclosed; target_domain_complete=false.
 EntitySpriteIndirectCall:
     call ax ; @0715B
 EntitySpriteRestoreDI:

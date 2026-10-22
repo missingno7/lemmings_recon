@@ -1075,6 +1075,12 @@ adlib_Command4Latch:
     db 0x6f,0x75,0x6e,0x64,0x20,0x49,0x6d,0x61,0x67,0x65,0x73,0x20,0x28,0x63,0x29,0x20 ; @00101
 ; DATA: embedded_resource
     db 0x31,0x39,0x39,0x31 ; @00111
+; S17 flow-state: Public update entry preserves incoming DF while selecting DS=ES=current
+; driver CS before0121. The header parser0457 retains incoming DF at04AB/04BA, and the
+; decoded AdLib image has no CLD/STD. INT61 clears IF on entry but does not clear DF;
+; intact IRET restores caller FLAGS, not an assumed DF0 ABI. Main services, saved-frame
+; writes, protected views, reentry and vector/allocation lifetime remain open, so S13
+; reversed-song03 headers cannot be excluded globally.
 adlib_UpdateService:
 ; Save AX/BX/CX/DX/DI/SI/DS/ES; select DS=ES=CS through two actual stack POPs.
 ; Process0457 then051C BEFORE decrementing byte B6B. Iterate all nine records
@@ -1210,6 +1216,11 @@ adlib_loc_01CE:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @001E2
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM selects different opcode/operand width) ; @001E4
     add si,0x3ea ; @001E6
+; S17 flow-state: No whole-program DF0 or DS=live-AdLib lifetime theorem was obtained.
+; S13 exclusion of88..AF still requires serial DF0/intact initialized payload/code/stack
+; ownership; reversed header LODS and changed saved segments remain outside it. Unknown
+; words and read provenance are not executable target declarations;
+; target_domain_complete=false.
     jmp [si] ; @001EA
 adlib_loc_01EC:
     sub al,0xdf ; @001EC

@@ -1,3 +1,9 @@
+; S17 flow-state: Flow-state preserves incoming DS/ES/SS as distinct provenances, not one
+; conventional game frame. Shifted bodies explicitly load graphics DS and relocated09A9
+; scratch ES, then select scratch DS through live PUSH ES/POP DS and VGA ES=A000; aligned
+; paths temporarily load game DS for advances. Returned DS depends on actual saved words.
+; No startup-wide stack, scratch allocation, width/count bounds, nonalias or
+; IRQ-reentrancy theorem follows from the symbolic handoff.
 ; Planar bitmap renderer and clipping/dirty dependencies, original 8822..9A8F.
 ; Variant bodies retain exact instructions, UNKNOWN bytes and live shared tails.
 ; STORAGE CONTRACT (static): all offsets below are hexadecimal. Let G be the

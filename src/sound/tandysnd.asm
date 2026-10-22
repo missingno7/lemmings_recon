@@ -893,6 +893,10 @@ tandysnd_loc_0031 equ tandysnd_ResetService
 tandysnd_loc_0019 equ tandysnd_SetCommand3Latch
 tandysnd_loc_0021 equ tandysnd_SetCommand4Latch
 tandysnd_loc_0029 equ tandysnd_SetCommand5Latch
+; S17 flow-state: Tandy is retained as a separate component with independent decoded-edge
+; state and frontier inventory. INT61 does not normalize DF; driver DS/ES selection and
+; live saves are explicit. No result here closes98..9F,5958 allocation ownership,
+; replacement/free lifetime or IRQ/hardware behavior.
 ; Maintained command contract: C prefix dispatches all AH bytes; AH0/1/2
 ; stop at untranslated update/detect/reset entries. AH3/4/5 compose the live
 ; stack setter tails; AH6..FF return after five DEC AH operations (AX is live).

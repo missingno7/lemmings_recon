@@ -31,6 +31,11 @@ UpdateMinimapColumn:
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @07977
     push cs ; @07979
     pop es ; @0797A
+; S17 flow-state: From796F, fixed known edges/no IRQ/intact saves prove ES=incoming CS,
+; AX0,CX000A,DI83C1 and DF=incoming DF at this REP STOSW. Therefore DF0 writes83C1..83D4;
+; DF1 writes83AF..83C2 (word high bytes are forward physical bytes). No DF0 dominance at
+; actual callers was proved; the backward footprint remains a possible conditional
+; checksum-code overwrite, not an execution claim.
     rep stosw ; @0797B
     mov si,[MinimapSourceColumnByteOffset-GameDataImage] ; @0797D
     add si,byte +0x10 ; @07981

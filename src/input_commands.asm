@@ -231,6 +231,11 @@ loc_3FEF:
     jg loc_3FEE ; @04009
     mov byte [EntityScanRequest-GameDataImage],0xff ; @0400B
     mov al,[EntitySlotBound-GameDataImage] ; @04010
+; S17 flow-state: The foreground constructor retains IF across30CC..314B. Under the
+; documented timer/command eligibility and intact IRET saves, this store may snapshot old
+; boundB after limit sampling, then foreground publication producesB+1 without recheck.
+; No <=50h population proof follows solely from supplied header bounds. Native
+; IRQ-at-poll scheduling omits this original schedule.
 ; PUBLICATION RACE: this command runs from IRQ1874->3E6F. If4010/4013 snapshots B after30D5 passed and before314B, it installs limit B while the pending constructor later publishes B+1. There is no constructor recheck/CLI, and scan request004B does not close0055. Next due creation sees inequality and can spill; B4F/header50 permits index50 on the following due call. Outside an in-flight creation, snapshotting the bound stops further creation normally. The stale-limit window begins after30CC reads0047; IRQ-before-CMP restores the old AL. Serialize sampling through314B.
     mov [LevelCreationLimit-GameDataImage],al ; @04013
     jmp short loc_3FEE ; @04016

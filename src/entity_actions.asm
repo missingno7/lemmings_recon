@@ -260,6 +260,11 @@ loc_3322:
     test word [si+EntityRecordStateBits-EntityRecordsBase],0xf5ef ; @0332D
     jnz loc_331F ; @03332
     jmp short loc_32D6 ; @03334
+; S17 flow-state: For entry3336, fixed known edges, intact saves and no asynchronous IRQ,
+; DF at347F/3488 is exactly incoming DF and ES is incoming DS; the path does not
+; normalize DF. With DF1 the displaced saves can replace callback high/low (+15/+14),
+; while DF0 uses +16..+1E. These are conditional writers; neither a real foreground DF1
+; origin nor global DF0 exclusion follows. Known target lists stay incomplete.
 ApplyEntityAction5:
 ;408 known bytes/158 sites/73 owned outcomes. Word MUL map geometry uses
 ; actual SS AX/DX saves and restores,then nine ordered SS probes reject2/A/3.

@@ -56,6 +56,13 @@ ProtectionDecodeNextWord:
 ; of each skipped five-byte gap are key data even though not executed here.
 ; 0D9E reads 0D9C..0D9D (9090): key DEDE exposes CC13 from stored 12 CD.
 ; These data roles do not classify the other gap bytes or prove write entries.
+; S18 alternate-gap spellings are documented in stream.asm: hypothetical
+; TF-on084D/084E gives NOP;MOV[SS:BP+0E],03, and087E/087F gives
+; NOP;MOV[SS:BP+0E],26. Each first word uses the SAME live[-2] rule.
+; No recovered interrupted IP selects them; do not add them to this CFG.
+; Likewise no hidden decoder state sweeps098C..0D9B: only an actual next
+; far IP/CS or IVT0 old pointer selects a patch. Altered frames/aliases remain
+; an unrestricted domain, not a justification for decoding arbitrary storage.
     push ds ; @00E29 int1_plaintext
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @00E2A int1_plaintext
     mov ds,ax ; @00E2C int1_plaintext

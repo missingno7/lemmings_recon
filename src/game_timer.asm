@@ -123,6 +123,11 @@ sub_186F:
 ; [1872] INT61 AH00 is called once per enabled game IRQ with DS:2010==FF and SoundOptionBits&3!=0; unlike INT60 there is no odd TimerCadenceCounter guard. AdLib0115 handles requests before phase decrement and all nine visits; timer/PIT configuration owns real cadence, not a fixed driver Hz.
 GameTimerInt611872:
     int 0x61 ; @01872
+; S17 flow-state: INT entry clears IF but retains interrupted DF. Internal STI permits
+; nested maskable IRQs after its shadow; undeclared input/sound/chain services cannot be
+; assumed to preserve local DF. Visibility invoked inside commands observes those local
+; flags before POPF18A7/outer IRET18B1. Intact saved FLAGS restore the interrupted value
+; afterward; arbitrary live-frame writes remain open.
 ; DF FOR COMMAND WRITERS:1840 input polling (including425F mouse INT33/live42A5) and185F/1872 sound precede this command call. No CLD separates their returned DF from3FDE->410F visibility.18A7/18B1 restore saved foreground flags only afterward; foreground DF0 does not prove writer DF0 inside this IRQ. Conversely an intact outer IRET prevents handler-local DF alone from leaking into foreground3150. The4013 command can race foreground30D5..314B count publication.
 loc_1874:
 GameTimerAfterInt611874:
