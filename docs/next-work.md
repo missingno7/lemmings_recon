@@ -18,14 +18,15 @@ reports are in build/ and are not a status source.
 
 ## Priorities (independent workstreams; supervisor integrates shared metadata)
 
-1. **Entity record lifetime and the 715B callback domain.** Producer/writer
-   matrix for record+14 across creation 30A6, update 1F19, clone/bulk copies,
-   activation and the 70F0 PUSH / 7159 POP handoff; 2Dh-record allocation and
-   reuse bounds. Largest main control-flow risk.
-2. **AdLib residue and dispatch domain.** Engine, grammar (stream_schema v1),
-   all 21 songs and 18 effects are decoded beside src/sound/adlib.asm. Remaining:
-   the 01EA 88..AF raw dispatch domain, 549 explicitly UNKNOWN payload bytes,
-   05A8/0B67/fine-frequency residue, and the PC-speaker image to the same bar.
+1. **Entity record count and 715B.** Field producers, DF-dependent callback
+   byte writers (347F/3488, 4119/4131) and the 715B transport are recorded. Open:
+   the original IRQ race (4013 between 30D5 and 314B) means a header limit of
+   50h does not bound the live count; exclusion of DF=1 at real action and
+   visibility entries; survival of spilled records.
+2. **Sound frontiers.** AdLib, Tandy songs/effects and PC-speaker producers are
+   decoded; 88..AF (AdLib) and 98..9F (Tandy) are excluded only in the serial
+   DF=0 non-alias domain. Open: global 01EA/02BB/0196 domains, DF=1 header
+   reversal, 05A8/0B67/fine-frequency/5630 residue, PC-speaker 0181 and tail.
 3. **Resource lifetimes.** GROUND request 1000h at DS:1B4B can reach DS:2B4A
    over 2011/2013/201F/25A0/2608/2778 while supplied files end at 1F6A; order
    bytes 54EE and override storage 5566..66E5 bounds. Underpins 42A5 and 1407.

@@ -7,6 +7,11 @@ MasterPicEoiOut18B4:
     out 0x20,al ; @018B4
 MasterPicEoiReturn18B6:
     ret ; @018B6
+; S14 U016: [018B7,018F8) stored bytes remain UNKNOWN.
+; Neighbours: P 018B6 ret; N 018F8 sti.
+; Candidate PIC helper18B7: command0B/read20,TEST7F; nonzero sends master EOI20 at18ED. Otherwise sends slaveA0 EOI20,command0B/readA0; nonzero skips master EOI, zero sends master20. EB00 branches are internal candidate delays. No STI/CLI/data store; AL/flags clobber. Hardware contract and incoming entry unproved.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0xb0,0x0b,0xe6,0x20,0xeb,0x00,0xeb,0x00,0xeb,0x00,0xe4,0x20,0xeb,0x00,0xeb,0x00 ; @018B7
 ; UNKNOWN: unresolved bytes
@@ -26,6 +31,11 @@ CriticalErrorHandler:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01904
     pop ds ; @01906
     iret ; @01907
+; S14 U017: [01908,01916) stored bytes remain UNKNOWN.
+; Neighbours: P 01907 iret; N 01916 push ds.
+; Candidate1908 compares DS1FDE withF8; equal RET1915,else DX03F2/AL03/OUT DX,AL/RET. Would touch floppy DOR only for non-hard-disk FAT ID. No data write/004A producer. Entry unproved.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x80,0x3e,0xde,0x1f,0xf8,0x74,0x06,0xba,0xf2,0x03,0xb0,0x03,0xee,0xc3 ; @01908
 times -(($-$$) != 0x1916) db 0

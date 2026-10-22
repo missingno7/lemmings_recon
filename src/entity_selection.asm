@@ -32,6 +32,11 @@ loc_3D1E:
     cmp byte [si+0x26],0xff ; @03D1E
     jnz loc_3D27 ; @03D22
     jmp short loc_3DA5 ; @03D24
+; S14 U046: [03D26,03D27) stored bytes remain UNKNOWN.
+; Neighbours: P 03D24 jmp 0x3da5; N 03D27 mov bp, word ptr [si].
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D26
 loc_3D27:
@@ -50,12 +55,22 @@ loc_3D3E:
     db 0x3b,0xc5 ; ENCODED: cmp ax,bp (NASM chooses a different encoding) ; @03D3E
     jnl loc_3D45 ; @03D40
     jmp short loc_3DA5 ; @03D42
+; S14 U047: [03D44,03D45) stored bytes remain UNKNOWN.
+; Neighbours: P 03D42 jmp 0x3da5; N 03D45 cmp bx, di.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D44
 loc_3D45:
     db 0x3b,0xdf ; ENCODED: cmp bx,di (NASM chooses a different encoding) ; @03D45
     jnl loc_3D4C ; @03D47
     jmp short loc_3DA5 ; @03D49
+; S14 U048: [03D4B,03D4C) stored bytes remain UNKNOWN.
+; Neighbours: P 03D49 jmp 0x3da5; N 03D4C add bp, 0xc.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D4B
 loc_3D4C:
@@ -63,6 +78,11 @@ loc_3D4C:
     cmp bp,0x680 ; @03D4F
     jnl loc_3D58 ; @03D53
     jmp short loc_3D5B ; @03D55
+; S14 U049: [03D57,03D58) stored bytes remain UNKNOWN.
+; Neighbours: P 03D55 jmp 0x3d5b; N 03D58 mov bp, 0xd0.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D57
 loc_3D58:
@@ -72,6 +92,11 @@ loc_3D5B:
     cmp di,0xb0 ; @03D5E
     jnl loc_3D67 ; @03D62
     jmp short loc_3D6A ; @03D64
+; S14 U050: [03D66,03D67) stored bytes remain UNKNOWN.
+; Neighbours: P 03D64 jmp 0x3d6a; N 03D67 mov di, 0xb0.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D66
 loc_3D67:
@@ -80,12 +105,22 @@ loc_3D6A:
     db 0x3b,0xc5 ; ENCODED: cmp ax,bp (NASM chooses a different encoding) ; @03D6A
     jng loc_3D71 ; @03D6C
     jmp short loc_3DA5 ; @03D6E
+; S14 U051: [03D70,03D71) stored bytes remain UNKNOWN.
+; Neighbours: P 03D6E jmp 0x3da5; N 03D71 cmp bx, di.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D70
 loc_3D71:
     db 0x3b,0xdf ; ENCODED: cmp bx,di (NASM chooses a different encoding) ; @03D71
     jng loc_3D78 ; @03D73
     jmp short loc_3DA5 ; @03D75
+; S14 U052: [03D77,03D78) stored bytes remain UNKNOWN.
+; Neighbours: P 03D75 jmp 0x3da5; N 03D78 push ax.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03D77
 loc_3D78:
@@ -135,6 +170,11 @@ loc_3DDE:
     cmp byte [EntitySelectedSlotIndex-GameDataImage],0xff ; @03DDE
     jnz loc_3DE8 ; @03DE3
     jmp short EntitySelectionReturn ; @03DE5
+; S14 U053: [03DE7,03DE8) stored bytes remain UNKNOWN.
+; Neighbours: P 03DE5 jmp 0x3e62; N 03DE8 mov byte ptr [0x1a], 0xff.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03DE7
 loc_3DE8:

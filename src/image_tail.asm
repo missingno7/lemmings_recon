@@ -1374,6 +1374,7 @@ MonoCrtcProbeEnableByte:
     db 0x4e,0x4d,0x2c,0x2e,0x01,0x2f,0x2a,0x04,0x20,0x05,0x80,0x81,0x82,0x83,0x84,0x85 ; @0BAEF
 ; UNKNOWN: unresolved bytes
     db 0x86,0x87,0x88,0x89,0x06,0x07,0x37,0x8a,0x39,0x2d,0x8c,0x35,0x8d,0x2b,0x31,0x8b ; @0BAFF
+; [0BB11] S16 DS2081..2082 stores30,2E. XLAT index0..52h ends2080;status starts2083.4F04/4F1F SI2080 instead selects graphics through1FE4/UI,not DS table bytes. No dedicated role/producer/consumer proved for these2 bytes;retain UNKNOWN,not padding.
 ; [0BB13] S8: mutable40-character status line plus NUL20AB, not DrawTextStream. Count2095..97,
 ; percent209C..9E and time20A7/20A9/20AA are aliased fields of this line. 3B23 supplies2083 to
 ; NUL reader417B; stored40 chars2083..20AA and NUL20AB. Selection3CEE clears11 prefix bytes,3DF3
@@ -1415,6 +1416,7 @@ CleanupExitMessage:
     db 0x72,0x79,0x0d,0x0a,0x45,0x78,0x69,0x74,0x69,0x6e,0x67,0x20,0x4c,0x65,0x6d,0x6d ; @0BB9F
 ; UNKNOWN: unresolved bytes
     db 0x69,0x6e,0x67,0x73,0x2e,0x2e,0x2e,0x0d,0x0a,0x48,0x61,0x76,0x65,0x20,0x61,0x20 ; @0BBAF
+; [0BBCB] S16 DS213B..2193 is candidate DOS-version error text endingCR/LF/$2193. No decoded version-test/pointer producer selects it;message grammar alone does not establish use,extent ownership or deadness. Stored process bytes outside normal clears;long GROUND/aliases can alter them. Keep UNKNOWN.
 ; UNKNOWN: unresolved bytes
     db 0x6e,0x69,0x63,0x65,0x20,0x44,0x4f,0x53,0x21,0x0d,0x0a,0x24,0x4c,0x65,0x6d,0x6d ; @0BBBF
 ; UNKNOWN: unresolved bytes
@@ -1483,6 +1485,7 @@ ResourceCloseErrorMessage:
     db 0x74,0x20,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x0d,0x0a,0x24 ; @0BCCF
 ; UNKNOWN: unresolved bytes
     db 0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x61,0x62,0x63,0x64,0x65,0x66 ; @0BCDF
+; S16 DS225F=90:hex alphabet ends225E by nibble-masked124A,startup heading starts2260. No established role for this intervening byte;UNKNOWN,not asserted alignment/NOP.
 ; [0BCF0] S8 WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF;
 ; pointer10A3/10A7, stored NUL22E0 bounds intact initial text. DOS02 sees every nonzero byte
 ; including CR/LF; saves and returned DS are live. Stored process-image initialization lies
@@ -1591,6 +1594,7 @@ ResourceCloseErrorMessage:
     db 0x73,0x73,0x20,0x31,0x2d,0x34,0x20,0x74,0x6f,0x20,0x73,0x65,0x6c,0x65,0x63,0x74 ; @0BF8F
 ; UNKNOWN: unresolved bytes
     db 0x20,0x61,0x6e,0x6f,0x74,0x68,0x65,0x72,0x20,0x4d,0x61,0x63,0x68,0x69,0x6e,0x65 ; @0BF9F
+; [0BFB7] S16 DS2527=00 is after machine-choice string's NUL2526,before saved filename2528. No identified formatter/marker/string consumer includes it. UNKNOWN,not a second required terminator.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x54,0x79,0x70,0x65,0x0d,0x0a,0x00,0x00 ; @0BFAF
 ; [0BFBB] S8 Stored ASCIIZ 'main.dat' [252B,2534); NUL2533. Pointers/services58D3/58E0. Open/DAT/error
@@ -1687,6 +1691,7 @@ OddLevelOverrideFilename:
 ; remain open.
 ; UNKNOWN: unresolved bytes
     db 0x6e,0x64,0x79,0x73,0x6e,0x64,0x2e,0x64,0x61,0x74,0x00,0x72,0x75,0x73,0x73,0x65 ; @0C00F
+; [0C026] S16 DS2596..259B stores00,00,00,00,FF,90. Protection filename ends2595;BIOS clock words start259C.0ED8 reads these six bytes only as opaque252A..2629 file export;does not initialize them. No separate field role established;keep UNKNOWN.
 ; UNKNOWN: unresolved bytes
     db 0x6c,0x6c,0x2e,0x64,0x61,0x74,0x00,0x00,0x00,0x00,0x00,0xff,0x90 ; @0C01F
 SavedBiosClockHigh:
@@ -1702,6 +1707,7 @@ SavedBiosClockLow:
 InputPollCallback:
 ; DATA: pointer_data
     db 0x52,0x42 ; @0C030
+; S16 six mutable bytes:LE16 calibration25A2/25A4 W4A73/77/8B/8F,R42B0/B4;mode25A6 W0F64/4A6D/85/AB5/ABD selects0 mouse,1 callback,other keyboard;sound bits25A7 W0591/05A9/05D3/0601/0289/02A6/44E3,Rmask1/2/3 and4E5A. Stored00,00,00,00,00,FF;normal startup/level clears exclude. Mode1 precedes calibration;no atomic X/Y pair. GROUND max2B4A,record/cache/string/SS/provider aliases remain;not immutable or host-service closure.
 ; [0C038] PALETTE ROW MAP:25A8 packed16/25B8 RGB48 slot6 seeded5377;25E8 packed8/25F0 RGB24 slot4 fixed targets.2608 black48;2638 current48 with2650 interior+18h,2668 current48. Stored/process initialization is separate from per-frame/level validity;nominal row writers select0/7,seed selects6. GROUND1000 request reachesall,actual0420 doesnot. Record/cache/alias writers remain. Exact contents/reader matrix:palette_frontends.asm,s7-tables.md.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0xff,0x00,0x11,0x02,0x17,0x16,0x14,0x07,0x16,0x00,0x00 ; @0C032
@@ -1737,6 +1743,7 @@ BasePaletteSource2608:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0C112
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @0C122
+; S16 candidate2698..2777 is8 lead pairs then104 delta2 pairs,not a sentinel-terminated allocation. Original cursor wrap and signedY/collision terminal are specified beside2A6D. No caller-wideY/+0E/state/alias closure proves112 entries;retain UNKNOWN and EntityState0400PairBase size0. Ordinary003A callback is not point-cloud003C.
 ; Candidate0400 pairs2698..2777:8 lead pairs then13*8 repeats,2bytes frame/signedY-action;producer+0E has no terminal112 guard. Do not set full size/class solely from colors2778 adjacency. GROUND/record/cache/aliases remain;see2A6D integration note.
 ; Unchecked pair reference at2A6D; naming the base does not establish extent.
 ; UNKNOWN: unresolved bytes
@@ -2791,6 +2798,7 @@ EntityState0400PairBase:
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E1D2
 ; UNKNOWN: unresolved bytes
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E1E2
+; [0E1F8] S16 UNKNOWN4768..48BE:two candidate point blocks4768..4807/4808..48A7,then WRITTEN BY RUSSELL KAY plusNUL48A8..48BE. Normal producer stops before34;no dedicated author-text cursor found. Neither apparent frame shape nor raw index admission proves total allocation or no alternate use.
 ; UNKNOWN: unresolved bytes
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E1F2
 ; UNKNOWN: unresolved bytes
@@ -2838,6 +2846,7 @@ EntityState0400PairBase:
 ; two runs UNKNOWN.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x52,0x55,0x53,0x53,0x45,0x4c,0x4c,0x20,0x4b,0x41,0x59,0x00,0x43,0x4c,0x49 ; @0E342
+; [0E35D] S16 candidateBOMBER label48CD..48D3.3DF6..3E6D picks48BF/48C6/48D4/48DB/48E2/48E9/48F0/48F7/48FE/490C for seven-byte3E58 copy,never this row in that decoded selector. KeepUNKNOWN;not proof of dead data or no raw/unknown consumer.
 ; UNKNOWN: unresolved bytes
     db 0x4d,0x42,0x45,0x52,0x46,0x4c,0x4f,0x41,0x54,0x45,0x52,0x42,0x4f,0x4d,0x42,0x45 ; @0E352
 ; UNKNOWN: unresolved bytes
@@ -2846,8 +2855,10 @@ EntityState0400PairBase:
     db 0x42,0x41,0x53,0x48,0x45,0x52,0x20,0x4d,0x49,0x4e,0x45,0x52,0x20,0x20,0x44,0x49 ; @0E372
 ; UNKNOWN: unresolved bytes
     db 0x47,0x47,0x45,0x52,0x20,0x57,0x41,0x4c,0x4b,0x45,0x52,0x20,0x46,0x41,0x4c,0x4c ; @0E382
+; [0E395] S16 candidateSPLATTR label4905..490B is skipped by known3DF6..3E6D selectors. Seven-byte copy from neighboring rows does not include it. KeepUNKNOWN;format/adjacency and missing direct reader do not prove padding/deadness.
 ; UNKNOWN: unresolved bytes
     db 0x45,0x52,0x20,0x53,0x50,0x4c,0x41,0x54,0x54,0x52,0x41,0x54,0x48,0x4c,0x45,0x54 ; @0E392
+; [0E3AF] S16 DS491F=90 is outside ten-byte template4913..491C,payload491D andblink491E. No established field reader/writer includes491F. KeepUNKNOWN.
 ; [0E3B0] 4920 packed16 and4930 RGB48 are slot2 stored menu targets/publication sources,not menu animation records49E0. Storedvalues and all nominal readers inpalette_frontends.asm/s7-tables.md. Outside GROUND/odd footprints;generic cursor/cache/segment aliases still live.
 ; UNKNOWN: unresolved bytes
     db 0x45,0x41,0x4a,0x48,0x4c,0x44,0x48,0x42,0x42,0x43,0x4a,0x00,0x00,0x90,0x00,0x14 ; @0E3A2
@@ -2864,6 +2875,7 @@ EntityState0400PairBase:
 ; classification.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x10,0x34,0x34,0x34,0x2c,0x2c,0x00,0x10,0x14,0x2c,0x38,0x20,0x24,0x28,0x00 ; @0E3E2
+; [0E3FA] S16 UNKNOWN trailer bytes atDS496A,4975,4980,498B,4996,49A1,49AC,49B7,49C2,49CD (496A+0B*n,n0..9). Ten11-byte slots4960..49CD:4F9F/4FF8 seeds,4FF2/5011 stride;word fields0/2/4/6/8 never touch+A. Stored00/traversal does not classify trailers as padding. ReturnedDS/SI,SS andrenderer aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x90,0x01,0x20,0x00,0x31,0x00,0x10,0x72,0x00,0x50,0x00,0xb8,0x01,0x00,0x01,0x2f ; @0E3F2
 ; UNKNOWN: unresolved bytes
@@ -3099,6 +3111,7 @@ BriefingGroupText:
     db 0x20,0x66,0x6f,0x72,0x20,0x4c,0x65,0x76,0x65,0x6c,0x20,0x20,0x20,0x20,0x20,0x0d ; @0E7E2
 ; UNKNOWN: unresolved bytes
     db 0x0d,0x0f,0x00,0x69,0x73,0x20,0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4a ; @0E7F2
+; [0E804] S16 DS4D74=00 follows stream terminator4D73;DrawTextStream returns on zero column and does not consume this second00. No dedicated producer/consumer;keepUNKNOWN rather than extending access-code stream.
 ; [0E805] S8 4D4D header/4D65 character grammar, reader475C/479C; exact stored stream[4D75,4DA0),
 ; terminal column0 at4D9F. 4D75:column2,row18,style0,text[4D78,4D9E),CR4D9E. DF0/intact stream
 ; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
@@ -3412,6 +3425,7 @@ BriefingGroupText:
     db 0x40,0x02,0x40,0x02,0x40,0x02,0x78,0x1e,0x00,0x00,0x00,0x00,0x79,0x9e,0x40,0x02 ; @0EDE2
 ; UNKNOWN: unresolved bytes
     db 0x40,0x02,0x40,0x02,0x00,0x00,0x00,0x00,0x40,0x02,0x40,0x02,0x00,0x00,0x00,0x00 ; @0EDF2
+; [0EE0C] S16 DS537C..547B is256 pattern-like bytes outside5CC1's exact96-byte B input531C..537B;next proven ownerPixelBitMasks begins547C. No dedicated decoded cursor/reader/producer for this residue found. Code CALL targets53xx/54xx and immediate comparison masks are not DS pointers. KeepUNKNOWN,no source-table extension.
 ; UNKNOWN: unresolved bytes
     db 0x40,0x02,0x40,0x02,0x00,0x00,0x79,0x9e,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03 ; @0EE02
 ; UNKNOWN: unresolved bytes
@@ -3450,6 +3464,7 @@ BriefingGroupText:
 ; live DS/stack aliases remain observable and adjoining bytes stay unresolved.
 PixelBitMasks:
     db 0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01 ; @0EF0C
+; S16 residue5484..54ED:mask-like5484..5489=C0,30,0C,03,F0,0F;LE16 arithmetic sequences548A..54AD=005A*n(n0..17 decimal),54AE..54CD=006C*n(n0..15),54CE..54DD=003C*n(n0..7),54DE..54ED=01E0*n(n0..7). No dedicated cursor/reader/producer established. Numeric pattern alone does not classify offset tables;all remainUNKNOWN,separate from proven order54EE.
 ; UNKNOWN: unresolved bytes
     db 0xc0,0x30,0x0c,0x03,0xf0,0x0f,0x00,0x00,0x5a,0x00,0xb4,0x00,0x0e,0x01 ; @0EF14
 ; UNKNOWN: unresolved bytes
@@ -3464,6 +3479,7 @@ PixelBitMasks:
     db 0x78,0x00,0xb4,0x00,0xf0,0x00,0x2c,0x01,0x68,0x01,0xa4,0x01,0x00,0x00,0xe0,0x01 ; @0EF62
 ; UNKNOWN: unresolved bytes
     db 0xc0,0x03,0xa0,0x05,0x80,0x07,0x60,0x09,0x40,0x0b,0x20,0x0d ; @0EF72
+; S16 exact nominal order54EE..5565 can be classified lookup_table from stored selectors,1987 reader,4515/4545 groups and473E completion. No78h bounds check:byte indices read54EE..55ED,overlapping override. Classification/size120 decimal is not an immutable/closed-writer or caller-selector certificate.
 ; [0EF7E] RESOURCE ORDER: initial120 bytes DS54EE..5565 serve four groups of30
 ; (4515/4545,473E). They survive startup/per-level clears;197D has no bound:
 ; byte index00..FF reads54EE..55ED, including override5566..55ED. Initial
@@ -3487,6 +3503,7 @@ LevelResourceOrderBytes:
     db 0x70,0x71,0x73,0x75,0x77,0x79,0x7b,0x7d,0x7f,0x96,0x81,0x09,0x83,0x85,0x87,0x89 ; @0EFE2
 ; UNKNOWN: unresolved bytes
     db 0x8b,0x8d,0x8f,0x91 ; @0EFF2
+; S16 classify only exact1180h override destination5566..66E5:19D5/19D9/19DC raw load,storedzero pre-load,supplied80*38h and19EA..1A02 source slices. Full read establishes image;short suffix stale,normal clears exclude. Unchecked n0..127 forwardreads through7165 andDF1 source[slice-36h,slice+1] overlap other owners;these do not enlarge destination.66E6..66EF remainsUNKNOWN.
 ; [0EFF6] OVERRIDE:19DC requests1180h ->DS5566..66E5; supplied oddtable.dat
 ; has that size (80*38h). Both startup and4551 clear exclude it. Each full
 ; odd read establishes a resource image; short reads retain prior bytes.
@@ -4053,6 +4070,7 @@ OddLevelOverrideBuffer:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @10152
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @10162
+; [10176] S16 ten zerosDS66E6..66EF lie beyond exact odd-load end66E5,before renderer fields66F0. No dedicated initializer/consumer established. Raw n80 override reads can traverse this gap,but unchecked access does not enlarge nominal resource allocation. KeepUNKNOWN,not padding.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @10172
 ; [10180] Runtime layout/per-draw words DS66F0..6704, exact initialization/read matrix in planar_drawing.asm.
@@ -4082,6 +4100,7 @@ DrawingSourceRowAdvance:
     db 0x00,0x00 ; @10192
 DrawingActiveDestinationRowAdvance:
     db 0x00,0x00 ; @10194
+; S16 UNKNOWN zero run6706..A947 has renderer source-row base6706 andmask/cache base6748,not proved allocations42h/4200h. Copy/fill+sentinel initializes[b,b+w]DF0/[b-w,b]DF1;SHR/RCR always forward,w0=65536RCR,wFF INCCL wrap=65536output,shift0=256passes. Source re-produced each row/plane,mask usually each row;DF0 sourcew>=42h overlapsmask,DF1w>=1 reaches6705,w>=2 reaches6704. Keep scratch ledger sizes0 and unknown run;liveDS/ES/SS/provider/IRQ aliases remain.
 ; [10196] Source-row base6706: copy CL bytes plus zero sentinel through DF, shift forward then LODSB through DF.
 ; Difference to6748 is42h, not a proven allocation extent; keep size0 and adjacent UNKNOWN.
 ; DF1,w>=1 overwrites6705; w>=2 reaches6704 before row-stride rereads.
@@ -4096,6 +4115,7 @@ DrawingSourceRowScratch:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @101C2
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @101D2
+; S16 mask-cache8D66 lifetime:8DBC BP6748;8DCD copy w,8DD1zero,8DD2 BP=copyendDI;8DE5/8DEA forwardshift then8DFE ANDVGAplane3. Buildallh rows,8E18 BX6748 resets;8E5B/8EF4/8F69/8FD9 readforward acrosssourceplanes. DF0 footprint h*(w+1),h0=256;DF1 rowstartsbackwards butshift/readforward. <=4200h is conditional nonoverlap withA948,not allocation proof. IncomingDS preparation can differ from relocated09A9 scratchES;liveSS savedsegments/counts/returns remain observable.
 ; [101D8] Mask base6748: copied masks or FF fill per row;8D66 caches all rows first, step +/- (CL+1).
 ; Spacing toA948 is4200h; DF0 h*(CL+1)<=4200h is only a nonoverlap condition.
 ; No allocation/valid-width proof; preserve UNKNOWN beyond identified scalar fields.

@@ -169,6 +169,11 @@ loc_775D:
     jnz loc_7766 ; @0775F
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @07761
     jmp short loc_77A8 ; @07763
+; S14 U087: [07765,07766) stored bytes remain UNKNOWN.
+; Neighbours: P 07763 jmp 0x77a8; N 07766 cmp al, 0x3a.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @07765
 loc_7766:
@@ -176,6 +181,11 @@ loc_7766:
     jnz loc_7770 ; @07768
     mov si,0x210 ; @0776A
     jmp short loc_77A8 ; @0776D
+; S14 U088: [0776F,07770) stored bytes remain UNKNOWN.
+; Neighbours: P 0776D jmp 0x77a8; N 07770 cmp al, 0x30.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0776F
 loc_7770:
@@ -197,18 +207,33 @@ loc_7780:
     shl ax,1 ; @0778C
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @0778E
     jmp short loc_77A8 ; @07790
+; S14 U089: [07792,07793) stored bytes remain UNKNOWN.
+; Neighbours: P 07790 jmp 0x77a8; N 07793 cmp al, 0x41.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @07792
 loc_7793:
     cmp al,0x41 ; @07793
     jnl loc_779A ; @07795
     jmp short loc_77FC ; @07797
+; S14 U090: [07799,0779A) stored bytes remain UNKNOWN.
+; Neighbours: P 07797 jmp 0x77fc; N 0779A cmp al, 0x5a.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @07799
 loc_779A:
     cmp al,0x5a ; @0779A
     jng loc_77A1 ; @0779C
     jmp short loc_77FC ; @0779E
+; S14 U091: [077A0,077A1) stored bytes remain UNKNOWN.
+; Neighbours: P 0779E jmp 0x77fc; N 077A1 sub al, 0x41.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @077A0
 loc_77A1:

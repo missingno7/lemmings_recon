@@ -119,10 +119,9 @@
       "status": "CONDITIONAL",
       "domain": "Immutable engine; ordinary nonaliasing live SS stack and RAM, DF=0, bounded initialized record/count domain, tokens80..87 plus documented note/B/C/E classes",
       "remaining": [
-        "88..AF unchecked target/domain closure",
-        "Score/effect ownership and event ordering not audited here",
-        "05A0 unseeded candidate and UNKNOWN state-adjacent bytes",
-        "Real device timing, interrupt interleavings and transformed code/stack aliases"
+        "Raw01EA remains open outside the S13 serial initialized DF0/nonaliasing/live-image domain; conditional producer closure is recorded on adlib_StreamCommandTargets.",
+        "Explicit S6 UNKNOWN instrument/layout residue and S2 unseeded05A0/state-adjacent bytes.",
+        "DF/segment/stack/IRQ/provider/driver-allocation lifetime and transformed-code closure for unrestricted execution."
       ]
     },
     "main_int61_producers": [
@@ -153,7 +152,7 @@
       {
         "image": "main",
         "address": 953,
-        "ax_producer": "0300|DS:[0054]",
+        "ax_producer": "AH=03, AL=byte DS:[0054]",
         "purpose": "level song ID"
       },
       {
@@ -261,7 +260,7 @@
       {
         "image": "main",
         "address": 12277,
-        "ax_producer": "0400|DS:[DI+001B]",
+        "ax_producer": "AH=04, AL=nonzero byte DS:[DI+001B]",
         "purpose": "nonzero object effect byte; mutable/unbounded object selector"
       },
       {
@@ -295,7 +294,7 @@
         "purpose": "effect"
       }
     ],
-    "main_producer_contract": "Fresh explore.analyze() and raw CD61 scan identify these28 sites. No recovered mainAH05 producer. Immediate effects plus GROUND-sourced object IDs cover normal01..12 but mutable unchecked object field is not universally bounded. Main normal/special song-ID tables cover01..15; raw external INT61 inputs/aliases remain independent domains. Timer1872 has no phase-bit guard, unlike INT60; gates2010==FF and25A7&3. Installation/Tandy cases retain returnedAL rather than replacing AH-only writes with constants."
+    "main_producer_contract": "S13 freshly imported explore.analyze() and raw canonical CD61 census both identify28 sites; state-specific protected ASM has no INT61/INT60.03B4 is a BYTE load then MOV AH,03, not a word OR.2FE9 is likewise a byte load then AH04. No recovered mainAH05 producer. Raw normal/special song indexes and mutable object IDs are unchecked, but0457 bounds accepted song IDs01..15 and051C bounds effects01..12 independently. Five Tandy startup calls05E1/05E5/05EB/05EF/05F3 follow05CA replacement and are not AdLib playback producers under the intact loader. All provider/alias/transformed-code and freed-vector alternatives remain explicit."
   },
   {
     "address": 33,
@@ -1228,7 +1227,8 @@
     ],
     "format_contract": "Relative base0B6E; directory absolute words for IDs01..15; header word0,relative bank word,tempo byte,count byte,relative order words; order word0 sentinel followed by relative list pointer; instrument stride16 but only00..0C,0E read; effect directory absolute at55E3+2*ID,bank54E3. Every pointer/arithmetic wraps per original instruction; no extent checks.",
     "pinned_payload_contract": "See adlib_SongDirectory.payload_audit and per-header/order/stream/bank symbols:21 songs/69 channels,378 score roots,18 FX roots; zero88..AF at token boundaries. Raw unchecked01EA seam is unchanged.",
-    "pinned_level_contract": "2179 C1 immediately precedes217A B0 6F, so0248..0338 loads current05AC pair DL=00/DH=03 in this same fetch; writes40/43. No incoming order points to217A. Raw-entry B-family uses liveDX without reload."
+    "pinned_level_contract": "2179 C1 immediately precedes217A B0 6F, so0248..0338 loads current05AC pair DL=00/DH=03 in this same fetch; writes40/43. No incoming order points to217A. Raw-entry B-family uses liveDX without reload.",
+    "producer_domain_contract": "S13: adlib_StreamCommandTargets.producer_domain closes all recovered main ID -> retained stream-pointer -> token paths in its serial initialized DF0/nonalias/live-image domain, even arbitrary byte request IDs. Raw01EA remains unresolved outside it."
   },
   {
     "address": 435,
@@ -2103,7 +2103,431 @@
         "value": 4933
       }
     ],
-    "unchecked_word_evidence": "These are immutable initial CODE bytes read as words, not promoted table entries or proven executable destinations; aliases/transformed bytes can change them. Full target control flow is unresolved."
+    "unchecked_word_evidence": "These are immutable initial CODE bytes read as words, not promoted table entries or proven executable destinations; aliases/transformed bytes can change them. Full target control flow is unresolved.",
+    "producer_domain": {
+      "status": "CONDITIONAL_CLOSED; raw target_domain_complete remains false",
+      "question": "Can stream-token88..AF reach JMP01EA from the recovered main INT61 producers?",
+      "domain": "Pinned loaded AdLib engine/payload; serial recognized public services from loaded state, ordinary nonaliasing driver RAM and live stack, DS=CS established by unmodified PUSH/POP, DF=0 during reset/song-header LODS; no external memory/code mutation, reentrant service or replacement/free. Arbitrary byte AL requests and any serial interleaving of valid service calls are allowed; no restrictions inferred from host success.",
+      "result": "No88..AF (nor83) at a fetch boundary in this domain. Actual low dispatch tokens80/81/82/84/85/86/87 reach seven of the eight stored words. Raw83/03AA remains in the engine/hint target list. Main request bytes are IDs, not stream pointers/tokens; retained state does not add roots.",
+      "main_producers": {
+        "recovered_sites": [
+          671,
+          783,
+          913,
+          938,
+          953,
+          958,
+          1437,
+          1505,
+          1509,
+          1515,
+          1519,
+          1523,
+          6258,
+          8862,
+          9422,
+          9939,
+          10856,
+          11531,
+          11624,
+          11868,
+          11952,
+          12191,
+          12277,
+          12364,
+          12451,
+          12809,
+          12952,
+          16250
+        ],
+        "raw_opcode_sites": [
+          671,
+          783,
+          913,
+          938,
+          953,
+          958,
+          1437,
+          1505,
+          1509,
+          1515,
+          1519,
+          1523,
+          6258,
+          8862,
+          9422,
+          9939,
+          10856,
+          11531,
+          11624,
+          11868,
+          11952,
+          12191,
+          12277,
+          12364,
+          12451,
+          12809,
+          12952,
+          16250
+        ],
+        "song_request": {
+          "site": 953,
+          "load_site": 948,
+          "kind": "byte",
+          "field": "main09A9:0054",
+          "normal_table": {
+            "start": 18551,
+            "end": 18568,
+            "ids": [
+              6,
+              7,
+              8,
+              10,
+              11,
+              4,
+              12,
+              13,
+              14,
+              15,
+              5,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "special_table": {
+            "start": 18568,
+            "end": 18572,
+            "ids": [
+              1,
+              9,
+              3,
+              2
+            ]
+          },
+          "writers": [
+            18529,
+            18547
+          ],
+          "lifecycle": "Startup0031 and per-level455B DF0 clears0054.482F returns without writing when2010==0. Otherwise0FE8 nonzero selects CS4888+(byte0FE8-1); zero uses CS4877+byte1F6C, incrementing only when1F6D!=0 and wrapping only exact11h.1F6C starts0 and survives455B; generic aliases remain unclosed.03AD checks music bit2 but has NO2010==FF guard."
+        },
+        "fixed_effect_requests": [
+          {
+            "site": 913,
+            "effect": 3
+          },
+          {
+            "site": 938,
+            "effect": 2
+          },
+          {
+            "site": 8862,
+            "effect": 8
+          },
+          {
+            "site": 9422,
+            "effect": 10
+          },
+          {
+            "site": 9939,
+            "effect": 18
+          },
+          {
+            "site": 10856,
+            "effect": 10
+          },
+          {
+            "site": 11531,
+            "effect": 10
+          },
+          {
+            "site": 11624,
+            "effect": 12
+          },
+          {
+            "site": 11868,
+            "effect": 5
+          },
+          {
+            "site": 11952,
+            "effect": 12
+          },
+          {
+            "site": 12191,
+            "effect": 16
+          },
+          {
+            "site": 12364,
+            "effect": 17
+          },
+          {
+            "site": 12451,
+            "effect": 13
+          },
+          {
+            "site": 12809,
+            "effect": 4
+          },
+          {
+            "site": 12952,
+            "effect": 18
+          },
+          {
+            "site": 16250,
+            "effect": 1
+          }
+        ],
+        "object_request": {
+          "site": 12277,
+          "load_site": 12265,
+          "record": "main09A9:17CB+1C*object_ordinal",
+          "field": 27,
+          "producer": "378A..37C1 copies28 bytes from1B4B+low16(type*28), DF-sensitive; zero definition leaves stale slot.1A18 requests rawGROUND. Caller2FB6..2FC1 uses saved interaction high nibble for object ordinal, then2FE9 reads live+1B. Alias/corrupt saved AX and unchecked type/DF remain open.",
+          "supplied_ground_records": [
+            {
+              "source": "assets/ground0o.dat",
+              "sha256": "86ecce12dea563b97d07339028780a0a50fc2cc75a67f682bf4d9aff8cf4b24a",
+              "record_count_audited": 16,
+              "nonzero_ids": [
+                {
+                  "record": 6,
+                  "address": 195,
+                  "effect": 15
+                },
+                {
+                  "record": 8,
+                  "address": 251,
+                  "effect": 7
+                },
+                {
+                  "record": 10,
+                  "address": 307,
+                  "effect": 14
+                }
+              ]
+            },
+            {
+              "source": "assets/ground1o.dat",
+              "sha256": "baf7a2ea30b07d2dc7968a5fb590987b3775840c57e6268437d3dce969b64d65",
+              "record_count_audited": 16,
+              "nonzero_ids": []
+            },
+            {
+              "source": "assets/ground2o.dat",
+              "sha256": "52e62aeefd6cd548690c02af6474936c5e16112e115ca7808c3748e500a9412d",
+              "record_count_audited": 16,
+              "nonzero_ids": [
+                {
+                  "record": 8,
+                  "address": 251,
+                  "effect": 7
+                }
+              ]
+            },
+            {
+              "source": "assets/ground3o.dat",
+              "sha256": "f4df8579a30cb55dae4a06f606e0453cb0931219efadf3e9465d681a43a2722c",
+              "record_count_audited": 16,
+              "nonzero_ids": [
+                {
+                  "record": 8,
+                  "address": 251,
+                  "effect": 9
+                },
+                {
+                  "record": 9,
+                  "address": 279,
+                  "effect": 7
+                },
+                {
+                  "record": 10,
+                  "address": 307,
+                  "effect": 7
+                }
+              ]
+            },
+            {
+              "source": "assets/ground4o.dat",
+              "sha256": "9669ee978e5adf5f8d5bfeb80ccc5d6c20e75e32f55e2a5c1c738f64af8faa91",
+              "record_count_audited": 16,
+              "nonzero_ids": [
+                {
+                  "record": 7,
+                  "address": 223,
+                  "effect": 9
+                },
+                {
+                  "record": 9,
+                  "address": 279,
+                  "effect": 6
+                },
+                {
+                  "record": 10,
+                  "address": 307,
+                  "effect": 6
+                }
+              ]
+            }
+          ],
+          "supplied_nonzero_union": [
+            6,
+            7,
+            9,
+            14,
+            15
+          ],
+          "unrestricted_byte_domain": "01..FF after2FEC rejects0; not bounded to the supplied union"
+        },
+        "tandy_only_sites": [
+          1505,
+          1509,
+          1515,
+          1519,
+          1523
+        ],
+        "no_recovered_ah05": true,
+        "fixed_and_supplied_first16_ground_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ],
+        "unestablished_supplied_effect_id": {
+          "effect": 11,
+          "reason": "No fixed request or audited first16 GROUND +1B emits0B. It remains an accepted driver ID;unchecked type/source,stale/corrupt record and aliases prevent an unreachable claim. Conditional proof deliberately admits all18 valid IDs."
+        }
+      },
+      "invariants": [
+        "Loaded ED/EE/EF/F0=0 and every channel mode=0. At serial public-service boundaries EF=0: only0461 writes a request,046E/0473 clears ED/EF before validation; no public setter writes EF. With EE!=0 the EF0 branch returns; retained liveAL is used only outside this invariant. AH05 would alter EE only, not break EF0, but main has no such producer.",
+        "ED0 yields no song.ED>=16h tails03AA without a directory fetch.ED01..15 selects one of21 absolute header words. With DF0 every header count is3/4, so initialization writes only05AC..05FB; all9 modes cleared first. Count0/overrun cannot arise from those headers. Reset/stop clears mode(s), never activates a stale PC.",
+        "F0=0/>=13h returns without fetch and remains pending.01..12 plus a free last-four record selects one of18 absolute roots; no free slot retains F0. Activation0542 is followed immediately by directory fetch0556 before return. All pinned FX terminate85, never80, so stale order pointers cannot be read by these effects.",
+        "Music root/next-order producer04C6..04E0 reads header-relative order, then first nonzero pattern word.80 alone replaces it via0415/041F or one03FA redirect. S6 enumerates all69 lists/378 roots and every redirect returns to that original nonzero list. No controls write the directory/order/payload in this domain.",
+        "Every timed event01B3 saves the already parsed next BX and reloads duration. Load017E restores it only after mode!=0; mode1 is phase gated, mode2 is not. Expiry0194 enters fetch; non-event0339/03CA only changes pitch/release state, never BX/order/PC.04D7,040C,0427,01B3 are the complete identified stored-PC writers;04D3,0408,0423 the order-pointer writers.",
+        "019E/01F4/0430 increment BX explicitly and ignore DF. Operand widths are fixed, including soleB0 at217A followingC1, so operand values cannot become tokens. Retained duration affects delay only; retained transpose/instrument/slide affects pitch/release only. Reset/start/deactivation never fabricate fresh fields. FX grant can scan the same channel again in the update but still resumes a boundary.",
+        "S6 listings and token histogram cover all reached boundaries; none is88..AF. Invalid main IDs are rejected by driver bounds before they can add a root. Main table/record universal bounds are therefore not a prerequisite for this conditional exclusion."
+      ],
+      "pointer_producers": [
+        {
+          "destination": "DI+0A",
+          "sites": [
+            1235,
+            1032,
+            1059
+          ],
+          "source": "Initialized header order or command80 successor/single redirect"
+        },
+        {
+          "destination": "DI+0C",
+          "sites": [
+            1239,
+            1036,
+            1063,
+            435
+          ],
+          "source": "First pattern / command80 pattern / next parsed boundary"
+        },
+        {
+          "destination": "live BX only",
+          "sites": [
+            1359,
+            414,
+            500,
+            1072
+          ],
+          "source": "Validated FX directory word or explicit byte increments"
+        }
+      ],
+      "residual": [
+        "DF is never cleared by AdLib and is retained by INT. Main protected08D2,1D34,1C78 clear it;1BB0 sets it before1BB9 callsReadDatBytes. The ordinary local STD window ends at the first1D34 CLD, not throughout reverse decoding. Game IRQ17C7 and its1872 sound path do not clear interruptedDF. No whole-program/provider/IRQ proof here establishesDF0 whenever a queued song starts; decoded local windows and external returnedFLAGS require lifetime review. NoDF1 playback schedule is asserted reached.",
+        "DF1 changes header interpretation, not the explicit byte fetch direction: header H -> word0[H],bank[H-2],tempo[H-4],count[H-5],first-order-relative[H-6]. For valid song03,H114C yields count4 from1147,bank0B6E,first orders0FE7/177A/0B70/6C8F; first PCs2C8F/347D/19F8/(outside pinned image). This already escapes the pinned grammar; no88..AF exclusion is claimed there. Zero counts in most reversed headers also enter LOOP withCX0.",
+        "Live stack/DS/ES/SS aliases or code/pointer/table mutation invalidate the producer induction; inconsistent EE!=0/EF!=0 uses liveAL at0478 and can acceptAL0 -> B6C directory alias. Raw direct internal entries are separate from public INT61 producers.40 initial out-of-table words remain CODE reads, not proven executable destinations.",
+        "057B installs before058D decode;05CA replaces it withTandy,05FA can free allocation without restoring INT61.03B9/03BE check music bit only;02A6 can set25A7=3 even if2010!=FF. Thus enabled music alone does not prove a live AdLib image. DOS allocations/short-read/provider/protected writers and all unknown transformed code remain lifetime obligations.",
+        "Actual OPL timing/NMI/reentrancy and arbitrary interrupt interleavings are not closed. Muted/unbound native sound omits interpreter/device behavior; equivalent timing/effects are unverified."
+      ],
+      "evidence": {
+        "image_sha256": "ad4f33eb383c60b5a67945987f27580fc0540e38558d4c158efe1a672db5f490",
+        "payload_owner": "adlib_SongDirectory.payload_audit",
+        "stream_schema_version": 1,
+        "method": "Static original instructions, imported explore.analyze(), pinned static DAT extraction and ledger grammar; no x86 execution."
+      },
+      "reached_dispatch_tokens": [
+        128,
+        129,
+        130,
+        132,
+        133,
+        134,
+        135
+      ],
+      "reached_dispatch_targets": [
+        1045,
+        448,
+        435,
+        1072,
+        1082,
+        1095,
+        1103
+      ],
+      "excluded_in_domain": [
+        131,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175
+      ]
+    }
   },
   {
     "address": 1045,
@@ -5144,7 +5568,8 @@
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED",
-    "semantic_contract": "EE0 copies ED into AL/EF; otherwise consults retained EF without loading AL. Ordinary EF0 while EE!=0 queues song changes. Nonzero EF clears ED/EF, AL>=16 stops music, else selects header. Count unchecked. All9 modes cleared; only count records initialized; all9 keyoff and OPL global setup; phase1."
+    "semantic_contract": "EE0 copies ED into AL/EF; otherwise consults retained EF without loading AL. Ordinary EF0 while EE!=0 queues song changes. Nonzero EF clears ED/EF, AL>=16 stops music, else selects header. Count unchecked. All9 modes cleared; only count records initialized; all9 keyoff and OPL global setup; phase1.",
+    "public_boundary_invariant": "Loaded EF0 is preserved at every serial recognized public-service boundary with ordinary memory/stack:0461 sets it only inside processing;0473 clears it before selection. Thus EE!=0 impliesEF0 under that invariant, regardless of AH03/AH05 latch values. The raw EE!=0/EF!=0 liveAL path is still real outside it."
   },
   {
     "address": 1308,

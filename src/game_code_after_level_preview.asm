@@ -21,6 +21,11 @@ CopyDirtyLevelRowsToDrawingPage:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @0811C
     jz loc_8123 ; @0811E
     jmp short loc_819D ; @08120
+; S14 U092: [08122,08123) stored bytes remain UNKNOWN.
+; Neighbours: P 08120 jmp 0x819d; N 08123 push ds.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @08122
 loc_8123:

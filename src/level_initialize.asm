@@ -38,6 +38,7 @@ ApplyLevelHeader:
     mov [LevelReleaseSetting-GameDataImage],al ; @036C4
     mov ah,[di+0x2] ; @036C7
     mov al,[di+0x3] ; @036CA
+; CAPACITY: only header+03 reaches byte0047; high+02 is discarded. Static pinned80 LEVEL sections plus40 forward odd rows selected by nominal120 order have high00/max50h (80 decimal). Other40 odd rows hold0063. This producer bound requires complete reads/intact order/DF0 override; it is not a constructor check. IRQ4013 racing30D5..314B can still step the published count past a reduced limit.
     mov [LevelCreationLimit-GameDataImage],al ; @036CD
     mov ah,[di+0x4] ; @036D0
     mov al,[di+0x5] ; @036D3
@@ -85,6 +86,11 @@ LevelAfterHeader:
     call SetupSpecialGraphicsResource ; @03749
 LevelInitializeAfterSpecial:
     jmp short loc_376A ; @0374C
+; S14 U043: [0374E,0374F) stored bytes remain UNKNOWN.
+; Neighbours: P 0374C jmp 0x376a; N 0374F mov si, 0x10eb.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0374E
 ; TERRAIN STREAM: four separate BEbyte reads,liveSI+4,FFFF sentinel; no400record limit.

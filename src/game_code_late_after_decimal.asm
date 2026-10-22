@@ -81,6 +81,11 @@ MenuTimerDataSegmentOperand4C50 equ $+1
     call SendMasterPicEoi ; @04C60
 MenuTimerAfterEoi4C63:
     jmp short MenuTimerChainReturn4C70 ; @04C63
+; S14 U071: [04C65,04C66) stored bytes remain UNKNOWN.
+; Neighbours: P 04C63 jmp 0x4c70; N 04C66 mov ax, 0x4c70.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04C65
 loc_4C66:
@@ -390,6 +395,11 @@ ClearFullDrawingPage:
     mov di,0x0 ; @04DEF
     mov cx,0x6d60 ; @04DF2
     jmp short ClearVgaBytes ; @04DF5
+; S14 U072: [04DF7,04DF8) stored bytes remain UNKNOWN.
+; Neighbours: P 04DF5 jmp 0x4df8; N 04DF8 mov dx, 0x3c4.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04DF7
 ; SS mirror words precede six OUTs. ES=A000, AX=A000, DX=3CE.
@@ -683,6 +693,11 @@ DrawScreenBackground:
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @05017
 DrawScreenBackgroundFromRow:
     jmp DrawScreenBackgroundTiles ; @05019
+; S14 U075: [0501C,05028) stored bytes remain UNKNOWN.
+; Neighbours: P 05019 jmp 0x7e76; N 05028 cli.
+; Candidate501C clears AL/stores0 to DS1FCD,then CMP AL,[1FCD]/JE5021 until unequal,RET. No STI/CLI/watchdog; disabled IRQ/no producer may spin indefinitely, byte wrap may hide changes. Clears timer state, never sets004A. Entry unproved.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x32,0xc0,0xa2,0xcd,0x1f,0x3a,0x06,0xcd,0x1f,0x74,0xfa,0xc3 ; @0501C
 InstallMenuTimerVector:

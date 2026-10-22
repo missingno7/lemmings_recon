@@ -3043,7 +3043,7 @@
         "end": 1018,
         "site": 490,
         "commands": "80..87",
-        "closure": "UNRESOLVED: AL80..AF reaches dispatch;88..AF indexes past visible table into code",
+        "closure": "CONDITIONALLY CLOSED for S13 initialized serial DF0/nonalias/live AdLib image and all byte requests; eight stored words. Raw80..AF still unchecked; see adlib_StreamCommandTargets.producer_domain residual.",
         "index_formula": "SI=03EA+zero_extend((2*token)&FF), token80..AF;JMP word DS:[SI] in current CS"
       }
     ],
@@ -3062,7 +3062,7 @@
           1103
         ],
         "evidence": "Static formula SI=03EA+zero_extend((2*token)&FF), token80..AF; eight words03EA..03F9 prove80..87 edges",
-        "closure": "UNRESOLVED raw domain:88..AF reads instruction bytes03FA..0449 as targets; S6 decodes all immutable pinned v1 score/effect roots with zero88..AF tokens, but aliases,transformed code,DF and external INT inputs remain unclosed."
+        "closure": "S13 conditional producer induction excludes88..AF for all recovered main ID requests in initialized serial DF0/nonalias/live-image domain; retained pointer writers and every S6 stream boundary are closed there. Raw frontier remains: DF1 header reversal, changed DS/SS/code/pointers, inconsistentEF, freed/replaced vector, external/reentrant/transformed paths. Known target list is not global closure."
       }
     ]
   },
@@ -3130,10 +3130,1010 @@
         "evidence": "TANDYSND-relative S10: Constant0809 lookup03F5/0408;72 stored decreasing period words,record boundary089A,unknown0899 excluded;byte arithmetic runtime128-word domain reads into later state without extending table ownership."
       },
       {
+        "start": 2201,
+        "end": 2202,
+        "class": "lookup_table",
+        "evidence": "S15 pinned index48h witness song10/ch1 event45B1; immutable stored byte0899 is low half of unchecked period word, high half live089A. S10 no-reader residue now closed; do not extend ordinary table."
+      },
+      {
+        "start": 2202,
+        "end": 2203,
+        "class": "lookup_table",
+        "evidence": "S15 pinned pitch indexes48/4A/4B/4C/7B/7F alias live music record bytes; pitch_aliases has original event/instrument/arpeggio witnesses. Runtime-data primary role remains; never substitute stored zero words.",
+        "overlay": true
+      },
+      {
         "start": 2202,
         "end": 2396,
         "class": "runtime_data",
         "evidence": "TANDYSND-relative S10: Four explicit30h records089A/08CA/08FA/092A,all48 bytes individually accounted by producers/start/instrument/note/parser/modifier/output;partial reset and read-only+2F channel bits included;095A word bank produced01AC/consumed02E0. No blanket-zero rationale."
+      },
+      {
+        "start": 2205,
+        "end": 2211,
+        "class": "lookup_table",
+        "evidence": "S15 pinned pitch indexes48/4A/4B/4C/7B/7F alias live music record bytes; pitch_aliases has original event/instrument/arpeggio witnesses. Runtime-data primary role remains; never substitute stored zero words.",
+        "overlay": true
+      },
+      {
+        "start": 2303,
+        "end": 2305,
+        "class": "lookup_table",
+        "evidence": "S15 pinned pitch indexes48/4A/4B/4C/7B/7F alias live music record bytes; pitch_aliases has original event/instrument/arpeggio witnesses. Runtime-data primary role remains; never substitute stored zero words.",
+        "overlay": true
+      },
+      {
+        "start": 2311,
+        "end": 2313,
+        "class": "lookup_table",
+        "evidence": "S15 pinned pitch indexes48/4A/4B/4C/7B/7F alias live music record bytes; pitch_aliases has original event/instrument/arpeggio witnesses. Runtime-data primary role remains; never substitute stored zero words.",
+        "overlay": true
+      },
+      {
+        "start": 2396,
+        "end": 2438,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 2438,
+        "end": 2443,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 2444,
+        "end": 2528,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 2528,
+        "end": 3095,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3099,
+        "end": 3111,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3115,
+        "end": 3143,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3147,
+        "end": 3159,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3163,
+        "end": 3175,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3179,
+        "end": 3191,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3195,
+        "end": 3207,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3211,
+        "end": 3223,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3227,
+        "end": 3232,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3233,
+        "end": 3323,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3323,
+        "end": 3733,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3738,
+        "end": 3750,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3754,
+        "end": 3766,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3770,
+        "end": 3782,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3786,
+        "end": 3798,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3802,
+        "end": 3814,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3818,
+        "end": 3846,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3850,
+        "end": 3862,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3866,
+        "end": 3882,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3898,
+        "end": 3903,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 3904,
+        "end": 4006,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4006,
+        "end": 4513,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4517,
+        "end": 4529,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4549,
+        "end": 4561,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4565,
+        "end": 4577,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4581,
+        "end": 4593,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4613,
+        "end": 4625,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4629,
+        "end": 4634,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4635,
+        "end": 4713,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 4713,
+        "end": 5412,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 5416,
+        "end": 5444,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 5448,
+        "end": 5476,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 5480,
+        "end": 5485,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 5486,
+        "end": 5558,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 5558,
+        "end": 6257,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6261,
+        "end": 6596,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6600,
+        "end": 6612,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6616,
+        "end": 6628,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6632,
+        "end": 6644,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6648,
+        "end": 6660,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6664,
+        "end": 6676,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6680,
+        "end": 6692,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6696,
+        "end": 6701,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6702,
+        "end": 6788,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 6800,
+        "end": 7559,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7573,
+        "end": 7585,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7589,
+        "end": 7601,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7605,
+        "end": 7633,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7637,
+        "end": 7649,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7653,
+        "end": 7665,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7669,
+        "end": 7685,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7797,
+        "end": 7802,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7803,
+        "end": 7911,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 7911,
+        "end": 9267,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9271,
+        "end": 9299,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9303,
+        "end": 9315,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9319,
+        "end": 9347,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9351,
+        "end": 9363,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9479,
+        "end": 9484,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9485,
+        "end": 9569,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 9569,
+        "end": 10775,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 10779,
+        "end": 10791,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 10795,
+        "end": 10807,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 10811,
+        "end": 10823,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 10827,
+        "end": 10839,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 10939,
+        "end": 10944,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 10945,
+        "end": 11053,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11053,
+        "end": 11677,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11681,
+        "end": 11697,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11713,
+        "end": 11725,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11729,
+        "end": 11757,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11761,
+        "end": 11773,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11777,
+        "end": 11789,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11809,
+        "end": 11821,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11825,
+        "end": 11830,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11831,
+        "end": 11939,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 11939,
+        "end": 12659,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 12679,
+        "end": 13298,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13302,
+        "end": 13314,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13318,
+        "end": 13330,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13334,
+        "end": 13346,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13350,
+        "end": 13366,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13382,
+        "end": 13387,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13388,
+        "end": 13442,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 13442,
+        "end": 14369,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 14373,
+        "end": 14385,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 14389,
+        "end": 14433,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 14437,
+        "end": 14449,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 14453,
+        "end": 14458,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 14459,
+        "end": 14561,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 14561,
+        "end": 15104,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15136,
+        "end": 15148,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15152,
+        "end": 15164,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15232,
+        "end": 15244,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15264,
+        "end": 15276,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15328,
+        "end": 15344,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15584,
+        "end": 15589,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15590,
+        "end": 15650,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 15650,
+        "end": 16063,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16067,
+        "end": 16079,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16083,
+        "end": 16095,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16099,
+        "end": 16111,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16115,
+        "end": 16131,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16147,
+        "end": 16152,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16153,
+        "end": 16231,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16231,
+        "end": 16611,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16615,
+        "end": 16627,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16631,
+        "end": 16659,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16663,
+        "end": 16675,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16679,
+        "end": 16684,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16685,
+        "end": 16775,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 16775,
+        "end": 17443,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 17447,
+        "end": 17475,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 17479,
+        "end": 17507,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 17511,
+        "end": 17516,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 17517,
+        "end": 17601,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 17601,
+        "end": 18152,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18156,
+        "end": 18168,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18188,
+        "end": 18200,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18204,
+        "end": 18232,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18236,
+        "end": 18241,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18242,
+        "end": 18314,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18314,
+        "end": 18852,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18856,
+        "end": 18868,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18872,
+        "end": 18884,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18888,
+        "end": 18909,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18910,
+        "end": 18976,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 18976,
+        "end": 19413,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19417,
+        "end": 19429,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19449,
+        "end": 19477,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19497,
+        "end": 19502,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19503,
+        "end": 19569,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19569,
+        "end": 19921,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19925,
+        "end": 19937,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 19941,
+        "end": 19953,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20005,
+        "end": 20010,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20011,
+        "end": 20071,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20071,
+        "end": 20583,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20587,
+        "end": 20599,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20603,
+        "end": 20631,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20635,
+        "end": 20647,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20763,
+        "end": 20768,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20769,
+        "end": 20847,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 20847,
+        "end": 21138,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21142,
+        "end": 21154,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21158,
+        "end": 21186,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21190,
+        "end": 21202,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21206,
+        "end": 21222,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21226,
+        "end": 21254,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21258,
+        "end": 21270,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21274,
+        "end": 21286,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21290,
+        "end": 21350,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21354,
+        "end": 21382,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21386,
+        "end": 21414,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21418,
+        "end": 21446,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21450,
+        "end": 21482,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21484,
+        "end": 21520,
+        "class": "lookup_table",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
+      },
+      {
+        "start": 21520,
+        "end": 21702,
+        "class": "static_data",
+        "evidence": "S15 TANDYSND-relative: exact consumed graph and byte owners in tandysnd_StreamFetch.payload_audit; header01A4/01EF,order01FB/0439/0421,stream023D/02BB and selected instrument02EF..0370 combined. Unconsumed bytes excluded."
       }
     ],
     "dispatch_tables": [
@@ -3152,10 +4152,28 @@
     "entry_evidence": "Main1652 relocated0842 frame and165A offset0182 install INT60;5972 loads MAIN.DAT section5 into this frame",
     "regions": [
       {
-        "start": 0,
-        "end": 30,
+        "start": 1,
+        "end": 3,
         "class": "runtime_data",
-        "evidence": "Dispatcher DS=CS; AH>=20 writes offsets0..DF; commands10..1F read fields"
+        "evidence": "Loaded active0/noise-step0;01BD/01CF/01EC/0251 write active,01E0 reads;01D9 reads byte2. No normal writer for2;raw setter remains explicit."
+      },
+      {
+        "start": 6,
+        "end": 7,
+        "class": "runtime_data",
+        "evidence": "Loaded phase0;01DC byte read/add/write consumes step2 every tick; no identified phase reader for output. Neighbor7 excluded."
+      },
+      {
+        "start": 8,
+        "end": 25,
+        "class": "runtime_data",
+        "evidence": "01C1..01C7 copies exactly15 field bytes to000A..0018;01C9/01CC reload0008/0009;01E6..022A consume/update countdowns,period,deltas,rotations,duration.0019 excluded."
+      },
+      {
+        "start": 26,
+        "end": 28,
+        "class": "runtime_data",
+        "evidence": "Initial last-divisor0 word;0232 compares selectedCX and0244 updates only when PIT writes occur.001C/001D excluded."
       },
       {
         "start": 30,
@@ -3168,6 +4186,27 @@
         "end": 385,
         "class": "effect_record_table",
         "evidence": "01B3/01B6/01B8 select base0028 plus signed AL*15;01C1 loop copies15 bytes;23 visible records end0181. Out-of-range/signed selections are unchecked."
+      },
+      {
+        "start": 0,
+        "end": 224,
+        "class": "runtime_data",
+        "overlay": true,
+        "evidence": "Raw AH20..FF writes AL to byte(originalAH-20)=0000..00DF at01A6, covering header/table/first184 record bytes. Also raw reads11..1F cover0001..000F. This write-window overlay does NOT settle unidentified stored roles0000/0003..0005/0007/0019/001C..001D."
+      },
+      {
+        "start": 40,
+        "end": 64,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "Raw command05..10 reads12 little-endian target words from first24 record bytes via0196. Initial targets listed in dispatcher ledger; these are data-as-target reads, not extra service-table entries."
+      },
+      {
+        "start": 385,
+        "end": 758,
+        "class": "static_data",
+        "overlay": true,
+        "evidence": "Raw LoadEffect AL17..2F explicitly reads consecutive15-byte spans0181..02F7. This proves a COPY-SOURCE overlap across separator,code,tail (02F6/02F7 outside payload), not intended record/code ownership of UNKNOWN bytes. Natural IDs02/0C/13 do not touch it."
       }
     ],
     "dispatch_tables": [
@@ -3179,7 +4218,7 @@
         "unresolved_targets": [
           0
         ],
-        "closure": "Unresolved: AH00..10 passes table branch;02/04 point to data at0;05..10 reads data beyond table; write commands can change table"
+        "closure": "CONDITIONALLY CLOSED for ten recovered main producers AH00/01/03 with intact loaded table/segments/stack:01D4/024F/01B0. Raw00..10 includes02/04 zero and05..10 data words; raw setters3E..47 can replace allfivewords; unrestricted frontier remains."
       }
     ],
     "indirect_transfers": [
@@ -3192,7 +4231,7 @@
           432
         ],
         "evidence": "Nonzero visible service table words; all live pointer values remain possible under mutable data commands",
-        "closure": "Zero words, out-of-table commands, and table mutation/producer domains remain open"
+        "closure": "Ten recovered main producers select only00/01/03, and their helpers never write001E..0027. This conditional target domain closes only for intact loaded image, nonaliasing stack/segments and no external writers. AH3E..47 writes all table bytes; arbitrary raw near target,02/04 zero,05..10 effect bytes and preemption/provider/transformed lifetimes remain open."
       }
     ]
   }

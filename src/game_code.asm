@@ -27,11 +27,25 @@ AdvanceEntityRecords:
 ; +26==FF slots. n<=FF gives a numeric end2D5B, not an allocated entity extent.
 ; Creation can select indexFF (2D5B..2D87) before INC0043 wraps to00. Equality
 ; with0047, rather than an unsigned limit test, is its sole count stop. A fresh
-; zero bound and stable limit L append indices0..L-1; no limit<=50 is proved.
+; zero bound and stable limit L append indices0..L-1 without count wrap. The
+; pinned120-entry order selects headers with L<=50h (80 decimal), including
+; the40 selected odd overrides; the other40 odd rows contain0063h (99).
+; This is a complete-read/DF0/intact-order asset bound, not a constructor check.
 ; Indices00..4F fit0088..0E97. Index50 starts0E98, overwriting spawn-coordinate
 ; storage BEFORE3100 reads it; its callback0EAC also lies in the410F visibility
 ; clear. Larger slots overlap visibility, loaded level, object and other data.
 ; Thus50h is a disjoint-prefix condition, never a clamp or inferred allocation.
+; IRQ LIMIT RACE:1874 calls3E6F, whose4010/4013 snapshots0043 into0047.
+; If that IRQ occurs after30D5 passes but before314B, the pending constructor
+; still publishes B+1 after the IRQ installed limit B. Creation never tests
+; 004B (the scan request), nor rechecks0047 before publishing. The next due
+; call sees B+1!=B and appends again. At B=4F this permits index50 on the next
+; due call despite a nominal header50. No CLI brackets this handoff. Thus
+; L<=50 alone cannot prove count<=50 under unrestricted original IRQ timing;
+; the prefix theorem also requires no such limit-write/publication race.
+; The stale-limit window actually begins after30CC samples0047: an IRQ
+; before30D3 still restores the old AL for comparison. After30D5 is the
+; simplest witness; serialization must cover limit sampling through314B.
 ;
 ; Established field roles: width, initial producer, later writers, consumers.
 ; All fields start zero in30F3's explicit INC-DI clear (independent of DF).
@@ -648,6 +662,11 @@ loc_2379:
     test word [si+EntityRecordStateBits-EntityRecordsBase],0x100 ; @02379
     jnz loc_2383 ; @0237E
     jmp short loc_2386 ; @02380
+; S14 U027: [02382,02383) stored bytes remain UNKNOWN.
+; Neighbours: P 02380 jmp 0x2386; N 02383 call 0x283b.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02382
 loc_2383:
@@ -1005,6 +1024,11 @@ loc_2693:
     mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @0269A
     jnz loc_26A2 ; @0269D
     jmp short loc_26E4 ; @0269F
+; S14 U028: [026A1,026A2) stored bytes remain UNKNOWN.
+; Neighbours: P 0269F jmp 0x26e4; N 026A2 cmp al, 0xa.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @026A1
 loc_26A2:
@@ -1050,12 +1074,22 @@ loc_26E4:
     cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @026EF
     jg loc_26F7 ; @026F2
     jmp short loc_2763 ; @026F4
+; S14 U029: [026F6,026F7) stored bytes remain UNKNOWN.
+; Neighbours: P 026F4 jmp 0x2763; N 026F7 cmp word ptr [si], 0x680.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @026F6
 loc_26F7:
     cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @026F7
     jl loc_2700 ; @026FB
     jmp short loc_2763 ; @026FD
+; S14 U030: [026FF,02700) stored bytes remain UNKNOWN.
+; Neighbours: P 026FD jmp 0x2763; N 02700 call 0x5dc6.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @026FF
 loc_2700:
@@ -1104,6 +1138,11 @@ EntityState0080AfterThirdPixelCall:
     jmp loc_1FE8 ; @0275D
 loc_2760:
     jmp short loc_2766 ; @02760
+; S14 U031: [02762,02763) stored bytes remain UNKNOWN.
+; Neighbours: P 02760 jmp 0x2766; N 02763 neg byte ptr [si + 0x27].
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02762
 loc_2763:
@@ -1433,6 +1472,7 @@ loc_2A57:
 EntityState0200AfterSound:
 loc_2A6A:
     jmp loc_29C1 ; @02A6A
+; S16 terminal is NOT a pair count:21E3 seeds+0E=0;2A7B adds2 modulo16 without sentinel. Frame store2A75 precedes second-byte read2A78,so record/table aliases are observable. Collision2AEC changes state;otherwise2B28 signedY>=B4 deactivates via20E2.21C6 leavesY unchanged. Candidate112 pairs gains221 decimal Y with stable nonwrapping no-collision state;Y0=-42 decimal reaches cursorE0/Y179 then reads2778 colors,Y0=-41 stops at112. Static conditional arithmetic only,not game reachability/native-domain expansion. No proven total pair extent;keep base size0.
 ; PAIR SCHEMA: DS2698+liveWord0E wraps;21E3=0,2A7B+=2.2A73->2A75 frame+28 store precedes2A78 signed Y/probe-action read, so a record/table alias can change the second byte. Candidate2698..2777 contains8 lead pairs then13 repetitions of8 pairs;112 is not a code bound. Height check2B28 and field initialization do not prove a total table extent;large records/GROUND/cache/aliases remain. See entity_points.asm and build/static/s7-tables.md; keep UNKNOWN extent.
 ; State0400 from1F85. Sparse known2A6D..2B34 excludes three UNKNOWN bytes.
 ; Pair index+0E is unchecked;21E3 initializes one observed path to zero.
@@ -1477,6 +1517,11 @@ EntityState0400AfterThreeProbePixelCall:
     jnz loc_2AEC ; @02AB6
     inc word [si+EntityRecordY-EntityRecordsBase] ; @02AB8
     jmp short loc_2B28 ; @02ABB
+; S14 U032: [02ABD,02ABE) stored bytes remain UNKNOWN.
+; Neighbours: P 02ABB jmp 0x2b28; N 02ABE call 0x5dc6.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02ABD
 loc_2ABE:
@@ -1492,6 +1537,11 @@ EntityState0400AfterTwoProbePixelCall:
     jnz loc_2AEC ; @02AD4
     inc word [si+EntityRecordY-EntityRecordsBase] ; @02AD6
     jmp short loc_2B28 ; @02AD9
+; S14 U033: [02ADB,02ADC) stored bytes remain UNKNOWN.
+; Neighbours: P 02AD9 jmp 0x2b28; N 02ADC call 0x5dc6.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02ADB
 loc_2ADC:
@@ -1502,6 +1552,11 @@ EntityState0400AfterOneProbePixelCall:
     jnz loc_2AEC ; @02AE4
     inc word [si+EntityRecordY-EntityRecordsBase] ; @02AE6
     jmp short loc_2B28 ; @02AE9
+; S14 U034: [02AEB,02AEC) stored bytes remain UNKNOWN.
+; Neighbours: P 02AE9 jmp 0x2b28; N 02AEC mov word ptr [si + 8], 0.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02AEB
 loc_2AEC:
@@ -1549,6 +1604,11 @@ loc_2B4A:
     cmp al,0xf ; @02B4A
     jnz loc_2B51 ; @02B4C
     jmp short loc_2B66 ; @02B4E
+; S14 U035: [02B50,02B51) stored bytes remain UNKNOWN.
+; Neighbours: P 02B4E jmp 0x2b66; N 02B51 cmp al, 3.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @02B50
 loc_2B51:
@@ -2035,6 +2095,7 @@ loc_2FDF:
     test byte [SoundOptionBits-GameDataImage],0x3 ; @02FDF
     jnz loc_2FE9 ; @02FE4
     jmp loc_2F3A ; @02FE6
+; S13: +1B is a BYTE effect ID,then AH04.378A copies28-byte GROUND templates to17CB+1C*ordinal,with unchecked type,DF and stale skipped records. Supplied first16 GROUND union06/07/09/0E/0F plus fixedrequests cover01..0A/0C..12;0B has no established ordinary producer in that sample,but remains accepted by AdLib. Raw nonzero01..FF object bytes are not clamped;051C rejects>=13 without adding stream roots. Do not confuse mutable/stale IDs with stream bytes.
 loc_2FE9:
     mov al,[di+0x1b] ; @02FE9
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @02FEC
@@ -2117,6 +2178,18 @@ CreateEntityRecordIfDue:
 ; after INC-to00 then ignores all slots. No DOS allocation is performed here.
 ; Coordinate source BX=0E98+4*(index&3) is read live AFTER the clear. Index50
 ; clears all four source pairs; it also overlaps the visibility map at0EA8.
+; CAPACITY DOMAIN: complete pinned LEVEL reads plus forward selected odd copies
+; give header low-byte limits01..50h; all80 base headers have high byte00.
+; The40 selected overrides also have high00 and limit<=50; unselected dummy
+; rows have0063.36CD discards the high byte, so arbitrary headers permit00..FF.
+; 0404's C8 is overwritten before the known first creation0483.4013 normally
+; stops at the current bound, but its IRQ race above can step past that limit.
+; With serialized limit changes, reset bound0 and L<=50, no creation can
+; cross0088..0E97. A stable starting bound B and limit L permit (L-B)&FF
+; successful publications before equality; B>L wraps. Starting0 never wraps
+; for a stable byte L, whereas FF!=L permits indexFF then INC-to00. Mutable
+; limits avoiding equality have no finite publication-count bound. These are
+; byte arithmetic contracts, not evidence of gameplay reaching every index.
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @030A6
     jnz loc_30B0 ; @030AB
     jmp loc_314F ; @030AD

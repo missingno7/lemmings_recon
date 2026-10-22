@@ -10,6 +10,7 @@ RebuildViewVisibilityMap:
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04111
     mov di,ViewVisibilityMapBase-GameDataImage ; @04113
     mov cx,0x68 ; @04116
+; CALLBACK FOOTPRINT: DF0 zero0EA8..0F77 and marker01 from0EA6+(unsigned(origin)>>3) cannot touch nominal entity prefix0088..0E97, but index50+14=0EAC overlaps. DF1 clear0DDA..0EA9 zeros callback words of slots4C..4F; following29h marker cannot reach4C..4E (remain0000), and4F becomes0101 for origin>>3=0/1,0100 for2,0000 for>=3. Nominal header50 does not protect against DF1 or4013 publication race. These are RAM values, not asserted executable targets.
 ; With stable ES=DS and AX=0,104 STOSW write0EA8..0F77 for DF=0 or0DDA..0EA9 for DF=1. The backward range includes record indices4C..4F callbacks (0DF8/0E25/0E52/0E7F); forward range includes index50 callback0EAC if that unchecked slot exists. No CLD here.4131 writes29 bytes from0EA8+(unsigned(view_origin)>>3)-2 following DF, with16-bit cursor wrap. Do not infer record noninterference from a visibility-only name.
     rep stosw ; @04119
     mov di,[LevelViewOriginPixels-GameDataImage] ; @0411B

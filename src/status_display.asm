@@ -40,6 +40,11 @@ loc_3AEF:
     mov byte [si],0x30 ; @03AFF
     mov byte [si+0x1],0x30 ; @03B02
     jmp short loc_3B21 ; @03B06
+; S14 U045: [03B08,03B09) stored bytes remain UNKNOWN.
+; Neighbours: P 03B06 jmp 0x3b21; N 03B09 inc ah.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03B08
 loc_3B09:

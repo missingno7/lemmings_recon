@@ -9,9 +9,9 @@ it does not independently certify toolchain freshness or manifest completeness.
 |---|---|
 | Main binary identity | retained exact-image evidence (82,906 main bytes; recorded input hashes match) |
 | Canonical main image | 82,906 bytes; SHA256 `b0c4ef403e4bd28fa7913cb51a8c87e4dbbba8c4f1c36ea1594ba4424d64ee4e` |
-| Classified main bytes | 58,372; classification is not semantic closure |
+| Classified main bytes | 62,978; classification is not semantic closure |
 | Decoded main instructions | 15,417 sites / 35,826 bytes |
-| UNKNOWN main bytes | 24,534 in 131 runs; 1,902 bytes inside provisional code frame |
+| UNKNOWN main bytes | 19,928 in 131 runs; 1,902 bytes inside provisional code frame |
 | Static control-flow frontier | 7 transfers; known target sets remain conditional |
 | Main C implementation union | 35,686 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
 | Semantic readiness | Scoped qualitative gate and subsystem matrix in [semantic audit](semantic-audit.md); no numeric semantic-completion claim |
@@ -24,8 +24,8 @@ inventories; their C columns likewise describe implementation ranges only:
 | Component | Image bytes | Classified bytes | Decoded code bytes | C code union | Open transfers |
 |---|---:|---:|---:|---:|---:|
 | adlib | 22,125 | 20,623 | 1,329 | 57 | 1 |
-| tandysnd | 21,702 | 2,342 | 1,802 | 49 | 1 |
-| pcspeaker | 758 | 596 | 211 | 211 | 1 |
+| tandysnd | 21,702 | 20,115 | 1,802 | 49 | 1 |
+| pcspeaker | 758 | 588 | 211 | 211 | 1 |
 
 Their exact byte identities and distinct code/data/CFG obligations are described in
 [executable.md](executable.md) and [sound-drivers.md](sound-drivers.md).

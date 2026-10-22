@@ -63,6 +63,11 @@ loc_83A9:
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @083AF
     mov [cs:0x83b9],al ; @083B1
     jmp short loc_83A7 ; @083B5
+; S14 U096: [083B7,083B8) stored bytes remain UNKNOWN.
+; Neighbours: P 083B5 jmp 0x83a7; N 083B8 static_data.
+; 8391 compares BX with83B7 and exits before8397:83B7 is excluded from the checksum read. Existing minimap797B DF1 overlay83AF..83C2 zeros this byte; DF0 writes83C1..83D4. Stored90 and bypassing JMP83B5 do not prove padding.
+; No checksum read here: equality stop8391 excludes83B7.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ChecksumLimit:
 ; Numeric equality stop at8391, not a byte read or executable entry. Stored90
 ; has no proved padding/NOP lifetime: no decoded incoming edge executes83B7,

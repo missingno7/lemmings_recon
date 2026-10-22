@@ -171,6 +171,14 @@ loc_3899:
 ; Default BUG:393A storesY at+0A,393D overwrites it withX at+0A; +0C stays stale.
 ; Spawn consumer30DB..3100 indexes only four pairs, but that is not a producer bound.
 ; Native core/default-bug/full-count comparisons: c/object_coordinates.c.
+; ENTITY CAPACITY CROSS-CONTRACT: nominal pinned120 level selections (80 base
+; sections plus40 forward odd overrides) have maximum count50h=80 decimal;
+; reset/serialized creation then fills exactly through0E97, before this base.
+; This boundary follows header producers36CD/19F5 and constructor30A6, not
+; this collector's32 definitions. Forty unselected odd rows instead hold0063.
+; Raw limits, altered selectors or4013 racing30D5..314B can exceed the prefix.
+; Index50 clear0E98..0EC4 destroys all four spawn pairs before30F9/30FD read
+; them, including aliases with visibility at0EA8. No capacity clamp prevents it.
 CollectTypeOneObjectCoordinates:
     lea si,[LevelObjectDefinitions-GameDataImage] ; @0389F
     lea bx,[TypeOneObjectCoordinates-GameDataImage] ; @038A3

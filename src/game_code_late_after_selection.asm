@@ -11,6 +11,11 @@ HandleSelectorKeysAndEdgeScroll:
     cmp al,0x2c ; @04088
     jnz loc_408F ; @0408A
     jmp short loc_40B5 ; @0408C
+; S14 U058: [0408E,0408F) stored bytes remain UNKNOWN.
+; Neighbours: P 0408C jmp 0x40b5; N 0408F cmp al, 0x2d.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0408E
 loc_408F:
@@ -18,6 +23,11 @@ SelectorKeyCheckNext:
     cmp al,0x2d ; @0408F
     jnz loc_4096 ; @04091
     jmp short loc_40CD ; @04093
+; S14 U059: [04095,04096) stored bytes remain UNKNOWN.
+; Neighbours: P 04093 jmp 0x40cd; N 04096 mov ax, word ptr [0x12].
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04095
 loc_4096:
@@ -35,6 +45,11 @@ EdgeScrollCheckRight:
     cmp ax,0x148 ; @040AC
     jnz loc_40B4 ; @040AF
     jmp short loc_40E5 ; @040B1
+; S14 U060: [040B3,040B4) stored bytes remain UNKNOWN.
+; Neighbours: P 040B1 jmp 0x40e5; N 040B4 ret.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @040B3
 loc_40B4:

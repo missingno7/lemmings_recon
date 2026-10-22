@@ -208,6 +208,11 @@ GameFrameWaitCheckTimerFlag:
     cmp byte [TimerChainFlag1FCF-GameDataImage],0xff ; @00179
     jnz loc_0171 ; @0017E
     jmp short GameFrameTickGate ; @00180
+; S14 U001: [00182,00183) stored bytes remain UNKNOWN.
+; Neighbours: P 00180 jmp 0x186; N 00183 call 0x1644.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00182
 loc_0183:
@@ -234,6 +239,7 @@ GameFrameAfterSelectorScroll:
     call CopyDirtyLevelRowsToDrawingPage ; @001A7
 GameFrameAfterDirtyRows:
     call CopyStatusBackdropToDrawingPage ; @001AA
+; ACTION DF: both01AD and01C5 call3150 with live foreground DF;319E->3336 has no CLD/POPF/INT before347F/3488. Main STD1BB0 has read-child CLD1D34 and normal decoder CLD1C78, so it is not a proved returning DF1 source. Known foreground/service/saved-frame DF and separate IRQ-local visibility DF contracts remain required. IRQ-at-poll scheduling does not exclude the original4013/constructor publication race.
 GameFrameAfterStatusBackdrop:
     call DispatchEntityAction ; @001AD
 CreateAndAdvanceEntityRecords:
@@ -259,6 +265,23 @@ GameFrameAfterSecondDispatch:
     cmp byte [GameEndRequested-GameDataImage],0xff ; @001C8
     jnz loc_01D2 ; @001CD
     jmp GameEndWaitForFade ; @001CF
+; S14 WRITER SEARCH: no dedicated actual-game FF producer identified.
+; Stored DS004A=00; startup0031/level455B clear it only with forward game-DS
+; footprints; their DF1 ranges miss004A. Session0409 resets00 directly.
+; Main absolute/word-overlap census: reader01D2 and zero writer0409 only.
+; Protected TF-on/TF-off + activeINT1 have no absolute004A access. This is
+; not a global no-writer proof:1130 indexed main writes,strings,implicit SS
+; frames,resource/returned segments and protected far aliases remain live.
+; Raw1C82 with ES=game DS,DI004B,ALFF storesFF at004A via1C83; raw20E2
+; with DS=game DS,SI0024 also setsFF. Neither proves a game-path producer.
+; Pinned LEVEL0FCB..17CA,GROUND request1B4B..2B4A,override5566..66E5 miss
+;004A under intact segments. Malformed lengths/cache/stack aliases unchecked.
+; Tandy AH03 writes driver-CS004A after PUSH CS/POP DS,not this field.
+; ExactFF samples1FCD twice and spins for each inequality. Changes before
+; resampling may coalesce; FF->00 counts;256 unseen increments alias equality.
+; No local timeout/CLD/STI. Other values bypass; retain FF branch/poll seam.
+; game_frame double-wait fixtures seedFF externally,not an original producer.
+; READINESS remains CONDITIONAL on producer/alias and IRQ scheduling domains.
 loc_01D2:
 GameFrameDoubleWaitCheck:
     cmp byte [FrameDoubleWaitFlag004A-GameDataImage],0xff ; @001D2
@@ -514,6 +537,7 @@ loc_03AD:
 TransitionCue37LevelMusic:
     test byte [SoundOptionBits-GameDataImage],0x2 ; @003AD
     jz loc_03D6 ; @003B2
+; S13: BYTE0054 ->AL,then AH03; never a word OR with neighboring0055.0457 accepts only01..15 before a stream-root lookup,so unchecked main song-index values cannot add roots under its serial initialized DF0/nonalias/live-image contract.03B9/03BE test music bit2 only;2010 is not checked.05FA can free without restoringINT61,and02A6 can later set25A7=3;music enabled does not prove live driver ownership. See adlib_StreamCommandTargets.producer_domain.
     mov al,[LevelSoundId-GameDataImage] ; @003B4
     mov ah,0x3 ; @003B7
 ; AH03 latches a song request only; AdLib0457 normally copies ED only while current-song gateEE==0. Immediate AH00 at03BE performs processing. Stop/reset/stream83 clear ED andEE together; a queued ID is not guaranteed to survive completion.
@@ -566,6 +590,9 @@ InitializeGameSession:
     mov word [PointerX-GameDataImage],0x96 ; @003F8
     mov word [PointerY-GameDataImage],0x64 ; @003FE
     mov byte [LevelCreationLimit-GameDataImage],0xc8 ; @00404
+; S14: dedicated session writer resets DS004A=00 after level4551. No
+; dedicated actual-game FF producer identified; indexed/decoder/segment alias
+; writers can setFF,so this clear does not prove a persistent zero invariant.
     mov byte [FrameDoubleWaitFlag004A-GameDataImage],0x0 ; @00409
     mov byte [LevelCountdownTensDigit-GameDataImage],0x30 ; @0040E
     mov byte [LevelCountdownOnesDigit-GameDataImage],0x30 ; @00413
@@ -616,6 +643,7 @@ InitializeGameAfterLevelInitialization:
     mov cx,0x96 ; @00478
     mov dx,0x64 ; @0047B
     int 0x33 ; @0047E
+; VISIBILITY DF: INT33 at047E can affect live flags before0480; no local CLD. The preceding normal DAT decode CLDs, but later platform returns and saved frames retain their own contract. This call and foreground/IRQ scroll callers must each establish DF0 for the nominal<=50 callback-preservation domain.
 InitializeGameVisibilityAndStatus:
 ; Child sequence: visibility/first create/fade seed/sound id/pages/status ->
 ; install IRQ08 -> object animation/draw, status backdrop/display (first frame).
@@ -992,6 +1020,11 @@ ProtectionEncodedDiskEntry:
     db 0x8f,0xbe,0x01,0x80,0x0c,0x47,0xe0,0x00,0xd7,0x3a,0x00,0x73,0x8c,0x13,0x0f,0x58 ; @0082D
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x00,0x06,0x8b,0xf0,0x01,0x69,0xff,0xd5,0x59,0x96,0x8a,0x95,0x0e,0x02,0x08,0xfe ; @0083D
+; S14 U002: [0084D,00852) stored bytes remain UNKNOWN.
+; Neighbours: P 0084B jmp 0x852 [tf_on]; N 00852 push cx [tf_on].
+; Known key data 0850..0851=030E for next0852/0853 supplies word[-2] bytes read by plaintextINT1 0E20 and previous-patch restoration0E0B. Existing overlay is not repeated. First three stored bytes retain unknown structural role; no state-CFG edge enters this run. Stored motif is not decoded active stream.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; TF-on JMP084B skips 084D..0851. Decoder0E20 at target0852 reads the last
 ; two as key word030E; target0853 also reads0851. First three remain unexplained;
 ; no incoming write entry or padding role is proved. Keep canonical UNKNOWN.
@@ -1005,6 +1038,11 @@ ProtectionBiosReadDecodeSeed:
     db 0x02,0x3c,0xac,0x00,0x4f,0xcb,0x05,0x34,0xac,0xe5,0xae,0xb4,0xdc,0x0e,0x02,0x1a ; @00862
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x8f,0xc9,0x02,0x8c,0xa3,0x25,0x7f,0xf2,0x0e,0x25,0x08,0xb0 ; @00872
+; S14 U003: [0087E,00883) stored bytes remain UNKNOWN.
+; Neighbours: P 0087C jmp 0x883 [tf_on]; N 00883 push cx [tf_on].
+; Known key data 0881..0882=260E for next0883/0884 supplies word[-2] bytes read by plaintextINT1 0E20 and previous-patch restoration0E0B. Existing overlay is not repeated. First three stored bytes retain unknown structural role; no state-CFG edge enters this run. Stored motif is not decoded active stream.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; TF-on JMP087C skips 087E..0882. Target0883 reads0881..0882 as key word260E;
 ; target0884 also reads0882. First three remain unexplained; stored26 does not
 ; prove an executed INT26 selector producer. Key-data overlay, UNKNOWN retained.
@@ -1313,6 +1351,11 @@ loc_0E89:
     mov byte [ProtectionRunCounterByte-GameDataImage],0x9 ; @00E9E
     call WriteProtectionCounterFile ; @00EA3
     jmp short loc_0EDF ; @00EA6
+; S14 U005: [00EA8,00EA9) stored bytes remain UNKNOWN.
+; Neighbours: P 00EA6 jmp 0xedf; N 00EA9 ret.
+; Stored90 bypassed by0EA6 JMP0EDF;0EA9 RET is separate. Numeric4113/4127/5739/7083 constructions refer to DS0EA8 visibility map, not CS0EA8; LEA does not access memory. No specific CS reader/writer identified beyond checksum/general unchecked aliases.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00EA8
 loc_0EA9:
@@ -1326,6 +1369,11 @@ loc_0EAA:
     mov byte [ProtectionRunCounterByte-GameDataImage],0x9 ; @00EB7
     call WriteProtectionCounterFile ; @00EBC
     jmp short loc_0EDF ; @00EBF
+; S14 U006: [00EC1,00EC2) stored bytes remain UNKNOWN.
+; Neighbours: P 00EBF jmp 0xedf; N 00EC2 lea dx, [0x258a].
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00EC1
 WriteProtectionCounterFile:
@@ -1638,6 +1686,11 @@ loc_1130:
     jz loc_1110 ; @01137
     inc bl ; @01139
     jmp short loc_11B5 ; @0113B
+; S14 U007: [0113D,0113E) stored bytes remain UNKNOWN.
+; Neighbours: P 0113B jmp 0x11b5; N 0113E cmp al, 0x1b.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0113D
 loc_113E:
@@ -1683,6 +1736,11 @@ loc_1176:
     cmp bl,0x1 ; @0118C
     jz MarkStartupOptionAndRedraw ; @0118F
     jmp short loc_120C ; @01191
+; S14 U008: [01193,01194) stored bytes remain UNKNOWN.
+; Neighbours: P 01191 jmp 0x120c; N 01194 mov word ptr [di], 0x2020.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01193
 ; [01194] DI/SI are unchecked marker cursors. If startup0031 ran forward and services preserved DI, DI=2012 here via10E2/10EC/10F6: word2020 changes RasterMeasurementMode2011 high byte2012 and first DisplayProbeRecords enable2013. Parser1293 changes SI but not DI. This is an original startup-option overlap, not a separate high-byte flag. Arbitrary incoming cursors may hit25A0 or other state; do not replace these stores with fixed menu-row writes.
@@ -1771,6 +1829,11 @@ WriteHexHighNibbleAtLiveCursor:
     mov [si],dl ; @0124C
     inc si ; @0124E
     ret ; @0124F
+; S14 U009: [01250,01293) stored bytes remain UNKNOWN.
+; Neighbours: P 0124F ret; N 01293 mov es, word ptr [0x1ff6].
+; Candidate decimal formatter1250 saves/restores AX, clears DH (leading-digit latch), calls1271 with divisors2710/03E8/0064/000A; writes four leading-space/digit bytes and final ones to DS:SI. SI advances four times, not after final byte.1271 INC DL/SUB AX,CX loops while unsigned no-borrow, adds divisor back, converts quotient to ASCII. First nonzero quotient sets DH=FF; preceding zero quotients emit20. CX/DX/flags clobber; DS/DF unchanged; SS saves/returns live. Relative calls1256/125C/1262/1268->1271, branches1277->1273,1281->128B,1286->128F,1291->128B are internal candidate evidence, not a proved entry.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x50,0x32,0xf6,0xb9,0x10,0x27,0xe8,0x18,0x00,0xb9,0xe8,0x03,0xe8,0x12,0x00,0xb9 ; @01250
 ; UNKNOWN: unresolved bytes
@@ -1828,6 +1891,11 @@ loc_12D4:
     cmp al,0x64 ; @012D4
     jnz loc_12DB ; @012D6
     jmp short loc_1358 ; @012D8
+; S14 U010: [012DA,012DB) stored bytes remain UNKNOWN.
+; Neighbours: P 012D8 jmp 0x1358; N 012DB cmp al, 0x65.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @012DA
 loc_12DB:
@@ -1838,6 +1906,11 @@ loc_12DB:
     cmp al,0x6f ; @012E3
     jnz loc_12EA ; @012E5
     jmp short loc_1364 ; @012E7
+; S14 U011: [012E9,012EA) stored bytes remain UNKNOWN.
+; Neighbours: P 012E7 jmp 0x1364; N 012EA cmp al, 0x76.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @012E9
 loc_12EA:
@@ -1864,6 +1937,11 @@ loc_130A:
 loc_1312:
     mov word [0x1f7c],0x4 ; @01312
     jmp short loc_1301 ; @01318
+; S14 U012: [0131A,0132A) stored bytes remain UNKNOWN.
+; Neighbours: P 01318 jmp 0x1301; N 0132A mov word ptr [0x2011], 0xc8.
+; Candidate parser arms131A/1322 store word DS:1F7C=0008/0000, then1320/1328 jump known parser continuation1301. Outgoing shared tails do not prove incoming entries or original option keys. No004A FF store.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0xc7,0x06,0x7c,0x1f,0x08,0x00,0xeb,0xdf,0xc7,0x06,0x7c,0x1f,0x00,0x00,0xeb,0xd7 ; @0131A
 loc_132A:
@@ -2089,6 +2167,11 @@ loc_14B2:
     mov al,0x1 ; @014BB
     mov ah,0x1 ; @014BD
     jmp short StoreDetectedAdapterPair ; @014BF
+; S14 U013: [014C1,014C2) stored bytes remain UNKNOWN.
+; Neighbours: P 014BF jmp 0x1523; N 014C2 in al, dx.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @014C1
 loc_14C2:
@@ -2218,6 +2301,11 @@ RestoreKeyboardVectorInterrupt:
     pop ds ; @01590
 RestoreKeyboardVectorReturn:
     ret ; @01591
+; S14 U014: [01592,015AD) stored bytes remain UNKNOWN.
+; Neighbours: P 01591 ret; N 015AD cmp byte ptr [0x200e], 0xff.
+; Candidate1592 saves DS, sets DS=0, writes IVT09 offset16D4/segmentCS and IVT08 offset17C7/segmentCS, restores DS,RET. AX=0; no CLI/STI surrounds four vector-word writes, so IF-enabled delivery may observe partial installation. Handler identities make interpretation coherent but supply no incoming entry. Canonical IVT is distinct from game DS004A; aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x1e,0x33,0xc0,0x8e,0xd8,0xc7,0x06,0x24,0x00,0xd4,0x16,0x8c,0x0e,0x26,0x00,0xc7 ; @01592
 ; UNKNOWN: unresolved bytes
@@ -2332,6 +2420,7 @@ GameTimerSoundSegmentOperand equ $+1
     mov ds,ax ; @01655
     mov ax,0x2560 ; @01657
     mov dx,0x182 ; @0165A
+; S13: MAIN.DAT5 was decoded at5972 to relocated0842:0000 (758 bytes,08420..08715);INT60 enters0182.0492/0183 may reinstall without reloading,so live PC fields/table persist.16A9 restoresINT08 only;no recovered INT60 restore. Natural00/01/03 targets stay01D4/024F/01B0 only under intact separated image/stack;rawAH3E..47 can rewrite every table byte.
     int 0x21 ; @0165D
 GameTimerInstallAfterVector60:
     pop ds ; @0165F
@@ -2374,6 +2463,11 @@ loc_1694:
     sti ; @01694
 GameTimerInstallReturn:
     ret ; @01695
+; S14 U015: [01696,016A9) stored bytes remain UNKNOWN.
+; Neighbours: P 01695 ret; N 016A9 push ds.
+; Candidate1696 CLI,AL36/OUT43,CX=live DS1FC9,low then high reload bytes OUT40,STI,RET. Forces IF=1; DF/segments unchanged; AX/CX clobber. No data-memory write. Entry/device lifetime unproved.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0xfa,0xb0,0x36,0xe6,0x43,0x8b,0x0e,0xc9,0x1f,0x8a,0xc1,0xe6,0x40,0x8a,0xc5,0xe6 ; @01696
 ; UNKNOWN: unresolved bytes

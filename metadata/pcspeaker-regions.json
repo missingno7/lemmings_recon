@@ -2,8 +2,48 @@
   "regions": [
     {
       "start": 0,
-      "end": 30,
+      "end": 1,
+      "classification": "unresolved"
+    },
+    {
+      "start": 1,
+      "end": 3,
       "classification": "runtime_data"
+    },
+    {
+      "start": 3,
+      "end": 6,
+      "classification": "unresolved"
+    },
+    {
+      "start": 6,
+      "end": 7,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 7,
+      "end": 8,
+      "classification": "unresolved"
+    },
+    {
+      "start": 8,
+      "end": 25,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 25,
+      "end": 26,
+      "classification": "unresolved"
+    },
+    {
+      "start": 26,
+      "end": 28,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 28,
+      "end": 30,
+      "classification": "unresolved"
     },
     {
       "start": 30,
@@ -31,5 +71,27 @@
       "classification": "unresolved"
     }
   ],
-  "overlays": []
+  "overlays": [
+    {
+      "start": 0,
+      "end": 224,
+      "class": "runtime_data",
+      "overlay": true,
+      "evidence": "Raw AH20..FF writes AL to byte(originalAH-20)=0000..00DF at01A6, covering header/table/first184 record bytes. Also raw reads11..1F cover0001..000F. This write-window overlay does NOT settle unidentified stored roles0000/0003..0005/0007/0019/001C..001D."
+    },
+    {
+      "start": 40,
+      "end": 64,
+      "class": "lookup_table",
+      "overlay": true,
+      "evidence": "Raw command05..10 reads12 little-endian target words from first24 record bytes via0196. Initial targets listed in dispatcher ledger; these are data-as-target reads, not extra service-table entries."
+    },
+    {
+      "start": 385,
+      "end": 758,
+      "class": "static_data",
+      "overlay": true,
+      "evidence": "Raw LoadEffect AL17..2F explicitly reads consecutive15-byte spans0181..02F7. This proves a COPY-SOURCE overlap across separator,code,tail (02F6/02F7 outside payload), not intended record/code ownership of UNKNOWN bytes. Natural IDs02/0C/13 do not touch it."
+    }
+  ]
 }

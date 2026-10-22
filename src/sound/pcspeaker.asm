@@ -1,6 +1,81 @@
 ; Canonical decompressed driver. No initialization/relocation patches.
 ; Entry offset0182 is installed as INT60; see sound-hints.json for the original install.
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
+;
+; S13 STATIC SEMANTIC CONTRACT (hex addresses unless an ordinal says decimal).
+; Ledger: pcspeaker_InterruptEntry owns producers/raw target words/writers,
+; lifecycle/timer/unknowns;EffectRecords owns all23 decoded15-byte records.
+; Section5 ofMAIN.DAT (758 bytes) replaces main08420..08715,then main165D
+; installs relocated0842:0182. Main5967 frame and1652 frame have relocations.
+; Initial stored mainzeros and this replacement are separate executable views.
+; Watchdog0183/0492 reinstalls without reload;16A9 restoresINT08,notINT60.
+;
+; ALL RECOVERED MAIN INT60 PRODUCERS (fresh analyze() equals rawCD60 census):
+;0273 AX0100 stop /0286 AX0000 tick: music-toggle key path;
+;02E1 AX0100 stop /02F4 AX0000 tick: end-of-level path;
+;185F AX0000 tick: newly incremented001C odd only;
+;2377 AX030C,26C0 AX0313,2F8C AX0302,31F6 AX0313,3F8D AX0313:effects.
+; Each site checks main2010!=FF and25A7&1;stop/tick pairs reloadAX and gates
+; separately. Natural effect IDs02/0C/13 select0046/00DC/0145,all in records.
+; No recovered main raw reader/setter,02/04 or05..10 command. Protected-state
+; ASM has noINT60; no main direct target enters08420..08715. These negatives
+; do not exclude unknown transformed code,generic segmented stores or aliases.
+;
+; CONDITIONAL DISPATCH CLOSURE: intact loaded section/table,ordinary separated
+; DS/SS/CS and actual live frames,no external writer. Only00/01/03 ->01D4/
+;024F/01B0. These helpers write active1,phase6,countdowns8/9,fields0A..18,
+; and last divisor1A..1B;NONE writes001E..0027. Thus recovered requests preserve
+; the original three target words. All raw quirks remain,includingzero targets.
+; RawAH00..10 calls DS:[001E+2*originalAH] in currentCS;02/04 target0000 data,
+;05..10 read first24 effect bytes. This is not an extended service table.
+; Initial05 target0320 enters main8740 UNKNOWN;06/07 target0C80 reaches main
+;90A0 renderer storage underCS0842,not mainCS0. Other initial rawtargets can
+; reach data/beyondmain;ledger lists flat offsets without proving valid entries.
+; RawAH11..1F reads byte0001..000F;AH20..FF writesAL to0000..00DF.
+; AH3E..47 can replace ALL ten stored table bytes;48..5F changes05..10 operands.
+; Both raw read/write paths retainAH=(originalAH-10h)&FF;children may changeAX.
+;0196 reads target BEFORE pushing019A;actual stack can alias the table/returns.
+; Allsix restored registers and IRET IP/CS/FLAGS are reread from liveSS.
+;
+; TIMER/INTERRUPTS: Tick has no private IRQ installer. Game17C7 calls185F at
+; odd001C with the gates above.0182 STI occurs before saves,so a foreground
+; LoadEffect/Stop can be preempted. Load clearsactive01BD BEFORE15 explicit
+; copy stores and activates last01CF:ordinary nestedTick sees old,inactive,or
+; complete neweffect. InactiveTick still incrementsphase6 and can change PIT
+; cache/ports;it does not touch copy fields. Raw setters,changedsegments and
+; reentrant/provider/code aliases are independent seams;no universal schedule.
+; Stop only clearsactive. The following mainTick chooses quiet divisor2;
+; everyTick still reads61 and writes61|3,not a physical gate-disable policy.
+;
+; STATE/STORED ROLES: loaded active1=0,step2=0,phase6=0,countdowns/fields=0,
+; lastdivisor1A=0. Phase6+=step2 on everyTick wraps8;no later phase reader was
+; identified. NamesNoiseStep/NoisePhase do not establish an audible-noise path.
+; Tick consumes every copied field: fiveLEwords step/current/reset/deltaA/B,
+; rotatingbytes14/15,duration16,pulse/modreload17/18. Reload0 wraps256;period
+; additions wrap16;ROR carry chooses deltas/gate. No index/duration clamps.
+; The raw positive indexes00..16h read23 complete records0028..0180. Natural
+; producers select only02/0C/13. RawAH48..FF changes stored0028..00DF only:
+; records00..0B plus first4 bytes of0C. Load does not modify stored records.
+; Signed selectors wrap16 and can read header/table/code/UNKNOWN/beyondpayload;
+; explicitINC copy ignoresDF,retains live source/destination overlap and reload.
+;
+; STORED UNKNOWN:0000,0003..0005,0007,0019,001C..001D have no identified
+; regular musical field/owner. Earlier blanket0000..001D runtime hint is now
+; split;raw read/write/source windows are overlays,not inferred stored roles.
+;0181=90 has no recovered entry/intendedrole;rawAL17 copies it with entrybytes.
+;0255..02F5 afterStopRET look like other-code fragments,but no recovered entry,
+; initial dispatch target or main direct transfer establishes execution/ownership.
+; No16-byte tail window matches another decoded component,unpackedmain or local
+; top-level asset. No provenance/dead-code/padding inference follows that search.
+; RawAL25..2F copies tail;AL2F reaches outsidepayload02F6/02F7 as well. These
+; source-read overlays preserve UNKNOWN primary roles. A raw table setter can
+; target0181/anytailoffset,so no global no-code claim is made.
+;
+; READINESS: CONDITIONAL for natural00/01/03 and separated intact memory;
+; raw arbitrary targets,UNKNOWN storedroles,actualIRQ/device/provider/lifetime
+; closure still block whole-imagefreeze. Existing native dispatcher exitsbefore
+; Tick;helperC success does not complete Tick bus/dispatcher composition. Muted/
+; unbound sound omits this original behavior;hardware equivalence is unverified.
 bits 16
 org 0
 pcspeaker_CurrentEffect equ pcspeaker_PeriodStep
@@ -8,16 +83,16 @@ pcspeaker_EffectRecordSize equ 15
 pcspeaker_sub_01B0 equ pcspeaker_LoadEffect
 pcspeaker_sub_01D4 equ pcspeaker_Tick
 pcspeaker_sub_024F equ pcspeaker_Stop
-; DATA: runtime_data
+; UNKNOWN: stored byte0; raw setter/copy source is a separate overlap.
     db 0x00 ; @00000
 pcspeaker_EffectActive:
 ; DATA: runtime_data
     db 0x00 ; @00001
 pcspeaker_NoiseStep:
-; DATA: runtime_data
+; STORED:0002 runtime_data;0003..0005 UNKNOWN (raw accessor overlap).
     db 0x00,0x01,0x00,0x00 ; @00002
 pcspeaker_NoisePhase:
-; DATA: runtime_data
+; STORED:0006 runtime_data;0007 UNKNOWN,not inferred padding.
     db 0x00,0x90 ; @00006
 pcspeaker_PulseCountdown:
 ; DATA: runtime_data
@@ -50,14 +125,38 @@ pcspeaker_EffectDuration:
 ; DATA: runtime_data
     db 0x00 ; @00016
 pcspeaker_EffectReload:
-; DATA: runtime_data
+; STORED:0017..0018 runtime reload pair;0019 UNKNOWN.
     db 0x00,0x00,0x90 ; @00017
 pcspeaker_LastPitPeriod:
-; DATA: runtime_data
+; STORED:001A..001B runtime last divisor;001C..001D UNKNOWN.
     db 0x00,0x00,0x00,0x00 ; @0001A
 pcspeaker_DispatchTable001E:
 ; DATA: lookup_table
     dw pcspeaker_Tick,pcspeaker_Stop,0,pcspeaker_LoadEffect,0 ; @0001E
+; RECORD LIST (index@address:step,current,reset,deltaA,deltaB;mod,gate,duration,pulse,modreload)
+; 00@0028: 0320,0C80,0C80,0140,FEC0;55,00,0A,00,01
+; 01@0037: 0190,0960,0960,0140,FEC0;55,00,0A,00,01
+; 02@0046: FF90,08C0,08C0,FFF0,0010;37,00,0A,00,01 MAIN
+; 03@0055: 0280,26C0,26C0,0560,F9C0;55,2C,0C,02,01
+; 04@0064: FD20,23A0,23A0,0240,FDC0;55,00,06,00,01
+; 05@0073: 0100,2080,2080,0560,FAA0;55,00,14,15,01
+; 06@0082: 0100,10E0,10E0,0560,FAA0;55,00,14,15,01
+; 07@0091: 0100,10E0,10E0,0240,FDC0;55,00,1B,07,01
+; 08@00A0: 01A0,3020,3650,0560,FAA0;D4,44,07,03,01
+; 09@00AF: 0050,0140,0140,0030,FFD0;55,00,23,00,01
+; 0A@00BE: FFC0,0460,0460,0010,FFF0;55,00,0A,00,01
+; 0B@00CD: 0270,0320,0320,0320,FCE0;55,00,05,00,01
+; 0C@00DC: 01A0,2080,2CF0,0560,FAA0;D4,44,46,09,01 MAIN
+; 0D@00EB: FF90,1F40,1F40,0010,FFF0;55,00,19,02,01
+; 0E@00FA: FFD0,1900,1900,0010,FFF0;55,00,19,02,01
+; 0F@0109: FFA0,1540,1540,FF40,0130;37,00,2C,00,01
+; 10@0118: 0090,00A0,00B0,0A70,F590;55,00,0F,05,01
+; 11@0127: 0790,2120,2120,00A0,FF60;33,00,27,06,01
+; 12@0136: 0050,1F40,2BC0,0640,FA60;55,88,50,00,01
+; 13@0145: 0680,0010,0010,0110,FF20;55,EC,05,00,01 MAIN
+; 14@0154: 0150,0AA0,10E0,0740,F8C0;33,00,19,05,01
+; 15@0163: 0001,00A0,00B0,0A70,F590;55,00,0F,05,01
+; 16@0172: 0270,0050,0060,0A70,F590;55,00,07,00,01
 pcspeaker_EffectRecords:
 ; DATA: effect_record_table
     db 0x20,0x03,0x80,0x0c,0x80,0x0c,0x40,0x01,0xc0,0xfe,0x55,0x00,0x0a,0x00,0x01,0x90 ; @00028
@@ -103,7 +202,7 @@ pcspeaker_EffectRecords:
     db 0x00,0x70,0x0a,0x90,0xf5,0x55,0x00,0x0f,0x05,0x01,0x70,0x02,0x50,0x00,0x60,0x00 ; @00168
 ; DATA: effect_record_table
     db 0x70,0x0a,0x90,0xf5,0x55,0x00,0x07,0x00,0x01 ; @00178
-; UNKNOWN: unresolved bytes
+; UNKNOWN:0181 stored90;no intended role/entry. RawAL17 copies it with code.
     db 0x90 ; @00181
 ; INT60 dispatcher contract (0182..01AF), with quiescent asynchronous IRQs:
 ; STI precedes live SS saves BX/CX/DX/SI/DI/DS and PUSH CS / POP DS.
@@ -154,6 +253,8 @@ pcspeaker_loc_01AA:
 ; Explicit INC ignores DF. Read reload DS:0017 after copying; write DS:0008.
 ; DEC DS:0001 rereads its actual byte, preserving address-add carry and recording
 ; entry flags on both RMW bus accesses. RET uses the post-body live SS word.
+; No port output or phase/cache reset here;the first scheduledTick predecrements
+; duration. PositiveN givesN-1 active computations;0 expires on256thTick.
 pcspeaker_LoadEffect:
     mov cx,0xf ; @001B0
     mov bx,0x28 ; @001B3
@@ -175,6 +276,10 @@ pcspeaker_loc_01C1:
     mov [0x8],ax ; @001CC
     dec byte [0x1] ; @001CF
     ret ; @001D3
+; Tick contract: phase always advances; inactive/end selects divisor2. Duration
+; and both countdowns wrap;period/deltas wrap16;ROR carries select A/B and gate.
+; Program PIT43/42 only on cache difference,then always port61|3. No phase
+; reader feeds sound;actual device/IRQ cadence is not supplied by this helper.
 pcspeaker_Tick:
     mov cx,0x2 ; @001D4
     db 0x8a,0xfd ; ENCODED: mov bh,ch (NASM selects different opcode/operand width) ; @001D7
@@ -224,11 +329,14 @@ pcspeaker_loc_0248:
     or al,0x3 ; @0024A
     out 0x61,al ; @0024C
     ret ; @0024E
+; Stop clears active only. Main stop/tick pairs perform the later PIT update;
+; this body neither disables gate61 nor writes a divisor.
 pcspeaker_Stop:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM selects different opcode/operand width) ; @0024F
     mov [0x1],al ; @00251
     ret ; @00254
-; UNKNOWN: unresolved bytes
+; UNKNOWN:0255..02F5 code-like fragments;no established entry/frame/provenance.
+; RawAL25..2F copies these bytes,but that does not prove stored record/code role.
     db 0x90,0x6b,0x83,0xc4,0x06,0x0b,0xd0,0x74,0x18,0xff,0x06,0x40,0x07,0x8b,0x46,0x04 ; @00255
 ; UNKNOWN: unresolved bytes
     db 0x40,0x50,0xb8,0xe8,0x07,0x50,0xe8,0xd8,0x9e,0x83,0xc4,0x04,0x8b,0xe5,0x5d,0xc3 ; @00265

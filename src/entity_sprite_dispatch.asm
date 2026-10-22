@@ -45,6 +45,26 @@ times -(($-$$) != 0x706f) db 0 ; module start assertion
 ; READINESS: CONDITIONAL nine-target preservation under initialized slots,
 ; completed publication, DF=0 action/map lifetime, disjoint writers and intact
 ; live saves/services. Raw706F and whole-program715B target domains stay OPEN.
+; S12 BOUND: for a reset array, pinned nominal headers limit creation to50h
+; only if4013 snapshots cannot race30CC limit sampling through314B. With this
+; serialized handoff, genuine cursors, initialized/live unchanged callback
+; slots, DF0 at action5 AND visibility writers, no other writer/alias and
+; intact SS target transport, every715B target is IN the nine-value set.
+; This is membership preservation; it does not prove all nine occur per level.
+; Count50 alone is insufficient:DF1 visibility clears slots4C..4F callbacks;
+; DF0 visibility reaches slot50 after an unchecked/raced capacity spill.
+; DS AT715B: no-strip path inherits706F DS exactly. Strip6F7C saves that DS,
+;6FAB sets source DS=CX and6FE0 restores the live saved word;7155..715A do
+; not repair DS. CX restored at7157 is the sprite source segment computed
+; at7112/7116, not main DS; the strip instead uses1FE8 at7126. Known targets
+; save current DS, set source DS from CX and restore the actual save on exit.
+; Near CALL715B retains current CS; callback+14 has no segment component.
+; SS is the live stack/map/mirror frame, not implicitly DS. For foreground
+; SP=P,3634's CALL/save/save/CALL gives706F S=P-8. If P=4AF4 with intact
+; balance, callback save is4AE6 and strip DS save4ADA, clear of low SS mirrors
+; and the normal dirty maps ending48F3. This is a sufficient local placement,
+; not a proof that arbitrary prior execution preserves that SP/SS/DS domain.
+; READINESS remains CONDITIONAL; target_domain_complete must remain false.
 DrawObjectSprite:
     push di ; @0706F
     mov bx,[di+EntityRecordX-EntityRecordsBase] ; @07070

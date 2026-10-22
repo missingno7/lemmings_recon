@@ -109,6 +109,7 @@ sub_184E:
     test byte [SoundOptionBits-GameDataImage],0x1 ; @01855
     jz GameTimerAfterInt601861 ; @0185A
     mov ax,0x0 ; @0185C
+; S13: PC Tick only on newly incremented001C odd,2010!=FF and25A7&1. Allten recovered INT60 producers use00/01/03;effects02/0C/13 select0046/00DC/0145.0182 STI before saves permits preemption of foreground LoadEffect/Stop. Load clearsactive before15 stores and activates last;ordinary nestedTick sees inactive during copy. InactiveTick still updatesphase/PITcache/ports,always61|3;Stop has no immediate hardware output. See pcspeaker_InterruptEntry ledger;actual IRQ/PIC schedule remains open.
 GameTimerInt60185F:
     int 0x60 ; @0185F
 GameTimerAfterInt601861:
@@ -122,6 +123,7 @@ sub_186F:
 ; [1872] INT61 AH00 is called once per enabled game IRQ with DS:2010==FF and SoundOptionBits&3!=0; unlike INT60 there is no odd TimerCadenceCounter guard. AdLib0115 handles requests before phase decrement and all nine visits; timer/PIT configuration owns real cadence, not a fixed driver Hz.
 GameTimerInt611872:
     int 0x61 ; @01872
+; DF FOR COMMAND WRITERS:1840 input polling (including425F mouse INT33/live42A5) and185F/1872 sound precede this command call. No CLD separates their returned DF from3FDE->410F visibility.18A7/18B1 restore saved foreground flags only afterward; foreground DF0 does not prove writer DF0 inside this IRQ. Conversely an intact outer IRET prevents handler-local DF alone from leaking into foreground3150. The4013 command can race foreground30D5..314B count publication.
 loc_1874:
 GameTimerAfterInt611874:
     call ProcessInputCommands3E6F ; @01874

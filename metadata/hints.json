@@ -409,6 +409,24 @@
       "evidence": "42A1 loads indirect callback from DS:25A0; static4252; stores4334/4359 at4A68/4A80"
     },
     {
+      "start": 49202,
+      "end": 49206,
+      "class": "runtime_data",
+      "evidence": "Exactly DS25A2/25A4 calibration LE16 words,stored zero,4A73/77/8B/8F writers and42B0/42B4 consumers;process persistence outside ordinary clears. Mode1 precedes separate calibration stores; GROUND maximum/indexed/string/stack/provider aliases remain,not exclusive ownership."
+    },
+    {
+      "start": 49206,
+      "end": 49207,
+      "class": "runtime_data",
+      "evidence": "Exactly DS25A6 input selector,stored00 and0F64/4A6D/4A85/4AB5/4ABD writers;418C/4196 and prompt readers distinguish00/01/other. Survives clears;calibration handoff and broad writer aliases remain;no closed raw three-value domain."
+    },
+    {
+      "start": 49207,
+      "end": 49208,
+      "class": "runtime_data",
+      "evidence": "Exactly DS25A7 sound option bitfield,storedFF,sound setup/menu/0289/02A6 writers,mask1/2/3 readers and4E5A menu consumer. Separate driver2010/menu ordinal1F71,process lifetime outside clears;GROUND/export/cache/SS/provider aliases explicit."
+    },
+    {
       "start": 49208,
       "end": 49304,
       "class": "static_data",
@@ -827,6 +845,18 @@
       "end": 61204,
       "class": "lookup_table",
       "evidence": "DS:547C byte table indexed byAND7 at5DEE/6164 and6F40/7058, read5DF5/616B/6F49/705D; image80,40,20,10,08,04,02,01; identifies only these8 storedbytes,not immutable live DS or adjacent extent"
+    },
+    {
+      "start": 61310,
+      "end": 61430,
+      "class": "lookup_table",
+      "evidence": "Exactly nominal120-byte DS54EE..5565 order object:stored selectors,1987 read,four30-entry group producers4515/4545,completion473E,next independent1180-byte override destination. No78h clamp:raw index reaches55ED in override buffer. Classification records schema/lifetime,not immutability,complete selector/writer closure or adjacent-table extension."
+    },
+    {
+      "start": 61430,
+      "end": 65910,
+      "class": "runtime_buffer",
+      "evidence": "Exactly DS5566..66E5 requested1180h raw-load destination19D5/19D9/19DC,stored zero pre-load state,38h source slices and supplied80-record layout. Valid after complete odd read;short suffix remains old;normal clears exclude it. Unchecked0..127 slice reads and DF1 overlap explicit;do not include66E6..66EF or renderer fields."
     },
     {
       "start": 65920,

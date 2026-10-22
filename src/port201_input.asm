@@ -72,10 +72,20 @@ MeasurePort201Axes:
 Port201PulseOut4392:
     out dx,al ; @04392
     jmp short loc_4396 ; @04393
+; S14 U061: [04395,04396) stored bytes remain UNKNOWN.
+; Neighbours: P 04393 jmp 0x4396; N 04396 jmp 0x4399.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04395
 loc_4396:
     jmp short loc_4399 ; @04396
+; S14 U062: [04398,04399) stored bytes remain UNKNOWN.
+; Neighbours: P 04396 jmp 0x4399; N 04399 in al, dx.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @04398
 loc_4399:

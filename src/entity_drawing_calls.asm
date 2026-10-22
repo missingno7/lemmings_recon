@@ -27,6 +27,24 @@ times -(($-$$) != 0x3634) db 0 ; module start assertion
 ; frame+28<1; otherwise6E83 is a direct CALL. No target may be removed globally.
 ; Global nine-target closure remains open: DF=1 action5 byte-writes+14/+15,
 ; visibility and count spill write into slots, and706F uses a writable SS save.
+; BOUNDED PREFIX: pinned nominal120 selections give header limit<=50h, so
+; reset bound0 plus serialized limit writes/creation publication confines
+; records to0088..0E97. This is conditional asset/lifetime evidence, not an
+; array check. IRQ1874->4013 can lower the limit to B after30D5 passes and
+; before314B increments to B+1; equality-only creation may then spill past50.
+; Visibility DF0 cannot touch the prefix:4119 clears0EA8..0F77 and4131 starts
+; at0EA6+(unsigned(origin)>>3), always above0E97. DF1 clears0DDA..0EA9,
+; zeroing BOTH callback bytes of slots4C..4F (0DF8/0E25/0E52/0E7F). Its
+; following29h-byte marker cannot reach the first three words; at slot4F it
+; leaves0101 for origin>>3=0/1,0100 for2,0000 for>=3, absent other writers.
+; Thus even a count50 is not callback-safe if visibility itself runs DF1.
+; DF1 may be IRQ-local:1840 polls mouse before1874 commands/3FDE->410F,
+; and18A7/18B1 restore foreground flags only AFTER that writer. Foreground
+; DF0 alone is insufficient; require DF0 at each visibility invocation too.
+; Minimap6FE2,dirty5726,point6E83 do not assign DS.706F likewise inherits DS;
+; its optional6F7B and nine known callbacks restore DS from actual SS saves.
+; With those saves intact the loop keeps main DS; ES is live (often A000),
+; never an invariant record segment. Damaged saves/services remove the claim.
 DrawEntityRecords:
     mov di,EntityRecordsBase-GameDataImage ; @03634
     mov cl,[EntitySlotBound-GameDataImage] ; @03637
@@ -56,6 +74,11 @@ EntityDrawingAfterDirty:
 EntityDrawingAfterPoints:
     pop di ; @0366C
     jmp short EntityDrawingRestoreRecord ; @0366D
+; S14 U042: [0366F,03670) stored bytes remain UNKNOWN.
+; Neighbours: P 0366D jmp 0x367d; N 03670 mov byte ptr [0x50], 0xff.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0366F
 loc_3670:

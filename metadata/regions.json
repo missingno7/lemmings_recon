@@ -1258,7 +1258,7 @@
     {
       "start": 49202,
       "end": 49208,
-      "classification": "unresolved"
+      "classification": "runtime_data"
     },
     {
       "start": 49208,
@@ -1507,6 +1507,21 @@
     },
     {
       "start": 61204,
+      "end": 61310,
+      "classification": "unresolved"
+    },
+    {
+      "start": 61310,
+      "end": 61430,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 61430,
+      "end": 65910,
+      "classification": "runtime_buffer"
+    },
+    {
+      "start": 65910,
       "end": 65920,
       "classification": "unresolved"
     },

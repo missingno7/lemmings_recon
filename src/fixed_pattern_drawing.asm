@@ -61,6 +61,11 @@ loc_71BE:
     mov ds,bp ; @071C7
 FixedPatternCopyReturn:
     ret ; @071C9
+; S14 U086: [071CA,07218) stored bytes remain UNKNOWN.
+; Neighbours: P 071C9 ret; N 07218 cli.
+; Candidate71CA remembers DS in BP,CLI,programs SEQ0F02/GC0105. SI=low16(44*word[DS0012]+(word[DS0010]>>3)+word[DS1F78]);stores DS000C=SI,DI=[DS0008],ES=DS=A000.16 rows copy3 bytes then ADD SI,29; strings follow DF,ADD stays positive. STI forces IF1,DS restored fromBP,ES remainsA000,BP clobbered. Live PUSH DX/POP DX/RET useSS. Resemblance to reached715F does not establish a second entry.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x8c,0xdd,0xfa,0xba,0xc4,0x03,0xb8,0x02,0x0f,0xef,0xba,0xce,0x03,0xb8,0x05,0x01 ; @071CA
 ; UNKNOWN: unresolved bytes

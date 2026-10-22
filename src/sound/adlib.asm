@@ -151,6 +151,56 @@
 ; Playback remains CONDITIONAL at the original inherited-state/live-DX/device/
 ; IRQ/SS/alias seams. Muted/unbound native sound omits this engine behavior;
 ; no C success, classification partition or static cycle proves equivalence.
+; S13 PRODUCER CLOSURE FOR01EA (conditional, not global frontier deletion).
+; The ledger adlib_StreamCommandTargets.producer_domain owns the full induction,
+; all28 main INT61 sites, actual byte-ID producers, pointer writers and residue.
+; Main03B4 loads BYTE0054 then AH03;2FE9 loads BYTEobject+1B then AH04.
+; Normal CS4877..4887 / special4888..488B tables supply all21 song IDs;
+; normal index1F6C wraps ONLY exactINC==11h, special0FE8-1 is unchecked.
+; GROUND1B4B ->378A28-byte DF copy ->17CB records ->2FE9 supplies object IDs;
+; supplied first16-record union06/07/09/0E/0F does not bound mutable/raw IDs.
+; Crucially driver0457 accepts only01..15,051C only01..12: arbitrary main
+; ID bytes do not add a stream root.0 or invalid effect stays pending;invalid
+; song>=16 stops music. Main05E1/05E5/05EB/05EF/05F3 follow Tandy replacement,
+; so are not AdLib producers in the intact loader. No recovered main AH05.
+;
+; Domain: pinned live decoded AdLib, serial public services, ordinary separated
+; RAM/stack, DS=CS from intact saves, DF0 during reset/headerLODS, no external
+; mutation/reentry/replacement/free. Loaded EF0 stays0 at every service boundary:
+;0461 is its only nonzero producer,0473 clears before processing;EE!=0 therefore
+; skips withEF0. InconsistentEF!=0/EE!=0 liveAL behavior stays in the RAW domain.
+; WithDF0 all accepted headers have3/4 channels. Loaded modes0;start clears9
+; and initializes each activated musicPC/order before return;FX activates a free
+; last-four record then fetches its validated absolute root immediately. No
+; reset/stop/end activates an old PC. Music80 alone changes order;all pinnedFX
+; end85 and never read stale order. Retained instrument/duration/transpose/slide
+; can change release/pitch/delay, never add a stream root or change token widths.
+; StoredPC writers:04D7/040C/0427/01B3;order:04D3/0408/0423.017E reloadsPC;
+;01B3 saves the next parsed boundary. Non-event0339/03CA never writesPC/order.
+; S6 closes all69 order lists/378 score roots/18FX roots and operand boundaries.
+; Thus83/88..AF cannot reach01EA in this domain, even arbitrary byte ID requests.
+; Actual low tokens80/81/82/84/85/86/87 reach seven stored targets. Raw83
+; remains in the eight-word table/hint; its handler is not removed.
+;
+; EXACT RESIDUE: AdLib has noCLD;INT retainsDF. Main1BB0 setsDF,1D34/1C78
+; and protected08D2 clear it. The local STD window ends at first1D34,not
+; throughout reverse decoding.17C7 ->1872 never clears interruptedDF.
+; No whole-program/provider/IRQ lifetime proof establishesDF0 at every song start.
+; DF1 makes headerH read word0[H],bank[H-2],tempo[H-4],count[H-5],orders[H-6-2k].
+; Valid song03 H114C then count4,bank0B6E,orders0FE7/177A/0B70/6C8F;this escapes
+; supplied grammar (last order already outside pinned bytes). Most reversed
+; headers give count0,which entersLOOP withCX0. This is static instruction/data
+; derivation, NOT a claim that such a game schedule was reached or safely returns.
+; Changed liveDS/SS/code/table/pointers,raw internal entries,reentry and protected
+; transformations still invalidate the induction.40 out-of-table words remain
+; code-byte reads,not extra dispatch entries or proved executable destinations.
+; Main057B installs BEFORE058D load;05CA replaces withTandy;05FA can free without
+; restoringINT61.03B9/03BE test music bit only(no2010 guard);02A6 can set bits3
+; after failure. Music-enabled does not prove live allocated AdLib ownership.
+; READINESS: READY for this conditional producer/token exclusion;full playback
+; remains CONDITIONAL at real inherited-state/device/IRQ/segment/lifetime seams.
+; Muted/unbound native sound omits these original services;equivalence unverified.
+;
 bits 16
 org 0
 ; S6 non-emitting payload addresses; every equate is ledger-backed.
@@ -1141,6 +1191,9 @@ adlib_loc_01CE:
 ; No clamp, implicit subtraction in a wider integer, or invented extra table.
 ; Immutable out-of-table words do not prove their destinations executable;
 ; mutable/aliased bytes further widen the raw target domain. Frontier stays open.
+; S13 header/ledger proves conditional exclusion of88..AF from initialized
+; serial DF0/nonalias/live-image public-service producers, even arbitrary IDs.
+; Do not apply that result to DF1/replaced/freed/aliased/raw-entry states.
     cmp al,0xe0 ; @001CE
     nop ; @001D0
     nop ; @001D1
@@ -1767,7 +1820,8 @@ adlib_sub_0559:
 ; B6A byte tempo reload: loaded09,04B7 ->0168; B6B byte phase: loaded00,
 ; 0516/0127/016B ->0189/0161. B6C word music count: loaded0001,
 ; 04BF ->03AD, ALSO raw songID0 directory slot; do not split into spare bytes.
-; Song headers/pointers/tokens beyond0B6E remain unclassified in this task.
+; S6 owns classification of consumed score/FX bytes beyond0B6E; its explicit
+; UNKNOWN residue remains. S13 pointer induction does not change that partition.
 ; STORED [start,end): 05A0..05A8 unresolved; 05A8..05AA runtime_data; 05AA..05AC unresolved; 05AC..05B0 runtime_data
     db 0x52,0x8b,0x16,0xa3,0x08,0xec,0x5a,0xc3,0x00,0x40,0x00,0x40,0x00,0x00,0x00,0x00 ; @005A0
 ; STORED [start,end): 05B0..05C0 runtime_data

@@ -11,9 +11,10 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+      "Initial00;Load01BD zero then01CF DEC;Tick01E0/01EC;Stop0251;byte wrap."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_role": "latch"
   },
   {
     "address": 2,
@@ -27,9 +28,10 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+      "Initial00;01D9 reader;only raw setter22 can change;phase-only use,not audible noise proof."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_role": "step"
   },
   {
     "address": 6,
@@ -43,9 +45,10 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+      "Initial00;01DC byte add of2 eachTick,includinginactive;no later reader found."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_role": "stored phase"
   },
   {
     "address": 8,
@@ -253,11 +256,431 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Direct data use by original 01B0/01D4 helpers; offset derived from their memory operands"
+      "Exactly23 contiguous15-byte records0028..0180 initialized from pinned MAIN.DAT5, each field copied by01C1..01C7 for raw index00..16h and consumed byTick;natural main IDs02/0C/13 select0046/00DC/0145.001E table and0182 entry bound stored layout;0181 is excluded. Raw write/source overlays retain mutable and out-of-range alternatives."
     ],
     "verification_status": "STATIC",
     "element_size": 15,
-    "element_size_symbol": "pcspeaker_EffectRecordSize"
+    "element_size_symbol": "pcspeaker_EffectRecordSize",
+    "record_schema": {
+      "size": 15,
+      "index_formula": "0028+signed8(AL)*15 modulo65536;byte IMUL CL,CL=0F;explicit INC forward copy ignoresDF",
+      "fields": [
+        {
+          "offset": 0,
+          "size": 2,
+          "destination": 10,
+          "meaning": "periodstep"
+        },
+        {
+          "offset": 2,
+          "size": 2,
+          "destination": 12,
+          "meaning": "initial/currentperiod"
+        },
+        {
+          "offset": 4,
+          "size": 2,
+          "destination": 14,
+          "meaning": "pulse-resetperiod"
+        },
+        {
+          "offset": 6,
+          "size": 2,
+          "destination": 16,
+          "meaning": "modulationdeltaA"
+        },
+        {
+          "offset": 8,
+          "size": 2,
+          "destination": 18,
+          "meaning": "modulationdeltaB"
+        },
+        {
+          "offset": 10,
+          "size": 1,
+          "destination": 20,
+          "meaning": "rotating modulation pattern"
+        },
+        {
+          "offset": 11,
+          "size": 1,
+          "destination": 21,
+          "meaning": "rotating gate pattern"
+        },
+        {
+          "offset": 12,
+          "size": 1,
+          "destination": 22,
+          "meaning": "duration ticks"
+        },
+        {
+          "offset": 13,
+          "size": 1,
+          "destination": 23,
+          "meaning": "pulse reload;zero wraps256"
+        },
+        {
+          "offset": 14,
+          "size": 1,
+          "destination": 24,
+          "meaning": "modulation reload;zero wraps256"
+        }
+      ],
+      "natural_indexes": [
+        2,
+        12,
+        19
+      ],
+      "raw_domain": "AllsignedAL admitted;positive00..16h covers stored23records.23..47 read code/UNKNOWN/beyond;negative selectors wrap before0028 and may overlap live header/table. Stored extent is not a bound check.",
+      "writers": "Decoded section supplies all23 complete15-byte records;01A6 rawAH48..FF mutates0028..00DF only (records00..0B plus first4bytes of0C);no recovered main setter.01C3 writes only live000A..0018, not stored records."
+    },
+    "entries": [
+      {
+        "index": 0,
+        "address": 40,
+        "period_step": 800,
+        "initial_period": 3200,
+        "pulse_reset_period": 3200,
+        "modulation_delta_a": 320,
+        "modulation_delta_b": 65216,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 10,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 1,
+        "address": 55,
+        "period_step": 400,
+        "initial_period": 2400,
+        "pulse_reset_period": 2400,
+        "modulation_delta_a": 320,
+        "modulation_delta_b": 65216,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 10,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 2,
+        "address": 70,
+        "period_step": 65424,
+        "initial_period": 2240,
+        "pulse_reset_period": 2240,
+        "modulation_delta_a": 65520,
+        "modulation_delta_b": 16,
+        "modulation_pattern": 55,
+        "gate_pattern": 0,
+        "duration": 10,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": true
+      },
+      {
+        "index": 3,
+        "address": 85,
+        "period_step": 640,
+        "initial_period": 9920,
+        "pulse_reset_period": 9920,
+        "modulation_delta_a": 1376,
+        "modulation_delta_b": 63936,
+        "modulation_pattern": 85,
+        "gate_pattern": 44,
+        "duration": 12,
+        "pulse_reload": 2,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 4,
+        "address": 100,
+        "period_step": 64800,
+        "initial_period": 9120,
+        "pulse_reset_period": 9120,
+        "modulation_delta_a": 576,
+        "modulation_delta_b": 64960,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 6,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 5,
+        "address": 115,
+        "period_step": 256,
+        "initial_period": 8320,
+        "pulse_reset_period": 8320,
+        "modulation_delta_a": 1376,
+        "modulation_delta_b": 64160,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 20,
+        "pulse_reload": 21,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 6,
+        "address": 130,
+        "period_step": 256,
+        "initial_period": 4320,
+        "pulse_reset_period": 4320,
+        "modulation_delta_a": 1376,
+        "modulation_delta_b": 64160,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 20,
+        "pulse_reload": 21,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 7,
+        "address": 145,
+        "period_step": 256,
+        "initial_period": 4320,
+        "pulse_reset_period": 4320,
+        "modulation_delta_a": 576,
+        "modulation_delta_b": 64960,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 27,
+        "pulse_reload": 7,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 8,
+        "address": 160,
+        "period_step": 416,
+        "initial_period": 12320,
+        "pulse_reset_period": 13904,
+        "modulation_delta_a": 1376,
+        "modulation_delta_b": 64160,
+        "modulation_pattern": 212,
+        "gate_pattern": 68,
+        "duration": 7,
+        "pulse_reload": 3,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 9,
+        "address": 175,
+        "period_step": 80,
+        "initial_period": 320,
+        "pulse_reset_period": 320,
+        "modulation_delta_a": 48,
+        "modulation_delta_b": 65488,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 35,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 10,
+        "address": 190,
+        "period_step": 65472,
+        "initial_period": 1120,
+        "pulse_reset_period": 1120,
+        "modulation_delta_a": 16,
+        "modulation_delta_b": 65520,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 10,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 11,
+        "address": 205,
+        "period_step": 624,
+        "initial_period": 800,
+        "pulse_reset_period": 800,
+        "modulation_delta_a": 800,
+        "modulation_delta_b": 64736,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 5,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 12,
+        "address": 220,
+        "period_step": 416,
+        "initial_period": 8320,
+        "pulse_reset_period": 11504,
+        "modulation_delta_a": 1376,
+        "modulation_delta_b": 64160,
+        "modulation_pattern": 212,
+        "gate_pattern": 68,
+        "duration": 70,
+        "pulse_reload": 9,
+        "modulation_reload": 1,
+        "recovered_main_selected": true
+      },
+      {
+        "index": 13,
+        "address": 235,
+        "period_step": 65424,
+        "initial_period": 8000,
+        "pulse_reset_period": 8000,
+        "modulation_delta_a": 16,
+        "modulation_delta_b": 65520,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 25,
+        "pulse_reload": 2,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 14,
+        "address": 250,
+        "period_step": 65488,
+        "initial_period": 6400,
+        "pulse_reset_period": 6400,
+        "modulation_delta_a": 16,
+        "modulation_delta_b": 65520,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 25,
+        "pulse_reload": 2,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 15,
+        "address": 265,
+        "period_step": 65440,
+        "initial_period": 5440,
+        "pulse_reset_period": 5440,
+        "modulation_delta_a": 65344,
+        "modulation_delta_b": 304,
+        "modulation_pattern": 55,
+        "gate_pattern": 0,
+        "duration": 44,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 16,
+        "address": 280,
+        "period_step": 144,
+        "initial_period": 160,
+        "pulse_reset_period": 176,
+        "modulation_delta_a": 2672,
+        "modulation_delta_b": 62864,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 15,
+        "pulse_reload": 5,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 17,
+        "address": 295,
+        "period_step": 1936,
+        "initial_period": 8480,
+        "pulse_reset_period": 8480,
+        "modulation_delta_a": 160,
+        "modulation_delta_b": 65376,
+        "modulation_pattern": 51,
+        "gate_pattern": 0,
+        "duration": 39,
+        "pulse_reload": 6,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 18,
+        "address": 310,
+        "period_step": 80,
+        "initial_period": 8000,
+        "pulse_reset_period": 11200,
+        "modulation_delta_a": 1600,
+        "modulation_delta_b": 64096,
+        "modulation_pattern": 85,
+        "gate_pattern": 136,
+        "duration": 80,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 19,
+        "address": 325,
+        "period_step": 1664,
+        "initial_period": 16,
+        "pulse_reset_period": 16,
+        "modulation_delta_a": 272,
+        "modulation_delta_b": 65312,
+        "modulation_pattern": 85,
+        "gate_pattern": 236,
+        "duration": 5,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": true
+      },
+      {
+        "index": 20,
+        "address": 340,
+        "period_step": 336,
+        "initial_period": 2720,
+        "pulse_reset_period": 4320,
+        "modulation_delta_a": 1856,
+        "modulation_delta_b": 63680,
+        "modulation_pattern": 51,
+        "gate_pattern": 0,
+        "duration": 25,
+        "pulse_reload": 5,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 21,
+        "address": 355,
+        "period_step": 1,
+        "initial_period": 160,
+        "pulse_reset_period": 176,
+        "modulation_delta_a": 2672,
+        "modulation_delta_b": 62864,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 15,
+        "pulse_reload": 5,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      },
+      {
+        "index": 22,
+        "address": 370,
+        "period_step": 624,
+        "initial_period": 80,
+        "pulse_reset_period": 96,
+        "modulation_delta_a": 2672,
+        "modulation_delta_b": 62864,
+        "modulation_pattern": 85,
+        "gate_pattern": 0,
+        "duration": 7,
+        "pulse_reload": 0,
+        "modulation_reload": 1,
+        "recovered_main_selected": false
+      }
+    ]
   },
   {
     "address": 386,
@@ -307,7 +730,381 @@
     "verification_status": "TESTED",
     "c_implementation": "c/pcspeaker_dispatch.c",
     "c_core": "lmn_pc_speaker_dispatch_core",
-    "verification_domain": "0182..01AF dispatcher prefix and IRET adapter with quiescent asynchronous IRQs; live RAM/VGA stack and data providers; actual mutable CALL table composes only exact LoadEffect/Stop entries; Tick/other targets and changed child returns are explicit exits; INT60 transport and IRQ timing remain outside scope"
+    "verification_domain": "0182..01AF dispatcher prefix and IRET adapter with quiescent asynchronous IRQs; live RAM/VGA stack and data providers; actual mutable CALL table composes only exact LoadEffect/Stop entries; Tick/other targets and changed child returns are explicit exits; INT60 transport and IRQ timing remain outside scope",
+    "semantic_readiness": {
+      "status": "CONDITIONAL",
+      "domain": "Recovered main00/01/03 requests, intact loaded section5/table, separated ordinary RAM/stack, actual live INT60 frame and main timer; no code/table/segment-changing provider or external raw setter.",
+      "remaining": [
+        "STI exposes preemption; actual IRQ scheduling and device timing remain original obligations.",
+        "Raw zero/out-of-table and arbitrary setter-mutated targets are unresolved.",
+        "0181/trailing stored roles and eight unsupported header bytes stay UNKNOWN; raw copy/read/write overlays do not establish their intended ownership.",
+        "Existing native dispatcher still exits beforeTick; its success does not prove composition/hardware equivalence."
+      ]
+    },
+    "main_int60_producers": [
+      {
+        "site": 627,
+        "definition": 624,
+        "bytes": "b80001",
+        "ax": 256
+      },
+      {
+        "site": 646,
+        "definition": 643,
+        "bytes": "b80000",
+        "ax": 0
+      },
+      {
+        "site": 737,
+        "definition": 734,
+        "bytes": "b80001",
+        "ax": 256
+      },
+      {
+        "site": 756,
+        "definition": 753,
+        "bytes": "b80000",
+        "ax": 0
+      },
+      {
+        "site": 6239,
+        "definition": 6236,
+        "bytes": "b80000",
+        "ax": 0
+      },
+      {
+        "site": 9079,
+        "definition": 9076,
+        "bytes": "b80c03",
+        "ax": 780
+      },
+      {
+        "site": 9920,
+        "definition": 9917,
+        "bytes": "b81303",
+        "ax": 787
+      },
+      {
+        "site": 12172,
+        "definition": 12169,
+        "bytes": "b80203",
+        "ax": 770
+      },
+      {
+        "site": 12790,
+        "definition": 12787,
+        "bytes": "b81303",
+        "ax": 787
+      },
+      {
+        "site": 16269,
+        "definition": 16266,
+        "bytes": "b81303",
+        "ax": 787
+      }
+    ],
+    "natural_command_contract": {
+      "commands": [
+        0,
+        1,
+        3
+      ],
+      "effects": [
+        2,
+        12,
+        19
+      ],
+      "targets": [
+        468,
+        591,
+        432
+      ],
+      "guards": "Every recovered site tests2010!=FF and25A7&1;185F additionally requires newly incremented001C odd.0273/0286 and02E1/02F4 stop then tick with fresh gates and MOV AX each time.2377/26C0/2F8C/31F6/3F8D request effects. Main does not use raw reader/setter or command02/04/05..10.",
+      "closure": "Conditional on intact loaded pointer words and separated stack/data, neither00,01nor03 writes001E..0027; no recovered direct main target enters08420..08715 and only1652/5967 materialize0842. Generic segment/indirect/physical aliases and unknown transformed code are not excluded by these negatives."
+    },
+    "dispatch_domain": {
+      "raw_call_commands": [
+        0,
+        16
+      ],
+      "raw_header_reads": [
+        1,
+        16
+      ],
+      "raw_setter_writes": [
+        0,
+        224
+      ],
+      "ah_residue": "Both command paths first execute SUB AH,10h; raw read/write leaves residualAH. Child commands may subsequently change AX. Saved BX/CX/DX/SI/DI/DS and IRET FLAGS come from actual SS, not cached entry values.",
+      "initial_words": [
+        {
+          "command": 0,
+          "address": 30,
+          "value": 468,
+          "role": "stored_service_word",
+          "main_relative_runtime_offset": 34292,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 1,
+          "address": 32,
+          "value": 591,
+          "role": "stored_service_word",
+          "main_relative_runtime_offset": 34415,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 2,
+          "address": 34,
+          "value": 0,
+          "role": "stored_service_word",
+          "main_relative_runtime_offset": 33824,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 3,
+          "address": 36,
+          "value": 432,
+          "role": "stored_service_word",
+          "main_relative_runtime_offset": 34256,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 4,
+          "address": 38,
+          "value": 0,
+          "role": "stored_service_word",
+          "main_relative_runtime_offset": 33824,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 5,
+          "address": 40,
+          "value": 800,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 34624,
+          "target_storage": "Outside PC payload;unpacked-main unresolved",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 6,
+          "address": 42,
+          "value": 3200,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 37024,
+          "target_storage": "Outside PC payload;unpacked-main instruction",
+          "main_instruction_boundary": true,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 7,
+          "address": 44,
+          "value": 3200,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 37024,
+          "target_storage": "Outside PC payload;unpacked-main instruction",
+          "main_instruction_boundary": true,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 8,
+          "address": 46,
+          "value": 320,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 34144,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 9,
+          "address": 48,
+          "value": 65216,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 99040,
+          "target_storage": "Outside PC payload;beyond stored main image",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 10,
+          "address": 50,
+          "value": 85,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 33909,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 11,
+          "address": 52,
+          "value": 10,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 33834,
+          "target_storage": "PC overlay bytes;stored role does not prove a valid instruction entry"
+        },
+        {
+          "command": 12,
+          "address": 54,
+          "value": 36865,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 70689,
+          "target_storage": "Outside PC payload;unpacked-main unresolved",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 13,
+          "address": 56,
+          "value": 24577,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 58401,
+          "target_storage": "Outside PC payload;unpacked-main runtime_data",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 14,
+          "address": 58,
+          "value": 24585,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 58409,
+          "target_storage": "Outside PC payload;unpacked-main runtime_data",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 15,
+          "address": 60,
+          "value": 16393,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 50217,
+          "target_storage": "Outside PC payload;unpacked-main lookup_table",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        },
+        {
+          "command": 16,
+          "address": 62,
+          "value": 49153,
+          "role": "effect_record_bytes",
+          "main_relative_runtime_offset": 82977,
+          "target_storage": "Outside PC payload;beyond stored main image",
+          "main_instruction_boundary": false,
+          "target_warning": "CurrentCS is relocated0842,not mainCS0;any reached main bytes retain different CS-relative/absolute-near addressing. No new code entry or execution equivalence is inferred."
+        }
+      ],
+      "table_writers": [
+        {
+          "site": 422,
+          "commands": [
+            62,
+            71
+          ],
+          "addresses": [
+            30,
+            40
+          ],
+          "effect": "Ten byte setters can construct any16-bit target in any of five words; read/CALL is live. Commands48..5F also mutate the out-of-table05..10 words."
+        }
+      ],
+      "ordinary_helper_writes": [
+        {
+          "helper": 432,
+          "ranges": [
+            [
+              1,
+              2
+            ],
+            [
+              8,
+              25
+            ]
+          ]
+        },
+        {
+          "helper": 468,
+          "ranges": [
+            [
+              1,
+              2
+            ],
+            [
+              6,
+              7
+            ],
+            [
+              8,
+              10
+            ],
+            [
+              12,
+              14
+            ],
+            [
+              20,
+              23
+            ],
+            [
+              26,
+              28
+            ]
+          ]
+        },
+        {
+          "helper": 591,
+          "ranges": [
+            [
+              1,
+              2
+            ]
+          ]
+        }
+      ],
+      "call_order": "0196 reads live DS:[001E+2*originalAH] before pushing019A and transfers within currentCS;02/04=0000 target data, not no-op. Changed SS may overwrite table. Restore words/IRET reread live stack.",
+      "cross_image_residue": "InitialrawAH05 target0320 enters main8740 UNKNOWN;06/07 target0C80 enters main90A0 renderer storage underCS0842,not its native mainCS. Other rawtargets include data or beyond storedmain;listed physical-offset mapping is not a valid-entry proof. Raw mutatedwords may target anyof65536 offsets."
+    },
+    "lifetime_contract": "MAIN.DAT section5 initialized by main5972 into relocated0842:0000, extent02F6;165D installs0842:0182 after resource load. Watchdog0183/0492 can reinstall without reload, preserving live state/table.16A9 restores INT08 only; no recovered save/restore of INT60. Other allocations/segmented generic aliases and changed DOS/provider returns remain open.",
+    "timer_contract": "Game17C7 increments001C, calls185F only odd phase with2010!=FF/25A7&1.00 Tick runs noise phase and always IN61/OR3/OUT61; inactive/end uses divisor2, not gate disable. Stop only writes active0; main immediately ticks afterward.0182 STI before saves permits hardware preemption of foreground requests. Load01BD clearsactive before15 stores,01CF activates last: ordinary nestedTick sees old effect before clear, inactive duringcopy, or neweffect afterDEC. InactiveTick may change phase/cache/ports but never the copy fields. No universal IRQ/PIC/provider schedule inferred.",
+    "unknown_stored_roles": [
+      {
+        "start": 0,
+        "end": 1,
+        "reason": "No regular engine reader/writer;raw setter/source only."
+      },
+      {
+        "start": 3,
+        "end": 6,
+        "reason": "Initial01,00,00;raw accessor/source only;no musical field established."
+      },
+      {
+        "start": 7,
+        "end": 8,
+        "reason": "Initial90;raw accessor/source only;not padding."
+      },
+      {
+        "start": 25,
+        "end": 26,
+        "reason": "Initial90 after reload pair;raw setter/source only;not padding."
+      },
+      {
+        "start": 28,
+        "end": 30,
+        "reason": "Initial00,00 beyond last-divisor;raw setter/source only."
+      },
+      {
+        "start": 385,
+        "end": 386,
+        "reason": "Initial90 skipped by known entries;unchecked AL17 copy can read it;no intended stored role/entry."
+      },
+      {
+        "start": 597,
+        "end": 758,
+        "reason": "Code-like trailing bytes after Stop RET0254. No recovered entry,initial table target,main direct transfer or local component/asset16-byte match;raw AL25..2F copies it. Raw setters may direct execution anywhere;not dead-code/residue classification."
+      }
+    ],
+    "negative_evidence": {
+      "method": "Imported main analyze(), protected ASM search, initial17 call operands, all standalone driver images and each top-level local asset plus unpacked main; exact16-byte windows starting everytailoffset0255..02E6.",
+      "result": "No matching tail window in other inputs; no direct main target in08420..08715; only MOV AX0842 at1652/5967. This search is not exhaustive generic-pointer/alias/protected-provider closure and does not identify historical provenance."
+    }
   },
   {
     "address": 432,
@@ -380,7 +1177,8 @@
     "verification_status": "TESTED",
     "c_implementation": "c/pcspeaker.c",
     "c_core": "lmn_pc_sound_effect_bus_core",
-    "verification_domain": "Near helper with optional byte RAM/VGA bus; live SS return and data/stack aliases, 20-bit physical word wrap, quiescent asynchronous IRQs; no writes to executing code; signed AL, explicit forward copy, post-copy reload and live active-byte DEC"
+    "verification_domain": "Near helper with optional byte RAM/VGA bus; live SS return and data/stack aliases, 20-bit physical word wrap, quiescent asynchronous IRQs; no writes to executing code; signed AL, explicit forward copy, post-copy reload and live active-byte DEC",
+    "semantic_contract": "LoadEffect uses signedAL*15 and forward bytecopy to000A..0018, independentDF;active cleared01BD beforecopy and01CF decrements livebyte last;reloadword0017 reread aftercopy ->0008/0009. Allsource accesses wrap16;AL2F reads02E9..02F7 beyond payload. RET reads liveSS. Arithmeticflags afterDEC,CF preserved from addressADD;actual changed RAM/provider/stack retains quirks. No port output or phase/cache reset;first sound update waits for aTick."
   },
   {
     "address": 468,
@@ -573,7 +1371,8 @@
     "verification_status": "TESTED",
     "c_implementation": "c/pcspeaker.c",
     "c_core": "lmn_pc_sound_tick_core",
-    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed"
+    "verification_domain": "Near helper, mapped 1MiB, quiescent interrupts, no data-write alias of code/return frame, live-data overlap and arbitrary signed selector allowed",
+    "semantic_contract": "CXstarts2;phase6+=step2 wraps8 eveninactive. Active duration DEC wraps;zero clearsactive and selects2. Otherwise modulation countdownDEC/rotate14 choosesA whenCF1 elseB,addcurrentperiod;period+=step thenpulsecountdownDEC mayreplacewithresetperiod. Storeperiod,rotate15:CF1 keeps2,CF0 selectsperiod.0232 writes43:B6,42:low,42:high only iflastword differs,thenstorescache. Always IN61/OR3/OUT61. AX/DX/BX/CX volatile internally;dispatcher restores savedBX/CX/DX;IRET restoresframeFLAGS. No output uses phase6. Duration is decremented before any activeperiod computation:positiveN permitsN-1 active computations,0 wraps and expires on256thTick;not an immediateLoad output. Explicit address/copy updates ignore incomingDF;IRET restores frameDF."
   },
   {
     "address": 591,
@@ -606,7 +1405,8 @@
     "verification_status": "TESTED",
     "c_implementation": "c/pcspeaker.c",
     "c_core": "lmn_pc_sound_stop_bus_core",
-    "verification_domain": "Near helper with optional byte RAM/VGA bus; live SS return and data/stack aliases, 20-bit physical word wrap, quiescent asynchronous IRQs; no writes to executing code; XOR AL and live active-byte store; undefined AF excluded"
+    "verification_domain": "Near helper with optional byte RAM/VGA bus; live SS return and data/stack aliases, 20-bit physical word wrap, quiescent asynchronous IRQs; no writes to executing code; XOR AL and live active-byte store; undefined AF excluded",
+    "semantic_contract": "XOR AL thenactive=0;AH retained fromdispatcher SUB. NoPIT/port61output;main stop/tickpair causesquietdivisor2onnextTick while lowgatebitsremainset. ActualRET/IRET andinterruptwindow remain live."
   },
   {
     "address": 30,

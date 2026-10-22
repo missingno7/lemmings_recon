@@ -40,11 +40,21 @@ RawResourceReturn:
 loc_193A:
     mov dx,DatFileErrorMessage-GameDataImage ; @0193A
     jmp short loc_1949 ; @0193D
+; S14 U018: [0193F,01940) stored bytes remain UNKNOWN.
+; Neighbours: P 0193D jmp 0x1949; N 01940 mov dx, 0x21a5.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @0193F
 loc_1940:
     mov dx,ResourceReadErrorMessage-GameDataImage ; @01940
     jmp short loc_1949 ; @01943
+; S14 U019: [01945,01946) stored bytes remain UNKNOWN.
+; Neighbours: P 01943 jmp 0x1949; N 01946 mov dx, 0x21b6.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01945
 loc_1946:
@@ -196,6 +206,7 @@ SelectionAfterOddOverrideRead:
     mov cx,0xc ; @019F0
     push ds ; @019F3
     pop es ; @019F4
+; POPULATION HEADER: all80 pinned LEVEL section headers have high00/count<=0050. The nominal120 stored order bytes select40 forward odd rows, also high00/count<=0050; other40 supplied odd rows contain twelve0063 words in the18h-byte header. Forward complete copy is needed for this bound. Do not replace unchecked selectors/short reads/backward copies with a universal50h limit;4013 can race constructor publication even with nominal headers.
 ; With DF=0, copies24 bytes to0FCB..0FE2 and32 to17AB..17CA. Bytes0FE3..0FEA
 ; (including graphics selectors0FE6/0FE8) stay from LEVEL. With DF=1 the word
 ; footprints are0FB5..0FCC and178D..17AC; source is[slice-36h,slice+1], not
@@ -240,6 +251,11 @@ SelectionAfterGroundRead:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01A29
     jz loc_1A30 ; @01A2B
     jmp short loc_1A5A ; @01A2D
+; S14 U020: [01A2F,01A30) stored bytes remain UNKNOWN.
+; Neighbours: P 01A2D jmp 0x1a5a; N 01A30 push ds.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01A2F
 loc_1A30:
@@ -451,6 +467,11 @@ DatAfterResourceOpen:
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01B91
     mov ds,cx ; @01B93
     jmp short DecodeDatPreservingSegment ; @01B95
+; S14 U021: [01B97,01B98) stored bytes remain UNKNOWN.
+; Neighbours: P 01B95 jmp 0x1ba9; N 01B98 push dx.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01B97
 loc_1B98:
@@ -496,6 +517,7 @@ sub_1BAD:
 ; saved BX/DS/return words remain ordinary writable memory, not cached values.
 DecodeDatSection:
     push bx ; @01BAF
+; S13 AdLib DF residual: STD remains set until the first ReadDatBytes1D34 CLD reached via1BB9;reverse decoder later uses explicit DECs. INT retainsDF;game17C7 ->1872 never clears interruptedDF. A valid song start withDF1 reverses headerLODS (H,H-2,H-4,H-5,H-6-2k),escaping pinned grammar. No whole-program IRQ/provider proof here establishes such a schedule or excludes it.
     std ; @01BB0
     push bx ; @01BB1
     db 0x8b,0xef ; ENCODED: mov bp,di (NASM chooses a different encoding) ; @01BB2
@@ -553,6 +575,11 @@ sub_1C0B:
     call ReadAndCopyReverseMatch ; @01C15
 DatAfterShortMatch:
     jmp short sub_1C6F ; @01C18
+; S14 U022: [01C1A,01C1B) stored bytes remain UNKNOWN.
+; Neighbours: P 01C18 jmp 0x1c6f; N 01C1B cmp ax, 3.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01C1A
 sub_1C1B:
@@ -575,6 +602,11 @@ DatAfterLongLiteralWrite:
     jnz loc_1C28 ; @01C33
 sub_1C35:
     jmp short sub_1C6F ; @01C35
+; S14 U023: [01C37,01C38) stored bytes remain UNKNOWN.
+; Neighbours: P 01C35 jmp 0x1c6f; N 01C38 mov cl, 8.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01C37
 sub_1C38:
@@ -586,6 +618,11 @@ DatAfterMatchLength:
     call ReadAndCopyReverseMatch ; @01C41
 DatAfterVariableMatch:
     jmp short sub_1C6F ; @01C44
+; S14 U024: [01C46,01C47) stored bytes remain UNKNOWN.
+; Neighbours: P 01C44 jmp 0x1c6f; N 01C47 mov cl, 1.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01C46
 sub_1C47:
@@ -600,6 +637,11 @@ sub_1C51:
     call ReadAndCopyReverseMatch ; @01C56
 sub_1C59:
     jmp short sub_1C6F ; @01C59
+; S14 U025: [01C5B,01C5C) stored bytes remain UNKNOWN.
+; Neighbours: P 01C59 jmp 0x1c6f; N 01C5C mov cl, 3.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01C5B
 sub_1C5C:
@@ -632,6 +674,10 @@ DatReadFailure:
     mov ax,0x9a9 ; @01C7A
     mov ds,ax ; @01C7D
     jmp loc_04D0 ; @01C7F
+; S14 raw alias witness: ES=game DS,DI004B,ALFF makes DEC DI/store1C83
+; set DS004A=FF. This original leaf does not validate destination ownership.
+; Pinned LEVEL starts0FCB; witness does not establish a game-path004A producer
+; or justify expanding an artificial native/provider domain.
 WriteReverseLiteral:
     dec di ; @01C82
     mov [es:di],al ; @01C83
@@ -807,6 +853,11 @@ loc_1D4E:
     and ax,0xf ; @01D75
     jnz loc_1D7D ; @01D78
     jmp short loc_1D7E ; @01D7A
+; S14 U026: [01D7C,01D7D) stored bytes remain UNKNOWN.
+; Neighbours: P 01D7A jmp 0x1d7e; N 01D7D inc dx.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01D7C
 loc_1D7D:

@@ -65,6 +65,11 @@ loc_3EDA:
     cmp ah,0x43 ; @03EDC
     jnz loc_3EE4 ; @03EDF
     jmp short loc_3F5C ; @03EE1
+; S14 U054: [03EE3,03EE4) stored bytes remain UNKNOWN.
+; Neighbours: P 03EE1 jmp 0x3f5c; N 03EE4 inc al.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03EE3
 loc_3EE4:
@@ -72,6 +77,11 @@ loc_3EE4:
     cmp ah,0x44 ; @03EE6
     jnz loc_3EEE ; @03EE9
     jmp short loc_3F5C ; @03EEB
+; S14 U055: [03EED,03EEE) stored bytes remain UNKNOWN.
+; Neighbours: P 03EEB jmp 0x3f5c; N 03EEE mov ax, word ptr [0x14].
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03EED
 loc_3EEE:
@@ -91,6 +101,11 @@ loc_3F07:
     cmp ax,0xd0 ; @03F0D
     jl loc_3F15 ; @03F10
     jmp short loc_3F92 ; @03F12
+; S14 U056: [03F14,03F15) stored bytes remain UNKNOWN.
+; Neighbours: P 03F12 jmp 0x3f92; N 03F15 cmp byte ptr [0x84], 0.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03F14
 loc_3F15:
@@ -151,6 +166,11 @@ InputCommandsInt603F8D:
 loc_3F8F:
 InputCommandsAfterInt603F8F:
     jmp short loc_3FE9 ; @03F8F
+; S14 U057: [03F91,03F92) stored bytes remain UNKNOWN.
+; Neighbours: P 03F8F jmp 0x3fe9; N 03F92 mov byte ptr [0x62], 0xff.
+; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
+; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
+; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @03F91
 loc_3F92:
@@ -211,6 +231,7 @@ loc_3FEF:
     jg loc_3FEE ; @04009
     mov byte [EntityScanRequest-GameDataImage],0xff ; @0400B
     mov al,[EntitySlotBound-GameDataImage] ; @04010
+; PUBLICATION RACE: this command runs from IRQ1874->3E6F. If4010/4013 snapshots B after30D5 passed and before314B, it installs limit B while the pending constructor later publishes B+1. There is no constructor recheck/CLI, and scan request004B does not close0055. Next due creation sees inequality and can spill; B4F/header50 permits index50 on the following due call. Outside an in-flight creation, snapshotting the bound stops further creation normally. The stale-limit window begins after30CC reads0047; IRQ-before-CMP restores the old AL. Serialize sampling through314B.
     mov [LevelCreationLimit-GameDataImage],al ; @04013
     jmp short loc_3FEE ; @04016
 loc_4018:

@@ -1,5 +1,6 @@
 ; Maintained 6E83..6F7A point-cloud leaf.
 times -(($-$$) != 0x6e83) db 0 ; module start assertion
+; S16 suffix4768..4807 and4808..48A7 has16/12 decimal non-skipped low-byte words atA0 stride;last word48A6=F480 still skips on low80.48A8..48BE is author text plusNUL,no identified dedicated consumer. Normal2358 stops selector34 before draw;365F admission01..7F does not produce34/35. Do not infer total53 frames from shape or unchecked reads;keep suffixUNKNOWN,total size0,and existing51-frame prefix only.
 ; CONTRACT: unchecked byte selector, live DS point/color/mask inputs.
 ; Count zero executes 65536 iterations; low 80h skips only its point.
 ; Low signed delta is X, high signed delta is Y. SS dirty writes precede
