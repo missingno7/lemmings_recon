@@ -270,6 +270,7 @@ GameFrameAfterDirtyRows:
 ; ACTION DF: both01AD and01C5 call3150 with live foreground DF;319E->3336 has no CLD/POPF/INT before347F/3488. Main STD1BB0 has read-child CLD1D34 and normal decoder CLD1C78, so it is not a proved returning DF1 source. Known foreground/service/saved-frame DF and separate IRQ-local visibility DF contracts remain required. IRQ-at-poll scheduling does not exclude the original4013/constructor publication race.
 GameFrameAfterStatusBackdrop:
     call DispatchEntityAction ; @001AD
+; T2 UNCONDITIONAL handoffs:create01B0,update01B3,animation01B6,object draw01B9,entity draw01BC,selection01BF,action01C5. Spill owners can alter+14 before draw. Zero-bound selection after wrap retains0063/cursors.01AD uses previous selection. Pending IRQ and live saves remain separate.
 CreateAndAdvanceEntityRecords:
 ; Scoped two-CALL prefix:actual returns01B3/01B6 remain live SS words.
 ; Newly created canonical record is consumed immediately by1F19; its byte
@@ -654,6 +655,7 @@ InitializeGameSession:
     mov [DrawingDirtyCellsEnabledByte-GameDataImage],al ; @00441
     mov [ForegroundCounter0052-GameDataImage],al ; @00444
     mov [EntityCreationGate-GameDataImage],al ; @00447
+; UNCONDITIONAL loader/arithmetic: SS=load+143E,initialSP4AF4. Forward clears end48F3,so only512 bytes lie above them; depth512 reaches48F4,514 writes48F2..48F3. This is not an exclusively owned stack allocation. DATA-CONDITIONAL original level007.dat section1 object10 +ground3o.dat type5 writes A5 at4816..4825 and49B6..49C5; depth304 already intersects the second row. Whole-program saved-frame survival and IRQ/provider depth remain UNRESOLVED.
     push ss ; @0044A
     pop es ; @0044B
     mov di,0x12 ; @0044C
@@ -685,6 +687,12 @@ InitializeGameAfterStateClear:
     call SetupGameVideoAndSpriteCallbacks ; @00462
 InitializeGameAfterVideoSetup:
     call PublishGameBasePalette ; @00465
+; T3 session boundary:0468 runs after455D resources/briefing and0462 video/0465 palette, but
+; before046B header initialization/0492 game IRQ install. It inherits previous calibration
+; probe enables/pointers;455B and03E7 did not restore them. If the dynamic gate applies,13DC
+; rearms later flags again even with nonzero old reload. If bypassed, prior flags/pairs
+; remain. DATA-CONDITIONAL supplied ground0o..ground4o.dat, each0420, excludes GROUND table
+; overwrite only; global writer/alias/IRQ closure is UNRESOLVED.
 InitializeGameAfterPalette:
     call CalibrateGameTimerReload ; @00468
 InitializeGameAfterTimerCalibration:
@@ -1563,6 +1571,7 @@ loc_0F64:
     ret ; @00F6E
 MouseEventReturn:
     retf ; @00F6F
+; UNCONDITIONAL local costs: CPU6 +DS/AX4;INT62 adds CPU6,so16 bytes before its unknown internal use. Restore arm PUSH DX/CALL587F and587F savedCX (ES uses CX) also peaks16 including outer frame. UNRESOLVED INT62 returned SS:SP and nested/provider stack use. RETF callback0F6F has zero local pushes;its external far caller owns the4-byte frame and choice of stack.
 MouseIrqBridge:
 ; 48 bytes/20 sites. See docs/mouse-irq-bridge.md for installed INT62 provenance.
 ; Live SS pushes precede the relocated immediate; external INT62 may return new
@@ -1851,6 +1860,13 @@ loc_1176:
 ; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01193
+; T3 PLATFORM-CONDITIONAL startup composition:0031 forward leaves DI2012;1293 never assigns
+; DI; early10E2/10EC/10F6 reaches the first store before interactive DI239F. Store2020
+; sets2012=20/e0=20 but not target words; the next store uses DS:SI, not ES:PSP. Exact prefix
+; profile:1A:AH=0000,21:AH=004A,10:AH=0000,21:AH=0002, optional21:AH=0007. Carrying state
+; through marker BIOS additionally needs10:AH=000F/0002 plus intact saves/no interference. e0
+; persists across sessions; ordinary row cursors miss probe/pointer words. Raw
+; cursor/segment/IRQ writers remain UNRESOLVED.
 ; R3 startup marker: forward0031 leavesDI2012;1293 does not assignDI. Early
 ;10E2/10EC/10F6 may therefore store2012=20 and enable2013=20, not a target byte.
 ; PROFILE composition needs1A:AH=0000,21:AH=004A,10:AH=0000,21:AH=0002 and
@@ -2164,6 +2180,17 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
+; T3 per-call recurrence (UNCONDITIONAL instruction implication; BIOS traversal
+; PLATFORM-CONDITIONAL): preserve e0=2013 and all four pointer words; clear adapter pairs;
+; replace later enables with FF on EACH detector call. Successful1410 clears later flags,
+; then rearms mono iff a pair with low1 was removed. Otherwise1462 leaves all FF if BL10;
+; recognized lookup high1 clears mono, other high clears color. CRTC/final swap do not change
+; enables. Prior suppression never suppresses the next executed detector.
+; Recurrence requires game DS, DF0 at every LODS, intact targets/SI/CX/returns, DI2006 and no
+; other writer. Exact profile:10:AX=1A00,10:AH=0012(BL10), conditional10:AH=000F.
+; CONSERVATIVE preservation is unknown; PROFILE does not fix BIOS results or close
+; IRQ/frame/alias/writers. VGA alone does not enable e0. If e0!=0 and AL1A/BL07-or08/BH00,
+; only1410 runs and later flags end0; these are additional actual-result premises.
 ; R3 conditional table lifetime: DATA-A five0420-byte ground files stop1F6A,
 ; excluding their overwrite of2013..201E; request1000 could still replace them.
 ; First00C8 measurement precedes GROUND; session0468 follows455D resource load.
@@ -2515,6 +2542,16 @@ RestoreKeyboardVectorReturn:
     db 0x1e,0x33,0xc0,0x8e,0xd8,0xc7,0x06,0x24,0x00,0xd4,0x16,0x8c,0x0e,0x26,0x00,0xc7 ; @01592
 ; UNKNOWN: unresolved bytes
     db 0x06,0x20,0x00,0xc7,0x17,0x8c,0x0e,0x22,0x00,0x1f,0xc3 ; @015A2
+; T3 UNCONDITIONAL call/lifetime: only decoded calls00C8 at startup and0468 every entered
+; session; only detector call15D5.200E==FF skips detector; else exact2011=00C8/0190 skips it;
+; ALL other words call13DC even if old1FC9!=0.15F8..15FD old-reload override happens AFTER
+; detection/measurement, not as a probe cache. Bypasses preserve all records/pairs; detector
+; rearms only later enables. Neither entry nor4551/03E7 restores pointer words/e0.
+; Early1194 at DI2012 can replace selector high with20, turning /2 or /4 values into20C8/2090
+; and enabling first probe20.200E=FF still wins the outer gate.
+; Menu/input/code/result/aborted briefing do not call this routine; retry/next level
+; reaching00FB calls0468 again. Actual records across
+; resource/renderer/indexed/frame/provider writers remain UNRESOLVED.
 ; CALIBRATION: only full option byteFF chooses4000. Word2011 selects200/400
 ; or real detector output;signed primary high byte selects160/320 scanlines.
 ; CLI measurement yields BP=FFFF-CX;stored reload is then overridden by actual
@@ -2705,6 +2742,7 @@ TimerRestoreClockInterrupt:
     int 0x1a ; @016D1
 TimerRestoreReturn:
     ret ; @016D3
+; UNCONDITIONAL intact-control serial stack cost: CPU6 +four register saves8 +CALL17B4/its PUSH AX/CALL17BE6 =20 bytes. Scan AX temporary is popped before later calls. No polling iteration adds words. EOI17A0 precedes optional17AC helper;17BC STI shadow covers17BD RET,then an eligible IRQ can precede outer POPs. UNRESOLVED physical nesting and provider/frame aliases;do not assume this handler can occur only once over a timer.
 ; R1 UNCONDITIONAL local return implication: IRQ09 inherits DF; no CLD or STD occurs in
 ; its decoded body.17B3 IRET restores actual interrupted FLAGS. Handler-local DF is not a
 ; foreground normalization service. Keep keyboard frame/buffer aliases and nesting separate.
@@ -2811,6 +2849,7 @@ loc_177F:
     test cl,0x80 ; @01796
     jz loc_179E ; @01799
     or cl,0x14 ; @0179B
+; T2 UNCONDITIONAL:scan15 maps0F8D(slot55 callback low),scan42 maps0FBA(slot56 callback low);accepted make/break writes94/00,next scans affect high bytes.4D3A repeat handling also writes these bytes. Spill retains keyboard ownership;no membership guard.
 loc_179E:
     mov [bx],cl ; @0179E
 loc_17A0:

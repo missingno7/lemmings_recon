@@ -221,6 +221,20 @@ loc_3FEE:
 InputCommandsReturn3FEE:
     ret ; @03FEE
 loc_3FEF:
+; T2 UNCONDITIONAL command domain (intact decoded state): only scan bytes58
+; (F12),53 (Delete),or panel ordinal0B reach this path. Panel route requires
+; button bit0,Y+8 signed>=C0,X-8 signed<D0,refresh84=0,latch62!=FF;
+; 3F38 sets latchFF before ordinal0B jumps here. Ordinary panel X=B8..C7.
+; 3FEF rejects gate002B=FF;3FF6 clears the scan byte.4002 updates snapshot1FD4
+; even if4009 rejects signed8((counter1FD3-old_snapshot)&FF)>5. Thus accepted
+; deltas are00..05 OR80..FF,not merely an unsigned five-frame interval.
+; Accepted command sets004B=FF,does NOT reset004C or close0055,and copies0043
+; to0047. One IRQ at any foreground boundary after30CC and before314B can
+; change L to oldB while the constructor retains oldL!=B,then publishesB+1.
+; Boundary before30CF/before30D3/before30D5 also works: actual IRET restores
+; sampled AL and CMP flags. Before30CC or after314B snapshots a stopping limit.
+; PROFILE grants no serialization. Actual pending/unmasked IRQ and intact saves
+; are separate UNRESOLVED premises; no host IRQ-at-poll substitution proves them.
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @03FEF
     jz loc_3FEE ; @03FF4
     mov byte [KeyboardScanCodeByte-GameDataImage],0x0 ; @03FF6

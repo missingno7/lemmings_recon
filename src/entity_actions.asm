@@ -3,6 +3,20 @@
 times -(($-$$) != 0x3150) db 0 ; module start assertion
 DispatchEntityAction:
 sub_3150:
+; T2 UNCONDITIONAL producer invariant with intact forward level reset and no
+; unrelated cursor writer:0058/005A/005C are0 or0088+2D*k,k=00..FE.3CDE can
+; scan at mostFF slots,so FF is never selected. Nonzero candidate count0063
+; validates a prior hit,not current liveness:01AD precedes update/selection,
+; and01C5 follows them. Update can deactivate the old selection between scans;
+; count wrap makes3CDE return without refreshing0063,indices or pointers.
+; Consequently stale pointers may be outside the NEW bound but stay aligned
+; in this domain. No action rechecks+26. A forward455B reset clears cursors
+; AND0063,so stale selection alone cannot cross that reset or alias002E slots.
+; DF0 action word stores keep nine membership if source slots survive,even
+; on stale/inactive records. DF1 action5 still writes+15 at347F,+14 at3488:
+; callback=old_row0_cell2 OR(old_row0_cell1<<8),including0000 for empty cells.
+; The map/source/save alias premises and actual foreground DF remain UNRESOLVED;
+; the platform profile cannot validate a cursor or remove this byte writer.
 ; RECORD POINTER DOMAIN:317C loads live DS:0058, with no alignment or0043 range
 ; check. The normal producer3CDE scans0088+k*2D, skips exact+26=FF and stores
 ; bucket pointers at3D8E/3D9C, then chosen0058 at3DC6/3DDA. Zero bound returns

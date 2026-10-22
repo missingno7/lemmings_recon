@@ -98,6 +98,7 @@ loc_424D:
     mov [InputButtonsWord-GameDataImage],bx ; @0424D
 PollInputKeyboardReturn4251:
     ret ; @04251
+; UNCONDITIONAL local stack: ten PUSH words=20,then INT33 CPU frame6.418C mode0 tail-jumps here;mode1 PUSH DX/CALL42A5 adds4 if live25A0 selects4252. PLATFORM-CONDITIONAL33:AX=0003 preserves declared returned stack/segments only;it has no transient stack-depth bound,mouse callback allocation,or IRQ/alias closure.
 PollMousePosition:
     push es ; @04252
     push ds ; @04253
@@ -147,6 +148,16 @@ loc_4293:
     pop es ; @0429F
 PollMousePositionReturn42A0:
     ret ; @042A0
+; T3 UNCONDITIONAL in the fixed decoded selection/no-other-writer domain: initial (M,P) is
+; (0,4252), or (2,4252) after 0F64. Mouse/keyboard/escape retain P; every mode1 publication
+; at4A6D/85 first replaces P at4A68/80. Ordinary selection histories call4334/4359 here,
+; never initial4252. The broader raw-M1/intact-slot domain still includes4252 and is
+; retained. Mode0 observed at418C bypasses this slot. Menu/code/level/session reuse does not
+; restore P. Global indexed/resource/renderer/IRQ/frame/provider writers remain UNRESOLVED.
+; P is sampled before PUSH DX/CALL; a later memory-only slot change cannot retarget latched
+; AX. No mode cancellation recheck occurs. An ordinary foreground selection cannot resume
+; inside its own timer poll before IRET; unknown reentry/nesting/aliases remain separate
+; obligations, not profile-closed.
 ; R3 writer refinement: supplied ground0o..ground4o.dat each0420 bytes end1F6A,
 ; excluding this raw-resource overwrite only; original request remains1000.
 ; SlotD3 starts259F:30F3 clears259F..25CB,30FB/3100 put X-high/Y-low at25A0/25A1.

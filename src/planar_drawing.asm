@@ -3238,6 +3238,7 @@ loc_9A0C:
     mov ch,[DrawingSavedHeightHighByte-GameDataImage] ; @09A0F
     pop bp ; @09A13
     ret ; @09A14
+; UNCONDITIONAL stack/write facts: seven saves14 +row DX/SI4 peak18 below near-entrySP. After rounding,DX=0 makes first9A75 row store01 at all65536 SS offsets beforePOPSI;post-row bounds do not prevent overwriting live saves/RET with0101 (already0101 can remain unchanged). This raw-input theorem is not production zero-width reachability (UNRESOLVED). With nominal G/S,DS:A950 aliasesSS:0 andDS:F444 aliasesSS:4AF4;all-DS-offset scratch RMW at8DE9/8DEA therefore also reaches the stack without an SS override.
 ; Save seven registers through live SS, then mark dirty cells with AL=1.
 ; DS:0026 chooses SS map base; stride 40 and unsigned end=base+801.
 ; CL rounds with byte wrap; zero counts retain do/LOOP and DEC behavior.

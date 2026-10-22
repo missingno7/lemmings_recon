@@ -31,6 +31,9 @@ REGS = ('ax', 'bx', 'cx', 'dx', 'si', 'di', 'bp', 'ds', 'es', 'ss', 'cs')
 HALVES = {a + b: (a + 'x', 8 if b == 'h' else 0)
           for a in 'abcd' for b in ('l', 'h')}
 CAP = 4
+SLOT_CAP = 64
+SUMMARY_CAP = 2  # specialized entry states per entry, plus the generic summary
+WORK_BUDGET = 2_000_000
 # None is TOP, frozenset() is BOTTOM. Atoms may be constants or provenance tuples.
 TOP = None
 ZERO = frozenset((0,))
@@ -101,6 +104,10 @@ class State:
     polluted: bool = False
     shadow: object = ZERO
     tf: object = TOP
+    # Forgotten writes are TOP only in these offset intervals. Keeping a sparse
+    # write footprint avoids turning a deep child's dead stack residues into
+    # loss of every older live save. Intervals overapproximate, never erase writes.
+    forgotten: tuple = ()
 
     @classmethod
     def symbolic(cls):
@@ -113,17 +120,43 @@ class State:
 
     def copy(self):
         return State(dict(self.regs), self.df, self.iff, self.sp,
-                     dict(self.slots), self.polluted, self.shadow, self.tf)
+                     dict(self.slots), self.polluted, self.shadow, self.tf, self.forgotten)
 
     def read_slot(self, offset):
         if offset is None:
             return Slot()
-        return self.slots.get(offset & 0xffff,
-                              Slot(TOP if self.polluted else val(('stack', offset & 0xffff))))
+        offset &= 0xffff
+        unknown = self.polluted or any(lo <= offset < hi for lo, hi in self.forgotten)
+        return self.slots.get(offset, Slot(TOP if unknown else val(('stack', offset))))
 
     def poison(self):
         self.slots.clear()
         self.polluted = True
+        self.forgotten = ()
+
+    def forget(self, ranges):
+        """Widen a write footprint, retaining at most four nonwrapping ranges."""
+        if self.polluted:
+            return  # The default is already TOP everywhere.
+        combined = []
+        for lo, hi in sorted((*self.forgotten, *ranges)):
+            if combined and lo <= combined[-1][1]:
+                combined[-1] = (combined[-1][0], max(hi, combined[-1][1]))
+            else:
+                combined.append((lo, hi))
+        # A convex hull is sound even when it includes unmodified words.
+        self.forgotten = tuple(combined if len(combined) <= CAP else
+                               [(combined[0][0], combined[-1][1])])
+
+    def trim_slots(self):
+        if len(self.slots) > SLOT_CAP:
+            # Prefer the nearest live stack words over popped child residues.
+            # This is only an eviction policy; forgotten words stay unknown.
+            anchor = self.sp if self.sp is not None else 0
+            kept = sorted(self.slots, key=lambda p: ((p - anchor) & 0xffff, p))[:SLOT_CAP]
+            removed = self.slots.keys() - set(kept)
+            self.forget((p, p + 1) for p in removed)
+            self.slots = {p: self.slots[p] for p in kept}
 
     def write_slot(self, offset, value, pushes=frozenset()):
         if offset is None:
@@ -136,9 +169,9 @@ class State:
         for p in (offset - 1, offset + 1):
             if (p & 0xffff) in self.slots:
                 self.slots[p & 0xffff] = Slot()
+        self.forget(((p & 0xffff), (p & 0xffff) + 1) for p in (offset - 1, offset + 1))
         self.slots[offset] = Slot(value, pushes)
-        if len(self.slots) > 64:
-            self.poison()
+        self.trim_slots()
 
     def push(self, value, address):
         self.sp = None if self.sp is None else (self.sp - 2) & 0xffff
@@ -160,11 +193,12 @@ def merge(a, b):
         for p in a.slots.keys() | b.slots.keys():
             x, y = a.read_slot(p), b.read_slot(p)
             slots[p] = Slot(union(x.value, y.value), x.pushes | y.pushes)
-    if len(slots) > 64:
-        slots, polluted = {}, True
-    return State({r: union(a.regs[r], b.regs[r]) for r in REGS},
+    out = State({r: union(a.regs[r], b.regs[r]) for r in REGS},
                  union(a.df, b.df), union(a.iff, b.iff), sp, slots,
                  polluted, union(a.shadow, b.shadow), union(a.tf, b.tf))
+    out.forget((*a.forgotten, *b.forgotten))
+    out.trim_slots()
+    return out
 
 
 def substitute(v, incoming, base):
@@ -206,14 +240,37 @@ def instantiate(template, incoming):
     out.sp = None if base is None or template.sp is None else (base + template.sp) & 0xffff
     if template.polluted:
         out.poison()
+    if base is None and template.forgotten:
+        out.poison()
+    elif base is not None:
+        ranges = []
+        for lo, hi in template.forgotten:
+            start = (base + lo) & 0xffff
+            end = start + hi - lo
+            ranges.extend([(start, min(end, 0x10000))])
+            if end > 0x10000:
+                ranges.append((0, end - 0x10000))
+        # A forgotten write may replace a concrete caller save as well as the
+        # symbolic default. Explicit template slots below override this havoc.
+        for p in out.slots:
+            if any(lo <= p < hi for lo, hi in ranges):
+                out.slots[p] = Slot()
+        out.forget(ranges)
+    copied = {}
     for p, slot in sorted(template.slots.items()):
         pushes = slot.pushes
         if slot.value is not None:
             for atom in slot.value:
                 if not isinstance(atom, int) and atom[0] == 'stack':
                     pushes |= incoming.read_slot(None if base is None else base + atom[1]).pushes
-        out.write_slot(None if base is None else base + p,
-                       substitute(slot.value, incoming, base), pushes)
+        if base is None:
+            out.poison()
+        else:
+            copied[(base + p) & 0xffff] = Slot(substitute(slot.value, incoming, base), pushes)
+    # Summary slots are simultaneous observations, including invalidated
+    # overlapping words. Replaying them as writes would invalidate each other.
+    out.slots.update(copied)
+    out.trim_slots()
     return out
 
 
@@ -509,6 +566,7 @@ def write_operand(s, operand, value, intact_stack):
             # Partial writes destroy both potentially overlapping words.
             for q in (p, (p - 1) & 0xffff):
                 s.slots[q] = Slot()
+            s.trim_slots()
         else:
             s.write_slot(p, value)
     elif not intact_stack:
@@ -685,8 +743,67 @@ class Exit:
     kind: str
 
 
+def summary_input(frame):
+    """Bounded specialization of entry values, never an assumed return ABI.
+
+    Caller identities remain symbolic parameters (including every stack word).
+    Constants/known bytes select service functions before a generic join loses
+    them; stack pointers are rebased to the child's own entry. No caller's return
+    IP is installed as a constant: RET still reads its actual symbolic slot.
+    """
+    seed = State.symbolic()
+    for reg, value in frame.regs.items():
+        if reg in ('ax', 'bx') and numbers(value):
+            seed.regs[reg] = value
+        elif value is not None and all(isinstance(a, tuple) and a[0] == 'sp' for a in value):
+            seed.regs[reg] = (frozenset(('sp', (a[1] - frame.sp) & 0xffff) for a in value)
+                              if frame.sp is not None else TOP)
+        elif reg in ('ax', 'bx'):
+            # AH/AX and BL are the selectors/qualifiers in the service model.
+            for shift, suffix in ((0, 'l'), (8, 'h')):
+                part = byte_part(value, shift)
+                if numbers(part):
+                    setreg(seed, reg[0] + suffix, part)
+    for name in ('df', 'iff', 'tf', 'shadow'):
+        value = getattr(frame, name)
+        if numbers(value):
+            setattr(seed, name, value)
+    return seed
+
+
+def summary_key(seed):
+    return tuple(seed.regs[r] for r in REGS) + (seed.df, seed.iff, seed.tf, seed.shadow)
+
+
+def rebase_pointers(value, base):
+    """Change only SP-derived coordinates, including pointers saved in words."""
+    if value is None:
+        return TOP
+    result = frozenset()
+    for atom in value:
+        if isinstance(atom, int):
+            part = val(atom)
+        elif atom[0] == 'sp':
+            part = TOP if base is None else val(('sp', (atom[1] - base) & 0xffff))
+        elif atom[0] in ('flags', 'bytes'):
+            part = val((atom[0], *(rebase_pointers(v, base) for v in atom[1:])))
+        elif atom[0] in ('byte', 'flag-bit'):
+            part = val((atom[0], rebase_pointers(atom[1], base), atom[2]))
+        else:
+            part = val(atom)
+        result = union(result, part)
+    return result
+
+
 class Analyzer:
-    """Finite symbolic summary worklist; callers restart only when a child grows."""
+    """Bounded summaries per entry state; generic fallback retains open domains.
+
+    At most SUMMARY_CAP specializations per entry; an excess request uses the
+    generic symbolic transformer, never drops an edge. All variants share the
+    monotone dependency worklist, including recursion and nonlocal/shared tails.
+    Public states/exits are the generic entry contracts; projection follows the
+    selected variants internally before joining observations at each address.
+    """
     def __init__(self, analysis, entries=(), *, intact_stack=False,
                  services=None, relocations=(), irq_mode='havoc', stop_before=()):
         self.instructions = {r['address']: r for r in analysis['instructions']}
@@ -704,23 +821,73 @@ class Analyzer:
         if isinstance(self.services, SerialDriverServices) and (not intact_stack or irq_mode != 'disabled'):
             raise ValueError('Original driver bindings require serial intact-stack analysis')
         self.states, self.exits = {}, defaultdict(dict)
-        self.dependencies, self.calls = defaultdict(set), {}
+        self.context_states, self.context_exits = {}, defaultdict(dict)
+        self.context_seeds, self.variants = {}, defaultdict(dict)
+        self.dependencies, self.calls = defaultdict(set), defaultdict(dict)
+        self.recursive_contexts = set()
         self.queue, self.queued = deque(), set()
+        self.updates = defaultdict(int)
         self.events = set()
         self.service_uses = defaultdict(set)
         self.steps = 0
+
+    def context(self, entry, seed=None):
+        generic = (entry, 0)
+        if generic not in self.context_seeds:
+            self.context_seeds[generic] = State.symbolic()
+            self.offer(generic, entry, self.context_seeds[generic])
+        if seed is None or seed == self.context_seeds[generic]:
+            return generic
+        signature = summary_key(seed)
+        variants = self.variants[entry]
+        if signature not in variants:
+            if len(variants) >= SUMMARY_CAP:
+                return generic
+            key = (entry, len(variants) + 1)
+            variants[signature] = key
+            self.context_seeds[key] = seed
+            self.offer(key, entry, seed)
+        return variants[signature]
 
     def offer(self, entry, address, state):
         if address not in self.instructions:
             self.events.add((address, 'undecoded_target'))
             return
         key = (entry, address)
-        joined = merge(self.states.get(key), state)
-        if joined != self.states.get(key):
-            self.states[key] = joined
+        old = self.context_states.get(key)
+        joined = merge(old, state)
+        if joined != old:
+            self.updates[key] += 1
+            if (old is not None and entry in self.recursive_contexts and
+                    self.updates[key] > 16 and joined.forgotten != old.forgotten):
+                # Recursive stack writes can otherwise grow a footprint one
+                # word per iteration all the way around 64K. Widen only its
+                # default, retaining explicit live slots, never assuming that
+                # arbitrary recursion preserves the initial caller's frame.
+                joined.forget(((0, 0x10000),))
+            self.context_states[key] = joined
             if key not in self.queued:
                 self.queued.add(key)
                 self.queue.append(key)
+
+    def depend(self, child, caller):
+        if caller in self.dependencies[child]:
+            return
+        self.dependencies[child].add(caller)
+        # Only recursive summary cycles need write-footprint widening. Applying
+        # it to an acyclic renderer while its children converge destroys older
+        # live saves unnecessarily. Use actual context dependencies/shared tails,
+        # not a guessed physical function boundary or C's supported range.
+        pending, seen = deque([(caller[0], (caller[0],))]), set()
+        while pending:
+            node, path = pending.popleft()
+            if node == child:
+                self.recursive_contexts.update(path)
+                break
+            if node in seen:
+                continue
+            seen.add(node)
+            pending.extend((parent, (*path, parent)) for parent, _ in sorted(self.dependencies[node]))
 
     def before(self, state):
         if self.irq_mode == 'havoc' and may(state.iff, 1) and may(state.shadow, 0):
@@ -732,21 +899,24 @@ class Analyzer:
 
     def run(self):
         for entry in self.entries:
-            self.offer(entry, entry, State.symbolic())
+            self.context(entry)
         while self.queue:
             entry, p = self.queue.popleft()
             self.queued.remove((entry, p))
             self.steps += 1
-            if self.steps > 2_000_000:
+            if self.steps > WORK_BUDGET:
                 raise RuntimeError('Flow-state work budget exceeded; no report accepted')
             self.process(entry, p)
+        self.states = {(context[0], p): state for (context, p), state in self.context_states.items()
+                       if context[1] == 0}
+        self.exits = defaultdict(dict, {e: self.context_exits[e, 0] for e in self.entries})
         return self
 
     def process(self, entry, p):
         if p in self.stop_before:
             return
         row = self.instructions[p]
-        incoming = self.before(self.states[entry, p])
+        incoming = self.before(self.context_states[entry, p])
         m, nxt = row['mnemonic'], (p + row['size']) & 0xffff
         if m in ('int', 'int3'):
             declaration = (self.services.resolve(row, incoming) if isinstance(self.services, ServiceModel)
@@ -775,12 +945,12 @@ class Analyzer:
             if numbers(ip) and (m == 'ret' or cs in (val(('reloc', 0)), val(('in', 'cs')))):
                 for target in sorted(ip): self.offer(entry, target, out)
                 return
-            old = self.exits[entry].get(p)
+            old = self.context_exits[entry].get(p)
             new = Exit(merge(old.state if old else None, out),
                        union(old.ip, ip) if old else ip,
                        union(old.cs, cs) if old else cs, m)
             if new != old:
-                self.exits[entry][p] = new
+                self.context_exits[entry][p] = new
                 for caller in sorted(self.dependencies[entry]):
                     if caller not in self.queued:
                         self.queue.append(caller)
@@ -794,21 +964,26 @@ class Analyzer:
             if unknown_base:
                 # The new CALL still writes a known return word at a new
                 # relative anchor, even if earlier code lost the caller's SP.
+                for reg, value in frame.regs.items():
+                    if value is not None and any(isinstance(a, tuple) and a[0] == 'sp' for a in value):
+                        frame.regs[reg] = TOP
                 frame.sp = 0
                 frame.poison()
             if m == 'lcall': frame.push(frame.regs['cs'], p)
             frame.push(val(nxt), p)
             targets = [e['target'] for e in edges if 'call' in e['kind'] and e['target'] is not None]
-            self.calls[entry, p] = (frame, tuple(sorted(targets)))
-            for target in targets:
+            for target in sorted(targets):
                 if target == nxt:
                     if unknown_base:
                         frame.sp = None
                         frame.poison()
                     self.offer(entry, nxt, frame)  # CALL-next / POP transport
                     continue
-                self.dependencies[target].add((entry, p))
-                for exit_ in self.exits[target].values():
+                child = self.context(target, summary_input(frame))
+                old_frame = self.calls[entry, p].get(child)
+                self.calls[entry, p][child] = merge(old_frame, frame)
+                self.depend(child, (entry, p))
+                for exit_ in self.context_exits[child].values():
                     resumed = instantiate(exit_.state, frame)
                     ips = substitute(exit_.ip, frame, frame.sp)
                     css = substitute(exit_.cs, frame, frame.sp)
@@ -858,20 +1033,21 @@ class Analyzer:
 
     def aggregate(self):
         states = {}
-        for (_, p), s in sorted(self.states.items()):
+        for (_, p), s in sorted(self.context_states.items()):
             states[p] = merge(states.get(p), self.before(s))
         return states
 
     def project(self, roots):
-        """Instantiate generic summaries from DOS/handler/frontier inputs.
+        """Instantiate selected summaries from DOS/handler/frontier inputs.
 
-        The finite join at each callee deliberately forgets which caller supplied
-        a value. It never uses routine-discovery seeds as reachable machine roots.
+        Different selected entry-state variants keep caller handoffs separate.
+        The finite join within a variant may still lose caller correlation. It
+        never uses routine-discovery seeds as reachable machine roots.
         SP in each callee is relative to that callee's own entry, not a guessed
         whole-program stack depth. Local entry-relative states remain separate.
         """
         by_entry = defaultdict(list)
-        for (entry, p), state in sorted(self.states.items()):
+        for (entry, p), state in sorted(self.context_states.items()):
             by_entry[entry].append((p, state))
         inputs, observed = {}, {}
         pending, queued = deque(), set()
@@ -884,37 +1060,41 @@ class Analyzer:
                     pending.append(entry)
                     queued.add(entry)
 
-        for entry, state in sorted(roots.items()): offer(entry, state)
+        for entry, state in sorted(roots.items()): offer((entry, 0), state)
+        steps = 0
         while pending:
             entry = pending.popleft()
             queued.remove(entry)
             incoming = inputs[entry]
             for p, template in by_entry[entry]:
+                steps += 1
+                if steps > WORK_BUDGET:
+                    raise RuntimeError('Flow-state projection budget exceeded; no report accepted')
                 actual = self.before(instantiate(template, incoming))
                 observed[p] = merge(observed.get(p), actual)
                 call = self.calls.get((entry, p))
                 if call is None: continue
-                frame_template, targets = call
-                frame = instantiate(frame_template, incoming)
-                for target in targets:
-                    if target == (p + self.instructions[p]['size']) & 0xffff: continue
+                for target, frame_template in sorted(call.items()):
+                    frame = instantiate(frame_template, incoming)
                     normalized = frame.copy()
                     base = frame.sp
                     normalized.sp = 0
                     normalized.slots = {}
                     normalized.polluted = True
+                    normalized.forgotten = ()
                     if base is not None:
                         for pos, slot in frame.slots.items():
-                            normalized.slots[(pos - base) & 0xffff] = slot
+                            normalized.slots[(pos - base) & 0xffff] = Slot(
+                                rebase_pointers(slot.value, base), slot.pushes)
                     # BP/SP-derived pointers into the caller's stack need the
                     # same coordinate change as the slots, including across CALL.
                     for reg, value in frame.regs.items():
-                        if value is not None:
-                            normalized.regs[reg] = frozenset(
-                                ('sp', (a[1] - base) & 0xffff) if isinstance(a, tuple) and a[0] == 'sp' and base is not None
-                                else a for a in value)
+                        normalized.regs[reg] = rebase_pointers(value, base)
                     offer(target, normalized)
-        return observed, inputs
+        by_address = {}
+        for (entry, _), incoming in sorted(inputs.items()):
+            by_address[entry] = merge(by_address.get(entry), incoming)
+        return observed, by_address
 
 
 def display_atom(a):
@@ -959,6 +1139,7 @@ def state_json(s):
                 interrupt_shadow=display(s.shadow, True),
                 maskable_IRQ_may_land=may(s.iff, 1) and may(s.shadow, 0),
                 stack_default='unknown' if s.polluted else 'saved-from-entry-stack',
+                forgotten_stack_offsets=[dict(start=lo, end_exclusive=hi) for lo, hi in s.forgotten],
                 popped_slot_residues_not_printed=True,
                 slots=[dict(offset=signed(p), value=display(slot.value),
                             pushes=[f'{a:04X}' for a in sorted(slot.pushes)])
@@ -1083,6 +1264,7 @@ def report_mode(analysis, image, relocations=(), *, component='main', services=N
             IRQ_entry='push interrupted FLAGS/CS/IP; clear IF/TF, retain DF; IRET consumes actual interrupted FLAGS',
             root_SP='DOS absolute 4AF4 is known at entry only; propagated SP is relative to each procedure entry, never a startup-wide stack-depth certificate',
             procedure_states='symbolic per-entry inputs, not proof that an entry is reached',
+            summaries=f'generic plus at most {SUMMARY_CAP} selector/flag/stack-pointer entry-state variants per entry; excess requests use generic; recursive write footprints widen after 16 updates',
             stack='word slots modulo16; unproved word-at-FFFF physical overlap is overapproximated',
             target_domain_complete=False),
         service_declarations=({f'{p:04X}': d for p, d in sorted(services.items())}
@@ -1095,7 +1277,8 @@ def report_mode(analysis, image, relocations=(), *, component='main', services=N
         serial_entry_inputs={f'{p:04X}': state_json(s) for p, s in sorted(entry_inputs.items())},
         frontiers=analysis.get('unresolved', []), target_domain_complete=False,
         work=dict(concurrent_steps=strict.steps, serial_steps=serial.steps,
-                  concurrent_contexts=len(strict.states), serial_contexts=len(serial.states)),
+                  concurrent_contexts=len(strict.context_states), serial_contexts=len(serial.context_states),
+                  concurrent_summaries=len(strict.context_seeds), serial_summaries=len(serial.context_seeds)),
         events=[dict(address=f'{p:04X}', kind=k) for p, k in sorted(strict.events | serial.events)],
         states=pool, instructions=rows, entry_relative=local)
 

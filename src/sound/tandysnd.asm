@@ -993,6 +993,7 @@ tandysnd_Command4Latch:
     db 0x6f,0x75,0x6e,0x64,0x20,0x49,0x6d,0x61,0x67,0x65,0x73,0x20,0x28,0x63,0x29,0x20 ; @0005E
 ; DATA: embedded_resource
     db 0x31,0x39,0x39,0x31 ; @0006E
+; UNCONDITIONAL decoded-path stack arithmetic: AH00 peaks22 below entry,28 with CPU frame;AH01 10,AH02 20,AH03/04/05 10 including frame. No decodedSTI. UNRESOLVED unrestricted02BB dispatch,5958 allocation/physical ownership,returned selectors and aliases;do not promote a known-edge cost into a complete alternative-driver bound.
 tandysnd_UpdateService:
     push ax ; @00072
     push bx ; @00073

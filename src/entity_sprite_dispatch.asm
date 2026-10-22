@@ -1,5 +1,30 @@
 ; Maintained 706F..715E entity sprite parent; physical order unchanged.
+; T2 target theorem (UNCONDITIONAL input implications; global domain UNRESOLVED):
+; P={6170,64D9,65D8,66D7,6817,6957,6A97,6BDB,6CFC}. With initialized preserved
+; slots,genuine completed records,DF0 at all action5/visibility writers,disjoint
+; other writers and intact70F0 target/save/DS/return transport,the following hold.
+; NO RACE: nominal original headers/order plus serialized publication give
+; count<=50 and targets inP (DATA-CONDITIONAL; never an instruction clamp).
+; RACE WITHOUT SPILL: while all processed records remain00..4F,the same P
+; implication holds; racing0047 alone writes no callback. This condition can
+; be transient; pending excess creation is not prevented by the scan request.
+; RACE WITH SPILL: constructor still installs live002E,but P is not preserved.
+; DF0 visibility can replace50..54 callbacks by0000/0001/0100/0101; keyboard
+; writes55/56; object animation intersects85/87/8A/8C/8F/91,plus later owners.
+; No claimed exhaustive target superset or actually executed new edge follows.
+; Concrete UNCONDITIONAL local implication: completed slot50 X=Y=0,then DF0
+; visibility at origin0080 zeros callback0EAC but marks0ED3=1. Empty terrain
+; lets state0004 fall without replacing+14; with no intervening append/writer,
+; point compare fails and7077 folds X+bias=-8 to0158,whose gate is0ED3.
+; +20 was also cleared,so no strip;715B receives0000 with intact saves.
+; This bounded instruction-feasible sequence disproves spill preservation;
+; actual whole-session arrival/schedule is UNRESOLVED,not an observed CALL0000.
+; In ANY case,DF1 action5/visibility or save/segment aliases remove the P proof.
+; Stale normal selection stays slot-aligned but can outlive count wrap/liveness;
+; its DF0 word stores alone preserve P. PROFILE supplies no race exclusion,
+; cursor bounds,writer lock or save-alias proof. Keep target_domain_complete=false.
 times -(($-$$) != 0x706f) db 0 ; module start assertion
+; UNCONDITIONAL intact-save known-edge arithmetic: the strip/nine callback closure peaks20 bytes below entryS;caller near frame is additional. DI S-2,alignment S-4,callback S-6 and strip DS S-12 remain live physical SS words. Mirror-only witnesses at small artificialSP do not establish actual placement. UNRESOLVED caller-rooted depth,record targets,dirty-map writes,service/nesting and saved-frame survival;the apparent512-byte gap has a pinned object row49B6..49C5.
 ; R3 nine-target membership remains conditional:DATA-A nominal order/header,
 ; forward reset,serialized count/limit publication,genuine record/selection,
 ; initialized slot preservation,DF0 at action5 and every visibility entry,and

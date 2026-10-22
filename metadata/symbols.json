@@ -53241,7 +53241,8 @@
       "Bounded native core/adapter composition through actual child frames; arbitrary live callback targets and provider/IRQ timing remain open.",
       "S12: only decoded CALL3675; DS inherited. No-strip path reaches715B with same DS; optional6F7B saves DS atS-12, sets strip source DS from CX supplied by1FE8, and POPs actual saved DS at6FE0.7157 instead restores sprite CX=(1FE6+BP)&FFFF. Near715B retains CS. Foreground SP P gives entry S=P-8; P4AF4 implies target save4AE6, strip DS save4ADA, disjoint low mirrors/normal maps through48F3 under canonical DS19B9/SS244E. This sufficient placement is not a full stack-lifetime proof; nine-set membership and target_domain_complete remain conditional. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
       "S17 flow-state: For706F entryS, current DS supplies the word sampled hereit is saved atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX at715B, including the strip path:7159 rereads the saved word, and715A removes alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment guarantee. No target-set membership follows.",
-      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations.",
+      "UNCONDITIONAL intact-save transport:715B AX=70F0 sampled+14,saveS-6;stripDS saveS-12 separately survives. No-race DATA-CONDITIONAL prefix and race-without-spill preserve nine only with full writer/DF/source premises. Spill permits DF0 visibility/keyboard/animation writes;static visible slot50 witness carries0000. Global domain UNRESOLVED in CONSERVATIVE/PROFILE;no new CFG edge."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 240,
@@ -67108,7 +67109,8 @@
       "30CF selects slot0088+[0043]*2D;314B increments after producer;1F2E loop bound includes inactive slots; unchecked extent. docs/entity-simulation.md",
       "Live byte0043:DF-clear0031/455B reset;314B INC publishes a completely cleared/initialized new slot.30CF reads index; no inactive-slot reuse, decrement or compaction in decoded producer/deactivators.1F2E/3637/3CDE consume bound including inactive slots. Stable byte bound n walks[0088,0088+2D*n), max exclusive2D5B; constructor indexFF reaches2D5B..2D87 then wraps bound00. Physical storage extent and service/alias/UNKNOWN writers remain unproved;50h is only the disjoint prefix before0E98, not a checked maximum.",
       "S12: byte0043 is reset by forward455B and incremented only after completed constructor stores at314B in the decoded direct domain; inactive slots retain their count. With stable starting B and limit L, (L-B)&FF publications precede equality; fresh B0 never wraps for stable byte L. Nominal pinned headers<=50 bound the prefix only with serialized limit writes: IRQ1874->4013 after30D5 and before314B can install limit B then publish B+1, defeating the stop and permitting subsequent spill. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
-      "R3 UNCONDITIONAL recurrence: byte-indexed0088+2D*count,equality-only limit,314B publication wrap. DATA assumption A nominal header<=50 bounds prefix0088..0E97 only with stable counters/cursors and serialization of30CC..314B against4013. Profile grants no serialization. Spill50 overlaps spawn/visibility; numericB3/D3 footprints reach probe/input storage,but later corrupted-state survival is UNRESOLVED."
+      "R3 UNCONDITIONAL recurrence: byte-indexed0088+2D*count,equality-only limit,314B publication wrap. DATA assumption A nominal header<=50 bounds prefix0088..0E97 only with stable counters/cursors and serialization of30CC..314B against4013. Profile grants no serialization. Spill50 overlaps spawn/visibility; numericB3/D3 footprints reach probe/input storage,but later corrupted-state survival is UNRESOLVED.",
+      "UNCONDITIONAL: published byte count is not allocation/active count. Stable scans cover00..n-1,neverFF.314B wrapsFF->00; constructor may addressFF.4013 race defeats DATA-CONDITIONAL nominal50 bound. Actual maximal surviving count UNRESOLVED; T2 report."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67175,7 +67177,8 @@
       "36CD stores header+02 low byte;30CC/01E7 compare with created-record counter0043;4013 replaces it with that counter. No host array bound implied.",
       "0404 provisionalC8;36CD takes only loaded header+03 into0047;4013 copies current0043 to stop creation.30D3 tests equality, not unsigned less-than and not a capacity clamp;01EA also compares. A fresh zero counter and unchanged limit L append indices0..L-1, conditional on intact writer/segment/cursor state. No limit<=50h is established.",
       "S12: 0404 provisional C8 is overwritten by36CD from header byte+03 before known first creation0483; high header byte discarded. All80 pinned base sections and40 nominally selected forward odd overrides have high00 and limit<=50h (80 decimal). Other40 odd rows hold0063 (99 decimal); arbitrary header low byte permits00..FF.4013 snapshots current0043 to stop creation, but IRQ timing after30D5/before314B can put the published bound above that equality-only limit. No constructor clamp. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
-      "R3 UNCONDITIONAL:36CD uses only loaded header low byte;4013 snapshots live0043. Nominal supplied120 headers<=50 is a separate DATA assumption A,not a guard. IRQ4013 after30CC sampling before314B publication can step count past the new limit;no barrier/recheck. Actual scheduling/exclusion and later spill survival remain UNRESOLVED under both flowstate modes."
+      "R3 UNCONDITIONAL:36CD uses only loaded header low byte;4013 snapshots live0043. Nominal supplied120 headers<=50 is a separate DATA assumption A,not a guard. IRQ4013 after30CC sampling before314B publication can step count past the new limit;no barrier/recheck. Actual scheduling/exclusion and later spill survival remain UNRESOLVED under both flowstate modes.",
+      "UNCONDITIONAL:0404 C8 provisional;36CD header low byte;4013 snapshots0043 only for scan58/53 or panel0B,gate002B!=FF,signed delta<=5 (00..05 or80..FF). After30CC and before314B yields limitB/countB+1 mod100. One race then fixed limit permits100 publications including pending one; survival UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67257,7 +67260,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "2005/2008 compares live cursor against0043;2026/2037 increments; no explicit reset at400B/203C. docs/entity-simulation.md"
+      "2005/2008 compares live cursor against0043;2026/2037 increments; no explicit reset at400B/203C. docs/entity-simulation.md",
+      "UNCONDITIONAL:455B clears004C;2026/2037 increment;400B does not reset.2005 equality-only versus0043 permits stale cursor above count after wrap,includingFF though stable update/draw/select never enumerateFF.2033 writes+20,not+14. Post-spill survival UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67434,7 +67438,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "3DC6/3DDA write the selected live SI;317C reads it. Selection geometry and wider validity remain scoped. docs/entity-actions.md",
-      "317C reads live0058 with no alignment/range/+26 recheck.3CDE scans2Dh slots and stores candidate pointers at3D8E/3D9C then chosen0058 at3DC6/3DDA. Zero bound leaves buckets stale; nonzero resets sentinels but not pointer words. Action guards0063,not selected index005E or presence001A. Pointer lifetime requires unchanged selection/record/service state; raw pointer/segment/stack aliases remain supported observations."
+      "317C reads live0058 with no alignment/range/+26 recheck.3CDE scans2Dh slots and stores candidate pointers at3D8E/3D9C then chosen0058 at3DC6/3DDA. Zero bound leaves buckets stale; nonzero resets sentinels but not pointer words. Action guards0063,not selected index005E or presence001A. Pointer lifetime requires unchanged selection/record/service state; raw pointer/segment/stack aliases remain supported observations.",
+      "UNCONDITIONAL input implication: intact reset/selection words give0 or0088+2D*k,k00..FE. Zero-bound3CDE preserves0063/indices/pointers;actions may use stale aligned inactive/above-new-bound slots without+26 validation. Stale alone cannot alias callback source globals. Other writers/aliases UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68147,7 +68152,8 @@
     "evidence": [
       "1F2B and30C9 slot base;30D3..30F3 clear one2D-byte slot;1FEC stride2D; whole array extent/max count unproven. docs/entity-simulation.md",
       "First slot only,2Dh bytes at DS:0088.30C9..30F7 computes0088+2D*unsigned0043 and clears45 bytes with explicit INC DI independent of DF;30F9..3147 initializes before314B bound publication.20E2/22EE/2339/2FD1 mark+26=FF without decrement/free/reuse; normal reuse is DF-clear455B level reset. No decoded whole-record clone;378A copies distinct1Ch graphics records,283B copies interaction pattern to SS. Indices00..4F end0E97;index50 overwrites0E98 spawn pairs and aliases visibility.45 is first-slot width, never whole-array extent. See maintained1F19 contract.",
-      "S12: retain size2D as first-slot schema, not new whole-array classification. Nominal header/order/full-read DF0 domain plus reset and serialized limit/publication gives at most50h slots, numeric prefix0088..0E97 (0E10 bytes). Neither byte counter nor equality guard allocates that extent. Index50 clears0E98..0EC4, destroying four spawn pairs before their read and overlapping visibility; raw/dummy limits or the4013 IRQ publication race permit spill. Byte-indexed selection reaches indexFF at2D5B..2D87 outside the prefix. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness."
+      "S12: retain size2D as first-slot schema, not new whole-array classification. Nominal header/order/full-read DF0 domain plus reset and serialized limit/publication gives at most50h slots, numeric prefix0088..0E97 (0E10 bytes). Neither byte counter nor equality guard allocates that extent. Index50 clears0E98..0EC4, destroying four spawn pairs before their read and overlapping visibility; raw/dummy limits or the4013 IRQ publication race permit spill. Byte-indexed selection reaches indexFF at2D5B..2D87 outside the prefix. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
+      "UNCONDITIONAL: size2D is first-slot schema,not total allocation. Slot50 starts0E98; clear precedes spawn reads. Byte-index constructor footprint0088..2D87; stable published walk ends2D5A at countFF. Exact initializer/per-index shared owners in T2 report; no new classification."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68494,7 +68500,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "389F appends+24/+30 coordinate pairs from unchecked32 type-one definitions;30E2 indexesfourpairs;128bytes ismaximumwrites notprovenallocation",
-      "S12: 389F scans32 definitions and can write128 decimal bytes from0E98; counts>=4 are unclamped.30DB masks the spawn index to four pairs, which is a consumer domain, not the collector bound. A serialized nominal<=50 entity prefix ends0E97; index50 constructor clears all four source pairs before30F9/30FD reads. The4013 IRQ race or unrestricted limits can cross this owner. Retain maximum writer footprint128, not a new entity capacity allocation."
+      "S12: 389F scans32 definitions and can write128 decimal bytes from0E98; counts>=4 are unclamped.30DB masks the spawn index to four pairs, which is a consumer domain, not the collector bound. A serialized nominal<=50 entity prefix ends0E97; index50 constructor clears all four source pairs before30F9/30FD reads. The4013 IRQ race or unrestricted limits can cross this owner. Retain maximum writer footprint128, not a new entity capacity allocation.",
+      "UNCONDITIONAL:389F up to32 pairs0E98..0F17,not entity allocation;firstfour read by constructor. Slot50 clear destroys all four,reads pair0 as X=Y=0,then replaces pairs1/2/3 byFFF8:FFF6,0004:0000,0A42:0000 absent interference. Later visibility/updates also own these bytes."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68527,7 +68534,8 @@
     "data_references": [],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Keyboard16D4 literal indexed field extent and consumers; docs/keyboard-input.md"
+      "Keyboard16D4 literal indexed field extent and consumers; docs/keyboard-input.md",
+      "UNCONDITIONAL:179E writes00/94 to0F78..0FCA;4D23 reads,4D3A updates repeat byte. Callback55=0F8D,56=0FBA overlaps scans15/42 (high bytes next scans). Later keyboard writes may leave nine-target set; actual high-spill arrival UNRESOLVED."
     ],
     "verification_status": "STATIC"
   },
@@ -68801,7 +68809,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "378A copies32 wrapped unchecked28-byte ground templates toDS17CB..1B4A;394F/7BB8/7C0A consume live slots; first-word-zero leaves stale bytes"
+      "378A copies32 wrapped unchecked28-byte ground templates toDS17CB..1B4A;394F/7BB8/7C0A consume live slots; first-word-zero leaves stale bytes",
+      "UNCONDITIONAL:378A setup copies1Ch templates. Recurring7C0A writes+00/+02/+17 at7C5C/7C4C/7C59;callback overlaps85(high),87(both),8A(both),8C(two stores),8F(low),91(low). Definition/flag/frame gates,staleBX and wrap retained. High-spill survival UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70267,7 +70276,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md",
-      "Stored DS:2011/2012=0000. MOV word132A=00C8,1332=0190 and MOV word15C2 prove one little-endian selector, not an independent high-byte flag. DF=0 clear0031 ends at2011; high2012 is not cleared. Under preserved startup DI,0031 leaves2012 and option tails10E2/10EC/10F6 reach1194 with this DI: word2020 writes high2012 and first probe enable2013. GROUND1A18 and indexed/alias writers also remain. Preserve all non-C8/non-190 values taking detector15D5."
+      "Stored DS:2011/2012=0000. MOV word132A=00C8,1332=0190 and MOV word15C2 prove one little-endian selector, not an independent high-byte flag. DF=0 clear0031 ends at2011; high2012 is not cleared. Under preserved startup DI,0031 leaves2012 and option tails10E2/10EC/10F6 reach1194 with this DI: word2020 writes high2012 and first probe enable2013. GROUND1A18 and indexed/alias writers also remain. Preserve all non-C8/non-190 values taking detector15D5.",
+      "UNCONDITIONAL stored0000;132A=00C8,1332=0190;15AD bypasses detector only if200E==FF or exactword2011 in{00C8,0190}. Every other word calls15D5 even with nonzero saved1FC9. PLATFORM-CONDITIONAL early1194/DI2012 changes high2012=20 and first probe enable20,so20C8/2090 no longer bypass. No ordinary per-session reset;wider writes UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70285,7 +70295,8 @@
     "evidence": [
       "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes",
       "Stored four enable-byte/near-word records:2013:00,1410;2016:00,1462;2019:00,1490;201C:00,14A0. 13F8/13FB set CX4/SI2013;13FF TEST/1402 LODSW preserves enable ZF. DS-frame, DF=0 at every LODS, preserved SI/CX saves and intact pointers close1407 locally. 13E9/13EE/13F3 enable only last three. 1194 with DI2012 can set first enable20. Known probe writers only change enables/pairs under preserved DS/DI; BIOS changes, GROUND request, unchecked record179, strings/stack/UNKNOWN paths prevent whole-lifetime closure.",
-      "R3 UNCONDITIONAL schema/lifetime: startup1194 DI2012 can set first enable20 without changing pointer words; level reset/session setup do not restore records. DATA assumption A excludes supplied GROUND overwrites. SlotB3 base1FFF clears records and3140=6170 yields first target0061. Local forward traversal requires intact pointer words,DF0/gameDS/DI2006 and savedSI/CX/returns. PROFILE entries10:AX=1A00,10:AH=0012(BL10),10:AH=000F preserve only the stated local domain. Global writer/race/alias closure remains UNRESOLVED."
+      "R3 UNCONDITIONAL schema/lifetime: startup1194 DI2012 can set first enable20 without changing pointer words; level reset/session setup do not restore records. DATA assumption A excludes supplied GROUND overwrites. SlotB3 base1FFF clears records and3140=6170 yields first target0061. Local forward traversal requires intact pointer words,DF0/gameDS/DI2006 and savedSI/CX/returns. PROFILE entries10:AX=1A00,10:AH=0012(BL10),10:AH=000F preserve only the stated local domain. Global writer/race/alias closure remains UNRESOLVED.",
+      "UNCONDITIONAL stored four enable/LE16 rows2013..201E,targets1410/1462/1490/14A0.13DC reinitializes only later enables before EVERY detector call;first enable and ALL target words persist across calibrations/menu/4551/03E7/session reuse.00C8 precedes main resources;0468 follows455D resources each entered session. Nonzero old reload does not skip15D5. DATA-CONDITIONAL GROUND0420 excludes its overwrite only;global record/renderer/frame/provider writers UNRESOLVED. Exact recurrence and BIOS premises in t3-input-probe.md."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70301,7 +70312,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "13FF first LODSB/1400 TEST; stored00, not set by13DC. Startup1194 with DI2012 sets20; broader resource/record/alias writers remain. Enables1410 when nonzero in the DF=0 table traversal."
+      "13FF first LODSB/1400 TEST; stored00, not set by13DC. Startup1194 with DI2012 sets20; broader resource/record/alias writers remain. Enables1410 when nonzero in the DF=0 table traversal.",
+      "UNCONDITIONAL stored0,not reset by13DC or session. PLATFORM-CONDITIONAL forward0031/DI-preserving startup prefix can leaveDI2012;1194 early10E2/10EC/10F6 writes2012=20 and2013=20 without touching pointers. Interactive row markers miss table. First enable carries0/20 in ordinary no-other-writer lifetime;VGA does not set it. Any nonzero enables1410. Wider writers UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70333,7 +70345,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md",
+      "UNCONDITIONAL:13EE=FF every executed detector;successful1410 sets0 at143F;1462 does not reset its own enable. Prior call suppression is never cached. Bypassing detector15AD gates retains current byte. Global lifetime UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70365,7 +70378,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md",
+      "UNCONDITIONAL:13E9=FF every executed detector;successful1410 clears143A;recognizedEGA with lookup high!=1 clears1483. CRTC calls/final pair swap do not change enables. Bypass retains prior byte;global lifetime UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70397,7 +70411,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md",
+      "UNCONDITIONAL:13F3=FF every executed detector;successful1410 clears1444 then145C rearmsFF if a detected pair has low1;recognizedEGA lookup high1 clears148A. Repeated detector resets avoid stale suppression. Bypass retains byte;global lifetime UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71138,7 +71153,8 @@
     "evidence": [
       "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional",
       "4252 stored word; direct4A68/4A80 install4334/4359 before publishing mode1 and calibration. Mode0/2/escape do not restore it. 42A1 samples before PUSH DX and CALL42A5. Known set is closed only if these are the last writes of both bytes in canonical DS and no intervening register/code change. GROUND file offsets0A55/0A56 and unchecked creation slot211 SI259F (clear30F3 and coordinate stores30FB/3100) are concrete other writers under named entry domains, not startup reachability claims. Raw strings, marker cursors, other indexed stores, provider/IRQ/physical aliases and UNKNOWN execution remain open.",
-      "R3 UNCONDITIONAL: mode0 bypasses42A5 without reading this word;4ABD does not restore it. Stored4252 and direct4A68/4A80=4334/4359 remain a last-writer domain only. DATA assumption A excludes GROUND overrun; nominal-origin theorem excludes4131. SlotD3 numerically overlaps this word and changes25A6 too; arrival/survival, indexed/string/stack/provider/IRQ closure remain UNRESOLVED.33:AX=0003 PROFILE preservation does not close writers."
+      "R3 UNCONDITIONAL: mode0 bypasses42A5 without reading this word;4ABD does not restore it. Stored4252 and direct4A68/4A80=4334/4359 remain a last-writer domain only. DATA assumption A excludes GROUND overrun; nominal-origin theorem excludes4131. SlotD3 numerically overlaps this word and changes25A6 too; arrival/survival, indexed/string/stack/provider/IRQ closure remain UNRESOLVED.33:AX=0003 PROFILE preservation does not close writers.",
+      "UNCONDITIONAL in fixed decoded selection/no-other-writer domain: stored4252; only absolute word stores4A68=4334,4A80=4359. Mouse4ABD/keyboard4AB5/escape4A4B/menu/code/level/session paths retain this word. Every ordinary mode1 publication first replaces it, so ordinary42A5 target set is4334/4359;4252 belongs only to broader intact-slot/raw-mode1 domain. Pointer can change while prior mode1 remains1 before publication; baselines follow. Global indexed/resource/renderer/frame/provider writer closure UNRESOLVED; see t3-input-probe.md."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71155,7 +71171,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "4A73/4A8B callback BX calibration stores;42B0 subtracts from live returned BX before PointerX update",
-      "Stored LE16 zero; excluded from startup/level clears. 4A73/4A8B store callback-returned BX after publishing mode1;42B0 subtracts live word modulo16 before signed dead-zone/scaling. Calibration validity begins after that store; reentrant poll before it can see prior value. Mouse/keyboard selection preserves baseline. GROUND maximum2B4A, indexed record/cache/string/SS/provider aliases remain writers; pinned GROUND ends1F6A. Process-persistent mutable field, not exclusively owned/immutable."
+      "Stored LE16 zero; excluded from startup/level clears. 4A73/4A8B store callback-returned BX after publishing mode1;42B0 subtracts live word modulo16 before signed dead-zone/scaling. Calibration validity begins after that store; reentrant poll before it can see prior value. Mouse/keyboard selection preserves baseline. GROUND maximum2B4A, indexed record/cache/string/SS/provider aliases remain writers; pinned GROUND ends1F6A. Process-persistent mutable field, not exclusively owned/immutable.",
+      "UNCONDITIONAL:4A73/4A8B storesBX after callback/mode1 publication;Y follows4A77/4A8F. Natural43CE returningCL0/1 impliesDX0201 through direct4A70/4A88,so DL01 measures;raw-entryDLFF remains supported. MenuIRQ4C70 DLFF skips axes/baselines;gameIRQ183E DL0 measures. Actual whole-session save/writer/IRQ ownership UNRESOLVED."
     ],
     "verification_status": "STATIC"
   },
@@ -71190,7 +71207,8 @@
     "evidence": [
       "418C selects0 mouse/1 indirect callback/other accelerated keyboard;0F64 fallback2;4A6D/4A85/4AB5/4ABD writers",
       "Stored00;0F64/4AB5 write02,4ABD writes00,4A6D/4A85 write01 BEFORE calibration.418C/4196 select00 mouse,01 callback,all other bytes keyboard; briefing/result prompts use00/01/other. Selection does not restore25A0/baselines. Excluded from ordinary startup/level clear; GROUND maximum and general indexed/string/SS/provider writers remain. No boolean normalization or closed three-value raw domain.",
-      "R3 UNCONDITIONAL: observed0 at418C routes direct4252;1 routes42A5;others keyboard. Successful initial mouse configuration and4ABD selection do not make this immutable or restore25A0. Constructor slotD3 base259F clears mode then3134 record+06=FFF6 leaves25A6=FF. This is a numeric writer witness; actual high-slot survival and whole-session mode persistence remain UNRESOLVED."
+      "R3 UNCONDITIONAL: observed0 at418C routes direct4252;1 routes42A5;others keyboard. Successful initial mouse configuration and4ABD selection do not make this immutable or restore25A0. Constructor slotD3 base259F clears mode then3134 record+06=FFF6 leaves25A6=FF. This is a numeric writer witness; actual high-slot survival and whole-session mode persistence remain UNRESOLVED.",
+      "UNCONDITIONAL decoded dedicated stores:0F64=2 on disabled/absent mouse;4AB5=2 on key3 or controllerCL2;4ABD=0 on allowed key1;4A6D/4A85=1 after complete callback word4334/4359 store. Initial0; successful0F08 does not explicitly reset0. Menu/code/session/result transitions preserve mode under no-other-writer premise.418C mode0 direct4252; second4196 comparison1 uses42A5,other keyboard. SlotD3 constructor can leaveFF; global lifetime UNRESOLVED."
     ],
     "verification_status": "STATIC"
   },

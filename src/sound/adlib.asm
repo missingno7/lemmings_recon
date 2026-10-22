@@ -1150,6 +1150,7 @@ adlib_Command4Latch:
     db 0x6f,0x75,0x6e,0x64,0x20,0x49,0x6d,0x61,0x67,0x65,0x73,0x20,0x28,0x63,0x29,0x20 ; @00101
 ; DATA: embedded_resource
     db 0x31,0x39,0x39,0x31 ; @00111
+; UNCONDITIONAL known-edge stack arithmetic: eight saves16 +CALL0177 2 +CALL0349 2 +BX/SI/AX6 +CALL0559 2 +savedDX2 =30 below driver entry,36 including INT61 CPU frame. AH01 peaks16 including frame,AH02 24,AH03/04/05 10. Recovered engine neverSTIs,excluding maskable reentry only while control remains in it. UNRESOLVED raw01EA targets,frame/code/segment aliases,NMI and external stack/nesting;these numbers are not a whole-game stack bound.
 ; S17 flow-state: Public update entry preserves incoming DF while selecting DS=ES=current
 ; driver CS before0121. The header parser0457 retains incoming DF at04AB/04BA, and the
 ; decoded AdLib image has no CLD/STD. INT61 clears IF on entry but does not clear DF;

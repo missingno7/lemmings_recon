@@ -1,5 +1,6 @@
 ; Maintained image span 03CDE..03E6E; physical order and UNKNOWN bytes preserved.
 times -(($-$$) != 0x3cde) db 0 ; module start assertion
+; T2 UNCONDITIONAL: intact reset/producer words give0 or0088+2D*k,k00..FE;byte count never scansFF. Zero bound skips0063/index/pointer resets,so wrap retains stale above-new-bound selection. Actions validate neither range nor+26. Forward455B reset clears these globals;other writers/aliases UNRESOLVED.
 ; CONTRACT: frozen entry CL controls the scan; zero leaves all candidate state stale.
 ; Live0043-CL determines bucket index. Last matching record wins in each bucket;
 ; pointer fields survive sentinel resets. Signed wrapped geometry retains0680->00D0.

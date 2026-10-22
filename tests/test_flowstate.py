@@ -30,6 +30,165 @@ def serial(analysis, entries=()):
 
 
 class FlowStateTests(unittest.TestCase):
+    def test_service_wrapper_specializes_live_selector_without_site_invention(self):
+        a = program([row(0, 'cld'), row(1, 'mov', 'ax, 0x3f00'),
+                     row(2, 'call', '16', 3), row(5, 'ret'),
+                     row(16, 'push', 'ds'), row(17, 'int', '0x21'),
+                     row(18, 'pop', 'ds'), row(19, 'ret')],
+                    [(0, 1, 'fallthrough'), (1, 2, 'fallthrough'),
+                     (2, 16, 'call'), (2, 5, 'fallthrough'),
+                     (16, 17, 'fallthrough'), (17, 18, 'fallthrough'),
+                     (18, 19, 'fallthrough')], (0, 16))
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            z = Analyzer(a, services=ServiceModel(mode), intact_stack=True,
+                         irq_mode='disabled').run()
+            self.assertEqual(z.states[0, 5].df, ZERO if mode == 'PROFILE' else TOP)
+            # The arbitrary raw wrapper entry still has an unknown selector.
+            self.assertIsNone(z.exits[16][19].state.df)
+            if mode == 'PROFILE':
+                self.assertEqual(z.states[0, 5].regs['ds'], val(('in', 'ds')))
+                self.assertEqual(z.states[0, 5].sp, 0)
+
+    def test_nested_summary_rebases_caller_stack_pointer_and_shared_tail(self):
+        a = program([row(0, 'push', 'ds'), row(1, 'mov', 'bp, sp'),
+                     row(2, 'call', '16', 3), row(5, 'pop', 'es'), row(6, 'ret'),
+                     row(16, 'call', '32', 3), row(19, 'ret'),
+                     row(32, 'jmp', '40'), row(40, 'mov', 'word ptr [bp], 0x1234'),
+                     row(41, 'ret')],
+                    [(0, 1, 'fallthrough'), (1, 2, 'fallthrough'),
+                     (2, 16, 'call'), (2, 5, 'fallthrough'), (5, 6, 'fallthrough'),
+                     (16, 32, 'call'), (16, 19, 'fallthrough'),
+                     (32, 40, 'branch'), (40, 41, 'fallthrough')], (0, 16, 32))
+        z = serial(a)
+        self.assertEqual((z.states[0, 6].regs['es'], z.states[0, 6].sp), (val(0x1234), 0))
+        s = State.symbolic()
+        s.regs['ds'] = val(0x8888)
+        observed, _ = z.project({0: s})
+        self.assertEqual(observed[40].regs['bp'], val(('sp', 4)))
+        self.assertEqual(observed[6].regs['es'], val(0x1234))
+
+    def test_deep_closed_call_closure_keeps_return_and_save_identities(self):
+        instructions, edges = [], []
+        for i in range(40):
+            p = 8 * i
+            instructions.extend([row(p, 'push', 'ds'), row(p + 1, 'call', str(p + 8), 3),
+                                 row(p + 4, 'pop', 'es'), row(p + 5, 'ret')])
+            edges.extend([(p, p + 1, 'fallthrough'), (p + 1, p + 8, 'call'),
+                          (p + 1, p + 4, 'fallthrough'), (p + 4, p + 5, 'fallthrough')])
+        instructions.extend([row(320, 'cld'), row(321, 'ret')])
+        edges.append((320, 321, 'fallthrough'))
+        z = serial(program(instructions, edges, tuple(8 * i for i in range(41))))
+        out = z.exits[0][5]
+        self.assertEqual((out.ip, out.state.sp, out.state.df), (val(('stack', 0)), 2, ZERO))
+        self.assertEqual(out.state.regs['es'], val(('in', 'ds')))
+        self.assertEqual(z.states[0, 5].read_slot(0xfffe).pushes, frozenset((0,)))
+        self.assertTrue(out.state.forgotten)
+
+    def test_slot_eviction_is_unknown_and_does_not_restore_entry_contents(self):
+        s = State()
+        s.write_slot(0, val(0xbeef), frozenset((9,)))
+        for p in range(2, 160, 2):
+            s.write_slot(p, val(0x1234))
+        self.assertLessEqual(len(s.slots), 64)
+        self.assertEqual(s.read_slot(0), Slot(val(0xbeef), frozenset((9,))))
+        self.assertIsNone(s.read_slot(158).value)
+        incoming = State()
+        incoming.write_slot(158, val(0x7777))
+        self.assertIsNone(instantiate(s, incoming).read_slot(158).value)
+
+    def test_summary_copy_does_not_replay_invalidated_overlap_as_a_write(self):
+        s = State.symbolic()
+        s.write_slot(0, val(0x1234))
+        s.write_slot(1, val(0x5678))
+        out = instantiate(s, State())
+        self.assertIsNone(out.read_slot(0).value)
+        self.assertEqual(out.read_slot(1).value, val(0x5678))
+        self.assertIsNone(out.read_slot(2).value)
+
+    def test_invalidated_summary_word_is_not_an_additional_overlapping_write(self):
+        template = State.symbolic()
+        template.write_slot(0xfffe, val(0x1234))
+        template.slots[0xffff] = Slot()  # observation of its invalidated neighbor
+        incoming = State()
+        incoming.write_slot(0, val(0xbeef), frozenset((7,)))
+        out = instantiate(template, incoming)
+        self.assertEqual(out.read_slot(0), incoming.read_slot(0))
+        self.assertIsNone(out.read_slot(0xffff).value)
+
+    def test_word_write_invalidates_implicit_overlapping_entry_words_at_wrap(self):
+        s = State.symbolic()
+        s.write_slot(0xffff, val(7))
+        self.assertIsNone(s.read_slot(0).value)
+        self.assertIsNone(s.read_slot(0xfffe).value)
+        self.assertEqual(s.read_slot(2).value, val(('stack', 2)))
+
+    def test_summary_limit_falls_back_to_generic_not_a_selected_service(self):
+        from flowstate import SUMMARY_CAP, summary_input
+        a = program([row(16, 'int', '0x21'), row(17, 'ret')],
+                    [(16, 17, 'fallthrough')], (16,))
+        z = Analyzer(a, services=ServiceModel('PROFILE'), intact_stack=True, irq_mode='disabled')
+        for selector in range(SUMMARY_CAP):
+            s = State.symbolic()
+            s.regs['ax'] = val(selector << 8)
+            self.assertNotEqual(z.context(16, summary_input(s)), (16, 0))
+        known_read = State.symbolic()
+        known_read.regs['ax'] = val(0x3f00)
+        self.assertEqual(z.context(16, summary_input(known_read)), (16, 0))
+        z.run()
+        self.assertIsNone(z.exits[16][17].state.df)
+        self.assertEqual(len(z.variants[16]), SUMMARY_CAP)
+
+    def test_unknown_sp_reanchor_discards_old_stack_pointer_relations(self):
+        a = program([row(0, 'mov', 'bp, sp'), row(1, 'mov', 'sp, ax'),
+                     row(2, 'call', '16', 3), row(5, 'ret'), row(16, 'ret')],
+                    [(0, 1, 'fallthrough'), (1, 2, 'fallthrough'),
+                     (2, 16, 'call'), (2, 5, 'fallthrough')], (0, 16))
+        self.assertIsNone(serial(a).states[0, 5].regs['bp'])
+
+    def test_original_code_entry_shared_tail_preserves_saved_bp_dispatch(self):
+        from flowstate import load_component
+        from graph import routine_views
+        from common import ROOT, read_json
+        original, _, relocations = load_component('main')
+        views = routine_views(original, read_json(ROOT/'metadata/symbols.json'), original=True)
+        entries, pending = set(), [0x4c7e]
+        while pending:
+            entry = pending.pop()
+            if entry in entries:
+                continue
+            entries.add(entry)
+            pending.extend(views[entry]['callees'])
+        sites = set().union(*(views[e]['sites'] for e in entries))
+        analysis = dict(instructions=[r for r in original['instructions'] if r['address'] in sites],
+                        edges=[e for e in original['edges'] if e['source'] in sites],
+                        routines=sorted(entries),
+                        unresolved=[r for r in original['unresolved'] if r['address'] in sites])
+        z = Analyzer(analysis, relocations=relocations, services=ServiceModel('PROFILE'),
+                     intact_stack=True, irq_mode='disabled').run()
+        for p, sp in ((0x4cc9, 0xffea), (0x4d18, 0)):
+            self.assertEqual(z.states[0x4c7e, p].regs['bp'], val(0x503b))
+            self.assertEqual(z.states[0x4c7e, p].sp, sp)
+        # This known-edge, intact-save implication is not whole-game closure of
+        # BP's target writers, absolute SS aliases, IRQs or the renderer profile.
+
+    def test_mutually_recursive_summary_footprints_have_a_finite_bound(self):
+        a = program([row(0, 'je', '8'), row(1, 'call', '16', 3), row(4, 'ret'),
+                     row(8, 'ret'), row(16, 'call', '0', 3), row(19, 'ret')],
+                    [(0, 8, 'branch'), (0, 1, 'fallthrough'), (1, 16, 'call'),
+                     (1, 4, 'fallthrough'), (16, 0, 'call'), (16, 19, 'fallthrough')], (0, 16))
+        z = serial(a)
+        self.assertLess(z.steps, 2000)
+        self.assertTrue(z.recursive_contexts)
+        self.assertIn((0, 4), z.states)
+
+    def test_projection_budget_exhaustion_rejects_the_result(self):
+        from unittest.mock import patch
+        a = program([row(0, 'nop'), row(1, 'ret')], [(0, 1, 'fallthrough')])
+        z = serial(a)
+        with patch('flowstate.WORK_BUDGET', 1):
+            with self.assertRaisesRegex(RuntimeError, 'projection budget exceeded; no report accepted'):
+                z.project({0: State.symbolic()})
+
     def test_decoded_std_census_includes_all_components_and_protected_views(self):
         from flowstate import load_component
         from common import ROOT, read_json

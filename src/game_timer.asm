@@ -14,6 +14,7 @@
 ; the foreground owns retrace sync. Every fourth IRQ chains to BIOS INT08.
 ; The foreground ticks after five IRQs (signed1FCD>4), dropping any excess.
 times -(($-$$) != 0x17c7) db 0
+; UNCONDITIONAL local stack arithmetic: CPU IRQ frame6 plus nine saves/PUSHF20 leaves26 resident bytes;1896..1898 add6 before external old08. AH00 AdLib known-edge peak is36 including INT frame,so1872 gives62 below interruptedSP. Mouse input gives54 atmode0 or58 if mode1 callback selects4252,plus provider internal usage. UNRESOLVED global bound:189D STI/shadowed189E MOV precede18A3/18A7/IRET while26 bytes remain. Another eligible IRQ here retains another26;profile grants no PIC/timing/nesting bound or old08/provider high-water mark.
 ; R1: IRQ entry inherits interrupted DF and saves it in the CPU frame.17D0 PUSHF is a
 ; different inner save from that consumed by18B1 IRET.18A7 POPF restores inner FLAGS first.
 ; With intact original outer frame, return DF equals interrupted DF even if children alter

@@ -226,6 +226,7 @@ pcspeaker_EffectRecords:
     db 0x70,0x0a,0x90,0xf5,0x55,0x00,0x07,0x00,0x01 ; @00178
 ; UNKNOWN:0181 stored90;no intended role/entry. RawAL17 copies it with code.
     db 0x90 ; @00181
+; UNCONDITIONAL natural00/01/03 intact-table arithmetic: six saves12 plus transientCS push orhelperCALL2 =>14 below entry,20 with CPU frame. STI precedes saves,so nesting remains live. UNRESOLVED raw0196 targets/table writers,code/frame aliases and physical delivery;profile does not serialize this engine.
 ; R1 UNCONDITIONAL returning-path implication: no decoded STD,CLD or POPF in this image.
 ; Recognized original returning bodies IRET with interrupted DF, including1; no implicit CLD.
 ; Premises: live immutable image/vector, correct recognized dispatch, serial execution and

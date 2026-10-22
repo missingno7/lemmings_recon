@@ -46,6 +46,19 @@ times -(($-$$) != 0x3634) db 0 ; module start assertion
 ; With those saves intact the loop keeps main DS; ES is live (often A000),
 ; never an invariant record segment. Damaged saves/services remove the claim.
 DrawEntityRecords:
+; T2 UNCONDITIONAL index handoff: after publication of slotk<=FE,this loop
+; and1F19/3CDE include it whenever live count>k and their saves survive; none
+; checks that k<=4F or distinguishes a spill. FF construction publishes00,
+; so normal update/draw/select never enumerate indexFF. Stale2005 scan may.
+; Visibility-miss7086,exact+26=FF,and point-path365A are gates,not proofs that
+; a corrupt callback can never reach715B. Visibility clears+26 too and can
+; reactivate spilled or backward-overlapped records without a constructor.
+; UNCONDITIONAL DF0 visibility with valid origin0010..0500 (multiple8):
+; zero0EA8..0F77 then marker0EA6+t..0ECE+t,t=origin>>3 in2..A0. For slots
+; 50..54 the callback is0000/0001/0100/0101 depending on marker intersection,
+; all outside the nine. DF1 zeros4C..4E callbacks;4F is0100 at t2,else0000
+; for t>=3. Actual origin/DF/record survival is a separate UNRESOLVED domain;
+; nominal header origin bounds are DATA-CONDITIONAL,not granted by VGA/profile.
     mov di,EntityRecordsBase-GameDataImage ; @03634
     mov cl,[EntitySlotBound-GameDataImage] ; @03637
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @0363B

@@ -21,6 +21,21 @@
 ; This working array adjoins the ground load at1B4B; it is not separate C state.
 ; Native core and bounded live saves/return aliases: c/object_graphics.c.
 CopyLevelObjectGraphicsRecords:
+; T2 UNCONDITIONAL live-overlay obligation: object slots17CB..1B4A overlap
+; entity indices84..98. This copier runs at level setup (376A/397A); it is
+; not normally interleaved with entity construction. The recurring3944->7C0A
+; animation step IS between update01B3 and drawing01BC,writing object+00 word,
+; +02 byte,+17 word (7C5C/7C4C/7C59). Exact entity+14 intersections:
+; index85:17FE high;87:1857/1858;8A:18DE/18DF;8C:1938/1939 (two stores);
+; 8F:19BF low;91:1A19 low. Animation has definition/flag/frame gates and a
+; staleBX store at7C5C; no callback-membership test protects these aliases.
+; Frame-offset arithmetic can produce non-nine words in this conditional
+; writer domain. Actual survival/reachability of those spills is UNRESOLVED.
+; 7BB8/394F subsequently consume the same definitions/graphics fields; writing
+; a spilled entity can therefore alter renderer sizes/segments/control inputs.
+; DATA-CONDITIONAL original GROUND files0420 bytes cover1B4B..1F6A; the1000
+; raw-read request is larger and is not an allocation/ownership certificate.
+; Neither short-file exclusion nor PROFILE closes these record/renderer aliases.
     push ds ; @0378A
     pop es ; @0378B
     lea bx,[LevelObjectDefinitions-GameDataImage] ; @0378C
@@ -53,6 +68,8 @@ loc_37B9:
     add di,byte +0x1c ; @037BC
     loop loc_379B ; @037BF
     ret ; @037C1
+; DATA-CONDITIONAL supplied-record footprint: level007.dat zero-based section1/object ordinal10,section0070 bytes021000AC0005000F (loaded DS103B),ground3o.dat type5 template008C has xoff0,yoff2,width16,height2,kind05. Original wrapped formula yields SS4816..4825 then49B6..49C5,valueA5. Thus interaction cells extend into dirty storage and above48F3 even without altered inputs. No interval-wide allocation/classification follows. UNCONDITIONAL row PUSH DX/BX atS-2/S-4 and POPs are live; writer/frame separation remains UNRESOLVED.
+; UNCONDITIONAL lifetime implication:046B/376D/3770 precede game-vector install0492. Nominal DF0 second dirty-copy8219 clears4816..4825;00454/00460 neither DF clears49B6..49C5. The upper row can persist into later levels/stack traffic;actual read/survival and eligible-provider nesting remain UNRESOLVED.
 ; OBJECT INTERACTION CELLS: first16 eight-byte definitions, no type bounds check.
 ; BE type*28 selects ground metadata; zero BE X skips the rectangle. Base SS offset
 ; =12h+((X>>2)+LEtemplate[0E])+416*((Y>>2)+LEtemplate[10]-1), wrapped16.
@@ -120,6 +137,7 @@ loc_382F:
     jmp short loc_37CB ; @03836
 loc_3838:
     ret ; @03838
+; UNCONDITIONAL raw-input alias witness: steel bytes10 2E 00 00 give x32,row46,width1,height1 and write09 atSS4AF2. This can replace a near caller word there. DATA-CONDITIONAL all80 supplied unmodified LEVEL steel spans stay within00A7..41CB under intact row saves; this is not an unchecked-input bound or a global stack theorem.
 ; STEEL INTERACTION CELLS:32 four-byte records atDS172B, skip only if both words0.
 ; X coordinate combines AH and AL bit7; row is AL&7F. DH high/low nibbles encode
 ; width/height minus1 (each1..16). Record byte3 participates only in the zero check.

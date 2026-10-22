@@ -1346,6 +1346,12 @@ RasterMeasurementMode2011:
 ; [0BAA2] DS2011/2012 is one little-endian RasterMeasurementMode2011 selector: stored0000,132A=00C8,1332=0190,read15C2. Forward clear0031 includes only low2011;1194 with preserved DI2012 writes high2012 plus first probe enable2013. Classify only this high byte as static_data; retain wider lifetime/alias uncertainty.
 ; UNKNOWN: unresolved bytes
     db 0x00 ; @0BAA2
+; T3 UNCONDITIONAL schema/lifetime: stored E=(0,0,0,0), T=(1410,1462,1490,14A0); ordinary
+; early marker may change e0 to20.13DC never restores e0/T, but rearms gates2016/19/1C every
+; call.00C8 precedes main resources; each session0468 follows455D. Cleared/probe-disabled
+; does not mean immutable or initialized per session. Long GROUND file04C8..04D3 (first
+; count04C9, complete04D4), slotB3, renderer width0, physical aliases/provider writers
+; remain; DATA-CONDITIONAL0420-byte GROUND excludes only that resource channel.
 ; [0BAA3] Four three-byte live probe rows2013..201E: enable + near target1410/1462/1490/14A0. Stored enables00.13DC resets only later three;1194 can enable first via DI2012. Pointer words are sampled live, not immutable. DF0/DS and saved SI/CX contract beside13DC bounds1407;GROUND request/indexed records/aliases remain wider writers.
 DisplayProbeRecords:
 ; DATA: lookup_table
@@ -1699,6 +1705,12 @@ SavedBiosClockHigh:
     db 0x00,0x00 ; @0C02C
 SavedBiosClockLow:
     db 0x00,0x00 ; @0C02E
+; T3 input transition product: no-other-writer ordinary quiescent states are mode0/2 with
+; P4252/4334/4359, or mode1 with P4334/4359. Mouse/keyboard retain P; controller replaces P
+; before1; menu/code/session retain both. Proper selection does not reactivate retained
+; joystick P without replacement. All writer/IRQ/alias closure remains UNRESOLVED; GROUND
+; file0A5B, first count0A5C, additionally overwrites mode25A6. Do not substitute this
+; ordinary target subset for the existing raw-entry domain.
 ; [0C030] DS25A0 initially4252;4A68/4A80 install4334/4359 before mode1/calibration. Initial/start-level clears do not restore it. GROUND file offsets0A55/0A56 and unchecked record211 clear/coordinate stores overlap this word. Preserve actual physical aliases and sample at42A1 before CALL-frame stores.
 ; [0C030] InputPollCallback: initial4252/stores4A68,4A80 are not writer closure.
 ; GROUND1A18 touches25A0 at count0A56h and both bytes at0A57h; supplied

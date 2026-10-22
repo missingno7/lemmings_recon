@@ -39,6 +39,8 @@ ProtectionBufferAddressFromCall:
     add di,0x210 ; @0068B tf_on
 protected_loc_068F:
     pop ax ; @0068F tf_on
+; UNCONDITIONAL protected stack frame: SUB SP,22/MOV BP,SP reserves[BP,BP+21];all decoded BP-local stores and093A eleven-byte table save[BP+13,BP+1D] fit.0715 ADD BP,22/0719 MOV SP,BP releases it.063E contributes32 resident register/IVT bytes before066D. Known deepest protected call chain reaches50 below066D;one INT1/INT3 frame+locals adds14. With two outer near frames the identified arithmetic total is100,SP4A90 from4AF4,excluding BIOS/DOS internal use and maskable IRQs. Universal max and actual BP/SS/frame/CS:IP survival remain UNRESOLVED;0DA6/0DAE discard DOS25/26 extraFLAGS,not ordinary locals.
+; UNCONDITIONAL installer ordering:00E0 protection precedes00E3 keyboard16D4 and43F8 menu08 install;game08 at0492 is later. Do not combine their maxima without an actual lifetime path. Already-installed INT24/privateIRQ and old08/providers remain stack/nesting seams.
     sub sp,byte +0x22 ; @00690 tf_on
     db 0x8b,0xec ; ENCODED: mov bp,sp (NASM chooses a different encoding) ; @00693 tf_on
     call InitializeProtectionLocalFrame ; @00695 tf_on

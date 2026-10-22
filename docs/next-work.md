@@ -35,21 +35,26 @@ the 1407 detector; AdLib bound as one process-lived instance at IVT61; mode 0
 input DF preservation through INT33 AX=0003. Under the named data assumption
 (original GROUND files are 0420 bytes): no GROUND overwrite of 25A0/2013.
 
+Also closed by original code (2026-10-22 round): the exact 4013 race (commands,
+vulnerable boundaries, count/limit recurrence, byte-address bound); owners of
+every spill index 50..FF and which record consumers accept them; proper mode-1
+entry always rewrites 25A0 (no stale joystick pointer by reentry); the
+detector runs every session after 455D; stack collision thresholds from SS:4AF4.
+Data-conditional: level007 object data writes SS:49B6..49C5, leaving only 302
+bytes of stack headroom above that row.
+
 Open, ordered by impact on a faithful VGA + AdLib translation:
-1. **Callback and target domains:** 715B record+14 membership (race, spill,
-   stale selection, byte writers), 42A5/25A0 writers across mode switches,
-   1407 records across sessions, AdLib 01EA under DF=1 or changed pointers,
-   width-0 renderer pass at 8DE9 writing every DS offset.
-2. **The 4013 creation race:** exclusion and survival of spilled records.
-3. **Saved-stack and segment aliases:** survival of saved frames, DS/SS at
-   driver and callback sites, physical heap/VGA/SS ownership.
-4. **Interrupt schedule:** physical cadence, old INT08/INT62/PIC nesting.
-5. **Residual UNKNOWN storage:** 1,902 code-frame bytes, DS residue,
-   protected stored bytes, driver residue, 004A FF producer.
-6. **Alternatives** (inventory in executable.md): Tandy and PC-speaker
-   frontiers 02BB/0196, joystick, alternate display paths.
-7. **Tooling:** coarse flowstate summaries lose return slots on large
-   closures; refine before relying on TOP results there.
+1. **Target domains:** exhaustive 715B values after spill and the maximal
+   surviving record count; 42A5/1407 against resource, indexed, renderer
+   (width 0), physical-alias and UNKNOWN writers; AdLib 01EA under DF=1.
+2. **Concurrency:** IRQ arrival, PIC/old INT08/INT62 nesting (post-EOI frames
+   retain 26 bytes per level), the 4013 race exclusion and survival.
+3. **Saved-stack aliases:** global lowest SP over foreground, IRQ, driver and
+   provider paths against the 302-byte headroom; saved-frame survival.
+4. **Residual UNKNOWN storage:** 1,902 code-frame bytes, DS residue, protected
+   stored bytes, driver residue, 2698 pair extent, 004A FF producer.
+5. **Alternatives** (inventory in executable.md): Tandy 02BB, PC-speaker 0196,
+   joystick timing, alternate display paths.
 
 Native follow-ups recorded for later, not current priorities: bind entity sound
 services, special-graphics briefing redraw, INT61 rebinding, private IRQ 0F70

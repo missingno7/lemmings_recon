@@ -31,6 +31,11 @@
 ; unbound-port/target stops and the host's unbound joystick omit this behavior;
 ; existing port_io/input_poll/keyboard_input evidence is only its stated domain.
 times -(($-$$) != 0x4334) db 0
+; T3 caller refinement supersedes the earlier unrestricted-DL warning ONLY for the
+; natural4A58->43CE->4A5B path: CL0/1 imply DX0201, so4A70/4A88 cannot inherit DLFF there
+; with intact returns. Measurement receives AL01 from MOV AL,1 after the callback literal.
+; Raw direct callback/calibration entries keep arbitrary DL, including FF. Wrappers still STI
+; unconditionally and retain unbounded/wrapped timing; no hardware equivalence is supplied.
 PollPort201ButtonsLow:
 ; CALLBACK PRODUCER:4A68 stores4334 before4A6D publishes mode1;4A70 calibrates
 ; through this same entry. DS must still name the game frame at each access.

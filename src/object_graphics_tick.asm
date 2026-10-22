@@ -44,6 +44,7 @@ loc_7C01:
     loop loc_7BC3 ; @07C07
 DrawLevelObjectGraphicsReturn:
     ret ; @07C09
+; T2 UNCONDITIONAL:7C4C/7C59/7C5C intersect entity callback bytes85:17FE,87:1857/1858,8A:18DE/18DF,8C:1938/1939,8F:19BF,91:1A19. Respect definition/flag/frame gates and staleBX. Frame01B6 precedes entity draw01BC;actual high-spill survival UNRESOLVED.
 ; ANIMATION:32 big-endian definitions stride8; mutable graphics stride1C.
 ; ZeroX stores staleBX at+00, without loading flags; type gating reads only+05.
 ; Live0055 must equalFF for low-type1. Flagsbit1 enables byteINC/equality wrap;

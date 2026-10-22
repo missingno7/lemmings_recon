@@ -38,6 +38,7 @@ ApplyLevelHeader:
     mov [LevelReleaseSetting-GameDataImage],al ; @036C4
     mov ah,[di+0x2] ; @036C7
     mov al,[di+0x3] ; @036CA
+; T2 DATA-CONDITIONAL original LEVEL000..009/ODDTABLE/54EE order gives low limit<=50;0047 takes low byte only. Prefix theorem also excludes4013 race30CC..314B and other writers. Later spill over loaded header does not itself reassign0047.
 ; CAPACITY: only header+03 reaches byte0047; high+02 is discarded. Static pinned80 LEVEL sections plus40 forward odd rows selected by nominal120 order have high00/max50h (80 decimal). Other40 odd rows hold0063. This producer bound requires complete reads/intact order/DF0 override; it is not a constructor check. IRQ4013 racing30D5..314B can still step the published count past a reduced limit.
     mov [LevelCreationLimit-GameDataImage],al ; @036CD
     mov ah,[di+0x4] ; @036D0

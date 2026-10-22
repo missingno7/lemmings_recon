@@ -5,6 +5,16 @@ loc_2EB2 equ EntityCountdownMaskedSoundReturn
 ; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
 AdvanceEntityRecords:
+; T2 UNCONDITIONAL numeric walk: boundn includes indices00..n-1,never indexFF
+; for any byte n. Constructor indexFF is legal at30EA but314B publishes00;
+; zero-bound update/draw/selection skip it and every earlier slot. A stale
+; scan cursor004C is independent:2005 compares equality,not cursor<count,
+; and400B does not reset it. If count wrapped below it,2005 can visit higher
+; old indices,includingFF,until equality; +20=0,+26!=FF,state&3=0 permits2033.
+; That scanner writes+20,not+14. Stable normal selection cursors remain aligned
+; to indices00..FE; stale alone does not make them arbitrary DS addresses.
+; UNRESOLVED: survival of counters,cursors,segments,saves and subsequent control
+; after spill; numeric walks are not evidence every high slot is reached.
 ; RECORD LIFETIME / WRITER CONTRACT (static, all offsets below hex).
 ; These are observed roles in one live 2Dh slot, not a historical C struct.
 ; Canonical DS is relocated09A9; none of 1F19..3633 loads/restores DS itself.
@@ -2192,6 +2202,32 @@ loc_30A5:
 ; SlotB3 numerically overlaps probe records;slotD3 overlaps25A0 and mode25A6.
 ; Do not infer these indices are reached,or clamp the original equality-only gate.
 CreateEntityRecordIfDue:
+; T2 UNCONDITIONAL race arithmetic,assuming no other counter/limit writer:
+; one successful4013 during30CC..314B changes(L,B) to(B,B+1 mod100).
+; With that limit fixed,the pending publication plusFF further successes
+; makes100 publications,then equality returns at countB. Byte count<=FF;
+; 100 distinct slot addresses exist,not an unbounded contiguous array. With
+; B=4F the session total before that stop is14F publications if all survive.
+; Repeated in-flight snapshots can postpone equality without an arithmetic
+; bound on total publications. These are recurrence bounds,NOT a survival
+; proof or a finite-time gameplay guarantee; actual maximal surviving count
+; is UNRESOLVED. The one-race suffix can numerically include every byte index.
+; T2 exact spill initializer: clear[S,S+2C]; then+00/+02=live spawn words,
+; +04=FFF8,+06=FFF6,+08=0004,+0A=0000,+0C=0A42,+10=005A,+12=003C,
+; +14=live002E,+23=03,+27=01,+29=04; every other byte remains00.
+; Sources are read AFTER clearing; no copied spawn cache exists. Index50
+; clears0E98..0EC4,then reads its zeroed first spawn pair,so X=Y=0 absent
+; interference. It installsFFF8/FFF6 into spawn pair1 and0004/0000 into
+; pair2,0A42/0000 into pair3. Later indices read these live,possibly changed
+; by visibility or updates; no common zero-coordinate theorem follows.
+; Other owners:50..54 callback words are visibility bytes,55..56 keyboard;
+; 57..84 intersect loaded LEVEL,84..98 object graphics,98..AF GROUND/special
+; metadata,AF..B3 process globals/vectors/graphics segments,then tables/text,
+; resource names/input/palettes and pair/point lookups throughFF:2D87.
+; Exact split slots,known owners and retained UNKNOWN gaps are in T2 report.
+; No new storage classification follows from this overlay; higher owners can
+; write+14 outside the nine targets even with DF0. Arrays/segments/stack aliases
+; and IRQ interleavings remain separate from PLATFORM/DATA assumptions.
 ; Record producer for the update and drawing consumers above.
 ; Gate002B must differ from FF;0055 must equal FF. Byte DEC0048 wraps and
 ; only zero reloads0048 from live0049. Equality0047==0043 prevents creation;

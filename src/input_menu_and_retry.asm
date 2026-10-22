@@ -53,6 +53,12 @@ MenuStartupAfterCall43F8:
     call PublishMenuPalette ; @043FB
 MenuStartupAfterCall43FB:
     call CheckMenuResourceAvailability ; @043FE
+; T3 UNCONDITIONAL dedicated-store lifetime: main refresh, code entry4967/4996,
+; briefing/game/result/retry paths do not publish input mode/pointer or reconstruct probe
+; records. Input escape preserves mode; scale escape is not cancellation. Mouse4ABD stores
+; mode0 only, keyboard4AB5 mode2 only. Every proper reentry to mode1 rewrites the full
+; pointer first. This excludes stale-pointer resurrection by ordinary mode switches, not
+; wider writers or latched-target/return aliases.
 loc_4401:
 ; Connected refresh: actual near calls flow through returnedDS/ES/SS/flags.
 ; Reset origins,caches,toggle; option index1F71 and SoundOptionBits survive.
@@ -994,6 +1000,16 @@ SelectInputController4A4E:
     call DrawTextStream ; @04A52
 ControllerMenuAfterText4A55:
     call SwapDrawingOriginsAndDisplay ; @04A55
+; T3 UNCONDITIONAL natural chooser handoff, with intact decoded control/saves:43CE returns
+; CL2 from latch77 without IN;4A5E routes it to keyboard. CL0/1 necessarily traverses MOV
+; DX,0201 at43DA. Neither the chooser suffix nor4A5B..4A70/88 changes DX, so ordinary direct
+; calibration has DL01 and AX4301; OUT4392 receives AL01. Raw/internal DLFF still skips axes
+; and retains its existing contract/tests. Flowstate merges CL/DX alternatives and does not
+; prove this correlation.
+; Low/high publish pointer before mode1, then measure and store X before Y, then choose
+; scale. If old mode1, menu IRQ can use the NEW pointer before the redundant mode store.4C70
+; DLFF makes those polls buttons-only;183E DL0 game polls measure axes. Baseline/scale
+; publication is not atomic; unrestricted writer/IRQ ownership stays UNRESOLVED.
 ControllerMenuAfterSwap4A58:
     call ChooseInputController ; @04A58
 ControllerMenuAfterChoice4A5B:
