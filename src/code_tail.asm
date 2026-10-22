@@ -1,5 +1,15 @@
 ; Maintained image span 083BF..09A8F; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
+; U09783BF..841F: only83C1..83D4 has a fixed minimap scratch owner. At797B
+; ES=CS via live PUSH CS/POP ES, ten STOSW clear that window with DF=0. Then
+; 79F4 sets CS:BX=83C1,20 rows may OR masks via7A55, and7A14 reads19 bytes
+; (83C1..83D3);83D4 is accumulated but not displayed. Scratch lives until next
+; column clear. With DF=1 clear is83AF..83C2, overlapping checksum code83AF..B6,
+; unresolved83B7 and state83B8..BE; rows83C3..D4 are not freshly cleared.
+; No caller-wide DF-clear proof; raw7A39 accepts ANY CS:BX. Live SS aliases can
+; extend row loops/change segments; these are unchecked footprints, not bounds.
+; 83BF..C0 and83D5..841F remain UNKNOWN. Raw8363 cursor>83B7 can scan them as
+; data; its absent static caller does not establish either reachability or death.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00 ; @083BF
 MinimapColumnBits:
@@ -112,6 +122,15 @@ MinimapColumnBits:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @08700
 ; DATA: runtime_executable_overlay_storage
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @08710
+; U0988716..8807 remains unresolved. 5967..5972 decodes MAIN.DAT section5 at
+; relocated0842:0000; metadata/sound-oracle.json gives02F6 bytes =>8420..8715.
+; 1652..165D installs0842:0182 INT60; no loader extension into this tail is
+; established. Stored zero and proximity to8808 are not allocation/padding
+; proof. PC-speaker01B6/01C1 reads0842:(0028+15*signed(AL)) for15 bytes:
+; raw AL=2F reaches offset02F6..02F7 in this tail; AL=30 starts02F8 here.
+; Recovered main effect producers are02/0C/13, not those values; this raw
+; reader does not establish a table extension or valid game lifetime. Unchecked
+; checksum8363 cursor>83B7 also reads it; segment/stack aliases stay possible.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @08716
 ; UNKNOWN: unresolved bytes
@@ -147,6 +166,13 @@ MinimapColumnBits:
 ; FAR leaf: AX pixel width,BX height,DX aperture origin; live DS fields.
 ; Pitch=width>>3 (truncate), extent=low16(pitch*height); AX low,DX high.
 ; MUL defines CF/OF only; other arithmetic flags undefined. RETF reads live SS.
+; Layout state is mutable, not constants: W66F2,66F0,1F76,66F4,66F6 in that
+; order. No body reads66F6 directly in the decoded main CFG; preserve the store.
+; Known installers:36A0 uses1664x164 at origin4A40;4C11 uses640x350;8226 uses
+; 352x160. These dimensions here are decimal (the stored operands are hex).
+; 36B6 CALL368E installs before level terrain/object drawing; other drawing
+; helpers require a prior installer in their incoming DS. No entry-local test
+; validates layout, DS=relocated09A9 or preserved SS saves/RETF words.
 SetDrawingLayout:
     mov [DrawingWidthPixels-GameDataImage],ax ; @08808
     mov [DrawingHeight-GameDataImage],bx ; @0880B

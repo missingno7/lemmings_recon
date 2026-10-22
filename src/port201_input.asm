@@ -6,6 +6,10 @@
 ; See docs/port-io.md. No interpretation of UNKNOWN4395/4398 is added.
 times -(($-$$) != 0x4334) db 0
 PollPort201ButtonsLow:
+; CALLBACK PRODUCER:4A68 stores4334 before4A6D publishes mode1;4A70 calibrates
+; through this same entry. DS must still name the game frame at each access.
+; This wrapper writes only0051 and0014 directly, not25A0. Its CALL/IRQ stack
+; writes and external port effects still require physical non-alias ownership.
     mov byte [Port201MaskByte0051-GameDataImage],0x3 ; @04334
     cmp dl,0xff ; @04339
     jz loc_4341 ; @0433C
@@ -28,6 +32,8 @@ Port201LowInput4345:
 Port201LowReturn4358:
     ret ; @04358
 PollPort201ButtonsHigh:
+;4A80 stores4359 before4A85 publishes mode1;4A88 calibrates this entry.
+; No callback-slot restoration occurs here or on changing input mode later.
     mov byte [Port201MaskByte0051-GameDataImage],0xc ; @04359
     cmp dl,0xff ; @0435E
     jz loc_436A ; @04361
@@ -54,6 +60,9 @@ Port201HighInput436E:
 Port201HighReturn4385:
     ret ; @04385
 MeasurePort201Axes:
+; BP is an axis-loop scratch word, finishing zero on normal termination;
+; this child does NOT preserve an incoming callback BP. Callers needing BP
+; must save it on owned SS storage. DS/ES/SS and DF are not assigned here.
     cli ; @04386
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @04387
     db 0x33,0xc9 ; ENCODED: xor cx,cx (NASM chooses a different encoding) ; @04389

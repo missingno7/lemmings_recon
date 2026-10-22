@@ -5,6 +5,125 @@ loc_2EB2 equ EntityCountdownMaskedSoundReturn
 ; Maintained image span 01F19..0368D; reconstruction module, not a historical linker claim.
 ; Mixed ownership remains provisional; UNKNOWN bytes and overlay storage keep their classifications.
 AdvanceEntityRecords:
+; RECORD LIFETIME / WRITER CONTRACT (static, all offsets below hex).
+; These are observed roles in one live 2Dh slot, not a historical C struct.
+; Canonical DS is relocated09A9; none of 1F19..3633 loads/restores DS itself.
+; Child CALLs/INT60/INT61 and live SS saves must preserve the cursor/frame for
+; the ordinary-array interpretation. Returned DS/SI are otherwise used as-is.
+; Startup0031 and per-level455B clear DS globals/record storage only with DF=0:
+; 0000..2011 and0000..0FC9 respectively. 03E7 does not clear records;0462 calls
+; 0FB2 to reinstall nine callback slots after the per-level clear, before046B
+; reads the level header. 36CD takes only header+03 into byte0047;0404's C8 is
+; provisional and4013 can replace0047 with current0043 to stop further creation.
+; Direct decoded0043 writer:314B INC, besides those bulk clears. Deactivation
+; does not decrement0043 or free a slot. 30A6 appends, never searches for FF.
+; Reuse on the known normal level-start path is the455B reset, not compaction
+; or an inactive-slot free list. No decoded whole-2Dh clone/copy was found.
+; 378A copies different1Ch object-graphics records at17CB;389F copies coordinate
+; pairs at0E98;283B copies nine interaction bytes to SS, not another entity.
+; These are scoped observations of decoded code, not exclusion of UNKNOWN code.
+;
+; With stable counters/cursors, byte bound n walks[0088,0088+2D*n), including
+; +26==FF slots. n<=FF gives a numeric end2D5B, not an allocated entity extent.
+; Creation can select indexFF (2D5B..2D87) before INC0043 wraps to00. Equality
+; with0047, rather than an unsigned limit test, is its sole count stop. A fresh
+; zero bound and stable limit L append indices0..L-1; no limit<=50 is proved.
+; Indices00..4F fit0088..0E97. Index50 starts0E98, overwriting spawn-coordinate
+; storage BEFORE3100 reads it; its callback0EAC also lies in the410F visibility
+; clear. Larger slots overlap visibility, loaded level, object and other data.
+; Thus50h is a disjoint-prefix condition, never a clamp or inferred allocation.
+;
+; Established field roles: width, initial producer, later writers, consumers.
+; All fields start zero in30F3's explicit INC-DI clear (independent of DF).
+; +00 W:30FB spawn X; movement/temp-save writers in states, read5DC6/5726/706F.
+; +02 W:3100 spawn Y; state heights and live POP restores, read same parents.
+; +04 W:312F=FFF8 drawing X bias; transition stores;5728/7072 and selection read.
+; +06 W:3134=FFF6 drawing Y bias; transition stores;214B/5762/70ED read live.
+; +08 W:310F OR0004 after clear; state/action/interaction RMW/replace;1F5E
+;       first-match dispatch. No independent skill enum or exclusive-bit proof.
+; +0A W:3113=0000 source cursor bias; transitions;70DF adds product low nibble.
+; +0C W:3118=0A42 paragraph bias; transitions;70D6 adds shifted full product.
+; +0E W:cleared;21E3=0,2A7B+=2;2A70 unchecked2698 pair cursor. DF=1 action5
+;       saves also overwrite+0E..+0F; this is not permanently unused padding.
+; +10 W:311D=005A frame stride; transitions;70BF/C2 unsigned full MUL.
+; +12 W:3122=003C mask cursor bias; transitions;70E4 adds to source SI.
+; +14 W:3140 reads live002E; word-store matrix below;365A compares live003C,
+;       70F0 PUSHes target. Also byte-written by action5 with DF=1 (347F/3488).
+; +16..1E B:clear, then action5 saves displaced SS cells with DF=0;283B restores
+;       via three MOVSW/MOVSB pairs. DF=1 saves+16..0E instead; see3336 contract.
+; +1F B:3262=08 observed store; no ordinary decoded consumer established here.
+; +20 B:clear;2033/31E1=4F,2277=0,2E06 DEC wraps. Same byte is countdown at1F45
+;       and strip selector at70F3/7118; do not create a second rendering field.
+; +21 B:32F2=0C,271E DEC;2693 uses it as a phase limit. Not a lifetime bound.
+; +22 B:2D4F/2E97=0F,2D71/2EB9 may clear; wider ownership not established here.
+; +23 B:312B=03,transition resets,223A+=3;21B0/2250 use unsigned thresholds.
+; +24 B:clear/310B/3147 AND01;32B3 replaces01;27DE OR80;1F54 overrides dispatch.
+; +25 B:3107=0,356B=FF;21B0/355E/3E0E test it. Not another active marker.
+; +26 B:clear activates only when the bound includes the slot.20E2/22EE/2339/
+;       2FD1 writeFF, without erasing callback/coordinates or removing the slot.
+;       1F3C/3647/3D1E skip exactFF only. No decoded field-level reactivation.
+; +27 B:3103=01;NEG at2142/215F/2763/29C1/2CBB/2FA8/2FB2,25D6 writes NEG AL,
+;       2273=0. Signed X delta and exact01 frame-add gate70A5 are the SAME byte.
+; +28 B:3127=0; state cadences and transitions;70A2 reads frame,365F signed>=1
+;       selects point drawing only when+14 equals live003C. No global frame bound.
+; +29 B:3139=04; transitions replace;70AB byte addition wraps before AH clear.
+; +2A B:3143=00; transitions set00/FF;70B0 exactFF suppresses eight-way scaling.
+; +2B/+2C B:2EFC/2EEA save second/first SS interaction samples;actions inspect
+;       nibbles. Their order and alias with saved first AX at2EFF are observable.
+;
+; CALLBACK PRODUCER MATRIX: physical stores in each handler, then DS source slot.
+; A dash means no direct+14 store in that handler, not absence of child/alias writes.
+; Dispatch first tests+26, countdown, bit80 of+24, then state bits in1F68 order.
+; Entry/state       +14 stores (all are live slot reads, not target literals)
+; 2047 zero        20CB:002E,21A2:0030
+; 21B0 0004        21F4:003A,2282:002E,22D1:002E
+; 22DF 0001        - (22EE deactivates)
+; 22F5 1000        - (expiry JMP20E2)
+; 2326 2000        - (2339 deactivates after INC0046)
+; 2340 4000        - (expiry JMP20E2)
+; 2350 0002        - (may CALL283B; expiry JMP20E2)
+; 23BF 0008        - (Y/frame/bit0008 changes preserve descriptor otherwise)
+; 23F3 0010        2483:002E,24FE:002E
+; 254F 0020        25C6:002E;260D transition to0040 PRESERVES callback/+2A
+; 2637 0040        2682:002E
+; 2693 0080        2794:002E,27D3:002E
+; 27E8 0100        282A:002E,then CALL283B
+; 287D 0200        292C:002E,29AE:002E,29F2:002E
+; 2A6D 0400        2B1A:002E
+; 2B35 0800        2BCE:002E,2C63:002E,2CEC:002E
+; 2D0F 8000        2D48:003C
+; 2DB5 +24 bit80   2DF2:002E
+; 2E04 countdown   2E40:002E,2E90:003C (only expiry replaces the descriptor)
+; 2EC0 cells       2F70:0032,3030:002E,3087:003E;2FD1 deactivates
+; 30A6 creation    3140:002E,after complete2Dh clear, before bound INC
+; 3150 actions     325F:0038,3315:0036,3459:002E,3536:0034,360B:0036
+;                 selectors2/3/4 preserve callback; action5 DF=1 overrides3459.
+; Other drawing-field writers by physical handler (union of explicit DS:SI
+; stores, not a claim that every branch writes the union; shared tails/children
+; retain their own effects). D={04,06,0A,0C,10,12,28,29,2A};+14 is above.
+; 2047:D,00,02,27,26   21B0:D,02,20,27   22DF:28,26   22F5:00,28
+; 2326:28,26           2340:28           2350:28      23BF:02,28
+; 23F3:D,00,02         254F:D,00,02,27   2637:D,02   2693:D,00,02,27
+; 27E8:D               287D:D,00,02,27   2A6D:D,02   2B35:D,00,02,27
+; 2D0F:D               2DB5:D           2E04:D,20   2EC0:D,26,27
+; 30A6:all2D bytes clear,then D,00,02,27; actions:see entity_actions.asm.
+; 2148 shared clamp writes02/27;20D6 writes02;20E2 writes26. 260D changes
+; 0A/0C/10/12/28/29 without writing04/06/14/2A, so state alone cannot supply
+; a complete drawing descriptor. Cadences update28 without rebuilding geometry.
+; Under canonical relocated DS09A9 / SS143E, the SS64K window startsA950 above
+; DS:0000, disjoint from byte-indexed slots through2D87 and slots002E..003F.
+; This excludes direct SS-map-to-record aliases in that machine domain only;
+; map writes can still corrupt SS saves/RET and thereby change later DS/SI.
+; Alternate SS, returned segments, resource/VGA/provider aliases remain separate.
+; Source002E/30/32/34/36/38/3A/3C/3E is initialized at0FC1..0FF1 to
+; 6170/64D9/65D8/66D7/6817/6957/6A97/6BDB/6CFC respectively.
+; Word stores preserve this nine-value domain only with stable initialized slots,
+; genuine record cursors, nonaliasing child/map/stack/device writes and intact
+; code. The creation clear transiently makes+14=0 AND+26=0 before publication;
+; no known foreground draw intervenes, but general IRQ/reentrant entry is unproved.
+; DF=1 action5, view-map clears, count spill and writable SS target saves are
+; concrete exclusions; see3336/3634/706F. READINESS: CONDITIONAL for this explicit
+; producer/preservation domain. NOT a complete715B target-domain certificate.
 ; Partial record schema is anchored in image_tail.asm and the symbol ledger.
 ; One DS record owns both simulation and sprite roles: +20 is countdown AND
 ; strip selector; +27 is signed horizontal step AND frame-add gate; +26==FF
@@ -1063,6 +1182,11 @@ EntityState0100AfterPatternCall:
 ; the destination segment is the popped value, including provider changes.
 ; Three MOVSW/MOVSB pairs retain DF and sequential overlap. Each literal
 ; 019Dh adjustment follows a pair; DF=1 is not a reversed 9-byte copy.
+; This is a record-to-SS-map copy, not entity cloning. With DF=1 the source
+; words start at+16,+13,+10 and bytes at+14,+11,+0E (word high bytes forward).
+; Thus it also READS callback low+14/mask/stride/pair-index storage in that domain.
+; Destination row starts advance019A, not01A0; map/record physical aliases may
+; overwrite+14 or its live saves despite the lack of an explicit [SI+14] store.
 ; AX=low product, BX=map offset, DX=live restored save; CX/BP/DS/SS unchanged.
 ; Last defined arithmetic flags are ADD DI,019Dh at 2873. See entity-pattern.md.
 CopyEntityPatternToInteractionMap:
@@ -1916,6 +2040,7 @@ loc_2FE9:
     jmp loc_2F3A ; @02FF0
 loc_2FF3:
     mov ah,0x4 ; @02FF3
+; AL from live object+1B is an effect ID, passed unchanged to AH04. AdLib accepts01..12 only when one of records064C/0638/0624/0610 is inactive; invalid or full retains pendingF0. GROUND sample-ID union is not a universal bound on mutable/unchecked object records.
     int 0x61 ; @02FF5
 EntityInteractionObjectSoundReturn:
     ret ; @02FF7
@@ -1982,6 +2107,14 @@ CreateEntityRecordIfDue:
 ; fetched only after the clear: bound50h makes SI=0E98 and destroys their source.
 ; Ordered record stores and the late callback002E read precede live INC0043.
 ; No array extent, coordinate cache, host record or corrected bound is implied.
+; Publication is INC0043 after3147, not the earlier+26 clear. An old inactive
+; record within the bound is never chosen by this routine. The clear writes
+; DS:[SI..SI+2C], followed by initialization, so after a reset the retained old
+; bytes of later slots are irrelevant until appended and individually cleared.
+; Known byte bound alone permits index00..FF (last slot2D5B..2D87); the walk
+; after INC-to00 then ignores all slots. No DOS allocation is performed here.
+; Coordinate source BX=0E98+4*(index&3) is read live AFTER the clear. Index50
+; clears all four source pairs; it also overlaps the visibility map at0EA8.
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @030A6
     jnz loc_30B0 ; @030AB
     jmp loc_314F ; @030AD
@@ -2013,6 +2146,7 @@ loc_30C3:
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @030EC
     mov cx,0x2d ; @030EE
     db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @030F1
+; [030F3] Unchecked producer witness, not a startup-reachability claim: slot byte179(decimal) yields SI1FFF and clear1FFF..202B, overlapping2011/2012 and four probe records;3140 writes record+14 at2013/2014. Slot211 gives SI259F, clear259F..25CB, then30FB/3100 straddle InputPollCallback25A0/25A1 with X-high/Y-low. Equality with mutable0047 is not a range bound. A closed target lifetime needs actual record/counter bounds or later reinitialization, including earlier overlapping globals.
 loc_30F3:
     mov byte [di],0x0 ; @030F3
     inc di ; @030F6

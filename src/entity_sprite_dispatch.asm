@@ -9,6 +9,42 @@ times -(($-$$) != 0x706f) db 0 ; module start assertion
 ; +14 is PUSHed at 70F0, then reread from live SS at 7159 before CALL AX 715B.
 ; Real 7155/715D child returns, saved DI and outer RET remain live; the known
 ; initialized callback slots do not close changed targets or provider aliases.
+; CALLBACK DOMAIN: in the initialized-slot / genuine-record / no-alias writer
+; domain,30A6 publishes+14 from002E and the32 explicit word stores listed by
+; 1F19 preserve{6170,64D9,65D8,66D7,6817,6957,6A97,6BDB,6CFC}. This is an
+; inductive preservation result for those writers, not an entry validation here.
+; Action5 with DF=1 overwrites high+15 at347F and low+14 at3488 with old map
+; bytes after3459 copied002E. Slot50 starts0E98; visibility4119 clears its+14 at
+; 0EAC. Even slots below50 can be hit by DF=1 visibility clear0DDA..0EA9.
+; DS is inherited (ordinary frame relocated09A9);706F itself never sets it.
+; +14 may therefore be any live word outside the stated producer domain, and
+; a near CALL uses the current CS, not an implied far segment from the record.
+;
+; Let S be entry SP, with intact code, stable SS and ordinary CALL/RET balance.
+; Saved DI is SS:S-2, alignment S-4, callback S-6; selector AX at70FF and DX
+; at7100 temporarily use S-8/S-0A and are popped before7118. Offsets wrap16.
+; No-strip path writes no further parent location S-6, so without asynchronous
+; or device/provider writes7159 returns exactly the word read at70F0. This is
+; true even if later reads see changed record+14: the record is not reloaded.
+; Strip path711E first POPs the live callback toAX, then7121 PUSHes it again;
+; a write before711E can therefore also replace the value being preserved.
+; Saved DI/CX/SI/BX use S-8/-0A/-0C/-0E; CALL7152 uses S-10 for return7155.
+; Child6F7B saves DS atS-12 and row CX atS-14, writes live SS:0000/0002/
+; 0008/000A/000C/000E mirrors and VGA ES:A000 destinations, then STI/POP DS/RET.
+; Fixed SS mirrors or physical VGA aliases can overwrite S-6 or other saves;
+; a changed child RET need not reach7155. Returned DS is the actual saved word.
+; Concrete raw-entry exclusion: S=000E puts saved callback atSS:0008. Child
+; 6F83 writes0F02 there; with disjoint VGA and intact7155 return,7159 reads
+; 0F02, outside the nine targets. Other parent saves also overlap mirrors.
+; This is a static alias witness, not proof that ordinary callers use that SP.
+; After actual7155..7158 restores,7159 POPs the saved callback and715A alignment;
+; CALL715B PUSHes715D atS-4. The callback may alter the remaining DI/outerRET
+; saves; the outer pop/RET is not an abstract host restore. No IF/DF promise is
+; added: strip and raster children force IF through CLI/STI and retain DF.
+; Offsets/SP wrap16; word high byte follows physical low+1 with20-bit wrap.
+; READINESS: CONDITIONAL nine-target preservation under initialized slots,
+; completed publication, DF=0 action/map lifetime, disjoint writers and intact
+; live saves/services. Raw706F and whole-program715B target domains stay OPEN.
 DrawObjectSprite:
     push di ; @0706F
     mov bx,[di+EntityRecordX-EntityRecordsBase] ; @07070

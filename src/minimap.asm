@@ -4,6 +4,26 @@ times -(($-$$) != 0x796f) db 0 ; module start assertion
 ; Clears 20 CS bytes using incoming DF, accumulates 20 rows, writes only 19.
 ; ES=A000 read mode1/color compare8/care8, then mode0 writes with plane3 SR=0.
 ; SS owns mirror words and every live CALL/save/RET frame; DS restored from stack.
+; Clear overlap, inclusive offsets:7970 sets DI=83C1,797B issues ten STOSW.
+; With unaliased PUSH CS/POP ES, DF=0 writes CS:83C1..83D4; DF=1 writes
+; CS:83AF..83C2 (words at83C1,83BF,...,83AF), including checksum instructions
+; 83AF..83B6, UNKNOWN83B7, sample result83B8, phase83B9, accumulator83BA,
+; cursor83BB..BC, sample result83BD and IRQ gate83BE. See checksum.asm/code_tail.
+; It does NOT reset checksum cursor/phase to the InitializeCodeChecksum values.
+; Twenty sampled bytes83C1..83D4 then OR into live scratch; display reads only
+; 83C1..83D3. DF=1 therefore leaves rows83C3..83D4 stale before accumulation.
+; PUSH DS precedes clear; PUSH CS/POP ES and POP DS are live SS accesses: a
+; device/alias stack can change ES away from CS or DS on exit. No mirror frame
+; substitution is valid. Sample direct entry can write arbitrary CS:BX.
+; Static callers377D (13-call initialization loop) and3AC8 (status, callers
+; 01C2/049E) establish no local CLD. Main STD1BB0 is followed by CALL1D2E,
+; whose1D34 CLD and normal1C78 CLD prevent a simple decoder-return DF=1 claim.
+; That observation is not a whole-program DF proof: entry FLAGS, service/IRET,
+; protected paths and live stack aliases remain unclosed. Keep DF=1 supported
+; as a raw-entry footprint and game caller DF domain explicitly OPEN.
+; CONDITIONAL: fixed20/19 scratch lifetime assumes intact loop saves, ES=CS
+; during clear and no asynchronous writers. Original VGA read-mode/plane/IRQ
+; ownership remains an obligation; constructed fixture services cannot close it.
 UpdateMinimapColumn:
     push ds ; @0796F
     lea di,[MinimapColumnBits] ; @07970

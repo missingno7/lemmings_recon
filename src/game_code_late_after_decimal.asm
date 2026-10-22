@@ -106,8 +106,41 @@ MenuTimerOuterIret4C7D:
     iret ; @04C7D
 ; Typed input keeps live outer/inner saves,20-cycle cursor blink and signed A..Z.
 ; Backspace moves without immediately erasing prior byte; full input replaces
-; last slot. Final submit clears1FC7 and tail-JMPs through savedBP. Known503B
-; target is conditional; alternate stack/alias target domains remain unresolved.
+; last slot. Final submit clears1FC7 and tail-JMPs through savedBP.
+; READINESS CONDITIONAL:503B is the sole target under4C7E entry, intact code,
+; game DS/DF=0, owned saves/return words and the child write contracts below.
+; The only decoded external entry is CALL4996; internal entry can inherit any BP.
+; Let P=entry SP (all offsets wrap16). Outer six-word frame has BP at P-0C,
+; DX -0A,CX -08,BX -06,DI -04,SI -02. Wait/draw inner five-word frames have
+; BP at P-16,DX -14,CX -12,SI -10,DI -0E. Wait CALL writes P-18; RET1550
+; restores it, then4CA8 restores inner BP. Draw CALL writes4CCB at P-18;
+; text RET4D77 consumes it; swap and keyboard CALLs reuse that return slot.
+; DrawTextStream assigns BP=0/2 from style: it does NOT preserve callback BP.
+;4CD1 rereads the saved inner BP;AL=FF repeats without popping the outer frame.
+; A ready key then4CDA rereads the DISTINCT outer BP. Every cycle balances
+; only if child RET/RETF words, returned SS:SP and live saves remain intact.
+; CURSOR INVARIANT:SI=4DF2,DX=4DFC,DI in[4DF2,4DFB]. Blink/insertion/DEL/CR
+; write only those ten bytes. Insertion reads4DFC (CR) before stepping back;
+; no insertion stores there. DEL tests the lower bound before decrementing.
+; Initial ten bytes must contain no CR (caller497D fills dots); accepted edits
+; preserve that property. Header4DEF..4DF1=0F0908 and4DFC/4DFD=0D00 survive.
+;503B then traverses one ten-glyph line with DF=0; style08 forces BP0, each
+; glyph uses a balanced near frame, BP save and far8822/RETF frame. Planar
+; prologue saves balance; aligned opaque rows save/pop DS and row/plane words.
+; Glyph source may be arbitrary bytes: it is read, not executed or written.
+; Children write DS:0F78..0FCA,491E,1FC7/1FC8,1F76..1F79,1FE4/1FE5 and
+; renderer globals; VGA A000 stores, SS mirrors0000..000F and optional9A75
+; dirty-map stores must not alias any live frame, text, code or those globals.
+;1550 and4C36 use only registers/ports;4C20 has balanced CALL4C24;4D1A has
+; no PUSH and never writes BP/segments. Port/IRQ effects remain external seams.
+; Sufficient concrete local domain: canonical load1010,DS19B9,SS244E,DF0,
+; P in[4940,4AF4], dirty marking off OR map0026 in{42B2,45D3}; fixed text
+; header/terminators, no CR inside input, owned renderer state and no external
+; frame/state writes (see the concrete renderer inputs in s4 integration report).
+; Deepest glyph/dirty stack is P-3A (P-32 with dirty marking off); dirty maps
+; end48F3 and cannot hit these saves. This is not a startup stack-range proof.
+; Text/stack/SS-mirror aliases, altered text headers/DF or changed child stacks
+; invalidate this induction; retain both original indirect frontiers outside it.
 ReadCodeInput:
     lea si,[EnteredLevelCode-GameDataImage] ; @04C7E
     mov cx,0xa ; @04C82
@@ -155,6 +188,8 @@ loc_4CC4:
     push dx ; @04CC7
     push bp ; @04CC8
 CodeInputDrawCall4CC9:
+; BP came from4CA8 (wait save), or intact prior4CD1 across another wait cycle.
+; PUSH BP at4CC8 cannot change the already-live register target by alias alone.
     call bp ; @04CC9
 CodeEntryAfterCall4CC9:
     call SwapDrawingOriginsAndDisplay ; @04CCB
@@ -169,6 +204,8 @@ CodeEntryAfterCall4CCE:
     cmp al,0xff ; @04CD6
     jz loc_4CA0 ; @04CD8
     pop bp ; @04CDA
+; This outer BP is now latched in a register through4D18: no later instruction
+; here assigns BP. It need not equal the inner value just restored at4CD1.
     pop dx ; @04CDB
     pop cx ; @04CDC
     pop bx ; @04CDD
@@ -204,6 +241,8 @@ loc_4D10:
     mov word [0x1fc7],0x0 ; @04D10
     mov [di],cl ; @04D16
 CodeInputDrawTail4D18:
+;4D10/4D16 stores cannot change latched BP; aliases CAN change inherited RET,
+; text or code. JMP supplies no new frame:503B uses original caller return at P.
     jmp bp ; @04D18
 ; Scan83 live state bytes. TEST then MOV reread held bytes; low7 decrement wraps.
 ; Decrement0 reloads86 and emits; stored93 emits; other states continue scanning.
@@ -242,6 +281,7 @@ loc_4D45:
     xlatb ; @04D4B
 KeyboardCharacterReadyReturn4D4C:
     ret ; @04D4C
+; [04D4D] Code-editor callback503B shares this RET4D77. Header style08 gives BP0; this stream intentionally clobbers BP, restored by editor inner POP4CD1 and distinct outer POP4CDA. At normal header0F0908 and ten non-CR input bytes, x=224..368,y=144,width/height16, three planes; DF0 reaches CR4DFC and terminal header4DFD. Changed header/DF/saved SI can destroy this finite traversal; do not infer callback identity from child BP preservation.
 ; Stream uses live DS:SI and incoming DF. Header: column(1-based), row, style.
 ; Header column0 terminates; style0=>BP2 elseBP0. Only CR ends each text run.
 ; Zero inside a run is a glyph. Save CX/BX/SI, consume actual glyph nearRET,
@@ -643,6 +683,7 @@ InstallMenuTimerVector:
     sti ; @05039
 MenuTimerInstallReturn503A:
     ret ; @0503A
+; [0503B] 4CC9 supplies return4CCB; final4D18 supplies no new word and inherits original4999 return from CALL4996. LEA SI4DEF then JMP4D4D; BP is assigned by text header and not preserved here. Sole503B target proof belongs to editor save ownership, not this bridge.
 ; Tail bridge sets live SI4DEF and shares text RET4D77/caller stack word.
 DrawCodeInputText:
     lea si,[CodeInputText-GameDataImage] ; @0503B

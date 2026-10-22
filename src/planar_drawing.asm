@@ -1,5 +1,94 @@
 ; Planar bitmap renderer and clipping/dirty dependencies, original 8822..9A8F.
 ; Variant bodies retain exact instructions, UNKNOWN bytes and live shared tails.
+; STORAGE CONTRACT (static): all offsets below are hexadecimal. Let G be the
+; relocated 09A9 frame, D incoming DS, S live SS. Preparation uses D; it never
+; establishes D=G. Bodies load the graphics selector through D:1FE4 after PUSH
+; DS. Shifted bodies set ES=G, copy graphics DS -> ES scratch, PUSH ES/POP DS,
+; then ES=A000. Row advances/shift read that live DS; row POP ES/DS restore
+; actual S words. Plane advances read restored ES:66F8, not graphics DS:66F8.
+; Aligned bodies instead PUSH graphics DS, load DS=G for each row/plane advance,
+; then POP DS. Thus different incoming D/G values do not share prepared state.
+; S owns every CALL/save/RET and VGA mirror (0000..0010); relocated 143E is
+; not substituted for live S. Stack/scratch/source/mirror aliases can change
+; saved counts, segments, control, strides and returns before their next read.
+;
+; Direct field writer/read inventory (indirect aliases additionally below):
+; 66F0 height W880B; R99E8,99F2,99F8. 66F2 width W8808; R9997,99A1.
+; 66F4 pitch W8819; R886F,8888. 66F6 extent W881E; no decoded direct reader.
+; 66F8 source extent W8834; R889A,88CB,914C,93B3,981C; ES plane readers
+; 89E8,8A70,8ADE,8BFF,8C7A,8CF5,8E8A,8F1A,8F8E,9244,92CC,933A;
+; G-DS plane readers 9474,94CE,950E,95C8,9614,9660,98B3,98FB,9939.
+; 66FA source pitch W882D; R88DA,915B,93C2,982B,99CA.
+; 66FC horizontal skip W8840; RW9987,99A7; R88C2,9143,93AA,9813.
+; 66FE vertical skip W883A,99DC; R88CE,88D2,914F,9153,93B6,93BA,981F,9823.
+; 6700 destination advance W888E; no decoded direct reader (not dead storage).
+; 6702 source advance W88E5,9166,93CD,9836; row readers in address order:
+; 89CA,8A57,8AC5,8B30,8BE4,8C61,8CDC,8D54,8E05,8E6F,8EFF,8F73,8FE3,
+; 9089,912D,9228,92B3,9321,938C,9452,94B0,94F0,952D,95A8,95F6,9642,
+; 968B,971F,9723,9792,97FE,9894,98DE,991C,9957.
+; 6704 active destination advance W8891; RW890E,8B42,8D66,8FF7,909C,916B;
+; row readers 89D1,8A5C,8ACA,8B35,8BE9,8C66,8CE1,8D59,8E09,8E73,8F03,
+; 8F77,8FE7,908D,9131,922D,92B8,9326,9391,9459,94B5,94F5,9532,95AD,
+; 95FB,9647,9690,9727,9796,9802,9898,98E2,9920,995B.
+; A948 left shift W8863 (left&7), R88AC then shifted-row readers:
+; 8986,8A30,8A9E,8B09,8BB4,8C31,8CAC,8D24,8DDE,8E3E,8ED3,8F49,8FB9,
+; 9057,90FB,91E2,91FB,928C,92FA,9365. 916B rereads at91FB after source shift.
+; A949 saved CH W9968 after PUSH BP; R99E2,9A06,9A0F on all clip returns.
+;
+; Initialization/order: 8808 must set layout in D before 8822 reads pitch or
+; clipping bounds. 8822 pushes AX/DX/CX, writes source pitch/extent, pops those
+; words LIVE, clears vertical then horizontal skip, optionally clips (A949
+; written before all exits), optionally marks S dirty map, then writes A948,
+; 6700 and6704. Each source-preparation entry writes6702 before body selection.
+; Source reversal reads extent, vertical skip TWICE, and pitch before that
+; store. Shifted body decrements6704 in D before changing DS; row work uses G
+; or restored segments. Stored zeros are not initialization for a later call.
+; Raw 882D needs the prologue saves/pitch in AX; 885E/88A6/939E need prepared
+; fields, 88BF/9140/93A7/9810 need skips/extent/pitch; body entries need all
+; selected fields and packed counters. 988B is a shared LOOP entry, not setup.
+;
+; Scratch footprint: source base6706, mask base6748; no allocation size proved.
+; With intact saves let w=CL after width>>3 is packed, h=CH (zero ->256 rows).
+; Copy/fill writes w bytes and a zero sentinel at b+/-w (DF), hence [b,b+w]
+; for DF=0 or [b-w,b] for DF=1. SHR at b then RCR at b+1..b+w ALWAYS walks
+; forward; INC preserves carry, regardless of DF. Only DF=0,w=1..254 gives
+; fully produced ordinary w+1-byte shift/output rows; source LODSB/output
+; STOSB follow DF, mask INC walks forward. DF=1 may read stale forward bytes.
+; w=0: copy writes only sentinel, RCR LOOP runs65536; w=FF: INC CL wraps the
+; output LOOP count to zero ->65536. Shift byte0 ->256 passes, not zero work.
+; DF=0 source w>=42 reaches mask base; DF=1 source w>=1 already writes6705
+; (active stride high byte), w>=2 reaches6704. Reread live advances after copy.
+; 8D66 caches h mask rows before drawing; BP becomes copy-end DI each row,
+; so cache starts6748 and steps +/-(w+1), not a fixed66-byte row. It ANDs each
+; shifted row with plane3 via forward BX/DI, then reuses forward cache reads
+; across source planes. DF=0,h*(w+1)<=4200 stays below A948; this is a derived
+; nonoverlap condition, not a proven caller/allocation bound. 6748-6706=42 and
+; A948-6748=4200 describe spacing only. No whole zero run is classified here.
+; Remaining indirect writes include DF strings, forward scratch RMW, cache AND,
+; live S dirty-map/saves/mirrors, and any physical aliases. Width/height, shifts,
+; source selectors and raw entries are unchecked; no clamp or shadow state.
+; CONDITIONAL readiness: intact code, explicit original VGA/IRQ service contract,
+; prepared live fields/frames. Global producer, allocation and IRQ domains remain
+; open; fixture VGA services do not prove original asynchronous ownership.
+; Scratch producer -> RMW -> consumer sites, each row in execution order:
+; Source (REP copy/zero; SHR/RCR; LODSB), all based at6706:
+; 895D/8961;898E/8993;89C3. 8A1D/8A21;8A37/8A3C;8A51.
+; 8A8B/8A8F;8AA5/8AAA;8ABF. 8AF6/8AFA;8B10/8B15;8B2A.
+; 8BA1/8BA5;8BBB/8BC0;8BDE. 8C1E/8C22;8C38/8C3D;8C5B.
+; 8C99/8C9D;8CB3/8CB8;8CD6. 8D11/8D15;8D2B/8D30;8D4E.
+; 8E2B/8E2F;8E45/8E4A;8E68. 8EC0/8EC4;8EDA/8EDF;8EF7.
+; 8F36/8F3A;8F50/8F55;8F6C. 8FA6/8FAA;8FC0/8FC5;8FDC.
+; 91BA/91BE;91E9/91EE;9222. 9279/927D;9293/9298;92AD.
+; 92E7/92EB;9301/9306;931B. 9352/9356;936C/9371;9386.
+; Mask (REP copy or FF fill/zero; SHR/RCR; forward-byte read), base6748:
+; 896F/8973;899E/89A3;89B5 (after source shift).
+; 9044/9048;905E/9063;9074. 90E8/90EC;9102/9107;9118.
+; 91CB/91CF (FF fill);9202/9207;921B (after source shift, A948 reread91FB).
+; Cache:8DCD/8DD1;8DE5/8DEA;8DFE AND after8DFB VGA read. BP=DI8DD2
+; records next row. After ALL cached rows:8E18 resets BX=6748; forward reads
+; 8E5B,8EF4,8F69,8FD9 consume it per plane, with saved BX restored between
+; planes. No cache reinitialization on later planes. Other variants need no
+; scratch mask. All above reads/writes use the segment handoffs stated here.
 DrawPlanarBitmap:
     push ax ; @08822
     push dx ; @08823

@@ -157,6 +157,10 @@ pcspeaker_loc_01AA:
 pcspeaker_LoadEffect:
     mov cx,0xf ; @001B0
     mov bx,0x28 ; @001B3
+; With installed0842 frame, unchecked signed(AL)*15+0028 reads outside the02F6 payload.
+; AL=2F spans02E9..02F7, touching main8716..8717; AL=30 starts02F8 at main8718.
+; Recovered main effects02/0C/13 do not establish these inputs as game-reachable.
+; This raw reader does not classify main U0988716..8807 as an effect-table extension.
     imul cl ; @001B6
     db 0x03,0xd8 ; ENCODED: add bx,ax (NASM selects different opcode/operand width) ; @001B8
     mov si,0xa ; @001BA

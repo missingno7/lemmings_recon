@@ -142,6 +142,20 @@ VgaMirrorFrameOperand5884 equ $+1
     sti ; @058D0
 VgaMirrorRestoreReturn:
     ret ; @058D1
+; [058D2] MAIN RESOURCE LIFETIMES (full pinned reads, intact selectors/saves):
+; all sections read000Ah header then listed payload into source offset0.
+; Sec0 payload21D4h/output5270h at[1FE4]:0 ->58E5/58E8 transforms; sec1
+; payload00FEh/output0184h replaces same source ->58FE; sec2 payload0CCDh/
+; output20C0h replaces it ->5927 plus1900..20BF glyph copy. Sec3 payload
+;6D5Eh/outputF210h at[1FEE]:0; sec4 payload344Bh/output8CF0h at
+; ([1FEE]+0F21h):0, nominal concatenated UI image[0,17F00h). Segment
+; addition wraps as a word. Sec5 payload0295h/output02F6h atliveCS5968
+; segment overlays image08420..08715; INT60 later0842:0182, excluding
+; unknown8716 onward. Optionalsec6 payload0875h/output2020h reuses[1FE4];
+;1900..201F copies to[1FEC]:00A0..07BF, keeping firstA0 glyph bytes.
+; Source0/1/2/6 is transient startup work; UI/glyph/generated banks persist
+; across levels/sessions.1FE4 later selects level/UI sources; it is not a
+; permanent owner. No size/nonalias guard is enforced by1BAF.
 LoadMainResourceSections:
 ; Twelve actual near frames compose the DAT pipeline and graphics producers.
 ; Every DS/BX restore rereads live SS, including PUSH/POP BX at5964/5965.

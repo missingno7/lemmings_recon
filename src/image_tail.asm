@@ -99,6 +99,11 @@ FirstObjectGraphicsFrameOffset equ LevelObjectGraphicsRecords+0x17
 GameTransitionFlags equ GameDataImage+0x004E
 GameEndRequested equ GameDataImage+0x004F
 FrameDoubleWaitFlag004A equ GameDataImage+0x004A
+DisplayCombinationProbeEnableByte equ GameDataImage+0x2013
+DisplayCombinationProbeTarget2014 equ GameDataImage+0x2014
+EgaProbeTarget2017 equ GameDataImage+0x2017
+ColorCrtcProbeTarget201A equ GameDataImage+0x201A
+MonoCrtcProbeTarget201D equ GameDataImage+0x201D
 StartupPspSegment1FF6 equ GameDataImage+0x1FF6
 StartupArenaTailSegment1FF2 equ GameDataImage+0x1FF2
 StartupOptionSelectionBypass200D equ GameDataImage+0x200D
@@ -144,6 +149,7 @@ MinimapSourceColumnByteOffset:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x32,0x00,0x00,0x32,0x00,0x00,0x63,0x00,0x00,0x63 ; @09AEE
 ; DATA: static_data
     db 0x00,0x00,0x63,0x00,0x00,0x63,0x00,0x00,0x63,0x00,0x00,0x63,0x00,0x00,0x63,0x00 ; @09AFE
+; [09B18] EntityRecordsBase remains a first45-byte anchor, not an array allocation. See1F19/30A6 lifetime matrix:byte counters,append publication,level reset,DF=1 action5 callback bytes and slot50/visibility overlap. Preserve existing bytes/classifications/equates; proposed ledger evidence is in symbols updates.
 ; DATA: static_data
     db 0x00,0x63,0x00,0x00,0x02,0x03,0x00,0x3c,0x3c,0x90,0x00,0x00,0x00,0x00,0x00,0x00 ; @09B0E
 ; DATA: static_data
@@ -1020,6 +1026,11 @@ LevelObjectGraphicsRecords:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0B5BE
 ; DATA: static_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0B5CE
+; [0B5DB] GROUND1000h is write ceiling, not exclusive4096-byte allocation.1A18
+; can writeDS1B4B..2B4A including callback25A0; supplied files are0420h
+; only, ending1F6A. Startup clear initializes once;4551 stops0FC9. File
+; holds16*1Ch templates1B4B..1D0A,64*8 terrain1D0B..1F0A and metadata
+;1F0B..1F6A with later palette/special writers. Short reads keep old bytes.
 GroundResourceBuffer:
     db 0x00,0x00,0x00 ; @0B5DB
 ; DATA: static_data
@@ -1264,10 +1275,15 @@ PaletteBlankingControl:
     db 0x00 ; @0BA9D
 ; DATA: static_data
     db 0x00,0x00,0x00 ; @0BA9E
+; [0BAA1] DS2011..2012 is a mode word: startup clear ends2011;132A/1332 write
+; whole word and15C2 reads it. GROUND request reaches both at count04C8h,
+; supplied0420h cannot.2013..201E probe records also lie in larger request.
 RasterMeasurementMode2011:
     db 0x00 ; @0BAA1
+; [0BAA2] DS2011/2012 is one little-endian RasterMeasurementMode2011 selector: stored0000,132A=00C8,1332=0190,read15C2. Forward clear0031 includes only low2011;1194 with preserved DI2012 writes high2012 plus first probe enable2013. Classify only this high byte as static_data; retain wider lifetime/alias uncertainty.
 ; UNKNOWN: unresolved bytes
     db 0x00 ; @0BAA2
+; [0BAA3] Four three-byte live probe rows2013..201E: enable + near target1410/1462/1490/14A0. Stored enables00.13DC resets only later three;1194 can enable first via DI2012. Pointer words are sampled live, not immutable. DF0/DS and saved SI/CX contract beside13DC bounds1407;GROUND request/indexed records/aliases remain wider writers.
 DisplayProbeRecords:
 ; DATA: lookup_table
     db 0x00,0x10,0x14 ; @0BAA3
@@ -1485,6 +1501,11 @@ SavedBiosClockHigh:
     db 0x00,0x00 ; @0C02C
 SavedBiosClockLow:
     db 0x00,0x00 ; @0C02E
+; [0C030] DS25A0 initially4252;4A68/4A80 install4334/4359 before mode1/calibration. Initial/start-level clears do not restore it. GROUND file offsets0A55/0A56 and unchecked record211 clear/coordinate stores overlap this word. Preserve actual physical aliases and sample at42A1 before CALL-frame stores.
+; [0C030] InputPollCallback: initial4252/stores4A68,4A80 are not writer closure.
+; GROUND1A18 touches25A0 at count0A56h and both bytes at0A57h; supplied
+;0420h files cannot. Protection0ED8 reads this word into its100h-byte file
+; output image; that service is not aRAM producer. Other aliases stay open.
 InputPollCallback:
 ; DATA: pointer_data
     db 0x52,0x42 ; @0C030
@@ -3028,6 +3049,11 @@ PixelBitMasks:
     db 0x78,0x00,0xb4,0x00,0xf0,0x00,0x2c,0x01,0x68,0x01,0xa4,0x01,0x00,0x00,0xe0,0x01 ; @0EF62
 ; UNKNOWN: unresolved bytes
     db 0xc0,0x03,0xa0,0x05,0x80,0x07,0x60,0x09,0x40,0x0b,0x20,0x0d ; @0EF72
+; [0EF7E] RESOURCE ORDER: initial120 bytes DS54EE..5565 serve four groups of30
+; (4515/4545,473E). They survive startup/per-level clears;197D has no bound:
+; byte index00..FF reads54EE..55ED, including override5566..55ED. Initial
+; bytes choose80 direct sections and40 odd overrides. Nominal stored extent
+; is not exclusive writer proof or classification of neighboring U114.
 LevelResourceOrderBytes:
     db 0x93,0x9b,0x9d,0x95 ; @0EF7E
 ; UNKNOWN: unresolved bytes
@@ -3046,6 +3072,12 @@ LevelResourceOrderBytes:
     db 0x70,0x71,0x73,0x75,0x77,0x79,0x7b,0x7d,0x7f,0x96,0x81,0x09,0x83,0x85,0x87,0x89 ; @0EFE2
 ; UNKNOWN: unresolved bytes
     db 0x8b,0x8d,0x8f,0x91 ; @0EFF2
+; [0EFF6] OVERRIDE:19DC requests1180h ->DS5566..66E5; supplied oddtable.dat
+; has that size (80*38h). Both startup and4551 clear exclude it. Each full
+; odd read establishes a resource image; short reads retain prior bytes.
+;19E4 accepts128 slices:80..127 exceed loaded storage. Forward copy sends
+;24/32 bytes to0FCB..0FE2/17AB..17CA; reverse word windows differ.
+;66E6..66EF is outside raw write; renderer66F0 onward has a separate owner.
 OddLevelOverrideBuffer:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0EFF6
 ; UNKNOWN: unresolved bytes
@@ -3608,6 +3640,9 @@ OddLevelOverrideBuffer:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @10162
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @10172
+; [10180] Runtime layout/per-draw words DS66F0..6704, exact initialization/read matrix in planar_drawing.asm.
+; Layout8808 must precede draw in same incoming DS; bodies may read relocated09A9 instead.
+; 66F6 and6700 retain observable stores with no decoded direct readers. Not constants.
 DrawingHeight:
     db 0x00,0x00 ; @10180
 ; UNKNOWN: unresolved bytes
@@ -3632,6 +3667,9 @@ DrawingSourceRowAdvance:
     db 0x00,0x00 ; @10192
 DrawingActiveDestinationRowAdvance:
     db 0x00,0x00 ; @10194
+; [10196] Source-row base6706: copy CL bytes plus zero sentinel through DF, shift forward then LODSB through DF.
+; Difference to6748 is42h, not a proven allocation extent; keep size0 and adjacent UNKNOWN.
+; DF1,w>=1 overwrites6705; w>=2 reaches6704 before row-stride rereads.
 DrawingSourceRowScratch:
 ; UNKNOWN: unresolved bytes; naming the runtime base does not classify contents.
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @10196
@@ -3643,6 +3681,9 @@ DrawingSourceRowScratch:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @101C2
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @101D2
+; [101D8] Mask base6748: copied masks or FF fill per row;8D66 caches all rows first, step +/- (CL+1).
+; Spacing toA948 is4200h; DF0 h*(CL+1)<=4200h is only a nonoverlap condition.
+; No allocation/valid-width proof; preserve UNKNOWN beyond identified scalar fields.
 DrawingMaskRowScratch:
 ; UNKNOWN: unresolved bytes; naming the runtime base does not classify contents.
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @101D8
@@ -5758,6 +5799,9 @@ DrawingMaskRowScratch:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @143C2
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @143D2
+; [143D8] A948 live left&7 written8863, consumed after game-frame handoffs; raw/alias zero shift wraps256.
+; A949 written9968 CH after PUSH BP, read on each clip return; both mutable state.
+; Startup clear DS0000..2011 does not initialize this span; writer-before-reader contracts are local.
 DrawingLeftBitShiftByte:
     db 0x00 ; @143D8
 DrawingSavedHeightHighByte:

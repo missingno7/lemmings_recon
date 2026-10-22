@@ -114,7 +114,188 @@
       ]
     ],
     "c_implementation": "c/sound_latches.c",
-    "verification_evidence": "tests/sound_latches.py: all256 AH selectors at core/adapter boundaries; update/detect/reset explicit untranslated exits; no playback acceptance"
+    "verification_evidence": "tests/sound_latches.py: all256 AH selectors at core/adapter boundaries; update/detect/reset explicit untranslated exits; no playback acceptance",
+    "semantic_readiness": {
+      "status": "CONDITIONAL",
+      "domain": "Immutable engine; ordinary nonaliasing live SS stack and RAM, DF=0, bounded initialized record/count domain, tokens80..87 plus documented note/B/C/E classes",
+      "remaining": [
+        "88..AF unchecked target/domain closure",
+        "Score/effect ownership and event ordering not audited here",
+        "05A0 unseeded candidate and UNKNOWN state-adjacent bytes",
+        "Real device timing, interrupt interleavings and transformed code/stack aliases"
+      ]
+    },
+    "main_int61_producers": [
+      {
+        "image": "main",
+        "address": 671,
+        "ax_producer": "0200",
+        "purpose": "reset; ordinary guard false after SoundOptionBits clear"
+      },
+      {
+        "image": "main",
+        "address": 783,
+        "ax_producer": "0200",
+        "purpose": "reset"
+      },
+      {
+        "image": "main",
+        "address": 913,
+        "ax_producer": "0403",
+        "purpose": "opening cue"
+      },
+      {
+        "image": "main",
+        "address": 938,
+        "ax_producer": "0402",
+        "purpose": "release start"
+      },
+      {
+        "image": "main",
+        "address": 953,
+        "ax_producer": "0300|DS:[0054]",
+        "purpose": "level song ID"
+      },
+      {
+        "image": "main",
+        "address": 958,
+        "ax_producer": "0000",
+        "purpose": "immediate song update"
+      },
+      {
+        "image": "main",
+        "address": 1437,
+        "ax_producer": "AH=01, AL=decoder return",
+        "purpose": "ordinary pinned DAT literal-tail decoder returnsAL00; AH-only write"
+      },
+      {
+        "image": "main",
+        "address": 1505,
+        "ax_producer": "0301",
+        "purpose": "Tandy startup song request"
+      },
+      {
+        "image": "main",
+        "address": 1509,
+        "ax_producer": "AH=00, AL=prior INT61 return",
+        "purpose": "Tandy update; ordinaryAL01"
+      },
+      {
+        "image": "main",
+        "address": 1515,
+        "ax_producer": "0300",
+        "purpose": "Tandy clear song request"
+      },
+      {
+        "image": "main",
+        "address": 1519,
+        "ax_producer": "AH=02, AL=prior INT61 return",
+        "purpose": "Tandy reset; ordinaryAL00"
+      },
+      {
+        "image": "main",
+        "address": 1523,
+        "ax_producer": "AH=00, AL=prior INT61 return",
+        "purpose": "Tandy update; ordinaryAL00"
+      },
+      {
+        "image": "main",
+        "address": 6258,
+        "ax_producer": "0000",
+        "purpose": "one enabled update per game IRQ"
+      },
+      {
+        "image": "main",
+        "address": 8862,
+        "ax_producer": "0408",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 9422,
+        "ax_producer": "040A",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 9939,
+        "ax_producer": "0412",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 10856,
+        "ax_producer": "040A",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 11531,
+        "ax_producer": "040A",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 11624,
+        "ax_producer": "040C",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 11868,
+        "ax_producer": "0405",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 11952,
+        "ax_producer": "040C",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 12191,
+        "ax_producer": "0410",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 12277,
+        "ax_producer": "0400|DS:[DI+001B]",
+        "purpose": "nonzero object effect byte; mutable/unbounded object selector"
+      },
+      {
+        "image": "main",
+        "address": 12364,
+        "ax_producer": "0411",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 12451,
+        "ax_producer": "040D",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 12809,
+        "ax_producer": "0404",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 12952,
+        "ax_producer": "0412",
+        "purpose": "effect"
+      },
+      {
+        "image": "main",
+        "address": 16250,
+        "ax_producer": "0401",
+        "purpose": "effect"
+      }
+    ],
+    "main_producer_contract": "Fresh explore.analyze() and raw CD61 scan identify these28 sites. No recovered mainAH05 producer. Immediate effects plus GROUND-sourced object IDs cover normal01..12 but mutable unchecked object field is not universally bounded. Main normal/special song-ID tables cover01..15; raw external INT61 inputs/aliases remain independent domains. Timer1872 has no phase-bit guard, unlike INT60; gates2010==FF and25A7&3. Installation/Tandy cases retain returnedAL rather than replacing AH-only writes with constants."
   },
   {
     "address": 33,
@@ -271,7 +452,21 @@
     "evidence": [
       "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "003A saves DS/AX/DI/SI/CX/DX; StopMusic uses retained count, then27 DF-sensitive reset packets, then clears all9 modes; leaves F0/EF/phase and most state. BX/ES/BP untouched in ordinary body. Live IRET applies caller frame."
+  },
+  {
+    "address": 109,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 54,
+    "symbol_name": "adlib_ResetOplPackets",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Reset0048 selects006D;27 DF-sensitive LODSW004F/CALL0050->0559 consumes register/value words; nine paired80-family release packets and B0..B8 zero key packets. No normal writer."
+    ],
+    "verification_status": "STATIC"
   },
   {
     "address": 163,
@@ -286,7 +481,8 @@
     "evidence": [
       "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Status test at literal0388 while writes use08A3; result AL=1 iff first&E0=0 and second&E0=C0 else0. Ordinary return AH=21,BX=8000|(first&E0),CX=0,DX=0388; DS restored,SI/DI/BP/ES untouched; actual IRET frame flags."
   },
   {
     "address": 237,
@@ -299,7 +495,8 @@
     "evidence": [
       "AH=3 setter at0022 stores AL through the live temporary DS popped from SS"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_contract": "Pending song ID;AH03 setter,045E reader,046E clear and03C3 word-clear."
   },
   {
     "address": 238,
@@ -312,7 +509,29 @@
     "evidence": [
       "AH=5 setter at0032 stores AL through the live temporary DS popped from SS"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_contract": "Current-song ID/request gate;AH05 setter,0457 gate,047F currentID,03C3 word-clear;not boolean."
+  },
+  {
+    "address": 239,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "adlib_SongRequestScratch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "045E/0461 copies ED when EE==0;0464 gates processing;0473 clears before start/stop. Loaded0. With EE!=0 a nonzero scratch uses live AL, not a reload fromEF."
+    ],
+    "verification_status": "STATIC",
+    "writers": [
+      1121,
+      1139
+    ],
+    "readers": [
+      1124
+    ],
+    "lifetime": "Driver decode until overwritten/reload; reset/StopMusic do not clear EF"
   },
   {
     "address": 240,
@@ -325,7 +544,8 @@
     "evidence": [
       "AH=4 setter at002A stores AL through the live temporary DS popped from SS"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_contract": "Pending effect ID;AH04 setter,051C consumer,053D grant-clear;invalid/full retains latch."
   },
   {
     "address": 277,
@@ -340,15 +560,18 @@
     "evidence": [
       "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Save AX/BX/CX/DX/DI/SI/DS/ES, select DS=ES=CS; song request then effect request then phase DEC then9 ascending channel visits; mode2 every update, others phase0 only; phase reload after scan; actual saved register restores/IRET, BP untouched."
   },
   {
     "address": 375,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0177",
-    "aliases": [],
+    "symbol_name": "adlib_AdvanceChannel",
+    "aliases": [
+      "adlib_sub_0177"
+    ],
     "callers": [
       302,
       308,
@@ -460,6 +683,166 @@
         "segment": "default",
         "displacement": 0,
         "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
         "index": null,
         "size": 2
       },
@@ -760,20 +1143,100 @@
         "size": 1
       }
     ],
-    "reachable_instruction_bytes": 436,
+    "reachable_instruction_bytes": 575,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 414,
+    "segment": "driver-relative",
+    "kind": "label",
+    "size": null,
+    "symbol_name": "adlib_StreamFetch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Channel countdown expiry0194 and instrument/length/control/effect tails enter byte fetch; BX increments once before token classification."
+    ],
+    "verification_status": "STATIC",
+    "stream_schema_version": 1,
+    "stream_schema": [
+      {
+        "tokens": "00..7F",
+        "operands": 0,
+        "action": "Note, saved key-off, pitch/key-on, timed finish"
+      },
+      {
+        "tokens": "80",
+        "operands": 0,
+        "action": "Next order; zero sentinel redirects once via following relative order pointer; continue"
+      },
+      {
+        "tokens": "81",
+        "operands": 0,
+        "action": "Saved key-off, slide0, timed finish"
+      },
+      {
+        "tokens": "82",
+        "operands": 0,
+        "action": "Timed hold, no key write/slide clear"
+      },
+      {
+        "tokens": "83",
+        "operands": 0,
+        "action": "Tail stop music; no stream/countdown save"
+      },
+      {
+        "tokens": "84",
+        "operands": 1,
+        "action": "Raw transpose byte; continue"
+      },
+      {
+        "tokens": "85",
+        "operands": 0,
+        "action": "Saved key-off and mode0; return"
+      },
+      {
+        "tokens": "86..87",
+        "operands": 0,
+        "action": "Slide01/FF; continue"
+      },
+      {
+        "tokens": "88..AF",
+        "operands": null,
+        "action": "Unresolved unchecked code-byte target"
+      },
+      {
+        "tokens": "B0..BF",
+        "operands": 1,
+        "action": "Level operand; opcode nibble ignored; LIVE DX offsets; continue"
+      },
+      {
+        "tokens": "C0..DF",
+        "operands": 0,
+        "action": "Instrument ID=token-C0; byte-wrap index; C0=>01F0; DI>=05FC selects effect bank; continue"
+      },
+      {
+        "tokens": "E0..FF",
+        "operands": 0,
+        "action": "Duration token-DF (1..32); continue"
+      }
+    ],
+    "format_contract": "Relative base0B6E; directory absolute words for IDs01..15; header word0,relative bank word,tempo byte,count byte,relative order words; order word0 sentinel followed by relative list pointer; instrument stride16 but only00..0C,0E read; effect directory absolute at55E3+2*ID,bank54E3. Every pointer/arithmetic wraps per original instruction; no extent checks."
   },
   {
     "address": 435,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_01B3",
-    "aliases": [],
+    "symbol_name": "adlib_FinishTimedEvent",
+    "aliases": [
+      "adlib_sub_01B3"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -805,7 +1268,8 @@
     "reachable_instruction_bytes": 13,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -814,8 +1278,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_01C0",
-    "aliases": [],
+    "symbol_name": "adlib_KeyOffTimedEvent",
+    "aliases": [
+      "adlib_sub_01C0"
+    ],
     "callers": [],
     "callees": [
       1369
@@ -865,17 +1331,46 @@
     "reachable_instruction_bytes": 27,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 500,
+    "segment": "driver-relative",
+    "kind": "label",
+    "size": null,
+    "symbol_name": "adlib_SetOperatorLevels",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "B0..BF comparison01DA..01DE branches here; consumes one byte and uses live DL/DH for OPL register numbers, without reloading channel+05."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 584,
+    "segment": "driver-relative",
+    "kind": "label",
+    "size": null,
+    "symbol_name": "adlib_SelectInstrument",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "C0..DF comparison01D4..01D8 branches here; mixed byte/word index maps C0 to01F0, C1..DF to00..01E0; writes16-byte-stride instrument consumers."
+    ],
+    "verification_status": "STATIC"
   },
   {
     "address": 825,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0339",
-    "aliases": [],
+    "symbol_name": "adlib_StepChannelPitch",
+    "aliases": [
+      "adlib_sub_0339"
+    ],
     "callers": [
       406
     ],
@@ -975,7 +1470,8 @@
     "reachable_instruction_bytes": 113,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -984,8 +1480,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0349",
-    "aliases": [],
+    "symbol_name": "adlib_WriteChannelPitch",
+    "aliases": [
+      "adlib_sub_0349"
+    ],
     "callers": [
       432
     ],
@@ -1061,7 +1559,8 @@
     "reachable_instruction_bytes": 97,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -1070,8 +1569,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_03AA",
-    "aliases": [],
+    "symbol_name": "adlib_StopMusicChannels",
+    "aliases": [
+      "adlib_sub_03AA"
+    ],
     "callers": [
       66
     ],
@@ -1115,7 +1616,8 @@
     "reachable_instruction_bytes": 32,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -1124,8 +1626,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_03CA",
-    "aliases": [],
+    "symbol_name": "adlib_ReleaseBeforeNextEvent",
+    "aliases": [
+      "adlib_sub_03CA"
+    ],
     "callers": [
       409
     ],
@@ -1185,17 +1689,247 @@
     "reachable_instruction_bytes": 32,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
+  },
+  {
+    "address": 1002,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 16,
+    "symbol_name": "adlib_StreamCommandTargets",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "01E0..01EA doubles AL modulo256 then adds03EA; eight stored near words for80..87; higher admitted80..AF domain is unchecked."
+    ],
+    "verification_status": "STATIC",
+    "targets": [
+      1045,
+      448,
+      435,
+      938,
+      1072,
+      1082,
+      1095,
+      1103
+    ],
+    "target_domain_complete": false,
+    "unchecked_initial_word_reads": [
+      {
+        "token": 136,
+        "address": 1018,
+        "value": 8075
+      },
+      {
+        "token": 137,
+        "address": 1020,
+        "value": 50049
+      },
+      {
+        "token": 138,
+        "address": 1022,
+        "value": 2926
+      },
+      {
+        "token": 139,
+        "address": 1024,
+        "value": 3979
+      },
+      {
+        "token": 140,
+        "address": 1026,
+        "value": 49537
+      },
+      {
+        "token": 141,
+        "address": 1028,
+        "value": 2926
+      },
+      {
+        "token": 142,
+        "address": 1030,
+        "value": 17219
+      },
+      {
+        "token": 143,
+        "address": 1032,
+        "value": 23945
+      },
+      {
+        "token": 144,
+        "address": 1034,
+        "value": 36874
+      },
+      {
+        "token": 145,
+        "address": 1036,
+        "value": 19849
+      },
+      {
+        "token": 146,
+        "address": 1038,
+        "value": 36876
+      },
+      {
+        "token": 147,
+        "address": 1040,
+        "value": 55691
+      },
+      {
+        "token": 148,
+        "address": 1042,
+        "value": 35305
+      },
+      {
+        "token": 149,
+        "address": 1044,
+        "value": 35837
+      },
+      {
+        "token": 150,
+        "address": 1046,
+        "value": 2653
+      },
+      {
+        "token": 151,
+        "address": 1048,
+        "value": 35728
+      },
+      {
+        "token": 152,
+        "address": 1050,
+        "value": 17167
+      },
+      {
+        "token": 153,
+        "address": 1052,
+        "value": 58179
+      },
+      {
+        "token": 154,
+        "address": 1054,
+        "value": 33243
+      },
+      {
+        "token": 155,
+        "address": 1056,
+        "value": 28353
+      },
+      {
+        "token": 156,
+        "address": 1058,
+        "value": 35083
+      },
+      {
+        "token": 157,
+        "address": 1060,
+        "value": 2653
+      },
+      {
+        "token": 158,
+        "address": 1062,
+        "value": 35216
+      },
+      {
+        "token": 159,
+        "address": 1064,
+        "value": 3149
+      },
+      {
+        "token": 160,
+        "address": 1066,
+        "value": 35728
+      },
+      {
+        "token": 161,
+        "address": 1068,
+        "value": 59865
+      },
+      {
+        "token": 162,
+        "address": 1070,
+        "value": 64878
+      },
+      {
+        "token": 163,
+        "address": 1072,
+        "value": 1930
+      },
+      {
+        "token": 164,
+        "address": 1074,
+        "value": 34883
+      },
+      {
+        "token": 165,
+        "address": 1076,
+        "value": 4677
+      },
+      {
+        "token": 166,
+        "address": 1078,
+        "value": 59792
+      },
+      {
+        "token": 167,
+        "address": 1080,
+        "value": 64868
+      },
+      {
+        "token": 168,
+        "address": 1082,
+        "value": 17803
+      },
+      {
+        "token": 169,
+        "address": 1084,
+        "value": 36872
+      },
+      {
+        "token": 170,
+        "address": 1086,
+        "value": 6376
+      },
+      {
+        "token": 171,
+        "address": 1088,
+        "value": 50689
+      },
+      {
+        "token": 172,
+        "address": 1090,
+        "value": 4165
+      },
+      {
+        "token": 173,
+        "address": 1092,
+        "value": 36864
+      },
+      {
+        "token": 174,
+        "address": 1094,
+        "value": 50883
+      },
+      {
+        "token": 175,
+        "address": 1096,
+        "value": 4933
+      }
+    ],
+    "unchecked_word_evidence": "These are immutable initial CODE bytes read as words, not promoted table entries or proven executable destinations; aliases/transformed bytes can change them. Full target control flow is unresolved."
   },
   {
     "address": 1045,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0415",
-    "aliases": [],
+    "symbol_name": "adlib_AdvanceOrder",
+    "aliases": [
+      "adlib_sub_0415"
+    ],
     "callers": [],
     "callees": [
       841,
@@ -1289,6 +2023,102 @@
         "base": "si",
         "index": null,
         "size": 2
+      },
+      {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
       },
       {
         "instruction": 500,
@@ -1619,10 +2449,11 @@
         "size": 2
       }
     ],
-    "reachable_instruction_bytes": 451,
+    "reachable_instruction_bytes": 536,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -1631,8 +2462,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_041F",
-    "aliases": [],
+    "symbol_name": "adlib_EnterPattern",
+    "aliases": [
+      "adlib_sub_041F"
+    ],
     "callers": [],
     "callees": [
       841,
@@ -1712,6 +2545,150 @@
         "size": 2
       },
       {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
         "instruction": 500,
         "segment": "default",
         "displacement": 0,
@@ -2008,10 +2985,11 @@
         "size": 1
       }
     ],
-    "reachable_instruction_bytes": 414,
+    "reachable_instruction_bytes": 536,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -2020,8 +2998,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0430",
-    "aliases": [],
+    "symbol_name": "adlib_SetTranspose",
+    "aliases": [
+      "adlib_sub_0430"
+    ],
     "callers": [],
     "callees": [
       841,
@@ -2101,6 +3081,150 @@
         "size": 2
       },
       {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
         "instruction": 500,
         "segment": "default",
         "displacement": 0,
@@ -2397,10 +3521,11 @@
         "size": 1
       }
     ],
-    "reachable_instruction_bytes": 407,
+    "reachable_instruction_bytes": 536,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -2409,8 +3534,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_043A",
-    "aliases": [],
+    "symbol_name": "adlib_EndChannel",
+    "aliases": [
+      "adlib_sub_043A"
+    ],
     "callers": [],
     "callees": [
       1369
@@ -2436,7 +3563,8 @@
     "reachable_instruction_bytes": 13,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -2445,8 +3573,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0447",
-    "aliases": [],
+    "symbol_name": "adlib_SetAscendingPitchStep",
+    "aliases": [
+      "adlib_sub_0447"
+    ],
     "callers": [],
     "callees": [
       841,
@@ -2518,6 +3648,158 @@
         "size": 2
       },
       {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
         "instruction": 500,
         "segment": "default",
         "displacement": 0,
@@ -2814,10 +4096,11 @@
         "size": 1
       }
     ],
-    "reachable_instruction_bytes": 405,
+    "reachable_instruction_bytes": 536,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -2826,8 +4109,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_044F",
-    "aliases": [],
+    "symbol_name": "adlib_SetDescendingPitchStep",
+    "aliases": [
+      "adlib_sub_044F"
+    ],
     "callers": [],
     "callees": [
       841,
@@ -2899,6 +4184,158 @@
         "size": 2
       },
       {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
         "instruction": 500,
         "segment": "default",
         "displacement": 0,
@@ -3195,10 +4632,11 @@
         "size": 1
       }
     ],
-    "reachable_instruction_bytes": 405,
+    "reachable_instruction_bytes": 536,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
     "verification_status": "UNTRANSLATED"
   },
@@ -3207,8 +4645,10 @@
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0457",
-    "aliases": [],
+    "symbol_name": "adlib_ProcessSongRequest",
+    "aliases": [
+      "adlib_sub_0457"
+    ],
     "callers": [
       289
     ],
@@ -3516,17 +4956,21 @@
     "reachable_instruction_bytes": 229,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "EE0 copies ED into AL/EF; otherwise consults retained EF without loading AL. Ordinary EF0 while EE!=0 queues song changes. Nonzero EF clears ED/EF, AL>=16 stops music, else selects header. Count unchecked. All9 modes cleared; only count records initialized; all9 keyoff and OPL global setup; phase1."
   },
   {
     "address": 1308,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_051C",
-    "aliases": [],
+    "symbol_name": "adlib_ProcessEffectRequest",
+    "aliases": [
+      "adlib_sub_051C"
+    ],
     "callers": [
       292
     ],
@@ -3636,6 +5080,166 @@
         "segment": "default",
         "displacement": 0,
         "base": "si",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1103,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1095,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1082,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1089,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1072,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1075,
+        "segment": "default",
+        "displacement": 18,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 941,
+        "segment": "default",
+        "displacement": 2924,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 945,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 952,
+        "segment": "default",
+        "displacement": 16,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 963,
+        "segment": "default",
+        "displacement": 237,
+        "base": null,
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 448,
+        "segment": "default",
+        "displacement": 8,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 455,
+        "segment": "default",
+        "displacement": 19,
+        "base": "di",
+        "index": null,
+        "size": 1
+      },
+      {
+        "instruction": 1045,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1049,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1059,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1063,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1018,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1024,
+        "segment": "default",
+        "displacement": 0,
+        "base": "bx",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1032,
+        "segment": "default",
+        "displacement": 10,
+        "base": "di",
+        "index": null,
+        "size": 2
+      },
+      {
+        "instruction": 1036,
+        "segment": "default",
+        "displacement": 12,
+        "base": "di",
         "index": null,
         "size": 2
       },
@@ -3936,25 +5540,32 @@
         "size": 1
       }
     ],
-    "reachable_instruction_bytes": 458,
+    "reachable_instruction_bytes": 597,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "F0 in01..12, first mode0 in064C/0638/0624/0610 wins; otherwise latch retained. Clear F0,set mode2,slide0,fetch absolute stream immediately. Following ascending channel scan may advance the allocated channel again in this same service."
   },
   {
     "address": 1369,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "adlib_sub_0559",
-    "aliases": [],
+    "symbol_name": "adlib_WriteOplRegister",
+    "aliases": [
+      "adlib_sub_0559"
+    ],
     "callers": [
       993,
       906,
       932,
       429,
+      1086,
+      949,
+      452,
       540,
       576,
       636,
@@ -3968,7 +5579,6 @@
       726,
       770,
       810,
-      949,
       1269,
       1281,
       1287,
@@ -3980,9 +5590,7 @@
       192,
       205,
       211,
-      80,
-      452,
-      1086
+      80
     ],
     "callees": [],
     "data_references": [
@@ -3998,8 +5606,651 @@
     "reachable_instruction_bytes": 71,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "AL register/AH value; DS08A3 base; OUT base +12 IN, OUT(base+1) +47 IN. AH preserved,AL final input,DX live-stack restored. Flags from INC(base) except CF preserved. No hardware status retry/timeout; base+1 wraps16."
+  },
+  {
+    "address": 1448,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "adlib_SongHeaderWord0",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header LODSW04AB -> store04AC; loaded4000; no identified engine reader. Do not infer clock/tempo use."
+    ],
+    "verification_status": "STATIC",
+    "writers": [
+      1196
+    ],
+    "readers": []
+  },
+  {
+    "address": 1452,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 180,
+    "symbol_name": "adlib_Channels",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Nine14h-byte records explicitly visited012B..015E, reset0055..0064, song04C3..04FC and FX0529..0556. Every field has identified producers/consumers or loaded selector ownership; stored-only04/0E not claimed read."
+    ],
+    "verification_status": "STATIC",
+    "element_size": 20,
+    "element_count": 9,
+    "fields": [
+      {
+        "offset": 0,
+        "size": 1,
+        "name": "note",
+        "writers": [
+          421,
+          837
+        ],
+        "readers": [
+          833,
+          843
+        ]
+      },
+      {
+        "offset": 1,
+        "size": 1,
+        "name": "countdown",
+        "writers": [
+          400,
+          443,
+          1243
+        ],
+        "readers": [
+          400,
+          983
+        ]
+      },
+      {
+        "offset": 2,
+        "size": 2,
+        "name": "instrument_pointer",
+        "writers": [
+          620
+        ],
+        "readers": [
+          509,
+          975
+        ]
+      },
+      {
+        "offset": 4,
+        "size": 1,
+        "name": "stored_instrument_id",
+        "writers": [
+          589
+        ],
+        "readers": []
+      },
+      {
+        "offset": 5,
+        "size": 1,
+        "name": "operator0_offset",
+        "writers": [],
+        "readers": [
+          624
+        ]
+      },
+      {
+        "offset": 6,
+        "size": 1,
+        "name": "operator1_offset",
+        "writers": [],
+        "readers": [
+          624
+        ]
+      },
+      {
+        "offset": 7,
+        "size": 1,
+        "name": "channel_ordinal",
+        "writers": [],
+        "readers": [
+          698,
+          900,
+          919
+        ]
+      },
+      {
+        "offset": 8,
+        "size": 2,
+        "name": "saved_key_off_packet",
+        "writers": [
+          925
+        ],
+        "readers": [
+          425,
+          448,
+          945,
+          989,
+          1082,
+          1265
+        ]
+      },
+      {
+        "offset": 10,
+        "size": 2,
+        "name": "next_order_word_pointer",
+        "writers": [
+          1032,
+          1059,
+          1235
+        ],
+        "readers": [
+          1045
+        ]
+      },
+      {
+        "offset": 12,
+        "size": 2,
+        "name": "next_stream_pointer",
+        "writers": [
+          435,
+          1036,
+          1063,
+          1239
+        ],
+        "readers": [
+          382
+        ]
+      },
+      {
+        "offset": 14,
+        "size": 1,
+        "name": "stored_level_operand",
+        "writers": [
+          503,
+          741
+        ],
+        "readers": []
+      },
+      {
+        "offset": 15,
+        "size": 1,
+        "name": "carrier_level_bias",
+        "writers": [
+          777
+        ],
+        "readers": [
+          543
+        ]
+      },
+      {
+        "offset": 16,
+        "size": 1,
+        "name": "mode",
+        "writers": [
+          91,
+          952,
+          1089,
+          1168,
+          1171,
+          1174,
+          1177,
+          1180,
+          1183,
+          1186,
+          1189,
+          1192,
+          1248,
+          1346
+        ],
+        "readers": [
+          375,
+          386,
+          1327
+        ]
+      },
+      {
+        "offset": 17,
+        "size": 1,
+        "name": "duration_reload",
+        "writers": [
+          494
+        ],
+        "readers": [
+          439
+        ]
+      },
+      {
+        "offset": 18,
+        "size": 1,
+        "name": "transpose",
+        "writers": [
+          733,
+          817,
+          1075
+        ],
+        "readers": [
+          847
+        ]
+      },
+      {
+        "offset": 19,
+        "size": 1,
+        "name": "pitch_step",
+        "writers": [
+          455,
+          996,
+          1095,
+          1103,
+          1361
+        ],
+        "readers": [
+          825
+        ]
+      }
+    ],
+    "lifetime": "Loaded once; reset/start selectively write fields. Mode0 suppresses advancement but retains note/PC/instrument/duration/transpose/step. Unchecked header count and stack aliases retain original memory effects.",
+    "initial_operator_tuples": [
+      [
+        0,
+        3,
+        0
+      ],
+      [
+        1,
+        4,
+        1
+      ],
+      [
+        2,
+        5,
+        2
+      ],
+      [
+        8,
+        11,
+        3
+      ],
+      [
+        9,
+        12,
+        4
+      ],
+      [
+        10,
+        13,
+        5
+      ],
+      [
+        16,
+        19,
+        6
+      ],
+      [
+        17,
+        20,
+        7
+      ],
+      [
+        18,
+        21,
+        8
+      ]
+    ]
+  },
+  {
+    "address": 2211,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "adlib_OplBasePort",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "055A loads base for every OUT/IN write helper; loaded0388, no identified engine writer. Detection direct status polling uses literal0388 separately."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      1370
+    ],
+    "writers": []
+  },
+  {
+    "address": 2215,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 128,
+    "symbol_name": "adlib_LevelToAttenuation",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0208/022C/02EE/0316 read with masked7F index from stream operand/instrument byte sums; all128 admitted; stored values3F-floor(i/2), no identified writer."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      520,
+      556,
+      750,
+      790
+    ]
+  },
+  {
+    "address": 2343,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart00",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone00. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2375,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart01",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone01. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2407,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart02",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone02. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2439,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart03",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone03. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2471,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart04",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone04. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2503,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart05",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone05. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2535,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart06",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone06. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2567,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart07",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone07. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2599,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart08",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone08. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2631,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart09",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone09. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2663,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart10",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone0A. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2695,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 2,
+    "symbol_name": "adlib_FrequencyRowStart11",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0349..0370 paired octave/semitone lookup selects0927+20h*semitone; normal semitone0B. Only first word is proven consumed; following30 bytes unresolved."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      880
+    ],
+    "row_stride": 32
+  },
+  {
+    "address": 2727,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 96,
+    "symbol_name": "adlib_NoteOctave",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0359 reads AA7+n, paired035D reads B07+n; stored96-byte quotients floor(n/0Ch) match12-way semitone cycle. No identified writer. n wraps8 and is not checked against60h."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      857
+    ]
+  },
+  {
+    "address": 2823,
+    "segment": "driver-relative",
+    "kind": "lookup_table",
+    "size": 96,
+    "symbol_name": "adlib_NoteSemitone",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "035D reads B07+n paired with0359; stored96-byte remainders n%0Ch; only low nibble survives byte doubling before frequency selection. No identified writer; n>=60h reads later state/score."
+    ],
+    "verification_status": "STATIC",
+    "readers": [
+      861
+    ]
+  },
+  {
+    "address": 2920,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "adlib_MusicInstrumentBank",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header relative word read04AF, add0B6E at04B0, store04B3;025D consumes only for DI<05FC. Loaded0000."
+    ],
+    "verification_status": "STATIC",
+    "writers": [
+      1203
+    ],
+    "readers": [
+      605
+    ]
+  },
+  {
+    "address": 2922,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "adlib_TempoReload",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Header byte04B6/04B7 writes;0168/016B reload phase after scan; loaded09. Reload0 means256 updates via DEC wrap."
+    ],
+    "verification_status": "STATIC",
+    "writers": [
+      1207
+    ],
+    "readers": [
+      360
+    ]
+  },
+  {
+    "address": 2923,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "adlib_TempoPhase",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Loaded00;0516 start writes1,0127 decrements before scan,016B reloads;0189 gates non-FX records and0161 gates reload."
+    ],
+    "verification_status": "STATIC",
+    "writers": [
+      1302,
+      295,
+      363
+    ],
+    "readers": [
+      393,
+      353,
+      295
+    ]
+  },
+  {
+    "address": 2924,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "adlib_MusicChannelCount",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Loaded0001; header byte count widened at04BB/04BD stored04BF; stop03AD reads full word. Raw inconsistent songID0 also indexes this word; zero/overlarge count is unchecked."
+    ],
+    "verification_status": "STATIC",
+    "writers": [
+      1215
+    ],
+    "readers": [
+      941,
+      1163
+    ]
   }
 ]

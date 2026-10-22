@@ -1,8 +1,143 @@
 ; Canonical decompressed driver. No initialization/relocation patches.
 ; Entry offset0000 is installed as INT61 by main CS:0576..057B.
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
+;
+; STATIC SEMANTIC CONTRACT (S2; offsets below are hexadecimal, image-relative).
+; Machine configuration: DOS VGA + AdLib; alternative sound images stay separate.
+; Scope: engine0000..05A7 and state/tables05A8..0B6D. Grammar below is the
+; handoff to score/effect reconstruction, not classification of those payloads.
+; Local readiness: CONDITIONAL for immutable engine, ordinary nonaliasing RAM/
+; stack, DF=0, valid initialized channels and the eight documented commands.
+; Full playback is NOT READY: pinned stream/order/instrument ownership still
+; needs its own audit; 88..AF indirect targets and unseeded05A0 remain open.
+; No C playback or hardware equivalence is asserted by this static contract.
+;
+; INSTALL/LIFETIME: main0576..057B installs INT61 at the DOS allocation:0000,
+; then058D decodes ADLIB.DAT into it (0567 paragraphs allocated at0570).
+; Failed detection may replace this same memory with Tandy at05CA. There are no
+; relocations; the identified engine uses the caller stack, with no DOS reader
+; or internal IRQ installer. UNKNOWN bytes are not thereby proved free of code.
+; Its mutable state lives in that segment from decode until reload/release;
+; reset/song start clear selected fields only, never a fresh state object.
+;
+; INT61 schema (AL is a byte; dispatch delivers AH=0 to recognized bodies):
+;   AH00 ->0115: process song then effect requests, advance one update.
+;   AH01 ->00A3: OPL detection; returns AL=01/00, clobbers AX/BX/CX/DX.
+;   AH02 ->003A: stop music, reset OPL packets, deactivate nine channels.
+;   AH03 ->0022: ED=AL (pending song ID; zero means no request).
+;   AH04 ->002A: F0=AL (pending effect ID; zero means no request).
+;   AH05 ->0032: EE=AL (current-song/request gate; not a boolean).
+;   AH06..FF ->0021: AH=(incoming AH-5), AL unchanged, IRET.
+; Setters do not validate AL. All services use live SS saves/CALL/RET/IRET;
+; returned FLAGS/IP/CS come from the actual interrupt frame. No CLD/STI/CLI
+; occurs here: INT entry clears IF/TF, retains DF; nested interrupts/provider
+; changes and code/data/stack aliases cannot be replaced with cached state.
+; Main1872 supplies one AH00 per enabled game IRQ (no odd-phase guard for61);
+; main03BE also updates immediately after selection. PIT/display cadence is
+; a MAIN contract, not a driver wall-clock constant (see game_timer.asm).
+;
+; STREAM SCHEMA v1 (BX points to next byte; DI identifies a 14h-byte channel).
+; Fetch019E advances BX by one with 16-bit wrap. No length/end/budget check.
+; Controls continue fetching in the SAME update until a timed event/return;
+; a control-only or cyclic stream can loop forever. Relative additions wrap16.
+;   00..7F: note byte, zero operands; store+00, send saved key-off+08,
+;           compute/key-on pitch0349, then timed finish01B3.
+;   80: zero operands; next order word at+0A. Nonzero is pattern-relative
+;       to0B6E; zero consumes the following relative order-list pointer and
+;       reads ONE first pattern word there (a second zero is NOT recursive).
+;       Save next order word and absolute pattern pointer; continue fetching.
+;   81: zero operands; write saved key-off, clear+13, timed finish.
+;   82: zero operands; timed finish (hold; no key write or slide clear).
+;   83: zero operands; tail to03AA, stop first word[B6C] music records and
+;       clear ED/EE; return directly, without saving BX/countdown for this event.
+;   84: ONE byte operand, unmasked -> channel+12 transpose; continue.
+;   85: zero operands; saved key-off, mode+10=0; return, no PC/countdown save.
+;   86 /87: zero operands; slide+13=01/FF; continue (not a timed event).
+;   88..AF: unchecked dispatch through following CODE bytes; no grammar assigned.
+;   B0..BF: ONE byte operand V (opcode low nibble ignored); store+0E=V;
+;           write two operator levels via01F4, continue. Uses LIVE DL/DH,
+;           not a reload of this channel's operator pair; see01F4 contract.
+;   C0..DF: zero operands; store ID=token-C0 at+04; select instrument and
+;           write its OPL parameters0248, continue. Index arithmetic is BYTE
+;           dec, three byte doubles, then WORD double: C0 selects+01F0h;
+;           C1..DF selects 16*(ID-1). No bank extent check.
+;   E0..FF: zero operands; default duration+11=token-DF (1..32); continue.
+; Timed finish01B3 stores BX at+0C and copies+11 to countdown+01. Countdown
+; zero wraps toFF on its next eligible tick; there is no zero-as-end convention.
+;
+; SCORE CONTAINER SCHEMA (not yet promoted to data classification): song IDs
+; 01..15 index absolute near words [0B6C+2*ID]; normal directory starts0B6E.
+; Header+0 word ->05A8 (write-only in identified engine; meaning unresolved);
+; +2 relative instrument bank ->B68 after+0B6E; +4 tempo byte ->B6A;
+; +5 unsigned channel count ->B6C word; +6 onward relative order-list words.
+; For each channel start reads first relative pattern word and saves the NEXT
+; order-word address. No initial zero-list redirect (unlike command80).
+; Count is unchecked: zero enters a LOOP body with CX=0; >9 overruns records.
+; Instruments have selection stride10h, but only+00..+0C and+0E are consumed:
+; +00/+01 ->60+op0/op1 (attack/decay), +02/+03 ->80+ops (sustain/release),
+; +04/+05 ->20+ops (operator characteristics), +06/+07 ->E0+ops (waveform),
+; +08 ->channel transpose, +09 ->C0+channel (feedback/connection),
+; +0A modulator level, +0B carrier level bias, +0C packed key-scale bits,
+; +0E release countdown comparator. +0D/+0F have no identified engine reader.
+; Effect requests01..12 use absolute words [55E3+2*ID], bank54E3; no header.
+; No score/effect run is classified merely from this schema or a slot stride.
+;
+; ALL OPL writes use0559: reset0050 (27 words at006D); detection00AC/00B2/
+; 00BA/00C0/00CD/00D3 (04=60,04=80,02=FF,04=21,04=60,04=80);
+; key-off01AD/01C4/03B5/03E1/043E/04F5; levels021C/0240/0302/032A;
+; instrument027C/0287/0292/029D/02A8/02B3/02C0/02CB/02D6;
+; pitch038A/03A4; song start0501/0507/050D/0513
+; (01=20,BD=C0,08=00,04=21). No direct OUT exists outside0559.
+; A muted host/unbound INT61 provider bypasses this actual interpreter and OPL
+; traffic: omitted original behavior, with device/timing equivalence unverified.
+; Prefix/latch C tests prove only their recorded transport domains.
 bits 16
 org 0
+; Semantic names are ledger-owned aliases; no emission/instruction changed.
+adlib_AdvanceChannel equ adlib_sub_0177
+adlib_FinishTimedEvent equ adlib_sub_01B3
+adlib_KeyOffTimedEvent equ adlib_sub_01C0
+adlib_StepChannelPitch equ adlib_sub_0339
+adlib_WriteChannelPitch equ adlib_sub_0349
+adlib_StopMusicChannels equ adlib_sub_03AA
+adlib_ReleaseBeforeNextEvent equ adlib_sub_03CA
+adlib_AdvanceOrder equ adlib_sub_0415
+adlib_EnterPattern equ adlib_sub_041F
+adlib_SetTranspose equ adlib_sub_0430
+adlib_EndChannel equ adlib_sub_043A
+adlib_SetAscendingPitchStep equ adlib_sub_0447
+adlib_SetDescendingPitchStep equ adlib_sub_044F
+adlib_ProcessSongRequest equ adlib_sub_0457
+adlib_ProcessEffectRequest equ adlib_sub_051C
+adlib_WriteOplRegister equ adlib_sub_0559
+adlib_ResetOplPackets equ $$+0x006d
+adlib_SongRequestScratch equ $$+0x00ef
+adlib_StreamFetch equ $$+0x019e
+adlib_SetOperatorLevels equ $$+0x01f4
+adlib_SelectInstrument equ $$+0x0248
+adlib_StreamCommandTargets equ $$+0x03ea
+adlib_SongHeaderWord0 equ $$+0x05a8
+adlib_Channels equ $$+0x05ac
+adlib_OplBasePort equ $$+0x08a3
+adlib_LevelToAttenuation equ $$+0x08a7
+adlib_FrequencyRowStart00 equ $$+0x0927
+adlib_FrequencyRowStart01 equ $$+0x0947
+adlib_FrequencyRowStart02 equ $$+0x0967
+adlib_FrequencyRowStart03 equ $$+0x0987
+adlib_FrequencyRowStart04 equ $$+0x09a7
+adlib_FrequencyRowStart05 equ $$+0x09c7
+adlib_FrequencyRowStart06 equ $$+0x09e7
+adlib_FrequencyRowStart07 equ $$+0x0a07
+adlib_FrequencyRowStart08 equ $$+0x0a27
+adlib_FrequencyRowStart09 equ $$+0x0a47
+adlib_FrequencyRowStart10 equ $$+0x0a67
+adlib_FrequencyRowStart11 equ $$+0x0a87
+adlib_NoteOctave equ $$+0x0aa7
+adlib_NoteSemitone equ $$+0x0b07
+adlib_MusicInstrumentBank equ $$+0x0b68
+adlib_TempoReload equ $$+0x0b6a
+adlib_TempoPhase equ $$+0x0b6b
+adlib_MusicChannelCount equ $$+0x0b6c
 adlib_loc_0115 equ adlib_UpdateService
 adlib_loc_00A3 equ adlib_DetectService
 adlib_loc_003A equ adlib_ResetService
@@ -27,7 +162,8 @@ adlib_loc_000E:
     dec ah ; @0000E
     jnz adlib_loc_0015 ; @00010
     jmp short adlib_loc_003A ; @00012
-; UNKNOWN: unresolved bytes
+; UNKNOWN: byte90 skipped by JMP0012 and branch0010. No recovered entry or
+; data consumer proves its role; NOP syntax alone does not establish padding.
     db 0x90 ; @00014
 adlib_loc_0015:
     dec ah ; @00015
@@ -72,6 +208,11 @@ adlib_SetCommand5Latch:
 adlib_Command5Return:
     iret ; @00039
 adlib_ResetService:
+; DS=CS through live saves; AX/DI/SI/CX/DX/DS saved, BX/ES/BP untouched by
+; ordinary body. First03AA uses retained B6C (initial1); then DF-sensitive
+; LODSW from006D for27 writes; finally clears mode+10 in ALL nine records.
+; Leaves pending effectF0, scratchEF, bank/count/tempo and other record fields.
+; MOV DX,0388 does not select0559's port: that helper always loads[08A3].
     push ds ; @0003A
     push ax ; @0003B
     push di ; @0003C
@@ -112,6 +253,10 @@ adlib_loc_005B:
 ; DATA: lookup_table
     db 0x8a,0x0f,0x95,0x0f,0xb8,0x00 ; @0009D
 adlib_DetectService:
+; DS=CS; polling IN at00B5/00C8 is literally DX=0388 even if08A3 is changed.
+; Require (first_status&E0)==0 and (second_status&E0)==C0; AL=1 else0.
+; On ordinary stack return AH=21, BX=8000|(first_status&E0), CX=0, DX=0388;
+; SI/DI/BP/ES untouched, DS restored. 012Ch LOOP delay, then OPL timer reset.
     push ds ; @000A3
     push cs ; @000A4
     pop ds ; @000A5
@@ -155,7 +300,7 @@ adlib_Command3Latch:
     db 0x00 ; @000ED
 adlib_Command5Latch:
     db 0x00 ; @000EE
-; UNKNOWN: unresolved bytes
+; DATA: runtime_data (song request scratch0461/0464/0473)
     db 0x00 ; @000EF
 ; DATA: static_data
 adlib_Command4Latch:
@@ -167,6 +312,14 @@ adlib_Command4Latch:
 ; DATA: embedded_resource
     db 0x31,0x39,0x39,0x31 ; @00111
 adlib_UpdateService:
+; Save AX/BX/CX/DX/DI/SI/DS/ES; select DS=ES=CS through two actual stack POPs.
+; Process0457 then051C BEFORE decrementing byte B6B. Iterate all nine records
+; ascending, reloading DI each time. Mode0 skips; mode2 runs every update;
+; other nonzero modes run only when B6B==0. Reload B6B fromB6A only after
+; the complete scan when zero. Reload0 gives a 256-update interval via wrap;
+; new song sets phase1, so its first events occur in the same update.
+; All saved registers restored via live SS; BP never touched; IRET restores
+; frame flags. There is no internal timer/interrupt scheduler or locking.
     push ax ; @00115
     push bx ; @00116
     push cx ; @00117
@@ -215,6 +368,9 @@ adlib_loc_016E:
     pop ax ; @00175
     iret ; @00176
 adlib_sub_0177:
+; AdvanceChannel: BX=[DI+0C] even when music phase subsequently skips.
+; Eligible active channel decrements countdown+01; zero fetches019E. Otherwise
+; slide0339 runs first, then conditional release03CA. Neither reloads DX.
     cmp byte [di+0x10],0x0 ; @00177
     nop ; @0017B
     jz adlib_loc_019D ; @0017C
@@ -248,6 +404,7 @@ adlib_loc_019E:
     call adlib_sub_0559 ; @001AD
     call adlib_sub_0349 ; @001B0
 adlib_sub_01B3:
+; FinishTimedEvent shared tail: save next BX and reload byte countdown.
     mov [di+0xc],bx ; @001B3
     nop ; @001B6
     mov al,[di+0x11] ; @001B7
@@ -256,6 +413,7 @@ adlib_sub_01B3:
     nop ; @001BE
     ret ; @001BF
 adlib_sub_01C0:
+; Command81: saved register/value word is sent exactly, not rebuilt from note.
     mov ax,[di+0x8] ; @001C0
     nop ; @001C3
     call adlib_sub_0559 ; @001C4
@@ -263,6 +421,12 @@ adlib_sub_01C0:
     nop ; @001CB
     jmp short adlib_sub_01B3 ; @001CC
 adlib_loc_01CE:
+; 01EA formula: token80..AF -> SI=03EA+zero_extend((2*token)&FF).
+; Read little-endian near target from live DS:SI, JMP in CURRENT CS. Eight
+; table words cover80..87 only;88..AF reads03FA..0449 instruction bytes.
+; No clamp, implicit subtraction in a wider integer, or invented extra table.
+; Immutable out-of-table words do not prove their destinations executable;
+; mutable/aliased bytes further widen the raw target domain. Frontier stays open.
     cmp al,0xe0 ; @001CE
     nop ; @001D0
     nop ; @001D1
@@ -286,6 +450,12 @@ adlib_loc_01EC:
     nop ; @001F1
     jmp short adlib_loc_019E ; @001F2
 adlib_loc_01F4:
+; B-family level: save operand at+0E, op0 value=level[V&7F] | ((I[0C]<<2)&C0).
+; op1 value=level[(channel[0F]+I[0A])&7F] | (ROR8(I[0C],2)&C0).
+; All byte sums wrap. Crucially op0/op1 register numbers are40+LIVE DL/DH;
+; the channel pair[DI+05] is NOT loaded here. DX persists across channels
+; within an update and arrives from caller across updates until a C token.
+; Stored+0E has no later identified reader; operand does not feed op1 value.
     mov al,[bx] ; @001F4
     inc bx ; @001F6
     mov [di+0xe],al ; @001F7
@@ -327,6 +497,12 @@ adlib_loc_01F4:
     pop bx ; @00244
     jmp adlib_loc_019E ; @00245
 adlib_loc_0248:
+; Instrument bank B68 for DI<05FC, fixed54E3 for DI>=05FC (not mode-based).
+; Selects010h slots using original mixed byte/word arithmetic described above.
+; Loads DX=[DI+05] here only. OPL writes preserve that pair through0559.
+; Initial levels: op0=level[I[0A]&7F]|((I[0C]<<2)&C0);
+; op1=level[(I[0A]+I[0B])&7F]|(ROR8(I[0C],2)&C0).
+; Stores ID+04, pointer+02, level+0E, bias+0F and transpose+12 (twice).
     sub al,0xc0 ; @00248
     nop ; @0024A
     nop ; @0024B
@@ -441,6 +617,8 @@ adlib_loc_026A:
     pop bx ; @00335
     jmp adlib_loc_019E ; @00336
 adlib_sub_0339:
+; If slide+13!=0, add it to note+00 modulo256 and fall through to pitch.
+; It never clamps to stream note range00..7F and retriggers key-on each step.
     mov al,[di+0x13] ; @00339
     nop ; @0033C
     db 0x0a,0xc0 ; ENCODED: or al,al (NASM selects different opcode/operand width) ; @0033D
@@ -452,6 +630,17 @@ adlib_sub_0339:
     nop ; @00347
     nop ; @00348
 adlib_sub_0349:
+; Pitch exact arithmetic: n=(note+transpose+4)&FF (no range check).
+; b=(byte[AA7+n]-1)&FF; s=byte[B07+n]; selector=2*((16*s)&FF).
+; W=word[0927+selector]; if signed16(W)<0 increment b; if signed8(b)<0,
+; increment b and arithmetic-shift W right1. Write A0+channel with low(W);
+; save (B0+channel, (high(W)&03)|((4*b)&FF)) at+08, then OR value20/key-on
+; for the write. 0559 clobbers AL; PUSH/POP AX around first write is essential.
+; DS note-index reads span AA7..BA6 and B07..C06 under raw wrapped inputs;
+; selector can address16 row starts0927..0B07, not only12 normal semitones.
+; Natural n<60h gives octave=floor(n/0Ch), semitone=n%0Ch. Only first word of
+; each20h-byte frequency row is read. The other15 words per row stay UNKNOWN.
+; DF changes LODSW's dead SI increment, not the selected pitch word here.
     push bx ; @00349
     push si ; @0034A
     mov al,[di] ; @0034B
@@ -505,6 +694,11 @@ adlib_loc_0381:
 adlib_loc_03A9:
     ret ; @003A9
 adlib_sub_03AA:
+; StopMusic shared tail (reset, invalid idle request, command83): send+08 and
+; clear mode for first word[B6C] records, starting05AC; clear WORD[ED] (ED+EE).
+; It does not clear EF/F0, phase, PC, transpose, slide or all nine channels.
+; CX=0 still enters LOOP body; unchecked counts/aliases may modify engine/stack,
+; so do not assert bounded completion outside proven header/count domains.
     mov di,0x5ac ; @003AA
     mov cx,[0xb6c] ; @003AD
 adlib_loc_03B1:
@@ -519,6 +713,9 @@ adlib_loc_03B1:
     mov word [0xed],0x0 ; @003C3
     ret ; @003C9
 adlib_sub_03CA:
+; Non-event release: skip only if the IMMEDIATE next stream byte[BX] is82.
+; Otherwise compare instrument[0E] with remaining countdown; equality sends
+; saved key-off then clears slide. It does not scan intervening controls.
     cmp byte [bx],0x82 ; @003CA
     jz adlib_loc_03E9 ; @003CD
     mov si,[di+0x2] ; @003CF
@@ -538,6 +735,8 @@ adlib_loc_03E9:
 ; DATA: lookup_table
     db 0x15,0x04,0xc0,0x01,0xb3,0x01,0xaa,0x03,0x30,0x04,0x3a,0x04,0x47,0x04,0x4f,0x04 ; @003EA
 adlib_loc_03FA:
+; Command80 zero sentinel: BX already points past zero to relative list pointer.
+; Dereference new list once, save list+2 and first pattern+0B6E, then fetch.
     mov bx,[bx] ; @003FA
     add bx,0xb6e ; @003FC
     mov cx,[bx] ; @00400
@@ -551,6 +750,7 @@ adlib_loc_03FA:
     db 0x8b,0xd9 ; ENCODED: mov bx,cx (NASM selects different opcode/operand width) ; @00410
     jmp adlib_loc_019E ; @00412
 adlib_sub_0415:
+; AdvanceOrder: +0A is the NEXT order word, not the current pattern's origin.
     mov bx,[di+0xa] ; @00415
     nop ; @00418
     mov cx,[bx] ; @00419
@@ -558,6 +758,7 @@ adlib_sub_0415:
     inc bx ; @0041C
     jcxz adlib_loc_03FA ; @0041D
 adlib_sub_041F:
+; Shared pattern handoff for nonzero next order and seeded/signature entry.
     add cx,0xb6e ; @0041F
     mov [di+0xa],bx ; @00423
     nop ; @00426
@@ -566,12 +767,14 @@ adlib_sub_041F:
     db 0x8b,0xd9 ; ENCODED: mov bx,cx (NASM selects different opcode/operand width) ; @0042B
     jmp adlib_loc_019E ; @0042D
 adlib_sub_0430:
+; Command84: one literal transpose byte; does not immediately recompute pitch.
     mov al,[bx] ; @00430
     inc bx ; @00432
     mov [di+0x12],al ; @00433
     nop ; @00436
     jmp adlib_loc_019E ; @00437
 adlib_sub_043A:
+; Command85 ends this channel only; mode0 prevents subsequent stale-PC reads.
     mov ax,[di+0x8] ; @0043A
     nop ; @0043D
     call adlib_sub_0559 ; @0043E
@@ -579,14 +782,28 @@ adlib_sub_043A:
     nop ; @00445
     ret ; @00446
 adlib_sub_0447:
+; Command86: step+1 applies on eligible countdown ticks, not on this control.
     mov byte [di+0x13],0x1 ; @00447
     nop ; @0044B
     jmp adlib_loc_019E ; @0044C
 adlib_sub_044F:
+; Command87: stepFF is byte addition, including note underflow/wrap.
     mov byte [di+0x13],0xff ; @0044F
     nop ; @00453
     jmp adlib_loc_019E ; @00454
 adlib_sub_0457:
+; Song request state machine: when EE==0 copy ED to AL and EF; otherwise skip
+; that load and consult retained EF. Ordinary initialized EF is0 whenever
+; EE!=0: EF is set only0461 and cleared0473 before starting/stopping. Thus a
+; new ED request waits while EE!=0; it does NOT replace a playing song.
+; Stop/command83 also clears pending ED, so waiting does not promise replay.
+; AH05 can clear/set that gate with any byte. EF!=0 with EE!=0 uses LIVE AL,
+; not EF, at0478/047F: retain this raw-entry/alias quirk, never invent a load.
+; Nonzero request clears ED/EF, rejects AL>=16 by03AA, else stores EE and
+; selects header. ID0 normally cannot pass EF gate; inconsistent state could
+; read B6C as a pointer. Song start deactivates all9, initializes ONLY count
+; records' order/PC/countdown/mode, preserving other fields until stream writes.
+; It keys off all9 after initialization; pending F0 is handled next at051C.
     cmp byte [0xee],0x0 ; @00457
     jnz adlib_loc_0464 ; @0045C
     mov al,[0xed] ; @0045E
@@ -671,6 +888,14 @@ adlib_loc_04F1:
 adlib_loc_051B:
     ret ; @0051B
 adlib_sub_051C:
+; F0=0 or>=13 remains latched and returns. Valid01..12 searches exactly FOUR
+; free mode0 records descending064C,0638,0624,0610; none free retains request.
+; Channel05FC is excluded although its instrument-bank branch is the FX bank.
+; No priority/preemption: last AH04 write wins the one pending byte. On grant,
+; clear F0, mode=2, slide=0, BX=absolute effect directory word, jump to fetch
+; IMMEDIATELY. Only stream events initialize PC/countdown/instrument/duration;
+; other fields retain prior lifetime. Update's subsequent ascending scan can
+; decrement or fetch this same effect again in the VERY SAME AH00 service.
     mov bl,[adlib_Command4Latch] ; @0051C
     db 0x0a,0xdb ; ENCODED: or bl,bl (NASM selects different opcode/operand width) ; @00520
     jz adlib_loc_053C ; @00522
@@ -699,6 +924,12 @@ adlib_loc_053D:
     nop ; @00555
     jmp adlib_loc_019E ; @00556
 adlib_sub_0559:
+; WriteOplRegister: AL=register, AH=value, DS owns08A3 base word (initial0388).
+; PUSH DX; OUT base,AL; 12 IN AL,base; MOV AL,AH; INC DX; OUT base+1,AL;
+; 47 IN AL,base+1; POP DX; RET. No status poll/timeout here, only literal delays.
+; AH preserved, AL returns last data-port input; DX restored via live SS.
+; BX/CX/SI/DI/BP/segments unchanged. INC(base) defines OF/SF/ZF/AF/PF and
+; preserves incoming CF; IN/OUT/MOV/POP/RET do not change flags. Port+1 wraps16.
     push dx ; @00559
     mov dx,[0x8a3] ; @0055A
     out dx,al ; @0055E
@@ -766,191 +997,248 @@ adlib_sub_0559:
     in al,dx ; @0059D
     pop dx ; @0059E
     ret ; @0059F
-; UNKNOWN: unresolved bytes
+; STATE OWNERSHIP / CLASSIFICATION (half-open ranges; no inferred padding).
+; 05A0..05A8: unseeded PUSH DX/MOV DX,[08A3]/IN AL,DX/POP DX/RET candidate.
+; No recovered incoming CALL/JMP/table target; retain UNKNOWN, not decoded code.
+; 05A8..05AA: header+0 copy, initial4000, written04AC, no identified read.
+; 05AA..05AC: initial4000 but NO identified read/write; UNKNOWN, not a second
+; header field merely because it resembles05A8.
+;
+; NINE CHANNEL RECORDS [05AC,0660), stride14h, mutable and fixed fields mixed.
+; Loaded fields have session lifetime; deactivation preserves all but mode.
+; Offset Size Meaning                  Producers -> consumers (instruction sites)
+; +00 1 note (wrap8)                    01A5,0345 ->0341,034B
+; +01 1 remaining countdown            04DB,01BB,0190 ->0190,03D7
+; +02 2 absolute instrument pointer    026C ->01FD,03CF
+; +04 1 selected ID (token-C0)          024D ->no identified reader (stored-only)
+; +05 1 OPL operator0 offset           loaded ->0270 word low
+; +06 1 OPL operator1 offset           loaded ->0270 word high
+; +07 1 OPL channel ordinal            loaded ->02BA,0384,0397
+; +08 2 saved key-off packet AL/AH     loaded low=B0+ordinal/high=0;
+;                                      039D ->01A9,01C0,03B1,03DD,043A,04F1
+; +0A 2 NEXT absolute order-word ptr   04D3,0408,0423 ->0415
+; +0C 2 saved next stream pointer      04D7,040C,0427,01B3 ->017E
+; +0E 1 most recent level operand      01F7,02E5 ->no identified reader
+; +0F 1 carrier level bias             0309 ->021F
+; +10 1 mode 0 inactive/1 music/2 FX    loaded0; reset005B,stop03B8,end0441,
+;                                      start0490..04A8/04E0,FX0542 ->0177,0182,052F
+; +11 1 duration reload                01EE ->01B7 (not reset or start initialized)
+; +12 1 transpose byte                 02DD,0331,0433 ->034F
+; +13 1 slide byte                     01C7,03E4,0447,044F,0551 ->0339
+; Loaded (op0,op1,ordinal) tuples:
+;   (00,03,00),(01,04,01),(02,05,02),(08,0B,03),(09,0C,04),
+;   (0A,0D,05),(10,13,06),(11,14,07),(12,15,08).
+; All other record bytes initially0. +05..+07 have no normal engine writer;
+; arbitrary stack/code aliases, overlarge header count and raw entry can change
+; them. Music initializes count records, FX allocates only last four; the
+; DI=05FC music/FX bank boundary is not a count guard. No shadow state copies.
+;
+; [0660,08A3) contains apparent test-player text (ends '$' at0829), keyboard-
+; shaped bytes082A..0888 and error text0889..08A3. No identified engine consumer
+; or initialization contract for any whole run: retain UNKNOWN, including zero
+; bytes. Appearance does not prove test UI reachability or padding ownership.
+; [08A3,08A5) immutable base0388 ->055A; no identified engine writer.
+; [08A5,08A7) two zeros have no identified owner: UNKNOWN.
+; [08A7,0927) 128 level values=3F-floor(index/2); reads0208/022C/02EE/0316,
+; each masks index7F; no identified writer, all128 indexes admitted.
+; [0927,0AA7) looks like12 rows*16 fine-frequency words, but0349 selects only
+; each row's FIRST word for normal semitones. Promote just twelve2-byte starts
+; 0927+20h*k (k=0..0Bh); thirty bytes after EACH remain UNKNOWN. Raw higher
+; selectors read the later octave/note bytes as words; do not extend this table.
+; [0AA7,0B07) octave[n]=floor(n/0Ch), [0B07,0B67) semitone[n]=n%0Ch,
+; n=0..5Fh; paired readers0359/035D, no identified writer. NOTE neither reader
+; bounds n<60h; out-of-range reads can enter the following table/state/score.
+; 0B67=90 has no dedicated reader/writer; UNKNOWN, not asserted alignment.
+; B68 word bank pointer: loaded0,04B3 ->025D (music instrument base).
+; B6A byte tempo reload: loaded09,04B7 ->0168; B6B byte phase: loaded00,
+; 0516/0127/016B ->0189/0161. B6C word music count: loaded0001,
+; 04BF ->03AD, ALSO raw songID0 directory slot; do not split into spare bytes.
+; Song headers/pointers/tokens beyond0B6E remain unclassified in this task.
+; STORED [start,end): 05A0..05A8 unresolved; 05A8..05AA runtime_data; 05AA..05AC unresolved; 05AC..05B0 runtime_data
     db 0x52,0x8b,0x16,0xa3,0x08,0xec,0x5a,0xc3,0x00,0x40,0x00,0x40,0x00,0x00,0x00,0x00 ; @005A0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 05B0..05C0 runtime_data
     db 0x00,0x00,0x03,0x00,0xb0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @005B0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 05C0..05D0 runtime_data
     db 0x00,0x00,0x00,0x00,0x00,0x01,0x04,0x01,0xb1,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @005C0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 05D0..05E0 runtime_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x05,0x02,0xb2,0x00,0x00,0x00 ; @005D0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 05E0..05F0 runtime_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x08,0x0b,0x03 ; @005E0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 05F0..0600 runtime_data
     db 0xb3,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @005F0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0600..0610 runtime_data
     db 0x00,0x09,0x0c,0x04,0xb4,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @00600
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0610..0620 runtime_data
     db 0x00,0x00,0x00,0x00,0x00,0x0a,0x0d,0x05,0xb5,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @00610
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0620..0630 runtime_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x10,0x13,0x06,0xb6,0x00,0x00,0x00 ; @00620
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0630..0640 runtime_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x11,0x14,0x07 ; @00630
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0640..0650 runtime_data
     db 0xb7,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @00640
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0650..0660 runtime_data
     db 0x00,0x12,0x15,0x08,0xb8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @00650
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0660..0670 unresolved
     db 0x20,0x41,0x64,0x2d,0x4c,0x69,0x62,0x20,0x4d,0x75,0x73,0x69,0x63,0x2f,0x46,0x58 ; @00660
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0670..0680 unresolved
     db 0x20,0x44,0x72,0x69,0x76,0x65,0x72,0x20,0x2d,0x20,0x28,0x63,0x29,0x20,0x31,0x39 ; @00670
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0680..0690 unresolved
     db 0x39,0x31,0x20,0x53,0x6f,0x75,0x6e,0x64,0x20,0x49,0x6d,0x61,0x67,0x65,0x73,0x20 ; @00680
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0690..06A0 unresolved
     db 0x20,0x20,0x54,0x65,0x6c,0x2e,0x20,0x30,0x36,0x31,0x20,0x37,0x37,0x33,0x20,0x34 ; @00690
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 06A0..06B0 unresolved
     db 0x35,0x34,0x31,0x0d,0x0a,0x0a,0x0a,0x09,0x09,0x09,0x7e,0x20,0x4c,0x65,0x6d,0x6d ; @006A0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 06B0..06C0 unresolved
     db 0x69,0x6e,0x67,0x73,0x20,0x7e,0x0d,0x0a,0x0a,0x0a,0x50,0x72,0x65,0x73,0x73,0x20 ; @006B0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 06C0..06D0 unresolved
     db 0x2d,0x20,0x41,0x20,0x2d,0x20,0x41,0x77,0x65,0x73,0x6f,0x6d,0x65,0x09,0x09,0x4c ; @006C0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 06D0..06E0 unresolved
     db 0x20,0x2d,0x20,0x54,0x69,0x6d,0x31,0x0d,0x0a,0x09,0x42,0x20,0x2d,0x20,0x42,0x65 ; @006D0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 06E0..06F0 unresolved
     db 0x61,0x73,0x74,0x49,0x09,0x09,0x4d,0x20,0x2d,0x20,0x54,0x69,0x6d,0x32,0x0d,0x0a ; @006E0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 06F0..0700 unresolved
     db 0x09,0x43,0x20,0x2d,0x20,0x42,0x65,0x61,0x73,0x74,0x49,0x49,0x09,0x09,0x4e,0x20 ; @006F0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0700..0710 unresolved
     db 0x2d,0x20,0x54,0x69,0x6d,0x33,0x0d,0x0a,0x09,0x44,0x20,0x2d,0x20,0x43,0x61,0x6e ; @00700
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0710..0720 unresolved
     db 0x43,0x61,0x6e,0x09,0x09,0x4f,0x20,0x2d,0x20,0x54,0x69,0x6d,0x34,0x0d,0x0a,0x09 ; @00710
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0720..0730 unresolved
     db 0x45,0x20,0x2d,0x20,0x44,0x6f,0x67,0x67,0x69,0x65,0x09,0x09,0x50,0x20,0x2d,0x20 ; @00720
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0730..0740 unresolved
     db 0x54,0x69,0x6d,0x35,0x0d,0x0a,0x09,0x46,0x20,0x2d,0x20,0x4c,0x65,0x6d,0x6d,0x69 ; @00730
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0740..0750 unresolved
     db 0x6e,0x67,0x31,0x09,0x09,0x51,0x20,0x2d,0x20,0x54,0x69,0x6d,0x36,0x0d,0x0a,0x09 ; @00740
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0750..0760 unresolved
     db 0x47,0x20,0x2d,0x20,0x4c,0x65,0x6d,0x6d,0x69,0x6e,0x67,0x32,0x09,0x09,0x52,0x20 ; @00750
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0760..0770 unresolved
     db 0x2d,0x20,0x54,0x69,0x6d,0x37,0x0d,0x0a,0x09,0x48,0x20,0x2d,0x20,0x4c,0x65,0x6d ; @00760
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0770..0780 unresolved
     db 0x6d,0x69,0x6e,0x67,0x33,0x09,0x09,0x53,0x20,0x2d,0x20,0x54,0x69,0x6d,0x38,0x0d ; @00770
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0780..0790 unresolved
     db 0x0a,0x09,0x49,0x20,0x2d,0x20,0x4d,0x65,0x6e,0x61,0x63,0x65,0x09,0x09,0x54,0x20 ; @00780
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0790..07A0 unresolved
     db 0x2d,0x20,0x54,0x69,0x6d,0x39,0x0d,0x0a,0x09,0x4a,0x20,0x2d,0x20,0x4d,0x6f,0x75 ; @00790
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 07A0..07B0 unresolved
     db 0x6e,0x74,0x61,0x69,0x6e,0x09,0x09,0x55,0x20,0x2d,0x20,0x54,0x69,0x6d,0x31,0x30 ; @007A0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 07B0..07C0 unresolved
     db 0x0d,0x0a,0x09,0x4b,0x20,0x2d,0x20,0x54,0x65,0x6e,0x20,0x4c,0x65,0x6d,0x6d,0x69 ; @007B0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 07C0..07D0 unresolved
     db 0x6e,0x67,0x73,0x0d,0x0a,0x0a,0x09,0x53,0x68,0x69,0x66,0x74,0x65,0x64,0x20,0x41 ; @007C0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 07D0..07E0 unresolved
     db 0x2d,0x51,0x20,0x66,0x6f,0x72,0x20,0x53,0x6f,0x75,0x6e,0x64,0x20,0x45,0x66,0x66 ; @007D0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 07E0..07F0 unresolved
     db 0x65,0x63,0x74,0x73,0x0d,0x0a,0x0a,0x09,0x09,0x09,0x20,0x53,0x70,0x61,0x63,0x65 ; @007E0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 07F0..0800 unresolved
     db 0x20,0x2d,0x20,0x46,0x61,0x73,0x74,0x20,0x46,0x6f,0x72,0x77,0x61,0x72,0x64,0x0d ; @007F0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0800..0810 unresolved
     db 0x0a,0x09,0x09,0x09,0x20,0x45,0x6e,0x74,0x65,0x72,0x20,0x2d,0x20,0x53,0x74,0x6f ; @00800
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0810..0820 unresolved
     db 0x70,0x20,0x54,0x75,0x6e,0x65,0x0d,0x0a,0x09,0x09,0x09,0x45,0x73,0x63,0x61,0x70 ; @00810
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0820..0830 unresolved
     db 0x65,0x20,0x2d,0x20,0x51,0x75,0x69,0x74,0x24,0x00,0x1b,0x31,0x32,0x33,0x34,0x35 ; @00820
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0830..0840 unresolved
     db 0x36,0x37,0x38,0x39,0x30,0x2d,0x3d,0x0c,0x09,0x51,0x57,0x45,0x52,0x54,0x59,0x55 ; @00830
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0840..0850 unresolved
     db 0x49,0x4f,0x50,0x00,0x00,0x0d,0x00,0x41,0x53,0x44,0x46,0x47,0x48,0x4a,0x4b,0x4c ; @00840
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0850..0860 unresolved
     db 0x00,0x00,0x00,0x00,0x00,0x5a,0x58,0x43,0x56,0x42,0x4e,0x4d,0x00,0x00,0x00,0x00 ; @00850
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0860..0870 unresolved
     db 0x00,0x00,0x20,0x00,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x00,0x00 ; @00860
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0870..0880 unresolved
     db 0x00,0x07,0x00,0x00,0x08,0x00,0x09,0x00,0x00,0x0a,0x00,0x00,0x00,0x00,0x00,0x00 ; @00870
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0880..0890 unresolved
     db 0x8b,0x8c,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x4e,0x6f,0x20,0x41,0x64,0x4c,0x69 ; @00880
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0890..08A0 unresolved
     db 0x62,0x20,0x43,0x61,0x72,0x64,0x20,0x43,0x6f,0x6e,0x6e,0x65,0x63,0x74,0x65,0x64 ; @00890
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 08A0..08A3 unresolved; 08A3..08A5 static_data; 08A5..08A7 unresolved; 08A7..08B0 lookup_table
     db 0x0d,0x0a,0x24,0x88,0x03,0x00,0x00,0x3f,0x3f,0x3e,0x3e,0x3d,0x3d,0x3c,0x3c,0x3b ; @008A0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 08B0..08C0 lookup_table
     db 0x3b,0x3a,0x3a,0x39,0x39,0x38,0x38,0x37,0x37,0x36,0x36,0x35,0x35,0x34,0x34,0x33 ; @008B0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 08C0..08D0 lookup_table
     db 0x33,0x32,0x32,0x31,0x31,0x30,0x30,0x2f,0x2f,0x2e,0x2e,0x2d,0x2d,0x2c,0x2c,0x2b ; @008C0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 08D0..08E0 lookup_table
     db 0x2b,0x2a,0x2a,0x29,0x29,0x28,0x28,0x27,0x27,0x26,0x26,0x25,0x25,0x24,0x24,0x23 ; @008D0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 08E0..08F0 lookup_table
     db 0x23,0x22,0x22,0x21,0x21,0x20,0x20,0x1f,0x1f,0x1e,0x1e,0x1d,0x1d,0x1c,0x1c,0x1b ; @008E0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 08F0..0900 lookup_table
     db 0x1b,0x1a,0x1a,0x19,0x19,0x18,0x18,0x17,0x17,0x16,0x16,0x15,0x15,0x14,0x14,0x13 ; @008F0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0900..0910 lookup_table
     db 0x13,0x12,0x12,0x11,0x11,0x10,0x10,0x0f,0x0f,0x0e,0x0e,0x0d,0x0d,0x0c,0x0c,0x0b ; @00900
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0910..0920 lookup_table
     db 0x0b,0x0a,0x0a,0x09,0x09,0x08,0x08,0x07,0x07,0x06,0x06,0x05,0x05,0x04,0x04,0x03 ; @00910
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0920..0929 lookup_table; 0929..0930 unresolved
     db 0x03,0x02,0x02,0x01,0x01,0x00,0x00,0xb2,0x02,0xb4,0x02,0xb7,0x02,0xb9,0x02,0xbc ; @00920
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0930..0940 unresolved
     db 0x02,0xbe,0x02,0xc1,0x02,0xc3,0x02,0xc6,0x02,0xc9,0x02,0xcb,0x02,0xce,0x02,0xd0 ; @00930
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0940..0947 unresolved; 0947..0949 lookup_table; 0949..0950 unresolved
     db 0x02,0xd3,0x02,0xd6,0x02,0xd8,0x02,0xdb,0x02,0xdd,0x02,0xe0,0x02,0xe3,0x02,0xe5 ; @00940
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0950..0960 unresolved
     db 0x02,0xe8,0x02,0xeb,0x02,0xed,0x02,0xf0,0x02,0xf3,0x02,0xf6,0x02,0xf8,0x02,0xfb ; @00950
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0960..0967 unresolved; 0967..0969 lookup_table; 0969..0970 unresolved
     db 0x02,0xfe,0x02,0x01,0x03,0x03,0x03,0x06,0x03,0x09,0x03,0x0c,0x03,0x0f,0x03,0x11 ; @00960
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0970..0980 unresolved
     db 0x03,0x14,0x03,0x17,0x03,0x1a,0x03,0x1d,0x03,0x20,0x03,0x23,0x03,0x26,0x03,0x29 ; @00970
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0980..0987 unresolved; 0987..0989 lookup_table; 0989..0990 unresolved
     db 0x03,0x2b,0x03,0x2e,0x03,0x31,0x03,0x34,0x03,0x37,0x03,0x3a,0x03,0x3d,0x03,0x40 ; @00980
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0990..09A0 unresolved
     db 0x03,0x43,0x03,0x46,0x03,0x49,0x03,0x4c,0x03,0x4f,0x03,0x52,0x03,0x56,0x03,0x59 ; @00990
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 09A0..09A7 unresolved; 09A7..09A9 lookup_table; 09A9..09B0 unresolved
     db 0x03,0x5c,0x03,0x5f,0x03,0x62,0x03,0x65,0x03,0x68,0x03,0x6b,0x03,0x6f,0x03,0x72 ; @009A0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 09B0..09C0 unresolved
     db 0x03,0x75,0x03,0x78,0x03,0x7b,0x03,0x7f,0x03,0x82,0x03,0x85,0x03,0x88,0x03,0x8c ; @009B0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 09C0..09C7 unresolved; 09C7..09C9 lookup_table; 09C9..09D0 unresolved
     db 0x03,0x8f,0x03,0x92,0x03,0x95,0x03,0x99,0x03,0x9c,0x03,0x9f,0x03,0xa3,0x03,0xa6 ; @009C0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 09D0..09E0 unresolved
     db 0x03,0xa9,0x03,0xad,0x03,0xb0,0x03,0xb4,0x03,0xb7,0x03,0xbb,0x03,0xbe,0x03,0xc1 ; @009D0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 09E0..09E7 unresolved; 09E7..09E9 lookup_table; 09E9..09F0 unresolved
     db 0x03,0xc5,0x03,0xc8,0x03,0xcc,0x03,0xcf,0x03,0xd3,0x03,0xd7,0x03,0xda,0x03,0xde ; @009E0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 09F0..0A00 unresolved
     db 0x03,0xe1,0x03,0xe5,0x03,0xe8,0x03,0xec,0x03,0xf0,0x03,0xf3,0x03,0xf7,0x03,0xfb ; @009F0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A00..0A07 unresolved; 0A07..0A09 lookup_table; 0A09..0A10 unresolved
     db 0x03,0xfe,0x03,0x01,0xfe,0x03,0xfe,0x05,0xfe,0x07,0xfe,0x08,0xfe,0x0a,0xfe,0x0c ; @00A00
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A10..0A20 unresolved
     db 0xfe,0x0e,0xfe,0x10,0xfe,0x12,0xfe,0x14,0xfe,0x16,0xfe,0x18,0xfe,0x1a,0xfe,0x1c ; @00A10
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A20..0A27 unresolved; 0A27..0A29 lookup_table; 0A29..0A30 unresolved
     db 0xfe,0x1e,0xfe,0x20,0xfe,0x21,0xfe,0x23,0xfe,0x25,0xfe,0x27,0xfe,0x29,0xfe,0x2b ; @00A20
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A30..0A40 unresolved
     db 0xfe,0x2d,0xfe,0x2f,0xfe,0x31,0xfe,0x34,0xfe,0x36,0xfe,0x38,0xfe,0x3a,0xfe,0x3c ; @00A30
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A40..0A47 unresolved; 0A47..0A49 lookup_table; 0A49..0A50 unresolved
     db 0xfe,0x3e,0xfe,0x40,0xfe,0x42,0xfe,0x44,0xfe,0x46,0xfe,0x48,0xfe,0x4a,0xfe,0x4c ; @00A40
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A50..0A60 unresolved
     db 0xfe,0x4f,0xfe,0x51,0xfe,0x53,0xfe,0x55,0xfe,0x57,0xfe,0x59,0xfe,0x5c,0xfe,0x5e ; @00A50
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A60..0A67 unresolved; 0A67..0A69 lookup_table; 0A69..0A70 unresolved
     db 0xfe,0x60,0xfe,0x62,0xfe,0x64,0xfe,0x67,0xfe,0x69,0xfe,0x6b,0xfe,0x6d,0xfe,0x6f ; @00A60
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A70..0A80 unresolved
     db 0xfe,0x72,0xfe,0x74,0xfe,0x76,0xfe,0x79,0xfe,0x7b,0xfe,0x7d,0xfe,0x7f,0xfe,0x82 ; @00A70
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A80..0A87 unresolved; 0A87..0A89 lookup_table; 0A89..0A90 unresolved
     db 0xfe,0x84,0xfe,0x86,0xfe,0x89,0xfe,0x8b,0xfe,0x8d,0xfe,0x90,0xfe,0x92,0xfe,0x95 ; @00A80
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0A90..0AA0 unresolved
     db 0xfe,0x97,0xfe,0x99,0xfe,0x9c,0xfe,0x9e,0xfe,0xa1,0xfe,0xa3,0xfe,0xa5,0xfe,0xa8 ; @00A90
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0AA0..0AA7 unresolved; 0AA7..0AB0 lookup_table
     db 0xfe,0xaa,0xfe,0xad,0xfe,0xaf,0xfe,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @00AA0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0AB0..0AC0 lookup_table
     db 0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x02 ; @00AB0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0AC0..0AD0 lookup_table
     db 0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x03,0x03,0x03,0x03,0x03 ; @00AC0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0AD0..0AE0 lookup_table
     db 0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04 ; @00AD0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0AE0..0AF0 lookup_table
     db 0x04,0x04,0x04,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x05,0x06 ; @00AE0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0AF0..0B00 lookup_table
     db 0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x06,0x07,0x07,0x07,0x07,0x07 ; @00AF0
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B00..0B10 lookup_table
     db 0x07,0x07,0x07,0x07,0x07,0x07,0x07,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08 ; @00B00
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B10..0B20 lookup_table
     db 0x09,0x0a,0x0b,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x00 ; @00B10
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B20..0B30 lookup_table
     db 0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x00,0x01,0x02,0x03,0x04 ; @00B20
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B30..0B40 lookup_table
     db 0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08 ; @00B30
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B40..0B50 lookup_table
     db 0x09,0x0a,0x0b,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x00 ; @00B40
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B50..0B60 lookup_table
     db 0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x00,0x01,0x02,0x03,0x04 ; @00B50
-; UNKNOWN: unresolved bytes
+; STORED [start,end): 0B60..0B67 lookup_table; 0B67..0B68 unresolved; 0B68..0B6E runtime_data; 0B6E..0B70 unresolved
     db 0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x90,0x00,0x00,0x09,0x00,0x01,0x00,0x98,0x0b ; @00B60
 ; UNKNOWN: unresolved bytes
     db 0x8a,0x0e,0x4c,0x11,0x25,0x14,0x2f,0x17,0x5c,0x1c,0x1b,0x20,0x27,0x26,0x76,0x2b ; @00B70

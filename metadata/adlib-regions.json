@@ -27,18 +27,8 @@
     },
     {
       "start": 237,
-      "end": 239,
-      "classification": "static_data"
-    },
-    {
-      "start": 239,
-      "end": 240,
-      "classification": "unresolved"
-    },
-    {
-      "start": 240,
       "end": 241,
-      "classification": "static_data"
+      "classification": "runtime_data"
     },
     {
       "start": 241,
@@ -62,6 +52,176 @@
     },
     {
       "start": 1440,
+      "end": 1448,
+      "classification": "unresolved"
+    },
+    {
+      "start": 1448,
+      "end": 1450,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 1450,
+      "end": 1452,
+      "classification": "unresolved"
+    },
+    {
+      "start": 1452,
+      "end": 1632,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 1632,
+      "end": 2211,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2211,
+      "end": 2213,
+      "classification": "static_data"
+    },
+    {
+      "start": 2213,
+      "end": 2215,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2215,
+      "end": 2345,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2345,
+      "end": 2375,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2375,
+      "end": 2377,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2377,
+      "end": 2407,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2407,
+      "end": 2409,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2409,
+      "end": 2439,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2439,
+      "end": 2441,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2441,
+      "end": 2471,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2471,
+      "end": 2473,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2473,
+      "end": 2503,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2503,
+      "end": 2505,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2505,
+      "end": 2535,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2535,
+      "end": 2537,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2537,
+      "end": 2567,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2567,
+      "end": 2569,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2569,
+      "end": 2599,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2599,
+      "end": 2601,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2601,
+      "end": 2631,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2631,
+      "end": 2633,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2633,
+      "end": 2663,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2663,
+      "end": 2665,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2665,
+      "end": 2695,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2695,
+      "end": 2697,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2697,
+      "end": 2727,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2727,
+      "end": 2919,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2919,
+      "end": 2920,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2920,
+      "end": 2926,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 2926,
       "end": 22125,
       "classification": "unresolved"
     }

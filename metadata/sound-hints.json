@@ -9,15 +9,9 @@
       },
       {
         "start": 237,
-        "end": 239,
-        "class": "static_data",
-        "evidence": "INT61 commands3/5 write00ED/00EE"
-      },
-      {
-        "start": 240,
         "end": 241,
-        "class": "static_data",
-        "evidence": "INT61 command4 writes00F0"
+        "class": "runtime_data",
+        "evidence": "INT61 setters ED/EE/F0;0457..047F song gate/copy EF,051C..0556 effect latch,03C3 clears ED/EE;all four bytes have writers/readers/lifetime"
       },
       {
         "start": 241,
@@ -30,6 +24,120 @@
         "end": 1018,
         "class": "lookup_table",
         "evidence": "01E0..01EA dispatches through eight visible near pointer words; higher command indexes remain unbounded"
+      },
+      {
+        "start": 1448,
+        "end": 1450,
+        "class": "runtime_data",
+        "evidence": "Header word copy04AB/04AC;no identified read;05AA..05AB excluded"
+      },
+      {
+        "start": 1452,
+        "end": 1632,
+        "class": "runtime_data",
+        "evidence": "Nine14h records;all20 bytes per record have explicit field initialization/writers/readers in adlib_Channels ledger and maintained ASM;not inferred from zero fill"
+      },
+      {
+        "start": 2211,
+        "end": 2213,
+        "class": "static_data",
+        "evidence": "055A OPL base word loaded0388;no identified writer;adjacent zeros excluded"
+      },
+      {
+        "start": 2215,
+        "end": 2343,
+        "class": "lookup_table",
+        "evidence": "0208/022C/02EE/0316 mask7F, admitting128 indexes;value=3F-floor(i/2);no identified writer"
+      },
+      {
+        "start": 2343,
+        "end": 2345,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 00;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2375,
+        "end": 2377,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 01;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2407,
+        "end": 2409,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 02;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2439,
+        "end": 2441,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 03;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2471,
+        "end": 2473,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 04;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2503,
+        "end": 2505,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 05;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2535,
+        "end": 2537,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 06;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2567,
+        "end": 2569,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 07;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2599,
+        "end": 2601,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 08;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2631,
+        "end": 2633,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 09;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2663,
+        "end": 2665,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 0A;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2695,
+        "end": 2697,
+        "class": "lookup_table",
+        "evidence": "0349..0370 selects first word at0927+20h*semitone 0B;following30 bytes left UNKNOWN;no identified writer"
+      },
+      {
+        "start": 2727,
+        "end": 2823,
+        "class": "lookup_table",
+        "evidence": "Paired0359/035D quotient/remainder tables:96 complete n/0Ch and n%0Ch entries;unchecked index remains wider"
+      },
+      {
+        "start": 2823,
+        "end": 2919,
+        "class": "lookup_table",
+        "evidence": "Paired0359/035D quotient/remainder tables;96 stored semitones;byte atB67 excluded"
+      },
+      {
+        "start": 2920,
+        "end": 2926,
+        "class": "runtime_data",
+        "evidence": "Header stores04B3/04B7/04BF,phase0516/0127/016B;read025D/0168/0189/0161/03AD;loaded bank0,reload9,phase0,count1"
       }
     ],
     "dispatch_tables": [
@@ -38,7 +146,26 @@
         "end": 1018,
         "site": 490,
         "commands": "80..87",
-        "closure": "UNRESOLVED: AL80..AF reaches dispatch;88..AF indexes past visible table into code"
+        "closure": "UNRESOLVED: AL80..AF reaches dispatch;88..AF indexes past visible table into code",
+        "index_formula": "SI=03EA+zero_extend((2*token)&FF), token80..AF;JMP word DS:[SI] in current CS"
+      }
+    ],
+    "indirect_transfers": [
+      {
+        "address": 490,
+        "bytes": "ff24",
+        "targets": [
+          1045,
+          448,
+          435,
+          938,
+          1072,
+          1082,
+          1095,
+          1103
+        ],
+        "evidence": "Static formula SI=03EA+zero_extend((2*token)&FF), token80..AF; eight words03EA..03F9 prove80..87 edges",
+        "closure": "UNRESOLVED:88..AF reads instruction bytes03FA..0449 as near targets; pinned-payload grammar/domain, aliases,transformed code and external INT input closure not established"
       }
     ]
   },

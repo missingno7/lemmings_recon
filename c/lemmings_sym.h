@@ -996,9 +996,11 @@
 #define CS_InitializeCodeChecksum 0x8343u
 #define CS_AdvanceCodeChecksum 0x8363u
 #define CS_ChecksumLimit 0x83B7u
+#define CS_StartupCodeChecksumFirstByte 0x83B8u
 #define CS_ChecksumPhase 0x83B9u
 #define CS_ChecksumAccumulator 0x83BAu
 #define CS_ChecksumCursor 0x83BBu
+#define CS_StartupCodeChecksumSecondByte 0x83BDu
 #define CS_MouseIrqMirrorGate83BE 0x83BEu
 #define CS_MinimapColumnBits 0x83C1u
 #define CS_SetDrawingLayout 0x8808u
@@ -1263,9 +1265,14 @@
 #define SEG09A9_ExternalSoundDriverEnabled 0x2010u
 #define SEG09A9_RasterMeasurementMode2011 0x2011u
 #define SEG09A9_DisplayProbeRecords 0x2013u
+#define SEG09A9_DisplayCombinationProbeEnableByte 0x2013u
+#define SEG09A9_DisplayCombinationProbeTarget2014 0x2014u
 #define SEG09A9_EgaProbeEnableByte 0x2016u
+#define SEG09A9_EgaProbeTarget2017 0x2017u
 #define SEG09A9_ColorCrtcProbeEnableByte 0x2019u
+#define SEG09A9_ColorCrtcProbeTarget201A 0x201Au
 #define SEG09A9_MonoCrtcProbeEnableByte 0x201Cu
+#define SEG09A9_MonoCrtcProbeTarget201D 0x201Du
 #define SEG09A9_KeyboardBindings201F 0x201Fu
 #define SEG09A9_KeyboardCharacterTable202E 0x202Eu
 #define SEG09A9_StatusEntityCountField 0x2095u

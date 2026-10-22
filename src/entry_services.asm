@@ -516,6 +516,7 @@ TransitionCue37LevelMusic:
     jz loc_03D6 ; @003B2
     mov al,[LevelSoundId-GameDataImage] ; @003B4
     mov ah,0x3 ; @003B7
+; AH03 latches a song request only; AdLib0457 normally copies ED only while current-song gateEE==0. Immediate AH00 at03BE performs processing. Stop/reset/stream83 clear ED andEE together; a queued ID is not guaranteed to survive completion.
     int 0x61 ; @003B9
 TransitionCue37AfterSelect:
     mov ax,0x0 ; @003BB
@@ -593,6 +594,7 @@ InitializeGameSession:
     mov cx,0x642 ; @0045B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0045E
     rep stosb ; @00460
+; [00462] The0FB2 child reinstalls all nine drawing callback words after the level455B clear and before046B initialization/header copy. This ordering is needed for first3140 publication and the conditional nine-value preservation proof; it does not close service/IRQ/alias writers.
 ; CONTRACT: 03E7..0461 initializes live DS fields, then clears SS:0012..42B1
 ; and SS:42B2..48F3 using the original DF-sensitive REP STOSB loops. The
 ; native parent composes every actual CALL/RET through the 04CF outer RET with
@@ -766,6 +768,12 @@ loc_0565:
     db 0x33,0xff ; ENCODED: xor di,di (NASM chooses a different encoding) ; @00585
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @00587
     lea dx,[0x2573] ; @00589
+; Executable DAT input uses allocated0567h-paragraph block, not main DS.
+; AdLib reads000Ah header then32B2h payload at0, output566Dh; Tandy05CA
+; reads000Ah then3065h, output54C6h into same block. Sizes are file facts,
+; not validated. INT61 installed before loading; failed AdLib can be replaced
+; by Tandy, negative fallback frees block without restoring INT61. Process
+; driver lifetime and platform/IRQ seams remain original obligations.
     call LoadDatResource ; @0058D
     pop ds ; @00590
     mov byte [0x25a7],0x1 ; @00591
@@ -1188,6 +1196,11 @@ CheckProtectionRunCounter:
     jc loc_0EAA ; @00E6F
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @00E71
     mov ah,0x3f ; @00E73
+; Separate file input0E7C reads at mostone russell.dat byte toDS252A.
+; Startup/per-level clears exclude it; missing-open0EAC zeros, short read
+; retains prior value before increment.0ED8 writes100h bytes FROM252A..2629
+; tofile (filenames, clocks, callback/options and palette prefix2608..2629),
+; not intoRAM. This is process-protection state with file persistence.
     lea dx,[ProtectionRunCounterByte-GameDataImage] ; @00E75
     mov cx,0x1 ; @00E79
     int 0x21 ; @00E7C
@@ -1582,6 +1595,7 @@ loc_1176:
     jmp short loc_120C ; @01191
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01193
+; [01194] DI/SI are unchecked marker cursors. If startup0031 ran forward and services preserved DI, DI=2012 here via10E2/10EC/10F6: word2020 changes RasterMeasurementMode2011 high byte2012 and first DisplayProbeRecords enable2013. Parser1293 changes SI but not DI. This is an original startup-option overlap, not a separate high-byte flag. Arbitrary incoming cursors may hit25A0 or other state; do not replace these stores with fixed menu-row writes.
 MarkStartupOptionAndRedraw:
     mov word [di],0x2020 ; @01194
     mov word [si],0x3e2d ; @01198
@@ -1763,6 +1777,14 @@ loc_1312:
 ; UNKNOWN: unresolved bytes
     db 0xc7,0x06,0x7c,0x1f,0x08,0x00,0xeb,0xdf,0xc7,0x06,0x7c,0x1f,0x00,0x00,0xeb,0xd7 ; @0131A
 loc_132A:
+; WORD OWNERSHIP:2011 low/2012 high are one little-endian measurement selector.
+;132A writes00C8;1332 writes0190;15C2 reads BOTH bytes. Stored word is0000.
+; DF-clear startup0031 clears only its low byte2011:2012 retains stored00
+; unless another writer intervenes. Neither a separate flag nor an unused gap.
+; Concrete indexed writer:0031 leaves DI2012;parser1293 does not change DI.
+; With services preserving DI, option-marker tail10E2/10EC/10F6 ->1194 stores
+;2020 at2012/2013 (mode high byte and first probe enable). No zero-high-byte
+; invariant follows from omitting /2 or /4 on those paths; keep the marker bug.
     mov word [RasterMeasurementMode2011-GameDataImage],0xc8 ; @0132A
     jmp short loc_1301 ; @01330
 loc_1332:
@@ -1839,11 +1861,41 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
-; VIDEO PROBES: four live three-byte DS rows,LODS follows DF; first flag is caller-owned.
-; Actual SI/CX saves surround CALL AX; native bodies implement1410/1462/1490/14A0.
-; Unrecognized targets stop before CALL,never execute UNKNOWN or a fallback CPU.
-; Raw CS lookup indexes are unchecked;signed pair ordering may invoke BIOS0F/swap.
-; Full INT10/IRET and returned registers/stack remain live; docs/video-probe.md.
+; VIDEO PROBES /1407 TARGET CONTRACT:conditional four-record traversal.
+; DS=relocated09A9,DF=0 at EVERY LODS, preserved loop saves and intact pointer
+; bytes give rows2013:{enable,1410},2016:{enable,1462},2019:{enable,1490},
+;201C:{enable,14A0}; final SI=201F,CX=0. Entry assigns SI/CX/DI but NOT DS/DF.
+; Stored enables are all00;13E9/13EE/13F3 set the last three toFF on each call.
+;2013 is neither set nor cleared here:it is a live input retained from its owner.
+; Startup1194 can set2013=20 via a word store with DI2012,also changing2012.
+; In an intact initial table1410 is skipped,so normally only three targets may
+; run; the four-target set includes an explicitly enabled first row.
+; Each byte TEST precedes LODSW;LODSW leaves ZF unchanged, even for disabled rows.
+; Word is sampled BEFORE PUSH SI/CX/CALL;their aliases cannot change current AX
+; but can corrupt subsequent records/saves. If Q=SP at13DC, savedSI is Q-2,
+; savedCX Q-4 and callback return1409 Q-6. Nominal children balance their CALLs;
+; BIOS INT10 adds FLAGS/CS/IP and IRET must restore the actual current frame.
+; SI/CX are reread at1409/140A;DS,DI,DF are NOT saved by the loop. Require BIOS
+; to preserve game DS,DI=2006 and DF0, return same SS:SP and preserve loop words.
+; Known callbacks' indexed stores142A/1438/1458/152D (and final151D/1520)
+; then affect only pairs2006..2009,not pointer bytes. A changed BIOS DI/DS
+; makes those stores additional possible table writers. Lookup indexes into
+; CS1530/1536 are unchecked; returned BL/CL are not normalized.
+; Enable writers:143A/143F/1444 clear2019/2016/201C;145C sets201C=FF;
+;1483 or148A clears2019 or201C. These writes gate later live iterations.
+; No decoded absolute store writes the four pointer words. That is NOT a
+; whole writer proof:GROUND1A18 can overwrite2013..201E (file04C8..04D3),
+; unchecked30F3 slot179(decimal),SI1FFF,clears1FFF..202B and3140 writes
+; record+14=2013/2014;1194/1198 marker cursors,ES strings,SS aliases,external
+; services and UNKNOWN paths remain. Supplied GROUND420 bytes stop at1F6A.
+; DF=1 with no callbacks changing state reads (enable,pointer-address) pairs
+;(2013,2012),(2010,200F),(200D,200C),(200A,2009),ending SI2007. These are NOT
+; the four records;nonzero options can dispatch arbitrary words. No local CLD.
+; READINESS CONDITIONAL:known set closed only for intact row words,DS/DF/DI,
+; stack and provider ownership above;unrestricted writer/lifetime closure open.
+; Native unbound-target stops are transport limits at1407,not original behavior.
+; BIOS/CRTC timing and asynchronous IRQ memory effects stay platform seams.
+; See docs/video-probe.md and s4 integration report for the precise residue.
 DetectVideoAdapters:
     lea di,[PrimaryDetectedAdapterPair-GameDataImage] ; @013DC
     mov word [di],0x0 ; @013E0
@@ -2090,6 +2142,8 @@ CalibrateGameTimerReload:
     mov word [0x1fc9],0x4000 ; @015B4
     ret ; @015BA
 loc_15BB:
+; Neither calibration nor its sole decoded caller to13DC at15D5 establishes
+; DF/game DS. A nonzero2011 word other than00C8/0190 ALSO falls into detection.
     mov ax,[0x1fc9] ; @015BB
     push ax ; @015BE
     mov bx,0x140 ; @015BF

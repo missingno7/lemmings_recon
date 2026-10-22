@@ -1,5 +1,7 @@
 ; Maintained3AC8..3CDD status display, preserving UNKNOWN3B08.
 times -(($-$$) != 0x3ac8) db 0 ; module start assertion
+; [03AC8] Calls minimap796F before viewport7A5A with live incoming DF; no entry CLD.
+; DF1 minimap clear writes CS83AF..83C2 over checksum code/state; caller-wide DF domain open.
 ; CONTRACT: two minimap CALLs fall through into live status rendering at3ACE.
 ; The100*completion byte DIV uses live CL; divisor0 skips DIV, overflow is#DE.
 ; Non100 formatting retains the leading209C byte. All child frames are actual SS.

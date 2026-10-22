@@ -8,6 +8,25 @@ times -(($-$$) != 0x3634) db 0 ; module start assertion
 ; The actual POP DI/CX controls the next record and LOOP, including aliases.
 ; 368A JMPs to the decimal field tail without a CALL frame; its RET consumes
 ; this routine's original caller word. UNKNOWN 366F is outside the known body.
+; LIFETIME: creation30A6 clears/initializes a new0088+k*2D slot, then publishes
+; it by INC0043. +26 starts00;20E2/22EE/2339/2FD1 markFF without reclaiming it.
+; There is no separate drawing-active allocation or callback list. After a
+; successful creation with unchanged bound/cursors, this loop includes that
+; slot; all inactive predecessors still consume iterations. Per-level455B
+; resets0043/storage with DF=0;03E7 reinstalls slots via0462->0FB2.
+; CL's entry bound is at mostFF, so stable saved CX/DI yield numeric footprint
+; [0088,2D5B) at boundFF, not a proven writable array. Slot50 begins0E98 and
+; callback0EAC aliases the visibility clear4119 even with DF=0. No bound clamp
+; protects spawn/visibility/loaded-level storage; corrupted saved CX/DI can
+; widen this walk beyond the original byte-bound footprint.
+; All four children use live segments; no DS/ES save surrounds them. Minimap
+; and dirty/point children write SS maps/mirrors, which may alias records and
+; actual saved loop words. The comparison365A is against LIVE DS:003C, not a
+; fixed6BDB test. A changed slot003C can reroute the point path without a CALL
+; through that slot. Under initialized slots,6BDB reaches706F only if signed
+; frame+28<1; otherwise6E83 is a direct CALL. No target may be removed globally.
+; Global nine-target closure remains open: DF=1 action5 byte-writes+14/+15,
+; visibility and count spill write into slots, and706F uses a writable SS save.
 DrawEntityRecords:
     mov di,EntityRecordsBase-GameDataImage ; @03634
     mov cl,[EntitySlotBound-GameDataImage] ; @03637

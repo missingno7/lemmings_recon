@@ -230,6 +230,7 @@ loc_4530:
 loc_454C:
 MainMenuStartLevel:
     mov byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @0454C
+; [04551] Per-level455B DF-clear reset0000..0FC9 zeroes0043 and callback slots.03E7 itself does not clear records;0462->0FB2 reinstalls002E..003F,046B loads header byte0047, then0483 may call creation.455B has no local CLD;DF=1 cannot be treated as equivalent reset. Normal known reuse is this reset plus per-slot30F3 initialization, not an inactive-slot free list.
 loc_4551:
 LoadAndStartSelectedLevel:
 ; Per-level state lifetime: DF-clear0000..0FC9 includes entity globals/records;

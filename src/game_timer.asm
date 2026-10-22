@@ -119,6 +119,7 @@ sub_1868:
     jz loc_1874 ; @0186D
 sub_186F:
     mov ax,0x0 ; @0186F
+; [1872] INT61 AH00 is called once per enabled game IRQ with DS:2010==FF and SoundOptionBits&3!=0; unlike INT60 there is no odd TimerCadenceCounter guard. AdLib0115 handles requests before phase decrement and all nine visits; timer/PIT configuration owns real cadence, not a fixed driver Hz.
 GameTimerInt611872:
     int 0x61 ; @01872
 loc_1874:

@@ -60791,7 +60791,7 @@
     "address": 33719,
     "segment": 0,
     "kind": "boundary",
-    "size": null,
+    "size": 0,
     "symbol_name": "ChecksumLimit",
     "aliases": [],
     "callers": [],
@@ -60799,7 +60799,24 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8363 compares BX against 83B7 before reading the byte"
+      "8363 compares BX against 83B7 before reading the byte",
+      "8391 tests equality before8397 XOR, so83B7 is not read by that scan, even after wrap. No decoded incoming execution; stored90 role unresolved. Minimap797B DF1 writes it; do not classify as immutable padding."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 33720,
+    "segment": 0,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "StartupCodeChecksumFirstByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "0006 CALL8343 returns XOR ofCS188F..1898 and0009 stores AL here. No specific direct reader identified. Minimap797B DF1 overwrites byte; live result storage, not constant."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -60815,7 +60832,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8343 clears; 8363 increments modulo 256"
+      "8343 clears; 8363 increments modulo 256",
+      "834E clears; 8366 increments; 836B reads; 83B1 stores FF on equality. Minimap DF1 clears this byte and code leading to that store; subsequent intact-checksum execution requires a separate domain."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -60831,7 +60849,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8343 clears; 8363 reads/writes XOR accumulator"
+      "8343 clears; 8363 reads/writes XOR accumulator",
+      "8352 clears; 837C exchanges with AL on phase wrap; 838D reads; 839C/83A9 store. Minimap DF1 also clears it; state is mutable."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -60847,7 +60866,24 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8343 sets 188F; 8363 loads and stores scan cursor"
+      "8343 sets 188F; 8363 loads and stores scan cursor",
+      "8356 initializes188F; 8377 clears on phase wrap; 8388 reads; 83A0 stores after full chunk; equality tail leaves cursor stale. Minimap DF1 clears both bytes. Raw cursor>83B7 can scan U097/U098; no static8363 caller."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 33725,
+    "segment": 0,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "StartupCodeChecksumSecondByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "000D CALL8343 resets checksum metadata again and0010 stores returned XOR here. No specific direct reader identified. Minimap797B DF1 overwrites byte; do not merge with two-byte cursor83BB..BC."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -60862,7 +60898,8 @@
     "callees": [],
     "data_references": [],
     "evidence": [
-      "CS byte aliases ChecksumCursor+3; FF stores00B4/4BE7, zero store00FE; gate read0F89; no unreachable-branch claim"
+      "CS byte aliases ChecksumCursor+3; FF stores00B4/4BE7, zero store00FE; gate read0F89; no unreachable-branch claim",
+      "00B4/4BE7 storeFF,00FE stores00;0F89 reads gate. Minimap797B DF1 clears it together with checksum state. Separate byte, not ChecksumCursor payload; same physical address as existing +3 alias."
     ],
     "verification_status": "STATIC",
     "confidence": "PROVEN"
@@ -60879,7 +60916,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "796F clears20 CS bytes, 7A39 ORs sampled row masks here, 796F copies19 rows to VGA"
+      "796F clears20 CS bytes, 7A39 ORs sampled row masks here, 796F copies19 rows to VGA",
+      "With intact saves and ES=CS,797B DF0 clears83C1..83D4;79F4 and20 calls79F8/7A2C initialize BX per row and OR masks via7A55;7A14 reads only83C1..83D3. DF1 clear83AF..83C2 leaves83C3..D4 stale and overwrites checksum code/state. Direct7A39 accepts arbitrary CS:BX; saved CX alias can extend loops."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -66887,7 +66925,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "0FC1..0FF1 stores nine drawing entry offsets;32 recovered object-record stores read these slots into record+14"
+      "0FC1..0FF1 stores nine drawing entry offsets;32 recovered object-record stores read these slots into record+14",
+      "Nine live near words at DS:002E..003F:0FC1/0FC7/0FCD/0FD3/0FD9/0FDF/0FE5/0FEB/0FF1 install6170/64D9/65D8/66D7/6817/6957/6A97/6BDB/6CFC. DF-clear0031 and455B bulk clears erase them;0462 calls0FB2 to reinstall per session before046B level setup.32 direct record+14 stores read these words late. No other absolute direct writer in freshly decoded main code; indexed/string/segment/provider/UNKNOWN aliases remain open. See 1F19 writer matrix and706F conditional domain."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -66953,7 +66992,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "30CF selects slot0088+[0043]*2D;314B increments after producer;1F2E loop bound includes inactive slots; unchecked extent. docs/entity-simulation.md"
+      "30CF selects slot0088+[0043]*2D;314B increments after producer;1F2E loop bound includes inactive slots; unchecked extent. docs/entity-simulation.md",
+      "Live byte0043:DF-clear0031/455B reset;314B INC publishes a completely cleared/initialized new slot.30CF reads index; no inactive-slot reuse, decrement or compaction in decoded producer/deactivators.1F2E/3637/3CDE consume bound including inactive slots. Stable byte bound n walks[0088,0088+2D*n), max exclusive2D5B; constructor indexFF reaches2D5B..2D87 then wraps bound00. Physical storage extent and service/alias/UNKNOWN writers remain unproved;50h is only the disjoint prefix before0E98, not a checked maximum."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67017,7 +67057,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "36CD stores header+02 low byte;30CC/01E7 compare with created-record counter0043;4013 replaces it with that counter. No host array bound implied."
+      "36CD stores header+02 low byte;30CC/01E7 compare with created-record counter0043;4013 replaces it with that counter. No host array bound implied.",
+      "0404 provisionalC8;36CD takes only loaded header+03 into0047;4013 copies current0043 to stop creation.30D3 tests equality, not unsigned less-than and not a capacity clamp;01EA also compares. A fresh zero counter and unchanged limit L append indices0..L-1, conditional on intact writer/segment/cursor state. No limit<=50h is established."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67273,7 +67314,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "3DC6/3DDA write the selected live SI;317C reads it. Selection geometry and wider validity remain scoped. docs/entity-actions.md"
+      "3DC6/3DDA write the selected live SI;317C reads it. Selection geometry and wider validity remain scoped. docs/entity-actions.md",
+      "317C reads live0058 with no alignment/range/+26 recheck.3CDE scans2Dh slots and stores candidate pointers at3D8E/3D9C then chosen0058 at3DC6/3DDA. Zero bound leaves buckets stale; nonzero resets sentinels but not pointer words. Action guards0063,not selected index005E or presence001A. Pointer lifetime requires unchanged selection/record/service state; raw pointer/segment/stack aliases remain supported observations."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67289,7 +67331,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "3D9C writes a candidate SI;3278/3329/354A/3626 replace live SI from this word before retesting eligibility. docs/entity-actions.md"
+      "3D9C writes a candidate SI;3278/3329/354A/3626 replace live SI from this word before retesting eligibility. docs/entity-actions.md",
+      "Fallback SI from live005A at3278/3329/354A/3626 after005F!=FF and then fresh eligibility tests.3D9C produces from scanned2Dh slots; nonzero scan resets sentinel, not pointer bytes; zero scan leaves both stale. No index alignment/range validation, slot pin or clone occurs. Later explicit action stores can target arbitrary DS bytes under changed pointer/segment domain."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67983,7 +68026,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "1F2B and30C9 slot base;30D3..30F3 clear one2D-byte slot;1FEC stride2D; whole array extent/max count unproven. docs/entity-simulation.md"
+      "1F2B and30C9 slot base;30D3..30F3 clear one2D-byte slot;1FEC stride2D; whole array extent/max count unproven. docs/entity-simulation.md",
+      "First slot only,2Dh bytes at DS:0088.30C9..30F7 computes0088+2D*unsigned0043 and clears45 bytes with explicit INC DI independent of DF;30F9..3147 initializes before314B bound publication.20E2/22EE/2339/2FD1 mark+26=FF without decrement/free/reuse; normal reuse is DF-clear455B level reset. No decoded whole-record clone;378A copies distinct1Ch graphics records,283B copies interaction pattern to SS. Indices00..4F end0E97;index50 overwrites0E98 spawn pairs and aliases visibility.45 is first-slot width, never whole-array extent. See maintained1F19 contract."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67999,7 +68043,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+00;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+00;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+00:30FB copies a live0E98+4*(index&3) coordinate after full slot clear. State movement and temporary coordinate/PUSH/POP writes use the same word;5DC6/5726/706F and3CDE consume it. Raw cursors,16-bit offset arithmetic and physical aliases remain observable; no host coordinate copy or capacity inferred."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68015,7 +68060,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+02;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+02;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+02:3100 copies live spawn Y after clear. State height steps, temporary changes and shared20D6/2148 stores mutate it;5DC6/5726/70F6 consume it.70F9 adds live+06 with16-bit wrap then signed-negative clamps to0; caller geometry is not an allocation proof."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68031,7 +68077,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+04;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+04;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+04:312F initializesFFF8 after clear; state/action/interaction transitions replace in place.5728/7072 and3CDE add it to+00 with wrapping. Not rebuilt by every state change (260D preserves it); earlier stores may alias callback source slots for artificial raw SI. See1F19 writer matrix."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68047,7 +68094,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+06;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+06;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+06:3134 initializesFFF6; transition writers,214B/2159 signed clamp and5762/70ED consume live value.260D changes the source descriptor without replacing this word. Preserve fresh reads, order and16-bit wrap; no independent host height."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68063,7 +68111,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "First record0088+08:310F initializes0004;1F5E reads once and dispatches first matching state bit;actions3150..3633 and interactions2EC0 write transitions. Composite bits have priority; no historical skill enum or array bound inferred."
+      "First record0088+08:310F initializes0004;1F5E reads once and dispatches first matching state bit;actions3150..3633 and interactions2EC0 write transitions. Composite bits have priority; no historical skill enum or array bound inferred.",
+      "First-slot word+08:30F3 clear then310F OR0004;1F5E load dispatches first matching bit after inactive/countdown/+24-bit80 gates. State/action/interaction writers preserve/replace composite masks in place;260D changes drawing source fields without+14/+2A. State is not a complete drawing descriptor or historical skill enum; full writer matrix beside1F19."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68079,7 +68128,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+0A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+0A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+0A:3113=0000 after clear; state/action/interaction transitions replace.70DF adds full frame-product low nibble to this cursor modulo16 bits without paragraph normalization.260D replaces it while retaining callback/+2A; state bits alone do not define a full descriptor."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68095,7 +68145,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+0C;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+0C;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+0C:3118=0A42; transitions replace.70D6 adds low16 shifted full unsigned frame product before7116 adds live1FE6 source segment. Source length, resource aliases and unchecked frame/alignment domains remain open."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68111,7 +68162,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+10;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+10;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+10:311D=005A; transition writers include261B=0048 while callback/+2A remain unchanged.70BF/C2 performs full unsigned MUL, not low-only indexing. DF=1 action5 additionally overwrites bytes+10/+11 at34B4/34A7 with saved map bytes."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68127,7 +68179,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+12;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+12;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+12:3122=003C; transition writers;70E4 adds to live source SI modulo16 bits. DF=1 action5 overwrites bytes+12/+13 at349E/3495 after descriptor initialization; DF=1 pattern283B also reads this word. Not an immutable resource-size field."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68143,7 +68196,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+14;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+14;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot word+14:cleared by30F3,3140 copies live002E before314B publishes. Complete32 direct word-store matrix is beside1F19. Additional concrete byte writers:DF=1 action5 stores old first-row map cell1 to+15 at347F and cell2 to+14 at3488, after3459 installed002E. Slot50 callback0EAC aliases DF=0 visibility clear4119; DF=1 clear0DDA..0EA9 reaches slots4C..4F callbacks.365A compares live003C;70F0 PUSH/711E POP+7121 PUSH/7159 POP carry through writable liveSS before715B near CALL. Nine-target preservation is conditional; unrestricted writer/stack/segment/IRQ/UNKNOWN domain OPEN. Static raw-entry handoff witness:706F entrySP000E puts callback saveSS:0008;strip6F83 writes0F02 there and an intact7155 return leads7159 to read0F02. No ordinary-caller SP reachability asserted."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68162,7 +68216,8 @@
     "confidence": "high",
     "evidence": [
       "First45-byte entity-record anchor only, base0088+20;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
-      "Shared+20 lifetime: cleared by creation30F3, assigned4F by action31E1/scan2033, decremented by2E04 countdown, and loaded at drawing70F3 then tested at7118 as strip selector. The drawing name is not an independent field."
+      "Shared+20 lifetime: cleared by creation30F3, assigned4F by action31E1/scan2033, decremented by2E04 countdown, and loaded at drawing70F3 then tested at7118 as strip selector. The drawing name is not an independent field.",
+      "Same first-slot byte+20 as countdown:30F3 clear,2033/31E1 assign4F,2277 clears,2E06 DEC wraps.1F45 countdown gate and70F3/7118 optional strip gate consume this storage; selector AX is saved at70FF and restored710B. Do not split animation/countdown state; returned segments and aliases remain live."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68197,7 +68252,8 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "First2Dh record anchor0088+26;3634 skips drawing only when the live byte equalsFF. No complete schema/lifetime/extent claim. docs/entity-drawing.md",
-      "Same+26 inactive marker is tested by simulation1F3C and drawing3647;20E2 writesFF. Do not introduce separate simulation-active and drawing-visible host state."
+      "Same+26 inactive marker is tested by simulation1F3C and drawing3647;20E2 writesFF. Do not introduce separate simulation-active and drawing-visible host state.",
+      "Same first-slot byte+26 as inactive marker.30F3 clears before creation publication314B.20E2/22EE/2339/2FD1 setFF;1F3C/3647/3D1E skip exactFF. Deactivation retains descriptor and slot bound; no decoded field-level reactivation/free list. Reuse on normal level path is455B reset followed by per-slot construction. Transient+26=0/+14=0 during creation is not a published record."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68216,7 +68272,8 @@
     "confidence": "high",
     "evidence": [
       "First45-byte entity-record anchor only, base0088+27;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
-      "Shared+27 lifetime:creation3103 writes01;zero state2051 sign-extends it into horizontal movement;2142 negates it;drawing70A5 tests exact01 before adding+29. Keep this signed direction/gate byte shared."
+      "Shared+27 lifetime:creation3103 writes01;zero state2051 sign-extends it into horizontal movement;2142 negates it;drawing70A5 tests exact01 before adding+29. Keep this signed direction/gate byte shared.",
+      "Same first-slot byte+27 as signed horizontal step:3103=01;2142/215F/2763/29C1/2CBB/2FA8/2FB2 NEG,25D6 writes register NEG result,2273=0.70A5 tests exact01 to suppress+29 addition. Preserve signed movement, byte wrap, flags and shared lifetime rather than separate fields."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68232,7 +68289,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+28;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+28;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot byte+28:3127=0; state cadences and descriptor transitions update without a global frame bound.70A2 reads it;70AB optional byte addition wraps before AH clear.365F/3662 use signed>=1 with equality to live003C to choose direct6E83 point path; with initialized slots this excludes6BDB from715B only for01..7F, not globally."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68248,7 +68306,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+29;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+29;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot byte+29:3139=04; state/action/interaction descriptor writers replace.70AB adds it modulo256 unless live+27==01;260D changes it without changing+14/+2A. Producer/current state alone cannot replace this live byte with a fixed frame table."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68264,7 +68323,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "First45-byte entity-record anchor only, base0088+2A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md"
+      "First45-byte entity-record anchor only, base0088+2A;3634 initializes DI/stride and706F reads this role. Other records/live DS:DI remain unchecked. No initialization, lifetime, historical schema or extent claim. docs/entity-sprites.md",
+      "First-slot byte+2A:3143=00; descriptor transitions write00/FF;70B0 tests exactFF to suppress eight-way frame/alignment scaling.260D transition preserves inherited value and callback while replacing0A/0C/10/12/28/29. No global Boolean domain outside the producer/alias contract."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68376,7 +68436,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "197D decodes selected LEVEL section here; all80 pinned sections decode to2048 bytes, matched in bounded decoder tests"
+      "197D decodes selected LEVEL section here; all80 pinned sections decode to2048 bytes, matched in bounded decoder tests",
+      "19AA/19B3 and 19BA/19BE repeatedly decode into0FCB; all80 pinned LEVEL sections output0800h. Header0FCB..0FEA, objects0FEB..10EA, terrain10EB..172A, steel172B..17AA, footer17AB..17CA. Supplied-file extent, not decoder limit. Payload requests0060..06C4; maximum source ends168E. Startup initializes once;4551 excludes record; each selection replaces it before4566/36B6/378A consumers. See resources.asm and build/static/s3-resource.md."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68776,7 +68837,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "1A18 requests1000 bytes ofground?o.dat into main data frame atthis offset"
+      "1A18 requests1000 bytes ofground?o.dat into main data frame atthis offset",
+      "Existing size1000h is requested write ceiling, not exclusive allocation:1A11/1A15/1A18 requests1B4B..2B4A; five supplied GROUND files are0420h and end1F6A. Maximum crosses selection/cache/IRQ/allocation fields,2011 word,2013 records,U112,callback25A0 and U113 through2B4A. Actual file:16*1Ch object templates,64*8 terrain records,60h trailing metadata. Short reads retain stale suffix. No whole-run classification or normal supplied-file overwrite claim."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70079,7 +70141,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+      "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md",
+      "Stored DS:2011/2012=0000. MOV word132A=00C8,1332=0190 and MOV word15C2 prove one little-endian selector, not an independent high-byte flag. DF=0 clear0031 ends at2011; high2012 is not cleared. Under preserved startup DI,0031 leaves2012 and option tails10E2/10EC/10F6 reach1194 with this DI: word2020 writes high2012 and first probe enable2013. GROUND1A18 and indexed/alias writers also remain. Preserve all non-C8/non-190 values taking detector15D5."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70095,7 +70158,40 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes"
+      "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes",
+      "Stored four enable-byte/near-word records:2013:00,1410;2016:00,1462;2019:00,1490;201C:00,14A0. 13F8/13FB set CX4/SI2013;13FF TEST/1402 LODSW preserves enable ZF. DS-frame, DF=0 at every LODS, preserved SI/CX saves and intact pointers close1407 locally. 13E9/13EE/13F3 enable only last three. 1194 with DI2012 can set first enable20. Known probe writers only change enables/pairs under preserved DS/DI; BIOS changes, GROUND request, unchecked record179, strings/stack/UNKNOWN paths prevent whole-lifetime closure."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8211,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "DisplayCombinationProbeEnableByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "13FF first LODSB/1400 TEST; stored00, not set by13DC. Startup1194 with DI2012 sets20; broader resource/record/alias writers remain. Enables1410 when nonzero in the DF=0 table traversal."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8212,
+    "segment": 2473,
+    "kind": "pointer_data",
+    "size": 2,
+    "symbol_name": "DisplayCombinationProbeTarget2014",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stored1014 little-endian1410; first DF=0 LODSW1402. No decoded absolute pointer store, but indexed/string/resource and stack aliases remain; not declared immutable."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70116,6 +70212,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8215,
+    "segment": 2473,
+    "kind": "pointer_data",
+    "size": 2,
+    "symbol_name": "EgaProbeTarget2017",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stored6214 little-endian1462; second DF=0 LODSW1402 under SI/CX-save and DS/DF contracts. Wider writers remain open."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8217,
     "segment": 2473,
     "kind": "data",
@@ -70132,6 +70244,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8218,
+    "segment": 2473,
+    "kind": "pointer_data",
+    "size": 2,
+    "symbol_name": "ColorCrtcProbeTarget201A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stored9014 little-endian1490; third DF=0 LODSW1402 under SI/CX-save and DS/DF contracts. Wider writers remain open."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8220,
     "segment": 2473,
     "kind": "data",
@@ -70144,6 +70272,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "13DC detector record/pair ownership,15AD signed reload selection and132A/1332 word producers; docs/video-probe.md"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8221,
+    "segment": 2473,
+    "kind": "pointer_data",
+    "size": 2,
+    "symbol_name": "MonoCrtcProbeTarget201D",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "StoredA014 little-endian14A0; fourth DF=0 LODSW1402 under SI/CX-save and DS/DF contracts. Wider writers remain open."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70352,7 +70496,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "0E7C one-byte read from russell.dat; 0E89 modulo-10 increment; 0E9E/0EB7 set 9; 0EC2 writes 0100 live DS bytes starting here."
+      "0E7C one-byte read from russell.dat; 0E89 modulo-10 increment; 0E9E/0EB7 set 9; 0EC2 writes 0100 live DS bytes starting here.",
+      "0E75/0E79/0E7C requestsone russell.dat byte; supplied file100h does not enlarge read.0E7E..0E89 increments wrapped byte and resets>=0Ah; open failure0EAA zeros.0ED1/0ED4/0ED8 exports100h bytes FROM252A..2629 including filenames/clocks/callback/options/palette prefix, not intoRAM. Process startup-protection state with file persistence; excluded from startup/per-level clears."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70576,7 +70721,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional"
+      "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional",
+      "4252 stored word; direct4A68/4A80 install4334/4359 before publishing mode1 and calibration. Mode0/2/escape do not restore it. 42A1 samples before PUSH DX and CALL42A5. Known set is closed only if these are the last writes of both bytes in canonical DS and no intervening register/code change. GROUND file offsets0A55/0A56 and unchecked creation slot211 SI259F (clear30F3 and coordinate stores30FB/3100) are concrete other writers under named entry domains, not startup reachability claims. Raw strings, marker cursors, other indexed stores, provider/IRQ/physical aliases and UNKNOWN execution remain open."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71096,7 +71242,7 @@
     "address": 19951,
     "segment": 2473,
     "kind": "data",
-    "size": null,
+    "size": 15,
     "symbol_name": "CodeInputText",
     "aliases": [],
     "callers": [],
@@ -71104,7 +71250,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md"
+      "Pinned4967/4C7E/503B code entry, cursor and result-text consumers; docs/code-entry.md",
+      "Stored header0F0908 at4DEF..4DF1, ten dots4DF2..4DFB, CR4DFC, zero header4DFD. 503B selects this stream;4D4D/4D56/4D59 consume header and4D65 consumes glyphs/CR. With DF0, no embedded CR and preserved saves, editor writes stay in ten-byte payload; header/terminators survive. No conclusion about neighboring bytes."
     ],
     "verification_status": "STATIC"
   },
@@ -71120,7 +71267,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "4C7E keyboard input;51A2 compares and rotates same ten-byte live buffer"
+      "4C7E keyboard input;51A2 compares and rotates same ten-byte live buffer",
+      "497D initializes ten dots;4C7E sets start4DF2/exclusive end4DFC. Under preserved six-word outer and five-word inner frames, DI stays4DF2..4DFB; blink4CBE/4CC2, insertion4CF4, DEL4D02 and submit4D16 write within them. Insertion transiently reads CR4DFC then backs up. 51A2 later reads/transforms same ten bytes. Text/stack/provider alias domains remain explicit."
     ],
     "verification_status": "STATIC"
   },
@@ -71336,7 +71484,7 @@
     "address": 21742,
     "segment": 2473,
     "kind": "data",
-    "size": null,
+    "size": 120,
     "symbol_name": "LevelResourceOrderBytes",
     "aliases": [],
     "callers": [],
@@ -71344,7 +71492,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "197D lookup yields one-based section/odd-table selector; extent and valid index domain unresolved"
+      "197D lookup yields one-based section/odd-table selector; extent and valid index domain unresolved",
+      "Proposed nominal stored extent54EE..5565: four groups*30 from4515/4545 and completion guard473E; pinned120 bytes are valid nonzero selectors1..A0,80 direct and40 override choices (indices6..79). This is not an access bound or exclusive writer proof:1987 byte index00..FF reads54EE..55ED including first88h override bytes;5205 publishes selection before validation. Keep UNKNOWN classification pending alias/writer closure."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71360,7 +71509,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "19DC reads requested1180 bytes ofoddtable.dat here; selected56-byte slice replaces record header/footer"
+      "19DC reads requested1180 bytes ofoddtable.dat here; selected56-byte slice replaces record header/footer",
+      "19D5/19D9/19DC requests5566..66E5; supplied oddtable.dat is1180h=80*38h. Short reads retain previous bytes.19E0/19E4 allows indices0..127; forward n127 reads712E..7165. Supplied order chooses40 indices6..79. DF0 copies24 bytes to0FCB..0FE2 then32 to17AB..17CA; DF1 word windows0FB5..0FCC and178D..17AC, source[slice-36h,slice+1]. Storage survives level reset; each odd read establishes resource-image validity. Gap66E6..66EF and renderer66F0 onward are outside raw write."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71376,7 +71526,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it",
+      "Mutable layout height: 880B stores BX; 9967 uses signed clipping bounds. Installer required in the same live frame before use. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 880B mov word ptr [0x66f0], bx; 99E8 cmp bx, word ptr [0x66f0]; 99F2 cmp bp, word ptr [0x66f0]; 99F8 mov cx, word ptr [0x66f0]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71392,7 +71543,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it",
+      "Mutable layout pixel width: 8808 stores AX before shifts; 9967 compares signed X/right bound. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 8808 mov word ptr [0x66f2], ax; 9997 cmp ax, word ptr [0x66f2]; 99A1 cmp bp, word ptr [0x66f2]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71408,7 +71560,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it",
+      "Mutable destination pitch: 8819 stores floor(width/8); 886F and8888 consume it after live SS saves. Width is not rounded. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 8819 mov word ptr [0x66f4], ax; 886F mul word ptr [0x66f4]; 8888 sub ax, word ptr [0x66f4]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71424,7 +71577,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it"
+      "8808 stores the live drawing layout; 8822 and subsequent drawing helpers consume it",
+      "881E stores low16(unsigned pitch*height). No decoded main direct reader identified; retain observable store, not a dead/constant claim. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 881E mov word ptr [0x66f6], ax"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71440,7 +71594,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8822 stores low16(source pitch * CL); downstream planar source branches consume it"
+      "8822 stores low16(source pitch * CL); downstream planar source branches consume it",
+      "8834 stores low16((original width>>3)*CL), before prologue POPs. Reverse preparation and plane advances read live values, including restored ES in shifted bodies and relocated game DS in aligned bodies. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 8834 mov word ptr [0x66f8], ax; 889A mov ax, word ptr [0x66f8]; 88CB mov ax, word ptr [0x66f8]; 89E8 add si, word ptr es:[0x66f8]; 8A70 add si, word ptr es:[0x66f8]; 8ADE add si, word ptr es:[0x66f8]; 8BFF add si, word ptr es:[0x66f8]; 8C7A add si, word ptr es:[0x66f8]; 8CF5 add si, word ptr es:[0x66f8]; 8E8A add si, word ptr es:[0x66f8]; 8F1A add si, word ptr es:[0x66f8]; 8F8E add si, word ptr es:[0x66f8]; 914C mov ax, word ptr [0x66f8]; 9244 add si, word ptr es:[0x66f8]; 92CC add si, word ptr es:[0x66f8]; 933A add si, word ptr es:[0x66f8]; 93B3 mov ax, word ptr [0x66f8]; 9474 add si, word ptr [0x66f8]; 94CE add si, word ptr [0x66f8]; 950E add si, word ptr [0x66f8]; 95C8 add si, word ptr [0x66f8]; 9614 add si, word ptr [0x66f8]; 9660 add si, word ptr [0x66f8]; 981C mov ax, word ptr [0x66f8]; 98B3 add si, word ptr [0x66f8]; 98FB add si, word ptr [0x66f8]; 9939 add si, word ptr [0x66f8]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71456,7 +71611,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8822 stores original width>>3; 9967 multiplies it by negated clipped Y"
+      "8822 stores original width>>3; 9967 multiplies it by negated clipped Y",
+      "882D stores original width>>3; reverse preparation subtracts it twice from skip and once from each cursor; clipping99CA multiplies negative Y by it. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 882D mov word ptr [0x66fa], ax; 88DA mov ax, word ptr [0x66fa]; 915B mov ax, word ptr [0x66fa]; 93C2 mov ax, word ptr [0x66fa]; 982B mov ax, word ptr [0x66fa]; 99CA mov bp, word ptr [0x66fa]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71472,7 +71628,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8822 zeroes it; 9967 increments once per8 horizontally clipped pixels"
+      "8822 zeroes it; 9967 increments once per8 horizontally clipped pixels",
+      "8840 clears before optional clipping; 9987/99A7 increment per eight clipped X pixels; source preparation reads it after PUSH BP. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 8840 mov word ptr [0x66fc], 0; 88C2 mov bp, word ptr [0x66fc]; 9143 mov bp, word ptr [0x66fc]; 93AA mov bp, word ptr [0x66fc]; 9813 mov bp, word ptr [0x66fc]; 9987 add word ptr [0x66fc], 1; 99A7 add word ptr [0x66fc], 1"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71488,7 +71645,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8822 zeroes it; 9967 stores low16(negativeY * source pitch)"
+      "8822 zeroes it; 9967 stores low16(negativeY * source pitch)",
+      "883A clears before optional clipping; 99DC stores low16(negative Y*source pitch); each reverse preparation reads/subtracts it twice. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 883A mov word ptr [0x66fe], 0; 88CE sub ax, word ptr [0x66fe]; 88D2 sub ax, word ptr [0x66fe]; 914F sub ax, word ptr [0x66fe]; 9153 sub ax, word ptr [0x66fe]; 93B6 sub ax, word ptr [0x66fe]; 93BA sub ax, word ptr [0x66fe]; 981F sub ax, word ptr [0x66fe]; 9823 sub ax, word ptr [0x66fe]; 99DC mov word ptr [0x66fe], bp"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71504,7 +71662,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "888E stores drawing pitch minus rendered byte width; 8891 repeats the value at6704; no direct consumer of6700 established"
+      "888E stores drawing pitch minus rendered byte width; 8891 repeats the value at6704; no direct consumer of6700 established",
+      "888E writes pitch-(postclip width>>3) before8891 copies to6704. No decoded direct reader identified; indirect overlaps and live SS aliases can observe it. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 888E mov word ptr [0x6700], ax"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71520,7 +71679,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "88E5/9166/93CD/9836 store horizontal skip or reversed skip-minus-two-pitches; rows reread live"
+      "88E5/9166/93CD/9836 store horizontal skip or reversed skip-minus-two-pitches; rows reread live",
+      "88E5/9166/93CD/9836 write horizontal skip or skip-2*sourcePitch before live POP BP; rows reread it after scratch/device work. Incoming DS preparation need not alias relocated game DS consumption. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 88E5 mov word ptr [0x6702], bp; 89CA mov ax, word ptr [0x6702]; 8A57 mov ax, word ptr [0x6702]; 8AC5 mov ax, word ptr [0x6702]; 8B30 mov ax, word ptr [0x6702]; 8BE4 mov ax, word ptr [0x6702]; 8C61 mov ax, word ptr [0x6702]; 8CDC mov ax, word ptr [0x6702]; 8D54 mov ax, word ptr [0x6702]; 8E05 add bx, word ptr [0x6702]; 8E6F add si, word ptr [0x6702]; 8EFF add si, word ptr [0x6702]; 8F73 add si, word ptr [0x6702]; 8FE3 add si, word ptr [0x6702]; 9089 add si, word ptr [0x6702]; 912D add si, word ptr [0x6702]; 9166 mov word ptr [0x6702], bp; 9228 mov ax, word ptr [0x6702]; 92B3 mov ax, word ptr [0x6702]; 9321 mov ax, word ptr [0x6702]; 938C mov ax, word ptr [0x6702]; 93CD mov word ptr [0x6702], bp; 9452 mov ax, word ptr [0x6702]; 94B0 mov ax, word ptr [0x6702]; 94F0 mov ax, word ptr [0x6702]; 952D mov ax, word ptr [0x6702]; 95A8 mov ax, word ptr [0x6702]; 95F6 mov ax, word ptr [0x6702]; 9642 mov ax, word ptr [0x6702]; 968B mov ax, word ptr [0x6702]; 971F add bx, word ptr [0x6702]; 9723 add si, word ptr [0x6702]; 9792 add si, word ptr [0x6702]; 97FE add bx, word ptr [0x6702]; 9836 mov word ptr [0x6702], bp; 9894 add si, word ptr [0x6702]; 98DE add si, word ptr [0x6702]; 991C add si, word ptr [0x6702]; 9957 add si, word ptr [0x6702]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71536,7 +71696,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8891 copies pitch minus rendered width; shifted variants decrement it before drawing"
+      "8891 copies pitch minus rendered width; shifted variants decrement it before drawing",
+      "8891 stores pitch-(postclip width>>3); all six shifted bodies decrement in incoming DS, then reread through live scratch DS. DF=1 source copies can overwrite6705/6704 before these reads. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 8891 mov word ptr [0x6704], ax; 890E dec word ptr [0x6704]; 89D1 add di, word ptr [0x6704]; 8A5C add di, word ptr [0x6704]; 8ACA add di, word ptr [0x6704]; 8B35 add di, word ptr [0x6704]; 8B42 dec word ptr [0x6704]; 8BE9 add di, word ptr [0x6704]; 8C66 add di, word ptr [0x6704]; 8CE1 add di, word ptr [0x6704]; 8D59 add di, word ptr [0x6704]; 8D66 dec word ptr [0x6704]; 8E09 add di, word ptr [0x6704]; 8E73 add di, word ptr [0x6704]; 8F03 add di, word ptr [0x6704]; 8F77 add di, word ptr [0x6704]; 8FE7 add di, word ptr [0x6704]; 8FF7 dec word ptr [0x6704]; 908D add di, word ptr [0x6704]; 909C dec word ptr [0x6704]; 9131 add di, word ptr [0x6704]; 916B dec word ptr [0x6704]; 922D add di, word ptr [0x6704]; 92B8 add di, word ptr [0x6704]; 9326 add di, word ptr [0x6704]; 9391 add di, word ptr [0x6704]; 9459 add di, word ptr [0x6704]; 94B5 add di, word ptr [0x6704]; 94F5 add di, word ptr [0x6704]; 9532 add di, word ptr [0x6704]; 95AD add di, word ptr [0x6704]; 95FB add di, word ptr [0x6704]; 9647 add di, word ptr [0x6704]; 9690 add di, word ptr [0x6704]; 9727 add di, word ptr [0x6704]; 9796 add di, word ptr [0x6704]; 9802 add di, word ptr [0x6704]; 9898 add di, word ptr [0x6704]; 98E2 add di, word ptr [0x6704]; 9920 add di, word ptr [0x6704]; 995B add di, word ptr [0x6704]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71552,7 +71713,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Shifted planar rows copy source bytes and a sentinel to gameDS:6706; named base only,allocation extent and producer domain remain unproven"
+      "Shifted planar rows copy source bytes and a sentinel to gameDS:6706; named base only,allocation extent and producer domain remain unproven",
+      "Source row base; sixteen copy/sentinel -> forward SHR/RCR -> DF LODSB phases listed beside DrawPlanarBitmap. DF0,w=1..254 initializes b..b+w, DF1 initializes b-w..b but carry chain still reads forward. w0 sweeps the segment; wFF output wraps to65536. Base6748 is42h bytes later, not proof of an allocation. Preserve size0 until a producer/allocation proof; do not classify all touched zero bytes."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71568,7 +71730,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "Shifted planar rows copy mask bytes and a sentinel to gameDS:6748 and shift live bytes there; named base only,allocation extent and producer domain remain unproven"
+      "Shifted planar rows copy mask bytes and a sentinel to gameDS:6748 and shift live bytes there; named base only,allocation extent and producer domain remain unproven",
+      "Mask base; default890E copies each first-plane row; opaque916B fills FF then zero; 8FF7/909C copy masks; 8D66 builds an h-row cache before drawing, BP=copy-end DI with signed-DF step w+1. Row/height/shift domains and allocation extent are unchecked; A948-base=4200h is spacing only. Preserve size0 until a producer/allocation proof; do not classify all touched zero bytes."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71584,7 +71747,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "8863 stores low3(left); shifted planar loops consume the live byte"
+      "8863 stores low3(left); shifted planar loops consume the live byte",
+      "8863 stores left&7 after PUSH BX and before POP BX; 88AC guards shifted selection. Shifted row reads occur after copy/segment handoff; 916B rereads after source shift at91FB. Aliases can change unchecked count; zero =>256 shift passes. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 8863 mov byte ptr [0xa948], bl; 88AC cmp byte ptr [0xa948], 0; 8986 mov al, byte ptr [0xa948]; 8A30 mov al, byte ptr [0xa948]; 8A9E mov al, byte ptr [0xa948]; 8B09 mov al, byte ptr [0xa948]; 8BB4 mov al, byte ptr [0xa948]; 8C31 mov al, byte ptr [0xa948]; 8CAC mov al, byte ptr [0xa948]; 8D24 mov al, byte ptr [0xa948]; 8DDE mov al, byte ptr [0xa948]; 8E3E mov al, byte ptr [0xa948]; 8ED3 mov al, byte ptr [0xa948]; 8F49 mov al, byte ptr [0xa948]; 8FB9 mov al, byte ptr [0xa948]; 9057 mov al, byte ptr [0xa948]; 90FB mov al, byte ptr [0xa948]; 91E2 mov al, byte ptr [0xa948]; 91FB mov al, byte ptr [0xa948]; 928C mov al, byte ptr [0xa948]; 92FA mov al, byte ptr [0xa948]; 9365 mov al, byte ptr [0xa948]"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71600,7 +71764,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "9967 saves CH here before clearing it, then rereads it at all return tails"
+      "9967 saves CH here before clearing it, then rereads it at all return tails",
+      "9968 writes CH after PUSH BP before clearing CH; every clip exit reads it (99E2,9A06,9A0F). This is per-call save state, not an initial-height constant. Direct references (ordered sites, control-path order in src/planar_drawing.asm): 9968 mov byte ptr [0xa949], ch; 99E2 mov ch, byte ptr [0xa949]; 9A06 mov ch, byte ptr [0xa949]; 9A0F mov ch, byte ptr [0xa949]"
     ],
     "verification_status": "UNRESOLVED"
   },

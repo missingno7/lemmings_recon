@@ -1012,6 +1012,16 @@
     },
     {
       "start": 33727,
+      "end": 33729,
+      "classification": "unresolved"
+    },
+    {
+      "start": 33729,
+      "end": 33749,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 33749,
       "end": 33824,
       "classification": "unresolved"
     },
@@ -1147,13 +1157,8 @@
     },
     {
       "start": 39568,
-      "end": 47778,
-      "classification": "static_data"
-    },
-    {
-      "start": 47778,
       "end": 47779,
-      "classification": "unresolved"
+      "classification": "static_data"
     },
     {
       "start": 47779,
@@ -1182,8 +1187,23 @@
     },
     {
       "start": 61204,
-      "end": 82906,
+      "end": 65920,
       "classification": "unresolved"
+    },
+    {
+      "start": 65920,
+      "end": 65942,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 65942,
+      "end": 82904,
+      "classification": "unresolved"
+    },
+    {
+      "start": 82904,
+      "end": 82906,
+      "classification": "runtime_data"
     }
   ],
   "overlays": [
@@ -1214,6 +1234,13 @@
       "class": "code_used_as_data",
       "overlay": true,
       "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
+    },
+    {
+      "start": 33711,
+      "end": 33731,
+      "class": "runtime_buffer",
+      "evidence": "Conditional minimap write footprint only:7970 DI83C1,CX10 words,ES from PUSH CS/POP ES;797B incomingDF1 writes83AF..83C2. Overlaps checksum instructions83AF..B6,UNKNOWN83B7,state83B8..BE,U097prefix83BF..C2. Base classifications remain; no DF-clear caller proof and no constant/padding claim.",
+      "overlay": true
     }
   ]
 }

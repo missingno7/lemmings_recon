@@ -1,5 +1,13 @@
 ; Maintained image span 08343..083BE; reconstruction module, not a historical linker claim.
 ; Startup integrity sample: 10 bytes beginning inside the CALL operand at188E.
+; Physical overlap with minimap797B: DF=1,ES=CS clears83AF..83C2, including
+; the83AF MOV AH,AL,83B1 phase store and83B5 JMP (83AF..83B6), boundary83B7,
+; and all83B8..83BE state. DF=0 clears only minimap83C1..83D4. There is no
+; proven caller-wide DF-clear invariant; altered checksum instructions must not
+; be treated as the intact8363 entry. No minimap run executes checksum here.
+; 0006/000D call8343, storing AL at83B8/83BD in order; each call resets83B9,
+; 83BA then word83BB to188F. 83BE is separate mouse-IRQ mirror gate: writers
+; 00B4/4BE7 setFF,00FE sets00;0F89 reads it. None is an immutable constant.
 ; AH and DS survive; AL returns XOR, BX=1899, CX=0. Metadata is reset.
 InitializeCodeChecksum:
     push ds ; @08343
@@ -56,9 +64,16 @@ loc_83A9:
     mov [cs:0x83b9],al ; @083B1
     jmp short loc_83A7 ; @083B5
 ChecksumLimit:
+; Numeric equality stop at8391, not a byte read or executable entry. Stored90
+; has no proved padding/NOP lifetime: no decoded incoming edge executes83B7,
+; but minimap DF=1 writes it. Keep UNKNOWN; comparison alone cannot classify.
+; 8363 reads CS:[BX] after PUSH CS/POP DS; BX==83B7 exits before XOR, including
+; on wrap. Incoming cursor>83B7 can scan U097/U098 as data in0800-byte chunks;
+; normal8343 initialization starts188F. No static caller of8363 is established.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @083B7
 ; DATA: static_data
+StartupCodeChecksumFirstByte:
     db 0x00 ; @083B8
 ChecksumPhase:
 ; DATA: static_data
@@ -68,4 +83,6 @@ ChecksumAccumulator:
     db 0x00 ; @083BA
 ChecksumCursor:
 ; DATA: static_data
-    db 0x00,0x00,0x00,0x00 ; @083BB
+    db 0x00,0x00 ; @083BB
+StartupCodeChecksumSecondByte:
+    db 0x00,0x00 ; @083BD

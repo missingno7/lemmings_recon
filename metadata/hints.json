@@ -109,10 +109,23 @@
       "evidence": "Read only at 494D as CS:[BX+4955] with BX in {0,2,..,16} set by 48F6 completion-vs-requirement comparisons; nine little-endian DS offsets 4F33..517A, each a valid two-line DrawTextStream start (result assessment messages). tests/level_result.py executes every index."
     },
     {
+      "start": 33711,
+      "end": 33731,
+      "class": "runtime_buffer",
+      "evidence": "Conditional minimap write footprint only:7970 DI83C1,CX10 words,ES from PUSH CS/POP ES;797B incomingDF1 writes83AF..83C2. Overlaps checksum instructions83AF..B6,UNKNOWN83B7,state83B8..BE,U097prefix83BF..C2. Base classifications remain; no DF-clear caller proof and no constant/padding claim.",
+      "overlay": true
+    },
+    {
       "start": 33720,
       "end": 33727,
       "class": "static_data",
       "evidence": "Entry stores 83B8/83BD/83BE; 8343 and 8363 read/write 83B9..83BC"
+    },
+    {
+      "start": 33729,
+      "end": 33749,
+      "class": "runtime_data",
+      "evidence": "Fixed20-byte minimap column workspace, DF0 ten-word clear797B,20 row targets83C1..83D4 from79F4/79FF via7A55;19 display reads7A14. DF1 clear differs and rows remain stale; no neighboring run classified."
     },
     {
       "start": 33824,
@@ -125,6 +138,12 @@
       "end": 47778,
       "class": "static_data",
       "evidence": "Startup0029..0031 explicitly initializes DS:0000..2011 with REP STOSB; stored image retained exactly; executable overlap not excluded by this initial classification"
+    },
+    {
+      "start": 47778,
+      "end": 47779,
+      "class": "static_data",
+      "evidence": "Precisely DS:2012, high byte of existing two-byte RasterMeasurementMode2011. Original132A/1332 store both bytes and15C2 reads both; stored00; startup DF0 clear stops at2011. Indexed1194 can change2012/2013 and other writers remain; this classifies one used selector byte without declaring immutable state, a new flag, code exclusion for neighbors, or wider UNKNOWN closure."
     },
     {
       "start": 47779,
@@ -143,6 +162,18 @@
       "end": 61204,
       "class": "lookup_table",
       "evidence": "DS:547C byte table indexed byAND7 at5DEE/6164 and6F40/7058, read5DF5/616B/6F49/705D; image80,40,20,10,08,04,02,01; identifies only these8 storedbytes,not immutable live DS or adjacent extent"
+    },
+    {
+      "start": 65920,
+      "end": 65942,
+      "class": "runtime_data",
+      "evidence": "Exact eleven live renderer words DS66F0..6704: ordered initializers8808,882D..8840,888E/8891,source entries and clipping; readers/aliases beside DrawPlanarBitmap. Stored zero only initial image; no extent extension to scratch."
+    },
+    {
+      "start": 82904,
+      "end": 82906,
+      "class": "runtime_data",
+      "evidence": "Exactly DS:A948 shift byte W8863/read88AC and shifted rows; DS:A949 saved CH W9968/read99E2,9A06,9A0F. Dynamic fields, not constants; unchecked scratch/cache/SS aliases remain."
     }
   ],
   "runtime_frontiers": [

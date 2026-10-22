@@ -1,6 +1,6 @@
 ; Connected input module418C..4333; unchanged physical bytes and live state.
 ; Mode0 tail-jumps to mouse4252; mode1 calls live DS:25A0; others accelerate keys.
-; Callback target domain is incomplete: known4252/4334/4359, no invented bounds.
+; 42A5 is closed to4252/4334/4359 only in the intact-slot domain below.
 ; Mouse INT33 provider returns full live segments/frame before actual IRET.
 ; Preserve PUSH/POP saves and actual CALL/RET aliases, signed clamps and wrap.
 ; Calibrated X uses one more SAR than Y; unchecked scale selector is not fixed.
@@ -142,6 +142,28 @@ loc_4293:
 PollMousePositionReturn42A0:
     ret ; @042A0
 loc_42A1:
+; TARGET/LIFETIME: the second mode read at4196 must equal1; direct entry here
+; bypasses both mode tests. With DS=relocated09A9, the stored word is4252;
+; 4A65/4A68 installs4334 and4A7D/4A80 installs4359. Menu choice CL1 selects
+; the latter, CL2 exits to keyboard mode2, every other CL selects4334.
+; Mode1 is published BEFORE calibration and baseline stores; an IRQ may poll
+; with old baselines. Escape and mouse/keyboard choices do not reset the word.
+; Known-set proof requires that these are the last writes to BOTH slot bytes.
+; GROUND1A18 requests DS:1B4B..2B4A: file offsets0A55/0A56 replace25A0/25A1
+; at returned lengths>=0A56/>=0A57. Supplied420-byte files stop at1F6A instead.
+; Indexed counterexample: creation30F3 at slot211(decimal), SI=259F, clears
+; 259F..25CB;30FB/3100 then overlap this word with X-high/Y-low. The byte
+; counter/limit equality is not a range guard. This is a raw-entry witness,
+; not proof that startup reaches slot211 through earlier overlapping records.
+; Also retain1194/1198 unchecked option-marker cursors, decoder/RLE/cache
+; ES:DI writers, and arbitrary DS/ES/SS aliases, providers and UNKNOWN paths.
+; The startup forward clear0031 ends2011;455B ends0FC9. Neither restores25A0.
+; Thus whole-program writer closure remains open; canonical DS and supplied
+; GROUND files alone do not establish it. Native unsupported-target status
+; is a transport boundary, not an original fallback. See s4 integration report.
+; AX samples the word BEFORE PUSH DX/CALL write SS. Aliasing those writes
+; with25A0 changes later polls, not this already-latched AX target (assuming
+; intact instructions and no intervening IRQ/provider change to registers).
     mov ax,[InputPollCallback-GameDataImage] ; @042A1
     push dx ; @042A4
 InputPollCallbackCall42A5:

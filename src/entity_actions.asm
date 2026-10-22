@@ -3,6 +3,22 @@
 times -(($-$$) != 0x3150) db 0 ; module start assertion
 DispatchEntityAction:
 sub_3150:
+; RECORD POINTER DOMAIN:317C loads live DS:0058, with no alignment or0043 range
+; check. The normal producer3CDE scans0088+k*2D, skips exact+26=FF and stores
+; bucket pointers at3D8E/3D9C, then chosen0058 at3DC6/3DDA. Zero bound returns
+; without resetting buckets; a nonzero scan resets indices, not pointer words.
+; The action guard tests candidate count0063, not005E/001A or+26 again. Fallback
+; SI comes from live005A after005F!=FF, followed by a fresh eligibility test;
+; selectors9/6/7/8 can use it. No host record validation or lifetime pin exists.
+; Direct+14 stores by selector:2/3/4 none;5 3459<-002E;6 3315<-0036;
+; 7 3536<-0034;8 360B<-0036;9 325F<-0038. Source words are read after preceding
+; stores; e.g. a raw SI002A can alias slot002E through+04. Nine literals from
+; setup0FC1..0FF1 cannot replace these live reads in the unrestricted contract.
+; No action allocates/compacts2Dh slots or writes+26 to reactivate an old slot.
+; Callback preservation additionally requires the DF/map/stack conditions below.
+; Direct drawing-field writes: selectors5/6/7/8/9 each write04/06/0A/0C/10/12/
+; 14/28/29/2A;8 also INCs02. Selectors2/3/4 write24/25/20 respectively and
+; preserve those drawing fields. Selector5's later STOSB footprint is additional.
 ; DS:SI selects the same mutable2D-byte record used by simulation and drawing.
 ; Selectors2..9 index the eight live action inventories; they are not +08 state
 ; values. Assignment may change state bits, sprite callback/geometry and cadence
@@ -235,6 +251,19 @@ ApplyEntityAction5:
 ; Transition3422 precedes fresh map reads/saves: PUSH DS/POP ES is live and
 ; not restored. Explicit map INCs stay forward while STOSB follows DF.
 ; Map/record/stack aliases can change both saved bytes and final POP SI.
+; CALLBACK-DOMAIN EXCEPTION: with stable ES=DS and DF=1, the nine STOSB stores
+; go to record+16,+15,+14,+13,+12,+11,+10,+0F,+0E. 347F overwrites callback high
+; byte+15 with the old second map cell;3488 overwrites low+14 with the old third.
+; The callback just installed at3459 is therefore NOT preserved in this domain.
+; With disjoint map/record/stack, final+14=old_cell2 | (old_cell1<<8), where cells
+; 0/1/2 are the first row's three pre-replacement bytes. Earlier checks reject
+; exact02/0A/03, not arbitrary bytes or near targets. Wider aliases may change
+; even that formula; source reads and SS writes remain interleaved and live.
+; DF=1 also overwrites mask+12/+13, stride+10/+11 and pair index+0E/+0F.
+; DF=0 saves only+16..1E but SS map writes can still physically alias records,
+; globals or PUSH DS/POP ES/POP SI saves. No CLD or segment-range check occurs.
+; READINESS: direct writer semantics known; nine-target preservation CONDITIONAL
+; on DF=0 and genuine stable record/frame plus disjoint map/stack/service writes.
 ; Shared31E5 feedback and320C RET retain the existing outer return word.
 loc_3336:
     cmp byte [LevelActionCount3-GameDataImage],0x0 ; @03336

@@ -3,6 +3,7 @@
 %if ($-$$) != 0x378a
     %error "level_objects start moved"
 %endif
+; [0378A] This is a1Ch ground-template-to-object copy at17CB, not a2Dh entity clone. Under intact counters/saves its32 destination starts advance1Ch and incoming DF moves each28-byte copy. Entity indices50 and above overlap neighboring owners; altered saves/segments are separate aliases.
 ; RECORD HANDOFF: main DS is also copied to ES.32 eight-byte definitions at0FEB
 ; select28-byte ground records by their big-endian word at+4. Low16-bit MUL/add
 ; chooses the live source; no type-index check. Destination17CB..1B4A is32 slots.
@@ -163,6 +164,7 @@ loc_3899:
     add di,byte +0x4 ; @03899
     loop loc_3840 ; @0389C
     ret ; @0389E
+; [0389F] Coordinates at0E98..0F17 are a maximum32-pair write footprint, not a capacity guarantee. The first16 bytes also equal the start of hypothetical entity slot50;30F3 clears that slot before reading the four spawn pairs. Collector count>=4 is unclamped; do not call entity prefix80 an allocated limit.
 ; TYPE-ONE COORDINATES: scans32 big-endian definitions, compares full type word+4
 ; to1 (no first-word presence check). Writes wrapped X+24,Y+30 pairs atDS:0E98.
 ; Counts0..3 fill four slots with original patterns; counts>=4 are not clamped.

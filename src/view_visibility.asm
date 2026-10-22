@@ -10,6 +10,7 @@ RebuildViewVisibilityMap:
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04111
     mov di,ViewVisibilityMapBase-GameDataImage ; @04113
     mov cx,0x68 ; @04116
+; With stable ES=DS and AX=0,104 STOSW write0EA8..0F77 for DF=0 or0DDA..0EA9 for DF=1. The backward range includes record indices4C..4F callbacks (0DF8/0E25/0E52/0E7F); forward range includes index50 callback0EAC if that unchecked slot exists. No CLD here.4131 writes29 bytes from0EA8+(unsigned(view_origin)>>3)-2 following DF, with16-bit cursor wrap. Do not infer record noninterference from a visibility-only name.
     rep stosw ; @04119
     mov di,[LevelViewOriginPixels-GameDataImage] ; @0411B
     shr di,1 ; @0411F

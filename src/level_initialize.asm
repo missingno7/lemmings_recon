@@ -124,6 +124,8 @@ LevelFinishAfterClear:
 loc_377C:
 LevelFinishMinimapLoop:
     push cx ; @0377C
+; Thirteen CALL796F iterations carry live DF; outer PUSH/POP CX does not clear it.
+; With DF1 each minimap clear writes83AF..83C2; no local CLD establishes a game-wide invariant.
     call UpdateMinimapColumn ; @0377D
 LevelFinishAfterColumn:
     pop cx ; @03780

@@ -1,6 +1,15 @@
 ; Maintained image span 01916..01F18; reconstruction module, not a historical linker claim.
 ; CONTRACT: DS:DX filename, ES:AX destination, CX maximum byte count.
 ; Open/read/close preserve live save frames; short reads are accepted.
+; SIZE CONTRACT: CX is a DOS request ceiling, not a reserved object extent.
+; AH=3F's returned AX is never compared with CX and is replaced by the close
+; result. A successful short read leaves the destination suffix unchanged;
+; there is no zero-fill, checksum or retry for a short count. Ordinary DOS
+; transfers advance through bytes independently of DF; arbitrary DOS segment,
+; stack or write effects remain a platform seam, not a preservation proof.
+; The two decoded callers request 1180h at DS:5566 and 1000h at DS:1B4B.
+; Destination/save-frame aliases are live: POP ES/DS at1937/1938 can observe
+; written bytes. Error tails do not unwind the partially consumed save frame.
 ; Failures transfer to the shared error printer with stage-specific message.
 ; Raw-only andfull fatal contracts: docs/resource-raw.md/resource-raw-full.md.
 ; Bus CPU words keep physical+1/A20 wrap; errors tail into1949 without unwind.
@@ -97,6 +106,22 @@ FileErrorCleanupTail:
 ; Selector-own bus observes XOR BH/CH before reads/saves,decimal ADD store flags,
 ; separate live DS:1FF0 reads and each immediate-child CALL/RET word.
 ; DAT/raw descendants retain their ordinary-RAM/intact-internal-return domains.
+; READINESS: CONDITIONAL for resource-image replacement. Extents below describe
+; canonical main DS, intact selectors/saves and complete pinned files; they do
+; not bound unchecked indices, malformed DAT output or arbitrary DOS effects.
+; LIFETIME: startup's DF-clear0000..2011 initializes LEVEL/working-object/GROUND
+; storage once. The per-level clear4551 stops at0FC9 (0FCA untouched), so it
+; initializes none of those resource images. Each selected LEVEL section reuses
+; 0FCB..17CA; object working slots17CB..1B4A are later copied by378A (zero-X
+; slots remain stale). GROUND1B4B..1F6A is replaced next; special setup1A7B can
+; replace parts of its trailing metadata. There is no independent C copy.
+; ORDER: initial54EE..5565 contains120 one-based selectors (four groups of30,
+; see4515/4545, result473E). This is a stored/nominal domain, not a loader check:
+; BL may be00..FF, so1987 reads54EE..55ED, including5566..55ED override storage.
+; Decrement00->FF gives group15/section7/odd override127. The pinned120 bytes
+; are01..A0, select LEVEL000..009 and contain40 odd overrides (indices6..79).
+; 5205 publishes a decoded byte before validation; neither local producers nor
+; the table's initial bytes prove a closed live index/writer domain.
 LoadSelectedLevelResources:
     mov bl,[LevelResourceSelectionByte-GameDataImage] ; @0197D
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @01981
@@ -119,6 +144,13 @@ SelectionAfterDecimal:
     lea dx,[LevelResourceFilename-GameDataImage] ; @019A4
     push ds ; @019A8
     pop es ; @019A9
+; LEVEL I/O: header request000A at0FCB, then packed-lowword-000A at the same
+; source start; the latter is06C4 at most across the80 pinned sections, reaching
+;168E. Full decoded output is0800 bytes,0FCB..17CA, for every supplied section.
+; Header0FCB..0FEA, objects0FEB..10EA, terrain10EB..172A, steel172B..17AA,
+; footer17AB..17CA are replaced, including skipped sections, not appended.
+; No literal0800 limit exists in the decoder. Successful pinned decode leaves
+; SI at its input start;19BA resets only DI for the next section, not SI/DS/ES.
     lea di,[LoadedLevelRecord-GameDataImage] ; @019AA
     push cx ; @019AE
     mov cx,es ; @019AF
@@ -144,6 +176,12 @@ loc_19C4:
     push ds ; @019CF
     pop es ; @019D0
     lea dx,[OddLevelOverrideFilename-GameDataImage] ; @019D1
+; RAW OVERRIDE: request=supplied file size1180h ->5566..66E5 (80*38h bytes).
+; A short read leaves old bytes, including old level data, in the missing suffix.
+; The next named renderer word is66F0;66E6..66EF is outside this write, with no
+; ownership inference. Forward slice n=(popped AL>>1) starts5566+38h*n;
+; n=79 ends66E5, n=80 first exceeds the load, n=127 reads712E..7165.
+; Incoming AH is discarded by MUL DH. SI ADD and string cursors wrap at16 bits.
     lea ax,[OddLevelOverrideBuffer-GameDataImage] ; @019D5
     mov cx,0x1180 ; @019D9
     call ReadRawResourceFile ; @019DC
@@ -158,6 +196,11 @@ SelectionAfterOddOverrideRead:
     mov cx,0xc ; @019F0
     push ds ; @019F3
     pop es ; @019F4
+; With DF=0, copies24 bytes to0FCB..0FE2 and32 to17AB..17CA. Bytes0FE3..0FEA
+; (including graphics selectors0FE6/0FE8) stay from LEVEL. With DF=1 the word
+; footprints are0FB5..0FCC and178D..17AC; source is[slice-36h,slice+1], not
+; the forward56-byte record. Word high bytes are physical+1. DOS close/read
+; can supply DF; no CLD here. Live overlap/saves may change following reads.
     rep movsw ; @019F5
     lea di,[LoadedLevelFooterBytes-GameDataImage] ; @019F7
     mov cx,0x10 ; @019FB
@@ -170,8 +213,23 @@ loc_1A00:
     lea dx,[GroundResourceFilename-GameDataImage] ; @01A0B
     push ds ; @01A0F
     pop es ; @01A10
+; GROUND request1000h ->1B4B..2B4A, image0B5DB..0C5DA. All five supplied
+; files are0420h ->1B4B..1F6A only:16*1Ch object templates1B4B..1D0A,
+; 64*8 terrain records1D0B..1F0A, trailing metadata1F0B..1F6A. Consumers378A/
+;37C2 use unchecked BE object-type*1Ch;7C67 masks terrain index to six bits.
+; Palette slots3/5 at CS52D4/52E4 consume the trailing packed/RGB rows.
+; A full1000h read also replaces selection/cache/IRQ/video/allocation fields
+;1F6B..2010, both bytes of2011, display-probe records2013..201E, all U112
+;201F..259F (keyboard/status/text/filenames/saved clocks), callback25A0..25A1,
+; and U11325A2..2B4A (input/options, palette rows25A8/2608/2638/2650/2668,
+; pair base2698, point colors2778 and prefix2788..2B4A of the point stream).
+; These are possible cross-owner writes, not ordinary pinned-file overwrites
+; or evidence classifying a whole UNKNOWN run. At leastC2Eh/C3Eh supplied
+; bytes would reach2778/2788; the actual0420h files cannot. Short reads can
+; leave even intended GROUND metadata stale. No requested count is clamped.
     lea ax,[GroundResourceBuffer-GameDataImage] ; @01A11
     mov cx,0x1000 ; @01A15
+; Cross-lifetime control storage: GROUND request1000 at DS1B4B reaches2B4A. Returned file offsets04C6/04C7 overwrite word2011,04C8..04D3 overwrite probe records2013..201E,0A55/0A56 overwrite input callback25A0/25A1. Supplied420-byte files end1F6A and do not touch these fields. Short reads preserve suffix; longer/changed provider reads invalidate the intact-table/callback target domains; preserve request1000 and live returned segment/save effects.
     call ReadRawResourceFile ; @01A18
 SelectionAfterGroundRead:
     mov al,[LevelGraphicsSetByte-GameDataImage] ; @01A1B
@@ -228,6 +286,18 @@ SelectionSpecialReturn:
 ; input from0038 and reuse heap[1FF0]:8000. Re-read pointers after saved-DS pushes.
 ; VGAGR reload follows drawing; final close exposes AX/flags without checking CF.
 ; Native bounded contract: docs/special-setup.md; VGA/IRQ/platform seams remain.
+; RESOURCE OWNERSHIP (forward DF): VGASPEC at input[1FF4]:0010 supplies40-byte
+; prefix0010..0037. Copy/write windows in main DS are1F23..1F3A (first3 become
+;1F,1F,00),1F53..1F6A,1F1B..1F22 and1F0B..1F12 (first becomes06). They
+; overlap the GROUND tail, not new persistent arrays. Bases1F13/1F3B themselves
+; are not the second/third copy destinations: the instructions add08/18.
+; Input from0038 holds four terminated RLE streams; each pinned stream writes
+;3840h bytes at heap[1FF0]:8000..B83F, reused for the next strip. Strip code
+; constructs its mask at B840..CAFF, then draws before the next reuse.
+; After strip3 the same heap is reused for VGAGR section0 at0010, then section1
+; at0000; input[1FF4] survives only until next resource load. All segment slots
+; and DS saves stay live. DF=1 reverses strings; missing RLE terminator has no
+; output bound, and neither DAT nor RLE asserts these asset-derived extents.
 SetupSpecialGraphicsResource:
     push ds ; @01A7B
     mov cx,0x18 ; @01A7C
@@ -410,6 +480,20 @@ sub_1BAD:
 ; Header bit count0 is valid:seed DL joins checksum, first read refills backwards.
 ; Short reads/malformed lengths are unchecked; normal exit clears DF, error exits
 ; preserve the live frame at04D0. Native bounded contract: docs/dat-section.md.
+; WRITE BOUNDS: BP=initial DI, end=(DI+BEword[SI+4]) modulo65536; the apparent
+; high output word[SI+2] is discarded. Read000A header bytes atDS:SI, then
+; CX=(BEword[SI+8]-000A) modulo65536 payload bytes at that same start (header
+; overwritten). Maximum requestFFFF is possible; returned AX counts are unused.
+; Header+6/+7 do not bound the payload. Cache copies obey provider-returned DF,
+; wrap16-bit offsets without segment advance, and set ES to the caller DS;
+; direct DOS reads keep provider ES. Thus input/output separation is not assured.
+; Tokens decrement DI and write live ES even with zero declared output. The
+; unsigned DI<=BP check is after a complete token (up to264 literal bytes);
+; there is no strict output allocation/length guard or checksum error transfer.
+; A malformed/short input may read stale bytes, cross below BP or wrap DI. No
+; universal small destination span follows from a header or one named consumer.
+; Normal CLD1C78 establishes forward DF only after successful local completion;
+; saved BX/DS/return words remain ordinary writable memory, not cached values.
 DecodeDatSection:
     push bx ; @01BAF
     std ; @01BB0
@@ -671,6 +755,17 @@ loc_1D22:
     mov dx,DatFileErrorMessage-GameDataImage ; @01D28
     jmp loc_1949 ; @01D2B
 ReadDatBytes:
+; RESOURCE FOOTPRINT SEAM: a cache hit copies requested CX bytes even beyond
+; the descriptor's stored supplied length. A cache miss may requestFFFF bytes
+; at cache-free segment:(offset+0D), publishing AX as length even on CF error.
+; FCB AH23 uses main1F95 (37-byte FCB; size DWORD1FB6..1FB9); ordinary file
+; checks do not populate resource destinations. PrepareDatCacheName1E1C can
+; wrap padding counts toFFFF and then overwrite almost an entire DS frame;
+; table/state immutability cannot be deduced solely from absolute store xrefs.
+; Startup clears enabled1F93 then explicitly disables it at00D8. Allocation
+; candidate1ED7 has no known incoming edge; broader cache reachability/aliases
+; remain unresolved, not dead. Cache images, if enabled, outlive a level until
+; overwritten/freed; per-read cursor/descriptor updates are not level resets.
     push di ; @01D2E
     push si ; @01D2F
     push ds ; @01D30
