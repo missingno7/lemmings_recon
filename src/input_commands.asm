@@ -152,6 +152,7 @@ loc_3F66:
     test byte [SoundOptionBits-GameDataImage],0x3 ; @03F70
     jz loc_3F7C ; @03F75
     mov ax,0x401 ; @03F77
+; R2:recovered caller1874 is after1872's update. AX0401 writes the same singleF0 latch as foreground effects;individualINTs serialize by IF-clearing/no-STI AdLib,but requests between updates are last-writer wins. New3F7A request waits for laterAH00 (including possible foreground03BE),not the already completed1872. Preserve real save/segment/dispatch residue.
 InputCommandsInt613F7A:
     int 0x61 ; @03F7A
 loc_3F7C:

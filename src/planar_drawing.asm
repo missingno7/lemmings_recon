@@ -1,3 +1,7 @@
+; R1 UNCONDITIONAL local input implication: the fixed8822 renderer and9967/9A15 children
+; contain no DF writer/service. All its LODS/STOS/MOVS preserve the incoming direction;
+; CLI/STI and VGA I/O do not normalize it. Main-root DF remains unresolved in both modes.
+; DF0 input does not prove source/cache/SS/ES ownership, VGA timing, or callback closure.
 ; S19 renderer-handoffs: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; InputDS D,relocated scratch G,VGA ES and live SS saves are separate owners. Actual POPs restore
 ; saved words;8D66 builds all cache rows before forward consumption. Global caller/storage
@@ -1142,6 +1146,12 @@ loc_8DE1:
     nop ; @08DE7
     nop ; @08DE8
     inc bx ; @08DE9
+; R3 UNCONDITIONAL per-entry writer:8DD8 setsDS to game scratch. At width0,
+;8DE3 leavesCX0;8DE9..8DEF performs65536 INC/RCR writes,covering every16-bit
+; DS offset,including2013 and25A0,in one shift pass with stable registers/code.
+; DF does not reverse these explicit INCs. Actual width0 caller provenance is
+; UNRESOLVED;profile preservation is not a width,allocation or save-alias proof.
+; Keep renderer and callback-writer obligations separate;no reachability added.
 loc_8DEA:
     rcr byte [bx],1 ; @08DEA
     nop ; @08DEC

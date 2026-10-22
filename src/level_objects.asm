@@ -3,6 +3,10 @@
 %if ($-$$) != 0x378a
     %error "level_objects start moved"
 %endif
+; R1 UNCONDITIONAL input implication: all37B4 copies inherit entry DF. Each copies1C bytes
+; from its wrapped unchecked type*1C source. SavedSI/CX/DI restore after the REP, while outer
+; DI adds1C even if REP ran backward. PROFILE supplies no missing entry DF or allocation bound;
+; actual ProgramEntry-to-copy DF remains UNRESOLVED in both modes.
 ; S19 level-clear-and-copies: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Level clear,odd-header and28-byte object copies use live DF/segments. Loader and service
 ; declarations do not certify complete actual entry/ownership domains.

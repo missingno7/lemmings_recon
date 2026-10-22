@@ -11,7 +11,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from flowstate import (Analyzer, State, Slot, TOP, ZERO, ONE, val, flags,
                        transfer, merge, instantiate, state_json, getreg, setreg,
                        ServiceModel, platform_profile, loader_state, interrupt_entry,
-                       driver_transform, proof_obligations, report)
+                       driver_transform, proof_obligations, report, SerialDriverServices,
+                       df_census)
 from explore import discover
 
 
@@ -29,6 +30,146 @@ def serial(analysis, entries=()):
 
 
 class FlowStateTests(unittest.TestCase):
+    def test_decoded_std_census_includes_all_components_and_protected_views(self):
+        from flowstate import load_component
+        from common import ROOT, read_json
+        found = {}
+        for component in ('main', 'adlib', 'tandysnd', 'pcspeaker'):
+            analysis, _, _ = load_component(component)
+            found[component] = [r['address'] for r in df_census(analysis)['std']]
+        protected = df_census(read_json(ROOT/'metadata/protection-cfg.json'))
+        self.assertEqual(found, dict(main=['1BB0'], adlib=[], tandysnd=[], pcspeaker=[]))
+        self.assertEqual(protected['std'], [])
+        self.assertEqual([(r['address'], r['view']) for r in protected['cld']], [('08D2', 'tf_on')])
+        self.assertEqual([(r['address'], r['view']) for r in protected['strings']], [('08D3', 'tf_on')])
+
+    def test_original_std_has_cld_before_any_string_consumer(self):
+        from flowstate import load_component
+        analysis, _, _ = load_component('main')
+        ins = {r['address']: r for r in analysis['instructions']}
+        # The entire straight-line transient window and the CALL's real child
+        # prefix, rather than an inference from a later normal-return CLD.
+        path = (0x1bb0, 0x1bb1, 0x1bb2, 0x1bb4, 0x1bb7, 0x1bb9,
+                0x1d2e, 0x1d2f, 0x1d30, 0x1d31, 0x1d32, 0x1d33, 0x1d34)
+        edges = {(e['source'], e['target']) for e in analysis['edges']}
+        for source, target in zip(path, path[1:]):
+            self.assertIn((source, target), edges)
+        state = State(df=ZERO)
+        for p in path:
+            self.assertFalse(any(x in ins[p]['mnemonic'] for x in ('lods', 'stos', 'movs', 'cmps', 'scas')))
+            state = transfer(ins[p], state, intact_stack=True)
+        self.assertEqual(state.df, ZERO)
+        self.assertEqual(ins[0x1c78]['mnemonic'], 'cld')
+        self.assertEqual(ins[0x1c79]['mnemonic'], 'ret')
+        self.assertIn((0x1c78, 0x1c79), edges)
+
+    def test_explicit_original_driver_binding_preserves_both_df_values_in_both_modes(self):
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            for component, vector in (('adlib', 0x61), ('tandysnd', 0x61), ('pcspeaker', 0x60)):
+                model = SerialDriverServices(mode, bindings={vector: component})
+                for function in ((0, 1, 3) if component == 'pcspeaker' else range(6)):
+                    for df in (ZERO, ONE):
+                        with self.subTest(mode=mode, component=component, function=function, df=df):
+                            s = State.symbolic()
+                            s.df = df
+                            setreg(s, 'ah', val(function))
+                            ins = row(0x100, 'int', hex(vector), 2)
+                            declaration = model.resolve(ins, s)
+                            self.assertEqual(declaration['profile_entries'], [])
+                            out = transfer(ins, s, intact_stack=True, services=model)
+                            self.assertEqual((out.df, out.sp), (df, 0))
+                            self.assertEqual(out.regs['ds'], s.regs['ds'])
+                self.assertIsNone(model.resolve(row(0, 'int', hex(vector)), State()))
+                bad = State()
+                setreg(bad, 'ah', val(0xff))
+                self.assertIsNone(model.resolve(row(0, 'int', hex(vector)), bad))
+
+    def test_driver_bindings_cannot_enter_concurrent_or_alias_scopes(self):
+        model = SerialDriverServices(bindings={0x61: 'adlib'})
+        a = program([row(0, 'nop')], [])
+        for kwargs in ({}, {'intact_stack': True}, {'irq_mode': 'disabled'}):
+            with self.assertRaisesRegex(ValueError, 'serial intact-stack'):
+                Analyzer(a, services=model, **kwargs)
+        with self.assertRaises(ValueError):
+            SerialDriverServices(bindings={0x60: 'adlib'})
+        s = State()
+        setreg(s, 'ah', ZERO)
+        with self.assertRaisesRegex(ValueError, 'intact-stack'):
+            transfer(row(0, 'int', '0x61'), s, services=model)
+
+    def test_first_arrival_stop_is_not_an_assumed_return_or_global_invariant(self):
+        a = program([row(0, 'nop'), row(1, 'std'), row(2, 'jmp', '0')],
+                    [(0, 1, 'fallthrough'), (1, 2, 'fallthrough'), (2, 0, 'branch')])
+        bounded = Analyzer(a, intact_stack=True, irq_mode='disabled', stop_before=(1,)).run()
+        self.assertEqual(bounded.states[0, 1].df, val(('in', 'df')))
+        self.assertNotIn((0, 2), bounded.states)
+        self.assertFalse(bounded.exits[0])
+        self.assertEqual(serial(a).states[0, 1].df, frozenset((('in', 'df'), 1)))
+
+    def test_original_protected_fill_cld_is_restored_by_cleanup_popf(self):
+        from common import ROOT, read_json
+        original = read_json(ROOT/'metadata/protection-cfg.json')
+        # Static summaries of two TF-on helper bodies. This does not compose
+        # dynamic INT1/INT3, disk services, or an actual protection invocation.
+        instructions = [r for r in original['instructions'] if r['state'] == 'tf_on'
+                        and (0x8cb <= r['address'] < 0x8d7 or 0x94a <= r['address'] < 0x96f)]
+        sites = {r['address'] for r in instructions}
+        a = dict(instructions=instructions, routines=[0x8cb, 0x94a], unresolved=[],
+                 edges=[e for e in original['edges'] if e['source'] in sites and e['target'] in sites
+                        and e['state'] == e['target_state'] == 'tf_on'])
+        z = serial(a)
+        for df in (ZERO, ONE):
+            s = State.symbolic()
+            s.df = df
+            filled = instantiate(z.exits[0x8cb][0x8d6].state, s)
+            cleaned = instantiate(z.exits[0x94a][0x96e].state, s)
+            self.assertEqual(filled.df, ZERO)
+            self.assertEqual(cleaned.df, df)
+
+    def test_original_timer_inner_popf_and_outer_iret_are_distinct(self):
+        from flowstate import load_component
+        original, _, _ = load_component('main')
+        instructions = [r for r in original['instructions'] if 0x18a7 <= r['address'] <= 0x18b1]
+        sites = {r['address'] for r in instructions}
+        a = dict(instructions=instructions, routines=[0x18a7], unresolved=[],
+                 edges=[e for e in original['edges'] if e['source'] in sites and e['target'] in sites])
+        z = serial(a)
+        s = State(df=ZERO, polluted=True)
+        s.slots = {0: Slot(flags(ONE, ZERO)), 20: Slot(val(0x1234)),
+                   22: Slot(val(0x1010)), 24: Slot(flags(ZERO, ONE))}
+        before_iret = instantiate(z.states[0x18a7, 0x18b1], s)
+        after_iret = instantiate(z.exits[0x18a7][0x18b1].state, s)
+        self.assertEqual(before_iret.df, ONE)
+        self.assertEqual((after_iret.df, after_iret.sp), (ZERO, 26))
+
+    def test_original_startup_postdecode_closure_has_no_df_writer_or_service(self):
+        from flowstate import load_component
+        from graph import routine_views
+        from common import ROOT, read_json
+        original, _, _ = load_component('main')
+        views = routine_views(original, read_json(ROOT/'metadata/symbols.json'), original=True)
+        closure, pending = set(), [0x59bb, 0x5cc1, 0x5ac1, 0x57d1]
+        while pending:
+            entry = pending.pop()
+            if entry in closure:
+                continue
+            closure.add(entry)
+            pending.extend(views[entry]['callees'])
+        sites = set().union(*(views[e]['sites'] for e in closure))
+        for entry in closure:
+            self.assertFalse(views[entry]['problems'])
+        instructions = [r for r in original['instructions'] if r['address'] in sites]
+        self.assertFalse([r for r in instructions if r['mnemonic'] in
+                          ('std', 'cld', 'popf', 'iret', 'int', 'int3')])
+        self.assertEqual({r['address'] for r in instructions
+                          if any(x in r['mnemonic'] for x in ('lods', 'stos', 'movs', 'scas', 'cmps'))},
+                         {0x5815, 0x5bba, 0x5be2, 0x5ce5, 0x5d6e, 0x5d7f})
+        # These actual caller sets connect the neutral bodies to the normal
+        # DAT reset handoffs at58E0/58F9/590F/598A. No global root input assumed.
+        for entry, callers in ((0x59bb, {0x58e5}), (0x5cc1, {0x58e8}),
+                               (0x5ac1, {0x58fe}), (0x57d1, {0x5927, 0x59a1})):
+            self.assertEqual(views[entry]['callers'], callers)
+
     def test_loader_flags_are_original_code_in_both_modes(self):
         a = program([row(0, 'nop')], [])
         result = report(a, b'\x90', mode='BOTH')

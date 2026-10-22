@@ -413,6 +413,58 @@ def driver_transform(component, function, state, address=0, size=2):
     return result if result is not None else State.havoc()
 
 
+class SerialDriverServices(ServiceModel):
+    """Opt-in original driver composition; never an implicit platform ABI.
+
+    A binding asserts a live immutable image/vector and recognized dispatch,
+    serial execution, returning paths and disjoint intact saves/IRET frames.
+    The caller must record these premises separately from profile entries.
+    In particular this does not prove that startup installed/retained AdLib,
+    that a stream terminates, or that a raw indirect target domain is closed.
+    Default ServiceModel/report scopes deliberately remain unchanged.
+    """
+    def __init__(self, mode='CONSERVATIVE', *, bindings):
+        super().__init__(mode)
+        self.bindings = dict(bindings)
+        for vector, component in self.bindings.items():
+            if (vector, component) not in ((0x61, 'adlib'), (0x61, 'tandysnd'),
+                                           (0x60, 'pcspeaker')):
+                raise ValueError('Binding is not an original sound vector/image pair')
+
+    def resolve(self, row, state):
+        vector = 3 if row['mnemonic'] == 'int3' else integer(operands(row)[0])
+        component = self.bindings.get(vector)
+        if component is None:
+            return super().resolve(row, state)
+        function = only(getreg(state, 'ah'))
+        if not isinstance(function, int) or function not in DRIVER_BODIES[component]:
+            return None
+        return dict(original_driver=component, driver_function=function,
+                    function=f'original:{component}:AH={function:02X}',
+                    profile_entries=[], intact_iret_frame=True,
+                    evidence='Original decoded body/actual saves and IRET; driver_transform domain')
+
+
+def df_census(analysis):
+    """Decoded DF operations/string consumers only; never sweep UNKNOWN bytes.
+
+    Keep view identity for protected instructions sharing a physical address.
+    The census proves absence of decoded STD, not absence of executable STD in
+    unresolved incoming paths or runtime-modified storage.
+    """
+    groups = {'std': [], 'cld': [], 'saved_flags': [], 'strings': []}
+    for row in sorted(analysis['instructions'], key=lambda r: (r['address'], r.get('state', ''))):
+        m = row['mnemonic']
+        group = ('std' if m == 'std' else 'cld' if m == 'cld' else
+                 'saved_flags' if m in ('pushf', 'popf', 'iret') else
+                 'strings' if any(x in m for x in ('lods', 'stos', 'movs', 'scas', 'cmps')) else None)
+        if group:
+            groups[group].append(dict(address=f"{row['address']:04X}",
+                                      view=row.get('state', 'raw'),
+                                      instruction=m + (' ' + row.get('operands', '')).rstrip()))
+    return groups
+
+
 def memory_offset(s, operand):
     """Resolve only genuine SS:SP/BP-relative stack expressions."""
     if '[' not in operand:
@@ -570,6 +622,11 @@ def transfer(row, state, *, intact_stack=False, relocations=(), services=None):
             return State.havoc()
         if not declaration.get('evidence') or not declaration.get('intact_iret_frame'):
             raise ValueError('Service needs evidence and an explicit intact_iret_frame contract')
+        if declaration.get('original_driver'):
+            if not intact_stack:
+                raise ValueError('Original driver composition requires explicit intact-stack scope')
+            return driver_transform(declaration['original_driver'], declaration['driver_function'],
+                                    state, p, row['size'])
         # CPU frame exists even when the body is a platform transformer.
         s = interrupt_entry(s, p, (p + row['size']) & 0xffff, TOP)
         frame_sp = s.sp
@@ -631,7 +688,7 @@ class Exit:
 class Analyzer:
     """Finite symbolic summary worklist; callers restart only when a child grows."""
     def __init__(self, analysis, entries=(), *, intact_stack=False,
-                 services=None, relocations=(), irq_mode='havoc'):
+                 services=None, relocations=(), irq_mode='havoc', stop_before=()):
         self.instructions = {r['address']: r for r in analysis['instructions']}
         self.edges = defaultdict(list)
         for e in analysis['edges']: self.edges[e['source']].append(e)
@@ -640,6 +697,12 @@ class Analyzer:
                               {e['target'] for e in analysis['edges'] if 'call' in e['kind'] and e['target'] is not None})
         self.intact_stack, self.services = intact_stack, services or {}
         self.relocations, self.irq_mode = set(relocations), irq_mode
+        # Optional first-arrival/prefix inquiry. A stop records its incoming
+        # state without executing it; it is not a RET or a proved dead edge.
+        # Empty by default so existing whole-body/report verdicts are retained.
+        self.stop_before = frozenset(stop_before)
+        if isinstance(self.services, SerialDriverServices) and (not intact_stack or irq_mode != 'disabled'):
+            raise ValueError('Original driver bindings require serial intact-stack analysis')
         self.states, self.exits = {}, defaultdict(dict)
         self.dependencies, self.calls = defaultdict(set), {}
         self.queue, self.queued = deque(), set()
@@ -680,6 +743,8 @@ class Analyzer:
         return self
 
     def process(self, entry, p):
+        if p in self.stop_before:
+            return
         row = self.instructions[p]
         incoming = self.before(self.states[entry, p])
         m, nxt = row['mnemonic'], (p + row['size']) & 0xffff

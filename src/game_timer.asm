@@ -14,6 +14,11 @@
 ; the foreground owns retrace sync. Every fourth IRQ chains to BIOS INT08.
 ; The foreground ticks after five IRQs (signed1FCD>4), dropping any excess.
 times -(($-$$) != 0x17c7) db 0
+; R1: IRQ entry inherits interrupted DF and saves it in the CPU frame.17D0 PUSHF is a
+; different inner save from that consumed by18B1 IRET.18A7 POPF restores inner FLAGS first.
+; With intact original outer frame, return DF equals interrupted DF even if children alter
+; handler-local DF. Visibility occurs before these restores. This does not close nesting,
+; provider/SS/save aliases, callback writers, or4013/creation publication races.
 GameTimerIrqHandler:
     push ax ; @017C7
     push ds ; @017C8
@@ -120,6 +125,7 @@ sub_1868:
     jz loc_1874 ; @0186D
 sub_186F:
     mov ax,0x0 ; @0186F
+; R2:AX0000 once per handler invocation reaching2010FF/25A7&3 gates,not necessarily once per physical PIT pulse.1840 input precedes;1874 commands/3F7A effect request follows;EOI/old08 chain is later. Stable mouse mode0 uses4252 saves;profile33:AX=0003 plus intact saves/preceding children supplies nominal DS=G,ES inherited,SS live,not global segment/DF closure. AdLib INT clearsIF and its recovered engine neverSTIs: no maskable foreground/update reentry inside it;NMI,escaped01EA,frame/code aliases and external providers remain separate. Main cadence/nesting is not thereby serialized.
 ; [1872] INT61 AH00 is called once per enabled game IRQ with DS:2010==FF and SoundOptionBits&3!=0; unlike INT60 there is no odd TimerCadenceCounter guard. AdLib0115 handles requests before phase decrement and all nine visits; timer/PIT configuration owns real cadence, not a fixed driver Hz.
 GameTimerInt611872:
     int 0x61 ; @01872

@@ -6,6 +6,12 @@
 ; Calibrated X uses one more SAR than Y; unchecked scale selector is not fixed.
 ; Contracts: docs/input-poll.md and docs/architecture.md.
 times -(($-$$) != 0x418c) db 0
+; R3 UNCONDITIONAL branch contract: mode0 observed by418C jumps directly4252,
+; bypassing42A5 without reading25A0. This empty per-invocation42A5 domain is not
+; pointer immutability:4ABD restores mode0 only, leaving any joystick word.
+; Primary mouse configuration is not a write lock on25A6/25A0; indexed/resource,
+; saved-frame/provider and IRQ writers require separate lifetime proof.
+; PROFILE mouse preservation uses exactly33:AX=0003; no writer/race closure.
 PollInputState418C:
     cmp byte [InputModeByte25A6-GameDataImage],0x0 ; @0418C
     jnz loc_4196 ; @04191
@@ -141,6 +147,13 @@ loc_4293:
     pop es ; @0429F
 PollMousePositionReturn42A0:
     ret ; @042A0
+; R3 writer refinement: supplied ground0o..ground4o.dat each0420 bytes end1F6A,
+; excluding this raw-resource overwrite only; original request remains1000.
+; SlotD3 starts259F:30F3 clears259F..25CB,30FB/3100 put X-high/Y-low at25A0/25A1.
+; Constructor3134 also sets25A6=FF via record+06=FFF6, so even mode0 persistence
+; is not implied by initial selection. Actual survival toD3 remains UNRESOLVED.
+; Visibility4131 can reach this word for corrupted origin; nominal DATA-A origin
+; 0010..0500 aligned8 excludes it. Stack/segment/provider/IRQ domains remain open.
 loc_42A1:
 ; TARGET/LIFETIME: the second mode read at4196 must equal1; direct entry here
 ; bypasses both mode tests. With DS=relocated09A9, the stored word is4252;

@@ -258,6 +258,10 @@ GameFrameAfterSelectorScroll:
     call CopyDirtyLevelRowsToDrawingPage ; @001A7
 GameFrameAfterDirtyRows:
     call CopyStatusBackdropToDrawingPage ; @001AA
+; R1: both3150 calls inherit live foreground DF. Loader0 and decoder normal-return0 are
+; proven boundary facts, not a certificate through all preceding services/protected views/
+; callbacks. PROFILE does not bind INT61 or close715B. Keep actual DF at01AD/01C5 unresolved
+; pending that composition, separately from IRQ/stack/record/resource writer obligations.
 ; S19 action5-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Loader DF0 excludes DOS entry DF1 as an origin. Actual DF0 at both foreground action calls is
 ; still unproved.
@@ -465,6 +469,7 @@ GameEndAfterTimerRestore:
     test byte [SoundOptionBits-GameDataImage],0x3 ; @00305
     jz loc_0311 ; @0030A
     mov ax,0x200 ; @0030C
+; R2:02FB restored timer08 before this guardedAX0200 reset. It clears selected driver state/modes,not the allocation/vector or a fresh level object;25A7&3==0 skips it. PROFILE1A:AH=0001 plus intact actual saves supplies nominal16A9 return preservation,not a global DS/SS/IRQ theorem.
     int 0x61 ; @0030F
 loc_0311:
 GameEndToResultScreen:
@@ -574,6 +579,7 @@ TransitionCue37LevelMusic:
 ; S13: BYTE0054 ->AL,then AH03; never a word OR with neighboring0055.0457 accepts only01..15 before a stream-root lookup,so unchecked main song-index values cannot add roots under its serial initialized DF0/nonalias/live-image contract.03B9/03BE test music bit2 only;2010 is not checked.05FA can free without restoringINT61,and02A6 can later set25A7=3;music enabled does not prove live driver ownership. See adlib_StreamCommandTargets.producer_domain.
     mov al,[LevelSoundId-GameDataImage] ; @003B4
     mov ah,0x3 ; @003B7
+; R2 UNCONDITIONAL recovered-engine implication: each INT61 clearsIF and AdLib neverSTIs,so timer1872 cannot interleave inside this setter/update. It CAN run after03B9 IRET and before03BE,consumeED and advance once;03BE then advances again. No queue or combined atomic request+update. D/E/SS stay caller-owned and restored through actual nonalias saves;global main segment/DF and escaped01EA domains remain UNRESOLVED.
 ; AH03 latches a song request only; AdLib0457 normally copies ED only while current-song gateEE==0. Immediate AH00 at03BE performs processing. Stop/reset/stream83 clear ED andEE together; a queued ID is not guaranteed to survive completion.
     int 0x61 ; @003B9
 TransitionCue37AfterSelect:
@@ -742,6 +748,7 @@ GameCheckCalibrationSecondEdge:
     mov [ForegroundWaitLowWord-GameDataImage],cx ; @004C7
     mov [ForegroundWaitHighWord-GameDataImage],dx ; @004CB
     ret ; @004CF
+; R2 UNCONDITIONAL recovered cleanup census:04D0/04EA do not save/restore61,reset AdLib or explicitly free its block.16A9 restores08 only. DOS4C ends the process;ordinary DOS reclamation ends live allocation ownership,leaving no game-code61 restoration. Private restore0FAE uses mutable1FC6;external/selector/physical aliases remain UNRESOLVED.
 loc_04D0:
 ; Nonreturning cleanup continuation. Keep each child CALL/actual RET word live.
 ; Video-returned DS selects the mouse gate;04EA is also reached by JMP106B.
@@ -804,6 +811,7 @@ CleanupAfterTerminate:
     mov [ss:VgaReadMapMirror-RuntimeStackFrame],ax ; @00549
 VgaMirrorInitializeReturn:
     ret ; @0054D
+; R2: successful AdLib05A4..05B3 returns before Tandy05CA/free05FA.00AB is the sole decoded caller;0570 allocation CF is unchecked,057B installs before058D load. Process-lived A/vector binding is PLATFORM-CONDITIONAL on profile21:AH=0025/0048/0049/003D/003F/0043(AL00),successful services/full pinned cache-off reads,intact saves/returns,separated allocations and no external/alias/unclosed-control writer. Menu/level/session paths do not explicitly reload/free it. Sound bits alone do not prove ownership. See src/sound/adlib.asm R2 and build/static/r2-adlib-life.md.
 ; S18 SOUND-SELECTION INVENTORY (all paths retained):
 ; 054E input2010==FF (/a),or initial5AD8-paragraph DOS48 failure055E,
 ; ->05FC sets2010=0,25A7=1,menu1F71=1: PC speaker. Otherwise free probe
@@ -1597,6 +1605,7 @@ RestorePrivateVector:
     mov al,[PrivateVectorNumber-GameDataImage] ; @00FA3
     mov dx,[SavedPrivateVector-GameDataImage] ; @00FA6
     mov ds,[SavedPrivateVector-GameDataImage+2] ; @00FAA
+; R2:dedicated1FC6 writers supply0C/74,not61;no old61 was saved. This dynamicDOS25 can still replace61 if selector/DS/frame aliases corrupt that domain. Thus absence of literal2561 after057B is not a whole-machine vector-immutability proof.
 RestorePrivateVectorInterrupt:
     int 0x21 ; @00FAE
     pop ds ; @00FB0
@@ -1842,6 +1851,12 @@ loc_1176:
 ; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @01193
+; R3 startup marker: forward0031 leavesDI2012;1293 does not assignDI. Early
+;10E2/10EC/10F6 may therefore store2012=20 and enable2013=20, not a target byte.
+; PROFILE composition needs1A:AH=0000,21:AH=004A,10:AH=0000,21:AH=0002 and
+; optional palette-prompt21:AH=0007, plus intact code/saves/no interference.
+; Normal interactive row cursors239F/23D2/240B/2442/248A miss the pointer words;
+; raw/altered cursors remain unchecked. LoaderDF0 is original evidence.
 ; [01194] DI/SI are unchecked marker cursors. If startup0031 ran forward and services preserved DI, DI=2012 here via10E2/10EC/10F6: word2020 changes RasterMeasurementMode2011 high byte2012 and first DisplayProbeRecords enable2013. Parser1293 changes SI but not DI. This is an original startup-option overlap, not a separate high-byte flag. Arbitrary incoming cursors may hit25A0 or other state; do not replace these stores with fixed menu-row writes.
 MarkStartupOptionAndRedraw:
     mov word [di],0x2020 ; @01194
@@ -2149,6 +2164,13 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
+; R3 conditional table lifetime: DATA-A five0420-byte ground files stop1F6A,
+; excluding their overwrite of2013..201E; request1000 could still replace them.
+; First00C8 measurement precedes GROUND; session0468 follows455D resource load.
+;455B and03E7 do not restore the probe records. VGA alone does not enable2013.
+; With enabled row0,AL1A/active07-or08/alternate00 at1413 disables later rows:
+; only1410 is called, conditional on these actual BIOS results/intact traversal.
+; Preserve broader BIOS/alternative rows; profile preservation fixes no results.
 ; S18 ALTERNATE DISPLAY INVENTORY (main image, not separate CGA/EGA builds).
 ; READINESS CONDITIONAL: original port/BIOS operations are understood locally;
 ; hardware results, DS/DF/DI, live records/saves and writer closure stay open.
@@ -2238,6 +2260,13 @@ loc_13FF:
     jz loc_140B ; @01403
     push si ; @01405
     push cx ; @01406
+; R3 global1407 closure remains UNRESOLVED in CONSERVATIVE and PROFILE. Local
+; forward four-row theorem requires intact target words,DF0 on everyLODS,gameDS,
+; DS/DI2006 preservation and actual savedSI/CX/returns surviving. PROFILE service
+; entries10:AX=1A00,10:AH=0012(BL10),10:AH=000F prove local preservation only.
+; Numeric indexed witness:slotB3 starts1FFF;3140 at2013 writes6170 across enable
+; and target-low, leaving target2014=0061 after30F3 clear. Actual arrival/survival
+; toB3 and IRQ/alias/provider writer domains remain open; no new edge is asserted.
 ; S19 probe-sufficient-df-domain: CONSERVATIVE=UNRESOLVED; PROFILE=PLATFORM-CONDITIONAL.
 ; Explicit entry13DC DF0/gameDS retains DF0/gameDS at1407 under declared BIOS functions in the
 ; serial intact-save domain. This does not prove traversal bounds or pointer writers.
@@ -2676,6 +2705,9 @@ TimerRestoreClockInterrupt:
     int 0x1a ; @016D1
 TimerRestoreReturn:
     ret ; @016D3
+; R1 UNCONDITIONAL local return implication: IRQ09 inherits DF; no CLD or STD occurs in
+; its decoded body.17B3 IRET restores actual interrupted FLAGS. Handler-local DF is not a
+; foreground normalization service. Keep keyboard frame/buffer aliases and nesting separate.
 ; S19 external-08-09: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Two INT08 far chains have caller-built FLAGS/CS/IP and external IRET edges. Undocumented
 ; provider segments/registers and frame aliases remain open. IRQ09 owns IRET;old09 is

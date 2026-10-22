@@ -74,6 +74,11 @@ ApplyLevelHeader:
     mov ah,[di+0x18] ; @0372D
     mov al,[di+0x19] ; @03730
     add ax,0x10 ; @03733
+; R3 DATA-A origin bound:all80 supplied LEVEL headers and120 nominal selected
+; headers yield(headerBE16+18+0010) in0010..04A0,multiples0010. Odd override
+; copies first18 bytes only,retaining this field. Minimap3FBE..3FDB and aligned
+; scroll40E5/414F preserve0010..0500; their equality checks do not clamp corrupt
+; origins. This condition bounds4131 away from2013/25A0,not all writer domains.
     mov [LevelViewOriginPixels-GameDataImage],ax ; @03736
     shr ax,1 ; @03739
     shr ax,1 ; @0373B

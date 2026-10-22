@@ -449,6 +449,10 @@ loc_3422:
     mov al,[ss:si] ; @03477
     mov byte [ss:si],0xa ; @0347A
     inc si ; @0347E
+; R1:3336/action5 stores inherit the DF supplied at foreground calls01AD/01C5. No local CLD,
+; POPF or service precedes them. DF1 makes347F write callback high+15 and3488 low+14; DF0
+; stores nine cells at+16..1E. Actual root DF is UNRESOLVED in both modes. Driver IRET is
+; DF-preserving, not DF-clearing; an intact outer IRQ frame prevents local DF leakage only.
 ; S19 action5-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
 ; With DF1 and stable record/map,347F stores callback high at+15,3488 low at+14: old cell2 OR old
 ; cell1<<8. With DF0 the nine cells write+16..1E instead.

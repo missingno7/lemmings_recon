@@ -3,6 +3,7 @@
 ; Bytes outside this view retain stored encoding and canonical region classifications.
 bits 16
 org 0x066d
+; R1 PLATFORM-CONDITIONAL sufficient DF domain:063E entryDF0,knownDL0/1 floppy paths,\n; original identified TF/INT1/INT3 views and intact nonalias saves retainDF0 on every known\n; normal return with profile13:AH=0000/0002. Sole live setter08D2 clears;070E/0718,094A/096D\n; and0970/0982 restore their own saved FLAGS;INT3 XOR high03 leavesDF intact.\n; CONSERVATIVE disk-return DF is unknown. Actual dynamic views/frames/caller provenance,\n; IRQ scheduling/aliases and absolute/raw write alternatives remain separate obligations.
 ; State inventory (half-open byte ranges; not one simultaneously loaded image):
 ; tf_on: [066D,084D),[0852,087E),[0883,0970),[0D9E,0D9F),
 ;        [0DA2,0DA4),[0DAA,0DAC),[0DB2,0DB3).
@@ -364,6 +365,10 @@ FillProtectionSectorBuffer:
     push cx ; @008CB tf_on
     les di,[bp+0xa] ; @008CC tf_on
     mov cx,0x100 ; @008CF tf_on
+; R1 UNCONDITIONAL TF-on helper result:08CB fill clears DF before08D3 REP STOSW and
+; returns0. This is not a protection-wide CLD:094A saves entry FLAGS,096D POPF restores
+; them after fill;070E/0718 and0970..0982 also preserve their live saved DF. Service-returned
+; DF and actual protected/root composition remain unresolved without their explicit domain.
     cld ; @008D2 tf_on
     rep stosw ; @008D3 tf_on
     pop cx ; @008D5 tf_on

@@ -893,6 +893,11 @@ tandysnd_loc_0031 equ tandysnd_ResetService
 tandysnd_loc_0019 equ tandysnd_SetCommand3Latch
 tandysnd_loc_0021 equ tandysnd_SetCommand4Latch
 tandysnd_loc_0029 equ tandysnd_SetCommand5Latch
+; R1 UNCONDITIONAL returning-path implication: no decoded STD,CLD or POPF in this image.
+; Recognized original returning bodies IRET with interrupted DF, including1; no implicit CLD.
+; Premises: live immutable image/vector, correct recognized dispatch, serial execution and
+; intact disjoint saves/frame. Does not close raw targets, stream termination, header input DF,
+; allocation/free/replacement lifetime, or speaker STI nesting; none is a profile assumption.
 ; S17 flow-state: Tandy is retained as a separate component with independent decoded-edge
 ; state and frontier inventory. INT61 does not normalize DF; driver DS/ES selection and
 ; live saves are explicit. No result here closes98..9F,5958 allocation ownership,

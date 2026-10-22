@@ -16,37 +16,40 @@ audits of 2026-10-22 (static risk map, sound images, native integration,
 methodology), whose findings are folded into the items below; their working
 reports are in build/ and are not a status source.
 
-## Priorities (independent workstreams; supervisor integrates shared metadata)
+## Freeze residue (asm-semantic-oracle-v1, VGA + AdLib first)
 
-1. **Entity record count and 715B.** Field producers, DF-dependent callback
-   byte writers (347F/3488, 4119/4131) and the 715B transport are recorded. Open:
-   the original IRQ race (4013 between 30D5 and 314B) means a header limit of
-   50h does not bound the live count; exclusion of DF=1 at real action and
-   visibility entries; survival of spilled records.
-2. **Sound frontiers.** AdLib, Tandy songs/effects and PC-speaker producers are
-   decoded; 88..AF (AdLib) and 98..9F (Tandy) are excluded only in the serial
-   DF=0 non-alias domain. Open: global 01EA/02BB/0196 domains, DF=1 header
-   reversal, 05A8/0B67/fine-frequency/5630 residue, PC-speaker 0181 and tail.
-3. **Resource lifetimes.** GROUND request 1000h at DS:1B4B can reach DS:2B4A
-   over 2011/2013/201F/25A0/2608/2778 while supplied files end at 1F6A; order
-   bytes 54EE and override storage 5566..66E5 bounds. Underpins 42A5 and 1407.
-4. **Remaining main transfers.** 42A5 input callback lifetime; 4CC9/4D18 saved-BP
-   invariants; 1407 probe traversal (DF, DS, records) and the 2011/2012 word.
-5. **Renderer storage.** DS 66F0..6748, A948/A949 initialization before use,
-   row footprints and DS/ES/SS handoffs; minimap DF=1 clear over checksum code
-   83AF..83C2 versus DF=0 83C1..83D4.
-6. **Consumed but unclassified tables.** Palette pointer tables 52D4/52E4 and
-   rows; point/pair/word-pattern tables 2698/2778/2788/52BC/531C; UI text,
-   keyboard tables (202E overlap), filenames and menu/result streams; CS tables
-   44E9/4877/4EE7/4F8A/5507 (keep 5517..5532 separate).
-7. **Protected storage and transport.** Overlays 098C/0B9C, 16-byte gap, seed
-   0D9C, dynamic INT1/INT3 frames; smallest service model that removes guesses.
-8. **Alternative executables.** Tandy and PC-speaker images classified to the
-   same bar; inventory joystick/port201 and alternate display paths.
-9. **Tooling truth.** graph.py must address C-domain labels and print every
-   frontier/provider seam in bottom-up views; coverage must reconcile its
-   receipts with the difftest registry; verify.py must record its full input and
-   resolved-tool closure.
+Verdict classes and the platform profile are defined in AGENTS.md and
+metadata/platform-profile.json; per-site verdicts sit beside the ASM
+(tools/flowstate.py, both modes).
+
+Closed by original code: loader hands DF=0/IF=1; the only decoded STD (1BB0)
+is reversed before every decoder return; protected POPFs restore their PUSHFs;
+drivers never change DF; AdLib is installed once (00AB->054E) with no reload,
+free or INT61 restore afterwards and cannot be re-entered while executing;
+mode 0 never calls 42A5; exact DF0/DF1 footprints of every DF-sensitive writer.
+So DF=1 has no known origin: it would need control reaching undecoded bytes or
+corrupted saved FLAGS.
+
+Closed only under the platform profile: forward startup clear; DF0/game DS at
+the 1407 detector; AdLib bound as one process-lived instance at IVT61; mode 0
+input DF preservation through INT33 AX=0003. Under the named data assumption
+(original GROUND files are 0420 bytes): no GROUND overwrite of 25A0/2013.
+
+Open, ordered by impact on a faithful VGA + AdLib translation:
+1. **Callback and target domains:** 715B record+14 membership (race, spill,
+   stale selection, byte writers), 42A5/25A0 writers across mode switches,
+   1407 records across sessions, AdLib 01EA under DF=1 or changed pointers,
+   width-0 renderer pass at 8DE9 writing every DS offset.
+2. **The 4013 creation race:** exclusion and survival of spilled records.
+3. **Saved-stack and segment aliases:** survival of saved frames, DS/SS at
+   driver and callback sites, physical heap/VGA/SS ownership.
+4. **Interrupt schedule:** physical cadence, old INT08/INT62/PIC nesting.
+5. **Residual UNKNOWN storage:** 1,902 code-frame bytes, DS residue,
+   protected stored bytes, driver residue, 004A FF producer.
+6. **Alternatives** (inventory in executable.md): Tandy and PC-speaker
+   frontiers 02BB/0196, joystick, alternate display paths.
+7. **Tooling:** coarse flowstate summaries lose return slots on large
+   closures; refine before relying on TOP results there.
 
 Native follow-ups recorded for later, not current priorities: bind entity sound
 services, special-graphics briefing redraw, INT61 rebinding, private IRQ 0F70

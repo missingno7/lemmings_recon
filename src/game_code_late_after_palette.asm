@@ -154,6 +154,12 @@ VgaMirrorFrameOperand5884 equ $+1
     sti ; @058D0
 VgaMirrorRestoreReturn:
     ret ; @058D1
+; R1 UNCONDITIONAL normal-startup continuation implication, both modes:1C78 CLD dominates
+; the recognized returning DAT handoffs.58E0 ->59BB/5CC1,58F9 ->5AC1,590F ->5927/593C,
+; 598A ->59A1/59B7 retain0 through their service-free fixed closures. Thus5815,593C,59B7,
+; 5BBA,5BE2,5CE5,5D6E,5D7F useDF0 on those ordinary58D2 call paths. No predecode DF or
+; profile assumption is needed for this local reset result. Total returns, raw reentry,
+; code/save/source/allocation aliases and IRQ timing remain independent obligations.
 ; [058D2] MAIN RESOURCE LIFETIMES (full pinned reads, intact selectors/saves):
 ; all sections read000Ah header then listed payload into source offset0.
 ; Sec0 payload21D4h/output5270h at[1FE4]:0 ->58E5/58E8 transforms; sec1

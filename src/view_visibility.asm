@@ -10,6 +10,11 @@ RebuildViewVisibilityMap:
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04111
     mov di,ViewVisibilityMapBase-GameDataImage ; @04113
     mov cx,0x68 ; @04116
+; R1: visibility4119/4131 retain entry DF; foreground0480 and IRQ3FDE are distinct callers.
+; In the sufficient serial/intact mouse-mode0/live-AdLib domain, INT33 AX0003 profile plus
+; original driver IRET preserve interrupted d before1840/1872/1874 ->3FDE; visibility sees d.
+; 18A7 POPF and18B1 outer IRET happen afterward. Neither corrects prior DF1 memory writes.
+; This conditional result closes a local handoff only; actual root inputs remain unresolved.
 ; S19 visibility-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
 ; Stable DS=ES:4119 zeroes0EA8..0F77 at DF0 or0DDA..0EA9 at DF1. DF1 destroys callback words
 ; slots4C..4F;4131 writes01 at[0E7E+t,0EA6+t],t=unsigned(origin)>>3.
@@ -39,6 +44,13 @@ RebuildViewVisibilityMap:
     add di,ViewVisibilityMapBase-GameDataImage ; @04127
     mov cx,0x29 ; @0412B
     mov ax,0x101 ; @0412E
+; R3 UNCONDITIONAL footprint:marker start0EA6+t,t=unsigned(origin)>>3,29 bytes
+; followingDF. DATA-A nominal headers produce0010..04A0 aligned10h; normal
+; minimap/scroll producers preserve0010..0500 aligned8. With intact producers,
+; t2..A0 gives DF0 union0EA8..0F6E orDF1 union0E80..0F46, missing2013/25A0.
+; Corrupted origin can hit them:DF0 t1145..116D for2013,16D2..16FA for25A0;
+; DF1 t116D..1195/16FA..1722. These are numeric witnesses,not normal reachability
+; or a general origin clamp. Record overlap/DF1/race obligations remain separate.
 ; S19 visibility-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
 ; Stable DS=ES:4119 zeroes0EA8..0F77 at DF0 or0DDA..0EA9 at DF1. DF1 destroys callback words
 ; slots4C..4F;4131 writes01 at[0E7E+t,0EA6+t],t=unsigned(origin)>>3.

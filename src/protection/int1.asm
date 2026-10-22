@@ -72,4 +72,7 @@ protected_loc_0E36:
     pop ds ; @00E36 int1_plaintext
     pop si ; @00E37 int1_plaintext
     pop ax ; @00E38 int1_plaintext
+; R1: CPU interrupt entry retains DF; this plaintext handler has no DF writer. Actual IRET
+; restores saved DF. INT3 high-FLAGS XOR03 at0DDC changes TF/IF, not DF bit04. These local
+; facts do not certify dynamic interrupted CS:IP, stack aliases or IRQ interleavings.
     iret ; @00E39 int1_plaintext

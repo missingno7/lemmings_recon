@@ -1,5 +1,12 @@
 ; Maintained 706F..715E entity sprite parent; physical order unchanged.
 times -(($-$$) != 0x706f) db 0 ; module start assertion
+; R3 nine-target membership remains conditional:DATA-A nominal order/header,
+; forward reset,serialized count/limit publication,genuine record/selection,
+; initialized slot preservation,DF0 at action5 and every visibility entry,and
+; no other indexed/resource/frame writer. AdLib+mode0 does not close these.
+; Independent transport:70F0 sample atSS:S-6 and stripDS atS-12 must survive;
+; rawS000E mirror overwrite0F02 remains valid outside proved stack placement.
+; Both flowstate modes retain global TOP/target_domain_complete=false.
 ; CONTRACT: live DS:DI entity record; +00/+04 form wrapped X for visibility,
 ; +02/+06 form signed-clamped Y. +28 plus optional +29 selects the frame;
 ; +27==1 suppresses that add, +2A==FF suppresses eight-way alignment scaling.

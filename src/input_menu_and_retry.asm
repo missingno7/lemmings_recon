@@ -273,6 +273,10 @@ LoadAndStartSelectedLevel:
     mov di,0x0 ; @04553
     mov cx,0xfca ; @04556
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04559
+; R1 UNCONDITIONAL input implication:4551 PUSHDS/POPES,DI0,CX0FCA,AL0 leaves DF unchanged.
+; DF0 clears0000..0FC9; DF1 starts at0000 then wrapsFFFF downward. No local CLD.
+; Actual ProgramEntry-to-entry DF remains UNRESOLVED in both modes; loader DF0 is not enough
+; to bridge protected/provider/callback returns. Retain segment/code/save alias obligations.
 ; S19 level-clear-and-copies: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Level clear,odd-header and28-byte object copies use live DF/segments. Loader and service
 ; declarations do not certify complete actual entry/ownership domains.

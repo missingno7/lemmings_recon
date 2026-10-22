@@ -1,6 +1,10 @@
 ; Maintained image span 05D66..0616F: generated masks and entity pixel drawing.
 ; Reconstruction module, not a historical linker claim. See docs/entity-mask.md.
 times -(($-$$) != 0x5d66) db 0 ; module start assertion
+; R1:5D66 is called only at5B06 in5AC1; sole5AC1 caller58FE follows normal DAT return
+; at58F9 (CLD1C78). Its5D6E LODSB/5D7F STOSW therefore useDF0 on that original normal
+; startup chain in both modes. Raw-entry adapters must still preserve their declared DF1
+; domain; this is no allocation, stack/source separation or global arbitrary-entry proof.
 ; DS:SI source, ES:DI output, BL repetitions, CX rows; DH starts at zero.
 ; LODSB and STOSW both follow DF. All SS saves/controls and final RET stay live.
 ; AX/BX/CX/DX/SI/DI/flags are outputs; DS/ES/SS/BP unchanged. No loop caps.

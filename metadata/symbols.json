@@ -5085,7 +5085,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Original DAT call return/fatal continuation; live stack residue in c/dat_section.c",
-      "04D0..04F8 has five live near calls, mouse conditional and DOS09/4C termination; no outerRET. Separate suffix at04EA; docs/fatal-cleanup.md"
+      "04D0..04F8 has five live near calls, mouse conditional and DOS09/4C termination; no outerRET. Separate suffix at04EA; docs/fatal-cleanup.md",
+      "R2: UNCONDITIONAL recovered04D0/04EA cleanup has no saved61 read,AdLib reset,sound-block DOS49 or explicit61 restoration. No decoded literal3561 exists;dynamic0FAE uses mutable private selector1FC6 (dedicated producers0C/74),so selector/physical aliases remain UNRESOLVED.21:AH=004C is the profile's nonreturning exit;ordinary DOS process reclamation ends A ownership without any game-code61 restoration. External vector cleanup/reuse is a separate platform dependency,not perpetual live driver ownership. build/static/r2-adlib-life.md. Append evidence only; retain41-byte extent."
     ],
     "verification_status": "TESTED",
     "c_implementation": "c/fatal_cleanup.c",
@@ -8915,7 +8916,8 @@
     "evidence": [
       "Static direct call target",
       "PUSHDS/CLI, PIT byte outputs43:36/40:00/40:00, liveLES saved vector, IVT08 writes, unconditionalSTI/livePOPDS, saved BIOS clock INT1A/AH01; docs/timer-restore.md",
-      "Additional c/timer_tail.c full-register INT1A cleanup API preserves actual software-INT/IRET transport and composes installer/IRQ lifecycle; older abstract BIOS API remains separately scoped; docs/timer-install.md"
+      "Additional c/timer_tail.c full-register INT1A cleanup API preserves actual software-INT/IRET transport and composes installer/IRQ lifecycle; older abstract BIOS API remains separately scoped; docs/timer-install.md",
+      "R2: UNCONDITIONAL recovered-code effect writes IVT08 at0000:0020/0022 and restores PIT/BIOS clock,not IVT61.02FB calls it before030F's optional AX0200 reset;this does not free/reload the process-owned AdLib object. PROFILE1A:AH=0001 plus intact actual saves is needed for the nominal returned segment/IF handoff;it does not close saved-stack/IVT aliases or IRQ/provider races. build/static/r2-adlib-life.md. Append evidence only; retain43-byte extent and prior alias tests."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 43,
@@ -66681,7 +66683,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "3736 stores wrapped header+18 word plus10;7BCF subtracts it from object X and7A5A/7AAF shift it for display addressing."
+      "3736 stores wrapped header+18 word plus10;7BCF subtracts it from object X and7A5A/7AAF shift it for display addressing.",
+      "R3 UNCONDITIONAL code implication / DATA assumption A: all80 supplied base LEVEL headers and120 nominal selections produce origin0010..04A0 aligned10h at3736; override replaces only first18h bytes. 03E7 provisional0218, minimap3FBE..3FDB and normal aligned scroll preserve0010..0500, excluding4131 writes to2013/25A0 only while these producers, DS and saves survive. Equality guards do not clamp corrupt origins; actual global writer closure remains UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67104,7 +67107,8 @@
     "evidence": [
       "30CF selects slot0088+[0043]*2D;314B increments after producer;1F2E loop bound includes inactive slots; unchecked extent. docs/entity-simulation.md",
       "Live byte0043:DF-clear0031/455B reset;314B INC publishes a completely cleared/initialized new slot.30CF reads index; no inactive-slot reuse, decrement or compaction in decoded producer/deactivators.1F2E/3637/3CDE consume bound including inactive slots. Stable byte bound n walks[0088,0088+2D*n), max exclusive2D5B; constructor indexFF reaches2D5B..2D87 then wraps bound00. Physical storage extent and service/alias/UNKNOWN writers remain unproved;50h is only the disjoint prefix before0E98, not a checked maximum.",
-      "S12: byte0043 is reset by forward455B and incremented only after completed constructor stores at314B in the decoded direct domain; inactive slots retain their count. With stable starting B and limit L, (L-B)&FF publications precede equality; fresh B0 never wraps for stable byte L. Nominal pinned headers<=50 bound the prefix only with serialized limit writes: IRQ1874->4013 after30D5 and before314B can install limit B then publish B+1, defeating the stop and permitting subsequent spill. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness."
+      "S12: byte0043 is reset by forward455B and incremented only after completed constructor stores at314B in the decoded direct domain; inactive slots retain their count. With stable starting B and limit L, (L-B)&FF publications precede equality; fresh B0 never wraps for stable byte L. Nominal pinned headers<=50 bound the prefix only with serialized limit writes: IRQ1874->4013 after30D5 and before314B can install limit B then publish B+1, defeating the stop and permitting subsequent spill. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
+      "R3 UNCONDITIONAL recurrence: byte-indexed0088+2D*count,equality-only limit,314B publication wrap. DATA assumption A nominal header<=50 bounds prefix0088..0E97 only with stable counters/cursors and serialization of30CC..314B against4013. Profile grants no serialization. Spill50 overlaps spawn/visibility; numericB3/D3 footprints reach probe/input storage,but later corrupted-state survival is UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67170,7 +67174,8 @@
     "evidence": [
       "36CD stores header+02 low byte;30CC/01E7 compare with created-record counter0043;4013 replaces it with that counter. No host array bound implied.",
       "0404 provisionalC8;36CD takes only loaded header+03 into0047;4013 copies current0043 to stop creation.30D3 tests equality, not unsigned less-than and not a capacity clamp;01EA also compares. A fresh zero counter and unchanged limit L append indices0..L-1, conditional on intact writer/segment/cursor state. No limit<=50h is established.",
-      "S12: 0404 provisional C8 is overwritten by36CD from header byte+03 before known first creation0483; high header byte discarded. All80 pinned base sections and40 nominally selected forward odd overrides have high00 and limit<=50h (80 decimal). Other40 odd rows hold0063 (99 decimal); arbitrary header low byte permits00..FF.4013 snapshots current0043 to stop creation, but IRQ timing after30D5/before314B can put the published bound above that equality-only limit. No constructor clamp. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness."
+      "S12: 0404 provisional C8 is overwritten by36CD from header byte+03 before known first creation0483; high header byte discarded. All80 pinned base sections and40 nominally selected forward odd overrides have high00 and limit<=50h (80 decimal). Other40 odd rows hold0063 (99 decimal); arbitrary header low byte permits00..FF.4013 snapshots current0043 to stop creation, but IRQ timing after30D5/before314B can put the published bound above that equality-only limit. No constructor clamp. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
+      "R3 UNCONDITIONAL:36CD uses only loaded header low byte;4013 snapshots live0043. Nominal supplied120 headers<=50 is a separate DATA assumption A,not a guard. IRQ4013 after30CC sampling before314B publication can step count past the new limit;no barrier/recheck. Actual scheduling/exclusion and later spill survival remain UNRESOLVED under both flowstate modes."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70244,7 +70249,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "InitializeSoundDriver writes2010=00/FF and25A7=01/03 at05A4..0606;2E4B/2E52 and2E9F/2EA6 read these live gates; masks are preserved, not a boolean normalization"
+      "InitializeSoundDriver writes2010=00/FF and25A7=01/03 at05A4..0606;2E4B/2E52 and2E9F/2EA6 read these live gates; masks are preserved, not a boolean normalization",
+      "R2: UNCONDITIONAL original producers05A4/05CE setFF for successful AdLib or Tandy replacement,05FC sets00 for speaker. This byte does not identify which executable owns IVT61 or prove a live allocation. PLATFORM-CONDITIONAL successful AdLib admission retains one0567-paragraph DOS block/vector across menus/levels/sessions; profile21:AH=0025/0048/0049/003D/003F/0043(AL00), successful services/full pinned cache-off reads, intact saves/returns, separated allocations and no external/alias/control writer required.05CA replacement and05FA free are excluded only on that admitted branch, never globally. build/static/r2-adlib-life.md and src/sound/adlib.asm R2 contract. Append evidence only; retain existing name/extent."
     ],
     "verification_status": "STATIC"
   },
@@ -70278,7 +70284,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes",
-      "Stored four enable-byte/near-word records:2013:00,1410;2016:00,1462;2019:00,1490;201C:00,14A0. 13F8/13FB set CX4/SI2013;13FF TEST/1402 LODSW preserves enable ZF. DS-frame, DF=0 at every LODS, preserved SI/CX saves and intact pointers close1407 locally. 13E9/13EE/13F3 enable only last three. 1194 with DI2012 can set first enable20. Known probe writers only change enables/pairs under preserved DS/DI; BIOS changes, GROUND request, unchecked record179, strings/stack/UNKNOWN paths prevent whole-lifetime closure."
+      "Stored four enable-byte/near-word records:2013:00,1410;2016:00,1462;2019:00,1490;201C:00,14A0. 13F8/13FB set CX4/SI2013;13FF TEST/1402 LODSW preserves enable ZF. DS-frame, DF=0 at every LODS, preserved SI/CX saves and intact pointers close1407 locally. 13E9/13EE/13F3 enable only last three. 1194 with DI2012 can set first enable20. Known probe writers only change enables/pairs under preserved DS/DI; BIOS changes, GROUND request, unchecked record179, strings/stack/UNKNOWN paths prevent whole-lifetime closure.",
+      "R3 UNCONDITIONAL schema/lifetime: startup1194 DI2012 can set first enable20 without changing pointer words; level reset/session setup do not restore records. DATA assumption A excludes supplied GROUND overwrites. SlotB3 base1FFF clears records and3140=6170 yields first target0061. Local forward traversal requires intact pointer words,DF0/gameDS/DI2006 and savedSI/CX/returns. PROFILE entries10:AX=1A00,10:AH=0012(BL10),10:AH=000F preserve only the stated local domain. Global writer/race/alias closure remains UNRESOLVED."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71130,7 +71137,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional",
-      "4252 stored word; direct4A68/4A80 install4334/4359 before publishing mode1 and calibration. Mode0/2/escape do not restore it. 42A1 samples before PUSH DX and CALL42A5. Known set is closed only if these are the last writes of both bytes in canonical DS and no intervening register/code change. GROUND file offsets0A55/0A56 and unchecked creation slot211 SI259F (clear30F3 and coordinate stores30FB/3100) are concrete other writers under named entry domains, not startup reachability claims. Raw strings, marker cursors, other indexed stores, provider/IRQ/physical aliases and UNKNOWN execution remain open."
+      "4252 stored word; direct4A68/4A80 install4334/4359 before publishing mode1 and calibration. Mode0/2/escape do not restore it. 42A1 samples before PUSH DX and CALL42A5. Known set is closed only if these are the last writes of both bytes in canonical DS and no intervening register/code change. GROUND file offsets0A55/0A56 and unchecked creation slot211 SI259F (clear30F3 and coordinate stores30FB/3100) are concrete other writers under named entry domains, not startup reachability claims. Raw strings, marker cursors, other indexed stores, provider/IRQ/physical aliases and UNKNOWN execution remain open.",
+      "R3 UNCONDITIONAL: mode0 bypasses42A5 without reading this word;4ABD does not restore it. Stored4252 and direct4A68/4A80=4334/4359 remain a last-writer domain only. DATA assumption A excludes GROUND overrun; nominal-origin theorem excludes4131. SlotD3 numerically overlaps this word and changes25A6 too; arrival/survival, indexed/string/stack/provider/IRQ closure remain UNRESOLVED.33:AX=0003 PROFILE preservation does not close writers."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71181,7 +71189,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "418C selects0 mouse/1 indirect callback/other accelerated keyboard;0F64 fallback2;4A6D/4A85/4AB5/4ABD writers",
-      "Stored00;0F64/4AB5 write02,4ABD writes00,4A6D/4A85 write01 BEFORE calibration.418C/4196 select00 mouse,01 callback,all other bytes keyboard; briefing/result prompts use00/01/other. Selection does not restore25A0/baselines. Excluded from ordinary startup/level clear; GROUND maximum and general indexed/string/SS/provider writers remain. No boolean normalization or closed three-value raw domain."
+      "Stored00;0F64/4AB5 write02,4ABD writes00,4A6D/4A85 write01 BEFORE calibration.418C/4196 select00 mouse,01 callback,all other bytes keyboard; briefing/result prompts use00/01/other. Selection does not restore25A0/baselines. Excluded from ordinary startup/level clear; GROUND maximum and general indexed/string/SS/provider writers remain. No boolean normalization or closed three-value raw domain.",
+      "R3 UNCONDITIONAL: observed0 at418C routes direct4252;1 routes42A5;others keyboard. Successful initial mouse configuration and4ABD selection do not make this immutable or restore25A0. Constructor slotD3 base259F clears mode then3134 record+06=FFF6 leaves25A6=FF. This is a numeric writer witness; actual high-slot survival and whole-session mode persistence remain UNRESOLVED."
     ],
     "verification_status": "STATIC"
   },
@@ -71198,7 +71207,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "InitializeSoundDriver writes2010=00/FF and25A7=01/03 at05A4..0606;2E4B/2E52 and2E9F/2EA6 read these live gates; masks are preserved, not a boolean normalization",
-      "StoredFF;0591/0601 write01,05A9/05D3 write03;44E3 writes live CS44E9+unchecked ordinal (nominal00/01/03).0289 writes00 before0295 rereads it;02A6 conditionally writes03. Entity/game/timer gates test masks01/02/03;4E5A reads for menu graphics. Separate from driver-presence2010 and menu ordinal1F71. Process-persistent, excluded ordinary clears; GROUND/file-export/cache/indexed/SS/provider channels remain explicit."
+      "StoredFF;0591/0601 write01,05A9/05D3 write03;44E3 writes live CS44E9+unchecked ordinal (nominal00/01/03).0289 writes00 before0295 rereads it;02A6 conditionally writes03. Entity/game/timer gates test masks01/02/03;4E5A reads for menu graphics. Separate from driver-presence2010 and menu ordinal1F71. Process-persistent, excluded ordinary clears; GROUND/file-export/cache/indexed/SS/provider channels remain explicit.",
+      "R2: UNCONDITIONAL decoded roles: gates command/update delivery,not driver allocation/lifetime.0289 clears00 before0295 tests&3 (029F bypassed in serial stable state);02A6 can set03 without checking live driver ownership;03B9/03BE require bit02 only,030F reset is gated,1872 requires2010==FF and&3.44E3 changes bits without reload/free;menu4C47 has no61 update. Individual live-AdLib calls exclude maskable IRQ reentry through original INT IF-clearing/no-STI engine; separate calls remain timing-dependent (03B9->03BE; foreground effects vs IRQ3F7A single F0 latch). Aliases,unknown dispatch and real IRQ/provider domains remain UNRESOLVED. build/static/r2-adlib-life.md. Append evidence only; retain existing name/extent."
     ],
     "verification_status": "STATIC"
   },

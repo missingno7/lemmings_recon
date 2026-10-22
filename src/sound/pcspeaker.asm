@@ -226,6 +226,11 @@ pcspeaker_EffectRecords:
     db 0x70,0x0a,0x90,0xf5,0x55,0x00,0x07,0x00,0x01 ; @00178
 ; UNKNOWN:0181 stored90;no intended role/entry. RawAL17 copies it with code.
     db 0x90 ; @00181
+; R1 UNCONDITIONAL returning-path implication: no decoded STD,CLD or POPF in this image.
+; Recognized original returning bodies IRET with interrupted DF, including1; no implicit CLD.
+; Premises: live immutable image/vector, correct recognized dispatch, serial execution and
+; intact disjoint saves/frame. Does not close raw targets, stream termination, header input DF,
+; allocation/free/replacement lifetime, or speaker STI nesting; none is a profile assumption.
 ; INT60 dispatcher contract (0182..01AF), with quiescent asynchronous IRQs:
 ; STI precedes live SS saves BX/CX/DX/SI/DI/DS and PUSH CS / POP DS.
 ; AH 00..10 doubles original AH for an unchecked word at DS:[001E+BX].

@@ -56,6 +56,7 @@ DisplayStartFirstOutput:
     sti ; @04C45
 DisplayStartReturn:
     ret ; @04C46
+; R2 UNCONDITIONAL recovered-menu contract: this timer polls input/chains but has noINT61 or call of the AdLib updater. Installed61/allocation persist in the conditional successful-AdLib process domain;menu entry is not a reload/reset/free. Real old08/provider effects remain UNRESOLVED.
 MenuTimerIrqHandler:
 ; CONTRACT: eight saves AX/BX/CX/DX/SI/DI/BP/DS, then relocated4C50 loadsDS.
 ; No ES or entryFLAGS save. Shared1FE3 increments modulo4; zero sendsEOI,
@@ -312,6 +313,9 @@ loc_4D45:
     xlatb ; @04D4B
 KeyboardCharacterReadyReturn4D4C:
     ret ; @04D4C
+; R1: all four stream LODSB sites4D4D/4D56/4D59/4D65 inherit stream-entry DF through
+; glyph4D78 ->8822. No boundary CLD. Fixed local input-direction implication is unconditional;
+; actual root DF, live stream/source/return ownership and unchecked glyph lookup remain open.
 ; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
 ; actual whole-machine DF/segment inputs.
 ; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame

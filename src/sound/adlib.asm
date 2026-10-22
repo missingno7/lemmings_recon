@@ -22,6 +22,72 @@
 ; Its mutable state lives in that segment from decode until reload/release;
 ; reset/song start clear selected fields only, never a fresh state object.
 ;
+; R2 MAIN -> ADLIB OWNERSHIP / CONCURRENCY (build/static/r2-adlib-life.md).
+; Verdicts below name their premises; the platform profile is not a proof of
+; allocation success, vector immutability, stack safety or IRQ scheduling.
+; UNCONDITIONAL instruction/CFG facts: main00AB is the sole decoded caller of
+; 054E.0570 requests0567 paragraphs;057B installs AX:0000 BEFORE058D load.
+; Allocation CF at0570 is unchecked. The earlier5AD8 probe equals0567+5571
+; (driver plus main1007 graphics request), but does not replace DOS success.
+; The allocation segment A is a DOS result, never a fixed2911 or gameDS.
+; Pinned AdLib occupies[A:0000,A:566D); allocation ends5670,leaving3 bytes
+; whose existence alone gives no stored role. No driver relocation is needed.
+; Detection059D returnsAL1/0;main059F tests it,05A1 pops savedA without
+; changing ZF. Success05A4..05B3 returns, skipping05CA replacement/05FA free.
+;
+; PLATFORM-CONDITIONAL process ownership: require exact profile entries
+;21:AH=0025/0048/0049/003D/003F/0043 (AL00 qualifier for0043), successful
+; ordinary DOS allocation/free/vector services and complete pinned DAT reads,
+; cache-disabled startup, intact actual saves/returns, separated allocations,
+; and no unclosed transfer, alias or external writer changing A/code/IVT61.
+; Then the selected AdLib block/vector persists across menus, level clears and
+; sessions. No decoded post-success path calls054E/reloads it or explicitly
+; frees it. Main16A9 restores only IVT08;02CD..0311 optionally sendsAH02,
+; never deallocates. Main04D0/04EA exit cleanup neither saves nor restores61;
+; no decoded3561 exists. DOS4C ends the process; later allocation reclamation
+; is a DOS effect, not perpetual ownership. A dangling61 on fallback05FA and
+; after process reclamation is not an installed-live-AdLib domain.
+; Dynamic DOS25 at0F60/0FAE uses live1FC6 (ordinary0C/74,not61); corruption
+; of that byte or physical IVT/save aliases still defeats vector immutability.
+;
+; UNCONDITIONAL interface implication for intact recovered paths: softwareINT
+; saves FLAGS/CS/IP on CALLER SS,clearsIF/TF and retainsDF. The recovered
+; driver contains noSTI/POPF/INT/SS switch. AH03/04/05 setDS=actualCS and
+; restore callerDS;AH02 similarly ownsDS;AH00 ownsDS=ES=actualCS. Caller
+; DS/ES need not name A; the caller stack is never switched to driver memory.
+; On returning nonalias paths, all six services preserveDS/ES/SS and live
+; IRET flags. AH00/02/03/04/05 returnAH0 and unchangedAL;detect returns
+; AX2101/2100, BX8000|(first_status&E0),CX0,DX0388. See body save contracts.
+; Absolute mainDS=relocated09A9,SS=relocated143E at EVERY61 is UNRESOLVED
+; in both flowstate modes; local saves/service declarations are not a global
+; segment theorem. Main229E/24CE/2A68/2D0B have localESA000 in the decoded
+; serial projection; other callerES values must remain live,not standardized.
+;
+; UNCONDITIONAL maskable-IRQ exclusion while execution remains in this engine:
+; IF stays0 until the finalIRET. Thus a foreground61 cannot be preempted by
+; timer17C7->1872,even though the MAIN handler hasSTI windows. IRQ-driven
+; update and foreground latch/reset commands do not interleave inside AdLib.
+; This is an original-code exclusion,not an IRQ-at-poll host policy. NMI,
+; changed frames/code,escaped01EA dispatch and external/reentrant raw entries
+; remain UNRESOLVED; no platform assumption closes those writer/race domains.
+; SeparateINTs are NOT one transaction:1872 may consumeED after03B9 and
+; before03BE,then03BE advances another update. F0 is one last-writer latch;
+; foreground effects and IRQ3F7A may replace a pending request between updates.
+; IRQ3F7A runs AFTER1872,so that new effect waits for a laterAH00. Never add
+; a host queue or collapse the foreground update into a nominal timer tick.
+;
+; UNCONDITIONAL ordering:1872 suppliesAX0000 once per17C7 invocation reaching
+; gates2010==FF and25A7&3;001C odd gates ONLY185F/INT60. Input1840 precedes
+; it,commands1874 follow;outer chain/EOI occurs later. Menu4C47 has no61.
+; Actual delivered cadence/PIT/retrace/provider/nesting remains UNRESOLVED.
+; Sound options gate calls,not allocation or a fresh state lifetime;029F's
+; ordinary guard is false after0289 zeroes25A7,030F reset is also gated.
+; All28 main sites are listed in the R2 report;05E1/05E5/05EB/05EF/05F3
+; belong only to Tandy replacement,not the successful AdLib path. No mainAH05.
+; READINESS: CONDITIONAL for this live-image composition; unrestricted whole
+; driver/DF/alias/IRQ/provider closure remains UNRESOLVED. Muted/unbound sound
+; still omits original playback/OPL effects; this contract does not renew C tests.
+;
 ; INT61 schema (AL is a byte; dispatch delivers AH=0 to recognized bodies):
 ;   AH00 ->0115: process song then effect requests, advance one update.
 ;   AH01 ->00A3: OPL detection; returns AL=01/00, clobbers AX/BX/CX/DX.
@@ -908,6 +974,11 @@ adlib_loc_003A equ adlib_ResetService
 adlib_loc_0022 equ adlib_SetCommand3Latch
 adlib_loc_002A equ adlib_SetCommand4Latch
 adlib_loc_0032 equ adlib_SetCommand5Latch
+; R1 UNCONDITIONAL returning-path implication: no decoded STD,CLD or POPF in this image.
+; Recognized original returning bodies IRET with interrupted DF, including1; no implicit CLD.
+; Premises: live immutable image/vector, correct recognized dispatch, serial execution and
+; intact disjoint saves/frame. Does not close raw targets, stream termination, header input DF,
+; allocation/free/replacement lifetime, or speaker STI nesting; none is a profile assumption.
 ; Maintained command contract: C prefix dispatches all AH bytes; AH0/1/2
 ; stop at untranslated update/detect/reset entries. AH3/4/5 compose the live
 ; stack setter tails; AH6..FF return after five DEC AH operations (AX is live).

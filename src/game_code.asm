@@ -2185,6 +2185,12 @@ loc_3059:
 EntityInteractionThirdSoundReturn:
 loc_30A5:
     ret ; @030A5
+; R3 primary configuration does not close capacity:DATA-A nominal headers<=50
+; imply0088..0E97 only with stable counters/cursors and serialization of30CC
+; limit sample through314B publication against1874->4013. PROFILE preserves
+; services,not this original race; later spill survival remains UNRESOLVED.
+; SlotB3 numerically overlaps probe records;slotD3 overlaps25A0 and mode25A6.
+; Do not infer these indices are reached,or clamp the original equality-only gate.
 CreateEntityRecordIfDue:
 ; Record producer for the update and drawing consumers above.
 ; Gate002B must differ from FF;0055 must equal FF. Byte DEC0048 wraps and

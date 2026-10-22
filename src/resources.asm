@@ -206,6 +206,12 @@ SelectionAfterOddOverrideRead:
     mov cx,0xc ; @019F0
     push ds ; @019F3
     pop es ; @019F4
+; R1 PLATFORM-CONDITIONAL: on the normal197D resource call chain these two copies use DF0,
+; independently of197D entry DF.1B79/1BA9 return via1C78 CLD;19C6 close and19DC raw read
+; preserve it under21:AH=003D/003F/003E of dos-vga-adlib. Normal intact continuations required.
+; 19F5 copies12 forward words to0FCB,19FE16 to17AB; source advances38 bytes altogether.
+; Index/short-read/segment/alias/reentry obligations remain; CONSERVATIVE actual DF is unresolved.
+; Coarse flowstate TOP from return-word widening is not evidence against this local reset proof.
 ; S19 level-clear-and-copies: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Level clear,odd-header and28-byte object copies use live DF/segments. Loader and service
 ; declarations do not certify complete actual entry/ownership domains.
@@ -249,6 +255,12 @@ loc_1A00:
 ; leave even intended GROUND metadata stale. No requested count is clamped.
     lea ax,[GroundResourceBuffer-GameDataImage] ; @01A11
     mov cx,0x1000 ; @01A15
+; R3 separate DATA assumption:ground0o.dat,ground1o.dat,ground2o.dat,ground3o.dat,
+; ground4o.dat are each0420 bytes,so ordinary returned data ends1F6A. Original
+; request1000 still permits2013..201E and25A0/25A1 overlap for longer inputs.
+; Short reads retain suffixes. This exclusion needs intact destination saves and
+; DOS bounded-buffer effects;platform-profile preservation alone is not a file
+; length/content or allocation/alias proof. See r3-writers.md named input hashes.
 ; Cross-lifetime control storage: GROUND request1000 at DS1B4B reaches2B4A. Returned file offsets04C6/04C7 overwrite word2011,04C8..04D3 overwrite probe records2013..201E,0A55/0A56 overwrite input callback25A0/25A1. Supplied420-byte files end1F6A and do not touch these fields. Short reads preserve suffix; longer/changed provider reads invalidate the intact-table/callback target domains; preserve request1000 and live returned segment/save effects.
     call ReadRawResourceFile ; @01A18
 SelectionAfterGroundRead:
@@ -574,6 +586,11 @@ sub_1BAD:
 ; saved BX/DS/return words remain ordinary writable memory, not cached values.
 DecodeDatSection:
     push bx ; @01BAF
+; R1 UNCONDITIONAL (fixed original serial stream): the only decoded STD across main/protected/three drivers.
+; Its CALL1BB9 reaches six saves1D2E..1D33 then CLD1D34 before any string/service/branch.
+; Normal decoder RET1C79 is immediately preceded by CLD1C78. Reverse tokens use explicit DEC.
+; Failure1BBE/1BED ->1C7A ->04D0 requests DOS termination, not a DF1 returning decoder path.
+; An IRQ can inherit DF1 in the transient window; neither a profile nor this barrier excludes it.
 ; S19 decoder-reset-barriers: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
 ; STD1BB0 is transient:1BB9 calls1D2E,CLD1D34 before DOS/cache selection;normal decoder return
 ; CLD1C78. This is not a demonstrated returning foreground DF1 origin.
@@ -876,6 +893,10 @@ loc_1D22:
 ; remain open.
     mov dx,DatFileErrorMessage-GameDataImage ; @01D28
     jmp loc_1949 ; @01D2B
+; R1: CLD1D34 is a local reset before cache/direct reads. PROFILE21:AH=0023/003F
+; keeps DF0 through1DEF/1E00 and normal returns1E10/1E1B; CONSERVATIVE provider DF is unknown.
+; Name/cache-selection strings1E1C..1ECF precede this reset and retain their own input contract.
+; No allocation/read-completeness or uninterrupted-lifetime invariant follows.
 ReadDatBytes:
 ; RESOURCE FOOTPRINT SEAM: a cache hit copies requested CX bytes even beyond
 ; the descriptor's stored supplied length. A cache miss may requestFFFF bytes

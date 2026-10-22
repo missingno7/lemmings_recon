@@ -26,6 +26,10 @@ times -(($-$$) != 0x796f) db 0 ; module start assertion
 ; ownership remains an obligation; constructed fixture services cannot close it.
 UpdateMinimapColumn:
     push ds ; @0796F
+; R1:7970 is LEA DI,83C1; the DF-sensitive clear is REP STOSW797B with CX0A,AX0,ES=CS.
+; It inherits796F entry DF: DF0 writes83C1..83D4; DF1 writes83AF..83C2 including checksum
+; instructions and83B7. Actual foreground DF and a later8363 invocation remain unresolved
+; in both modes. No driver supplies an implicit CLD.
 ; S19 minimap-footprints: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
 ; 796F sets ES=CS,DI83C1,AX0,CX0A. DF0 clears83C1..83D4;DF1 clears83AF..83C2 over checksum
 ; instructions/limit83B7.
