@@ -1571,6 +1571,7 @@ loc_0F64:
     ret ; @00F6E
 MouseEventReturn:
     retf ; @00F6F
+; U1 private wrapper has noEOI:CPU6+DS/AX4+INT62 frame6 gives16+B62 at provider entry. Restore arm peaks16 locally;58D0 STI shadows itsRET, reopening at0F9C with12 resident (then10/8/6). EOI of IRQ4/vector0C or configuredIRQ12/vector74 belongs to the external provider; self-nesting needs that release plusIF1 and a new request. INT62's own stack switching/high-water mark and IF/PIC behavior are unknown; normal returnedSS:SP cannot bound its transient use.
 ; UNCONDITIONAL local costs: CPU6 +DS/AX4;INT62 adds CPU6,so16 bytes before its unknown internal use. Restore arm PUSH DX/CALL587F and587F savedCX (ES uses CX) also peaks16 including outer frame. UNRESOLVED INT62 returned SS:SP and nested/provider stack use. RETF callback0F6F has zero local pushes;its external far caller owns the4-byte frame and choice of stack.
 MouseIrqBridge:
 ; 48 bytes/20 sites. See docs/mouse-irq-bridge.md for installed INT62 provenance.
@@ -2742,6 +2743,7 @@ TimerRestoreClockInterrupt:
     int 0x1a ; @016D1
 TimerRestoreReturn:
     ret ; @016D3
+; U1 keyboard costs include CPU6:200A0 gives peak16 and no STI;200A!=0 gives peak20, but helper wait17BE runs IF0. First helper16E6 ends STI17BC/shadowed RET, exposing scan-save depth16 before EOI; IRQ0 may preempt, IRQ1/lower remain PIC-blocked. After EOI17A0->18B4, IF is already1: same/lower admitted requests may enter at18B6 with16 resident. Second helper17AC/PUSH AX17B4 leaves18 resident at17B5 beforeCLI, permitting a late fresh IRQ1 or IRQ0 there. This18-byte recurrent window is not the IF0 controller wait; after STI/shadowed RET17BD,17AF retains14. Each recurrence needs a new request and the appropriate PIC priority/IF boundary; physical arrival bounds unresolved.
 ; UNCONDITIONAL intact-control serial stack cost: CPU6 +four register saves8 +CALL17B4/its PUSH AX/CALL17BE6 =20 bytes. Scan AX temporary is popped before later calls. No polling iteration adds words. EOI17A0 precedes optional17AC helper;17BC STI shadow covers17BD RET,then an eligible IRQ can precede outer POPs. UNRESOLVED physical nesting and provider/frame aliases;do not assume this handler can occur only once over a timer.
 ; R1 UNCONDITIONAL local return implication: IRQ09 inherits DF; no CLD or STD occurs in
 ; its decoded body.17B3 IRET restores actual interrupted FLAGS. Handler-local DF is not a

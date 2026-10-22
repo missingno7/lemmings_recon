@@ -16,45 +16,42 @@ audits of 2026-10-22 (static risk map, sound images, native integration,
 methodology), whose findings are folded into the items below; their working
 reports are in build/ and are not a status source.
 
-## Freeze residue (asm-semantic-oracle-v1, VGA + AdLib first)
+## Freeze status (audit 2026-10-22; classes in semantic-audit.md G.7)
 
-Verdict classes and the platform profile are defined in AGENTS.md and
-metadata/platform-profile.json; per-site verdicts sit beside the ASM
-(tools/flowstate.py, both modes).
+`asm-semantic-oracle-v1` is not attained. Criteria 1-3 are met for the main
+executable inventory and protected views only; every other component/criterion
+cell, and criteria 4-7 for both the full specification and VGA + AdLib, are
+NOT MET. Detailed matrices: build/static/u2a-freeze.md and u2b-freeze.md
+(working reports, not a status source).
 
-Closed by original code: loader hands DF=0/IF=1; the only decoded STD (1BB0)
-is reversed before every decoder return; protected POPFs restore their PUSHFs;
-drivers never change DF; AdLib is installed once (00AB->054E) with no reload,
-free or INT61 restore afterwards and cannot be re-entered while executing;
-mode 0 never calls 42A5; exact DF0/DF1 footprints of every DF-sensitive writer.
-So DF=1 has no known origin: it would need control reaching undecoded bytes or
-corrupted saved FLAGS.
+Characterized original nondeterminism (class 3, preserve, never repair):
+- N01 creation race: F12/Delete/panel command via IRQ 1874 -> 3E6F -> 4013
+  between limit load 30CC and publication 314B sets 0047 to the old count and
+  bypasses the equality stop; spill footprint per index is recorded.
+- N06 AdLib request/update ordering: an IRQ between song request 03B9 and
+  update 03BE can consume the request first; effect latch F0 is last-writer-wins.
+- Level 7 stack crossing mechanism: frame 32 + keyboard scan 16 + eight retained
+  timer tails of 26 + a ninth (62) reach SP=49B6; overwritten words are known.
+  Whether hardware timing realizes it, and what providers add, is U03/U04.
 
-Closed only under the platform profile: forward startup clear; DF0/game DS at
-the 1407 detector; AdLib bound as one process-lived instance at IVT61; mode 0
-input DF preservation through INT33 AX=0003. Under the named data assumption
-(original GROUND files are 0420 bytes): no GROUND overwrite of 25A0/2013.
+Platform-conditional (class 2): PC01 startup clear, PC02 1407 detector DF0/DS,
+PC03 INT33 AX=0003 preservation, PC04 DOS file-service continuations, PC05
+process-lived AdLib binding, PC06 startup marker recurrence.
 
-Also closed by original code (2026-10-22 round): the exact 4013 race (commands,
-vulnerable boundaries, count/limit recurrence, byte-address bound); owners of
-every spill index 50..FF and which record consumers accept them; proper mode-1
-entry always rewrites 25A0 (no stale joystick pointer by reentry); the
-detector runs every session after 455D; stack collision thresholds from SS:4AF4.
-Data-conditional: level007 object data writes SS:49B6..49C5, leaving only 302
-bytes of stack headroom above that row.
-
-Open, ordered by impact on a faithful VGA + AdLib translation:
-1. **Target domains:** exhaustive 715B values after spill and the maximal
-   surviving record count; 42A5/1407 against resource, indexed, renderer
-   (width 0), physical-alias and UNKNOWN writers; AdLib 01EA under DF=1.
-2. **Concurrency:** IRQ arrival, PIC/old INT08/INT62 nesting (post-EOI frames
-   retain 26 bytes per level), the 4013 race exclusion and survival.
-3. **Saved-stack aliases:** global lowest SP over foreground, IRQ, driver and
-   provider paths against the 302-byte headroom; saved-frame survival.
-4. **Residual UNKNOWN storage:** 1,902 code-frame bytes, DS residue, protected
-   stored bytes, driver residue, 2698 pair extent, 004A FF producer.
-5. **Alternatives** (inventory in executable.md): Tandy 02BB, PC-speaker 0196,
-   joystick timing, alternate display paths.
+Genuine semantic blockers (class 4), in impact order for VGA + AdLib:
+- U01 715B values and control after record spill.
+- U02 42A5/1407/4CC9/4D18 target and writer domains.
+- U03 global lowest SP and saved-frame/segment alias survival.
+- U04 actual IRQ/PIC/old INT08/INT62/mouse/INT24 nesting and schedules.
+- U05 remaining UNKNOWN storage (code frame, DS, protected, sound), 2698 extent,
+  point suffix 4768+, scratch allocation, 004A FF producer, 8363 caller.
+- U06 resource/terrain/object field ownership and allocation/short-read effects.
+- U07 AdLib 01EA under DF=1/transformed pointers, failure/preload vector cases,
+  dynamic BIOS selector 0621/0626, real OPL/PIT/VGA timing.
+- U08 alternatives: Tandy 02BB/5958, PC-speaker 0196 and tail, joystick timing,
+  alternate display/palette/option routes (block full freeze, not the AdLib port).
+- U09 protected-view composition, stored 098C..0D9D roles, media/persistence.
+- U10 effects of reachable processor faults and changed returns.
 
 Native follow-ups recorded for later, not current priorities: bind entity sound
 services, special-graphics briefing redraw, INT61 rebinding, private IRQ 0F70

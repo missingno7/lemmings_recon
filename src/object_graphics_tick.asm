@@ -25,6 +25,7 @@ loc_7BC3:
     mov dh,[byte di+FirstObjectDefinitionFlags-LevelObjectDefinitions] ; @07BDC
     mov dl,[byte di+FirstObjectDefinitionFlags+1-LevelObjectDefinitions] ; @07BDF
     db 0x8b,0xea ; ENCODED: mov bp,dx (NASM chooses a different encoding) ; @07BE2
+; U1 caller-specific stack: AND BP,FFFE clears bit0, so8822 selects unshifted rendering. Its14-byte unshifted bodies are smaller than CALL9A15+18=20. 01B9 nearCALL2 +caller CX/DI/SI6 +farCALL4 +dirty child20 =32 below foreground4AF4, reaching4AD4 at9A75 with ordinaryIF1. Generic shifted-masked24 cannot be charged to this caller. During0498 initialization the live00FB CALL03E7 adds2, giving34; game08 was installed at0492. These are intact known-path implications, not callback/provider/global stack closure.
     and bp,byte -0x2 ; @07BE4
     mov dl,[byte si+FirstObjectGraphicsWidth-LevelObjectGraphicsRecords] ; @07BE7
     db 0x32,0xf6 ; ENCODED: xor dh,dh (NASM chooses a different encoding) ; @07BEA

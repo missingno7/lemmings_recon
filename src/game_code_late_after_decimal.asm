@@ -56,6 +56,7 @@ DisplayStartFirstOutput:
     sti ; @04C45
 DisplayStartReturn:
     ret ; @04C46
+; U1 menu08:CPU6+eight saves16=22 resident;old08 synthetic frame reaches28+B08. No ownSTI. OwnEOI path still hasIF0; mode0 declared INT33 normal return preserves0, mode2 has noSTI,old08 synthetic IRET returns0. These do not prove a postEOI tail recurrence. Actual menu4C70 setsDLFF,so known mode1 joystick callbacks skip4386 and their4346/436F STI exposes28-byte depth. Broader DL!=FF measurement adds aCALL2 and43C8 STI shadowsSAR CX,notRET,but is not the natural menu handoff. Provider-internal IF/PIC/stack and actual arrivals remain separate UNRESOLVED dependencies.
 ; R2 UNCONDITIONAL recovered-menu contract: this timer polls input/chains but has noINT61 or call of the AdLib updater. Installed61/allocation persist in the conditional successful-AdLib process domain;menu entry is not a reload/reset/free. Real old08/provider effects remain UNRESOLVED.
 MenuTimerIrqHandler:
 ; CONTRACT: eight saves AX/BX/CX/DX/SI/DI/BP/DS, then relocated4C50 loadsDS.

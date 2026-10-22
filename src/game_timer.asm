@@ -14,6 +14,7 @@
 ; the foreground owns retrace sync. Every fourth IRQ chains to BIOS INT08.
 ; The foreground ticks after five IRQs (signed1FCD>4), dropping any excess.
 times -(($-$$) != 0x17c7) db 0
+; U1 PROVEN intact-frame costs: IRQ6+saves/PUSHF20=26 resident;1872 plus recovered AdLib36 gives62. Conventional non-auto, fixed-priority PIC ISR0 blocks IRQ0/IRQ1/lower IRQs before EOI even at STI17FD/1837. No finite nesting-count cap follows from the code. Every extra level requires its own fresh pending/arriving PIT request after the previous acknowledge, plus IF1/PIC eligibility; pulses coalesce, not an arbitrary backlog. Physical realization/provider high-water marks remain UNRESOLVED; build/static/u1-stack.md.
 ; UNCONDITIONAL local stack arithmetic: CPU IRQ frame6 plus nine saves/PUSHF20 leaves26 resident bytes;1896..1898 add6 before external old08. AH00 AdLib known-edge peak is36 including INT frame,so1872 gives62 below interruptedSP. Mouse input gives54 atmode0 or58 if mode1 callback selects4252,plus provider internal usage. UNRESOLVED global bound:189D STI/shadowed189E MOV precede18A3/18A7/IRET while26 bytes remain. Another eligible IRQ here retains another26;profile grants no PIC/timing/nesting bound or old08/provider high-water mark.
 ; R1: IRQ entry inherits interrupted DF and saves it in the CPU frame.17D0 PUSHF is a
 ; different inner save from that consumed by18B1 IRET.18A7 POPF restores inner FLAGS first.
@@ -161,6 +162,7 @@ GameTimerChain1893:
     pushf ; @01896
     push cs ; @01897
     push ax ; @01898
+; U1 old08 is a distinct extension:32 bytes at far-chain entry plus unknown provider B08 on this SS. CLI1881 makes synthetic FLAGS1896 IF0, so intact provider IRET returnsIF0 before189D. BIOS/provider owns this path's EOI; no second local EOI. Its own IF1-after-EOI window, INT1C/callback stack use and timing are UNRESOLVED and may retain32+B08 rather than26. PROFILE preservation supplies no transient high-water bound.
 ; S19 external-08-09: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Two INT08 far chains have caller-built FLAGS/CS/IP and external IRET edges. Undocumented
 ; provider segments/registers and frame aliases remain open. IRQ09 owns IRET;old09 is
@@ -170,6 +172,7 @@ GameTimerChain1893:
 ChecksumWindowEnd:
 GameTimerFarChain1899:
     jmp far [SavedTimerVector-GameDataImage] ; @01899
+; U1 final-tail window:189D STI shadows MOV189E, so the eligible nesting boundaries are18A3 and18A7, both with26 resident. PUSHF17D0 saved CPU-cleared IF0; intact POPF18A7 restores0, excluding the later POPs until IRET releases the whole frame. EOI alone did not enable nesting:1881 CLI covers local18B4/RET1891. A new IRQ must already be pending or arrive by18A7; the exposed interval is only INC18A3. Reload/retrace and provider duration, not window existence alone, decide each extra level.
 GameTimerChainReturn189D:
     sti ; @0189D
     mov byte [TimerChainFlag1FCF-GameDataImage],0xff ; @0189E
