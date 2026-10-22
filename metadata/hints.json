@@ -39,10 +39,24 @@
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
     },
     {
+      "start": 2128,
+      "end": 2130,
+      "class": "static_data",
+      "evidence": "Known key-data overlay within skipped084D..0851; canonical UNKNOWN retained. Derived edge084B->0852 bypasses gap; 0E20 reads stored word030E at0850 for target0852; target0853 also reads0851. Original INT3/shared-tail probes stopping beforeIRET exposeB851; XOR1 at0850 exposesB853. No evidence classifies084D..084F or proves a BIOS write entry.",
+      "overlay": true
+    },
+    {
       "start": 2130,
       "end": 2174,
       "class": "state_specific_code",
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2177,
+      "end": 2179,
+      "class": "static_data",
+      "evidence": "Known key-data overlay within skipped087E..0882; canonical UNKNOWN retained. Derived edge087C->0883 bypasses gap; 0E20 reads stored word260E at0881 for target0883; target0884 also reads0882. Original INT3/shared-tail probes stopping beforeIRET exposeB851; XOR1 at0881 exposesB853. No evidence classifies087E..0880 or proves selector26/write producer.",
+      "overlay": true
     },
     {
       "start": 2179,
@@ -58,6 +72,13 @@
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     },
     {
+      "start": 2444,
+      "end": 2956,
+      "class": "runtime_sector_buffer",
+      "evidence": "Update existing overlay, do not duplicate. Runtime overlay only; canonical stored bytes remain UNKNOWN. CALL-next066E supplies0671; ADD031B gives098C; 067B forms SI=CS+0098, DI000C; low12(SI)<=0FDF selects this window. SS:BP+0A/+0C owns pointer; 08CB CLD REP STOSW0100 words fills, BIOS read/07E7/07F0/07F9 and CRC/bit-count consumers use it, 094A zeroes selected512 on cleanup. No permanent BSS or exclusion of another stored interpretation.",
+      "overlay": true
+    },
+    {
       "start": 2972,
       "end": 3484,
       "class": "runtime_sector_buffer",
@@ -65,11 +86,25 @@
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     },
     {
+      "start": 2972,
+      "end": 3484,
+      "class": "runtime_sector_buffer",
+      "evidence": "Update existing overlay, do not duplicate. Runtime overlay only; canonical stored bytes remain UNKNOWN. low12(CS+0098)>0FDF adds0210 to DI000C, selecting physical alias CS:0B9C..0D9B. Same fill/read/process/clear lifetime as primary; exactly one512-byte window per ordinary call. Neither window includes0B8C..0B9B or0D9C..0D9D.",
+      "overlay": true
+    },
+    {
       "start": 3484,
       "end": 3486,
       "class": "static_data",
       "overlay": true,
       "evidence": "ProtectionDecodeNextWord 0E20 uses word[nextIP-2]; nextIP 0D9E reads CS:0D9C 9090 and key DEDE exposes CC13 from CD12; two bounded original INT3 seed probes confirm dependence. Known data use only; alternative execution not excluded."
+    },
+    {
+      "start": 3484,
+      "end": 3486,
+      "class": "static_data",
+      "evidence": "Update existing seed overlay, do not duplicate. Known key-data overlay; canonical stored bytes remain UNKNOWN. ProtectionDecodeNextWord0E20 reads word(nextIP-2) at CS:0D9C when nextIP0D9E. Stored9090 yields keyDEDE and visible13CC from storedCD12. Both sector buffers end before this seed. Six named shared-verifier handler probes include unchanged/one-bit-perturbed seed at0D9C; no destination executed. No claim these bytes execute as NOPs.",
+      "overlay": true
     },
     {
       "start": 3486,
@@ -103,10 +138,52 @@
       "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
     },
     {
+      "start": 17641,
+      "end": 17644,
+      "class": "lookup_table",
+      "evidence": "JMP44E6 skips exact00,01,03 bytes before44EC.44DC zero-extended incremented byte indexes CS table at44E0; startupclear0 and0596/0606->1,05AE/05D8->2 seed1F71,44D5 updates. Equality-only wrap at limit2/3, changed driver gates/invalid indices can escape; maximum raw read45E8. No direct ordinary CS table writer identified. CS input bytes are process-image initialization; checksum8397 may read them as data. Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof."
+    },
+    {
+      "start": 18551,
+      "end": 18568,
+      "class": "lookup_table",
+      "evidence": "17 initialized IDs06,07,08,0A,0B,04,0C,0D,0E,0F,05,10,11,12,13,14,15. RET4865/4876 and code488C bound stored tables.482F..4864 zero-extendsAL and reads4877+AL at485E; only success4852 advances1F6C and resets exactINC==11h; no-successAL0 selects06. Startupclear seeds1F6C0,4551 does not reset; rawcycle can read4877..4976. CS input bytes are process-image initialization; checksum8397 may read them as data. Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof."
+    },
+    {
+      "start": 18568,
+      "end": 18572,
+      "class": "lookup_table",
+      "evidence": "Four initialized01,09,03,02.4836 nonzero LEVEL0FE8 enters4866, decrementsAL then zero-extends,4870 readsCS4888+AL. Supplied level images have0 normal and1..4 special (static DAT extraction); malformed/changed header permits1..FF ->4888..4986, internalAL0 entry ->4987. No code bound to fourentries, no table writer in selector. CS input bytes are process-image initialization; checksum8397 may read them as data. Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof."
+    },
+    {
       "start": 18773,
       "end": 18791,
       "class": "lookup_table",
       "evidence": "Read only at 494D as CS:[BX+4955] with BX in {0,2,..,16} set by 48F6 completion-vs-requirement comparisons; nine little-endian DS offsets 4F33..517A, each a valid two-line DrawTextStream start (result assessment messages). tests/level_result.py executes every index."
+    },
+    {
+      "start": 20199,
+      "end": 20207,
+      "class": "lookup_table",
+      "evidence": "Four little-endian CS words57F4,5428,505C,4C90;4ECD reads after zero-extension and doubling livegroup1F6E, UI1FEE+1000 published4EC2. Four72x27x4 plane sources of03CCh in MAIN UIbank. RET4EE6/code4EEF close exact8 bytes. Startupclear/4827 seed0,4502/4532 cycle nominal0..3 with equalityguards,473B/52A1 write selection/30. Unchecked fullbyte permits0..8 fromdecode (FF selection ->8) and corruptvalues through255, rawreads4EE7..50E6. No identified direct CS table writer. CS input bytes are process-image initialization; checksum8397 may read them as data. Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof."
+    },
+    {
+      "start": 20362,
+      "end": 20374,
+      "class": "lookup_table",
+      "evidence": "Six little-endian CS words9488,A2D4,B120,BF6C,CDB8,DC04.4F3A initializesDI;4F37 count4 then4F47 count2 share4F4B read and4F4E DI+=2. Both bitmapwrappers restoreliveDI/SI viaSS; sourceUI1FEE, each color/mask pair spans0E4Ch, mask+0AB9. RET4F89/code4F96 bound12 storedbytes; no tablewrites by these consumers. Raw4F4A CX0 enters body thenLOOP wraps toFFFF, arbitraryDI/savedCX/DS/SS aliases can read elsewhere; do not clamp to six. CS input bytes are process-image initialization; checksum8397 may read them as data. Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof."
+    },
+    {
+      "start": 21204,
+      "end": 21236,
+      "class": "lookup_table",
+      "evidence": "Two eight-word palette pointer tables; static words+all eight nominal slot producers/readers accounted in palette_frontends.asm. Live DS targets, runtime alias writes and unchecked selectors remain; not immutable and no extra extent."
+    },
+    {
+      "start": 21767,
+      "end": 21783,
+      "class": "lookup_table",
+      "evidence": "Exactly16 stored DAC mapping bytes, nominal mapped writerCH/CL0/16,0/8,8/8 through54E9. Unchecked reads do not enlarge table;5517..5532 remains UNKNOWN. CS aliases/checksum reader retained."
     },
     {
       "start": 33711,
@@ -152,10 +229,598 @@
       "evidence": "13F8..140B iterates four records: enable byte then near code word via LODSB/LODSW/CALL AX"
     },
     {
+      "start": 47791,
+      "end": 47806,
+      "class": "lookup_table",
+      "evidence": "IRQ16F8 seeds201F/CX1;175A/175F reread bindings, FF disables and first equality wins;1763/1764 increments and shifts through16 bytes. Stored bytes10 1E 18 19 39 01 1C 02 03 04 7C 7B 7A 79 77 4C. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 47806,
+      "end": 47807,
+      "class": "lookup_table",
+      "evidence": "Shared physical byte202E=4C: binding slot15 read175A/175F and character index0 readXLAT4D4B. 4D1A/4D20 scans83 state bytes0F78..0FCA with first-ready index0..52;4D45/4D47/4D4B XLATs live202E+index. Table stored202E..2080, not NUL terminated. Shared202E=4C is also binding15; scan0 translates L. No identified ordinary direct table store; IRQ changes state, not this table. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 47807,
+      "end": 47889,
+      "class": "lookup_table",
+      "evidence": "4D1A/4D20 scans83 state bytes0F78..0FCA with first-ready index0..52;4D45/4D47/4D4B XLATs live202E+index. Table stored202E..2080, not NUL terminated. Shared202E=4C is also binding15; scan0 translates L. No identified ordinary direct table store; IRQ changes state, not this table. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 47891,
+      "end": 47932,
+      "class": "runtime_data",
+      "evidence": "3B23 supplies2083 to NUL reader417B; stored40 chars2083..20AA and NUL20AB. Selection3CEE clears11 prefix bytes,3DF3 formats208B..8D,3E58 copies7 label bytes to2083..89. Count368A/3AB7 writes2095..97;3ABD/3AFB..3B1E write209C..9E, non100 keeps209C;36E2 writes20A7,040E/0413 set20A9/AA,021F..0246 borrow/count down. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 47932,
+      "end": 47972,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at04ED/04F2; stored dollar terminator20D3 gives exact initial extent[20AC,20D4). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 47972,
+      "end": 48075,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at0EFC/0F01; stored dollar terminator213A gives exact initial extent[20D4,213B). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48164,
+      "end": 48181,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at193A/1D28->1955; stored dollar terminator21A4 gives exact initial extent[2194,21A5). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48181,
+      "end": 48198,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at1940->1955; stored dollar terminator21B5 gives exact initial extent[21A5,21B6). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48198,
+      "end": 48216,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at1946->1955; stored dollar terminator21C7 gives exact initial extent[21B6,21C8). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48216,
+      "end": 48250,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at105C/1069; stored dollar terminator21E9 gives exact initial extent[21C8,21EA). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48250,
+      "end": 48272,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at1064/1069; stored dollar terminator21FF gives exact initial extent[21EA,2200). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48272,
+      "end": 48351,
+      "class": "static_data",
+      "evidence": "DOS AH09 pointer at00C2/00C6; stored dollar terminator224E gives exact initial extent[2200,224F). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48351,
+      "end": 48367,
+      "class": "lookup_table",
+      "evidence": "Nibble mask123F plus224F/124A reader bounds16 stored ASCII digits.225F stored90 is excluded. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48368,
+      "end": 48497,
+      "class": "static_data",
+      "evidence": "WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF; pointer10A3/10A7, stored NUL22E0 bounds intact initial text. DOS02 sees every nonzero byte including CR/LF; saves and returned DS are live. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48497,
+      "end": 48660,
+      "class": "static_data",
+      "evidence": "WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF; pointer10B2/10B5, stored NUL2383 bounds intact initial text. DOS02 sees every nonzero byte including CR/LF; saves and returned DS are live. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48660,
+      "end": 49079,
+      "class": "runtime_data",
+      "evidence": "WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF; pointer1104/1107 and11AB/11AF, stored NUL2526 bounds intact initial text. DOS02 sees every nonzero byte including CR/LF; saves and returned DS are live. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open. Marker1194/1198 stores2020 to oldDI and3E2D to newSI at nominal239F/23D2/240B/2442/248A; early1194 entry has unchecked cursors, not guaranteed menu rows."
+    },
+    {
+      "start": 49080,
+      "end": 49082,
+      "class": "runtime_data",
+      "evidence": "191B saves incoming raw-resource filename pointer before open;195D uses it for NUL printing after errors; process/file-operation lifetime, not an in-file byte. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49082,
+      "end": 49083,
+      "class": "runtime_data",
+      "evidence": "0E75/0E7C requests one byte from russell.dat; success increments live byte, read count/CF unchecked;0EAC open failure zeros.0ED4..0ED8 exports100h bytes252A..2629 from RAM, not RAM initialization. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49083,
+      "end": 49092,
+      "class": "static_data",
+      "evidence": "Stored ASCIIZ 'main.dat' [252B,2534); NUL2533. Pointers/services58D3/58E0. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49092,
+      "end": 49103,
+      "class": "runtime_data",
+      "evidence": "Stored ASCIIZ 'vgagr0.dat' [2534,253F); NUL253E. Pointers/services1A31/1A40,1B19/1B28,4AFD/4B04. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open. Nominal in-string writes: 2539 at1A24. Digit helper4BC2 writes three LEVEL digits with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to its nonzero header byte, all wrapping and unchecked."
+    },
+    {
+      "start": 49103,
+      "end": 49116,
+      "class": "runtime_data",
+      "evidence": "Stored ASCIIZ 'ground0o.dat' [253F,254C); NUL254B. Pointers/services1A0B/1A18. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open. Nominal in-string writes: 2545 at1A09. Digit helper4BC2 writes three LEVEL digits with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to its nonzero header byte, all wrapping and unchecked."
+    },
+    {
+      "start": 49116,
+      "end": 49129,
+      "class": "runtime_data",
+      "evidence": "Stored ASCIIZ 'level000.dat' [254C,2559); NUL2558. Pointers/services19A4/19B3. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open. Nominal in-string writes: 2551 at19A0->4BC2. Digit helper4BC2 writes three LEVEL digits with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to its nonzero header byte, all wrapping and unchecked."
+    },
+    {
+      "start": 49129,
+      "end": 49142,
+      "class": "runtime_data",
+      "evidence": "Stored ASCIIZ 'vgaspec0.dat' [2559,2566); NUL2565. Pointers/services1A63/1A72. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open. Nominal in-string writes: 2560 at1A60. Digit helper4BC2 writes three LEVEL digits with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to its nonzero header byte, all wrapping and unchecked."
+    },
+    {
+      "start": 49142,
+      "end": 49155,
+      "class": "static_data",
+      "evidence": "Stored ASCIIZ 'oddtable.dat' [2566,2573); NUL2572. Pointers/services19D1/19DC. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49155,
+      "end": 49165,
+      "class": "static_data",
+      "evidence": "Stored ASCIIZ 'adlib.dat' [2573,257D); NUL257C. Pointers/services0589/058D. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49165,
+      "end": 49178,
+      "class": "static_data",
+      "evidence": "Stored ASCIIZ 'tandysnd.dat' [257D,258A); NUL2589. Pointers/services05C6/05CA. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49178,
+      "end": 49190,
+      "class": "static_data",
+      "evidence": "Stored ASCIIZ 'russell.dat' [258A,2596); NUL2595. Pointers/services0E66/0E6D,0EC2/0ECB. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49196,
+      "end": 49198,
+      "class": "runtime_data",
+      "evidence": "0016 INT1A then001C savesCX;16C7 reads for restore16D1; startup clear ends2011 and does not overwrite. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 49198,
+      "end": 49200,
+      "class": "runtime_data",
+      "evidence": "0018 savesDX;16CB reads for restore16D1. Adjacent clock word259C has same process lifetime; not filename suffix. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
       "start": 49200,
       "end": 49202,
       "class": "pointer_data",
       "evidence": "42A1 loads indirect callback from DS:25A0; static4252; stores4334/4359 at4A68/4A80"
+    },
+    {
+      "start": 49208,
+      "end": 49304,
+      "class": "static_data",
+      "evidence": "Exact four target-row windows25A8/25B8/25E8/25F0:16,48,8,24 bytes;stored UI/split colors plus5377 seeded color7/upper8,03CE/534B readers. GROUND maximum, large records, cache padding and live aliases may overwrite; not immutable."
+    },
+    {
+      "start": 49304,
+      "end": 49352,
+      "class": "static_data",
+      "evidence": "Exactly48 storedzero black-target bytes, pointer-slot1 packed16/RGB16*3 consumers and5456/5460 repeat-first24 publication. No nominal row writer;maximum GROUND/large records/cache/provider aliases retained. Not classification by zero alone."
+    },
+    {
+      "start": 49352,
+      "end": 49448,
+      "class": "runtime_data",
+      "evidence": "Two exact48-byte current palette rows2638/2668;2650 is interior RGB2638+18h. Stored zeros, nominal source0/7 row writers563E/56E2, split/transition producers and timer/publication readers close nominal row schemas/lifetime. Wider GROUND/record/cache/raw-selector/segment effects remain; no padding claim."
+    },
+    {
+      "start": 49672,
+      "end": 49688,
+      "class": "lookup_table",
+      "evidence": "Exactly16 stored VGA colors consumed by6F5F withCX&0F. Storedimage initialization plus042C countproducer;long GROUND and recordDD/cache/alias writes retained; no larger table claim."
+    },
+    {
+      "start": 49688,
+      "end": 57848,
+      "class": "lookup_table",
+      "evidence": "Only the51 normally consumed A0-byte point frames:042C count50,2D33/2E7B frame0+callback003C,2353 INC/2358 expiry34,3634 signed gate and6E83/6ED2 word readers. Stored signedXY/80 sentinel data;not full array extent. Wider signed/raw selectors and resource/record/cache/stack/segment effects explicitly retained;4768 onward stays unresolved."
+    },
+    {
+      "start": 58191,
+      "end": 58198,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48BF;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'CLIMBER'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58198,
+      "end": 58205,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48C6;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'FLOATER'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58212,
+      "end": 58219,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48D4;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'BLOCKER'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58219,
+      "end": 58226,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48DB;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'BUILDER'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58226,
+      "end": 58233,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48E2;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'BASHER '; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58233,
+      "end": 58240,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48E9;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'MINER  '; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58240,
+      "end": 58247,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48F0;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'DIGGER '; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58247,
+      "end": 58254,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48F7;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'WALKER '; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58254,
+      "end": 58261,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal48FE;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'FALLER '; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58268,
+      "end": 58275,
+      "class": "static_data",
+      "evidence": "Selection3DFA..3E69 selects literal490C;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'ATHLETE'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58275,
+      "end": 58285,
+      "class": "lookup_table",
+      "evidence": "Exact ten-byte code template established by both5042 encoder and51A2 decoder; original initialized ASCII bytes, no terminator.491D/491E are separate mutable bytes;491F excluded."
+    },
+    {
+      "start": 58285,
+      "end": 58286,
+      "class": "runtime_data",
+      "evidence": "Stored00;52CD writes decoded low4 bits only after validation;5046 reads byte for encode. Completion is separately encoded and not decoded."
+    },
+    {
+      "start": 58286,
+      "end": 58287,
+      "class": "runtime_data",
+      "evidence": "Stored00;4C95 sets14h;4CAD decrements byte;4CB3 reloads14h, controls cursor blink. Neither byte is startup-cleared."
+    },
+    {
+      "start": 58288,
+      "end": 58352,
+      "class": "lookup_table",
+      "evidence": "Exactly16 packed menu colors4920 and16 RGB triples4930, slot2 nominal53FC/536C/467B readers. Stored process initialization;normal clears/GROUND/odd writes exclude, but generic cache/cursor/selector aliases remain. No neighboring text/record extent inference."
+    },
+    {
+      "start": 58352,
+      "end": 58362,
+      "class": "runtime_data",
+      "evidence": "Menu animation record0, exact used words+0/+2/+4/+6/+8 atDS4960..4969.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte496A excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58363,
+      "end": 58373,
+      "class": "runtime_data",
+      "evidence": "Menu animation record1, exact used words+0/+2/+4/+6/+8 atDS496B..4974.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte4975 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58374,
+      "end": 58384,
+      "class": "runtime_data",
+      "evidence": "Menu animation record2, exact used words+0/+2/+4/+6/+8 atDS4976..497F.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte4980 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58385,
+      "end": 58395,
+      "class": "runtime_data",
+      "evidence": "Menu animation record3, exact used words+0/+2/+4/+6/+8 atDS4981..498A.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte498B excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58396,
+      "end": 58406,
+      "class": "runtime_data",
+      "evidence": "Menu animation record4, exact used words+0/+2/+4/+6/+8 atDS498C..4995.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte4996 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58407,
+      "end": 58417,
+      "class": "runtime_data",
+      "evidence": "Menu animation record5, exact used words+0/+2/+4/+6/+8 atDS4997..49A0.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49A1 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58418,
+      "end": 58428,
+      "class": "runtime_data",
+      "evidence": "Menu animation record6, exact used words+0/+2/+4/+6/+8 atDS49A2..49AB.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49AC excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58429,
+      "end": 58439,
+      "class": "runtime_data",
+      "evidence": "Menu animation record7, exact used words+0/+2/+4/+6/+8 atDS49AD..49B6.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49B7 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58440,
+      "end": 58450,
+      "class": "runtime_data",
+      "evidence": "Menu animation record8, exact used words+0/+2/+4/+6/+8 atDS49B8..49C1.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49C2 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58451,
+      "end": 58461,
+      "class": "runtime_data",
+      "evidence": "Menu animation record9, exact used words+0/+2/+4/+6/+8 atDS49C3..49CC.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49CD excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58462,
+      "end": 58729,
+      "class": "static_data",
+      "evidence": "7CBC initializesDS001D/001F to49CE;7D33/7D37 consumes livecursor, FF pauses100ticks then unconditionally fetches one next byte7D4C; CR reloadsstart001D then fetches one byte. Stored extent[49CE,4AD9), restartCR4AD8, FF at49F3,4A19,4A3F,4A65,4AB0,4AD6. Second fetch is not recursively interpreted. IncomingDF/SI16 wrap and cursor/stack aliases can escape storedextent; no NUL terminator. No identified ordinary stream writer;001D/001F/0021/0023 are separate menu-lifetime state,0021 reused by48EB as resultprompt."
+    },
+    {
+      "start": 58729,
+      "end": 58778,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader443A/443E; exact stored stream[4AD9,4B0A), terminal column0 at4B09. 4AD9:column9,row17,style0,text[4ADC,4AF3),CR4AF3; 4AF4:column12,row18,style0,text[4AF7,4B08),CR4B08. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 58778,
+      "end": 58928,
+      "class": "runtime_data",
+      "evidence": "4D4D header/4D65 character grammar, reader463C/4640; exact stored stream[4B0A,4BA0), terminal column0 at4B9F. 4B0A:column1,row5,style0,text[4B0D,4B15),CR4B15; 4B16:column9,row5,style0,text[4B19,4B39),CR4B39; 4B3A:column11,row8,style0,text[4B3D,4B53),CR4B53; 4B54:column11,row10,style0,text[4B57,4B67),CR4B67; 4B68:column11,row12,style0,text[4B6B,4B7A),CR4B7A; 4B7B:column11,row14,style0,text[4B7E,4B8C),CR4B8C; 4B8D:column11,row16,style0,text[4B90,4B9E),CR4B9E. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 58928,
+      "end": 58963,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4643/465D,47EA/4804; exact stored stream[4BA0,4BC3), terminal column0 at4BC2. 4BA0:column6,row19,style0,text[4BA3,4BC1),CR4BC1. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 58963,
+      "end": 58997,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader464E/465D,47F5/4804; exact stored stream[4BC3,4BE5), terminal column0 at4BE4. 4BC3:column6,row19,style0,text[4BC6,4BE3),CR4BE3. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 58997,
+      "end": 59025,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4659/465D,4800/4804; exact stored stream[4BE5,4C01), terminal column0 at4C00. 4BE5:column9,row19,style0,text[4BE8,4BFF),CR4BFF. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59025,
+      "end": 59049,
+      "class": "lookup_table",
+      "evidence": "Exactly four6-byte rating rows; two independent readers45E5 and49C0 plus literal6 multiplication/loop and intact stored rows establish24-byte table, not bounds for arbitrary selectors. DF and source/stack aliases remain."
+    },
+    {
+      "start": 59049,
+      "end": 59070,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4703/471A; exact stored stream[4C19,4C2E), terminal column0 at4C2D. 4C19:column13,row1,style0,text[4C1C,4C2C),CR4C2C. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59070,
+      "end": 59102,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4716/471A; exact stored stream[4C2E,4C4E), terminal column0 at4C4D. 4C2E:column7,row1,style0,text[4C31,4C4C),CR4C4C. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59102,
+      "end": 59143,
+      "class": "runtime_data",
+      "evidence": "4D4D header/4D65 character grammar, reader48EF/48F3; exact stored stream[4C4E,4C77), terminal column0 at4C76. 4C4E:column13,row3,style0,text[4C51,4C61),CR4C61; 4C62:column13,row4,style0,text[4C65,4C75),CR4C75. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59143,
+      "end": 59181,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader48D1/48EB->479F/47A3; exact stored stream[4C77,4C9D), terminal column0 at4C9C. 4C77:column4,row19,style0,text[4C7A,4C9B),CR4C9B. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59181,
+      "end": 59209,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader48DC/48EB->479F/47A3; exact stored stream[4C9D,4CB9), terminal column0 at4CB8. 4C9D:column7,row19,style0,text[4CA0,4CB7),CR4CB7. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59209,
+      "end": 59235,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader48E7/48EB->479F/47A3; exact stored stream[4CB9,4CD3), terminal column0 at4CD2. 4CB9:column10,row19,style0,text[4CBC,4CD1),CR4CD1. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59235,
+      "end": 59278,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader477D/479C; exact stored stream[4CD3,4CFE), terminal column0 at4CFD. 4CD3:column2,row18,style0,text[4CD6,4CFC),CR4CFC. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59278,
+      "end": 59312,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4788/479C; exact stored stream[4CFE,4D20), terminal column0 at4D1F. 4CFE:column6,row18,style0,text[4D01,4D1E),CR4D1E. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59312,
+      "end": 59343,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4793/479C; exact stored stream[4D20,4D3F), terminal column0 at4D3E. 4D20:column8,row18,style0,text[4D23,4D3D),CR4D3D. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59343,
+      "end": 59396,
+      "class": "runtime_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4755/4759; exact stored stream[4D3F,4D74), terminal column0 at4D73. 4D3F:column5,row14,style0,text[4D42,4D61),CR4D61; 4D62:column13,row15,style0,text[4D65,4D72),CR4D72. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59397,
+      "end": 59440,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader475C/479C; exact stored stream[4D75,4DA0), terminal column0 at4D9F. 4D75:column2,row18,style0,text[4D78,4D9E),CR4D9E. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59440,
+      "end": 59474,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4767/479C; exact stored stream[4DA0,4DC2), terminal column0 at4DC1. 4DA0:column6,row18,style0,text[4DA3,4DC0),CR4DC0. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59474,
+      "end": 59505,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4772/479C; exact stored stream[4DC2,4DE1), terminal column0 at4DE0. 4DC2:column8,row18,style0,text[4DC5,4DDF),CR4DDF. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59505,
+      "end": 59534,
+      "class": "runtime_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4983/4987; exact stored stream[4DE1,4DFE), terminal column0 at4DFD. 4DE1:column15,row7,style0,text[4DE4,4DEE),CR4DEE; 4DEF:column15,row9,style8,text[4DF2,4DFC),CR4DFC. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59534,
+      "end": 59575,
+      "class": "runtime_data",
+      "evidence": "4D4D header/4D65 character grammar, reader49C2/49C6; exact stored stream[4DFE,4E27), terminal column0 at4E26. 4DFE:column11,row11,style8,text[4E01,4E14),CR4E14; 4E15:column13,row13,style8,text[4E18,4E25),CR4E25. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59575,
+      "end": 59594,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader49EC/49F0; exact stored stream[4E27,4E3A), terminal column0 at4E39. 4E27:column13,row11,style8,text[4E2A,4E38),CR4E38. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59594,
+      "end": 59646,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4A0D/4A11; exact stored stream[4E3A,4E6E), terminal column0 at4E6D. 4E3A:column12,row5,style0,text[4E3D,4E4E),CR4E4E; 4E4F:column8,row10,style0,text[4E52,4E5D),CR4E5D; 4E5E:column8,row12,style0,text[4E61,4E6C),CR4E6C. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59646,
+      "end": 59669,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4A1B/4A1F; exact stored stream[4E6E,4E85), terminal column0 at4E84. 4E6E:column8,row8,style0,text[4E71,4E83),CR4E83. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59669,
+      "end": 59705,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4A4E/4A52; exact stored stream[4E85,4EA9), terminal column0 at4EA8. 4E85:column5,row15,style0,text[4E88,4EA7),CR4EA7. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59705,
+      "end": 59743,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4A95/4A99; exact stored stream[4EA9,4ECF), terminal column0 at4ECE. 4EA9:column3,row17,style0,text[4EAC,4ECD),CR4ECD. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59743,
+      "end": 59792,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4B28/4B2C; exact stored stream[4ECF,4F00), terminal column0 at4EFF. 4ECF:column10,row11,style0,text[4ED2,4EE8),CR4EE8; 4EE9:column12,row13,style0,text[4EEC,4EFE),CR4EFE. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59792,
+      "end": 59843,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4AD5/4AD9; exact stored stream[4F00,4F33), terminal column0 at4F32. 4F00:column9,row11,style0,text[4F03,4F1B),CR4F1B; 4F1C:column12,row13,style0,text[4F1F,4F31),CR4F31. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59843,
+      "end": 59911,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot0->494D/4952; exact stored stream[4F33,4F77), terminal column0 at4F76. 4F33:column4,row7,style0,text[4F36,4F57),CR4F57; 4F58:column8,row8,style0,text[4F5B,4F75),CR4F75. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59911,
+      "end": 59980,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot1->494D/4952; exact stored stream[4F77,4FBC), terminal column0 at4FBB. 4F77:column3,row7,style0,text[4F7A,4F9D),CR4F9D; 4F9E:column8,row8,style0,text[4FA1,4FBA),CR4FBA. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59980,
+      "end": 60051,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot2->494D/4952; exact stored stream[4FBC,5003), terminal column0 at5002. 4FBC:column3,row7,style0,text[4FBF,4FE3),CR4FE3; 4FE4:column8,row8,style0,text[4FE7,5001),CR5001. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60051,
+      "end": 60126,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot3->494D/4952; exact stored stream[5003,504E), terminal column0 at504D. 5003:column4,row7,style0,text[5006,5025),CR5025; 5026:column3,row8,style0,text[5029,504C),CR504C. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60126,
+      "end": 60193,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot4->494D/4952; exact stored stream[504E,5091), terminal column0 at5090. 504E:column2,row7,style0,text[5051,5077),CR5077; 5078:column11,row8,style0,text[507B,508F),CR508F. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60193,
+      "end": 60270,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot5->494D/4952; exact stored stream[5091,50DE), terminal column0 at50DD. 5091:column3,row7,style0,text[5094,50B7),CR50B7; 50B8:column4,row8,style0,text[50BB,50DC),CR50DC. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60270,
+      "end": 60348,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot6->494D/4952; exact stored stream[50DE,512C), terminal column0 at512B. 50DE:column2,row7,style0,text[50E1,5107),CR5107; 5108:column2,row8,style0,text[510B,512A),CR512A. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60348,
+      "end": 60426,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot7->494D/4952; exact stored stream[512C,517A), terminal column0 at5179. 512C:column5,row7,style0,text[512F,514E),CR514E; 514F:column2,row8,style0,text[5152,5178),CR5178. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60426,
+      "end": 60507,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader4955 slot8->494D/4952; exact stored stream[517A,51CB), terminal column0 at51CA. 517A:column3,row7,style0,text[517D,51A1),CR51A1; 51A2:column3,row8,style0,text[51A5,51C9),CR51C9. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60507,
+      "end": 60748,
+      "class": "static_data",
+      "evidence": "4D4D header/4D65 character grammar, reader47E3/47E7; exact stored stream[51CB,52BC), terminal column0 at52BB. 51CB:column12,row3,style0,text[51CE,51DE),CR51DE; 51DF:column1,row8,style0,text[51E2,520A),CR520A; 520B:column1,row9,style0,text[520E,5236),CR5236; 5237:column1,row10,style0,text[523A,5262),CR5262; 5263:column1,row11,style0,text[5266,528E),CR528E; 528F:column1,row17,style0,text[5292,52BA),CR52BA. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 60748,
+      "end": 60940,
+      "class": "lookup_table",
+      "evidence": "Two96-byte stored fixed-pattern inputs,3*16 LE16 rows each.5CC1/5CDD normalforward read counts and7218 generated group schema agree;original bytes persist through normalclears/GROUND/odd. DF1/aliases retained, no classification of neighboring run."
     },
     {
       "start": 61196,

@@ -125,7 +125,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Main0576..057B installs offset0 as INT61",
-      "Maintained native dispatcher prefix only; update/detect/reset bodies remain untranslated"
+      "Maintained native dispatcher prefix only; update/detect/reset bodies remain untranslated",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
     "verification_status": "TESTED",
     "c_code_ranges": [
@@ -135,7 +136,18 @@
       ]
     ],
     "c_implementation": "c/sound_latches.c",
-    "verification_evidence": "tests/sound_latches.py: all256 AH selectors at core/adapter boundaries; update/detect/reset explicit untranslated exits; no playback acceptance"
+    "verification_evidence": "tests/sound_latches.py: all256 AH selectors at core/adapter boundaries; update/detect/reset explicit untranslated exits; no playback acceptance",
+    "semantic_contract": "INT61 dispatch AH00..05 to update/detect/reset/song/effect/gate; recognized body AH0; >=06 returns AH-5. Live DS=CS and SS IRET. See S10 engine/state/grammar contract beside ASM; TESTED remains prefix/latches only.",
+    "semantic_readiness": {
+      "status": "CONDITIONAL",
+      "domain": "Immutable engine, DF=0, ordinary nonaliasing RAM/live SS stack, initialized records and bounded documented stream/order/instrument/arpeggio/period indexes",
+      "remaining": [
+        "98..9F unchecked indirect targets; AC..AF arpeggio pointer overread and unchecked pitch/instrument indexes",
+        "Score/effect producer domains and byte ownership outside this task",
+        "0376 alternate parser and04C7 isolatedRET lack entry/provenance evidence",
+        "5630 residue and5958 adjacent memory ownership; hardware/IRQ/interleaving/alias equivalence"
+      ]
+    }
   },
   {
     "address": 24,
@@ -290,9 +302,11 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "AH02 wrapper preserves DS AX DI SI CX DX; BX ES BP untouched. CALL0641 selective reset, actual SS IRET. Duplicate08F6 write retained; no third transpose/effect reset."
   },
   {
     "address": 67,
@@ -305,9 +319,11 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "AH01 saves DS, DS=CS, XOR AL,AL, restores DS and IRET; AL0 unconditionally. Does not probe Tandy hardware; main BIOS probe chooses driver."
   },
   {
     "address": 74,
@@ -320,7 +336,8 @@
     "evidence": [
       "AH=3 setter at0019 stores AL through the live temporary DS popped from SS"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_contract": "Pending song byte,AH03 writes001C;017D copied only when gate004B=0;reset0643 word clears both004A/004B. Values unvalidated by setter."
   },
   {
     "address": 75,
@@ -333,7 +350,8 @@
     "evidence": [
       "AH=5 setter at0029 stores AL through the live temporary DS popped from SS"
     ],
-    "verification_status": "STATIC"
+    "verification_status": "STATIC",
+    "semantic_contract": "Current-song/request gate ID,not bool;AH05 writes002C,0193 writes accepted songID;0176 tests nonzero;reset0643 clears with004A. No recovered mainAH05 producer."
   },
   {
     "address": 76,
@@ -345,6 +363,20 @@
     "confidence": "PROVEN",
     "evidence": [
       "AH=4 setter at0021 stores AL through the live temporary DS popped from SS"
+    ],
+    "verification_status": "STATIC",
+    "semantic_contract": "Pending effect byte,AH04 writes0024;071B reads,accepted01..12 clears0744;zero/out-of-range/equal-or-higher active priority stays pending. Reset0641 does not clear."
+  },
+  {
+    "address": 77,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_ActiveEffectId",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x004d, never absolute equ. 00A8/0129/0590 select effect tone/noise;0735 writes accepted01..12;062F clears;0641 does not clear."
     ],
     "verification_status": "STATIC"
   },
@@ -359,17 +391,21 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
+      "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Save AX BX CX DX DI SI DS ES; DS=ES=CS; process song, DEC phase, visit four records, combine masks, noise step, phase-zero effect admission, 11 OUT C0 writes, restore/IRET. No CLD; header/instrument LODS depend on DF."
   },
   {
     "address": 216,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_00D8",
-    "aliases": [],
+    "symbol_name": "tandysnd_WritePsgFrame",
+    "aliases": [
+      "tandysnd_sub_00D8"
+    ],
     "callers": [
       204
     ],
@@ -491,17 +527,21 @@
     "reachable_instruction_bytes": 158,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "11 ordered OUT C0 writes: music tone0/tone1, literal E5 noise control and noise volume, tone2 from music or effect by004D. Period writes mask10 bits; volumes XOR0F then OR selector without mask.0767 accumulator not emitted."
   },
   {
     "address": 374,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0176",
-    "aliases": [],
+    "symbol_name": "tandysnd_ProcessSongRequest",
+    "aliases": [
+      "tandysnd_sub_0176"
+    ],
     "callers": [
       126
     ],
@@ -642,17 +682,21 @@
     "reachable_instruction_bytes": 109,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Gate004B zero copies004A to07A1, else uses retained scratch. Nonzero scratch PUSH AX/reset/POP AX; invalid >=16 returns after destructive reset. Valid01..15 absolute directory095C+2*(ID-1), header0->5630, bank->095A, tempo->079F, skip byte5, exactly3 lists. phase1,5958=0; IN61/AND9C/OR60/OUT61."
   },
   {
     "address": 483,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_01E3",
-    "aliases": [],
+    "symbol_name": "tandysnd_InitializeMusicChannel",
+    "aliases": [
+      "tandysnd_sub_01E3"
+    ],
     "callers": [
       439,
       445,
@@ -728,17 +772,21 @@
     "reachable_instruction_bytes": 42,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "DI music record/SI header list field. Set count1 flags0 pitchstep0. Zero list early RET without advancing SI or clearing mode. Nonzero relative list/pattern base095C; save next word+00, pattern+02,mode1; other state inherited."
   },
   {
     "address": 524,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_020C",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvanceChannel",
+    "aliases": [
+      "tandysnd_sub_020C"
+    ],
     "callers": [
       136,
       142,
@@ -1376,17 +1424,34 @@
     "reachable_instruction_bytes": 384,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Mode0 return; mode2 always timed, other nonzero modes timed only phase0. On nonexpiry note-step/release, then envelope,slide02,slide04,modulation,arp; expiry enters stream parser and returns without those effects. BX/DI/pointers unchecked."
+  },
+  {
+    "address": 573,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "tandysnd_StreamFetch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x023d, never absolute equ. 023D explicit byte fetch with INC BX; many control-tail continuations. Size0 is an entry point only, not a new byte classification."
+    ],
+    "verification_status": "STATIC"
   },
   {
     "address": 654,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_028E",
-    "aliases": [],
+    "symbol_name": "tandysnd_FinishTimedEvent",
+    "aliases": [
+      "tandysnd_sub_028E"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -1418,17 +1483,21 @@
     "reachable_instruction_bytes": 10,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Timed finish: save BX at+02, duration+0A at+05; RET to channel/effect caller. No note,flag or envelope change."
   },
   {
     "address": 664,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0298",
-    "aliases": [],
+    "symbol_name": "tandysnd_SilenceTimedEvent",
+    "aliases": [
+      "tandysnd_sub_0298"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -1468,17 +1537,34 @@
     "reachable_instruction_bytes": 16,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Timed silent event: volume+08=0 then shared028E; does not deactivate record."
+  },
+  {
+    "address": 717,
+    "segment": "driver-relative",
+    "kind": "continuation",
+    "size": 0,
+    "symbol_name": "tandysnd_SelectInstrument",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x02cd, never absolute equ. C0..DF dispatch branch; live DS:SI LODS and stride/conditional16-byte record schema beside ASM; no independent RET."
+    ],
+    "verification_status": "STATIC"
   },
   {
     "address": 960,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_03C0",
-    "aliases": [],
+    "symbol_name": "tandysnd_StepNotePitch",
+    "aliases": [
+      "tandysnd_sub_03C0"
+    ],
     "callers": [
       551
     ],
@@ -1584,17 +1670,21 @@
     "reachable_instruction_bytes": 59,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "If note-step+12 nonzero, ADD to note+09 modulo8 and tail03F5 to recalculate period/offset preset. Else RET."
   },
   {
     "address": 976,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_03D0",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvanceArpeggio",
+    "aliases": [
+      "tandysnd_sub_03D0"
+    ],
     "callers": [
       569
     ],
@@ -1732,17 +1822,21 @@
     "reachable_instruction_bytes": 81,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Flag01: byte cursor+1E increments modulo256; read curve+cursor. Highbit resets cursor0 and apply low7 bits now, not terminator-only; add note modulo8 then tail03F5."
   },
   {
     "address": 1013,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_03F5",
-    "aliases": [],
+    "symbol_name": "tandysnd_ComputeTonePeriod",
+    "aliases": [
+      "tandysnd_sub_03F5"
+    ],
     "callers": [
       583
     ],
@@ -1824,17 +1918,21 @@
     "reachable_instruction_bytes": 43,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "AL note+channelTranspose+5958 byte wrap; AH=0 then ADD AL,7 and double AL. Read word0809+zero_extend(byte index), store+06; flag04 adds word offset+22 and reloads+1F from+24. Can read through0908 into record data."
   },
   {
     "address": 1056,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0420",
-    "aliases": [],
+    "symbol_name": "tandysnd_RedirectOrder",
+    "aliases": [
+      "tandysnd_sub_0420"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -2452,17 +2550,21 @@
     "reachable_instruction_bytes": 359,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command91 NOP then0421: inline word is relative order-list address; load first pattern word, save next list cursor and pattern address, JMP023D. Zero pattern adds095C normally, no recursive redirect."
   },
   {
     "address": 1081,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0439",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvanceOrder",
+    "aliases": [
+      "tandysnd_sub_0439"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -3112,17 +3214,21 @@
     "reachable_instruction_bytes": 380,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command80 next relative pattern word at+00; zero reads following relative list pointer via0421. Save next order-word address and pattern; JMP023D. No bounds/sentinel validation."
   },
   {
     "address": 1103,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_044F",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvanceVolumeEnvelope",
+    "aliases": [
+      "tandysnd_sub_044F"
+    ],
     "callers": [
       557
     ],
@@ -3316,17 +3422,21 @@
     "reachable_instruction_bytes": 93,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Ordered attack/decay/release stages. Byte counters wrap; attack ADD has no volume cap, decay/release SUB borrow clamps0. One stage per call; zero intervals wrap toFF."
   },
   {
     "address": 1196,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_04AC",
-    "aliases": [],
+    "symbol_name": "tandysnd_ArmNoteRelease",
+    "aliases": [
+      "tandysnd_sub_04AC"
+    ],
     "callers": [
       554
     ],
@@ -3384,17 +3494,21 @@
     "reachable_instruction_bytes": 27,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "If remaining+05==releaseComparator+13 and next byte!=8D, releaseGate1,pitchstep0,clear slide02 only. Does not disable offset mode or modulation."
   },
   {
     "address": 1224,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_04C8",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetAscendingNoteStep",
+    "aliases": [
+      "tandysnd_sub_04C8"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -3988,17 +4102,21 @@
     "reachable_instruction_bytes": 341,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command81 zero operands: pitchstep+12=1; continue023D."
   },
   {
     "address": 1231,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_04CF",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetDescendingNoteStep",
+    "aliases": [
+      "tandysnd_sub_04CF"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -4592,17 +4710,21 @@
     "reachable_instruction_bytes": 341,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command82 zero operands: pitchstep+12=FF; continue023D."
   },
   {
     "address": 1238,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_04D6",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetReleaseParameters",
+    "aliases": [
+      "tandysnd_sub_04D6"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -5244,17 +5366,21 @@
     "reachable_instruction_bytes": 367,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command83 consumes2 bytes: release comparator, packed high-nibble release counter/reload and low-nibble decrement; continue."
   },
   {
     "address": 1271,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_04F7",
-    "aliases": [],
+    "symbol_name": "tandysnd_DisableChannelNoiseAndArpeggio",
+    "aliases": [
+      "tandysnd_sub_04F7"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -5864,17 +5990,21 @@
     "reachable_instruction_bytes": 349,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command8A clears channelBit+2F in noiseMask+2E then tails04FF to clear arp01 and continue."
   },
   {
     "address": 1279,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_04FF",
-    "aliases": [],
+    "symbol_name": "tandysnd_DisableArpeggio",
+    "aliases": [
+      "tandysnd_sub_04FF"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -6468,17 +6598,21 @@
     "reachable_instruction_bytes": 341,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command84 clears arp01 only then fetches. Does not reset curve/cursor or period."
   },
   {
     "address": 1286,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0506",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetPeriodSlide",
+    "aliases": [
+      "tandysnd_sub_0506"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -7104,17 +7238,21 @@
     "reachable_instruction_bytes": 354,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command85 consumes3 bytes: step word+20 (bit15 subtract,magnitude15),countdown+1F,enable02; continue."
   },
   {
     "address": 1306,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_051A",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetPeriodOffsetSlide",
+    "aliases": [
+      "tandysnd_sub_051A"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -7756,17 +7894,21 @@
     "reachable_instruction_bytes": 361,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command86 consumes5 bytes: offset word+22,step word+20,preset+24,enable04; countdown+1F not set until03F5."
   },
   {
     "address": 1333,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0535",
-    "aliases": [],
+    "symbol_name": "tandysnd_ClearPeriodOffsetMode",
+    "aliases": [
+      "tandysnd_sub_0535"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -8360,17 +8502,21 @@
     "reachable_instruction_bytes": 341,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command87 clears04 only, leaving current period/step/countdown; continue."
   },
   {
     "address": 1340,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_053C",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetModulationParameters",
+    "aliases": [
+      "tandysnd_sub_053C"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -9028,17 +9174,21 @@
     "reachable_instruction_bytes": 367,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command88 consumes3 bytes: delay+25,depth+26/+27,initialPeriod+28/doubleReload+29; set48. Growth+2A/+2B inherited. Modulation does not read bit08."
   },
   {
     "address": 1373,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_055D",
-    "aliases": [],
+    "symbol_name": "tandysnd_ClearModulationBit08",
+    "aliases": [
+      "tandysnd_sub_055D"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -9632,17 +9782,21 @@
     "reachable_instruction_bytes": 341,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command89 clears08 and continues;06B7 tests depth rather than08, so this does not disable modulation."
   },
   {
     "address": 1380,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0564",
-    "aliases": [],
+    "symbol_name": "tandysnd_NoiseEnableNopEntry",
+    "aliases": [
+      "tandysnd_sub_0564"
+    ],
     "callers": [],
     "callees": [
       1013,
@@ -10245,17 +10399,21 @@
     "reachable_instruction_bytes": 347,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command8C NOP fallthrough0565, identical4-byte noise parameters/enable to8B."
   },
   {
     "address": 1381,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0565",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetNoiseParametersAndEnable",
+    "aliases": [
+      "tandysnd_sub_0565"
+    ],
     "callers": [],
     "callees": [
       1013,
@@ -10858,17 +11016,21 @@
     "reachable_instruction_bytes": 346,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command8B consumes4 noise bytes through0571, OR channelBit into noiseMask,continue."
   },
   {
     "address": 1393,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0571",
-    "aliases": [],
+    "symbol_name": "tandysnd_ReadNoiseParameters",
+    "aliases": [
+      "tandysnd_sub_0571"
+    ],
     "callers": [
       1381
     ],
@@ -10942,17 +11104,21 @@
     "reachable_instruction_bytes": 25,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Read4 explicit forward BX bytes into0768 step,0767 accumulator,0765 delay,0766 count; RET. No DF-sensitive string ops."
   },
   {
     "address": 1418,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_058A",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvanceNoiseState",
+    "aliases": [
+      "tandysnd_sub_058A"
+    ],
     "callers": [
       184
     ],
@@ -11050,17 +11216,21 @@
     "reachable_instruction_bytes": 71,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "From076A choose channel volume (music bits0/1/2 priority or effect bit0 only); no bit means noise volume0/no sweep. Chosen: DEC delay, if SF clamp0 and if count nonzero DEC count/ADD step to0767. Accumulator not read by port output."
   },
   {
     "address": 1489,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_05D1",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetChannelTranspose",
+    "aliases": [
+      "tandysnd_sub_05D1"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -11662,17 +11832,21 @@
     "reachable_instruction_bytes": 343,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command8F consumes1 byte channel transpose+2C, continue; no immediate period recompute."
   },
   {
     "address": 1498,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_05DA",
-    "aliases": [],
+    "symbol_name": "tandysnd_StartNoiseArpeggioPreset",
+    "aliases": [
+      "tandysnd_sub_05DA"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -11906,17 +12080,21 @@
     "reachable_instruction_bytes": 127,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command93 zero operands: global noise words0800/00E1,noise mask enabled,curve07BA,cursor0,arp01,clear slide02,synthesize note0C-channelTranspose through0244. Global transpose and offset04 still contribute."
   },
   {
     "address": 1541,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0605",
-    "aliases": [],
+    "symbol_name": "tandysnd_StartPeriodSlidePreset",
+    "aliases": [
+      "tandysnd_sub_0605"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -12134,17 +12312,21 @@
     "reachable_instruction_bytes": 117,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command95 zero operands: clear channel noise bit,slide word6/count0C,enable02/clear arp01,synthesize note0-channelTranspose through0244;04 retained."
   },
   {
     "address": 1574,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0626",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetGlobalTranspose",
+    "aliases": [
+      "tandysnd_sub_0626"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -12746,17 +12928,21 @@
     "reachable_instruction_bytes": 343,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command96 consumes1 byte to actual DS:5958 out of requested allocation; continue. Read by03F8, initialized by01D5."
   },
   {
     "address": 1583,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_062F",
-    "aliases": [],
+    "symbol_name": "tandysnd_EndEffectSelection",
+    "aliases": [
+      "tandysnd_sub_062F"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -12772,17 +12958,21 @@
     "reachable_instruction_bytes": 6,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command92 clears004D ONLY,RET without save BX/countdown. Effect mode2 remains active and future visits use prior saved pointer/countdown. Renderer/mixer switch back to music."
   },
   {
     "address": 1589,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0635",
-    "aliases": [],
+    "symbol_name": "tandysnd_SetTempoReload",
+    "aliases": [
+      "tandysnd_sub_0635"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -13384,17 +13574,21 @@
     "reachable_instruction_bytes": 343,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command97 consumes1 byte ->tempoReload079F, not current phase; continue."
   },
   {
     "address": 1598,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_063E",
-    "aliases": [],
+    "symbol_name": "tandysnd_ContinueStream",
+    "aliases": [
+      "tandysnd_sub_063E"
+    ],
     "callers": [],
     "callees": [
       1013
@@ -13980,17 +14174,21 @@
     "reachable_instruction_bytes": 337,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Command94 zero operands JMP023D, not timed finish."
   },
   {
     "address": 1601,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0641",
-    "aliases": [],
+    "symbol_name": "tandysnd_ResetSelectedStateAndPsg",
+    "aliases": [
+      "tandysnd_sub_0641"
+    ],
     "callers": [
       57,
       395
@@ -14137,17 +14335,21 @@
     "reachable_instruction_bytes": 78,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Selective reset exact stores:004A word,07A1,076A,08C6,08F6 twice,08C7,08F7,0927,08A2,08D2,0902,08C8,08F8,0928,0769 zero;0764=10. Missing0926 clear retained. Does not clear004C/004D/effect record/phase/tempo/global pitch. Port61 ANDFC,OUT C0 9F BF DF FF. RET; stream90 does not resume parser."
   },
   {
     "address": 1679,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_068F",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvanceOffsetSlide",
+    "aliases": [
+      "tandysnd_sub_068F"
+    ],
     "callers": [
       563
     ],
@@ -14205,17 +14407,21 @@
     "reachable_instruction_bytes": 34,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Flag04 enters shared069C slide after0696 already handled02; both flags cause two steps/count decrements, not one."
   },
   {
     "address": 1686,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_0696",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvancePeriodSlide",
+    "aliases": [
+      "tandysnd_sub_0696"
+    ],
     "callers": [
       560
     ],
@@ -14273,17 +14479,21 @@
     "reachable_instruction_bytes": 33,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Flag02 step: DEC byte count+1F, SF set ->INC undo. Else step word bit15 selects SUB low15 magnitude, otherwise ADD; modulo16. Flag04 separately invokes same tail."
   },
   {
     "address": 1719,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_06B7",
-    "aliases": [],
+    "symbol_name": "tandysnd_AdvancePeriodModulation",
+    "aliases": [
+      "tandysnd_sub_06B7"
+    ],
     "callers": [
       566
     ],
@@ -14469,17 +14679,21 @@
     "reachable_instruction_bytes": 100,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Previous BX byte8D overrides unsigned duration-delay<remaining gate. Nonzero depth drives modulation regardless bit08. Growth countdown can INC depth. Period expiry reloads/toggles40 without adjust; other visits ADD/SUB depth by40."
   },
   {
     "address": 1819,
     "segment": "driver-relative",
     "kind": "entry",
     "size": null,
-    "symbol_name": "tandysnd_sub_071B",
-    "aliases": [],
+    "symbol_name": "tandysnd_ProcessEffectRequest",
+    "aliases": [
+      "tandysnd_sub_071B"
+    ],
     "callers": [
       201
     ],
@@ -15163,8 +15377,296 @@
     "reachable_instruction_bytes": 405,
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Static call/table target or signature-matched legacy lead"
+      "Static call/table target or signature-matched legacy lead",
+      "S10 static original-instruction/state/dispatch audit; maintained contract in src/sound/tandysnd.asm; no playback acceptance"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "UNTRANSLATED",
+    "semantic_contract": "Phase0 accepts effect01..12 only if no active ID or strictly lower than active004D; rejected latch persists. Setmode2,clear request/flags/pitchstep/depth/transpose,releaseComparator1; absolute directory53EA+2*ID ->BX,JMP023D. No general state reset."
+  },
+  {
+    "address": 1890,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_SongStartZeroByte",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0762, never absolute equ. 01C6 writes zero; loaded0; no identified engine reader or wider lifetime inference."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1892,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_ResetConstant10",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0764, never absolute equ. Loaded10;01D0 and0689 write10; no identified engine reader;0763 excluded."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1893,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_NoiseDelay",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0765, never absolute equ. 036C/0580 set from fourth-operand group,05E0 writes low00;05BA DEC and05BF clamps on SF; not a wrapping-domain clamp elsewhere."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1894,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_NoiseStepCount",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0766, never absolute equ. 0370/0586 set,05E0 high08;05C3 tests,05C8 DEC while nonzero."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1895,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_NoiseAccumulator",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0767, never absolute equ. 0368/057A set,05E6 word00E1;05CE ADD through BX=0767. No identified port-output reader:011C writes literalE5."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1896,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_NoiseStep",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0768, never absolute equ. 0364/0574 writes;05E6 high00;05CB loads byte delta for05CE."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1897,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_NoiseVolume",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0769, never absolute equ. 05B4 chooses channel live volume or05AC zero;0670 reset;0120 XOR0F/ORF0 emits unmasked."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1898,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_CombinedNoiseMask",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x076a, never absolute equ. 009D..00B5 combines music and effect+2E masks, masks off music bit04 when004D nonzero;058A selects volume;0649 clears."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1899,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 48,
+    "symbol_name": "tandysnd_StreamCommandTargets",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x076b, never absolute equ. 02B1..02BB byte doubled80..9F index;24 actual words for80..97, higher indexes consume state/pointer bytes; source image words checked."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1951,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_TempoReload",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x079f, never absolute equ. Header01B0 or command97/0638 writes;00C2 loads on phase zero.98..9F dispatch can reinterpret live state."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1952,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_TempoPhase",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x07a0, never absolute equ. Loaded0,01CB writes1;0081 DEC before channels,021B gates music;00C5 reloads only after visits;00C9 effect admission at zero."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1953,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_SongRequestScratch",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x07a1, never absolute equ. 0180 copies004A only if004B=0;0183 loads;0646 reset clears; active gate blocks copy of a queued request."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1954,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 24,
+    "symbol_name": "tandysnd_ArpeggioPointers",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x07a2, never absolute equ. 03AB..03B2 indexes16 possible words;12 stored pointers lead to complete high-bit-terminated curves07BA..0808;AC..AF overread curve bytes, not added entries."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 1978,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 79,
+    "symbol_name": "tandysnd_ArpeggioCurves",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x07ba, never absolute equ. All12 pointer roots exhaustively read to first high-bit byte:07BA..BB,BC..BD,BE..C1,C2..E0,E1..E3,E4..E9,EA..EB,EC..F1,F2..F8,F9..FE,7FF..800,801..808.03D9..03F2 applies sentinel low7 then resets cursor;05EC also selects07BA.07C2..07DF textual alias."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2057,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 144,
+    "symbol_name": "tandysnd_TonePeriods",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x0809, never absolute equ. 03F5..040A index and store word;72 decreasing semitone-like stored periods through0898 before unknown0899 and records089A. Runtime byte index admits128 words through0908; do not extend table ownership to that read domain."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2202,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 48,
+    "symbol_name": "tandysnd_MusicChannel0",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x089a, never absolute equ. 007E..00CC visits explicit base,01E3/071B initialize selected fields,020C parser/modifiers read/write every byte as mapped beside ASM;00D8 reads+06/+08,009D reads+2E;stored channel bit+2F is 04. Reset partial; effect and third transpose quirks retained."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2250,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 48,
+    "symbol_name": "tandysnd_MusicChannel1",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x08ca, never absolute equ. 007E..00CC visits explicit base,01E3/071B initialize selected fields,020C parser/modifiers read/write every byte as mapped beside ASM;00D8 reads+06/+08,009D reads+2E;stored channel bit+2F is 02. Reset partial; effect and third transpose quirks retained."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2298,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 48,
+    "symbol_name": "tandysnd_MusicChannel2",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x08fa, never absolute equ. 007E..00CC visits explicit base,01E3/071B initialize selected fields,020C parser/modifiers read/write every byte as mapped beside ASM;00D8 reads+06/+08,009D reads+2E;stored channel bit+2F is 01. Reset partial; effect and third transpose quirks retained."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2346,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 48,
+    "symbol_name": "tandysnd_EffectChannel",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x092a, never absolute equ. 007E..00CC visits explicit base,01E3/071B initialize selected fields,020C parser/modifiers read/write every byte as mapped beside ASM;00D8 reads+06/+08,009D reads+2E;stored channel bit+2F is 01. Reset partial; effect and third transpose quirks retained."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 2394,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "tandysnd_MusicInstrumentBank",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x095a, never absolute equ. 01A8..01AC header relative word+095C stores,02E0 loads except DI092A selects52DA; loaded0,unchecked bank/selector extent."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22064,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "tandysnd_SongHeaderWord0",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x5630, never absolute equ. 01A4 LODSW/01A5 store; no identified reader; outside image54C6 but inside allocation5670, ordinarily residual AdLib bytes before store. Meaning unresolved."
+    ],
+    "verification_status": "STATIC"
+  },
+  {
+    "address": 22872,
+    "segment": "driver-relative",
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "tandysnd_GlobalTranspose",
+    "aliases": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "TANDYSND-relative; use section-relative equ name equ $$+0x5958, never absolute equ. 01D5 initializes0,command96/0629 writes,03F8 adds to note modulo8. Outside0567-paragraph allocation; adjacent DOS memory ownership unresolved; no shadow state."
+    ],
+    "verification_status": "STATIC"
   }
 ]

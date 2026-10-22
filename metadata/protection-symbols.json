@@ -159,8 +159,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_0671",
-    "aliases": [],
+    "symbol_name": "ProtectionBufferAddressFromCall",
+    "aliases": [
+      "protected_sub_0671"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -314,8 +316,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_071E",
-    "aliases": [],
+    "symbol_name": "ProbeProtectionFloppyPattern",
+    "aliases": [
+      "protected_sub_071E"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -446,8 +450,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_0786",
-    "aliases": [],
+    "symbol_name": "InitializeProtectionLocalFrame",
+    "aliases": [
+      "protected_sub_0786"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -557,8 +563,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_07B7",
-    "aliases": [],
+    "symbol_name": "ReadAndValidateProtectionSector",
+    "aliases": [
+      "protected_sub_07B7"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -705,8 +713,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_0847",
-    "aliases": [],
+    "symbol_name": "ReadProtectionBiosSector",
+    "aliases": [
+      "protected_sub_0847"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -782,8 +792,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_0878",
-    "aliases": [],
+    "symbol_name": "ReadProtectionAbsoluteSector",
+    "aliases": [
+      "protected_sub_0878"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -859,8 +871,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_08B2",
-    "aliases": [],
+    "symbol_name": "DispatchProtectionAbsoluteDiskService",
+    "aliases": [
+      "protected_sub_08B2"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -889,8 +903,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_08BE",
-    "aliases": [],
+    "symbol_name": "ResetProtectionBiosDisk",
+    "aliases": [
+      "protected_sub_08BE"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -923,8 +939,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_08CB",
-    "aliases": [],
+    "symbol_name": "FillProtectionSectorBuffer",
+    "aliases": [
+      "protected_sub_08CB"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -963,8 +981,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_08D7",
-    "aliases": [],
+    "symbol_name": "ComputeProtectionCrc16",
+    "aliases": [
+      "protected_sub_08D7"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -998,8 +1018,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_08FC",
-    "aliases": [],
+    "symbol_name": "CountProtectionSetBits",
+    "aliases": [
+      "protected_sub_08FC"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -1028,8 +1050,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_0913",
-    "aliases": [],
+    "symbol_name": "SaveAndPatchFloppyParameterTable",
+    "aliases": [
+      "protected_sub_0913"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -1157,8 +1181,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_094A",
-    "aliases": [],
+    "symbol_name": "ClearProtectionBufferAndRestoreFloppyParameters",
+    "aliases": [
+      "protected_sub_094A"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -1216,8 +1242,10 @@
     "state": "tf_on",
     "kind": "entry",
     "size": null,
-    "symbol_name": "protected_sub_0D9E",
-    "aliases": [],
+    "symbol_name": "ProtectionBiosInt13Gate",
+    "aliases": [
+      "protected_sub_0D9E"
+    ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Direct call in derived state-specific original stream"
@@ -1317,7 +1345,8 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "0DB3 installs this address as INT1 after negating 59 bytes"
+      "0DB3 installs this address as INT1 after negating 59 bytes",
+      "Protected ledger metadata/protection-symbols.json; state=int1_plaintext. All59 bytes are simultaneous plaintext after INT3 byte-NEG. STI opens IRQ window. Prologue AX/SI/DS saves leave T=entrySP-6; restore old word via IVT0, guard displaced plaintext AL==CC; else frame-derived next-word patch. IRET uses liveSS; wrapping and aliases not normalized."
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 59
@@ -1376,7 +1405,8 @@
     ],
     "confidence": "PROVEN",
     "evidence": [
-      "Shared tail entered by INT3 with TF set and by active INT1"
+      "Shared tail entered by INT3 with TF set and by active INT1",
+      "Protected ledger metadata/protection-symbols.json; state=int1_plaintext. Shared tail entered by INT1 after previous-word restoration and by enablingINT3. SI=T=post-three-pushSP; LDS SI,SS:[T+6] loads interrupted IP:CS. Read target[-2], NOT/ROL16, XOR target word, record far pointer at IVT0. Dynamic far destination includes CALL/RET/taken-branch continuations; no fixed target list for arbitrary interrupted frames."
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 30

@@ -1,7 +1,60 @@
 ; Palette pointers, byte-port writers and transition front ends, original52D4..563D.
 ; Native contracts: docs/palette-row-select.md and docs/palette-ports.md.
-; Initial table bytes remain UNKNOWN; unchecked selectors and buffer ownership stay open.
+; Stored schemas/nominal lifetimes below; classification proposals are in build/static/s7-tables.json.
+; Raw selectors, returned segments, aliases and resource writes retain their wider domains.
 ; Native transitions,ports and53F6/53FC/53FE selectors retain their scoped contracts.
+; TABLE CONTRACT (all coordinates hex): CS52D4/52E4 each store eight LE16
+; offsets into live DS, not far pointers or RGB records owned by CS. Initial slots:
+; slot packed / RGB     nominal role and byte width (packed / RGB)
+; 0    2638 /2638        current top/full row,10/30;2650 is RGB colors8..F
+; 1    2608 /2608        stored black target,10/30;all30 stored bytes are00
+; 2    4920 /4930        stored menu target,10/30
+; 3    1F13 /1F3B        GROUND level target,10/30
+; 4    25E8 /25F0        stored lower-eight target,08/18
+; 5    1F0B /1F23        GROUND first-eight seed,08/18
+; 6    25A8 /25B8        fixed UI plus seeded game target,10/30
+; 7    2668 /2668        current lower/full row,10/30
+; Packed bytes encode three2-bit channels in bits(5,2),(4,1),(3,0);
+; RGB is interleaved R,G,B bytes, not three planes. Only full modeword4
+; selects RGB here; mode2 is not required by the general packed selector paths.
+;
+; POINTER READERS:52FF/530D fixed slot1;5384/5388 and53A7/53AB fixed6/5;
+; 53DE/53ED use AL at53CA,5412/541E use AL at5401;557E/558D and55A1/55B0
+; use BL/BH at5569;55CD/55DC and5610/561F use BL/BH at55B7.
+; Selector producers:531E=(0,1),536C=(0,2),5329=(0,1) then(7,1),
+; 534B=(0,inBH) then(7,inBL);03CE supplies0604,CL10/DL08;467B supplies
+; 0302,CL10/DL10. 03DE/45F8/46B1 supply5329's firstCL10 (second forces10).
+; Publication:53FC forces slot2;4600 AL1;466E/46A8 AL0 with upper-eight;
+; 46CF AL0/CL8 and46E6 AL7/CL8. Thus all eight slots have a nominal use.
+; AL/BL/BH zero-extend and double WITHOUT mask/check:00..FF read base+0..1FE,
+; even when beyond these eight stored words (packed through54D3,RGB54E3).
+; Every read is live; source/target reads can see different table contents.
+;
+; INITIALIZATION/LIFETIME: image supplies these CS words and rows25A8..2697,
+;4920..495F; neither startup DS clear0000..2011 nor level clear0000..0FC9
+; reaches those DS rows. 2638/2668 persist across menu/frame/level transitions;
+; they are modified in place, not reset per frame.2608 remains a black target
+; on the nominal producer paths, not an immutable constant for arbitrary entries.
+; 563E writes one packed source byte;56E2 writes three RGB source bytes, both
+; forward regardless of DF. Nominal source slots are0/7, not all target rows.
+; 5377 writes slot6 color7 and colors8..F from live slot5; details below.
+; GROUND1A18 requests1000 bytes atDS1B4B:can overwrite25A8..2697 and point
+; prefix2788..2B4A; pinned0420-byte files stop1F6A. Slots3/5 are replaced by
+; every full GROUND read;1A7B special setup overlays their palette subwindows.
+; GROUND's physical request does not reach CS52D4/52E4 or DS4920/4930.
+; Unchecked entity slots can overwrite DS rows25A8 onward:byte indexD3 starts
+;25A8's containing record, through indexFF end2D87. Unbounded cache-name
+; padding1E51/1E60 can wrap a DS string across any row; DOS/heap selectors,
+; live SS saves and raw row/format cursors leave additional alias writers open.
+; Protection export0ED8 readsDS252A..2629 (100h bytes) FROM RAM tofile,
+; including25A8..2607 and black-row2608..2629; it is not a RAM initializer.
+; AdvanceCodeChecksum8397 can read these CS tables through its live CS cursor;
+; its incoming-call reachability remains unresolved.
+; No named consumer proves immutable/exclusive ownership. Known CS minimap/
+; checksum/protection writes have separate footprints; arbitrary stack/far
+; aliases do not inherit a no-write guarantee for these CS tables.
+; UNKNOWN classification is unchanged here; integration proposes only exact
+; nominal table/row windows, never a larger UNKNOWN run or unchecked read span.
 ; UNKNOWN: unresolved bytes
 PackedPalettePointerTable:
     db 0x38,0x26,0x08,0x26,0x20,0x49,0x13,0x1f,0xe8,0x25,0x0b,0x1f,0xa8,0x25,0x68,0x26 ; @052D4
@@ -90,6 +143,12 @@ TransitionPaletteToSlot2:
     mov bx,0x200 ; @05371
     jmp PaletteTransitionSharedBody ; @05374
 ; GAME FADE SEED: live CS slots6/5 own DI/SI; actual PUSH DS/POP ES,DF words.
+; With stored pointers/DF0:packed25AF=DS1F0B, then1F0B..1F12 ->25B0..25B7;
+; RGB25CD..25CF=DS1F23..1F25, then1F23..1F3A ->25D0..25E7.
+; Earlier UI colors remain stored bytes; no full-row clear. Explicit color7
+; stores ignore DF. DF1 MOVSWs instead write packed25AA..25B1 from1F05..1F0C,
+; RGB25BA..25D1 from1F0D..1F24 (word high byte is physical+1). ES comes from
+; the actual PUSH DS/POP ES; strings can therefore write a different frame.
 ; Duplicate source color0 into color7,then copy8 colors to rows8..15.
 ; RGB uses3-byte colors and12 MOVSWs,packed uses4. Preserve final CMP/RET sites.
 ; Full native contracts: docs/game-prepare.md.
@@ -331,6 +390,14 @@ loc_5504:
     pop di ; @05505
 MappedDacPaletteReturn5506:
     ret ; @05506
+; CS5507..5516 nominal16-byte mapping: attribute color0..F -> DAC indices.
+; Its stored bytes below are NOT an allocation/check:54E1 starts at5507+CH,
+;54E9 advances DI forward independently of source DF. Nominal mapped callers
+; use(CH,CL)=(0,10),(0,8),(8,8), so only this prefix is their index table.
+; ArbitraryCH/CL includingCL0 read adjacent storage and wrap16-bit DI.
+; No normal direct index-table writer identified; CS/SS/interrupt aliases stay
+; live. Bytes5517..5532 remain a SEPARATE UNKNOWN code-looking28-byte span;
+; an unchecked index read cannot classify that suffix as more index entries.
 ; UNKNOWN: unresolved bytes
 MappedDacPaletteIndexes:
     db 0x00,0x01,0x02,0x03,0x04,0x05,0x14,0x07,0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,0x3f ; @05507

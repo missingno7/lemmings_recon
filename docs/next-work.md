@@ -22,10 +22,10 @@ reports are in build/ and are not a status source.
    matrix for record+14 across creation 30A6, update 1F19, clone/bulk copies,
    activation and the 70F0 PUSH / 7159 POP handoff; 2Dh-record allocation and
    reuse bounds. Largest main control-flow risk.
-2. **AdLib driver grammar and state.** Engine [0000,05A8): INT61 dispatch, 01EA
-   target formula, stream grammar, OPL register writes and timing; state/tables
-   [05A8,0B6E). Then score [0B6E,54E3) and effects [54E3,566D) once the grammar
-   is fixed. Recover original music logic; never approximate it.
+2. **AdLib residue and dispatch domain.** Engine, grammar (stream_schema v1),
+   all 21 songs and 18 effects are decoded beside src/sound/adlib.asm. Remaining:
+   the 01EA 88..AF raw dispatch domain, 549 explicitly UNKNOWN payload bytes,
+   05A8/0B67/fine-frequency residue, and the PC-speaker image to the same bar.
 3. **Resource lifetimes.** GROUND request 1000h at DS:1B4B can reach DS:2B4A
    over 2011/2013/201F/25A0/2608/2778 while supplied files end at 1F6A; order
    bytes 54EE and override storage 5566..66E5 bounds. Underpins 42A5 and 1407.

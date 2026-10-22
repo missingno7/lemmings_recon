@@ -42,8 +42,18 @@
     },
     {
       "start": 1890,
-      "end": 1899,
+      "end": 1891,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 1891,
+      "end": 1892,
       "classification": "unresolved"
+    },
+    {
+      "start": 1892,
+      "end": 1899,
+      "classification": "runtime_data"
     },
     {
       "start": 1899,
@@ -52,9 +62,42 @@
     },
     {
       "start": 1947,
+      "end": 1951,
+      "classification": "unresolved"
+    },
+    {
+      "start": 1951,
+      "end": 1954,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 1954,
+      "end": 2201,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 2201,
+      "end": 2202,
+      "classification": "unresolved"
+    },
+    {
+      "start": 2202,
+      "end": 2396,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 2396,
       "end": 21702,
       "classification": "unresolved"
     }
   ],
-  "overlays": []
+  "overlays": [
+    {
+      "start": 1986,
+      "end": 2016,
+      "class": "embedded_resource",
+      "evidence": "TANDYSND-relative S10: ASCII MUSIC BY SOUND IMAGES (C) 1991;also arpeggio pointer slotA3 consumer03D9,curve ends withB1 at07E0. Preserve text/pitch-data overlapping role.",
+      "overlay": true
+    }
+  ]
 }

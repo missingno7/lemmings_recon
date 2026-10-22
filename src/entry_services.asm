@@ -751,6 +751,7 @@ loc_0565:
     mov ah,0x49 ; @00567
     int 0x21 ; @00569
     mov ah,0x48 ; @0056B
+; TANDYSND state extent:allocation0567 paragraphs ends5670;driver image54C6;01A5 writes5630 inside allocation/residual AdLib suffix,01D5/0629 use5958 outside it (extent5959,2E9 extra bytes). Preserve unchecked second allocation CF,real segment adjacency and selective reset;do not enlarge allocation/shadow transpose to hide original effect.
     mov bx,0x567 ; @0056D
     int 0x21 ; @00570
     push ds ; @00572
@@ -869,6 +870,32 @@ loc_0635:
 loc_063D:
     ret ; @0063D
 ProbeOriginalFloppyMedia:
+; CONDITIONAL: known 0635/0E99/0EB2 calls enter with TF clear and ordinary
+; disjoint code, IVT, SS stack, game DS and floppy-table storage. DL is forced
+; to 0; 0698's DL>=2 absolute-disk arm is not selected in this domain. Other
+; entries/aliases remain obligations, including the decoded INT25/26 gates.
+; Saves DS/ES/CX/SI/DI/BP and IVT0..4 (20 bytes); DS becomes SS at 066A.
+; Protected 066D allocates 22h bytes at SS:BP. Normal completion clears the
+; selected 512-byte CS buffer, restores the saved 11-byte floppy table, IVT0..4,
+; encoded stream/INT1 and saved registers, then 0E3A returns admission CF.
+; AX/BX carry the CRC pair (early failure: both 0); DL is the selected drive.
+; DX otherwise follows the original arithmetic/services; DF is cleared at 08D2.
+; Saved TF/IF are toggled together at each INT3, not forced to constants.
+; With TF-clear, IF-preserving disk returns and matched toggles, exit TF=0 and
+; IF=entry IF. INT1's STI still permits IRQ observation inside the transport.
+;
+; Smallest instruction-level service domain for this entry: BIOS tick byte
+; 0000:046C (or DH if CX=9299), the INT1E table, and INT13 AH=00/02. Carry actual
+; service registers, saved FLAGS/segments and sector bytes; signature sectors
+; can be inspected despite BIOS error, so read failure is not a uniform rule.
+; The transport below and src/protection/*.asm owns instruction-word mutation.
+; A coarser 063E outcome substitution may hide transient vector/code/table
+; writes only at a quiescent boundary. It must supply the actual pre-RET state,
+; stack residue if observed, any critical-error/device events and admission;
+; clear exactly the selected buffer and retain the other buffer/gap/seed bytes.
+; Current c/protection.c exposes this media seam, not an INT1/INT3 translation.
+; Equivalence to unrestricted media/IRQ/alias behavior is unverified; PASS is
+; not a fabricated BIOS success. Unsupported service is distinct from CF fail.
     db 0x32,0xd2 ; ENCODED: xor dl,dl (NASM chooses a different encoding) ; @0063E
     push ds ; @00640
     push es ; @00641
@@ -887,6 +914,9 @@ loc_064A:
     cli ; @00655
     call InstallProtectionInt3FromReturnAddress ; @00656
 InstallProtectionInt3FromReturnAddress:
+; CALL-next, not a leaf RET: consume 0659, add 075A -> CS:0DB3 in IVT3.
+; CLI protects installation; POPF restores the flags saved at 0654. SI=CS,
+; DS=SS at 066C; INT3 enables the tf_on view at saved return CS:066D.
     pop word [0xc] ; @00659
     add word [0xc],0x75a ; @0065D
     push cs ; @00663
@@ -897,6 +927,11 @@ InstallProtectionInt3FromReturnAddress:
     pop ds ; @0066B
     int3 ; @0066C
 ProtectionEncodedDiskEntry:
+; Stored encoding is not the executed stream. src/protection/stream.asm lists
+; each instruction in tf_on/tf_off state; src/protection/int1.asm is the whole
+; negated-handler view. A two-byte patch can overlap the following instruction:
+; exposing 066D gives 50 E9, but restoring it before 066E exposes E8 00 00.
+; These stitched views are inventories, never replacement runtime images.
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x90,0x8e,0xde,0x00,0x1b,0xfa,0xd2,0x03,0xcb,0xa8,0xd9,0xaa,0x9f,0x42,0xc2,0x8a ; @0066D
 ; CODE: stored state_specific_code; execution views in src/protection
@@ -957,16 +992,26 @@ ProtectionEncodedDiskEntry:
     db 0x8f,0xbe,0x01,0x80,0x0c,0x47,0xe0,0x00,0xd7,0x3a,0x00,0x73,0x8c,0x13,0x0f,0x58 ; @0082D
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x00,0x06,0x8b,0xf0,0x01,0x69,0xff,0xd5,0x59,0x96,0x8a,0x95,0x0e,0x02,0x08,0xfe ; @0083D
+; TF-on JMP084B skips 084D..0851. Decoder0E20 at target0852 reads the last
+; two as key word030E; target0853 also reads0851. First three remain unexplained;
+; no incoming write entry or padding role is proved. Keep canonical UNKNOWN.
 ; UNKNOWN: unresolved bytes
-    db 0x7e,0xc5,0x44,0x0e,0x03 ; @0084D
+    db 0x7e,0xc5,0x44 ; @0084D
+ProtectionBiosReadDecodeSeed:
+    db 0x0e,0x03 ; @00850
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0xb2,0x41,0x98,0x00,0x9e,0xab,0x72,0xa9,0x90,0xcb,0x0e,0xad,0xbc,0x0a,0x0c,0xa4 ; @00852
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x02,0x3c,0xac,0x00,0x4f,0xcb,0x05,0x34,0xac,0xe5,0xae,0xb4,0xdc,0x0e,0x02,0x1a ; @00862
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x8f,0xc9,0x02,0x8c,0xa3,0x25,0x7f,0xf2,0x0e,0x25,0x08,0xb0 ; @00872
+; TF-on JMP087C skips 087E..0882. Target0883 reads0881..0882 as key word260E;
+; target0884 also reads0882. First three remain unexplained; stored26 does not
+; prove an executed INT26 selector producer. Key-data overlay, UNKNOWN retained.
 ; UNKNOWN: unresolved bytes
-    db 0x7e,0x59,0x44,0x0e,0x26 ; @0087E
+    db 0x7e,0x59,0x44 ; @0087E
+ProtectionAbsoluteReadDecodeSeed:
+    db 0x0e,0x26 ; @00881
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0xb2,0x0b,0x98,0x00,0x9e,0xab,0x48,0xee,0x00,0xe4,0xb8,0x08,0x01,0x00,0x76,0x22 ; @00883
 ; CODE: stored state_specific_code; execution views in src/protection
@@ -1001,7 +1046,26 @@ ProtectionEncodedDiskEntry:
     db 0xf6,0x8e,0xde,0x8f,0x44,0x12,0x83,0xee,0x02,0x83,0xfe,0xec,0x75,0xf5,0x51,0x9d ; @00973
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x5d,0x5f,0x5e,0x59,0x07,0x1f,0xe9,0xae,0x04 ; @00983
+; Protected storage inventory, inclusive ranges (canonical bytes stay UNKNOWN):
+; 098C..0B8B: 512-byte primary sector-buffer overlay.
+; 0B8C..0B9B: 16 bytes outside both buffers; no specific protection role proved.
+; 0B9C..0D9B: 512-byte DMA-fallback sector-buffer overlay.
+; 0D9C..0D9D: retained decode seed for protected 0D9E, not buffer storage.
+; CALL-next 066E supplies 0671; +031B=098C. At 067B SI=(CS+0098) mod 10000,
+; DI=000C; low12(SI)>0FDF selects DI=021C, equivalent to CS:0B9C. Either
+; 512-byte transfer stays in one physical 64 KiB DMA page, including wrap.
+; SS:BP+0A/+0C owns the selected offset/segment for this call only. 08CB fills
+; 0100 words (CLD); 07BB supplies 1234 before BIOS reads, 07E7/07F0/07F9 mutate
+; signature bytes, CRC/bit-count readers inspect them; 094A fills with zero on
+; both success/failure cleanup. The unselected buffer is unchanged in the
+; disjoint domain. Initial stored buffer contents remain unexplained; neither
+; overwrite nor absent graph edges proves no alternate executable role.
+; Thus 1024 bytes have a runtime buffer role, 2 a seed role, and 16 no specific
+; protection role; all 1042 stored bytes retain canonical UNKNOWN accounting.
+; AdvanceCodeChecksum's live CS cursor can read these bytes; its caller remains
+; unresolved. Preserve final buffer clear and untouched originals, not new BSS.
 ; UNKNOWN: unresolved bytes
+ProtectionSectorBufferPrimary:
     db 0xb5,0xa2,0x6b,0x88,0xd7,0x53,0xae,0xea,0x5c,0x18,0xb9,0x73,0x72,0x2a,0xe4,0x97 ; @0098C
 ; UNKNOWN: unresolved bytes
     db 0xc9,0x72,0x92,0x28,0x24,0x94,0x49,0x6b,0x93,0x19,0x26,0x76,0x4d,0x2f,0x9a,0xa1 ; @0099C
@@ -1065,9 +1129,12 @@ ProtectionEncodedDiskEntry:
     db 0x66,0x73,0xcd,0x29,0x9b,0x96,0x36,0x70,0x6d,0x23,0xdb,0x89,0xb7,0x56,0x6e,0xf0 ; @00B6C
 ; UNKNOWN: unresolved bytes
     db 0xdd,0x23,0xbb,0x8a,0x77,0x58,0xee,0xf3,0xdd,0x2a,0xbb,0x98,0x76,0x74,0xed,0x2b ; @00B7C
+; 0B8C..0B9B is outside both REP STOSW windows. Retain UNKNOWN, not padding.
 ; UNKNOWN: unresolved bytes
     db 0xdb,0x9a,0xb6,0x78,0x6d,0x34,0xda,0xab,0xb4,0x9a,0x69,0x78,0xd2,0x33,0xa5,0xaa ; @00B8C
+; DMA fallback: the same selected-buffer lifetime as 098C, not extra capacity.
 ; UNKNOWN: unresolved bytes
+ProtectionSectorBufferDmaFallback:
     db 0x4b,0x98,0x96,0x73,0x2d,0x2a,0x5b,0x97,0xb6,0x71,0x6d,0x26,0xdb,0x8f,0xb6,0x62 ; @00B9C
 ; UNKNOWN: unresolved bytes
     db 0x6c,0x08,0xd8,0x53,0xb1,0xea,0x63,0x18,0xc6,0x73,0x8d,0x2a,0x1b,0x98,0x36,0x73 ; @00BAC
@@ -1131,13 +1198,22 @@ ProtectionEncodedDiskEntry:
     db 0x84,0x97,0x09,0x72,0x12,0x27,0x24,0x91,0x49,0x65,0x93,0x0d,0x27,0x5e,0x4e,0xff ; @00D7C
 ; UNKNOWN: unresolved bytes
     db 0x9c,0x41,0x38,0xc6,0x70,0xcf,0xe1,0xe1,0xc3,0x06,0x87,0x50,0x0e,0xe4,0x1c,0x0b ; @00D8C
+; Known data-use overlay: 0E20 reads this word when interrupted IP=0D9E.
+; ROL16(NOT 9090,1)=DEDE; stored word CD12 XOR DEDE=13CC (bytes CC 13).
+; Neither buffer reaches this seed; no execution of these two 90 bytes is
+; established. Canonical UNKNOWN retains possible additional interpretations.
 ; UNKNOWN: unresolved bytes
+ProtectionInt13DecodeSeed:
     db 0x90,0x90 ; @00D9C
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x12,0xcd,0x13,0xcc,0x1b,0xab,0xcd,0x25,0x83,0xc4,0x02,0xcc,0x39,0xab,0xcd,0x26 ; @00D9E
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x83,0xc4,0x02,0xcc,0x39 ; @00DAE
 ProtectionInt3Handler:
+; Plain stored INT3 body; live hardware frame at entry SS:S is IP,CS,FLAGS.
+; PUSH AX/SI/DS leaves T=S-6; saved IP/CS/FLAGS are T+6/+8/+A. No new stack
+; or data frame is installed. Saved registers and IRET words remain live RAM;
+; an alias may change subsequent loads, so the disjoint-domain rule matters.
     push ax ; @00DB3
     push si ; @00DB4
     push ds ; @00DB5
@@ -1145,6 +1221,10 @@ ProtectionInt3Handler:
     mov ds,ax ; @00DB8
     call InstallProtectionInt1FromReturnAddress ; @00DBA
 InstallProtectionInt1FromReturnAddress:
+; CALL-next consumes 0DBD; +0042 installs CS:0DFF as IVT1. Every INT3 negates
+; exactly 003B bytes 0DFF..0E39 (byte NEG, not NOT). Even invocations restore
+; stored bytes. First TF-clear entry exposes src/protection/int1.asm; enabling
+; branch 0DE6 enters its shared tail 0E1C, skipping INT1's STI/old-word restore.
     pop word [0x4] ; @00DBD
     add word [0x4],0x42 ; @00DC1
     push cs ; @00DC7
@@ -1156,10 +1236,17 @@ loc_0DD3:
     inc si ; @00DD6
     dec ax ; @00DD7
     jnz loc_0DD3 ; @00DD8
+; SI=T. XOR high saved FLAGS byte by 03 toggles TF and IF simultaneously;
+; branch uses the new TF. No fixed callback address is supplied to 0E1C:
+; LDS there takes interrupted CS:IP from SS:[T+6], including CALL/RET targets.
     db 0x8b,0xf4 ; ENCODED: mov si,sp (NASM chooses a different encoding) ; @00DDA
     xor byte [ss:si+0xb],0x3 ; @00DDC
     test byte [ss:si+0xb],0x1 ; @00DE1
     jnz $+(54) ; @00DE6
+; Disabling: IVT0 is the previous patch's far pointer, not an active divide
+; handler. Compute candidate ciphertext from current memory using its prior
+; word. Here CC guard tests candidate AL BEFORE XCHG; INT1 tests displaced
+; plaintext AL AFTER XCHG. A skipped swap is an observable distinction.
     lds si,[0x0] ; @00DE8
     mov ax,[si-0x2] ; @00DEC
     not ax ; @00DEF
@@ -1174,6 +1261,9 @@ loc_0DFB:
     pop ax ; @00DFD
     iret ; @00DFE
 ProtectionEncodedInt1:
+; Entire 59-byte stored/negated pair; only the plaintext view is executable
+; as the installed INT1 handler. Shared 0E1C reads the live interrupted frame,
+; never a fixed near target. See src/protection/int1.asm for wrap/alias/order.
 ; CODE: stored runtime_modified_code; execution views in src/protection
     db 0x05,0xb0,0xaa,0xe2,0xcd,0x40,0x72,0x28,0x3b,0xca,0x00,0x00,0x75,0xbc,0x02,0x09 ; @00DFF
 ; CODE: stored runtime_modified_code; execution views in src/protection

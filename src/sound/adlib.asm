@@ -2,14 +2,16 @@
 ; Entry offset0000 is installed as INT61 by main CS:0576..057B.
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
 ;
-; STATIC SEMANTIC CONTRACT (S2; offsets below are hexadecimal, image-relative).
+; STATIC SEMANTIC CONTRACT (S2 engine/state; S6 data; hexadecimal image offsets).
 ; Machine configuration: DOS VGA + AdLib; alternative sound images stay separate.
 ; Scope: engine0000..05A7 and state/tables05A8..0B6D. Grammar below is the
-; handoff to score/effect reconstruction, not classification of those payloads.
+; basis of the S6 pinned score/effect[0B6E,566D) ownership audit in the ledger.
 ; Local readiness: CONDITIONAL for immutable engine, ordinary nonaliasing RAM/
 ; stack, DF=0, valid initialized channels and the eight documented commands.
-; Full playback is NOT READY: pinned stream/order/instrument ownership still
-; needs its own audit; 88..AF indirect targets and unseeded05A0 remain open.
+; Pinned data layout/token/control ownership is READY in the S6 domain below.
+; Playback composition is CONDITIONAL there. Unrestricted whole-driver playback
+; is NOT READY: raw88..AF, inherited pointers, device/IRQ/segment/stack aliases
+; and unseeded05A0 remain. No complete driver freeze is asserted.
 ; No C playback or hardware equivalence is asserted by this static contract.
 ;
 ; INSTALL/LIFETIME: main0576..057B installs INT61 at the DOS allocation:0000,
@@ -65,7 +67,7 @@
 ; Timed finish01B3 stores BX at+0C and copies+11 to countdown+01. Countdown
 ; zero wraps toFF on its next eligible tick; there is no zero-as-end convention.
 ;
-; SCORE CONTAINER SCHEMA (not yet promoted to data classification): song IDs
+; SCORE CONTAINER SCHEMA (S6 promotes only proven consumed intervals): song IDs
 ; 01..15 index absolute near words [0B6C+2*ID]; normal directory starts0B6E.
 ; Header+0 word ->05A8 (write-only in identified engine; meaning unresolved);
 ; +2 relative instrument bank ->B68 after+0B6E; +4 tempo byte ->B6A;
@@ -80,7 +82,8 @@
 ; +0A modulator level, +0B carrier level bias, +0C packed key-scale bits,
 ; +0E release countdown comparator. +0D/+0F have no identified engine reader.
 ; Effect requests01..12 use absolute words [55E3+2*ID], bank54E3; no header.
-; No score/effect run is classified merely from this schema or a slot stride.
+; S6 ledger records every consumed interval and UNKNOWN slot byte; stride alone
+; never classifies a slot. Directory00 at55E3 remains UNKNOWN (ID0 rejected).
 ;
 ; ALL OPL writes use0559: reset0050 (27 words at006D); detection00AC/00B2/
 ; 00BA/00C0/00CD/00D3 (04=60,04=80,02=FF,04=21,04=60,04=80);
@@ -91,8 +94,719 @@
 ; A muted host/unbound INT61 provider bypasses this actual interpreter and OPL
 ; traffic: omitted original behavior, with device/timing equivalence unverified.
 ; Prefix/latch C tests prove only their recorded transport domains.
+; S6 PINNED DATA CONTRACT (static v1 derivation; no x86/game execution).
+; Readable listings: metadata/adlib-symbols.json names every header/order/stream,
+; selected instrument prefix and bank; adlib_SongDirectory.payload_audit owns the
+; byte partition, overlap map, token legend/histogram and explicit UNKNOWN reasons.
+; Domain: immutable supplied engine/payload, DS=CS through update, ordinary
+; nonaliasing stack/RAM, DF=0; valid song01..15/effect01..12 requests. DF is
+; never cleared by the driver: directory/header LODS require the stated domain.
+; Every song has3/4 channels (all music DI<05FC); every order cycle returns
+; through a single zero redirect to its initial nonzero list word. All378 score
+; roots end80; all18 FX roots end85, none reads stale order state. Every first
+; timed event initializes duration; every first NOTE selects an instrument.
+; Cycle durations agree across each song's channels; ledger records eligible
+; music ticks, not wall time or an IRQ schedule. No88..AF token, C0 or instrument
+; ID>10h occurs at a reached boundary. Operand bytes are not dispatch tokens.
+; All payload data have no identified driver writer under this nonalias domain;
+; main058D decode initializes it; Tandy05CA replacement ends/overlays its lifetime.
+;
+; Retained-state quirk: OFF before first C still calls03D3 on non-event ticks.
+; Instrument pointer initially0 reads engine byte000E=FE as release data; later song
+; transitions may retain a prior bank's pointer. Do not initialize a fresh slot.
+; Music never sets slide86/87, preserving loaded slide0; effect grant clears it.
+; Selected fields00..0C are read on C;0E on conditional release.2617/2ECD+0E
+; have explicit retained05C0 ->song05/ch1 OFF195D witnesses.493B+0E (4949)
+; has no proven read under pinned duration/hold sequences and stays UNKNOWN.
+; No full16-byte instrument slot is classified:0D/0F have no reader/writer.
+; All consumed release comparator bytes are00, so nonzero-countdown release
+; never clears slide for these slots. OFF clears it; immediate82 skips release.
+;
+; Wrapped pitch is REAL pinned behavior: n=(note+transpose+4)&FF. Song01 nF5,
+; song05 nF7/FC, song0D nFB and effect0F nF8 alias score header/order bytes:
+;   nF5: octave[B9C]=07, semitone[BFC]=38 ->frequency[A27]=FE23
+;   nF7: octave[B9E]=38, semitone[BFE]=38 ->frequency[A27]=FE23
+;   nF8: octave[B9F]=00, semitone[BFF]=02 ->frequency[967]=0306
+;   nFB: octave[BA2]=6C, semitone[C02]=71 ->frequency[947]=02DB
+;   nFC: octave[BA3]=00, semitone[C03]=49 ->frequency[A47]=FE44
+; These bytes retain their primary header/order roles; ledger records overlap.
+; Frequency selector is20h*k, k0..15, for ANY byte semitone (four BYTE doubles
+; then WORD double). No row interior02..1F is selected even on wrapped inputs;
+; the360 fine-frequency-looking residual bytes remain UNKNOWN, not padding.
+; 0B67=90 has no pinned token/pitch consumer: no n60/C0 occurs. Raw n60 reads it
+; as semitone, nC0 as octave; this does not classify its intended stored role.
+; Header word0 values4000/4200/4312/4400 only copy to05A8; no identified reader
+; resolves a clock/tempo meaning.05AA/05AB remain separate UNKNOWN.
+;
+; UNKNOWN payload: selected0D/0F, unselected layout slots,4949 conditional field,
+; unused effect-directory zero word55E3..55E4, and1A8D..1A90 (rest lookalike with
+; no recovered incoming order edge). This is no dead/unreachable-code claim.
+; Shared stream54DF..54E2 belongs to songs01/02/05/12/14;0F0F..0F13 is shared
+; by two song02 channels. No conflicting token/operand interpretation was found.
+; Sole B-family217A B0 6F immediately follows2179 C1 in the same fetch;
+; that C loads current05AC DX=0300, so this pinned site writes40/43. Preserve
+; raw01F4 live-DX semantics; no alternate order points into217A.
+; Effect0F T=F4 is unsigned wrap, never a clamped note. Effect duration sums
+; count eligible channel ticks: grant fetches then the same update scans again.
+; Playback remains CONDITIONAL at the original inherited-state/live-DX/device/
+; IRQ/SS/alias seams. Muted/unbound native sound omits this engine behavior;
+; no C success, classification partition or static cycle proves equivalence.
 bits 16
 org 0
+; S6 non-emitting payload addresses; every equate is ledger-backed.
+adlib_SongDirectory equ $$+0x0b6e
+adlib_Song01Header equ $$+0x0b98
+adlib_Song01Channel0Orders equ $$+0x0ba6
+adlib_Song01Channel1Orders equ $$+0x0bc0
+adlib_Song01Channel2Orders equ $$+0x0bda
+adlib_Song01Channel3Orders equ $$+0x0bf4
+adlib_Pattern0C0E equ $$+0x0c0e
+adlib_Pattern0C45 equ $$+0x0c45
+adlib_Pattern0C70 equ $$+0x0c70
+adlib_Pattern0CA7 equ $$+0x0ca7
+adlib_Pattern0CDE equ $$+0x0cde
+adlib_Pattern0D15 equ $$+0x0d15
+adlib_Pattern0D57 equ $$+0x0d57
+adlib_Pattern0D96 equ $$+0x0d96
+adlib_Pattern0DA1 equ $$+0x0da1
+adlib_Pattern0DA6 equ $$+0x0da6
+adlib_Pattern0DAB equ $$+0x0dab
+adlib_Pattern0DB5 equ $$+0x0db5
+adlib_Pattern0DBA equ $$+0x0dba
+adlib_Pattern0DC5 equ $$+0x0dc5
+adlib_Pattern0DEC equ $$+0x0dec
+adlib_Song01InstrumentBank equ $$+0x0dfa
+adlib_Instrument0DFA equ $$+0x0dfa
+adlib_Instrument0E0A equ $$+0x0e0a
+adlib_Instrument0E1A equ $$+0x0e1a
+adlib_Instrument0E2A equ $$+0x0e2a
+adlib_Instrument0E3A equ $$+0x0e3a
+adlib_Instrument0E4A equ $$+0x0e4a
+adlib_Instrument0E5A equ $$+0x0e5a
+adlib_Instrument0E6A equ $$+0x0e6a
+adlib_Instrument0E7A equ $$+0x0e7a
+adlib_Song02Header equ $$+0x0e8a
+adlib_Song02Channel0Orders equ $$+0x0e98
+adlib_Song02Channel1Orders equ $$+0x0eb4
+adlib_Song02Channel2Orders equ $$+0x0ed0
+adlib_Song02Channel3Orders equ $$+0x0eec
+adlib_Pattern0F08 equ $$+0x0f08
+adlib_Pattern0F0F equ $$+0x0f0f
+adlib_Pattern0F14 equ $$+0x0f14
+adlib_Pattern0F19 equ $$+0x0f19
+adlib_Pattern0F44 equ $$+0x0f44
+adlib_Pattern0F6F equ $$+0x0f6f
+adlib_Pattern0FA3 equ $$+0x0fa3
+adlib_Pattern0FD6 equ $$+0x0fd6
+adlib_Pattern0FDB equ $$+0x0fdb
+adlib_Pattern0FE0 equ $$+0x0fe0
+adlib_Pattern0FE5 equ $$+0x0fe5
+adlib_Pattern100A equ $$+0x100a
+adlib_Pattern1011 equ $$+0x1011
+adlib_Pattern1020 equ $$+0x1020
+adlib_Pattern1041 equ $$+0x1041
+adlib_Pattern1066 equ $$+0x1066
+adlib_Pattern107E equ $$+0x107e
+adlib_Pattern1098 equ $$+0x1098
+adlib_Pattern109D equ $$+0x109d
+adlib_Pattern10A2 equ $$+0x10a2
+adlib_Pattern10A7 equ $$+0x10a7
+adlib_Song02InstrumentBank equ $$+0x10ac
+adlib_Instrument10AC equ $$+0x10ac
+adlib_Instrument10BC equ $$+0x10bc
+adlib_Instrument10CC equ $$+0x10cc
+adlib_Instrument10DC equ $$+0x10dc
+adlib_Instrument10EC equ $$+0x10ec
+adlib_Instrument10FC equ $$+0x10fc
+adlib_Instrument110C equ $$+0x110c
+adlib_Instrument111C equ $$+0x111c
+adlib_Instrument112C equ $$+0x112c
+adlib_Instrument113C equ $$+0x113c
+adlib_Song03Header equ $$+0x114c
+adlib_Song03Channel0Orders equ $$+0x1158
+adlib_Song03Channel1Orders equ $$+0x1178
+adlib_Song03Channel2Orders equ $$+0x1198
+adlib_Pattern11B8 equ $$+0x11b8
+adlib_Pattern11BD equ $$+0x11bd
+adlib_Pattern11F7 equ $$+0x11f7
+adlib_Pattern122F equ $$+0x122f
+adlib_Pattern126C equ $$+0x126c
+adlib_Pattern12A9 equ $$+0x12a9
+adlib_Pattern12E6 equ $$+0x12e6
+adlib_Pattern12EB equ $$+0x12eb
+adlib_Pattern12F0 equ $$+0x12f0
+adlib_Pattern12F5 equ $$+0x12f5
+adlib_Pattern1318 equ $$+0x1318
+adlib_Pattern132C equ $$+0x132c
+adlib_Pattern134C equ $$+0x134c
+adlib_Pattern136D equ $$+0x136d
+adlib_Pattern1385 equ $$+0x1385
+adlib_Pattern1393 equ $$+0x1393
+adlib_Song03InstrumentBank equ $$+0x13a5
+adlib_Instrument13A5 equ $$+0x13a5
+adlib_Instrument13B5 equ $$+0x13b5
+adlib_Instrument13D5 equ $$+0x13d5
+adlib_Instrument13E5 equ $$+0x13e5
+adlib_Instrument13F5 equ $$+0x13f5
+adlib_Instrument1415 equ $$+0x1415
+adlib_Song04Header equ $$+0x1425
+adlib_Song04Channel0Orders equ $$+0x1431
+adlib_Song04Channel1Orders equ $$+0x1449
+adlib_Song04Channel2Orders equ $$+0x1461
+adlib_Pattern1479 equ $$+0x1479
+adlib_Pattern149A equ $$+0x149a
+adlib_Pattern14BB equ $$+0x14bb
+adlib_Pattern14DC equ $$+0x14dc
+adlib_Pattern14FB equ $$+0x14fb
+adlib_Pattern1522 equ $$+0x1522
+adlib_Pattern1545 equ $$+0x1545
+adlib_Pattern1564 equ $$+0x1564
+adlib_Pattern1584 equ $$+0x1584
+adlib_Pattern1597 equ $$+0x1597
+adlib_Pattern15AA equ $$+0x15aa
+adlib_Pattern15CA equ $$+0x15ca
+adlib_Pattern15E6 equ $$+0x15e6
+adlib_Pattern15FF equ $$+0x15ff
+adlib_Pattern1607 equ $$+0x1607
+adlib_Pattern161B equ $$+0x161b
+adlib_Pattern1648 equ $$+0x1648
+adlib_Pattern1675 equ $$+0x1675
+adlib_Pattern1697 equ $$+0x1697
+adlib_Pattern16B5 equ $$+0x16b5
+adlib_Song04InstrumentBank equ $$+0x16df
+adlib_Instrument16DF equ $$+0x16df
+adlib_Instrument16EF equ $$+0x16ef
+adlib_Instrument16FF equ $$+0x16ff
+adlib_Instrument170F equ $$+0x170f
+adlib_Instrument171F equ $$+0x171f
+adlib_Song05Header equ $$+0x172f
+adlib_Song05Channel0Orders equ $$+0x173b
+adlib_Song05Channel1Orders equ $$+0x1753
+adlib_Song05Channel2Orders equ $$+0x176b
+adlib_Pattern1783 equ $$+0x1783
+adlib_Pattern17CC equ $$+0x17cc
+adlib_Pattern1814 equ $$+0x1814
+adlib_Pattern185C equ $$+0x185c
+adlib_Pattern18A6 equ $$+0x18a6
+adlib_Pattern18DB equ $$+0x18db
+adlib_Pattern18FA equ $$+0x18fa
+adlib_Pattern190C equ $$+0x190c
+adlib_Pattern1924 equ $$+0x1924
+adlib_Pattern1939 equ $$+0x1939
+adlib_Pattern195C equ $$+0x195c
+adlib_Pattern1964 equ $$+0x1964
+adlib_Pattern1973 equ $$+0x1973
+adlib_Pattern1997 equ $$+0x1997
+adlib_Pattern19BB equ $$+0x19bb
+adlib_Pattern19D9 equ $$+0x19d9
+adlib_Pattern1A04 equ $$+0x1a04
+adlib_Pattern1A29 equ $$+0x1a29
+adlib_Pattern1A4D equ $$+0x1a4d
+adlib_Pattern1A6B equ $$+0x1a6b
+adlib_Pattern1A91 equ $$+0x1a91
+adlib_Pattern1A98 equ $$+0x1a98
+adlib_Pattern1AA7 equ $$+0x1aa7
+adlib_Pattern1ABF equ $$+0x1abf
+adlib_Pattern1B01 equ $$+0x1b01
+adlib_Pattern1B4E equ $$+0x1b4e
+adlib_Pattern1B97 equ $$+0x1b97
+adlib_Pattern1BD4 equ $$+0x1bd4
+adlib_Song05InstrumentBank equ $$+0x1bec
+adlib_Instrument1BEC equ $$+0x1bec
+adlib_Instrument1BFC equ $$+0x1bfc
+adlib_Instrument1C0C equ $$+0x1c0c
+adlib_Instrument1C1C equ $$+0x1c1c
+adlib_Instrument1C2C equ $$+0x1c2c
+adlib_Instrument1C3C equ $$+0x1c3c
+adlib_Instrument1C4C equ $$+0x1c4c
+adlib_Song06Header equ $$+0x1c5c
+adlib_Song06Channel0Orders equ $$+0x1c6a
+adlib_Song06Channel1Orders equ $$+0x1c86
+adlib_Song06Channel2Orders equ $$+0x1c9e
+adlib_Song06Channel3Orders equ $$+0x1cba
+adlib_Pattern1CC6 equ $$+0x1cc6
+adlib_Pattern1CE0 equ $$+0x1ce0
+adlib_Pattern1CFA equ $$+0x1cfa
+adlib_Pattern1D13 equ $$+0x1d13
+adlib_Pattern1D32 equ $$+0x1d32
+adlib_Pattern1D56 equ $$+0x1d56
+adlib_Pattern1D72 equ $$+0x1d72
+adlib_Pattern1DA1 equ $$+0x1da1
+adlib_Pattern1DD3 equ $$+0x1dd3
+adlib_Pattern1DFB equ $$+0x1dfb
+adlib_Pattern1E2C equ $$+0x1e2c
+adlib_Pattern1E5D equ $$+0x1e5d
+adlib_Pattern1E8B equ $$+0x1e8b
+adlib_Pattern1EB2 equ $$+0x1eb2
+adlib_Pattern1ED6 equ $$+0x1ed6
+adlib_Pattern1EF8 equ $$+0x1ef8
+adlib_Pattern1F19 equ $$+0x1f19
+adlib_Pattern1F4A equ $$+0x1f4a
+adlib_Pattern1F7C equ $$+0x1f7c
+adlib_Pattern1F9D equ $$+0x1f9d
+adlib_Song06InstrumentBank equ $$+0x1fab
+adlib_Instrument1FAB equ $$+0x1fab
+adlib_Instrument1FBB equ $$+0x1fbb
+adlib_Instrument1FCB equ $$+0x1fcb
+adlib_Instrument1FDB equ $$+0x1fdb
+adlib_Instrument1FEB equ $$+0x1feb
+adlib_Instrument1FFB equ $$+0x1ffb
+adlib_Instrument200B equ $$+0x200b
+adlib_Song07Header equ $$+0x201b
+adlib_Song07Channel0Orders equ $$+0x2027
+adlib_Song07Channel1Orders equ $$+0x2049
+adlib_Song07Channel2Orders equ $$+0x206b
+adlib_Pattern208D equ $$+0x208d
+adlib_Pattern20D9 equ $$+0x20d9
+adlib_Pattern210A equ $$+0x210a
+adlib_Pattern212E equ $$+0x212e
+adlib_Pattern2155 equ $$+0x2155
+adlib_Pattern2179 equ $$+0x2179
+adlib_Pattern21B4 equ $$+0x21b4
+adlib_Pattern21EC equ $$+0x21ec
+adlib_Pattern221D equ $$+0x221d
+adlib_Pattern2255 equ $$+0x2255
+adlib_Pattern2298 equ $$+0x2298
+adlib_Pattern22DE equ $$+0x22de
+adlib_Pattern2322 equ $$+0x2322
+adlib_Pattern2365 equ $$+0x2365
+adlib_Pattern2398 equ $$+0x2398
+adlib_Pattern23E6 equ $$+0x23e6
+adlib_Pattern241E equ $$+0x241e
+adlib_Pattern2460 equ $$+0x2460
+adlib_Pattern2498 equ $$+0x2498
+adlib_Pattern24D0 equ $$+0x24d0
+adlib_Pattern2508 equ $$+0x2508
+adlib_Pattern2543 equ $$+0x2543
+adlib_Pattern2580 equ $$+0x2580
+adlib_Song07InstrumentBank equ $$+0x25b7
+adlib_Instrument25B7 equ $$+0x25b7
+adlib_Instrument25C7 equ $$+0x25c7
+adlib_Instrument25D7 equ $$+0x25d7
+adlib_Instrument25E7 equ $$+0x25e7
+adlib_Instrument25F7 equ $$+0x25f7
+adlib_Instrument2607 equ $$+0x2607
+adlib_Instrument2617 equ $$+0x2617
+adlib_Song08Header equ $$+0x2627
+adlib_Song08Channel0Orders equ $$+0x2633
+adlib_Song08Channel1Orders equ $$+0x264d
+adlib_Song08Channel2Orders equ $$+0x2667
+adlib_Pattern2681 equ $$+0x2681
+adlib_Pattern26B7 equ $$+0x26b7
+adlib_Pattern2704 equ $$+0x2704
+adlib_Pattern272C equ $$+0x272c
+adlib_Pattern2762 equ $$+0x2762
+adlib_Pattern278C equ $$+0x278c
+adlib_Pattern27BF equ $$+0x27bf
+adlib_Pattern2807 equ $$+0x2807
+adlib_Pattern2842 equ $$+0x2842
+adlib_Pattern287B equ $$+0x287b
+adlib_Pattern28AE equ $$+0x28ae
+adlib_Pattern28CB equ $$+0x28cb
+adlib_Pattern28F1 equ $$+0x28f1
+adlib_Pattern2908 equ $$+0x2908
+adlib_Pattern2925 equ $$+0x2925
+adlib_Pattern2944 equ $$+0x2944
+adlib_Pattern2968 equ $$+0x2968
+adlib_Pattern2985 equ $$+0x2985
+adlib_Pattern298E equ $$+0x298e
+adlib_Pattern29C3 equ $$+0x29c3
+adlib_Pattern29DF equ $$+0x29df
+adlib_Pattern2A05 equ $$+0x2a05
+adlib_Pattern2A33 equ $$+0x2a33
+adlib_Pattern2A69 equ $$+0x2a69
+adlib_Pattern2AA3 equ $$+0x2aa3
+adlib_Pattern2AE0 equ $$+0x2ae0
+adlib_Song08InstrumentBank equ $$+0x2b16
+adlib_Instrument2B16 equ $$+0x2b16
+adlib_Instrument2B26 equ $$+0x2b26
+adlib_Instrument2B36 equ $$+0x2b36
+adlib_Instrument2B46 equ $$+0x2b46
+adlib_Instrument2B56 equ $$+0x2b56
+adlib_Instrument2B66 equ $$+0x2b66
+adlib_Song09Header equ $$+0x2b76
+adlib_Song09Channel0Orders equ $$+0x2b82
+adlib_Song09Channel1Orders equ $$+0x2ba4
+adlib_Song09Channel2Orders equ $$+0x2bc6
+adlib_Pattern2BE8 equ $$+0x2be8
+adlib_Pattern2C0B equ $$+0x2c0b
+adlib_Pattern2C2E equ $$+0x2c2e
+adlib_Pattern2C51 equ $$+0x2c51
+adlib_Pattern2C74 equ $$+0x2c74
+adlib_Pattern2C97 equ $$+0x2c97
+adlib_Pattern2CB0 equ $$+0x2cb0
+adlib_Pattern2CC7 equ $$+0x2cc7
+adlib_Pattern2CE5 equ $$+0x2ce5
+adlib_Pattern2D37 equ $$+0x2d37
+adlib_Pattern2D9D equ $$+0x2d9d
+adlib_Pattern2DF0 equ $$+0x2df0
+adlib_Pattern2E41 equ $$+0x2e41
+adlib_Song09InstrumentBank equ $$+0x2e7d
+adlib_Instrument2E7D equ $$+0x2e7d
+adlib_Instrument2E8D equ $$+0x2e8d
+adlib_Instrument2E9D equ $$+0x2e9d
+adlib_Instrument2EAD equ $$+0x2ead
+adlib_Instrument2EBD equ $$+0x2ebd
+adlib_Instrument2ECD equ $$+0x2ecd
+adlib_Instrument2EDD equ $$+0x2edd
+adlib_Instrument2EED equ $$+0x2eed
+adlib_Song0AHeader equ $$+0x2f0d
+adlib_Song0AChannel0Orders equ $$+0x2f1b
+adlib_Song0AChannel1Orders equ $$+0x2f3d
+adlib_Song0AChannel3Orders equ $$+0x2f5f
+adlib_Song0AChannel2Orders equ $$+0x2f81
+adlib_Pattern2FA3 equ $$+0x2fa3
+adlib_Pattern2FB5 equ $$+0x2fb5
+adlib_Pattern2FC9 equ $$+0x2fc9
+adlib_Pattern2FDB equ $$+0x2fdb
+adlib_Pattern2FF1 equ $$+0x2ff1
+adlib_Pattern3002 equ $$+0x3002
+adlib_Pattern3014 equ $$+0x3014
+adlib_Pattern3029 equ $$+0x3029
+adlib_Pattern303E equ $$+0x303e
+adlib_Pattern304D equ $$+0x304d
+adlib_Pattern3063 equ $$+0x3063
+adlib_Pattern3075 equ $$+0x3075
+adlib_Pattern3088 equ $$+0x3088
+adlib_Pattern309A equ $$+0x309a
+adlib_Pattern30B0 equ $$+0x30b0
+adlib_Pattern30C1 equ $$+0x30c1
+adlib_Pattern30DF equ $$+0x30df
+adlib_Pattern3102 equ $$+0x3102
+adlib_Pattern3123 equ $$+0x3123
+adlib_Pattern3142 equ $$+0x3142
+adlib_Pattern3166 equ $$+0x3166
+adlib_Pattern3187 equ $$+0x3187
+adlib_Pattern31AD equ $$+0x31ad
+adlib_Pattern31CA equ $$+0x31ca
+adlib_Pattern31F4 equ $$+0x31f4
+adlib_Pattern3214 equ $$+0x3214
+adlib_Pattern322C equ $$+0x322c
+adlib_Pattern323F equ $$+0x323f
+adlib_Pattern3252 equ $$+0x3252
+adlib_Pattern3265 equ $$+0x3265
+adlib_Pattern3276 equ $$+0x3276
+adlib_Pattern3294 equ $$+0x3294
+adlib_Pattern32B7 equ $$+0x32b7
+adlib_Pattern32D8 equ $$+0x32d8
+adlib_Pattern32F7 equ $$+0x32f7
+adlib_Pattern331B equ $$+0x331b
+adlib_Pattern333C equ $$+0x333c
+adlib_Pattern3362 equ $$+0x3362
+adlib_Pattern337F equ $$+0x337f
+adlib_Pattern33A9 equ $$+0x33a9
+adlib_Pattern33C9 equ $$+0x33c9
+adlib_Pattern33E1 equ $$+0x33e1
+adlib_Pattern33F4 equ $$+0x33f4
+adlib_Pattern3407 equ $$+0x3407
+adlib_Pattern341A equ $$+0x341a
+adlib_Pattern342B equ $$+0x342b
+adlib_Pattern3449 equ $$+0x3449
+adlib_Pattern346E equ $$+0x346e
+adlib_Pattern3493 equ $$+0x3493
+adlib_Pattern34B8 equ $$+0x34b8
+adlib_Pattern34D7 equ $$+0x34d7
+adlib_Pattern3503 equ $$+0x3503
+adlib_Pattern3531 equ $$+0x3531
+adlib_Pattern355E equ $$+0x355e
+adlib_Pattern3590 equ $$+0x3590
+adlib_Pattern35BC equ $$+0x35bc
+adlib_Pattern35DD equ $$+0x35dd
+adlib_Pattern35FC equ $$+0x35fc
+adlib_Pattern361B equ $$+0x361b
+adlib_Pattern363A equ $$+0x363a
+adlib_Song0AInstrumentBank equ $$+0x3655
+adlib_Instrument3655 equ $$+0x3655
+adlib_Instrument3665 equ $$+0x3665
+adlib_Instrument3675 equ $$+0x3675
+adlib_Instrument3685 equ $$+0x3685
+adlib_Instrument3695 equ $$+0x3695
+adlib_Instrument36A5 equ $$+0x36a5
+adlib_Instrument36B5 equ $$+0x36b5
+adlib_Song0BHeader equ $$+0x36c5
+adlib_Song0BChannel0Orders equ $$+0x36d1
+adlib_Song0BChannel1Orders equ $$+0x36e5
+adlib_Song0BChannel2Orders equ $$+0x36f9
+adlib_Pattern370D equ $$+0x370d
+adlib_Pattern3747 equ $$+0x3747
+adlib_Pattern378A equ $$+0x378a
+adlib_Pattern37CC equ $$+0x37cc
+adlib_Pattern3813 equ $$+0x3813
+adlib_Pattern384A equ $$+0x384a
+adlib_Pattern3888 equ $$+0x3888
+adlib_Pattern38AF equ $$+0x38af
+adlib_Pattern38C5 equ $$+0x38c5
+adlib_Pattern38E8 equ $$+0x38e8
+adlib_Pattern391E equ $$+0x391e
+adlib_Pattern3960 equ $$+0x3960
+adlib_Pattern39A3 equ $$+0x39a3
+adlib_Pattern39DA equ $$+0x39da
+adlib_Pattern39F2 equ $$+0x39f2
+adlib_Pattern3A17 equ $$+0x3a17
+adlib_Pattern3A2C equ $$+0x3a2c
+adlib_Pattern3A46 equ $$+0x3a46
+adlib_Pattern3A71 equ $$+0x3a71
+adlib_Pattern3AA9 equ $$+0x3aa9
+adlib_Pattern3ABD equ $$+0x3abd
+adlib_Pattern3AEF equ $$+0x3aef
+adlib_Pattern3B17 equ $$+0x3b17
+adlib_Pattern3B47 equ $$+0x3b47
+adlib_Song0BInstrumentBank equ $$+0x3b68
+adlib_Instrument3B68 equ $$+0x3b68
+adlib_Instrument3B78 equ $$+0x3b78
+adlib_Instrument3B88 equ $$+0x3b88
+adlib_Instrument3B98 equ $$+0x3b98
+adlib_Instrument3BA8 equ $$+0x3ba8
+adlib_Instrument3BB8 equ $$+0x3bb8
+adlib_Song0CHeader equ $$+0x3bc8
+adlib_Song0CChannel0Orders equ $$+0x3bd4
+adlib_Song0CChannel1Orders equ $$+0x3bf4
+adlib_Song0CChannel2Orders equ $$+0x3c14
+adlib_Pattern3C34 equ $$+0x3c34
+adlib_Pattern3C66 equ $$+0x3c66
+adlib_Pattern3C9B equ $$+0x3c9b
+adlib_Pattern3CD1 equ $$+0x3cd1
+adlib_Pattern3D06 equ $$+0x3d06
+adlib_Pattern3D29 equ $$+0x3d29
+adlib_Pattern3D4B equ $$+0x3d4b
+adlib_Pattern3D8E equ $$+0x3d8e
+adlib_Pattern3DB1 equ $$+0x3db1
+adlib_Pattern3DCE equ $$+0x3dce
+adlib_Pattern3DEF equ $$+0x3def
+adlib_Pattern3E0D equ $$+0x3e0d
+adlib_Song0CInstrumentBank equ $$+0x3e50
+adlib_Instrument3E70 equ $$+0x3e70
+adlib_Instrument3E80 equ $$+0x3e80
+adlib_Instrument3ED0 equ $$+0x3ed0
+adlib_Instrument3EF0 equ $$+0x3ef0
+adlib_Instrument3F30 equ $$+0x3f30
+adlib_Song0DHeader equ $$+0x3f40
+adlib_Song0DChannel0Orders equ $$+0x3f4c
+adlib_Song0DChannel1Orders equ $$+0x3f5e
+adlib_Song0DChannel2Orders equ $$+0x3f70
+adlib_Pattern3F82 equ $$+0x3f82
+adlib_Pattern3FAD equ $$+0x3fad
+adlib_Pattern3FD4 equ $$+0x3fd4
+adlib_Pattern4013 equ $$+0x4013
+adlib_Pattern4047 equ $$+0x4047
+adlib_Pattern406A equ $$+0x406a
+adlib_Pattern408D equ $$+0x408d
+adlib_Pattern40AC equ $$+0x40ac
+adlib_Pattern40BB equ $$+0x40bb
+adlib_Pattern40DA equ $$+0x40da
+adlib_Song0DInstrumentBank equ $$+0x4103
+adlib_Instrument4103 equ $$+0x4103
+adlib_Instrument4113 equ $$+0x4113
+adlib_Instrument4123 equ $$+0x4123
+adlib_Instrument4133 equ $$+0x4133
+adlib_Instrument4143 equ $$+0x4143
+adlib_Instrument4153 equ $$+0x4153
+adlib_Song0EHeader equ $$+0x4173
+adlib_Song0EChannel0Orders equ $$+0x417f
+adlib_Song0EChannel1Orders equ $$+0x4197
+adlib_Song0EChannel2Orders equ $$+0x41af
+adlib_Pattern41C7 equ $$+0x41c7
+adlib_Pattern41F5 equ $$+0x41f5
+adlib_Pattern4227 equ $$+0x4227
+adlib_Pattern4256 equ $$+0x4256
+adlib_Pattern4278 equ $$+0x4278
+adlib_Pattern429B equ $$+0x429b
+adlib_Pattern42D0 equ $$+0x42d0
+adlib_Pattern42F2 equ $$+0x42f2
+adlib_Pattern431C equ $$+0x431c
+adlib_Song0EInstrumentBank equ $$+0x4337
+adlib_Instrument4337 equ $$+0x4337
+adlib_Instrument4347 equ $$+0x4347
+adlib_Instrument4357 equ $$+0x4357
+adlib_Instrument4367 equ $$+0x4367
+adlib_Instrument4377 equ $$+0x4377
+adlib_Song0FHeader equ $$+0x4387
+adlib_Song0FChannel0Orders equ $$+0x4393
+adlib_Song0FChannel1Orders equ $$+0x43af
+adlib_Song0FChannel2Orders equ $$+0x43cb
+adlib_Pattern43E7 equ $$+0x43e7
+adlib_Pattern440A equ $$+0x440a
+adlib_Pattern442D equ $$+0x442d
+adlib_Pattern4450 equ $$+0x4450
+adlib_Pattern4473 equ $$+0x4473
+adlib_Pattern4496 equ $$+0x4496
+adlib_Pattern44D6 equ $$+0x44d6
+adlib_Pattern4516 equ $$+0x4516
+adlib_Pattern4557 equ $$+0x4557
+adlib_Pattern4597 equ $$+0x4597
+adlib_Pattern45D7 equ $$+0x45d7
+adlib_Pattern45F6 equ $$+0x45f6
+adlib_Pattern4613 equ $$+0x4613
+adlib_Pattern4634 equ $$+0x4634
+adlib_Pattern465A equ $$+0x465a
+adlib_Song0FInstrumentBank equ $$+0x4677
+adlib_Instrument4677 equ $$+0x4677
+adlib_Instrument4687 equ $$+0x4687
+adlib_Instrument4697 equ $$+0x4697
+adlib_Instrument46A7 equ $$+0x46a7
+adlib_Instrument46B7 equ $$+0x46b7
+adlib_Song10Header equ $$+0x46c7
+adlib_Song10Channel0Orders equ $$+0x46d3
+adlib_Song10Channel1Orders equ $$+0x46ed
+adlib_Song10Channel2Orders equ $$+0x4707
+adlib_Pattern4721 equ $$+0x4721
+adlib_Pattern4764 equ $$+0x4764
+adlib_Pattern47A7 equ $$+0x47a7
+adlib_Pattern47CA equ $$+0x47ca
+adlib_Pattern480D equ $$+0x480d
+adlib_Pattern4814 equ $$+0x4814
+adlib_Pattern4843 equ $$+0x4843
+adlib_Pattern4865 equ $$+0x4865
+adlib_Pattern4893 equ $$+0x4893
+adlib_Pattern48A8 equ $$+0x48a8
+adlib_Pattern48E3 equ $$+0x48e3
+adlib_Pattern4909 equ $$+0x4909
+adlib_Song10InstrumentBank equ $$+0x493b
+adlib_Instrument493B equ $$+0x493b
+adlib_Instrument494B equ $$+0x494b
+adlib_Instrument496B equ $$+0x496b
+adlib_Instrument497B equ $$+0x497b
+adlib_Instrument498B equ $$+0x498b
+adlib_Song11Header equ $$+0x499b
+adlib_Song11Channel0Orders equ $$+0x49a7
+adlib_Song11Channel1Orders equ $$+0x49bd
+adlib_Song11Channel2Orders equ $$+0x49d3
+adlib_Pattern49E9 equ $$+0x49e9
+adlib_Pattern4A0D equ $$+0x4a0d
+adlib_Pattern4A35 equ $$+0x4a35
+adlib_Pattern4A58 equ $$+0x4a58
+adlib_Pattern4A7B equ $$+0x4a7b
+adlib_Pattern4A9F equ $$+0x4a9f
+adlib_Pattern4AC7 equ $$+0x4ac7
+adlib_Pattern4AF8 equ $$+0x4af8
+adlib_Pattern4B2A equ $$+0x4b2a
+adlib_Pattern4B5D equ $$+0x4b5d
+adlib_Pattern4B8F equ $$+0x4b8f
+adlib_Pattern4BC2 equ $$+0x4bc2
+adlib_Song11InstrumentBank equ $$+0x4bf7
+adlib_Instrument4BF7 equ $$+0x4bf7
+adlib_Instrument4C07 equ $$+0x4c07
+adlib_Instrument4C17 equ $$+0x4c17
+adlib_Instrument4C27 equ $$+0x4c27
+adlib_Song12Header equ $$+0x4c37
+adlib_Song12Channel0Orders equ $$+0x4c45
+adlib_Song12Channel1Orders equ $$+0x4c59
+adlib_Song12Channel2Orders equ $$+0x4c6d
+adlib_Song12Channel3Orders equ $$+0x4c81
+adlib_Pattern4C95 equ $$+0x4c95
+adlib_Pattern4CC7 equ $$+0x4cc7
+adlib_Pattern4CF9 equ $$+0x4cf9
+adlib_Pattern4D2B equ $$+0x4d2b
+adlib_Pattern4D5B equ $$+0x4d5b
+adlib_Pattern4D90 equ $$+0x4d90
+adlib_Pattern4DA6 equ $$+0x4da6
+adlib_Pattern4DBC equ $$+0x4dbc
+adlib_Pattern4DF5 equ $$+0x4df5
+adlib_Pattern4E2A equ $$+0x4e2a
+adlib_Song12InstrumentBank equ $$+0x4e53
+adlib_Instrument4E53 equ $$+0x4e53
+adlib_Instrument4E63 equ $$+0x4e63
+adlib_Instrument4E83 equ $$+0x4e83
+adlib_Instrument4E93 equ $$+0x4e93
+adlib_Instrument4EA3 equ $$+0x4ea3
+adlib_Song13Header equ $$+0x4eb3
+adlib_Song13Channel0Orders equ $$+0x4ebf
+adlib_Song13Channel1Orders equ $$+0x4ed3
+adlib_Song13Channel2Orders equ $$+0x4ee7
+adlib_Pattern4EFB equ $$+0x4efb
+adlib_Pattern4F1E equ $$+0x4f1e
+adlib_Pattern4F41 equ $$+0x4f41
+adlib_Pattern4F64 equ $$+0x4f64
+adlib_Pattern4F94 equ $$+0x4f94
+adlib_Pattern4FC3 equ $$+0x4fc3
+adlib_Pattern4FF6 equ $$+0x4ff6
+adlib_Pattern500C equ $$+0x500c
+adlib_Pattern5022 equ $$+0x5022
+adlib_Song13InstrumentBank equ $$+0x503d
+adlib_Instrument503D equ $$+0x503d
+adlib_Instrument504D equ $$+0x504d
+adlib_Instrument505D equ $$+0x505d
+adlib_Song14Header equ $$+0x506d
+adlib_Song14Channel0Orders equ $$+0x507b
+adlib_Song14Channel1Orders equ $$+0x508d
+adlib_Song14Channel2Orders equ $$+0x509f
+adlib_Song14Channel3Orders equ $$+0x50b1
+adlib_Pattern50C3 equ $$+0x50c3
+adlib_Pattern50D4 equ $$+0x50d4
+adlib_Pattern50E5 equ $$+0x50e5
+adlib_Pattern50F6 equ $$+0x50f6
+adlib_Pattern5107 equ $$+0x5107
+adlib_Pattern512A equ $$+0x512a
+adlib_Pattern515F equ $$+0x515f
+adlib_Pattern5194 equ $$+0x5194
+adlib_Pattern51C9 equ $$+0x51c9
+adlib_Pattern5205 equ $$+0x5205
+adlib_Pattern522D equ $$+0x522d
+adlib_Pattern5252 equ $$+0x5252
+adlib_Pattern527A equ $$+0x527a
+adlib_Pattern52A2 equ $$+0x52a2
+adlib_Song14InstrumentBank equ $$+0x52d7
+adlib_Instrument52D7 equ $$+0x52d7
+adlib_Instrument52E7 equ $$+0x52e7
+adlib_Instrument52F7 equ $$+0x52f7
+adlib_Instrument5307 equ $$+0x5307
+adlib_Instrument5317 equ $$+0x5317
+adlib_Instrument5327 equ $$+0x5327
+adlib_Song15Header equ $$+0x5337
+adlib_Song15Channel0Orders equ $$+0x5343
+adlib_Song15Channel1Orders equ $$+0x535b
+adlib_Song15Channel2Orders equ $$+0x5373
+adlib_Pattern538B equ $$+0x538b
+adlib_Pattern53A5 equ $$+0x53a5
+adlib_Pattern53C1 equ $$+0x53c1
+adlib_Pattern53DA equ $$+0x53da
+adlib_Pattern53F2 equ $$+0x53f2
+adlib_Pattern5414 equ $$+0x5414
+adlib_Pattern5449 equ $$+0x5449
+adlib_Pattern546C equ $$+0x546c
+adlib_Song15InstrumentBank equ $$+0x548f
+adlib_Instrument548F equ $$+0x548f
+adlib_Instrument549F equ $$+0x549f
+adlib_Instrument54AF equ $$+0x54af
+adlib_Instrument54BF equ $$+0x54bf
+adlib_Instrument54CF equ $$+0x54cf
+adlib_Pattern54DF equ $$+0x54df
+adlib_EffectInstrumentBank equ $$+0x54e3
+adlib_Instrument54E3 equ $$+0x54e3
+adlib_Instrument54F3 equ $$+0x54f3
+adlib_Instrument5503 equ $$+0x5503
+adlib_Instrument5513 equ $$+0x5513
+adlib_Instrument5523 equ $$+0x5523
+adlib_Instrument5533 equ $$+0x5533
+adlib_Instrument5543 equ $$+0x5543
+adlib_Instrument5553 equ $$+0x5553
+adlib_Instrument5563 equ $$+0x5563
+adlib_Instrument5573 equ $$+0x5573
+adlib_Instrument5583 equ $$+0x5583
+adlib_Instrument5593 equ $$+0x5593
+adlib_Instrument55A3 equ $$+0x55a3
+adlib_Instrument55B3 equ $$+0x55b3
+adlib_Instrument55C3 equ $$+0x55c3
+adlib_Instrument55D3 equ $$+0x55d3
+adlib_EffectDirectoryBase equ $$+0x55e3
+adlib_Effect01Stream equ $$+0x5609
+adlib_Effect02Stream equ $$+0x560d
+adlib_Effect03Stream equ $$+0x5615
+adlib_Effect04Stream equ $$+0x5621
+adlib_Effect05Stream equ $$+0x5625
+adlib_Effect06Stream equ $$+0x5631
+adlib_Effect07Stream equ $$+0x5635
+adlib_Effect08Stream equ $$+0x5639
+adlib_Effect09Stream equ $$+0x563d
+adlib_Effect0AStream equ $$+0x5645
+adlib_Effect0BStream equ $$+0x5649
+adlib_Effect0CStream equ $$+0x564e
+adlib_Effect0DStream equ $$+0x5652
+adlib_Effect0EStream equ $$+0x5657
+adlib_Effect0FStream equ $$+0x565b
+adlib_Effect10Stream equ $$+0x5661
+adlib_Effect11Stream equ $$+0x5665
+adlib_Effect12Stream equ $$+0x5669
 ; Semantic names are ledger-owned aliases; no emission/instruction changed.
 adlib_AdvanceChannel equ adlib_sub_0177
 adlib_FinishTimedEvent equ adlib_sub_01B3

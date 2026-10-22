@@ -683,7 +683,7 @@
     {
       "start": 17641,
       "end": 17644,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 17644,
@@ -723,7 +723,7 @@
     {
       "start": 18551,
       "end": 18572,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 18572,
@@ -773,7 +773,7 @@
     {
       "start": 20199,
       "end": 20207,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 20207,
@@ -783,7 +783,7 @@
     {
       "start": 20362,
       "end": 20374,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 20374,
@@ -803,7 +803,7 @@
     {
       "start": 21204,
       "end": 21236,
-      "classification": "unresolved"
+      "classification": "lookup_table"
     },
     {
       "start": 21236,
@@ -872,6 +872,11 @@
     },
     {
       "start": 21767,
+      "end": 21783,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 21783,
       "end": 21811,
       "classification": "unresolved"
     },
@@ -1162,13 +1167,88 @@
     },
     {
       "start": 47779,
-      "end": 47791,
+      "end": 47889,
       "classification": "lookup_table"
     },
     {
-      "start": 47791,
-      "end": 49200,
+      "start": 47889,
+      "end": 47891,
       "classification": "unresolved"
+    },
+    {
+      "start": 47891,
+      "end": 47932,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 47932,
+      "end": 48075,
+      "classification": "static_data"
+    },
+    {
+      "start": 48075,
+      "end": 48164,
+      "classification": "unresolved"
+    },
+    {
+      "start": 48164,
+      "end": 48351,
+      "classification": "static_data"
+    },
+    {
+      "start": 48351,
+      "end": 48367,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 48367,
+      "end": 48368,
+      "classification": "unresolved"
+    },
+    {
+      "start": 48368,
+      "end": 48660,
+      "classification": "static_data"
+    },
+    {
+      "start": 48660,
+      "end": 49079,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 49079,
+      "end": 49080,
+      "classification": "unresolved"
+    },
+    {
+      "start": 49080,
+      "end": 49083,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 49083,
+      "end": 49092,
+      "classification": "static_data"
+    },
+    {
+      "start": 49092,
+      "end": 49142,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 49142,
+      "end": 49190,
+      "classification": "static_data"
+    },
+    {
+      "start": 49190,
+      "end": 49196,
+      "classification": "unresolved"
+    },
+    {
+      "start": 49196,
+      "end": 49200,
+      "classification": "runtime_data"
     },
     {
       "start": 49200,
@@ -1177,6 +1257,246 @@
     },
     {
       "start": 49202,
+      "end": 49208,
+      "classification": "unresolved"
+    },
+    {
+      "start": 49208,
+      "end": 49352,
+      "classification": "static_data"
+    },
+    {
+      "start": 49352,
+      "end": 49448,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 49448,
+      "end": 49672,
+      "classification": "unresolved"
+    },
+    {
+      "start": 49672,
+      "end": 57848,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 57848,
+      "end": 58191,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58191,
+      "end": 58205,
+      "classification": "static_data"
+    },
+    {
+      "start": 58205,
+      "end": 58212,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58212,
+      "end": 58261,
+      "classification": "static_data"
+    },
+    {
+      "start": 58261,
+      "end": 58268,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58268,
+      "end": 58275,
+      "classification": "static_data"
+    },
+    {
+      "start": 58275,
+      "end": 58285,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 58285,
+      "end": 58287,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58287,
+      "end": 58288,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58288,
+      "end": 58352,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 58352,
+      "end": 58362,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58362,
+      "end": 58363,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58363,
+      "end": 58373,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58373,
+      "end": 58374,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58374,
+      "end": 58384,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58384,
+      "end": 58385,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58385,
+      "end": 58395,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58395,
+      "end": 58396,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58396,
+      "end": 58406,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58406,
+      "end": 58407,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58407,
+      "end": 58417,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58417,
+      "end": 58418,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58418,
+      "end": 58428,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58428,
+      "end": 58429,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58429,
+      "end": 58439,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58439,
+      "end": 58440,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58440,
+      "end": 58450,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58450,
+      "end": 58451,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58451,
+      "end": 58461,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58461,
+      "end": 58462,
+      "classification": "unresolved"
+    },
+    {
+      "start": 58462,
+      "end": 58778,
+      "classification": "static_data"
+    },
+    {
+      "start": 58778,
+      "end": 58928,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 58928,
+      "end": 59025,
+      "classification": "static_data"
+    },
+    {
+      "start": 59025,
+      "end": 59049,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 59049,
+      "end": 59102,
+      "classification": "static_data"
+    },
+    {
+      "start": 59102,
+      "end": 59143,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 59143,
+      "end": 59343,
+      "classification": "static_data"
+    },
+    {
+      "start": 59343,
+      "end": 59396,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 59396,
+      "end": 59397,
+      "classification": "unresolved"
+    },
+    {
+      "start": 59397,
+      "end": 59505,
+      "classification": "static_data"
+    },
+    {
+      "start": 59505,
+      "end": 59575,
+      "classification": "runtime_data"
+    },
+    {
+      "start": 59575,
+      "end": 60748,
+      "classification": "static_data"
+    },
+    {
+      "start": 60748,
+      "end": 60940,
+      "classification": "lookup_table"
+    },
+    {
+      "start": 60940,
       "end": 61196,
       "classification": "unresolved"
     },
@@ -1208,11 +1528,32 @@
   ],
   "overlays": [
     {
+      "start": 2128,
+      "end": 2130,
+      "class": "static_data",
+      "evidence": "Known key-data overlay within skipped084D..0851; canonical UNKNOWN retained. Derived edge084B->0852 bypasses gap; 0E20 reads stored word030E at0850 for target0852; target0853 also reads0851. Original INT3/shared-tail probes stopping beforeIRET exposeB851; XOR1 at0850 exposesB853. No evidence classifies084D..084F or proves a BIOS write entry.",
+      "overlay": true
+    },
+    {
+      "start": 2177,
+      "end": 2179,
+      "class": "static_data",
+      "evidence": "Known key-data overlay within skipped087E..0882; canonical UNKNOWN retained. Derived edge087C->0883 bypasses gap; 0E20 reads stored word260E at0881 for target0883; target0884 also reads0882. Original INT3/shared-tail probes stopping beforeIRET exposeB851; XOR1 at0881 exposesB853. No evidence classifies087E..0880 or proves selector26/write producer.",
+      "overlay": true
+    },
+    {
       "start": 2444,
       "end": 2956,
       "class": "runtime_sector_buffer",
       "overlay": true,
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
+    },
+    {
+      "start": 2444,
+      "end": 2956,
+      "class": "runtime_sector_buffer",
+      "evidence": "Update existing overlay, do not duplicate. Runtime overlay only; canonical stored bytes remain UNKNOWN. CALL-next066E supplies0671; ADD031B gives098C; 067B forms SI=CS+0098, DI000C; low12(SI)<=0FDF selects this window. SS:BP+0A/+0C owns pointer; 08CB CLD REP STOSW0100 words fills, BIOS read/07E7/07F0/07F9 and CRC/bit-count consumers use it, 094A zeroes selected512 on cleanup. No permanent BSS or exclusion of another stored interpretation.",
+      "overlay": true
     },
     {
       "start": 2972,
@@ -1222,11 +1563,25 @@
       "evidence": "066E CALL-next plus031B constructs098C; paragraph alignment optionally adds0210;08CB REP STOSW fills256 words through pointer at SS:BP+0A; initial stored bytes still unresolved"
     },
     {
+      "start": 2972,
+      "end": 3484,
+      "class": "runtime_sector_buffer",
+      "evidence": "Update existing overlay, do not duplicate. Runtime overlay only; canonical stored bytes remain UNKNOWN. low12(CS+0098)>0FDF adds0210 to DI000C, selecting physical alias CS:0B9C..0D9B. Same fill/read/process/clear lifetime as primary; exactly one512-byte window per ordinary call. Neither window includes0B8C..0B9B or0D9C..0D9D.",
+      "overlay": true
+    },
+    {
       "start": 3484,
       "end": 3486,
       "class": "static_data",
       "overlay": true,
       "evidence": "ProtectionDecodeNextWord 0E20 uses word[nextIP-2]; nextIP 0D9E reads CS:0D9C 9090 and key DEDE exposes CC13 from CD12; two bounded original INT3 seed probes confirm dependence. Known data use only; alternative execution not excluded."
+    },
+    {
+      "start": 3484,
+      "end": 3486,
+      "class": "static_data",
+      "evidence": "Update existing seed overlay, do not duplicate. Known key-data overlay; canonical stored bytes remain UNKNOWN. ProtectionDecodeNextWord0E20 reads word(nextIP-2) at CS:0D9C when nextIP0D9E. Stored9090 yields keyDEDE and visible13CC from storedCD12. Both sector buffers end before this seed. Six named shared-verifier handler probes include unchanged/one-bit-perturbed seed at0D9C; no destination executed. No claim these bytes execute as NOPs.",
+      "overlay": true
     },
     {
       "start": 6287,

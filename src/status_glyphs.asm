@@ -7,6 +7,14 @@ times -(($-$$) != 0x762a) db 0 ; module start assertion
 ; Glyph passes use map masks0F/02/08 with live1FEC DS and sequential source reads.
 ; Space blanks16 rows without latch/source reads; invalid selectors preserve IF.
 ; Both retain live SS saves/mirrors/RET, DF strings and literal +2B row adjustment.
+; S8 SELECTOR CONTRACT: glyph accepts only20,25,3A,30..39,41..5A by signed
+; byte comparisons;80..FF fail the first signed lower bound. Space clears;
+; percent selects source00A0, colon02B0, digits00D0+30h*n, capitals02E0+30h*n
+; within live1FEC bank. Each drawn glyph consumes three consecutive16-byte
+; source passes only with DF0; incoming DF1 walks backward instead. Unknown
+; character/control bytes from status text are skipped after VGA setup; they
+; do not terminate DrawStatusText (only its LODSB NUL does). Status count's
+; unnormalized quotient permits glyph-index25 for byte255, not just0..9.
 DrawStatusCount:
     push ds ; @0762A
     push ax ; @0762B

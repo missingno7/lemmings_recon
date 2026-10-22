@@ -1,5 +1,6 @@
 """Reproducible, separate byte/translation/execution accounting."""
 import argparse
+from pathlib import Path
 from common import ROOT,BUILD,read_json,write_json,sha
 from explore import analyze
 from unpack import unpack,ASSET,relocated
@@ -7,20 +8,22 @@ from unpack import unpack,ASSET,relocated
 def static_identity_evidence(image):
     """Match the exact image and recorded hashes, without renewing acceptance.
 
-    This checks the report's input manifest, not toolchain freshness or whether
-    that manifest captured every dependency of the verifier.
+    Validate the verifier's local closure and resolved runtime/tool provenance.
+    This only checks retained evidence; it does not execute the identity gate.
     """
     path=BUILD/'static-verification.json'
     if not path.exists():return dict(current=False,reason='no retained static gate')
     result=read_json(path)
     inputs=result.get('verification_inputs',{})
+    from verify import identity_provenance_errors
+    provenance_errors=identity_provenance_errors(result)
     stale=[name for name,digest in inputs.items()
            if not (ROOT/name).is_file() or sha((ROOT/name).read_bytes())!=digest]
     valid=(result.get('verification_scope')=='static' and
            result.get('bounded_unpacker_checks') is True and bool(inputs) and
            result.get('canonical_sha256')==sha(image) and
-           result.get('byte_exact_asm_bytes')==len(image) and not stale)
-    return dict(current=valid,input_count=len(inputs),stale_inputs=stale,
+           result.get('byte_exact_asm_bytes')==len(image) and not stale and not provenance_errors)
+    return dict(current=valid,input_count=len(inputs),stale_inputs=stale,provenance_errors=provenance_errors,
                 reason='matching exact image and recorded inputs' if valid else 'missing, stale or mismatched static evidence')
 
 def inventory():
@@ -43,10 +46,11 @@ def inventory():
     metrics['unresolved_provisional_code_bytes']=sum(min(row['end'],limit)-row['start']
         for row in analysis['regions'] if row['classification']=='unresolved' and row['start']<limit)
     from sound import sound_images,analyze_driver,translated_scope
-    components={};pins=read_json(ROOT/'metadata/sound-oracle.json')
+    components={};decoded_components={};pins=read_json(ROOT/'metadata/sound-oracle.json')
     for name,(component,description) in sound_images().items():
         if description!=pins[name]:raise ValueError('Sound oracle differs: '+name)
         decoded=analyze_driver(name,component)
+        decoded_components[name]=decoded
         if dict(regions=decoded['regions'],overlays=decoded['overlays'])!=read_json(ROOT/f'metadata/{name}-regions.json'):
             raise ValueError('Sound region inventory differs: '+name)
         _,c_bytes=translated_scope(component,decoded,read_json(ROOT/f'metadata/{name}-symbols.json'))
@@ -55,6 +59,24 @@ def inventory():
             decoded_instruction_bytes=decoded['metrics']['decoded_instruction_bytes'],
             translated_code_bytes=c_bytes,unresolved_transfers=decoded['metrics']['unresolved_transfers'])
     metrics['sound_components']=components
+    protection=read_json(ROOT/'metadata/protection-views.json')
+    metrics['protected_views']=dict(stream=protection['stream_metrics'],
+                                   int1_instruction_count=protection['int1_instruction_count'])
+    # Derive service/frontier sites from decoded CFGs, not copied checkpoint prose.
+    def seams(decoded):
+        services={(r['address'],r['mnemonic']) for r in decoded['instructions']
+                  if r['mnemonic'] in ('in','out','insb','insw','outsb','outsw','cli','sti')}
+        services.update((e['source'],e['kind']) for e in decoded['edges']
+                        if e['kind'] in ('interrupt','runtime_interrupt','external_interrupt_chain','external_interrupt_return'))
+        return dict(services=[dict(address=p,kind=k) for p,k in sorted(services)],
+                    unresolved=decoded['unresolved'])
+    metrics['component_seams']={'main':seams(analysis)}
+    metrics['component_seams'].update({name:seams(decoded) for name,decoded in decoded_components.items()})
+    metrics['component_seams']['main/protected-stream']=seams(read_json(ROOT/'metadata/protection-cfg.json'))
+    seam_rows='\n'.join(f"| {name} | "+
+        (', '.join(f"{r['address']:04X}:{r['kind']}" for r in row['services']) or 'none discovered')+' | '+
+        (', '.join(f"{r['address']:04X}:{r['kind']}" for r in row['unresolved']) or 'none in this decoded view')+' |'
+        for name,row in metrics['component_seams'].items())
     component_rows='\n'.join(f"| {name} | {row['image_bytes']:,} | {row['classified_bytes']:,} | {row['decoded_instruction_bytes']:,} | {row['translated_code_bytes']:,} | {row['unresolved_transfers']} |"
         for name,row in components.items())
     identity=static_identity_evidence(image);metrics['static_identity_evidence']=identity
@@ -64,8 +86,9 @@ def inventory():
 
 Current static inventory, reproducible with `tools/coverage.py --inventory`.
 This command does not run or renew behavioral campaigns.
-Retained identity evidence checks the image and the report's recorded inputs;
-it does not independently certify toolchain freshness or manifest completeness.
+Static closure is open. Counts describe discovered code only, not semantic closure.
+Retained identity evidence checks the declared input closure and resolved tools;
+it does not rerun the exact gate or establish behavior.
 
 | Evidence dimension | Current result |
 |---|---|
@@ -90,6 +113,23 @@ inventories; their C columns likewise describe implementation ranges only:
 Their exact byte identities and distinct code/data/CFG obligations are described in
 [executable.md](executable.md) and [sound-drivers.md](sound-drivers.md).
 
+Protected execution views ([protection.md](protection.md)) are derived from main
+storage: {protection['stream_metrics']['instructions']} stream instruction sites /
+{protection['stream_metrics']['instruction_bytes']} instruction bytes,
+{protection['stream_metrics']['unresolved_transfers']} open stream transfers;
+{protection['int1_instruction_count']} transformed INT1 sites. These are separate
+execution interpretations, never additional canonical bytes. Raw barriers remain open.
+
+| Component/view | Discovered provider/device/IRQ sites | Unresolved transfers |
+|---|---|---|
+{seam_rows}
+
+Sites identify original obligations, not equivalent platform implementations.
+PC-speaker replaces main 08420..08715 storage; AdLib/Tandy are loaded components.
+DOS/BIOS services, interrupt scheduling and sound playback remain scoped seams;
+see [interrupts.md](interrupts.md), [sound-drivers.md](sound-drivers.md),
+[architecture.md](architecture.md) and the ownership contracts beside ASM.
+
 `tools/coverage.py` without `--inventory` retains the strict full-contract and
 native-report checks. Only a successful complete acceptance run may publish its
 aggregate totals. Old reports remain historical for their recorded inputs;
@@ -106,10 +146,103 @@ def contract_verification():
             not verified.get('bounded_unpacker_checks') or
             not verified.get('bounded_extractor_checks')):
         raise ValueError('Full contract checks required for coverage; run tools/verify.py --contracts')
+    from verify import identity_provenance_errors
+    errors=identity_provenance_errors(verified)
+    if errors:raise ValueError('Stale contract verification provenance: '+', '.join(errors)+'; run tools/verify.py --contracts')
     for path,digest in verified['verification_inputs'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale contract verification for '+path+'; run tools/verify.py --contracts')
     return verified
+
+
+CHECKSUM_INPUTS={'checksum.c':'c/checksum.c','checksum.h':'c/checksum.h',
+    'regs.h':'c/regs.h','lemmings_sym.h':'c/lemmings_sym.h','symbols.json':'metadata/symbols.json',
+    'checksum.py':'tests/checksum.py','difftest.py':'tools/difftest.py','cbuild.py':'tools/cbuild.py'}
+
+def reconcile_receipts(receipts,suites):
+    """A registry addition cannot silently escape aggregate acceptance."""
+    required={s.name for s in suites}
+    missing=required-receipts.keys();extra=receipts.keys()-required
+    if missing or extra:
+        raise ValueError('Native receipt reconciliation: omitted required suites '+','.join(sorted(missing))+
+                         '; unregistered suites '+','.join(sorted(extra)))
+
+def registry_receipts(image,oracle,*,suites=None):
+    """Normalize the existing receipt dialects without importing/running suites.
+
+    Matching the suite's own source hash binds its declared scope, including
+    formats that predate a domain field. All consumed hashes remain mandatory.
+    Composition receipts establish no instruction or byte ownership.
+    """
+    if suites is None:
+        from difftest import SUITES
+        suites=SUITES
+    if len({s.name for s in suites})!=len(suites) or len({s.report_path for s in suites})!=len(suites):
+        raise ValueError('Duplicate native suite or receipt path')
+    receipts={};digests={};sound_pins=read_json(ROOT/'metadata/sound-oracle.json')
+    def digest(path):
+        if path not in digests:digests[path]=sha(path.read_bytes())
+        return digests[path]
+    for suite in suites:
+        if suite.accounting_role not in ('instruction','composition','component','protected'):
+            raise ValueError('Undeclared accounting role: '+suite.name)
+        path=Path(suite.report_path)
+        if path.is_absolute() or '..' in path.parts:raise ValueError('Receipt must be under build: '+suite.name)
+        path=BUILD/path
+        if not path.is_file():raise ValueError('Missing required native receipt: '+suite.name+' ('+str(path)+')')
+        report=read_json(path);hashes=report.get('input_hashes')
+        if not isinstance(hashes,dict) or not hashes:raise ValueError('Missing receipt inputs: '+suite.name)
+        names=CHECKSUM_INPUTS if suite.name=='checksum' else {}
+        normalized={names.get(name,name):value for name,value in hashes.items()}
+        if 'tests/'+suite.name+'.py' not in normalized:
+            raise ValueError('Receipt omits suite scope/source: '+suite.name)
+        for name,value in normalized.items():
+            source=ROOT/name
+            if not source.is_file() or digest(source)!=value:raise ValueError('Stale native receipt '+suite.name+': '+name)
+        if ('accepted' in report and report['accepted'] is not True) or report.get('error') or report.get('failure'):
+            raise ValueError('Failed native receipt: '+suite.name)
+        if suite.name in ('host_vga','host_journey') and report.get('accepted') is not True:
+            raise ValueError('Unaccepted host receipt: '+suite.name)
+        # Main instruction images, component images, and legacy checksum oracle.
+        if suite.name=='checksum':
+            pin=report.get('oracle',{});load=int(pin['load_segment'],16)
+            if pin.get('relocated_image_sha256')!=sha(relocated(image,oracle['relocations'],load)):
+                raise ValueError('Native oracle identity changed: '+suite.name)
+        elif suite.name=='sound_latches':
+            if set(report.get('components',{}))!={'adlib','tandysnd'}:
+                raise ValueError('Missing sound component receipt')
+            for name,row in report['components'].items():
+                if row.get('image_sha256')!=sound_pins[name]['image_sha256']:
+                    raise ValueError('Native sound oracle changed: '+name)
+        elif 'image_sha256' in report:
+            name=report.get('image','main')
+            expected=sha(image) if name=='main' else sound_pins[name]['image_sha256']
+            if report['image_sha256']!=expected:raise ValueError('Native oracle identity changed: '+suite.name)
+        elif 'assets/vgalemmi.exe' not in normalized:
+            raise ValueError('Missing pinned executable input: '+suite.name)
+        def addresses(values):return {int(p,16) if isinstance(p,str) else p for p in values}
+        sites=set()
+        if suite.accounting_role=='instruction':
+            sites=addresses(report.get('executed_instruction_addresses',report.get('instruction_sites',[])))
+            for row in report.get('routines',[]):sites.update(addresses(row.get('executed_instruction_addresses',[])))
+            if not sites:raise ValueError('Missing instruction evidence: '+suite.name)
+        component_sites={}
+        if suite.accounting_role=='component':
+            if suite.name=='sound_latches':
+                component_sites={name:addresses(row['executed_instruction_addresses'])
+                                 for name,row in report['components'].items()}
+            else:
+                name=report.get('image')
+                if name not in sound_pins:raise ValueError('Missing component/view identity: '+suite.name)
+                component_sites={name:addresses(report['executed_instruction_addresses'])|
+                                      addresses(report.get('child_instruction_addresses',[]))}
+        cases=report.get('case_count',report.get('cases',report.get('traces',report.get('input_cases',[]))))
+        count=cases if isinstance(cases,int) else len(cases)
+        if count<=0:raise ValueError('Empty native receipt: '+suite.name)
+        receipts[suite.name]=dict(report=report,path=suite.report_path,role=suite.accounting_role,
+                                  main_sites=sites,component_sites=component_sites,case_count=count)
+    reconcile_receipts(receipts,suites)
+    return receipts
 
 def translated_code_bytes(symbols,instructions,image_size):
     """Union complete decoded instructions across explicit, possibly shared tails.
@@ -149,9 +282,14 @@ def translated_code_bytes(symbols,instructions,image_size):
 
 def report():
     verified=contract_verification()
+    image,oracle=unpack(ASSET.read_bytes())
+    receipts=registry_receipts(image,oracle)
+    by_path={row['path']:row['report'] for row in receipts.values()}
+    def receipt(name):
+        # Auxiliary receipts (e.g. split palette) retain their explicit checks.
+        return by_path[name] if name in by_path else read_json(BUILD/name)
     analysis=analyze()
     m=dict(analysis['metrics'])
-    image,oracle=unpack(ASSET.read_bytes())
     built=(BUILD/'asm/program.bin').read_bytes()
     if built!=image or verified['canonical_sha256']!=sha(image):
         raise ValueError('Run tools/verify.py --contracts before reporting coverage')
@@ -162,7 +300,7 @@ def report():
     m['translated_c_routines']=len(translated)
     code_bytes=translated_code_bytes(symbols,analysis['instructions'],len(image))
     m['translated_c_code_bytes']=len(code_bytes)
-    d=read_json(BUILD/'differential.json')
+    d=receipt('differential.json')
     paths={'checksum.c':'c/checksum.c','checksum.h':'c/checksum.h',
            'lemmings_sym.h':'c/lemmings_sym.h','regs.h':'c/regs.h','symbols.json':'metadata/symbols.json',
            'checksum.py':'tests/checksum.py','difftest.py':'tools/difftest.py','cbuild.py':'tools/cbuild.py'}
@@ -172,41 +310,41 @@ def report():
     if d['oracle']['relocated_image_sha256']!=sha(relocated(image,oracle['relocations'],int(d['oracle']['load_segment'],16))):
         raise ValueError('Differential oracle identity changed')
     executed={int(x,16) for r in d['routines'] for x in r['executed_instruction_addresses']}
-    dat=read_json(BUILD/'dat-differential.json')
+    dat=receipt('dat-differential.json')
     for path,digest in dat['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale DAT differential report for '+path+'; run tools/difftest.py --all')
     if dat['image_sha256']!=sha(image):raise ValueError('DAT differential oracle changed')
     executed.update(dat['executed_instruction_addresses'])
-    io=read_json(BUILD/'dat-io-differential.json')
+    io=receipt('dat-io-differential.json')
     for path,digest in io['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale DAT read differential report for '+path+'; run tools/difftest.py --all')
     if io['image_sha256']!=sha(image):raise ValueError('DAT read differential oracle changed')
     executed.update(io['executed_instruction_addresses'])
-    section=read_json(BUILD/'dat-section-differential.json')
+    section=receipt('dat-section-differential.json')
     for path,digest in section['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale DAT section differential report for '+path+'; run tools/difftest.py --all')
     if section['image_sha256']!=sha(image):raise ValueError('DAT section differential oracle changed')
     executed.update(section['executed_instruction_addresses'])
-    cache=read_json(BUILD/'dat-cache-differential.json')
-    allocation=read_json(BUILD/'cache-allocation-differential.json')
-    video=read_json(BUILD/'video-restore-differential.json')
-    display_status=read_json(BUILD/'display-status-differential.json')
-    display_start=read_json(BUILD/'display-start-differential.json')
-    display_setup=read_json(BUILD/'display-setup-differential.json')
-    text_glyph=read_json(BUILD/'text-glyph-differential.json')
-    text_stream=read_json(BUILD/'text-stream-differential.json')
-    display_pages=read_json(BUILD/'display-pages-differential.json')
-    background=read_json(BUILD/'background-drawing-differential.json')
-    palette_channels=read_json(BUILD/'palette-channels-differential.json')
-    palette_rows=read_json(BUILD/'palette-rows-differential.json')
-    palette_ports=read_json(BUILD/'palette-ports-differential.json')
-    palette_timer=read_json(BUILD/'palette-timer-differential.json')
-    palette_row_select=read_json(BUILD/'palette-row-select-differential.json')
-    palette_transition=read_json(BUILD/'palette-transition-differential.json')
-    retry_input=read_json(BUILD/'retry-input-differential.json')
+    cache=receipt('dat-cache-differential.json')
+    allocation=receipt('cache-allocation-differential.json')
+    video=receipt('video-restore-differential.json')
+    display_status=receipt('display-status-differential.json')
+    display_start=receipt('display-start-differential.json')
+    display_setup=receipt('display-setup-differential.json')
+    text_glyph=receipt('text-glyph-differential.json')
+    text_stream=receipt('text-stream-differential.json')
+    display_pages=receipt('display-pages-differential.json')
+    background=receipt('background-drawing-differential.json')
+    palette_channels=receipt('palette-channels-differential.json')
+    palette_rows=receipt('palette-rows-differential.json')
+    palette_ports=receipt('palette-ports-differential.json')
+    palette_timer=receipt('palette-timer-differential.json')
+    palette_row_select=receipt('palette-row-select-differential.json')
+    palette_transition=receipt('palette-transition-differential.json')
+    retry_input=receipt('retry-input-differential.json')
     if retry_input.get('access_guard_exit')!=86 or not retry_input.get('null_bus_deadline_verified'):
         raise ValueError('Retry input guard probes must complete before C coverage')
     for extra in (display_status,display_start,display_setup,text_glyph,text_stream,display_pages,background,palette_channels,palette_rows,palette_ports,palette_timer,palette_row_select,palette_transition,retry_input):
@@ -215,10 +353,10 @@ def report():
                 raise ValueError('Stale display differential report for '+path)
         if extra['image_sha256']!=sha(image):raise ValueError('Display differential oracle changed')
         executed.update(extra['executed_instruction_addresses'])
-    vectors=read_json(BUILD/'vector-restore-differential.json')
-    timer=read_json(BUILD/'timer-restore-differential.json')
-    cleanup=read_json(BUILD/'fatal-cleanup-differential.json')
-    file_error=read_json(BUILD/'file-error-differential.json')
+    vectors=receipt('vector-restore-differential.json')
+    timer=receipt('timer-restore-differential.json')
+    cleanup=receipt('fatal-cleanup-differential.json')
+    file_error=receipt('file-error-differential.json')
     for path,digest in file_error['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale file error differential report for '+path)
@@ -260,20 +398,20 @@ def report():
             raise ValueError('Stale DAT cache differential report for '+path+'; run tools/difftest.py --all')
     if cache['image_sha256']!=sha(image):raise ValueError('DAT cache differential oracle changed')
     executed.update(cache['executed_instruction_addresses'])
-    files=read_json(BUILD/'dat-files-differential.json')
+    files=receipt('dat-files-differential.json')
     for path,digest in files['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale DAT file differential report for '+path+'; run tools/difftest.py --all')
     if files['image_sha256']!=sha(image):raise ValueError('DAT file differential oracle changed')
     executed.update(files['executed_instruction_addresses'])
-    resource=read_json(BUILD/'dat-load-differential.json')
+    resource=receipt('dat-load-differential.json')
     for path,digest in resource['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale DAT resource differential report for '+path+'; run tools/difftest.py --all')
     if resource['image_sha256']!=sha(image):raise ValueError('DAT resource differential oracle changed')
     executed.update(resource['executed_instruction_addresses'])
-    raw=read_json(BUILD/'resource-raw-differential.json')
-    raw_full=read_json(BUILD/'resource-raw-full-differential.json')
+    raw=receipt('resource-raw-differential.json')
+    raw_full=receipt('resource-raw-full-differential.json')
     for path,digest in raw_full['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale raw full differential report for '+path)
@@ -285,165 +423,165 @@ def report():
             raise ValueError('Stale raw resource differential report for '+path+'; run tools/difftest.py --all')
     if raw['image_sha256']!=sha(image):raise ValueError('Raw resource differential oracle changed')
     executed.update(raw['executed_instruction_addresses'])
-    rle=read_json(BUILD/'resource-rle-differential.json')
+    rle=receipt('resource-rle-differential.json')
     for path,digest in rle['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale resource RLE differential report for '+path+'; run tools/difftest.py --all')
     if rle['image_sha256']!=sha(image):raise ValueError('Resource RLE differential oracle changed')
     executed.update(rle['executed_instruction_addresses'])
-    blit=read_json(BUILD/'special-blit-differential.json')
+    blit=receipt('special-blit-differential.json')
     for path,digest in blit['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale special VGA blit differential report for '+path+'; run tools/difftest.py --all')
     if blit['image_sha256']!=sha(image):raise ValueError('Special VGA blit differential oracle changed')
     executed.update(blit['executed_instruction_addresses'])
-    setup=read_json(BUILD/'special-setup-differential.json')
+    setup=receipt('special-setup-differential.json')
     for path,digest in setup['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale special graphics setup differential report for '+path+'; run tools/difftest.py --all')
     if setup['image_sha256']!=sha(image):raise ValueError('Special graphics setup differential oracle changed')
     executed.update(setup['executed_instruction_addresses'])
-    decimal=read_json(BUILD/'decimal-digits-c-differential.json')
-    status_icons=read_json(BUILD/'status-icons-differential.json')
-    timer_tail=read_json(BUILD/'timer-tail-differential.json')
-    game_timer=read_json(BUILD/'game-timer-differential.json')
-    menu_timer=read_json(BUILD/'menu-timer-differential.json')
-    timer_install=read_json(BUILD/'timer-install-differential.json')
-    keyboard_input=read_json(BUILD/'keyboard-input-differential.json')
-    menu_animation=read_json(BUILD/'menu-animation-differential.json')
-    menu_cache=read_json(BUILD/'menu-cache-differential.json')
-    menu_scroll=read_json(BUILD/'menu-scroll-differential.json')
-    main_menu=read_json(BUILD/'main-menu-differential.json')
-    split_palette=read_json(BUILD/'split-palette-differential.json')
-    level_preview=read_json(BUILD/'level-preview-differential.json')
-    level_briefing=read_json(BUILD/'level-briefing-differential.json')
-    level_start=read_json(BUILD/'level-start-differential.json')
-    video_probe=read_json(BUILD/'video-probe-differential.json')
-    game_prepare=read_json(BUILD/'game-prepare-differential.json')
-    game_initialize_prefix=read_json(BUILD/'game-initialize-prefix-differential.json')
-    ui_commands=read_json(BUILD/'ui-commands-differential.json')
-    input_poll=read_json(BUILD/'input-poll-differential.json')
-    port_io=read_json(BUILD/'port-io-differential.json')
-    mouse_irq_bridge=read_json(BUILD/'mouse-irq-bridge-differential.json')
-    vga_mirrors=read_json(BUILD/'vga-mirrors-differential.json')
-    fixed_pattern_copy=read_json(BUILD/'fixed-pattern-copy-differential.json')
-    fixed_pattern_draw=read_json(BUILD/'fixed-pattern-draw-differential.json')
-    fixed_pattern_update=read_json(BUILD/'fixed-pattern-update-differential.json')
-    main_resources=read_json(BUILD/'main-resources-differential.json')
-    fixed_word_banks=read_json(BUILD/'fixed-word-banks-differential.json')
-    vga_plane_copy=read_json(BUILD/'vga-plane-copy-differential.json')
-    entity_sprite_banks=read_json(BUILD/'entity-sprite-banks-differential.json')
-    sprite_wide_banks=read_json(BUILD/'sprite-wide-banks-differential.json')
-    sprite_shift_banks=read_json(BUILD/'sprite-shift-banks-differential.json')
-    sprite_bank=read_json(BUILD/'sprite-bank-differential.json')
-    entity_drawing=read_json(BUILD/'entity-drawing-differential.json')
-    entity_sprite_dispatch=read_json(BUILD/'entity-sprite-dispatch-differential.json')
-    entity_sprite_planes=read_json(BUILD/'entity-sprite-planes-differential.json')
-    entity_sprite_wide=read_json(BUILD/'entity-sprite-wide-differential.json')
-    entity_sprite_aligned=read_json(BUILD/'entity-sprite-aligned-differential.json')
-    entity_sprite_shifted=read_json(BUILD/'entity-sprite-shifted-differential.json')
-    entity_points=read_json(BUILD/'entity-points-differential.json')
-    entity_strip=read_json(BUILD/'entity-strip-differential.json')
-    entity_minimap=read_json(BUILD/'entity-minimap-differential.json')
-    view_visibility=read_json(BUILD/'view-visibility-differential.json')
-    entity_dirty=read_json(BUILD/'entity-dirty-differential.json')
-    status_copy=read_json(BUILD/'status-copy-differential.json')
-    status_initialize=read_json(BUILD/'status-initialize-differential.json')
-    object_drawing_tick=read_json(BUILD/'object-drawing-tick-differential.json')
-    object_animation=read_json(BUILD/'object-animation-differential.json')
-    status_display=read_json(BUILD/'status-display-differential.json')
-    status_display_full=read_json(BUILD/'status-display-full-differential.json')
-    status_text=read_json(BUILD/'status-text-differential.json')
-    status_count=read_json(BUILD/'status-count-differential.json')
-    status_glyph=read_json(BUILD/'status-glyph-differential.json')
-    minimap_viewport=read_json(BUILD/'minimap-viewport-differential.json')
-    minimap_status=read_json(BUILD/'minimap-status-differential.json')
-    decimal_field=read_json(BUILD/'decimal-field-differential.json')
-    entity_select=read_json(BUILD/'entity-select-differential.json')
-    entity_select_actions=read_json(BUILD/'entity-select-actions-differential.json')
-    selection=read_json(BUILD/'resource-select-differential.json')
-    selection_full=read_json(BUILD/'resource-select-full-differential.json')
-    objects=read_json(BUILD/'object-graphics-differential.json')
-    coordinates=read_json(BUILD/'object-coordinates-differential.json')
-    cells=read_json(BUILD/'object-cells-differential.json')
-    steel=read_json(BUILD/'steel-cells-differential.json')
-    state=read_json(BUILD/'object-state-differential.json')
-    cells_bus=read_json(BUILD/'object-cells-bus-differential.json')
-    steel_bus=read_json(BUILD/'steel-cells-bus-differential.json')
-    coordinates_bus=read_json(BUILD/'object-coordinates-bus-differential.json')
-    state_bus=read_json(BUILD/'object-state-bus-differential.json')
-    finish=read_json(BUILD/'level-finish-differential.json')
-    initialization=read_json(BUILD/'level-initialize-differential.json')
-    clear=read_json(BUILD/'vga-clear-differential.json')
-    layout=read_json(BUILD/'drawing-layout-differential.json')
-    drawing=read_json(BUILD/'level-drawing-differential.json')
-    header=read_json(BUILD/'level-header-differential.json')
-    sample=read_json(BUILD/'minimap-sample-differential.json')
-    mmrow=read_json(BUILD/'minimap-row-differential.json')
-    mmcolumn=read_json(BUILD/'minimap-column-differential.json')
-    clip=read_json(BUILD/'drawing-clip-differential.json')
-    dirty=read_json(BUILD/'drawing-dirty-differential.json')
-    inputs=read_json(BUILD/'drawing-inputs-differential.json')
-    dispatch=read_json(BUILD/'drawing-dispatch-differential.json')
-    source=read_json(BUILD/'drawing-source-differential.json')
-    plan=read_json(BUILD/'drawing-plan-differential.json')
-    opaque=read_json(BUILD/'aligned-opaque-differential.json')
-    render=read_json(BUILD/'drawing-render-differential.json')
-    masked=read_json(BUILD/'aligned-masked-differential.json')
-    masked_render=read_json(BUILD/'drawing-masked-render-differential.json')
-    protected=read_json(BUILD/'aligned-protected-differential.json')
-    effects=read_json(BUILD/'aligned-mask-effects-differential.json')
-    readmask=read_json(BUILD/'aligned-read-mask-differential.json')
-    aligned_render=read_json(BUILD/'drawing-aligned-render-differential.json')
-    shifted_effects=read_json(BUILD/'shifted-mask-effects-differential.json')
-    shifted_render=read_json(BUILD/'drawing-shifted-render-differential.json')
-    shifted_opaque=read_json(BUILD/'shifted-opaque-differential.json')
-    shifted_masked=read_json(BUILD/'shifted-masked-differential.json')
-    shifted_protected=read_json(BUILD/'shifted-protected-differential.json')
-    shifted_readmask=read_json(BUILD/'shifted-read-mask-differential.json')
-    bitmap=read_json(BUILD/'drawing-bitmap-differential.json')
-    terrain_inputs=read_json(BUILD/'terrain-inputs-differential.json')
-    terrain=read_json(BUILD/'terrain-drawing-differential.json')
-    commands=read_json(BUILD/'terrain-commands-differential.json')
-    streams=read_json(BUILD/'terrain-stream-differential.json')
-    object_draw=read_json(BUILD/'object-drawing-differential.json')
-    redraw=read_json(BUILD/'level-redraw-differential.json')
-    entity_pattern=read_json(BUILD/'entity-pattern-differential.json')
-    entity_pixel=read_json(BUILD/'entity-pixel-differential.json')
-    entity_pixel_bus=read_json(BUILD/'entity-pixel-bus-differential.json')
-    entity_vga=read_json(BUILD/'entity-vga-differential.json')
-    entity_stroke=read_json(BUILD/'entity-stroke-differential.json')
-    mask_generators=read_json(BUILD/'mask-generators-differential.json')
-    generated_graphics=read_json(BUILD/'generated-graphics-differential.json')
-    entity_mask=read_json(BUILD/'entity-mask-differential.json')
-    entity_mask_rows=read_json(BUILD/'entity-mask-rows-differential.json')
-    coordinate_pixel=read_json(BUILD/'coordinate-pixel-differential.json')
-    entity_countdown=read_json(BUILD/'entity-countdown-differential.json')
-    entity_interactions=read_json(BUILD/'entity-interactions-differential.json')
-    entity_finish=read_json(BUILD/'entity-finish-differential.json')
-    entity_zero_state=read_json(BUILD/'entity-zero-state-differential.json')
-    entity_state4=read_json(BUILD/'entity-state4-differential.json')
-    entity_cadence=read_json(BUILD/'entity-cadence-differential.json')
-    entity_state8=read_json(BUILD/'entity-state8-differential.json')
-    entity_state2=read_json(BUILD/'entity-state2-differential.json')
-    entity_state10=read_json(BUILD/'entity-state10-differential.json')
-    entity_state20=read_json(BUILD/'entity-state20-differential.json')
-    entity_state40=read_json(BUILD/'entity-state40-differential.json')
-    entity_state80=read_json(BUILD/'entity-state80-differential.json')
-    entity_state100=read_json(BUILD/'entity-state100-differential.json')
-    entity_state200=read_json(BUILD/'entity-state200-differential.json')
-    entity_state400=read_json(BUILD/'entity-state400-differential.json')
-    entity_late_states=read_json(BUILD/'entity-late-states-differential.json')
-    entity_state800=read_json(BUILD/'entity-state800-differential.json')
-    entity_update=read_json(BUILD/'entity-update-differential.json')
-    entity_create=read_json(BUILD/'entity-create-differential.json')
-    entity_action_sound=read_json(BUILD/'entity-action-sound-differential.json')
-    entity_actions_basic=read_json(BUILD/'entity-actions-basic-differential.json')
-    entity_actions_advanced=read_json(BUILD/'entity-actions-advanced-differential.json')
-    entity_action_map=read_json(BUILD/'entity-action-map-differential.json')
-    entity_action_dispatch=read_json(BUILD/'entity-action-dispatch-differential.json')
-    entity_batch=read_json(BUILD/'entity-batch-differential.json')
-    entity_pattern_bus=read_json(BUILD/'entity-pattern-bus-differential.json')
+    decimal=receipt('decimal-digits-c-differential.json')
+    status_icons=receipt('status-icons-differential.json')
+    timer_tail=receipt('timer-tail-differential.json')
+    game_timer=receipt('game-timer-differential.json')
+    menu_timer=receipt('menu-timer-differential.json')
+    timer_install=receipt('timer-install-differential.json')
+    keyboard_input=receipt('keyboard-input-differential.json')
+    menu_animation=receipt('menu-animation-differential.json')
+    menu_cache=receipt('menu-cache-differential.json')
+    menu_scroll=receipt('menu-scroll-differential.json')
+    main_menu=receipt('main-menu-differential.json')
+    split_palette=receipt('split-palette-differential.json')
+    level_preview=receipt('level-preview-differential.json')
+    level_briefing=receipt('level-briefing-differential.json')
+    level_start=receipt('level-start-differential.json')
+    video_probe=receipt('video-probe-differential.json')
+    game_prepare=receipt('game-prepare-differential.json')
+    game_initialize_prefix=receipt('game-initialize-prefix-differential.json')
+    ui_commands=receipt('ui-commands-differential.json')
+    input_poll=receipt('input-poll-differential.json')
+    port_io=receipt('port-io-differential.json')
+    mouse_irq_bridge=receipt('mouse-irq-bridge-differential.json')
+    vga_mirrors=receipt('vga-mirrors-differential.json')
+    fixed_pattern_copy=receipt('fixed-pattern-copy-differential.json')
+    fixed_pattern_draw=receipt('fixed-pattern-draw-differential.json')
+    fixed_pattern_update=receipt('fixed-pattern-update-differential.json')
+    main_resources=receipt('main-resources-differential.json')
+    fixed_word_banks=receipt('fixed-word-banks-differential.json')
+    vga_plane_copy=receipt('vga-plane-copy-differential.json')
+    entity_sprite_banks=receipt('entity-sprite-banks-differential.json')
+    sprite_wide_banks=receipt('sprite-wide-banks-differential.json')
+    sprite_shift_banks=receipt('sprite-shift-banks-differential.json')
+    sprite_bank=receipt('sprite-bank-differential.json')
+    entity_drawing=receipt('entity-drawing-differential.json')
+    entity_sprite_dispatch=receipt('entity-sprite-dispatch-differential.json')
+    entity_sprite_planes=receipt('entity-sprite-planes-differential.json')
+    entity_sprite_wide=receipt('entity-sprite-wide-differential.json')
+    entity_sprite_aligned=receipt('entity-sprite-aligned-differential.json')
+    entity_sprite_shifted=receipt('entity-sprite-shifted-differential.json')
+    entity_points=receipt('entity-points-differential.json')
+    entity_strip=receipt('entity-strip-differential.json')
+    entity_minimap=receipt('entity-minimap-differential.json')
+    view_visibility=receipt('view-visibility-differential.json')
+    entity_dirty=receipt('entity-dirty-differential.json')
+    status_copy=receipt('status-copy-differential.json')
+    status_initialize=receipt('status-initialize-differential.json')
+    object_drawing_tick=receipt('object-drawing-tick-differential.json')
+    object_animation=receipt('object-animation-differential.json')
+    status_display=receipt('status-display-differential.json')
+    status_display_full=receipt('status-display-full-differential.json')
+    status_text=receipt('status-text-differential.json')
+    status_count=receipt('status-count-differential.json')
+    status_glyph=receipt('status-glyph-differential.json')
+    minimap_viewport=receipt('minimap-viewport-differential.json')
+    minimap_status=receipt('minimap-status-differential.json')
+    decimal_field=receipt('decimal-field-differential.json')
+    entity_select=receipt('entity-select-differential.json')
+    entity_select_actions=receipt('entity-select-actions-differential.json')
+    selection=receipt('resource-select-differential.json')
+    selection_full=receipt('resource-select-full-differential.json')
+    objects=receipt('object-graphics-differential.json')
+    coordinates=receipt('object-coordinates-differential.json')
+    cells=receipt('object-cells-differential.json')
+    steel=receipt('steel-cells-differential.json')
+    state=receipt('object-state-differential.json')
+    cells_bus=receipt('object-cells-bus-differential.json')
+    steel_bus=receipt('steel-cells-bus-differential.json')
+    coordinates_bus=receipt('object-coordinates-bus-differential.json')
+    state_bus=receipt('object-state-bus-differential.json')
+    finish=receipt('level-finish-differential.json')
+    initialization=receipt('level-initialize-differential.json')
+    clear=receipt('vga-clear-differential.json')
+    layout=receipt('drawing-layout-differential.json')
+    drawing=receipt('level-drawing-differential.json')
+    header=receipt('level-header-differential.json')
+    sample=receipt('minimap-sample-differential.json')
+    mmrow=receipt('minimap-row-differential.json')
+    mmcolumn=receipt('minimap-column-differential.json')
+    clip=receipt('drawing-clip-differential.json')
+    dirty=receipt('drawing-dirty-differential.json')
+    inputs=receipt('drawing-inputs-differential.json')
+    dispatch=receipt('drawing-dispatch-differential.json')
+    source=receipt('drawing-source-differential.json')
+    plan=receipt('drawing-plan-differential.json')
+    opaque=receipt('aligned-opaque-differential.json')
+    render=receipt('drawing-render-differential.json')
+    masked=receipt('aligned-masked-differential.json')
+    masked_render=receipt('drawing-masked-render-differential.json')
+    protected=receipt('aligned-protected-differential.json')
+    effects=receipt('aligned-mask-effects-differential.json')
+    readmask=receipt('aligned-read-mask-differential.json')
+    aligned_render=receipt('drawing-aligned-render-differential.json')
+    shifted_effects=receipt('shifted-mask-effects-differential.json')
+    shifted_render=receipt('drawing-shifted-render-differential.json')
+    shifted_opaque=receipt('shifted-opaque-differential.json')
+    shifted_masked=receipt('shifted-masked-differential.json')
+    shifted_protected=receipt('shifted-protected-differential.json')
+    shifted_readmask=receipt('shifted-read-mask-differential.json')
+    bitmap=receipt('drawing-bitmap-differential.json')
+    terrain_inputs=receipt('terrain-inputs-differential.json')
+    terrain=receipt('terrain-drawing-differential.json')
+    commands=receipt('terrain-commands-differential.json')
+    streams=receipt('terrain-stream-differential.json')
+    object_draw=receipt('object-drawing-differential.json')
+    redraw=receipt('level-redraw-differential.json')
+    entity_pattern=receipt('entity-pattern-differential.json')
+    entity_pixel=receipt('entity-pixel-differential.json')
+    entity_pixel_bus=receipt('entity-pixel-bus-differential.json')
+    entity_vga=receipt('entity-vga-differential.json')
+    entity_stroke=receipt('entity-stroke-differential.json')
+    mask_generators=receipt('mask-generators-differential.json')
+    generated_graphics=receipt('generated-graphics-differential.json')
+    entity_mask=receipt('entity-mask-differential.json')
+    entity_mask_rows=receipt('entity-mask-rows-differential.json')
+    coordinate_pixel=receipt('coordinate-pixel-differential.json')
+    entity_countdown=receipt('entity-countdown-differential.json')
+    entity_interactions=receipt('entity-interactions-differential.json')
+    entity_finish=receipt('entity-finish-differential.json')
+    entity_zero_state=receipt('entity-zero-state-differential.json')
+    entity_state4=receipt('entity-state4-differential.json')
+    entity_cadence=receipt('entity-cadence-differential.json')
+    entity_state8=receipt('entity-state8-differential.json')
+    entity_state2=receipt('entity-state2-differential.json')
+    entity_state10=receipt('entity-state10-differential.json')
+    entity_state20=receipt('entity-state20-differential.json')
+    entity_state40=receipt('entity-state40-differential.json')
+    entity_state80=receipt('entity-state80-differential.json')
+    entity_state100=receipt('entity-state100-differential.json')
+    entity_state200=receipt('entity-state200-differential.json')
+    entity_state400=receipt('entity-state400-differential.json')
+    entity_late_states=receipt('entity-late-states-differential.json')
+    entity_state800=receipt('entity-state800-differential.json')
+    entity_update=receipt('entity-update-differential.json')
+    entity_create=receipt('entity-create-differential.json')
+    entity_action_sound=receipt('entity-action-sound-differential.json')
+    entity_actions_basic=receipt('entity-actions-basic-differential.json')
+    entity_actions_advanced=receipt('entity-actions-advanced-differential.json')
+    entity_action_map=receipt('entity-action-map-differential.json')
+    entity_action_dispatch=receipt('entity-action-dispatch-differential.json')
+    entity_batch=receipt('entity-batch-differential.json')
+    entity_pattern_bus=receipt('entity-pattern-bus-differential.json')
     for path,digest in game_initialize_prefix['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale game initialization prefix differential report for '+path+'; run tools/difftest.py game_initialize_prefix')
@@ -620,6 +758,10 @@ def report():
     reports+=(entity_interactions,entity_finish,entity_zero_state,entity_state4,entity_cadence,entity_state8,entity_state2,entity_state10,entity_state20,entity_state40,entity_state80,entity_state100,entity_state200,entity_state400,entity_late_states,entity_state800,entity_update,entity_create,entity_action_sound,entity_actions_basic,entity_actions_advanced,entity_action_map,entity_action_dispatch,entity_batch,entity_pattern_bus)
     m['differential_cases']=sum(r['case_count'] for r in reports)
     m['mutations_detected']=sum(r['mutation_count'] for r in reports)
+    m['native_receipts']={name:{k:row[k] for k in ('path','role','case_count')} for name,row in receipts.items()}
+    m['composition_receipts']=[name for name,row in receipts.items() if row['role']=='composition']
+    m['native_receipt_cases']=sum(row['case_count'] for row in receipts.values())
+    for row in receipts.values():executed.update(row['main_sites'])
     decoded_sites={instruction['address'] for instruction in analysis['instructions']}
     if executed-decoded_sites:
         raise ValueError('C differential report includes undecoded instruction sites: '+
@@ -632,14 +774,18 @@ def report():
     m['unresolved_indirect_transfers']=sum(r['kind']=='indirect_or_far_transfer' for r in analysis['unresolved'])
     m['runtime_control_frontiers']=sum(r['kind'].startswith('runtime_modified') for r in analysis['unresolved'])
     m['sound']=verified['sound']
-    pc=read_json(BUILD/'pcspeaker-differential.json')
+    pc=receipt('pcspeaker-differential.json')
     for path,digest in pc['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale PC-speaker differential report for '+path+'; run tools/difftest.py --all')
     if pc['image_sha256']!=m['sound']['pcspeaker']['image_sha256']:
         raise ValueError('PC-speaker differential oracle changed')
-    m['sound']['pcspeaker']['differential_c_instructions']=len(pc['executed_instruction_addresses'])
-    controls=read_json(BUILD/'sound-latches-differential.json')
+    component_sites={name:set() for name in m['sound']}
+    for row in receipts.values():
+        for name,sites in row['component_sites'].items():component_sites[name].update(sites)
+    for name,sites in component_sites.items():
+        m['sound'][name]['differential_c_instructions']=len(sites)
+    controls=receipt('sound-latches-differential.json')
     for path,digest in controls['input_hashes'].items():
         if sha((ROOT/path).read_bytes())!=digest:
             raise ValueError('Stale sound control differential report for '+path)
@@ -652,13 +798,13 @@ def report():
             raise ValueError('Sound control oracle changed: '+name)
         if component['translated_code_bytes']!=m['sound'][name]['c_bytes']:
             raise ValueError('Sound control C byte scope changed: '+name)
-        m['sound'][name]['differential_c_instructions']=len(component['executed_instruction_addresses'])
     m['all_images_translated_c_routines']=m['translated_c_routines']+sum(s['c_routines'] for s in m['sound'].values())
-    m['all_images_translated_c_bytes']=m['translated_c_code_bytes']+pc['translated_code_bytes']+controls['translated_code_bytes']
+    # Each component ledger owns its byte union. Bus/dispatcher/composition
+    # receipts overlap and cannot be added as extra translated storage.
+    m['all_images_translated_c_bytes']=m['translated_c_code_bytes']+sum(s['c_bytes'] for s in m['sound'].values())
     m['all_images_differential_cases']=m['differential_cases']+pc['case_count']+controls['case_count']
     m['all_images_mutations_detected']=m['mutations_detected']+pc['mutation_count']+controls['mutation_count']
-    c_executed=len(executed)+len(pc['executed_instruction_addresses'])+sum(
-        len(s['executed_instruction_addresses']) for s in controls['components'].values())
+    c_executed=len(executed)+sum(len(sites) for sites in component_sites.values())
     m['all_images_original_c_instructions_executed']=c_executed
     m['protection']=verified['protection']
     m['indirect']=verified['indirect']

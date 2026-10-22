@@ -3,10 +3,25 @@
 ; Bytes outside this view retain stored encoding and canonical region classifications.
 bits 16
 org 0x066d
+; State inventory (half-open byte ranges; not one simultaneously loaded image):
+; tf_on: [066D,084D),[0852,087E),[0883,0970),[0D9E,0D9F),
+;        [0DA2,0DA4),[0DAA,0DAC),[0DB2,0DB3).
+; tf_off: [0970,098C),[0D9F,0DA2),[0DA4,0DAA),[0DAC,0DB2),[0E3A,0E66).
+; Canonical INT3 [0DB3,0DFF) executes unchanged; active INT1 [0DFF,0E3A)
+; is the separate byte-negated plaintext view in int1.asm. INT3 at 066C
+; creates the first TF-on point; the table below's gates toggle saved TF/IF.
+; Conditional CFG alternatives are retained, not proof every arm is reachable.
+; READINESS: CONDITIONAL known startup DL=0, TF clear, disjoint RAM and bounded
+; INT13 services; arbitrary incoming frames, aliases and IRQ interleavings open.
 ProtectedDiskEntry:
     push ax ; @0066D tf_on
-    call protected_sub_0671 ; @0066E tf_on
-protected_sub_0671:
+    call ProtectionBufferAddressFromCall ; @0066E tf_on
+ProtectionBufferAddressFromCall:
+; CALL-next address discovery consumes 0671, not an ordinary child return.
+; 0671+031B=098C; SI=(entry CS+0098) mod 10000, DI=000C. If low12(SI)>0FDF,
+; DI+=0210 ->021C, a physical alias of CS:0B9C instead of CS:098C. Each
+; selection holds 512 bytes within one DMA 64 KiB page (20-bit address wrap).
+; Save this far pointer at SS:BP+0A/+0C; no permanent DS buffer is allocated.
     pop ax ; @00671 tf_on
     add ax,0x31b ; @00672 tf_on
     nop ; @00675 tf_on
@@ -25,14 +40,17 @@ protected_loc_068F:
     pop ax ; @0068F tf_on
     sub sp,byte +0x22 ; @00690 tf_on
     db 0x8b,0xec ; ENCODED: mov bp,sp (NASM chooses a different encoding) ; @00693 tf_on
-    call protected_sub_0786 ; @00695 tf_on
+    call InitializeProtectionLocalFrame ; @00695 tf_on
+; 063E forces DL=0; 0786 preserves DL, so the ordinary startup caller uses
+; only the BIOS floppy arm. Keep absolute read/INT26 alternatives inventoried;
+; neither their CFG edges nor the skipped selector bytes prove startup writes.
     cmp dl,0x2 ; @00698 tf_on
     jnc protected_loc_06D7 ; @0069B tf_on
     mov bx,0xc02 ; @0069D tf_on
-    call protected_sub_0913 ; @006A0 tf_on
-    call protected_sub_08BE ; @006A3 tf_on
+    call SaveAndPatchFloppyParameterTable ; @006A0 tf_on
+    call ResetProtectionBiosDisk ; @006A3 tf_on
 protected_loc_06A6:
-    call protected_sub_071E ; @006A6 tf_on
+    call ProbeProtectionFloppyPattern ; @006A6 tf_on
     jnc protected_loc_06C1 ; @006A9 tf_on
     cmp byte [bp+0x2],0xc ; @006AB tf_on
     jz protected_loc_0709 ; @006AF tf_on
@@ -46,25 +64,25 @@ protected_loc_06A6:
 protected_loc_06C1:
     les si,[bp+0xa] ; @006C1 tf_on
     mov ax,0x87 ; @006C4 tf_on
-    call protected_sub_08D7 ; @006C7 tf_on
+    call ComputeProtectionCrc16 ; @006C7 tf_on
     xchg ax,bx ; @006CA tf_on
     les si,[bp+0xa] ; @006CB tf_on
     mov ax,0x4e ; @006CE tf_on
-    call protected_sub_08D7 ; @006D1 tf_on
+    call ComputeProtectionCrc16 ; @006D1 tf_on
     clc ; @006D4 tf_on
     jnc protected_loc_070E ; @006D5 tf_on
 protected_loc_06D7:
-    call protected_sub_0878 ; @006D7 tf_on
+    call ReadProtectionAbsoluteSector ; @006D7 tf_on
     les si,[bp+0xa] ; @006DA tf_on
     mov ax,0xfe ; @006DD tf_on
-    call protected_sub_08D7 ; @006E0 tf_on
+    call ComputeProtectionCrc16 ; @006E0 tf_on
     cmp ax,[es:si] ; @006E3 tf_on
     jnz protected_loc_0709 ; @006E6 tf_on
     mov word [bp+0x20],0xffe0 ; @006E8 tf_on
     les si,[bp+0x1e] ; @006ED tf_on
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @006F0 tf_on
     mov ax,0x200 ; @006F2 tf_on
-    call protected_sub_08D7 ; @006F5 tf_on
+    call ComputeProtectionCrc16 ; @006F5 tf_on
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @006F8 tf_on
     les si,[bp+0xa] ; @006FA tf_on
     xor ax,[es:si+0xfa] ; @006FD tf_on
@@ -75,38 +93,41 @@ protected_loc_0709:
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @0070B tf_on
     stc ; @0070D tf_on
 protected_loc_070E:
+; All identified body exits converge here. Preserve result FLAGS/AX across
+; selected-buffer clear/table restore, recover drive DL, discard 22h locals;
+; 096F disables TF and 0976 restores all 10 saved IVT words before result check.
     pushf ; @0070E tf_on
-    call protected_sub_094A ; @0070F tf_on
+    call ClearProtectionBufferAndRestoreFloppyParameters ; @0070F tf_on
     mov dl,[bp+0x0] ; @00712 tf_on
     add bp,byte +0x22 ; @00715 tf_on
     popf ; @00718 tf_on
     db 0x8b,0xe5 ; ENCODED: mov sp,bp (NASM chooses a different encoding) ; @00719 tf_on
     jmp protected_loc_096F ; @0071B tf_on
-protected_sub_071E:
+ProbeProtectionFloppyPattern:
     mov cx,0x3 ; @0071E tf_on
 protected_loc_0721:
     mov byte [bp+0x2],0x1 ; @00721 tf_on
-    call protected_sub_07B7 ; @00725 tf_on
+    call ReadAndValidateProtectionSector ; @00725 tf_on
     jc protected_loc_0733 ; @00728 tf_on
     mov byte [bp+0x2],0xc ; @0072A tf_on
-    call protected_sub_07B7 ; @0072E tf_on
+    call ReadAndValidateProtectionSector ; @0072E tf_on
     jnc protected_loc_0752 ; @00731 tf_on
 protected_loc_0733:
     mov al,0x1 ; @00733 tf_on
     sub al,[bp+0x0] ; @00735 tf_on
     jc protected_loc_077E ; @00738 tf_on
     mov [bp+0x0],al ; @0073A tf_on
-    call protected_sub_08BE ; @0073D tf_on
+    call ResetProtectionBiosDisk ; @0073D tf_on
     mov byte [bp+0x2],0x1 ; @00740 tf_on
-    call protected_sub_07B7 ; @00744 tf_on
+    call ReadAndValidateProtectionSector ; @00744 tf_on
     jc protected_loc_077E ; @00747 tf_on
     mov byte [bp+0x2],0xc ; @00749 tf_on
-    call protected_sub_07B7 ; @0074D tf_on
+    call ReadAndValidateProtectionSector ; @0074D tf_on
     jc protected_loc_077E ; @00750 tf_on
 protected_loc_0752:
     mov [bp+0x1e],ax ; @00752 tf_on
     mov byte [bp+0x2],0xb ; @00755 tf_on
-    call protected_sub_07B7 ; @00759 tf_on
+    call ReadAndValidateProtectionSector ; @00759 tf_on
     jc protected_loc_077E ; @0075C tf_on
     add ax,[bp+0x1e] ; @0075E tf_on
     cmp ax,0x54 ; @00761 tf_on
@@ -128,7 +149,17 @@ protected_loc_077E:
 protected_loc_0782:
     mov [bp+0x1e],ax ; @00782 tf_on
     ret ; @00785 tf_on
-protected_sub_0786:
+InitializeProtectionLocalFrame:
+; Local schema: 22h bytes at live SS:BP, allocated at 0690 for this call only.
+; +00 drive, +01 head; +02 sector, +03 cylinder (word +02 -> BIOS CX).
+; +04/+06 saved entry AX/BX, also low/high logical-sector words; +08 DOS
+; sector count; +0A/+0C selected buffer offset/segment; +0E service selector.
+; +0F/+11 unaligned saved INT1E far pointer; +13..+1D its 11 saved bytes.
+; +1E scratch count/result; +20 scratch segment (0, later FFE0 on absolute arm).
+; Not a zeroed struct: +1E is read by LES before initialization, but ES=0
+; from +20, and tick read is constant ES:046C, ignoring the loaded SI value.
+; CX=9299 bypasses tick read and uses input DH; initial head=bit0, cylinder=bit2.
+; Default BP operands use SS even when LDS in an absolute arm changes DS.
     mov [bp+0x4],ax ; @00786 tf_on
     mov [bp+0x6],bx ; @00789 tf_on
     mov [bp+0x0],dl ; @0078C tf_on
@@ -147,13 +178,17 @@ protected_loc_07A8:
     and dh,0x1 ; @007B0 tf_on
     mov [bp+0x1],dh ; @007B3 tf_on
     ret ; @007B6 tf_on
-protected_sub_07B7:
+ReadAndValidateProtectionSector:
+; Three-attempt sector/signature worker: fill whole buffer with word 1234,
+; then BIOS read. AH=80 fails immediately; sector 1 requires AH=0, but other
+; sectors inspect the live bytes despite other BIOS error results. +38/+39
+; XOR cylinder/head and +3C gets 33BC before CRC checks; all are buffer writes.
     push cx ; @007B7 tf_on
     mov cx,0x3 ; @007B8 tf_on
 protected_loc_07BB:
     mov ax,0x1234 ; @007BB tf_on
-    call protected_sub_08CB ; @007BE tf_on
-    call protected_sub_0847 ; @007C1 tf_on
+    call FillProtectionSectorBuffer ; @007BE tf_on
+    call ReadProtectionBiosSector ; @007C1 tf_on
     cmp ah,0x80 ; @007C4 tf_on
     jz protected_loc_0844 ; @007C7 tf_on
     cmp byte [bp+0x2],0x1 ; @007C9 tf_on
@@ -176,7 +211,7 @@ protected_loc_07D5:
     mov ax,0x33bc ; @007F6 tf_on
     mov [es:si+0x3c],ax ; @007F9 tf_on
     mov ax,0x46 ; @007FD tf_on
-    call protected_sub_08D7 ; @00800 tf_on
+    call ComputeProtectionCrc16 ; @00800 tf_on
     cmp ax,0x6e62 ; @00803 tf_on
     jnz protected_loc_083B ; @00806 tf_on
     les si,[bp+0xa] ; @00808 tf_on
@@ -184,7 +219,7 @@ protected_loc_07D5:
     mov di,0xbf60 ; @0080E tf_on
     mov ax,0x39 ; @00811 tf_on
 protected_loc_0814:
-    call protected_sub_08D7 ; @00814 tf_on
+    call ComputeProtectionCrc16 ; @00814 tf_on
     db 0x3b,0xc7 ; ENCODED: cmp ax,di (NASM chooses a different encoding) ; @00817 tf_on
     jnz protected_loc_083B ; @00819 tf_on
     les si,[bp+0xa] ; @0081B tf_on
@@ -197,11 +232,11 @@ protected_loc_0827:
     add al,[bp+0x1] ; @0082D tf_on
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @00830 tf_on
     mov ax,0x6 ; @00832 tf_on
-    call protected_sub_08FC ; @00835 tf_on
+    call CountProtectionSetBits ; @00835 tf_on
     clc ; @00838 tf_on
     jnc protected_loc_0845 ; @00839 tf_on
 protected_loc_083B:
-    call protected_sub_08BE ; @0083B tf_on
+    call ResetProtectionBiosDisk ; @0083B tf_on
     dec cx ; @0083E tf_on
     jz protected_loc_0844 ; @0083F tf_on
     jmp protected_loc_07BB ; @00841 tf_on
@@ -210,9 +245,16 @@ protected_loc_0844:
 protected_loc_0845:
     pop cx ; @00845 tf_on
     ret ; @00846 tf_on
-protected_sub_0847:
+ReadProtectionBiosSector:
+; Producer sets BIOS function +0E=02; 084B jumps over five stored bytes.
+; Only CX/BP are saved around INT13. Read uses AX=0201, ES:BX=buffer,
+; CX=sector/cylinder and DX=drive/head. Other returned registers/flags are live.
     mov byte [bp+0xe],0x2 ; @00847 tf_on
     jmp short protected_loc_0852 ; @0084B tf_on
+; 084D..0851 is skipped, not proved padding or a BIOS-write entry. Decoder
+; for 0852 reads word 0850..0851=030E; decoding 0853 also reads byte 0851.
+; Thus 0850..0851 have a key-data role; 084D..084F have no specific role
+; proved by this path. Keep all five canonical UNKNOWN and any code role open.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x7e,0xc5,0x44,0x0e,0x03 ; @0084D
 protected_loc_0852:
@@ -226,7 +268,7 @@ protected_loc_0856:
     les bx,[bp+0xa] ; @0085D tf_on
     mov cx,[bp+0x2] ; @00860 tf_on
     mov dx,[bp+0x0] ; @00863 tf_on
-    call protected_sub_0D9E ; @00866 tf_on
+    call ProtectionBiosInt13Gate ; @00866 tf_on
     pop bp ; @00869 tf_on
     pop cx ; @0086A tf_on
     jnc protected_loc_0876 ; @0086B tf_on
@@ -237,9 +279,16 @@ protected_loc_0856:
 protected_loc_0876:
     pop cx ; @00876 tf_on
     ret ; @00877 tf_on
-protected_sub_0878:
+ReadProtectionAbsoluteSector:
+; Absolute read producer +0E=25; skipped 087E..0882 does not prove a reachable
+; +0E=26 write producer. With saved BX!=FFFF, DS:BX=SS:(BP+04), CX=FFFF
+; supplies 32-bit sector/count/buffer packet; BX=FFFF selects legacy buffer
+; DS:BX,CX=1,DX=entry AX. Keep the TF-off DOS extra-FLAGS transport below.
     mov byte [bp+0xe],0x25 ; @00878 tf_on
     jmp short protected_loc_0883 ; @0087C tf_on
+; 087E..0882 is skipped. Decoder for 0883 reads word 0881..0882=260E;
+; decoding 0884 also reads byte 0882. Last two bytes have a key-data role;
+; first three remain unexplained. No direct entry or runtime writer is proved.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x7e,0x59,0x44,0x0e,0x26 ; @0087E
 protected_loc_0883:
@@ -259,7 +308,7 @@ protected_loc_0887:
     mov cx,0x1 ; @008A1 tf_on
     mov dx,[bp+0x4] ; @008A4 tf_on
 protected_loc_08A7:
-    call protected_sub_08B2 ; @008A7 tf_on
+    call DispatchProtectionAbsoluteDiskService ; @008A7 tf_on
     pop bp ; @008AA tf_on
     pop cx ; @008AB tf_on
     jnc protected_loc_08B0 ; @008AC tf_on
@@ -267,22 +316,29 @@ protected_loc_08A7:
 protected_loc_08B0:
     pop cx ; @008B0 tf_on
     ret ; @008B1 tf_on
-protected_sub_08B2:
+DispatchProtectionAbsoluteDiskService:
+; Selector==26 dispatches INT26, everything else INT25. Known entry 0878
+; writes 25; no identified startup producer supplies 26. Retain both gates.
     cmp byte [bp+0xe],0x26 ; @008B2 tf_on
     jz protected_loc_08BB ; @008B6 tf_on
     jmp protected_loc_0DA3 ; @008B8 tf_on
 protected_loc_08BB:
     jmp protected_loc_0DAB ; @008BB tf_on
-protected_sub_08BE:
+ResetProtectionBiosDisk:
+; Reset quirk: load frame.drive into AL, not DL, before AH=00 INT13. The
+; actual BIOS reset drive is live DL, which prior arithmetic/services can alter.
     push cx ; @008BE tf_on
     push bp ; @008BF tf_on
     mov al,[bp+0x0] ; @008C0 tf_on
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @008C3 tf_on
-    call protected_sub_0D9E ; @008C5 tf_on
+    call ProtectionBiosInt13Gate ; @008C5 tf_on
     pop bp ; @008C8 tf_on
     pop cx ; @008C9 tf_on
     ret ; @008CA tf_on
-protected_sub_08CB:
+FillProtectionSectorBuffer:
+; Whole selected-buffer writer: AX word -> 0100 forward words at +0A/+0C.
+; CLD persists after RET; CX restored, ES/DI follow LES and STOSW. Exactly
+; 098C..0B8B OR 0B9C..0D9B in the ordinary pointer domain, never gap or seed.
     push cx ; @008CB tf_on
     les di,[bp+0xa] ; @008CC tf_on
     mov cx,0x100 ; @008CF tf_on
@@ -290,7 +346,11 @@ protected_sub_08CB:
     rep stosw ; @008D3 tf_on
     pop cx ; @008D5 tf_on
     ret ; @008D6 tf_on
-protected_sub_08D7:
+ComputeProtectionCrc16:
+; CRC-16, initial 0EDC, MSB-first polynomial 1021 (XOR0810,STC,RCL form).
+; AX input byte count -> DX; read ES:SI, INC SI modulo 10000 (independent of
+; DF), return AX CRC, DX=0, advanced SI; BX/CX saved. Count 0 wraps to 65536
+; reads, not empty input. Callers here supply explicit positive lengths.
     push bx ; @008D7 tf_on
     push cx ; @008D8 tf_on
     xchg ax,dx ; @008D9 tf_on
@@ -315,7 +375,10 @@ protected_loc_08F2:
     pop cx ; @008F9 tf_on
     pop bx ; @008FA tf_on
     ret ; @008FB tf_on
-protected_sub_08FC:
+CountProtectionSetBits:
+; Count set bits in AX bytes at ES:SI, with INC SI rather than a DF string.
+; Return AX count modulo 10000, DX=0, SI advanced; CX saved, BL destroyed.
+; Input count 0 performs 65536 reads. Known signature calls supply 6 bytes.
     push cx ; @008FC tf_on
     xchg ax,dx ; @008FD tf_on
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @008FE tf_on
@@ -333,7 +396,10 @@ protected_loc_090C:
     jnz protected_loc_0900 ; @0090F tf_on
     pop cx ; @00911 tf_on
     ret ; @00912 tf_on
-protected_sub_0913:
+SaveAndPatchFloppyParameterTable:
+; Drive<2 saves vector INT1E's far table pointer and 11 table bytes, then
+; writes BX at table+3 (normal BX=0C02). INT1E vector itself is not changed.
+; Copies use explicit INC, independent of DF; table/stack aliases remain live.
     cmp byte [bp+0x0],0x2 ; @00913 tf_on
     jnc protected_loc_0949 ; @00917 tf_on
     mov word [bp+0x20],0x0 ; @00919 tf_on
@@ -355,11 +421,14 @@ protected_loc_0937:
     mov [es:si+0x3],bx ; @00945 tf_on
 protected_loc_0949:
     ret ; @00949 tf_on
-protected_sub_094A:
+ClearProtectionBufferAndRestoreFloppyParameters:
+; On every identified body exit, zero all 512 selected bytes and, drive<2,
+; restore the saved 11-byte floppy table. Preserve AX/FLAGS, not the transient
+; code/vector/stack traffic. Buffer stays zero after the ordinary completed call.
     pushf ; @0094A tf_on
     push ax ; @0094B tf_on
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @0094C tf_on
-    call protected_sub_08CB ; @0094E tf_on
+    call FillProtectionSectorBuffer ; @0094E tf_on
     cmp byte [bp+0x0],0x2 ; @00951 tf_on
     jnc protected_loc_096C ; @00955 tf_on
     les si,[bp+0xf] ; @00957 tf_on
@@ -378,6 +447,8 @@ protected_loc_096C:
     popf ; @0096D tf_on
     ret ; @0096E tf_on
 protected_loc_096F:
+; INT3 toggles TF off/IF back and re-encodes INT1. 0970..0988 uses raw bytes,
+; restoring IVT0..4 and saved registers; JMP0989 bypasses all storage to 0E3A.
     int3 ; @0096F tf_on
 protected_loc_0970:
     pushf ; @00970 tf_off
@@ -398,6 +469,10 @@ protected_loc_0976:
     pop es ; @00987 tf_off
     pop ds ; @00988 tf_off
     jmp protected_loc_0E3A ; @00989 tf_off
+; No instruction in this graph lies in 098C..0D9D. Runtime overlay inventory:
+; 098C..0B8B primary512; 0B8C..0B9B unknown16; 0B9C..0D9B fallback512;
+; 0D9C..0D9D decode seed2. Fills/read/validation/clear prove the buffer role,
+; not initial stored meaning or global absence of code. Canonical UNKNOWN stays.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0xb5,0xa2,0x6b,0x88,0xd7,0x53,0xae,0xea,0x5c,0x18,0xb9,0x73,0x72,0x2a,0xe4,0x97 ; @0098C
 ; UNKNOWN: stored bytes outside the derived instruction graph
@@ -462,8 +537,11 @@ protected_loc_0976:
     db 0x66,0x73,0xcd,0x29,0x9b,0x96,0x36,0x70,0x6d,0x23,0xdb,0x89,0xb7,0x56,0x6e,0xf0 ; @00B6C
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0xdd,0x23,0xbb,0x8a,0x77,0x58,0xee,0xf3,0xdd,0x2a,0xbb,0x98,0x76,0x74,0xed,0x2b ; @00B7C
+; Outside both 512-byte windows; no protection-specific role for these 16 bytes.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0xdb,0x9a,0xb6,0x78,0x6d,0x34,0xda,0xab,0xb4,0x9a,0x69,0x78,0xd2,0x33,0xa5,0xaa ; @00B8C
+; Alternative buffer selection; unselected bytes retain their entry contents
+; in the disjoint call domain.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x4b,0x98,0x96,0x73,0x2d,0x2a,0x5b,0x97,0xb6,0x71,0x6d,0x26,0xdb,0x8f,0xb6,0x62 ; @00B9C
 ; UNKNOWN: stored bytes outside the derived instruction graph
@@ -528,9 +606,15 @@ protected_loc_0976:
     db 0x84,0x97,0x09,0x72,0x12,0x27,0x24,0x91,0x49,0x65,0x93,0x0d,0x27,0x5e,0x4e,0xff ; @00D7C
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x9c,0x41,0x38,0xc6,0x70,0xcf,0xe1,0xe1,0xc3,0x06,0x87,0x50,0x0e,0xe4,0x1c,0x0b ; @00D8C
+; Retained key word 9090: int1 0E20 at nextIP0D9E reads it, yielding keyDEDE
+; and visible word13CC from storedCD12. Both buffer windows end before it.
+; Known data use, not executed NOPs; alternate interpretation still unresolved.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x90,0x90 ; @00D9C
-protected_sub_0D9E:
+ProtectionBiosInt13Gate:
+; TF-on INT3 -> TF-off INT13 -> raw INT3 -> TF-on RET. Paired INT3s toggle
+; saved IF with TF; service must return TF clear with explicit register/FLAGS,
+; segment and memory effects. This gate does not invent a successful read.
     int3 ; @00D9E tf_on
 protected_loc_0D9F:
     int 0x13 ; @00D9F tf_off
@@ -538,6 +622,9 @@ protected_loc_0D9F:
 protected_loc_0DA2:
     ret ; @00DA2 tf_on
 protected_loc_0DA3:
+; TF-off INT25 returns an extra FLAGS word on the stack; ADD SP,2 discards it
+; and changes arithmetic FLAGS including CF. Preserve 16-bit SP wrap. Then
+; raw INT3 enables TF before RET; DOS carry is not transparently propagated.
     int3 ; @00DA3 tf_on
 protected_loc_0DA4:
     int 0x25 ; @00DA4 tf_off
@@ -546,6 +633,8 @@ protected_loc_0DA4:
 protected_loc_0DAA:
     ret ; @00DAA tf_on
 protected_loc_0DAB:
+; Same extra-FLAGS/ADD/INT3 transport for INT26. Decoded alternative retained;
+; no ordinary startup write request follows merely from this gate's existence.
     int3 ; @00DAB tf_on
 protected_loc_0DAC:
     int 0x26 ; @00DAC tf_off
@@ -572,6 +661,10 @@ protected_loc_0DB2:
 ; STORED: outside this execution view; canonical runtime_modified_code
     db 0xca,0x00,0x00,0x71,0xfa,0xfe,0x00,0xe1,0xa2,0xa8,0x31 ; @00E2F
 protected_loc_0E3A:
+; Raw TF-off admission tail: existing CF failure returns unchanged; otherwise
+; accept exactly AX/BX=(581C,A9F2),(D950,270A),(9CF8,1A8C), clearing CF.
+; Mismatch sets CF. Other arithmetic flags come from the actual final CMP;
+; no pass latch is stored. RET uses the original 063E caller's live near word.
     jnc protected_loc_0E3D ; @00E3A tf_off
     ret ; @00E3C tf_off
 protected_loc_0E3D:

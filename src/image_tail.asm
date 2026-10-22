@@ -99,6 +99,69 @@ FirstObjectGraphicsFrameOffset equ LevelObjectGraphicsRecords+0x17
 GameTransitionFlags equ GameDataImage+0x004E
 GameEndRequested equ GameDataImage+0x004F
 FrameDoubleWaitFlag004A equ GameDataImage+0x004A
+GameFadePackedTarget25A8 equ GameDataImage+0x25A8
+GameFadeRgbTarget25B8 equ GameDataImage+0x25B8
+SplitPackedTarget25E8 equ GameDataImage+0x25E8
+SplitRgbTarget25F0 equ GameDataImage+0x25F0
+MenuPackedPalette4920 equ GameDataImage+0x4920
+MenuRgbPalette4930 equ GameDataImage+0x4930
+StatusTextLine equ GameDataImage+0x2083
+StatusLabelClimber equ GameDataImage+0x48BF
+StatusLabelFloater equ GameDataImage+0x48C6
+StatusLabelBlocker equ GameDataImage+0x48D4
+StatusLabelBuilder equ GameDataImage+0x48DB
+StatusLabelBasher equ GameDataImage+0x48E2
+StatusLabelMiner equ GameDataImage+0x48E9
+StatusLabelDigger equ GameDataImage+0x48F0
+StatusLabelWalker equ GameDataImage+0x48F7
+StatusLabelFaller equ GameDataImage+0x48FE
+StatusLabelAthlete equ GameDataImage+0x490C
+ProtectionDiskMissingMessage equ GameDataImage+0x20D4
+MemoryControlBlockErrorMessage equ GameDataImage+0x21C8
+InsufficientMemoryMessage equ GameDataImage+0x21EA
+StartupLoadingMessage equ GameDataImage+0x2200
+StartupMachineSelectionHeading equ GameDataImage+0x2260
+StartupDisplayChoiceText equ GameDataImage+0x22E1
+StartupMachineChoiceText equ GameDataImage+0x2384
+StartupChoiceMarker239F equ GameDataImage+0x239F
+StartupChoiceMarker23D2 equ GameDataImage+0x23D2
+StartupChoiceMarker240B equ GameDataImage+0x240B
+StartupChoiceMarker2442 equ GameDataImage+0x2442
+StartupChoiceMarker248A equ GameDataImage+0x248A
+HexNibbleCharacters equ GameDataImage+0x224F
+MainResourceFilename equ GameDataImage+0x252B
+AdLibDriverFilename equ GameDataImage+0x2573
+TandyDriverFilename equ GameDataImage+0x257D
+BriefingInformationText equ GameDataImage+0x4B0A
+ContinueMouseText equ GameDataImage+0x4BA0
+ContinueFireText equ GameDataImage+0x4BC3
+ContinueSpaceText equ GameDataImage+0x4BE5
+ResultTimeUpText equ GameDataImage+0x4C19
+ResultAllAccountedText equ GameDataImage+0x4C2E
+ResultPercentagesText equ GameDataImage+0x4C4E
+ResultMenuMouseText equ GameDataImage+0x4C77
+ResultMenuButtonText equ GameDataImage+0x4C9D
+ResultMenuReturnText equ GameDataImage+0x4CB9
+RetryLevelMouseText equ GameDataImage+0x4CD3
+RetryLevelButtonText equ GameDataImage+0x4CFE
+RetryLevelSpaceText equ GameDataImage+0x4D20
+ResultAccessCodeText equ GameDataImage+0x4D3F
+NextLevelMouseText equ GameDataImage+0x4D75
+NextLevelButtonText equ GameDataImage+0x4DA0
+NextLevelSpaceText equ GameDataImage+0x4DC2
+ResultAssessmentNoneText equ GameDataImage+0x4F33
+ResultAssessmentBelowHalfText equ GameDataImage+0x4F77
+ResultAssessmentBelowRequirementMinusFiveText equ GameDataImage+0x4FBC
+ResultAssessmentBelowRequirementMinusOneText equ GameDataImage+0x5003
+ResultAssessmentOneShortText equ GameDataImage+0x504E
+ResultAssessmentExactRequirementText equ GameDataImage+0x5091
+ResultAssessmentBelowRequirementPlusTwentyText equ GameDataImage+0x50DE
+ResultAssessmentAboveRequirementText equ GameDataImage+0x512C
+ResultAssessmentAllSavedText equ GameDataImage+0x517A
+AllLevelsCompletedText equ GameDataImage+0x51CB
+ResultRescuedPercentField equ GameDataImage+0x4C5D
+ResultRequiredPercentField equ GameDataImage+0x4C71
+ResultAccessLevelField equ GameDataImage+0x4D5D
 DisplayCombinationProbeEnableByte equ GameDataImage+0x2013
 DisplayCombinationProbeTarget2014 equ GameDataImage+0x2014
 EgaProbeTarget2017 equ GameDataImage+0x2017
@@ -1293,6 +1356,12 @@ ColorCrtcProbeEnableByte:
     db 0x00,0x90,0x14 ; @0BAA9
 MonoCrtcProbeEnableByte:
     db 0x00,0xa0,0x14 ; @0BAAC
+; S8: binding table201F..202E and character table202E..2080 overlap at202E=4C. Do not create
+; disjoint copies. IRQ bounds16 bindings; reader4D1A bounds83 characters, but incoming table
+; bytes/aliases are live. Stored process-image initialization lies beyond startup DF0
+; clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18
+; may overwrite through2B4A (supplied0420-byte files end1F6A);
+; indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x10,0x1e,0x18,0x19,0x39,0x01,0x1c,0x02,0x03,0x04,0x7c,0x7b,0x7a,0x79,0x77,0x4c ; @0BAAF
 ; UNKNOWN: unresolved bytes
@@ -1305,18 +1374,35 @@ MonoCrtcProbeEnableByte:
     db 0x4e,0x4d,0x2c,0x2e,0x01,0x2f,0x2a,0x04,0x20,0x05,0x80,0x81,0x82,0x83,0x84,0x85 ; @0BAEF
 ; UNKNOWN: unresolved bytes
     db 0x86,0x87,0x88,0x89,0x06,0x07,0x37,0x8a,0x39,0x2d,0x8c,0x35,0x8d,0x2b,0x31,0x8b ; @0BAFF
+; [0BB13] S8: mutable40-character status line plus NUL20AB, not DrawTextStream. Count2095..97,
+; percent209C..9E and time20A7/20A9/20AA are aliased fields of this line. 3B23 supplies2083 to
+; NUL reader417B; stored40 chars2083..20AA and NUL20AB. Selection3CEE clears11 prefix bytes,3DF3
+; formats208B..8D,3E58 copies7 label bytes to2083..89. Count368A/3AB7
+; writes2095..97;3ABD/3AFB..3B1E write209C..9E, non100 keeps209C;36E2 writes20A7,040E/0413
+; set20A9/AA,021F..0246 borrow/count down. Stored process-image initialization lies beyond
+; startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long
+; GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A);
+; indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x32,0x33,0x30,0x2e,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ; @0BB0F
 ; UNKNOWN: unresolved bytes
     db 0x20,0x20,0x4f,0x55,0x54,0x20,0x20,0x20,0x20,0x20,0x20,0x49,0x4e,0x20,0x20,0x20 ; @0BB1F
 ; UNKNOWN: unresolved bytes
     db 0x25,0x20,0x20,0x54,0x49,0x4d,0x45,0x20,0x20,0x3a,0x20,0x20,0x00 ; @0BB2F
+; S8 DOS dollar string [20AC,20D4), including dollar20D3; reader04ED/04F2. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 CleanupExitMessage:
     db 0x45,0x78,0x69 ; @0BB3C
 ; UNKNOWN: unresolved bytes
     db 0x74,0x69,0x6e,0x67,0x20,0x4c,0x65,0x6d,0x6d,0x69,0x6e,0x67,0x73,0x2e,0x2e,0x2e ; @0BB3F
 ; UNKNOWN: unresolved bytes
     db 0x0d,0x0a,0x48,0x61,0x76,0x65,0x20,0x61,0x20,0x6e,0x69,0x63,0x65,0x20,0x44,0x4f ; @0BB4F
+; [0BB64] S8 DOS dollar string [20D4,213B), including dollar213A; reader0EFC/0F01. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x53,0x21,0x0d,0x0a,0x24,0x4c,0x65,0x6d,0x6d,0x69,0x6e,0x67,0x73,0x20,0x44,0x69 ; @0BB5F
 ; UNKNOWN: unresolved bytes
@@ -1343,24 +1429,48 @@ CleanupExitMessage:
     db 0x65,0x72,0x20,0x76,0x65,0x72,0x73,0x69,0x6f,0x6e,0x20,0x6f,0x66,0x20,0x44,0x4f ; @0BC0F
 ; UNKNOWN: unresolved bytes
     db 0x53,0x2e,0x0d,0x0a,0x24 ; @0BC1F
+; S8 DOS dollar string [2194,21A5), including dollar21A4; reader193A/1D28->1955. Stored
+; process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551
+; clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A
+; (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open.
 DatFileErrorMessage:
     db 0x4f,0x70,0x65,0x6e,0x20,0x48,0x61,0x73,0x20,0x46,0x61 ; @0BC24
 ; UNKNOWN: unresolved bytes
     db 0x69,0x6c,0x65,0x64,0x3a,0x24 ; @0BC2F
+; S8 DOS dollar string [21A5,21B6), including dollar21B5; reader1940->1955. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 ResourceReadErrorMessage:
     db 0x52,0x65,0x61,0x64,0x20,0x48,0x61,0x73,0x20,0x46 ; @0BC35
 ; UNKNOWN: unresolved bytes
     db 0x61,0x69,0x6c,0x65,0x64,0x3a,0x24 ; @0BC3F
+; S8 DOS dollar string [21B6,21C8), including dollar21C7; reader1946->1955. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 ResourceCloseErrorMessage:
     db 0x43,0x6c,0x6f,0x73,0x65,0x20,0x48,0x61,0x73 ; @0BC46
+; [0BC58] S8 DOS dollar string [21C8,21EA), including dollar21E9; reader105C/1069. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x46,0x61,0x69,0x6c,0x65,0x64,0x3a,0x24,0x4d,0x65,0x6d,0x6f,0x72,0x79,0x20 ; @0BC4F
 ; UNKNOWN: unresolved bytes
     db 0x43,0x6f,0x6e,0x74,0x72,0x6f,0x6c,0x20,0x42,0x6c,0x6f,0x63,0x6b,0x73,0x20,0x44 ; @0BC5F
+; [0BC7A] S8 DOS dollar string [21EA,2200), including dollar21FF; reader1064/1069. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x73,0x74,0x72,0x6f,0x79,0x65,0x64,0x0d,0x0a,0x24,0x49,0x6e,0x73,0x75,0x66 ; @0BC6F
 ; UNKNOWN: unresolved bytes
     db 0x66,0x69,0x63,0x69,0x65,0x6e,0x74,0x20,0x4d,0x65,0x6d,0x6f,0x72,0x79,0x0d,0x0a ; @0BC7F
+; [0BC90] S8 DOS dollar string [2200,224F), including dollar224E; reader00C2/00C6. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x24,0x20,0x20,0x20,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x20,0x50,0x43,0x20,0x4c,0x65 ; @0BC8F
 ; UNKNOWN: unresolved bytes
@@ -1373,6 +1483,12 @@ ResourceCloseErrorMessage:
     db 0x74,0x20,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x0d,0x0a,0x24 ; @0BCCF
 ; UNKNOWN: unresolved bytes
     db 0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x61,0x62,0x63,0x64,0x65,0x66 ; @0BCDF
+; [0BCF0] S8 WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF;
+; pointer10A3/10A7, stored NUL22E0 bounds intact initial text. DOS02 sees every nonzero byte
+; including CR/LF; saves and returned DS are live. Stored process-image initialization lies
+; beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability
+; inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A);
+; indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ; @0BCEF
 ; UNKNOWN: unresolved bytes
@@ -1389,6 +1505,12 @@ ResourceCloseErrorMessage:
     db 0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d ; @0BD4F
 ; UNKNOWN: unresolved bytes
     db 0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x2d,0x0d,0x0a,0x0d ; @0BD5F
+; [0BD71] S8 WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF;
+; pointer10B2/10B5, stored NUL2383 bounds intact initial text. DOS02 sees every nonzero byte
+; including CR/LF; saves and returned DS are live. Stored process-image initialization lies
+; beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability
+; inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A);
+; indexed/string/stack/segment/service aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x0a,0x00,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ; @0BD6F
 ; UNKNOWN: unresolved bytes
@@ -1409,6 +1531,14 @@ ResourceCloseErrorMessage:
     db 0x69,0x74,0x20,0x54,0x6f,0x20,0x44,0x4f,0x53,0x0d,0x0a,0x0d,0x0a,0x20,0x20,0x20 ; @0BDEF
 ; UNKNOWN: unresolved bytes
     db 0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ; @0BDFF
+; [0BE14] S8 WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF;
+; pointer1104/1107 and11AB/11AF, stored NUL2526 bounds intact initial text. DOS02 sees every
+; nonzero byte including CR/LF; saves and returned DS are live. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open. Marker1194/1198 stores2020
+; to oldDI and3E2D to newSI at nominal239F/23D2/240B/2442/248A; early1194 entry has unchecked
+; cursors, not guaranteed menu rows.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x2d,0x3e,0x20,0x00,0x0d,0x0a,0x0d,0x0a,0x20,0x20,0x20,0x20,0x20,0x20,0x20 ; @0BE0F
 ; UNKNOWN: unresolved bytes
@@ -1463,35 +1593,98 @@ ResourceCloseErrorMessage:
     db 0x20,0x61,0x6e,0x6f,0x74,0x68,0x65,0x72,0x20,0x4d,0x61,0x63,0x68,0x69,0x6e,0x65 ; @0BF9F
 ; UNKNOWN: unresolved bytes
     db 0x20,0x54,0x79,0x70,0x65,0x0d,0x0a,0x00,0x00 ; @0BFAF
+; [0BFBB] S8 Stored ASCIIZ 'main.dat' [252B,2534); NUL2533. Pointers/services58D3/58E0. Open/DAT/error
+; printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change
+; bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and
+; per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open.
 LastResourceFilenameOffset:
     db 0x00,0x00,0x00,0x6d,0x61,0x69,0x6e ; @0BFB8
 ; UNKNOWN: unresolved bytes
     db 0x2e,0x64,0x61,0x74,0x00 ; @0BFBF
+; S8 Stored ASCIIZ 'vgagr0.dat' [2534,253F); NUL253E.
+; Pointers/services1A31/1A40,1B19/1B28,4AFD/4B04. Open/DAT/error printer use liveDS:DX/BX, not
+; host strings; selector arithmetic and providers can change bytes. Stored process-image
+; initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No
+; immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files
+; end1F6A); indexed/string/stack/segment/service aliases remain open. Nominal in-string writes:
+; 2539 at1A24. Digit helper4BC2 writes three LEVEL digits with forward INC independent DF;
+; graphics/ground add30 to the byte, special adds2F to its nonzero header byte, all wrapping and
+; unchecked.
 GraphicsDatFilename:
     db 0x76,0x67,0x61,0x67,0x72 ; @0BFC4
 GraphicsFilenameSelector:
     db 0x30,0x2e,0x64,0x61,0x74,0x00 ; @0BFC9
+; S8 Stored ASCIIZ 'ground0o.dat' [253F,254C); NUL254B. Pointers/services1A0B/1A18.
+; Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers
+; can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011
+; and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open. Nominal in-string writes: 2545 at1A09. Digit helper4BC2 writes three LEVEL digits
+; with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to its
+; nonzero header byte, all wrapping and unchecked.
 ; UNKNOWN: unresolved bytes
 GroundResourceFilename:
     db 0x67,0x72,0x6f,0x75,0x6e,0x64 ; @0BFCF
 GroundFilenameSelector:
     db 0x30,0x6f,0x2e,0x64,0x61,0x74,0x00 ; @0BFD5
+; S8 Stored ASCIIZ 'level000.dat' [254C,2559); NUL2558. Pointers/services19A4/19B3.
+; Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers
+; can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011
+; and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open. Nominal in-string writes: 2551 at19A0->4BC2. Digit helper4BC2 writes three LEVEL
+; digits with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to
+; its nonzero header byte, all wrapping and unchecked.
 LevelResourceFilename:
     db 0x6c,0x65,0x76 ; @0BFDC
 ; UNKNOWN: unresolved bytes
     db 0x65,0x6c ; @0BFDF
 LevelResourceFilenameDigits:
     db 0x30,0x30,0x30,0x2e,0x64,0x61,0x74,0x00 ; @0BFE1
+; S8 Stored ASCIIZ 'vgaspec0.dat' [2559,2566); NUL2565. Pointers/services1A63/1A72.
+; Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers
+; can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011
+; and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open. Nominal in-string writes: 2560 at1A60. Digit helper4BC2 writes three LEVEL digits
+; with forward INC independent DF; graphics/ground add30 to the byte, special adds2F to its
+; nonzero header byte, all wrapping and unchecked.
 SpecialResourceFilename:
     db 0x76,0x67,0x61,0x73,0x70,0x65 ; @0BFE9
 ; UNKNOWN: unresolved bytes
     db 0x63 ; @0BFEF
 SpecialFilenameSelector:
     db 0x30,0x2e,0x64,0x61,0x74,0x00 ; @0BFF0
+; S8 Stored ASCIIZ 'oddtable.dat' [2566,2573); NUL2572. Pointers/services19D1/19DC.
+; Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers
+; can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011
+; and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open.
 OddLevelOverrideFilename:
     db 0x6f,0x64,0x64,0x74,0x61,0x62,0x6c,0x65,0x2e ; @0BFF6
+; [0C00D] S8 Stored ASCIIZ 'tandysnd.dat' [257D,258A); NUL2589. Pointers/services05C6/05CA.
+; Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers
+; can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011
+; and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open.
+; [0C003] S8 Stored ASCIIZ 'adlib.dat' [2573,257D); NUL257C. Pointers/services0589/058D. Open/DAT/error
+; printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change
+; bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and
+; per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open.
 ; UNKNOWN: unresolved bytes
     db 0x64,0x61,0x74,0x00,0x61,0x64,0x6c,0x69,0x62,0x2e,0x64,0x61,0x74,0x00,0x74,0x61 ; @0BFFF
+; [0C01A] S8 Stored ASCIIZ 'russell.dat' [258A,2596); NUL2595. Pointers/services0E66/0E6D,0EC2/0ECB.
+; Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers
+; can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011
+; and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite
+; through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases
+; remain open.
 ; UNKNOWN: unresolved bytes
     db 0x6e,0x64,0x79,0x73,0x6e,0x64,0x2e,0x64,0x61,0x74,0x00,0x72,0x75,0x73,0x73,0x65 ; @0C00F
 ; UNKNOWN: unresolved bytes
@@ -1509,6 +1702,7 @@ SavedBiosClockLow:
 InputPollCallback:
 ; DATA: pointer_data
     db 0x52,0x42 ; @0C030
+; [0C038] PALETTE ROW MAP:25A8 packed16/25B8 RGB48 slot6 seeded5377;25E8 packed8/25F0 RGB24 slot4 fixed targets.2608 black48;2638 current48 with2650 interior+18h,2668 current48. Stored/process initialization is separate from per-frame/level validity;nominal row writers select0/7,seed selects6. GROUND1000 request reachesall,actual0420 doesnot. Record/cache/alias writers remain. Exact contents/reader matrix:palette_frontends.asm,s7-tables.md.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0xff,0x00,0x11,0x02,0x17,0x16,0x14,0x07,0x16,0x00,0x00 ; @0C032
 ; UNKNOWN: unresolved bytes
@@ -1543,6 +1737,7 @@ BasePaletteSource2608:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0C112
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @0C122
+; Candidate0400 pairs2698..2777:8 lead pairs then13*8 repeats,2bytes frame/signedY-action;producer+0E has no terminal112 guard. Do not set full size/class solely from colors2778 adjacency. GROUND/record/cache/aliases remain;see2A6D integration note.
 ; Unchecked pair reference at2A6D; naming the base does not establish extent.
 ; UNKNOWN: unresolved bytes
 EntityState0400PairBase:
@@ -1573,6 +1768,7 @@ EntityState0400PairBase:
     db 0x05,0x02,0x04,0x02,0x04,0x02,0x05,0x02,0x06,0x02,0x07,0x02,0x07,0x02,0x06,0x02 ; @0C1E2
 ; UNKNOWN: unresolved bytes
     db 0x05,0x02,0x04,0x02,0x04,0x02,0x05,0x02,0x06,0x02,0x07,0x02,0x07,0x02,0x06,0x02 ; @0C1F2
+; [0C208] 2778 exact16-byte VGA color window;2788 point-frame normalprefix51*A0 bytes through4767,50 LE16 signedXY words/frame,low80 skip. Beyond4767 full extent unresolved;caller gate1..7F/raw selectorall256 are not prefix bounds. GROUND/large records/cache/aliases remain;see entity_points.asm.
 ; UNKNOWN: unresolved bytes
     db 0x05,0x02,0x04,0x02,0x04,0x02,0x04,0x02,0x06,0x07,0x08,0x09,0x0a,0x0b,0x08,0x09 ; @0C202
 ; UNKNOWN: unresolved bytes
@@ -2637,6 +2833,9 @@ EntityState0400PairBase:
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E322
 ; UNKNOWN: unresolved bytes
     db 0x80,0x80,0x80,0x80,0x80,0xf4,0x57,0x52,0x49,0x54,0x54,0x45,0x4e,0x20,0x42,0x59 ; @0E332
+; [0E34F] S8 fixed7-byte labels read3E58 start48BF,48C6,48D4,48DB,48E2,48E9,48F0,48F7,48FE,490C.
+; 48CD..48D3 (BOMBER ) and4905..490B (SPLATTR) lack established selection/readers; leave those
+; two runs UNKNOWN.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x52,0x55,0x53,0x53,0x45,0x4c,0x4c,0x20,0x4b,0x41,0x59,0x00,0x43,0x4c,0x49 ; @0E342
 ; UNKNOWN: unresolved bytes
@@ -2649,6 +2848,7 @@ EntityState0400PairBase:
     db 0x47,0x47,0x45,0x52,0x20,0x57,0x41,0x4c,0x4b,0x45,0x52,0x20,0x46,0x41,0x4c,0x4c ; @0E382
 ; UNKNOWN: unresolved bytes
     db 0x45,0x52,0x20,0x53,0x50,0x4c,0x41,0x54,0x54,0x52,0x41,0x54,0x48,0x4c,0x45,0x54 ; @0E392
+; [0E3B0] 4920 packed16 and4930 RGB48 are slot2 stored menu targets/publication sources,not menu animation records49E0. Storedvalues and all nominal readers inpalette_frontends.asm/s7-tables.md. Outside GROUND/odd footprints;generic cursor/cache/segment aliases still live.
 ; UNKNOWN: unresolved bytes
     db 0x45,0x41,0x4a,0x48,0x4c,0x44,0x48,0x42,0x42,0x43,0x4a,0x00,0x00,0x90,0x00,0x14 ; @0E3A2
 ; UNKNOWN: unresolved bytes
@@ -2657,6 +2857,11 @@ EntityState0400PairBase:
     db 0x00,0x20,0x10,0x08,0x18,0x0c,0x08,0x0c,0x00,0x04,0x08,0x02,0x1f,0x10,0x0b,0x24 ; @0E3C2
 ; UNKNOWN: unresolved bytes
     db 0x1a,0x16,0x29,0x26,0x23,0x2f,0x00,0x14,0x00,0x00,0x18,0x04,0x00,0x1c,0x08,0x00 ; @0E3D2
+; [0E3F0] S8: ten0B-stride records4960..49CD; only the ten-byte word prefix of each is explained. +0
+; countW500C/4FAF/4FB9,R4FA7; +2 resetR5002/4FB6; +4xR4FD3,+6yR4FD6,+8sourceR4FC8. +A bytes
+; remain UNKNOWN.8000 sentinel, decrementFFEF reset, other negative counters draw with wrapped
+; frame arithmetic; no range clamping. Prefix classification is not entire110-byte
+; classification.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x10,0x34,0x34,0x34,0x2c,0x2c,0x00,0x10,0x14,0x2c,0x38,0x20,0x24,0x28,0x00 ; @0E3E2
 ; UNKNOWN: unresolved bytes
@@ -2671,6 +2876,12 @@ EntityState0400PairBase:
     db 0x00,0x80,0x00,0x80,0xef,0x01,0x82,0x00,0x10,0x96,0x00,0x00,0x80,0x00,0x80,0xaf ; @0E432
 ; UNKNOWN: unresolved bytes
     db 0x00,0xcf,0x00,0x10,0x96,0x00,0x00,0x80,0x00,0x80,0x2a,0x01,0xd1,0x00,0x10,0x84 ; @0E442
+; [0E45E] S8 7CBC initializesDS001D/001F to49CE;7D33/7D37 consumes livecursor, FF pauses100ticks then
+; unconditionally fetches one next byte7D4C; CR reloadsstart001D then fetches one byte. Stored
+; extent[49CE,4AD9), restartCR4AD8, FF at49F3,4A19,4A3F,4A65,4AB0,4AD6. Second fetch is not
+; recursively interpreted. IncomingDF/SI16 wrap and cursor/stack aliases can escape
+; storedextent; no NUL terminator. No identified ordinary stream writer;001D/001F/0021/0023 are
+; separate menu-lifetime state,0021 reused by48EB as resultprompt.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x80,0x00,0x80,0x2a,0x00,0x09,0x00,0x10,0x96,0x00,0x20,0x20,0x20,0x20 ; @0E452
 ; UNKNOWN: unresolved bytes
@@ -2705,12 +2916,27 @@ EntityState0400PairBase:
     db 0x20,0x20,0x20,0x20,0x20,0x43,0x6f,0x70,0x79,0x72,0x69,0x67,0x68,0x74,0x20,0x31 ; @0E542
 ; UNKNOWN: unresolved bytes
     db 0x39,0x39,0x31,0x20,0x50,0x73,0x79,0x67,0x6e,0x6f,0x73,0x69,0x73,0x20,0x4c,0x74 ; @0E552
+; [0E569] S8 4D4D header/4D65 character grammar, reader443A/443E; exact stored stream[4AD9,4B0A),
+; terminal column0 at4B09. 4AD9:column9,row17,style0,text[4ADC,4AF3),CR4AF3;
+; 4AF4:column12,row18,style0,text[4AF7,4B08),CR4B08. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x64,0x2e,0x20,0x20,0xff,0x20,0x0d,0x09,0x11,0x00,0x28,0x43,0x29,0x4d,0x43,0x4d ; @0E562
 ; UNKNOWN: unresolved bytes
     db 0x58,0x43,0x49,0x20,0x50,0x73,0x79,0x67,0x6e,0x6f,0x73,0x69,0x73,0x20,0x4c,0x74 ; @0E572
 ; UNKNOWN: unresolved bytes
     db 0x64,0x0d,0x0c,0x12,0x00,0x41,0x20,0x44,0x4d,0x41,0x20,0x44,0x65,0x73,0x69,0x67 ; @0E582
+; [0E59A] S8 4D4D header/4D65 character grammar, reader463C/4640; exact stored stream[4B0A,4BA0),
+; terminal column0 at4B9F. 4B0A:column1,row5,style0,text[4B0D,4B15),CR4B15;
+; 4B16:column9,row5,style0,text[4B19,4B39),CR4B39;
+; 4B3A:column11,row8,style0,text[4B3D,4B53),CR4B53;
+; 4B54:column11,row10,style0,text[4B57,4B67),CR4B67;
+; 4B68:column11,row12,style0,text[4B6B,4B7A),CR4B7A;
+; 4B7B:column11,row14,style0,text[4B7E,4B8C),CR4B8C;
+; 4B8D:column11,row16,style0,text[4B90,4B9E),CR4B9E. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x6e,0x20,0x47,0x61,0x6d,0x65,0x0d,0x00,0x01,0x05,0x00,0x4c,0x65,0x76,0x65,0x6c ; @0E592
 ; UNKNOWN: unresolved bytes
@@ -2745,58 +2971,126 @@ BriefingTimePluralByte:
     db 0x73,0x0d,0x0b,0x10,0x00,0x52,0x61 ; @0E61B
 ; UNKNOWN: unresolved bytes
     db 0x74,0x69,0x6e,0x67,0x20,0x20 ; @0E622
+; [0E630] S8 4D4D header/4D65 character grammar, reader4643/465D,47EA/4804; exact stored
+; stream[4BA0,4BC3), terminal column0 at4BC2. 4BA0:column6,row19,style0,text[4BA3,4BC1),CR4BC1.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 BriefingGroupText:
     db 0x4d,0x61,0x79,0x68,0x65,0x6d,0x0d,0x00,0x06,0x13 ; @0E628
 ; UNKNOWN: unresolved bytes
     db 0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x6d,0x6f,0x75,0x73,0x65,0x20,0x62,0x75,0x74 ; @0E632
 ; UNKNOWN: unresolved bytes
     db 0x74,0x6f,0x6e,0x20,0x74,0x6f,0x20,0x63,0x6f,0x6e,0x74,0x69,0x6e,0x75,0x65,0x0d ; @0E642
+; [0E653] S8 4D4D header/4D65 character grammar, reader464E/465D,47F5/4804; exact stored
+; stream[4BC3,4BE5), terminal column0 at4BE4. 4BC3:column6,row19,style0,text[4BC6,4BE3),CR4BE3.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x06,0x13,0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x46,0x69,0x72,0x65,0x20,0x62 ; @0E652
 ; UNKNOWN: unresolved bytes
     db 0x75,0x74,0x74,0x6f,0x6e,0x20,0x74,0x6f,0x20,0x63,0x6f,0x6e,0x74,0x69,0x6e,0x75 ; @0E662
+; [0E675] S8 4D4D header/4D65 character grammar, reader4659/465D,4800/4804; exact stored
+; stream[4BE5,4C01), terminal column0 at4C00. 4BE5:column9,row19,style0,text[4BE8,4BFF),CR4BFF.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x0d,0x00,0x09,0x13,0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x53,0x70,0x61,0x63 ; @0E672
+; [0E691] S8: fixed-width6-byte rating rows4C01..4C18, not NUL strings.45E5 forwardcopies and49C0
+; DF-sensitive copy can read outside rows for unchecked byte selectors; group255
+; source51FB..5200 withDF0.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x20,0x74,0x6f,0x20,0x63,0x6f,0x6e,0x74,0x69,0x6e,0x75,0x65,0x0d,0x00,0x46 ; @0E682
 ; UNKNOWN: unresolved bytes
     db 0x75,0x6e,0x20,0x20,0x20,0x54,0x72,0x69,0x63,0x6b,0x79,0x54,0x61,0x78,0x69,0x6e ; @0E692
+; [0E6A9] S8 4D4D header/4D65 character grammar, reader4703/471A; exact stored stream[4C19,4C2E),
+; terminal column0 at4C2D. 4C19:column13,row1,style0,text[4C1C,4C2C),CR4C2C. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x67,0x4d,0x61,0x79,0x68,0x65,0x6d,0x0d,0x01,0x00,0x59,0x6f,0x75,0x72,0x20,0x74 ; @0E6A2
+; [0E6BE] S8 4D4D header/4D65 character grammar, reader4716/471A; exact stored stream[4C2E,4C4E),
+; terminal column0 at4C4D. 4C2E:column7,row1,style0,text[4C31,4C4C),CR4C4C. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x69,0x6d,0x65,0x20,0x69,0x73,0x20,0x75,0x70,0x21,0x0d,0x00,0x07,0x01,0x00,0x41 ; @0E6B2
 ; UNKNOWN: unresolved bytes
     db 0x6c,0x6c,0x20,0x6c,0x65,0x6d,0x6d,0x69,0x6e,0x67,0x73,0x20,0x61,0x63,0x63,0x6f ; @0E6C2
+; [0E6DE] S8 4D4D header/4D65 character grammar, reader48EF/48F3; exact stored stream[4C4E,4C77),
+; terminal column0 at4C76. 4C4E:column13,row3,style0,text[4C51,4C61),CR4C61;
+; 4C62:column13,row4,style0,text[4C65,4C75),CR4C75. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x75,0x6e,0x74,0x65,0x64,0x20,0x66,0x6f,0x72,0x2e,0x0d,0x00,0x0d,0x03,0x00,0x59 ; @0E6D2
 ; UNKNOWN: unresolved bytes
     db 0x6f,0x75,0x20,0x72,0x65,0x73,0x63,0x75,0x65,0x64,0x20,0x20,0x20,0x20,0x20,0x0d ; @0E6E2
 ; UNKNOWN: unresolved bytes
     db 0x0d,0x04,0x00,0x59,0x6f,0x75,0x20,0x6e,0x65,0x65,0x64,0x65,0x64,0x20,0x20,0x20 ; @0E6F2
+; [0E707] S8 4D4D header/4D65 character grammar, reader48D1/48EB->479F/47A3; exact stored
+; stream[4C77,4C9D), terminal column0 at4C9C. 4C77:column4,row19,style0,text[4C7A,4C9B),CR4C9B.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x20,0x20,0x0d,0x00,0x04,0x13,0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x72,0x69 ; @0E702
 ; UNKNOWN: unresolved bytes
     db 0x67,0x68,0x74,0x20,0x6d,0x6f,0x75,0x73,0x65,0x20,0x62,0x75,0x74,0x74,0x6f,0x6e ; @0E712
+; [0E72D] S8 4D4D header/4D65 character grammar, reader48DC/48EB->479F/47A3; exact stored
+; stream[4C9D,4CB9), terminal column0 at4CB8. 4C9D:column7,row19,style0,text[4CA0,4CB7),CR4CB7.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x66,0x6f,0x72,0x20,0x6d,0x65,0x6e,0x75,0x0d,0x00,0x07,0x13,0x00,0x50,0x72 ; @0E722
 ; UNKNOWN: unresolved bytes
     db 0x65,0x73,0x73,0x20,0x62,0x75,0x74,0x74,0x6f,0x6e,0x20,0x32,0x20,0x66,0x6f,0x72 ; @0E732
+; [0E749] S8 4D4D header/4D65 character grammar, reader48E7/48EB->479F/47A3; exact stored
+; stream[4CB9,4CD3), terminal column0 at4CD2. 4CB9:column10,row19,style0,text[4CBC,4CD1),CR4CD1.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x6d,0x65,0x6e,0x75,0x0d,0x00,0x0a,0x13,0x00,0x50,0x72,0x65,0x73,0x73,0x20 ; @0E742
 ; UNKNOWN: unresolved bytes
     db 0x52,0x65,0x74,0x75,0x72,0x6e,0x20,0x66,0x6f,0x72,0x20,0x6d,0x65,0x6e,0x75,0x0d ; @0E752
+; [0E763] S8 4D4D header/4D65 character grammar, reader477D/479C; exact stored stream[4CD3,4CFE),
+; terminal column0 at4CFD. 4CD3:column2,row18,style0,text[4CD6,4CFC),CR4CFC. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x02,0x12,0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x6c,0x65,0x66,0x74,0x20,0x6d ; @0E762
 ; UNKNOWN: unresolved bytes
     db 0x6f,0x75,0x73,0x65,0x20,0x62,0x75,0x74,0x74,0x6f,0x6e,0x20,0x74,0x6f,0x20,0x72 ; @0E772
+; [0E78E] S8 4D4D header/4D65 character grammar, reader4788/479C; exact stored stream[4CFE,4D20),
+; terminal column0 at4D1F. 4CFE:column6,row18,style0,text[4D01,4D1E),CR4D1E. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x74,0x72,0x79,0x20,0x6c,0x65,0x76,0x65,0x6c,0x0d,0x00,0x06,0x12,0x00,0x50 ; @0E782
 ; UNKNOWN: unresolved bytes
     db 0x72,0x65,0x73,0x73,0x20,0x62,0x75,0x74,0x74,0x6f,0x6e,0x20,0x31,0x20,0x74,0x6f ; @0E792
+; [0E7B0] S8 4D4D header/4D65 character grammar, reader4793/479C; exact stored stream[4D20,4D3F),
+; terminal column0 at4D3E. 4D20:column8,row18,style0,text[4D23,4D3D),CR4D3D. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x72,0x65,0x74,0x72,0x79,0x20,0x6c,0x65,0x76,0x65,0x6c,0x0d,0x00,0x08,0x12 ; @0E7A2
 ; UNKNOWN: unresolved bytes
     db 0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x53,0x70,0x61,0x63,0x65,0x20,0x74,0x6f,0x20 ; @0E7B2
+; [0E7CF] S8 4D4D header/4D65 character grammar, reader4755/4759; exact stored stream[4D3F,4D74),
+; terminal column0 at4D73. 4D3F:column5,row14,style0,text[4D42,4D61),CR4D61;
+; 4D62:column13,row15,style0,text[4D65,4D72),CR4D72. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x72,0x65,0x74,0x72,0x79,0x20,0x6c,0x65,0x76,0x65,0x6c,0x0d,0x00,0x05,0x0e,0x00 ; @0E7C2
 ; UNKNOWN: unresolved bytes
@@ -2805,54 +3099,120 @@ BriefingGroupText:
     db 0x20,0x66,0x6f,0x72,0x20,0x4c,0x65,0x76,0x65,0x6c,0x20,0x20,0x20,0x20,0x20,0x0d ; @0E7E2
 ; UNKNOWN: unresolved bytes
     db 0x0d,0x0f,0x00,0x69,0x73,0x20,0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4a ; @0E7F2
+; [0E805] S8 4D4D header/4D65 character grammar, reader475C/479C; exact stored stream[4D75,4DA0),
+; terminal column0 at4D9F. 4D75:column2,row18,style0,text[4D78,4D9E),CR4D9E. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x0d,0x00,0x00,0x02,0x12,0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x6c,0x65,0x66,0x74 ; @0E802
 ; UNKNOWN: unresolved bytes
     db 0x20,0x6d,0x6f,0x75,0x73,0x65,0x20,0x62,0x75,0x74,0x74,0x6f,0x6e,0x20,0x66,0x6f ; @0E812
+; [0E830] S8 4D4D header/4D65 character grammar, reader4767/479C; exact stored stream[4DA0,4DC2),
+; terminal column0 at4DC1. 4DA0:column6,row18,style0,text[4DA3,4DC0),CR4DC0. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x72,0x20,0x6e,0x65,0x78,0x74,0x20,0x6c,0x65,0x76,0x65,0x6c,0x0d,0x00,0x06,0x12 ; @0E822
 ; UNKNOWN: unresolved bytes
     db 0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x62,0x75,0x74,0x74,0x6f,0x6e,0x20,0x31,0x20 ; @0E832
 ; UNKNOWN: unresolved bytes
     db 0x66,0x6f,0x72,0x20,0x6e,0x65,0x78,0x74,0x20,0x6c,0x65,0x76,0x65,0x6c,0x0d,0x00 ; @0E842
+; S8 4D4D header/4D65 character grammar, reader4772/479C; exact stored stream[4DC2,4DE1),
+; terminal column0 at4DE0. 4DC2:column8,row18,style0,text[4DC5,4DDF),CR4DDF. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x08,0x12,0x00,0x50,0x72,0x65,0x73,0x73,0x20,0x53,0x70,0x61,0x63,0x65,0x20,0x66 ; @0E852
+; [0E871] S8 4D4D header/4D65 character grammar, reader4983/4987; exact stored stream[4DE1,4DFE),
+; terminal column0 at4DFD. 4DE1:column15,row7,style0,text[4DE4,4DEE),CR4DEE;
+; 4DEF:column15,row9,style8,text[4DF2,4DFC),CR4DFC. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x6f,0x72,0x20,0x6e,0x65,0x78,0x74,0x20,0x6c,0x65,0x76,0x65,0x6c,0x0d,0x00,0x0f ; @0E862
+; [0E87F] S8 4D4D header/4D65 character grammar, reader503B/503F substream of4DE1; exact stored
+; stream[4DEF,4DFE), terminal column0 at4DFD. 4DEF:column15,row9,style8,text[4DF2,4DFC),CR4DFC.
+; DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live
+; saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable
+; fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x07,0x00,0x45,0x6e,0x74,0x65,0x72,0x20,0x43,0x6f,0x64,0x65,0x0d,0x0f,0x09,0x08 ; @0E872
+; [0E88E] S8 4D4D header/4D65 character grammar, reader49C2/49C6; exact stored stream[4DFE,4E27),
+; terminal column0 at4E26. 4DFE:column11,row11,style8,text[4E01,4E14),CR4E14;
+; 4E15:column13,row13,style8,text[4E18,4E25),CR4E25. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x2e,0x2e,0x2e,0x2e,0x2e,0x2e,0x2e,0x2e,0x2e,0x2e,0x0d,0x00,0x0b,0x0b,0x08,0x43 ; @0E882
 ; UNKNOWN: unresolved bytes
     db 0x6f,0x64,0x65,0x20,0x66,0x6f,0x72,0x20,0x4c,0x65,0x76,0x65,0x6c,0x20,0x20,0x20 ; @0E892
 ; UNKNOWN: unresolved bytes
     db 0x20,0x20,0x0d,0x0d,0x0d,0x08,0x52,0x61,0x74,0x69,0x6e,0x67,0x20,0x4d,0x61,0x79 ; @0E8A2
+; [0E8B7] S8 4D4D header/4D65 character grammar, reader49EC/49F0; exact stored stream[4E27,4E3A),
+; terminal column0 at4E39. 4E27:column13,row11,style8,text[4E2A,4E38),CR4E38. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x68,0x65,0x6d,0x0d,0x00,0x0d,0x0b,0x08,0x49,0x6e,0x63,0x6f,0x72,0x72,0x65,0x63 ; @0E8B2
+; [0E8CA] S8 4D4D header/4D65 character grammar, reader4A0D/4A11; exact stored stream[4E3A,4E6E),
+; terminal column0 at4E6D. 4E3A:column12,row5,style0,text[4E3D,4E4E),CR4E4E;
+; 4E4F:column8,row10,style0,text[4E52,4E5D),CR4E5D;
+; 4E5E:column8,row12,style0,text[4E61,4E6C),CR4E6C. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x74,0x20,0x43,0x6f,0x64,0x65,0x0d,0x00,0x0c,0x05,0x00,0x43,0x68,0x6f,0x6f,0x73 ; @0E8C2
 ; UNKNOWN: unresolved bytes
     db 0x65,0x20,0x49,0x6e,0x70,0x75,0x74,0x20,0x54,0x79,0x70,0x65,0x0d,0x08,0x0a,0x00 ; @0E8D2
 ; UNKNOWN: unresolved bytes
     db 0x32,0x2e,0x20,0x4a,0x6f,0x79,0x73,0x74,0x69,0x63,0x6b,0x0d,0x08,0x0c,0x00,0x33 ; @0E8E2
+; [0E8FE] S8 4D4D header/4D65 character grammar, reader4A1B/4A1F; exact stored stream[4E6E,4E85),
+; terminal column0 at4E84. 4E6E:column8,row8,style0,text[4E71,4E83),CR4E83. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x2e,0x20,0x4b,0x65,0x79,0x62,0x6f,0x61,0x72,0x64,0x0d,0x00,0x08,0x08,0x00,0x31 ; @0E8F2
 ; UNKNOWN: unresolved bytes
     db 0x2e,0x20,0x4d,0x69,0x63,0x72,0x6f,0x73,0x6f,0x66,0x74,0x20,0x4d,0x6f,0x75,0x73 ; @0E902
+; [0E915] S8 4D4D header/4D65 character grammar, reader4A4E/4A52; exact stored stream[4E85,4EA9),
+; terminal column0 at4EA8. 4E85:column5,row15,style0,text[4E88,4EA7),CR4EA7. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x0d,0x00,0x05,0x0f,0x00,0x43,0x65,0x6e,0x74,0x72,0x65,0x20,0x4a,0x6f,0x79 ; @0E912
 ; UNKNOWN: unresolved bytes
     db 0x73,0x74,0x69,0x63,0x6b,0x20,0x74,0x68,0x65,0x6e,0x20,0x50,0x72,0x65,0x73,0x73 ; @0E922
+; [0E939] S8 4D4D header/4D65 character grammar, reader4A95/4A99; exact stored stream[4EA9,4ECF),
+; terminal column0 at4ECE. 4EA9:column3,row17,style0,text[4EAC,4ECD),CR4ECD. DF0/intact stream
+; only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned
+; DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical
+; aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x20,0x46,0x69,0x72,0x65,0x0d,0x00,0x03,0x11,0x00,0x53,0x65,0x6c,0x65,0x63,0x74 ; @0E932
 ; UNKNOWN: unresolved bytes
     db 0x20,0x4a,0x6f,0x79,0x73,0x74,0x69,0x63,0x6b,0x20,0x73,0x65,0x6e,0x73,0x69,0x74 ; @0E942
+; [0E95F] S8 4D4D header/4D65 character grammar, reader4B28/4B2C; exact stored stream[4ECF,4F00),
+; terminal column0 at4EFF. 4ECF:column10,row11,style0,text[4ED2,4EE8),CR4EE8;
+; 4EE9:column12,row13,style0,text[4EEC,4EFE),CR4EFE. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x69,0x76,0x69,0x74,0x79,0x20,0x28,0x31,0x2d,0x34,0x29,0x0d,0x00,0x0a,0x0b,0x00 ; @0E952
 ; UNKNOWN: unresolved bytes
     db 0x49,0x6e,0x73,0x65,0x72,0x74,0x20,0x44,0x69,0x73,0x6b,0x20,0x69,0x6e,0x74,0x6f ; @0E962
 ; UNKNOWN: unresolved bytes
     db 0x20,0x44,0x72,0x69,0x76,0x65,0x0d,0x0c,0x0d,0x00,0x54,0x68,0x65,0x6e,0x20,0x70 ; @0E972
+; [0E990] S8 4D4D header/4D65 character grammar, reader4AD5/4AD9; exact stored stream[4F00,4F33),
+; terminal column0 at4F32. 4F00:column9,row11,style0,text[4F03,4F1B),CR4F1B;
+; 4F1C:column12,row13,style0,text[4F1F,4F31),CR4F31. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x72,0x65,0x73,0x73,0x20,0x61,0x6e,0x79,0x20,0x6b,0x65,0x79,0x0d,0x00,0x09,0x0b ; @0E982
 ; UNKNOWN: unresolved bytes
@@ -2861,6 +3221,11 @@ BriefingGroupText:
     db 0x6e,0x74,0x6f,0x20,0x44,0x72,0x69,0x76,0x65,0x0d,0x0c,0x0d,0x00,0x54,0x68,0x65 ; @0E9A2
 ; UNKNOWN: unresolved bytes
     db 0x6e,0x20,0x70,0x72,0x65,0x73,0x73,0x20,0x61,0x6e,0x79,0x20,0x6b,0x65,0x79,0x0d ; @0E9B2
+; [0E9C3] S8 4D4D header/4D65 character grammar, reader4955 slot0->494D/4952; exact stored
+; stream[4F33,4F77), terminal column0 at4F76. 4F33:column4,row7,style0,text[4F36,4F57),CR4F57;
+; 4F58:column8,row8,style0,text[4F5B,4F75),CR4F75. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x04,0x07,0x00,0x52,0x4f,0x43,0x4b,0x20,0x42,0x4f,0x54,0x54,0x4f,0x4d,0x21 ; @0E9C2
 ; UNKNOWN: unresolved bytes
@@ -2869,6 +3234,11 @@ BriefingGroupText:
     db 0x20,0x73,0x61,0x6b,0x65,0x0d,0x08,0x08,0x00,0x74,0x68,0x61,0x74,0x20,0x79,0x6f ; @0E9E2
 ; UNKNOWN: unresolved bytes
     db 0x75,0x20,0x6e,0x75,0x6b,0x65,0x64,0x20,0x74,0x68,0x61,0x74,0x20,0x6c,0x65,0x76 ; @0E9F2
+; [0EA07] S8 4D4D header/4D65 character grammar, reader4955 slot1->494D/4952; exact stored
+; stream[4F77,4FBC), terminal column0 at4FBB. 4F77:column3,row7,style0,text[4F7A,4F9D),CR4F9D;
+; 4F9E:column8,row8,style0,text[4FA1,4FBA),CR4FBA. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x6c,0x2e,0x0d,0x00,0x03,0x07,0x00,0x42,0x65,0x74,0x74,0x65,0x72,0x20,0x72 ; @0EA02
 ; UNKNOWN: unresolved bytes
@@ -2877,6 +3247,11 @@ BriefingGroupText:
     db 0x74,0x65,0x67,0x79,0x20,0x62,0x65,0x66,0x6f,0x72,0x65,0x0d,0x08,0x08,0x00,0x79 ; @0EA22
 ; UNKNOWN: unresolved bytes
     db 0x6f,0x75,0x20,0x74,0x72,0x79,0x20,0x74,0x68,0x69,0x73,0x20,0x6c,0x65,0x76,0x65 ; @0EA32
+; [0EA4C] S8 4D4D header/4D65 character grammar, reader4955 slot2->494D/4952; exact stored
+; stream[4FBC,5003), terminal column0 at5002. 4FBC:column3,row7,style0,text[4FBF,4FE3),CR4FE3;
+; 4FE4:column8,row8,style0,text[4FE7,5001),CR5001. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x6c,0x20,0x61,0x67,0x61,0x69,0x6e,0x21,0x0d,0x00,0x03,0x07,0x00,0x41,0x20,0x6c ; @0EA42
 ; UNKNOWN: unresolved bytes
@@ -2887,6 +3262,11 @@ BriefingGroupText:
     db 0x6c,0x0d,0x08,0x08,0x00,0x69,0x73,0x20,0x64,0x65,0x66,0x69,0x6e,0x69,0x74,0x65 ; @0EA72
 ; UNKNOWN: unresolved bytes
     db 0x6c,0x79,0x20,0x72,0x65,0x63,0x6f,0x6d,0x6d,0x65,0x6e,0x64,0x65,0x64,0x2e,0x0d ; @0EA82
+; [0EA93] S8 4D4D header/4D65 character grammar, reader4955 slot3->494D/4952; exact stored
+; stream[5003,504E), terminal column0 at504D. 5003:column4,row7,style0,text[5006,5025),CR5025;
+; 5026:column3,row8,style0,text[5029,504C),CR504C. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x00,0x04,0x07,0x00,0x59,0x6f,0x75,0x20,0x67,0x6f,0x74,0x20,0x70,0x72,0x65,0x74 ; @0EA92
 ; UNKNOWN: unresolved bytes
@@ -2895,6 +3275,11 @@ BriefingGroupText:
     db 0x6d,0x65,0x2e,0x0d,0x03,0x08,0x00,0x4e,0x6f,0x77,0x20,0x74,0x72,0x79,0x20,0x61 ; @0EAB2
 ; UNKNOWN: unresolved bytes
     db 0x67,0x61,0x69,0x6e,0x20,0x66,0x6f,0x72,0x20,0x74,0x68,0x61,0x74,0x20,0x66,0x65 ; @0EAC2
+; [0EADE] S8 4D4D header/4D65 character grammar, reader4955 slot4->494D/4952; exact stored
+; stream[504E,5091), terminal column0 at5090. 504E:column2,row7,style0,text[5051,5077),CR5077;
+; 5078:column11,row8,style0,text[507B,508F),CR508F. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x77,0x20,0x25,0x20,0x65,0x78,0x74,0x72,0x61,0x2e,0x0d,0x00,0x02,0x07,0x00,0x4f ; @0EAD2
 ; UNKNOWN: unresolved bytes
@@ -2903,6 +3288,11 @@ BriefingGroupText:
     db 0x64,0x20,0x79,0x65,0x74,0x20,0x73,0x6f,0x20,0x66,0x61,0x72,0x20,0x28,0x74,0x65 ; @0EAF2
 ; UNKNOWN: unresolved bytes
     db 0x65,0x68,0x65,0x65,0x29,0x0d,0x0b,0x08,0x00,0x4d,0x61,0x79,0x62,0x65,0x20,0x74 ; @0EB02
+; [0EB21] S8 4D4D header/4D65 character grammar, reader4955 slot5->494D/4952; exact stored
+; stream[5091,50DE), terminal column0 at50DD. 5091:column3,row7,style0,text[5094,50B7),CR50B7;
+; 50B8:column4,row8,style0,text[50BB,50DC),CR50DC. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x68,0x69,0x73,0x20,0x74,0x69,0x6d,0x65,0x2e,0x2e,0x2e,0x2e,0x2e,0x0d,0x00,0x03 ; @0EB12
 ; UNKNOWN: unresolved bytes
@@ -2913,6 +3303,11 @@ BriefingGroupText:
     db 0x6c,0x6f,0x73,0x65,0x72,0x0d,0x04,0x08,0x00,0x74,0x68,0x61,0x6e,0x20,0x74,0x68 ; @0EB42
 ; UNKNOWN: unresolved bytes
     db 0x61,0x74,0x2e,0x20,0x4c,0x65,0x74,0x27,0x73,0x20,0x74,0x72,0x79,0x20,0x74,0x68 ; @0EB52
+; [0EB6E] S8 4D4D header/4D65 character grammar, reader4955 slot6->494D/4952; exact stored
+; stream[50DE,512C), terminal column0 at512B. 50DE:column2,row7,style0,text[50E1,5107),CR5107;
+; 5108:column2,row8,style0,text[510B,512A),CR512A. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x20,0x6e,0x65,0x78,0x74,0x2e,0x2e,0x2e,0x2e,0x0d,0x00,0x02,0x07,0x00,0x54 ; @0EB62
 ; UNKNOWN: unresolved bytes
@@ -2923,6 +3318,11 @@ BriefingGroupText:
     db 0x6f,0x75,0x20,0x6f,0x6e,0x0d,0x02,0x08,0x00,0x74,0x68,0x61,0x74,0x20,0x61,0x74 ; @0EB92
 ; UNKNOWN: unresolved bytes
     db 0x74,0x65,0x6d,0x70,0x74,0x2e,0x20,0x4f,0x6e,0x74,0x6f,0x20,0x74,0x68,0x65,0x20 ; @0EBA2
+; [0EBBC] S8 4D4D header/4D65 character grammar, reader4955 slot7->494D/4952; exact stored
+; stream[512C,517A), terminal column0 at5179. 512C:column5,row7,style0,text[512F,514E),CR514E;
+; 514F:column2,row8,style0,text[5152,5178),CR5178. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x6e,0x65,0x78,0x74,0x2e,0x2e,0x2e,0x2e,0x0d,0x00,0x05,0x07,0x00,0x59,0x6f,0x75 ; @0EBB2
 ; UNKNOWN: unresolved bytes
@@ -2933,6 +3333,11 @@ BriefingGroupText:
     db 0x4c,0x65,0x74,0x27,0x73,0x20,0x73,0x65,0x65,0x20,0x69,0x66,0x20,0x79,0x6f,0x75 ; @0EBE2
 ; UNKNOWN: unresolved bytes
     db 0x20,0x63,0x61,0x6e,0x20,0x73,0x74,0x6f,0x72,0x6d,0x20,0x74,0x68,0x65,0x20,0x6e ; @0EBF2
+; [0EC0A] S8 4D4D header/4D65 character grammar, reader4955 slot8->494D/4952; exact stored
+; stream[517A,51CB), terminal column0 at51CA. 517A:column3,row7,style0,text[517D,51A1),CR51A1;
+; 51A2:column3,row8,style0,text[51A5,51C9),CR51C9. DF0/intact stream only: NUL in text is glyph;
+; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x65,0x78,0x74,0x2e,0x2e,0x2e,0x0d,0x00,0x03,0x07,0x00,0x53,0x75,0x70,0x65,0x72 ; @0EC02
 ; UNKNOWN: unresolved bytes
@@ -2943,6 +3348,15 @@ BriefingGroupText:
     db 0x03,0x08,0x00,0x74,0x68,0x61,0x74,0x20,0x6c,0x65,0x76,0x65,0x6c,0x2e,0x20,0x43 ; @0EC32
 ; UNKNOWN: unresolved bytes
     db 0x61,0x6e,0x20,0x79,0x6f,0x75,0x20,0x64,0x6f,0x20,0x69,0x74,0x20,0x61,0x67,0x61 ; @0EC42
+; [0EC5B] S8 4D4D header/4D65 character grammar, reader47E3/47E7; exact stored stream[51CB,52BC),
+; terminal column0 at52BB. 51CB:column12,row3,style0,text[51CE,51DE),CR51DE;
+; 51DF:column1,row8,style0,text[51E2,520A),CR520A;
+; 520B:column1,row9,style0,text[520E,5236),CR5236;
+; 5237:column1,row10,style0,text[523A,5262),CR5262;
+; 5263:column1,row11,style0,text[5266,528E),CR528E;
+; 528F:column1,row17,style0,text[5292,52BA),CR52BA. DF0/intact stream only: NUL in text is
+; glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process
+; lifetime; named formatter/editor writes for mutable fields, physical aliases remain.
 ; UNKNOWN: unresolved bytes
     db 0x69,0x6e,0x2e,0x2e,0x2e,0x2e,0x3f,0x0d,0x00,0x0c,0x03,0x00,0x43,0x6f,0x6e,0x67 ; @0EC52
 ; UNKNOWN: unresolved bytes
@@ -2973,6 +3387,7 @@ BriefingGroupText:
     db 0x20,0x4e,0x6f,0x77,0x20,0x68,0x6f,0x6c,0x64,0x20,0x79,0x6f,0x75,0x72,0x20,0x62 ; @0ED22
 ; UNKNOWN: unresolved bytes
     db 0x72,0x65,0x61,0x74,0x68,0x20,0x66,0x6f,0x72,0x20,0x74,0x68,0x65,0x20,0x64,0x61 ; @0ED32
+; [0ED4C] 52BC..531B and531C..537B fixedpattern inputs each3*16 LE16 rows;5CC1 readsstoredgameDS,5CDD emits8*90h perinput toES1FEA;7218 groups0/1 data,group2 GC8 controls. DF1 readsdifferent525E..52BD/52BE..531D. Exact192-byte lookup classification proposedonly;no neighboring extent/immutabilityclaim.
 ; UNKNOWN: unresolved bytes
     db 0x74,0x61,0x20,0x64,0x69,0x73,0x6b,0x20,0x0d,0x00,0x00,0x00,0x01,0x00,0x00,0x00 ; @0ED42
 ; UNKNOWN: unresolved bytes

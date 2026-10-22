@@ -1,4 +1,12 @@
 ; Maintained image span 04B5C..04BE6; physical order and UNKNOWN bytes preserved.
+; S8 TEXT FIELD OWNERS: percentage4B5C writes incoming SI..SI+3, preserving
+; the enclosing stream CR after that field. Decimal4B68 writes SI..SI+2;
+; pair4BBE writes SI..SI+1; none writes NUL/CR. All offsets wrap16 within live
+; DS, stores observe aliases and can overwrite their own active SS return.
+; Owned callers use DS4B57/4C5D/4C71 for percent,4B50/4D5D/4E10/2095 for
+; decimal,4B13/4B78 for pair. Widths do not validate unsigned inputs: pair's
+; AL>=100 produces a nondecimal tens character, and time's separate byte+30
+; store at45B7 is not decimal conversion. Header/style/terminators stay live.
 times -(($-$$) != 0x4b5c) db 0 ; module start assertion
 ; Percent field: space at liveSI+3 before actual decimal CALL/RET, then percent at
 ; returnedSI and forward INC. Changed child return stops before the store.

@@ -501,6 +501,14 @@ loc_4EBC:
 loc_4EE6:
 MenuLevelGroupReturn:
     ret ; @04EE6
+; S8 Four little-endian CS words57F4,5428,505C,4C90;4ECD reads after zero-extension and doubling
+; livegroup1F6E, UI1FEE+1000 published4EC2. Four72x27x4 plane sources of03CCh in MAIN UIbank.
+; RET4EE6/code4EEF close exact8 bytes. Startupclear/4827 seed0,4502/4532 cycle nominal0..3 with
+; equalityguards,473B/52A1 write selection/30. Unchecked fullbyte permits0..8 fromdecode (FF
+; selection ->8) and corruptvalues through255, rawreads4EE7..50E6. No identified direct CS table
+; writer. CS input bytes are process-image initialization; checksum8397 may read them as data.
+; Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global
+; writer-closure proof.
 ; UNKNOWN: unresolved bytes
 MenuLevelGroupGraphicSources:
     db 0xf4,0x57,0x28,0x54,0x5c,0x50,0x90,0x4c ; @04EE7
@@ -588,6 +596,13 @@ MenuDecorationAfterBitmap:
     pop ax ; @04F88
 MenuDecorationBitmapReturn:
     ret ; @04F89
+; S8 Six little-endian CS words9488,A2D4,B120,BF6C,CDB8,DC04.4F3A initializesDI;4F37 count4
+; then4F47 count2 share4F4B read and4F4E DI+=2. Both bitmapwrappers restoreliveDI/SI viaSS;
+; sourceUI1FEE, each color/mask pair spans0E4Ch, mask+0AB9. RET4F89/code4F96 bound12
+; storedbytes; no tablewrites by these consumers. Raw4F4A CX0 enters body thenLOOP wraps toFFFF,
+; arbitraryDI/savedCX/DS/SS aliases can read elsewhere; do not clamp to six. CS input bytes are
+; process-image initialization; checksum8397 may read them as data. Lack of direct stores does
+; not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof.
 ; UNKNOWN: unresolved bytes
 MenuDecorationSourceTable:
     db 0x88,0x94,0xd4,0xa2,0x20,0xb1,0x6c,0xbf,0xb8,0xcd,0x04,0xdc ; @04F8A

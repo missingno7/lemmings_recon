@@ -1,8 +1,204 @@
 ; Canonical decompressed driver. No initialization/relocation patches.
 ; Entry offset0000 is installed as INT61 by main CS:0576..057B.
 ; UNKNOWN includes unclassified sound data; no no-code claim is implied.
+;
+; STATIC SEMANTIC CONTRACT S10 (hexadecimal DRIVER-RELATIVE offsets).
+; Scope: engine [0000,0762), state/tables [0762,095C). Score/effect bytes
+; are deliberately not classified here. Structural comparison with AdLib is
+; not evidence that operand lengths, instruments or reset behavior agree.
+; Readiness: CONDITIONAL for immutable code, DF=0, ordinary nonaliasing stack
+; and driver RAM, initialized records, bounded streams using80..97 and valid
+; order/instrument/arpeggio/period indexes. Full playback remains NOT READY:
+; producer domains,98..9F,AC..AF,0376/04C7 provenance, adjacent memory ownership
+; and real hardware/IRQ timing remain explicit obligations. No C is added.
+;
+; INSTALL/LIFETIME: main056D/0570 requests0567 paragraphs (end5670), installs
+; INT61 at allocation:0000 (0576..057B), loads AdLib first, and on fallback
+; decodes Tandy at05CA over that same segment. Driver bytes end54C6: fallback
+; initially leaves AdLib suffix54C6..566C intact. No segment relocation table,
+; internal file reader or IRQ installer occurs in the identified engine.
+; State lives in the actual CS-derived segment until reload/release; reset
+; is selective, not reinitialization. Main's second allocation CF is unchecked.
+; Word5630 is written at01A5 (header+0, no identified engine reader): outside
+; Tandy's stored image but INSIDE requested allocation. Byte5958 is initialized
+; at01D5, set by96 at0629 and read by03F8: outside allocation by2E8h from its
+; exclusive end; address extent5959 is2E9h larger than5670. Preserve actual
+; segment memory/adjacent ownership; neither extend allocation nor shadow it.
+;
+; INT61 ABI: AH00 update0072; AH01 detect0043 returns AL=0 (main's BIOS probe
+; chooses Tandy); AH02 reset0031; AH03 writes song request004A; AH04 writes
+; effect request004C; AH05 writes current-song/request gate004B (an ID, not a
+; boolean). Recognized bodies see AH=0. AH06..FF returns AH=incomingAH-5.
+; Update saves/restores AX/BX/CX/DX/DI/SI/DS/ES, uses DS=ES=CS, BP untouched.
+; Reset saves DS/AX/DI/SI/CX/DX, uses DS=CS; BX/ES/BP untouched. Detect/setters
+; save/restore DS, use DS=CS; detect alters AL only, setters leave AX live.
+; All ordinary returns use real SS PUSH/POP/CALL/RET/IRET. FLAGS/IP/CS are
+; restored from the live interrupt frame; aliases can change saved values.
+; No CLD/STI/CLI: INT entry clears IF/TF, retains DF. DF affects header and
+; instrument LODS; explicit BX fetches and INCs stay forward even with DF=1.
+; No unrestricted alias, nested-interrupt or transformed-code closure claimed.
+; Main1872 calls update on enabled game IRQs;03BE/05E5/05F3 also call update.
+; Cadence is a main-timer contract, not a driver wall-clock rate.
+;
+; UPDATE ORDER:0176 handles song -> decrement byte07A0 ->020C on three music
+; records089A/08CA/08FA then effect092A. Combine their+2E noise masks into076A;
+; when004D!=0 remove bit04 from music union and OR effect+2E.058A chooses
+; noise volume and advances noise state. At phase07A0==0 reload from079F and
+; THEN071B accepts effects; output00D8 follows, so newly accepted effects can
+; sound this update while their mask joins the union on the next update.
+; Music timed counters advance only at phase zero, mode2 effects every update;
+; envelope, slide, modulation and arpeggio run on other active-channel visits.
+; Zero tempo/countdown decrements wrap toFF; no zero-as-end or safety budget.
+;
+; STREAM GRAMMAR v1: BX is next stream byte, DI is a30h-byte record.023D
+; reads [BX] then INC BX. Controls continue fetching in the SAME update until
+; a timed event or direct return; a control-only/cyclic stream can run forever.
+; Explicit INC/additions wrap16; byte pitch/count arithmetic wraps8.
+; 00..7F: note ->+09;03F5 computes period+06; copy base volume+11 to+08,
+; reset release gate+15, modulation half-period/depth and envelope stages;
+; finish028E stores BX at+02 and duration+0A at countdown+05. Does not reset
+; arpeggio cursor+1E, slide flags or modulation-growth counter+2A.
+; E0..FF: duration+0A=token-DF (1..32), continue.
+; B0..BF: base volume+11=token-B0, ZERO operands (unlike AdLib), continue.
+; A0..AF: pointer word [07A2+2*(token-A0)] ->+1C, cursor+1E=0, enable flag01.
+; Only12 stored pointer slots07A2..07B9 are established; AC..AF reads curve
+; bytes07BA..07C1 as addresses. No clamp or extension into a16-entry table.
+; C0..DF: flags+04=40, select instrument; byte DEC and three byte doubles,
+; then WORD double give C0 offset01F0, C1..DF offsets10h*(token-C1).
+; Bank=[095A], except DI=092A selects52DA; unchecked index, continue.
+;
+; 02BB DISPATCH: comparisons admit80..9F; SI=076B+zero_extend((2*AL)&FF),
+; JMP word DS:[SI] in current CS. Exactly24 stored words076B..079A:
+; token target operands/action (operand sizes below are bytes, little-endian):
+; 80 0439 0: next order word; zero redirects through following relative word.
+; 81 04C8 0: pitch-note step+12=01; continue.
+; 82 04CF 0: pitch-note step+12=FF; continue.
+; 83 04D6 2: release comparator+13, packed release reload(high)/delta(low).
+; 84 04FF 0: clear arpeggio flag01; continue.
+; 85 0506 3: step word+20, countdown+1F, set flag02; continue.
+; 86 051A 5: period offset word+22, step word+20, preset+24, set flag04;
+;            does NOT set live countdown+1F until next pitch computation.
+; 87 0535 0: clear flag04; leaves current period/step/countdown intact.
+; 88 053C 3: modulation delay+25, depth+26/+27, period+28 and double+29;
+;            set flags48. Does not set growth+2A/+2B. Bit08 has no identified
+;            reader: modulation06B7 tests depth, not that bit.
+; 89 055D 0: clear bit08 ONLY; does not disable depth-driven modulation.
+; 8A 04F7 0: clear this channel's bit(+2F) from+2E; tail to84.
+; 8B 0565 4: global noise step0768, accumulator0767, delay0765, count0766;
+;            enable this channel bit in+2E; continue.
+; 8C 0564 4: NOP then SAME behavior as8B (not a separate disable operation).
+; 8D 028E 0: timed hold, save BX/countdown without note/envelope restart.
+; 8E 0298 0: volume+08=0 then timed finish028E.
+; 8F 05D1 1: channel transpose+2C, no immediate period recomputation.
+; 90 0641 0: reset and RET directly; no stream/countdown save, no parser resume.
+; 91 0420 2: inline relative order-list address; read first pattern, save next
+;            list address+00 and pattern+02; continue. NOP at0420 is retained.
+; 92 062F 0: selector004D=0 then RET; leaves effect mode/stream/countdown,
+;            volume/noise state intact. NOT an effect-record deactivation.
+; 93 05DA 0: noise words0765=0800/0767=00E1, enable channel noise bit,
+;            curve07BA/cursor0, set arp/clear slide02, synthesize note0C-+2C
+;            through0244 (global transpose still contributes).
+; 94 063E 0: continue fetching (not a timed no-op).
+; 95 0605 0: clear noise bit, step0006/count0C, set slide02/clear arp01,
+;            synthesize note00-+2C through0244; flag04 may still apply.
+; 96 0626 1: global transpose DS:5958; continue (real out-of-allocation write).
+; 97 0635 1: tempo reload079F only (not current phase07A0); continue.
+; 98..9F: unresolved unchecked targets from079B..07AA. Loaded words are
+; 0000,0000,0000,BA00,BC07,BE07,C207,E107;9A uses live079F/07A0 and9B
+; live07A1 plus low byte of first arpeggio pointer. Never freeze these values
+; as an immutable target set or classify following state as code pointers.
+;
+; SCORE/INSTRUMENT SCHEMA (handoff only, no score/FX classification): IDs01..15
+; index absolute near words095C+2*(ID-1). Header+0 word ->5630 (meaning open),
+; +2 relative instrument bank ->095A after+095C, +4 tempo ->079F, +5 skipped;
+; exactly THREE relative order-list words at+6 are visited, no channel count.
+; For each nonzero list offset: first relative pattern ->record+02 and next
+; order-word address ->record+00; mode+2D=1. A zero list causes early RET from
+; helper WITHOUT advancing SI, so later records reread the same zero; it does
+; not clear their mode. Command80 handles ONE zero redirect only, not recursion.
+; Command91 redirects through its inline word. Initial pattern zero is added
+; to095C normally. No pointer, list, pattern or header length checks.
+; Instrument selection stride10h; bytes+0..+B always consumed with LODSB:
+; +0 type; equals2F enables channel bit in noise mask, else sets mask0;
+; +1 transpose; +2 base volume; +3 packed attack; +4 packed decay;
+; +5 attack interval(high nibble), decay interval(low nibble);
+; +6 release comparator; +7 release interval(high)/decrement(low);
+; +8 modulation delay; +9 depth; +A initial period (reload=byte*2);
+; +B growth reload/current. For type2F only,+C..+F initialize global noise
+; step0768, accumulator0767, delay0765, count0766. No semantic use is assigned
+; to unconsumed record tails or whole banks solely from this stride.
+; Effect IDs01..12 use absolute words53EA+2*ID; no song header/order setup.
+;
+; CHANNEL RECORD (four30h-byte records089A..0959, every byte accounted for):
+; +00w next order-word address; +02w stream cursor; +04 flags; +05 countdown;
+; +06w tone period; +08 live volume; +09 note; +0A duration reload;
+; +0B packed attack; +0C attack count; +0D volume increment;
+; +0E packed decay; +0F decay count; +10 volume decrement; +11 base volume;
+; +12 note-step byte; +13 release comparator; +14 release decrement;
+; +15 release gate; +16/+17 attack counter/reload; +18/+19 decay counter/reload;
+; +1A/+1B release counter/reload; +1Cw arpeggio pointer; +1E byte cursor;
+; +1F slide countdown; +20w step (bit15 subtract flag, magnitude low15);
+; +22w note-time period offset; +24 slide-countdown preset;
+; +25 modulation delay; +26/+27 depth/current and note-reload;
+; +28/+29 period/current and full-reload; +2A/+2B growth counter/reload;
+; +2C transpose; +2D mode0=inactive,2=every-update,other=tempo-gated;
+; +2E noise participation mask; +2F channel bit (stored04/02/01/01).
+; All fields start from stored bytes, NOT blanket reset. Instrument, note,
+; song/effect start and reset overwrite different subsets; see local contracts.
+;
+; STATE/TABLE EXTENTS (classification proposals are in build/static/s10-tandy.json):
+; 0762 written0 at song start, no identified reader;0763 remains UNKNOWN;
+; 0764 written10 at song start/reset, no identified reader.0765..076A noise
+; counters/accumulator/step/output volume/mask;079B..079E remain UNKNOWN;
+; 079F tempo reload,07A0 phase,07A1 song request scratch.07A2..07B9 twelve
+; absolute arpeggio pointers. Their sentinel-terminated curves cover07BA..0808;
+; high-bit byte is APPLIED with bit7 stripped, then cursor resets (no stop).
+; 07C2..07DF also spells MUSIC BY SOUND IMAGES (C) 1991; A3 really points
+; there, ending on B1 at07E0. Text/data overlap is preserved; no claim A3 is
+; produced by pinned music yet.0809..0898 contains72 period words;0899=90
+; has no identified ordinary consumer and remains UNKNOWN.095Aw bank pointer.
+;03F5 uses index zero_extend(2*((note+transpose+global+7)&FF)&FF), so lookup
+; can read0809..0908 (128 words), beyond72 stored periods into channel state.
+; No masking note to supported range, sign-extending transpose, or clamping.
+;
+; PORT CONTRACT:00D8 emits exactly11 OUT C0 writes per ordinary update: tone0
+; low latch80|(period&0F), high=(period&03F0)>>4, attenuation90|(volume XOR0F),
+; tone1 equivalents A0/B0, literal noise E5, F0|(noiseVolume XOR0F), then tone2
+; C0/D0 from08FA or effect092A according to004D. Volumes are NOT masked or
+; clamped before XOR/OR. Tone periods are truncated only at actual port writes.
+;0767 is a mutable noise accumulator but NO identified output reader uses it:
+; changing it does not replace literal E5. Reset emits9F,BF,DF,FF to C0 and
+; port61=(IN61 & FC). Song start writes61=(IN61 &9C)|60. Preserve ordering,
+; input-dependent bits and all writes; device audible effect/timing unverified.
+; A muted/unbound host bypassing INT61 omits this interpreter, memory traffic
+; and ports; it is omitted original behavior, not proven device equivalence.
 bits 16
 org 0
+tandysnd_ActiveEffectId equ $$+0x004d
+tandysnd_SongStartZeroByte equ $$+0x0762
+tandysnd_ResetConstant10 equ $$+0x0764
+tandysnd_NoiseDelay equ $$+0x0765
+tandysnd_NoiseStepCount equ $$+0x0766
+tandysnd_NoiseAccumulator equ $$+0x0767
+tandysnd_NoiseStep equ $$+0x0768
+tandysnd_NoiseVolume equ $$+0x0769
+tandysnd_CombinedNoiseMask equ $$+0x076a
+tandysnd_StreamCommandTargets equ $$+0x076b
+tandysnd_TempoReload equ $$+0x079f
+tandysnd_TempoPhase equ $$+0x07a0
+tandysnd_SongRequestScratch equ $$+0x07a1
+tandysnd_ArpeggioPointers equ $$+0x07a2
+tandysnd_ArpeggioCurves equ $$+0x07ba
+tandysnd_TonePeriods equ $$+0x0809
+tandysnd_MusicChannel0 equ $$+0x089a
+tandysnd_MusicChannel1 equ $$+0x08ca
+tandysnd_MusicChannel2 equ $$+0x08fa
+tandysnd_EffectChannel equ $$+0x092a
+tandysnd_MusicInstrumentBank equ $$+0x095a
+tandysnd_SongHeaderWord0 equ $$+0x5630
+tandysnd_GlobalTranspose equ $$+0x5958
+tandysnd_StreamFetch equ $$+0x023d
+tandysnd_SelectInstrument equ $$+0x02cd
 tandysnd_loc_0072 equ tandysnd_UpdateService
 tandysnd_loc_0043 equ tandysnd_DetectService
 tandysnd_loc_0031 equ tandysnd_ResetService
@@ -72,7 +268,7 @@ tandysnd_ResetService:
     push dx ; @00036
     push cs ; @00037
     pop ds ; @00038
-    call tandysnd_sub_0641 ; @00039
+    call tandysnd_ResetSelectedStateAndPsg ; @00039
     pop dx ; @0003C
     pop cx ; @0003D
     pop si ; @0003E
@@ -113,16 +309,16 @@ tandysnd_UpdateService:
     pop ds ; @0007B
     push cs ; @0007C
     pop es ; @0007D
-    call tandysnd_sub_0176 ; @0007E
+    call tandysnd_ProcessSongRequest ; @0007E
     dec byte [0x7a0] ; @00081
     mov di,0x89a ; @00085
-    call tandysnd_sub_020C ; @00088
+    call tandysnd_AdvanceChannel ; @00088
     mov di,0x8ca ; @0008B
-    call tandysnd_sub_020C ; @0008E
+    call tandysnd_AdvanceChannel ; @0008E
     mov di,0x8fa ; @00091
-    call tandysnd_sub_020C ; @00094
+    call tandysnd_AdvanceChannel ; @00094
     mov di,0x92a ; @00097
-    call tandysnd_sub_020C ; @0009A
+    call tandysnd_AdvanceChannel ; @0009A
     mov al,[0x8c8] ; @0009D
     or al,[0x8f8] ; @000A0
     or al,[0x928] ; @000A4
@@ -132,15 +328,15 @@ tandysnd_UpdateService:
     or al,[0x958] ; @000B1
 tandysnd_loc_00B5:
     mov [0x76a],al ; @000B5
-    call tandysnd_sub_058A ; @000B8
+    call tandysnd_AdvanceNoiseState ; @000B8
     cmp byte [0x7a0],0x0 ; @000BB
     jnz tandysnd_loc_00CC ; @000C0
     mov al,[0x79f] ; @000C2
     mov [0x7a0],al ; @000C5
     nop ; @000C8
-    call tandysnd_sub_071B ; @000C9
+    call tandysnd_ProcessEffectRequest ; @000C9
 tandysnd_loc_00CC:
-    call tandysnd_sub_00D8 ; @000CC
+    call tandysnd_WritePsgFrame ; @000CC
     pop es ; @000CF
     pop ds ; @000D0
     pop si ; @000D1
@@ -150,7 +346,7 @@ tandysnd_loc_00CC:
     pop bx ; @000D5
     pop ax ; @000D6
     iret ; @000D7
-tandysnd_sub_00D8:
+tandysnd_WritePsgFrame:
     mov al,[0x8a0] ; @000D8
     and al,0xf ; @000DB
     or al,0x80 ; @000DD
@@ -222,7 +418,13 @@ tandysnd_loc_0153:
     or al,0xd0 ; @00171
     out 0xc0,al ; @00173
     ret ; @00175
-tandysnd_sub_0176:
+tandysnd_ProcessSongRequest:
+; Song request transaction: when004B=0 copy004A to scratch07A1, otherwise
+; reconsider existing07A1. Nonzero scratch is PUSHed across reset0641; that
+; reset clears004A/004B/07A1 even for invalid IDs>=16, which then just RET.
+; Valid IDs01..15 set004B and initialize three channels, phase1/global pitch0.
+; No equal-current-song check: ordinary start clears scratch, then the active
+; gate prevents a new004A from being copied until004B is cleared (AH05/reset).
     cmp byte [0x4b],0x0 ; @00176
     jnz tandysnd_loc_0183 ; @0017B
     mov al,[0x4a] ; @0017D
@@ -232,7 +434,7 @@ tandysnd_loc_0183:
     db 0x0a,0xc0 ; ENCODED: or al,al (NASM selects different opcode/operand width) ; @00186
     jz tandysnd_loc_01E2 ; @00188
     push ax ; @0018A
-    call tandysnd_sub_0641 ; @0018B
+    call tandysnd_ResetSelectedStateAndPsg ; @0018B
     pop ax ; @0018E
     cmp al,0x16 ; @0018F
     jnc tandysnd_loc_01E2 ; @00191
@@ -253,11 +455,11 @@ tandysnd_loc_0183:
     mov [0x79f],al ; @001B0
     inc si ; @001B3
     mov di,0x89a ; @001B4
-    call tandysnd_sub_01E3 ; @001B7
+    call tandysnd_InitializeMusicChannel ; @001B7
     mov di,0x8ca ; @001BA
-    call tandysnd_sub_01E3 ; @001BD
+    call tandysnd_InitializeMusicChannel ; @001BD
     mov di,0x8fa ; @001C0
-    call tandysnd_sub_01E3 ; @001C3
+    call tandysnd_InitializeMusicChannel ; @001C3
     mov byte [0x762],0x0 ; @001C6
     mov byte [0x7a0],0x1 ; @001CB
     mov byte [0x764],0x10 ; @001D0
@@ -268,7 +470,10 @@ tandysnd_loc_0183:
     out 0x61,al ; @001E0
 tandysnd_loc_01E2:
     ret ; @001E2
-tandysnd_sub_01E3:
+tandysnd_InitializeMusicChannel:
+; DS=driver, SI points to header order offset; DI=one music record. Always
+; writes countdown1/flags0/noteStep0 BEFORE testing list word. Zero does not
+; advance SI or clear mode/order/stream; preserves stale remaining state.
     mov byte [di+0x5],0x1 ; @001E3
     mov byte [di+0x4],0x0 ; @001E7
     mov byte [di+0x12],0x0 ; @001EB
@@ -287,7 +492,12 @@ tandysnd_sub_01E3:
     mov byte [di+0x2d],0x1 ; @00207
 tandysnd_loc_020B:
     ret ; @0020B
-tandysnd_sub_020C:
+tandysnd_AdvanceChannel:
+; Inactive mode0 returns before reading stream. Mode2 bypasses tempo gating.
+; On eligible non-expiry: step note03C0, maybe release04AC; then every active
+; visit runs envelope044F, slide0696, offset-slide068F, modulation06B7, arp03D0.
+; On expiry parser returns directly at timed event/end/reset, skipping those
+; per-visit effects this time. No bounds on BX, DI, tables or controls per tick.
     cmp byte [di+0x2d],0x0 ; @0020C
     jz tandysnd_loc_020B ; @00210
     mov bx,[di+0x2] ; @00212
@@ -298,14 +508,14 @@ tandysnd_sub_020C:
 tandysnd_loc_0222:
     dec byte [di+0x5] ; @00222
     jz tandysnd_loc_023D ; @00225
-    call tandysnd_sub_03C0 ; @00227
-    call tandysnd_sub_04AC ; @0022A
+    call tandysnd_StepNotePitch ; @00227
+    call tandysnd_ArmNoteRelease ; @0022A
 tandysnd_loc_022D:
-    call tandysnd_sub_044F ; @0022D
-    call tandysnd_sub_0696 ; @00230
-    call tandysnd_sub_068F ; @00233
-    call tandysnd_sub_06B7 ; @00236
-    call tandysnd_sub_03D0 ; @00239
+    call tandysnd_AdvanceVolumeEnvelope ; @0022D
+    call tandysnd_AdvancePeriodSlide ; @00230
+    call tandysnd_AdvanceOffsetSlide ; @00233
+    call tandysnd_AdvancePeriodModulation ; @00236
+    call tandysnd_AdvanceArpeggio ; @00239
     ret ; @0023C
 tandysnd_loc_023D:
     mov al,[bx] ; @0023D
@@ -314,7 +524,7 @@ tandysnd_loc_023D:
     js tandysnd_loc_029E ; @00242
 tandysnd_loc_0244:
     mov [di+0x9],al ; @00244
-    call tandysnd_sub_03F5 ; @00247
+    call tandysnd_ComputeTonePeriod ; @00247
     mov al,[di+0x11] ; @0024A
     mov [di+0x8],al ; @0024D
     mov byte [di+0x15],0x0 ; @00250
@@ -341,14 +551,14 @@ tandysnd_loc_0244:
     shr al,1 ; @00287
     shr al,1 ; @00289
     mov [di+0x10],al ; @0028B
-tandysnd_sub_028E:
+tandysnd_FinishTimedEvent:
     mov [di+0x2],bx ; @0028E
     mov al,[di+0xa] ; @00291
     mov [di+0x5],al ; @00294
     ret ; @00297
-tandysnd_sub_0298:
+tandysnd_SilenceTimedEvent:
     mov byte [di+0x8],0x0 ; @00298
-    jmp short tandysnd_sub_028E ; @0029C
+    jmp short tandysnd_FinishTimedEvent ; @0029C
 tandysnd_loc_029E:
     cmp al,0xe0 ; @0029E
     jnc tandysnd_loc_02BD ; @002A0
@@ -453,7 +663,13 @@ tandysnd_loc_0363:
     lodsb ; @0036F
     mov [0x766],al ; @00370
     jmp tandysnd_loc_023D ; @00373
-; UNKNOWN: unresolved bytes
+; UNKNOWN:0376..03A4 alternate-parser CANDIDATE, not an established entry.
+; Static decode: SUB AL,B0; store+11; consume3 bytes from BX for packed attack
+; +0B, decay+0E, attack high-nibble interval+16/+17 and decay low+18/+19;
+; JMP023D at03A2. Unlike actual B0 path02C5 this consumes operands. Fresh
+; recursive edges and24 dispatch words have no0376 target; predecessor0373
+; jumps023D. Do not adopt this candidate grammar or call it dead/padding.
+; No data/writer/overlay ownership established; retain all47 bytes UNKNOWN.
     db 0x2c,0xb0,0x88,0x45,0x11,0x8a,0x07,0x43,0x88,0x45,0x0b,0x8a,0x07,0x43,0x88,0x45 ; @00376
 ; UNKNOWN: unresolved bytes
     db 0x0e,0x8a,0x07,0xd0,0xe8,0xd0,0xe8,0xd0,0xe8,0xd0,0xe8,0x88,0x45,0x16,0x88,0x45 ; @00386
@@ -470,16 +686,19 @@ tandysnd_loc_03A5:
     mov byte [di+0x1e],0x0 ; @003B5
     or byte [di+0x4],0x1 ; @003B9
     jmp tandysnd_loc_023D ; @003BD
-tandysnd_sub_03C0:
+tandysnd_StepNotePitch:
     mov al,[di+0x12] ; @003C0
     db 0x0a,0xc0 ; ENCODED: or al,al (NASM selects different opcode/operand width) ; @003C3
     jz tandysnd_loc_03CF ; @003C5
     add al,[di+0x9] ; @003C7
     mov [di+0x9],al ; @003CA
-    jmp short tandysnd_sub_03F5 ; @003CD
+    jmp short tandysnd_ComputeTonePeriod ; @003CD
 tandysnd_loc_03CF:
     ret ; @003CF
-tandysnd_sub_03D0:
+tandysnd_AdvanceArpeggio:
+; Flag01 arpeggio: byte cursor increments modulo256. Read pointer+cursor;
+; if bit7 set, reset cursor0 and apply low7 bits THIS visit. Add note modulo8
+; and tail to03F5. No sentinel search at runtime or curve extent check.
     test byte [di+0x4],0x1 ; @003D0
     jnz tandysnd_loc_03D9 ; @003D4
     jmp tandysnd_loc_071A ; @003D6
@@ -496,7 +715,12 @@ tandysnd_loc_03D9:
     and al,0x7f ; @003F0
 tandysnd_loc_03F2:
     add al,[di+0x9] ; @003F2
-tandysnd_sub_03F5:
+tandysnd_ComputeTonePeriod:
+; AL note (possibly arpeggiated), DS driver, DI live record. Byte additions
+; transpose+2C and5958, then AH=0, byte ADD7/double: SI0809..0907 odd-aligned
+; word starts (last read through0908). Word+06 receives lookup value; flag04
+; adds offset+22 modulo16 and resets slide countdown+1F from+24. OUT later
+; masks to10 bits; arithmetic/state is not limited to10 bits here.
     add al,[di+0x2c] ; @003F5
     add al,[0x5958] ; @003F8
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @003FC
@@ -514,7 +738,9 @@ tandysnd_sub_03F5:
     mov [di+0x1f],al ; @0041C
 tandysnd_loc_041F:
     ret ; @0041F
-tandysnd_sub_0420:
+tandysnd_RedirectOrder:
+; Inline list redirect: BX points to relative word operand;0421 loads it,
+; adds095C, reads ONE relative pattern word, saves next order word and fetches.
     nop ; @00420
 tandysnd_loc_0421:
     mov bx,[bx] ; @00421
@@ -527,7 +753,10 @@ tandysnd_loc_0421:
     mov [di+0x2],cx ; @00431
     db 0x8b,0xd9 ; ENCODED: mov bx,cx (NASM selects different opcode/operand width) ; @00434
     jmp tandysnd_loc_023D ; @00436
-tandysnd_sub_0439:
+tandysnd_AdvanceOrder:
+; Order advance: BX=record+00, consume next relative pattern word. Zero takes
+;0421 with BX pointing to the following list-redirect word; not a recursive
+; zero chain. Ordinary path and redirect share023D without timed finish.
     mov bx,[di] ; @00439
     mov cx,[bx] ; @0043B
     inc bx ; @0043D
@@ -538,7 +767,12 @@ tandysnd_sub_0439:
     mov [di+0x2],cx ; @00447
     db 0x8b,0xd9 ; ENCODED: mov bx,cx (NASM selects different opcode/operand width) ; @0044A
     jmp tandysnd_loc_023D ; @0044C
-tandysnd_sub_044F:
+tandysnd_AdvanceVolumeEnvelope:
+; Envelope stages in order: attack count+0C -> decay count+0F -> release gate
+; +15. Each stage decrements its own byte interval; zero interval wrapsFF.
+; Attack adds high nibble of packed+0B without volume clamp; decay subtracts
+; +10, release subtracts+14; unsigned borrow clamps volume0, not negative.
+; Each visit executes at most one stage, even when its count just reached0.
     cmp byte [di+0xc],0x0 ; @0044F
     jz tandysnd_loc_046A ; @00453
     dec byte [di+0x16] ; @00455
@@ -578,7 +812,10 @@ tandysnd_loc_048F:
     jc tandysnd_loc_048A ; @004A6
     mov [di+0x8],al ; @004A8
     ret ; @004AB
-tandysnd_sub_04AC:
+tandysnd_ArmNoteRelease:
+; If remaining duration+05 equals release comparator+13 and NEXT stream byte
+; is not8D, arm release+15, clear note-step+12 and slide flag02. Flag04 and
+; modulation depth remain; hold lookahead suppresses this transition.
     mov al,[di+0x13] ; @004AC
     cmp al,[di+0x5] ; @004AF
     jnz tandysnd_loc_04C6 ; @004B2
@@ -590,15 +827,17 @@ tandysnd_sub_04AC:
     and byte [di+0x4],0xfd ; @004C2
 tandysnd_loc_04C6:
     ret ; @004C6
-; UNKNOWN: unresolved bytes
+; UNKNOWN:04C7 is isolated C3 (RET candidate), immediately after RET04C6;
+; no incoming recursive edge,24-word target or fallthrough establishes it as
+; code. Byte is not declared dead/padding; provenance/data ownership open.
     db 0xc3 ; @004C7
-tandysnd_sub_04C8:
+tandysnd_SetAscendingNoteStep:
     mov byte [di+0x12],0x1 ; @004C8
     jmp tandysnd_loc_023D ; @004CC
-tandysnd_sub_04CF:
+tandysnd_SetDescendingNoteStep:
     mov byte [di+0x12],0xff ; @004CF
     jmp tandysnd_loc_023D ; @004D3
-tandysnd_sub_04D6:
+tandysnd_SetReleaseParameters:
     mov al,[bx] ; @004D6
     inc bx ; @004D8
     mov [di+0x13],al ; @004D9
@@ -614,14 +853,14 @@ tandysnd_sub_04D6:
     and al,0xf ; @004EF
     mov [di+0x14],al ; @004F1
     jmp tandysnd_loc_023D ; @004F4
-tandysnd_sub_04F7:
+tandysnd_DisableChannelNoiseAndArpeggio:
     mov al,[di+0x2f] ; @004F7
     not al ; @004FA
     and [di+0x2e],al ; @004FC
-tandysnd_sub_04FF:
+tandysnd_DisableArpeggio:
     and byte [di+0x4],0xfe ; @004FF
     jmp tandysnd_loc_023D ; @00503
-tandysnd_sub_0506:
+tandysnd_SetPeriodSlide:
     mov ax,[bx] ; @00506
     inc bx ; @00508
     inc bx ; @00509
@@ -631,7 +870,7 @@ tandysnd_sub_0506:
     mov [di+0x1f],al ; @00510
     or byte [di+0x4],0x2 ; @00513
     jmp tandysnd_loc_023D ; @00517
-tandysnd_sub_051A:
+tandysnd_SetPeriodOffsetSlide:
     mov ax,[bx] ; @0051A
     inc bx ; @0051C
     inc bx ; @0051D
@@ -645,10 +884,10 @@ tandysnd_sub_051A:
     mov [di+0x24],al ; @0052B
     or byte [di+0x4],0x4 ; @0052E
     jmp tandysnd_loc_023D ; @00532
-tandysnd_sub_0535:
+tandysnd_ClearPeriodOffsetMode:
     and byte [di+0x4],0xfb ; @00535
     jmp tandysnd_loc_023D ; @00539
-tandysnd_sub_053C:
+tandysnd_SetModulationParameters:
     mov al,[bx] ; @0053C
     inc bx ; @0053E
     mov [di+0x25],al ; @0053F
@@ -663,17 +902,19 @@ tandysnd_sub_053C:
     mov [di+0x29],al ; @00553
     or byte [di+0x4],0x48 ; @00556
     jmp tandysnd_loc_023D ; @0055A
-tandysnd_sub_055D:
+tandysnd_ClearModulationBit08:
+; Command89 clears08;06B7 NEVER tests08. Preserve depth-driven modulation;
+; translating this as a vibrato-disable operation would change the engine.
     and byte [di+0x4],0xf7 ; @0055D
     jmp tandysnd_loc_023D ; @00561
-tandysnd_sub_0564:
+tandysnd_NoiseEnableNopEntry:
     nop ; @00564
-tandysnd_sub_0565:
-    call tandysnd_sub_0571 ; @00565
+tandysnd_SetNoiseParametersAndEnable:
+    call tandysnd_ReadNoiseParameters ; @00565
     mov al,[di+0x2f] ; @00568
     or [di+0x2e],al ; @0056B
     jmp tandysnd_loc_023D ; @0056E
-tandysnd_sub_0571:
+tandysnd_ReadNoiseParameters:
     mov al,[bx] ; @00571
     inc bx ; @00573
     mov [0x768],al ; @00574
@@ -687,7 +928,13 @@ tandysnd_sub_0571:
     inc bx ; @00585
     mov [0x766],al ; @00586
     ret ; @00589
-tandysnd_sub_058A:
+tandysnd_AdvanceNoiseState:
+; Noise volume arbitration from076A: if no effect, choose bit0/channel08FA,
+; else bit1/08CA, else bit2/089A; with effect test ONLY bit0 using092A volume.
+; No chosen bit ->0769=0 and skip noise sweep. Chosen ->copy volume, DEC0765;
+; if SF set clamp delay0 and, while0766 nonzero, DEC count and ADD step0768 to
+; accumulator0767 (all byte wrap). SF tests actual DEC result, not signed input.
+;0767 is read/modified here via BX but output011C uses literal E5, not0767.
     mov al,[0x76a] ; @0058A
     mov bx,0x932 ; @0058D
     cmp byte [0x4d],0x0 ; @00590
@@ -722,12 +969,12 @@ tandysnd_loc_05BF:
     mov al,[0x768] ; @005CB
     add [bx],al ; @005CE
     ret ; @005D0
-tandysnd_sub_05D1:
+tandysnd_SetChannelTranspose:
     mov al,[bx] ; @005D1
     inc bx ; @005D3
     mov [di+0x2c],al ; @005D4
     jmp tandysnd_loc_023D ; @005D7
-tandysnd_sub_05DA:
+tandysnd_StartNoiseArpeggioPreset:
     mov al,[di+0x2f] ; @005DA
     or [di+0x2e],al ; @005DD
     mov word [0x765],0x800 ; @005E0
@@ -739,7 +986,7 @@ tandysnd_sub_05DA:
     mov al,0xc ; @005FD
     sub al,[di+0x2c] ; @005FF
     jmp tandysnd_loc_0244 ; @00602
-tandysnd_sub_0605:
+tandysnd_StartPeriodSlidePreset:
     mov al,[di+0x2f] ; @00605
     not al ; @00608
     and [di+0x2e],al ; @0060A
@@ -750,22 +997,33 @@ tandysnd_sub_0605:
     mov al,0x0 ; @0061E
     sub al,[di+0x2c] ; @00620
     jmp tandysnd_loc_0244 ; @00623
-tandysnd_sub_0626:
+tandysnd_SetGlobalTranspose:
     mov al,[bx] ; @00626
     inc bx ; @00628
     mov [0x5958],al ; @00629
     jmp tandysnd_loc_023D ; @0062C
-tandysnd_sub_062F:
+tandysnd_EndEffectSelection:
+; Effect-end92 clears004D ONLY and RETs through caller020C or071B. Record+2D
+; remains2; BX and+05 are not saved. Future visits can keep parsing stale
+; stream state while renderer/mixer now selects music channel2. No fix applied.
     mov byte [0x4d],0x0 ; @0062F
     ret ; @00634
-tandysnd_sub_0635:
+tandysnd_SetTempoReload:
     mov al,[bx] ; @00635
     inc bx ; @00637
     mov [0x79f],al ; @00638
     jmp tandysnd_loc_023D ; @0063B
-tandysnd_sub_063E:
+tandysnd_ContinueStream:
     jmp tandysnd_loc_023D ; @0063E
-tandysnd_sub_0641:
+tandysnd_ResetSelectedStateAndPsg:
+; Reset store set is exact: word004A=0,07A1/076A=0; transpose08C6=0,
+;08F6=0 TWICE at064F/0652; music modes08C7/08F7/0927=0; music volumes
+;08A2/08D2/0902=0; music noise08C8/08F8/0928=0;0769=0;0764=10.
+; Missing0926 clear is real (third music transpose retained). Does NOT clear
+; effect selector004D,request004C,record092A,tempo/phase,095A,5630,5958,
+; noise sweep0765..0768 or most record fields. Port61/C0 writes follow below.
+; AH02 restores AX; stream90 enters same body as a JMP target and its RET
+; returns to parser's CALLER without saving stream/countdown. No shadow reset.
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM selects different opcode/operand width) ; @00641
     mov [0x4a],ax ; @00643
     mov [0x7a1],al ; @00646
@@ -796,11 +1054,16 @@ tandysnd_sub_0641:
     out 0xc0,al ; @00687
     mov byte [0x764],0x10 ; @00689
     ret ; @0068E
-tandysnd_sub_068F:
+tandysnd_AdvanceOffsetSlide:
+; Flag04 invokes same069C slide step as flag02 at0696. Update calls0696 THEN
+;068F: both flags set means two countdown decrements/period steps per visit,
+; not a single combined-mode step. Negative DEC results are undone by INC.
     test byte [di+0x4],0x4 ; @0068F
     jnz tandysnd_loc_069C ; @00693
     ret ; @00695
-tandysnd_sub_0696:
+tandysnd_AdvancePeriodSlide:
+; Step word+20 uses bit15 as SUBTRACT direction and low15 as magnitude, NOT
+; two's-complement signed delta. All period additions/subtractions wrap16.
     test byte [di+0x4],0x2 ; @00696
     jz tandysnd_loc_06AB ; @0069A
 tandysnd_loc_069C:
@@ -819,7 +1082,13 @@ tandysnd_loc_06AC:
 tandysnd_loc_06B3:
     inc byte [di+0x1f] ; @006B3
     ret ; @006B6
-tandysnd_sub_06B7:
+tandysnd_AdvancePeriodModulation:
+; Look BEHIND current BX for8D (DEC/read/INC, wrapping); otherwise run only
+; when unsigned(duration+0A - delay+25) < remaining+05. Depth+26=0 returns.
+; Growth: nonzero reload+2B decrements+2A; on zero reload it and INC depth.
+; Flag40 selects ADD vs SUB depth. DEC period+28: at zero reload+29, toggle
+; direction and RET WITHOUT period adjustment; other visits adjust period.
+; Bit08 set/cleared by88/89 is not tested, so it does not gate this routine.
     dec bx ; @006B7
     mov al,[bx] ; @006B8
     inc bx ; @006BA
@@ -868,7 +1137,12 @@ tandysnd_loc_0712:
     sub [di+0x6],ax ; @00717
 tandysnd_loc_071A:
     ret ; @0071A
-tandysnd_sub_071B:
+tandysnd_ProcessEffectRequest:
+; Phase-zero effect admission AFTER channel updates/mix: request004C01..12;
+; if004D!=0 only STRICTLY LOWER IDs steal, equal/higher stays pending. Accepted
+; request sets004D,mode2 and clears004C/flags/noteStep/depth/transpose; release
+; comparator=1, then JMP023D with BX from53EA+2*ID. No general record reset,
+; order setup or countdown initialization: first timed event does that.
     mov bl,[tandysnd_Command4Latch] ; @0071B
     db 0x0a,0xdb ; ENCODED: or bl,bl (NASM selects different opcode/operand width) ; @0071F
     jz tandysnd_loc_0761 ; @00721

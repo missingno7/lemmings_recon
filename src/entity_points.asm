@@ -4,6 +4,49 @@ times -(($-$$) != 0x6e83) db 0 ; module start assertion
 ; Count zero executes 65536 iterations; low 80h skips only its point.
 ; Low signed delta is X, high signed delta is Y. SS dirty writes precede
 ; actual coordinate POPs; mirrors, saved mask, live RET and IF remain live.
+; TABLE/PRODUCER CONTRACT: frame schema is50h LE words/A0h bytes. Each word
+; stores signed X in low byte and signed Y in high; low80h skips this point,
+; irrespective of high byte. First stored pair is9CCC (X=-34h,Y=-64h).
+; 042C sets DS004D=50h after per-level clear;6ECC reads it once (not a bound
+; on arbitrary entry). 365A compares callback to live003C;365F/3664 signed
+; frame>=1 admits01..7F, not merely the normal animation's01..33.
+; Normal bit0002 producers:2D33/2E7B set frame0 with callback from003C
+; (normally6BDB);2353 increments frame,2358 deactivates at34 before drawing.
+; With intact record/slots, no intervening alias/service change, this produces
+; frames1..33, offsets2788..4767 at50 words each. Do NOT infer total extent
+; from adjacent text4913 or assume the code clamps a different starting frame.
+; Stored frame-like bytes continue beyond4767; their total ownership remains
+; unresolved. 6E83 subtracts1 as BYTE then MUL A0:raw selector0 selectsFF,
+; baseC6E8;caller7F selects7E,base7648. No saturation or table-end sentinel.
+;
+; COLOR TABLE:DS2778..2787 stores04,02,06,07,08,09,0A,0B,08,09,0A,0B,
+;0C,0D,0E,0F;one byte/entry, index is remainingCX&0F at6F56..6F5F. Normal
+; count50 starts index0 thenF..1, five cycles;skipped/clipped points do not
+; fetch a color but still decrement CX. Color is sent live to GC set/reset.
+; It is a VGA plane-bit color, not an RGB/palette-pointer-table selector.
+;
+; PAIR TABLE CROSS-DEPENDENCY:state0400 at2A6D usesDS2698+recordWord0E;
+;21E3 initializes0,2A7B adds2 with word wrap and no count/terminator. First
+;byte becomes frame+28 BEFORE second-byte read;second is signed Y delta except
+;1/2/3 request that many collision probes. This state uses callback003A on its
+;normal producer, so those pair frame bytes are not point-frame producers.
+; Apparent2698..2777 schema:8 lead pairs then13 repetitions of8 pairs;
+;lead(01,03)(02,03)(03,03)(05,03)(05,FF)(05,00)(05,01)(05,01), repeat
+;(05,02)(06,02)(07,02)(07,02)(06,02)(05,02)(04,02)(04,02). The112-pair
+;stored candidate has NO proved terminal index; keep its extent unresolved.
+;
+; LIFETIME/WRITERS:stored DS colors/frames/pairs survive startup0000..2011
+;and level0000..0FC9 clears. No dedicated normal table-mutator is decoded;
+;this leaf only reads them. GROUND request1B4B..2B4A can replace pairs/colors
+;and2788..2B4A prefix;supplied0420 bytes stop1F6A. Unchecked2Dh record spans
+;fromDD touch colors/first frame, throughFF end2D87;D8 touches pair storage.
+;Cache name-padding1E51/1E60 can underflow/wrap across DS;live row/formatter
+;cursors, returned heap selectors, SS/data/VGA/provider aliases remain writers
+;outside nominal domains. Canonical DS09A9 and SS143E are distinct frames;
+;dirty bytes at6F20 use SS,not these DS tables by equal numeric offset.
+; READINESS: CONDITIONAL on those explicit lifetime/segment/alias domains.
+;Classification proposals cover only the color window and normal point prefix;
+;they neither close all aliases nor classify the entire neighboring UNKNOWN run.
 DrawEntityPointCloud:
     mov al,[si+0x28] ; @06E83
     sub al,0x1 ; @06E86

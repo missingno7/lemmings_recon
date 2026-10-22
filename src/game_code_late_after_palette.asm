@@ -54,6 +54,14 @@ loc_580E:
     jnz loc_57FE ; @05824
 VgaPlaneCopyReturn:
     ret ; @05826
+; TABLE HANDOFF:58E8->5CC1 generates the two banks from stored game-DS
+;52BC/531C, not from MAIN0's transient decoded frame. Each source is3*16 LE16
+;rows, producing8*90h bytes;1FEA is the arena+2E72 selector published1025.
+;The90h-paragraph gap to glyph selector1FEC matches900h normal output bytes.
+;With intact pointers/saves, selection below is bounded to16 slices0..0870,
+;each[+00,+2F] first data,[+30,+5F] second data,[+60,+8F] GC8 controls.
+;The two16-row passes at7218 consume all three groups;see its local contract.
+;Source/state aliases and allocation failure do not inherit this layout bound.
 UpdateFixedWordPattern:
 ; CONTRACT: actual CALL frames715F then7218; stop on changed child returns.
 ; Live pointer+bias alignment selects a0090h-byte bank slice, plus0480h only

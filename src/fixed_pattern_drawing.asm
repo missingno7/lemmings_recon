@@ -71,6 +71,31 @@ FixedPatternCopyReturn:
     db 0x89,0x36,0x0c,0x00,0x8b,0x3e,0x08,0x00,0xba,0x00,0xa0,0x8e,0xc2,0x8e,0xda,0xb9 ; @071FA
 ; UNKNOWN: unresolved bytes
     db 0x10,0x00,0xa4,0xa4,0xa4,0x83,0xc6,0x29,0xe2,0xf8,0xfb,0x8e,0xdd,0xc3 ; @0720A
+; SOURCE SCHEMA (canonical game DS before5827 changes it):52BC..531B=A,
+;531C..537B=B, each60h bytes =3 groups*10h rows*LE16 word. These are stored
+;image sources, not MAIN payload or the ES=A000 destination. 58E8 calls5CC1
+;after MAIN0, but5CC1 keeps game DS and selects only output ES through1FEA.
+;5CDD shifts each [low,high,00] bit chain0..7, emitting3 bytes per row;
+;each group becomes30h bytes, each shift90h, each A/B bank480h bytes.
+;Thus group0 -> slice+00 data,group1 ->+30 data,group2 ->+60 GC8 controls.
+;First literal pass below uses group0 and group2;second uses group1 under
+;SEQ map-mask02/GC rotate10. No host-converted mask or third data copy.
+;5827 alignment=(PointerX+zero_extend(bias1FE0))&7;exactFF selection adds480.
+;Raw7218 entry does not enforce those selectors, source layout or DF0.
+;Generator strings follow DF:48-word DF1 windows are525E..52BD (A) and
+;52BE..531D (B), NOT the declared forward96-byte sources. Consumer BX still
+;increments forward while SI follows DF; do not replace that by a reversed bank.
+;Original source bytes survive normal startup/level clears. GROUND's maximum
+;2B4A and override5566..66E5 do not reach52BC..537B. No dedicated normal
+;source write is decoded. Cache name-padding/formatter/row cursors and
+;heap/SS/returned-segment aliases can still overwrite them; no immutable claim.
+;Generated1FEA block nominally starts arena+2E72 and has90h paragraphs;
+;two480-byte banks exactly consume900h bytes. Stored sources are process
+;lifetime; generated data becomes valid after5CC1 and persists across levels
+;until reuse/alias, not a separate per-frame source. Allocation success and
+;arbitrary selector/provider effects remain separate platform obligations.
+; READINESS: CONDITIONAL for the established source/producer/consumer domain;
+;byte classifications proposed for exact96+96 only, not the surrounding run.
 DrawFixedWordPattern:
 ; CONTRACT: two literal16-row passes; no CX loop counter or local CLD.
 ; First pass reads3 control bytes via explicit BX increments and3 data bytes

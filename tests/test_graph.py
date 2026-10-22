@@ -1,9 +1,11 @@
 """Dependency selection must retain shared tails, open domains and cycles."""
 import sys
+import contextlib
+import io
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
-from graph import body,dependency_order,routine_views,tag
+from graph import body,dependency_order,routine_views,tag,bottom_up,tree
 
 class GraphTests(unittest.TestCase):
     def test_original_view_exposes_untranslated_suffix_and_follows_native_children(self):
@@ -19,7 +21,7 @@ class GraphTests(unittest.TestCase):
                     verification_status='TESTED',c_implementation='fixture.c')]
         scoped=routine_views(analysis,ledger)
         self.assertEqual(scoped[0]['sites'],{0})
-        self.assertNotIn(1,scoped)
+        self.assertEqual(scoped[1]['sites'],{1,4})
         views=routine_views(analysis,ledger,original=True)
         self.assertEqual(views[0]['sites'],{0,1,4})
         self.assertEqual(views[1]['callees'],{8})
@@ -50,7 +52,7 @@ class GraphTests(unittest.TestCase):
                 dict(address=4,segment=0,kind='continuation',size=0,symbol_name='Resume',verification_status='UNRESOLVED')]
         views=routine_views(analysis,ledger)
         self.assertEqual(views[1]['sites'],{1});self.assertEqual(views[1]['boundaries'],{4})
-        self.assertEqual(views[1]['callees'],{8});self.assertNotIn(4,views)
+        self.assertEqual(views[1]['callees'],{8});self.assertEqual(views[4]['sites'],{4,5})
         self.assertEqual(views[0]['sites'],{0,1,4,5})
         self.assertFalse(views[0]['symbol'].get('c_implementation'))
 
@@ -82,5 +84,45 @@ class GraphTests(unittest.TestCase):
         views={0:view([1]),1:view([0])}
         order,cycles=dependency_order(0,views)
         self.assertEqual(set(order),{0,1});self.assertEqual(cycles,{0})
+
+    def test_maintained_labels_are_query_views_without_discovery_seeds(self):
+        from common import ROOT,read_json
+        from explore import analyze
+        analysis=analyze();seeds=list(analysis['routines']);sites=list(analysis['instructions'])
+        ledger=read_json(ROOT/'metadata/symbols.json')
+        for original in (False,True):
+            views=routine_views(analysis,ledger,original=original)
+            for address,name in ((0xFB,'EnterLoadedLevelGame'),(0x105,'GameFrameSwapAndPace')):
+                self.assertEqual(views[address]['symbol']['symbol_name'],name)
+                self.assertIn(address,views[address]['sites'])
+        self.assertEqual(analysis['routines'],seeds)
+        self.assertEqual(analysis['instructions'],sites)
+        # An undecoded named location remains unknown; navigation never decodes it.
+        ledger.append(dict(address=0xFFFF,segment=0,kind='label',symbol_name='Unknown'))
+        self.assertNotIn(0xFFFF,routine_views(analysis,ledger,original=True))
+
+    def test_bottom_up_keeps_real_frontier_and_device_sites(self):
+        from common import ROOT,read_json
+        from explore import analyze
+        views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'),original=True)
+        out=io.StringIO()
+        with contextlib.redirect_stdout(out):bottom_up(0x706F,views,original=True)
+        self.assertIn('715B:indirect_or_far_transfer',out.getvalue())
+        self.assertIn('platform/IRQ sites:',out.getvalue())
+
+    def test_native_root_and_tree_print_service_and_external_return_sites(self):
+        analysis=dict(instructions=[dict(address=0,mnemonic='out',size=1),
+                                    dict(address=1,mnemonic='iret',size=1)],
+                      edges=[dict(source=0,target=1,kind='fallthrough'),
+                             dict(source=1,target=None,kind='external_interrupt_return')],
+                      unresolved=[dict(address=1,kind='open domain')],routines=[0])
+        ledger=[dict(address=0,segment=0,kind='label',size=2,symbol_name='NativeRoot',
+                     verification_status='TESTED',c_implementation='fixture.c')]
+        views=routine_views(analysis,ledger)
+        for render in (lambda:bottom_up(0,views),lambda:tree(0,views,0)):
+            out=io.StringIO()
+            with contextlib.redirect_stdout(out):render()
+            for site in ('0000:out','0001:external_interrupt_return','0001:open domain'):
+                self.assertIn(site,out.getvalue())
 
 if __name__=='__main__':unittest.main()

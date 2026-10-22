@@ -752,6 +752,11 @@ loc_1D22:
     pop es ; @01D25
     pop cx ; @01D26
     pop dx ; @01D27
+; S8 filename-error alias: Only identified ordinary2528 store is191B in raw-file entry1916. DAT
+; attribute failure1D22..1D2B restores DX then replaces it with2194 and tails1949 without
+; updating2528.195D therefore prints the prior raw filename pointer, or initial stored0000
+; before a raw read; do not silently replace it with the failing DAT filename. Generic aliases
+; remain open.
     mov dx,DatFileErrorMessage-GameDataImage ; @01D28
     jmp loc_1949 ; @01D2B
 ReadDatBytes:

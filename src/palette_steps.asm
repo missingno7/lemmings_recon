@@ -2,6 +2,16 @@
 ; Native contracts: docs/palette-channels.md and docs/palette-rows.md.
 ; Explicit INC cursors ignore DF; zeroCL loops65536 times. Stack saves/RET stay live.
 ; Packed BP and RGB BL markers deliberately produce different final sign flags.
+; ROW OWNERSHIP: nominal selectors in palette_frontends.asm use DS2638 and
+; DS2668 as current/source rows, updating toward black/menu/ground/UI targets.
+; Packed width is CL bytes (nominal10 or08);RGB width is3*CL (30 or18).
+; 2650 is an interior alias of RGB2638, not a third separately initialized row.
+; These source/target loads BOTH use DS (not ES despite prefix PUSH DS/POP ES).
+; All original byte stores and later reads remain live under overlap: neither
+; row is snapshotted and target data can be changed by an earlier source write.
+; READINESS: CONDITIONAL for intact instructions/live segmented memory and
+; declared port/IRQ services; nominal stored extents do not bound raw entry,
+; source-selector corruption, zeroCL, cache/record/resource or stack aliases.
 StepPackedPaletteRow:
     db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @0563E
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @05640

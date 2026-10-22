@@ -616,6 +616,7 @@ loc_2340:
     jmp loc_20E2 ; @0234A
 loc_234D:
     jmp loc_1FEB ; @0234D
+; NORMAL POINT PREFIX:2D33/2E7B start frame0 and callback003C;2353 INC exposes1..33 before2358 expiry34->20E2. With042C count50,6E83 consumes2788..4767 only in stable producer domain.365F signed>=1 permits1..7F and raw6E83 permitsall bytes;not a global frame clamp or complete-array extent. Callback/record/provider writes retain wider behavior.
 AdvanceEntityState0002:
 loc_2350:
 ; State0002: INC the full +28 byte; equality34 marks inactive via20E2.
@@ -1432,6 +1433,7 @@ loc_2A57:
 EntityState0200AfterSound:
 loc_2A6A:
     jmp loc_29C1 ; @02A6A
+; PAIR SCHEMA: DS2698+liveWord0E wraps;21E3=0,2A7B+=2.2A73->2A75 frame+28 store precedes2A78 signed Y/probe-action read, so a record/table alias can change the second byte. Candidate2698..2777 contains8 lead pairs then13 repetitions of8 pairs;112 is not a code bound. Height check2B28 and field initialization do not prove a total table extent;large records/GROUND/cache/aliases remain. See entity_points.asm and build/static/s7-tables.md; keep UNKNOWN extent.
 ; State0400 from1F85. Sparse known2A6D..2B34 excludes three UNKNOWN bytes.
 ; Pair index+0E is unchecked;21E3 initializes one observed path to zero.
 ; Store first pair byte to+28 before fetching the second, then ADD+0E,2.

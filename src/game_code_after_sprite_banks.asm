@@ -1,6 +1,7 @@
 ; Word-mask generator prefix and unresolved suffix 5CC1..5D65.
 
 times -(($-$$) != 0x5cc1) db 0 ; module start assertion
+; STORED SOURCE OWNERSHIP:58E8 reaches here after MAIN0 but DS is restored gameDS;A52BC/B531C are image sources, not MAIN payload. Each96-byte source=3 groups*16 LE16;5CDD emits8 shifts*90h bytes/bank;7218 reads groups0/1 as data andgroup2 as GC8 controls. DF1 windows A525E..52BD/B52BE..531D differ;ES1FEA/call saves stay live. See fixed_pattern_drawing.asm;classification proposals in s7-tables.json.
 sub_5CC1:
 GenerateFixedWordMaskBanks:
 ; DS:52BC/531C contain three groups of sixteen words each on the initialized

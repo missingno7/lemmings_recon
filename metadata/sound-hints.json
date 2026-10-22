@@ -2,6 +2,13 @@
   "adlib": {
     "regions": [
       {
+        "start": 14,
+        "end": 15,
+        "class": "static_data",
+        "overlay": true,
+        "evidence": "S6:initial song01/ch3 OFF54E0 keeps initial instrument pointer0 at05E8+02; non-event03D3 reads000E=FE as release comparator while primary role remains DEC AH instruction. Retained pointers after later starts remain explicit."
+      },
+      {
         "start": 109,
         "end": 163,
         "class": "lookup_table",
@@ -138,6 +145,2896 @@
         "end": 2926,
         "class": "runtime_data",
         "evidence": "Header stores04B3/04B7/04BF,phase0516/0127/016B;read025D/0168/0189/0161/03AD;loaded bank0,reload9,phase0,count1"
+      },
+      {
+        "start": 2926,
+        "end": 2968,
+        "class": "lookup_table",
+        "evidence": "S6:0482..048C indexes21 absolute headers; per-entry values and full ownership proof in adlib_SongDirectory.payload_audit."
+      },
+      {
+        "start": 2968,
+        "end": 2982,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 2972,
+        "end": 2973,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; pitch-index:F5,song:01; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 2974,
+        "end": 2975,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; pitch-index:F7,song:01; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 2975,
+        "end": 2976,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; pitch-index:F8,song:01; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 2978,
+        "end": 2979,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; pitch-index:FB,song:01; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 2979,
+        "end": 2980,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; pitch-index:FC,song:01; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 2982,
+        "end": 3006,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3006,
+        "end": 3008,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3008,
+        "end": 3032,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3032,
+        "end": 3034,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3034,
+        "end": 3058,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3058,
+        "end": 3060,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3060,
+        "end": 3084,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3068,
+        "end": 3069,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; orders:0BF4,pitch-index:F5; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 3070,
+        "end": 3071,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; orders:0BF4,pitch-index:F7; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 3071,
+        "end": 3072,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; orders:0BF4,pitch-index:F8; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 3074,
+        "end": 3075,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; orders:0BF4,pitch-index:FB; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 3075,
+        "end": 3076,
+        "class": "lookup_table",
+        "overlay": true,
+        "evidence": "S6:0359/035D wrapped pitch lookup overlaps consumed header/order byte; orders:0BF4,pitch-index:FC; exact n/source values in adlib_SongDirectory.payload_audit.wrapped_pitch_reads."
+      },
+      {
+        "start": 3084,
+        "end": 3086,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3086,
+        "end": 3578,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 3578,
+        "end": 3591,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3592,
+        "end": 3593,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3594,
+        "end": 3607,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3608,
+        "end": 3609,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3610,
+        "end": 3623,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3624,
+        "end": 3625,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3626,
+        "end": 3639,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3640,
+        "end": 3641,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3642,
+        "end": 3655,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3656,
+        "end": 3657,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3658,
+        "end": 3671,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3672,
+        "end": 3673,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3674,
+        "end": 3687,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3688,
+        "end": 3689,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3690,
+        "end": 3703,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3704,
+        "end": 3705,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3706,
+        "end": 3719,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 3720,
+        "end": 3721,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 3722,
+        "end": 3736,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 3736,
+        "end": 3762,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3762,
+        "end": 3764,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3764,
+        "end": 3790,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3790,
+        "end": 3792,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3792,
+        "end": 3818,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3818,
+        "end": 3820,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3820,
+        "end": 3846,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 3846,
+        "end": 3848,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 3848,
+        "end": 4268,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 4268,
+        "end": 4281,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4282,
+        "end": 4283,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4284,
+        "end": 4297,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4298,
+        "end": 4299,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4300,
+        "end": 4313,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4314,
+        "end": 4315,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4316,
+        "end": 4329,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4330,
+        "end": 4331,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4332,
+        "end": 4345,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4346,
+        "end": 4347,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4348,
+        "end": 4361,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4362,
+        "end": 4363,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4364,
+        "end": 4377,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4378,
+        "end": 4379,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4380,
+        "end": 4393,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4394,
+        "end": 4395,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4396,
+        "end": 4409,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4410,
+        "end": 4411,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4412,
+        "end": 4425,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 4426,
+        "end": 4427,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 4428,
+        "end": 4440,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 4440,
+        "end": 4470,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 4470,
+        "end": 4472,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 4472,
+        "end": 4502,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 4502,
+        "end": 4504,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 4504,
+        "end": 4534,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 4534,
+        "end": 4536,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 4536,
+        "end": 5029,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 5029,
+        "end": 5042,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5043,
+        "end": 5044,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5045,
+        "end": 5058,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5059,
+        "end": 5060,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5077,
+        "end": 5090,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5091,
+        "end": 5092,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5093,
+        "end": 5106,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5107,
+        "end": 5108,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5109,
+        "end": 5122,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5123,
+        "end": 5124,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5141,
+        "end": 5154,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5155,
+        "end": 5156,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5157,
+        "end": 5169,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 5169,
+        "end": 5191,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 5191,
+        "end": 5193,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 5193,
+        "end": 5215,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 5215,
+        "end": 5217,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 5217,
+        "end": 5239,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 5239,
+        "end": 5241,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 5241,
+        "end": 5855,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 5855,
+        "end": 5868,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5869,
+        "end": 5870,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5871,
+        "end": 5884,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5885,
+        "end": 5886,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5887,
+        "end": 5900,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5901,
+        "end": 5902,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5903,
+        "end": 5916,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5917,
+        "end": 5918,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5919,
+        "end": 5932,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 5933,
+        "end": 5934,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 5935,
+        "end": 5947,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 5947,
+        "end": 5969,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 5969,
+        "end": 5971,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 5971,
+        "end": 5993,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 5993,
+        "end": 5995,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 5995,
+        "end": 6017,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 6017,
+        "end": 6019,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 6019,
+        "end": 6797,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 6801,
+        "end": 7148,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 7148,
+        "end": 7161,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7162,
+        "end": 7163,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7164,
+        "end": 7177,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7178,
+        "end": 7179,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7180,
+        "end": 7193,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7194,
+        "end": 7195,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7196,
+        "end": 7209,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7210,
+        "end": 7211,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7212,
+        "end": 7225,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7226,
+        "end": 7227,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7228,
+        "end": 7241,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7242,
+        "end": 7243,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7244,
+        "end": 7257,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 7258,
+        "end": 7259,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 7260,
+        "end": 7274,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 7274,
+        "end": 7300,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 7300,
+        "end": 7302,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 7302,
+        "end": 7324,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 7324,
+        "end": 7326,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 7326,
+        "end": 7352,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 7352,
+        "end": 7354,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 7354,
+        "end": 7364,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 7364,
+        "end": 7366,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 7366,
+        "end": 8107,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 8107,
+        "end": 8120,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8121,
+        "end": 8122,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8123,
+        "end": 8136,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8137,
+        "end": 8138,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8139,
+        "end": 8152,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8153,
+        "end": 8154,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8155,
+        "end": 8168,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8169,
+        "end": 8170,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8171,
+        "end": 8184,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8185,
+        "end": 8186,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8187,
+        "end": 8200,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8201,
+        "end": 8202,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8203,
+        "end": 8216,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 8217,
+        "end": 8218,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 8219,
+        "end": 8231,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 8231,
+        "end": 8263,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 8263,
+        "end": 8265,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 8265,
+        "end": 8297,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 8297,
+        "end": 8299,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 8299,
+        "end": 8331,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 8331,
+        "end": 8333,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 8333,
+        "end": 9655,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 9655,
+        "end": 9668,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9669,
+        "end": 9670,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9671,
+        "end": 9684,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9685,
+        "end": 9686,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9687,
+        "end": 9700,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9701,
+        "end": 9702,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9703,
+        "end": 9716,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9717,
+        "end": 9718,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9719,
+        "end": 9732,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9733,
+        "end": 9734,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9735,
+        "end": 9748,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9749,
+        "end": 9750,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9751,
+        "end": 9764,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 9765,
+        "end": 9766,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 9767,
+        "end": 9779,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 9779,
+        "end": 9803,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 9803,
+        "end": 9805,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 9805,
+        "end": 9829,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 9829,
+        "end": 9831,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 9831,
+        "end": 9855,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 9855,
+        "end": 9857,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 9857,
+        "end": 11030,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 11030,
+        "end": 11043,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11044,
+        "end": 11045,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11046,
+        "end": 11059,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11060,
+        "end": 11061,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11062,
+        "end": 11075,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11076,
+        "end": 11077,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11078,
+        "end": 11091,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11092,
+        "end": 11093,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11094,
+        "end": 11107,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11108,
+        "end": 11109,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11110,
+        "end": 11123,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11124,
+        "end": 11125,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11126,
+        "end": 11138,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 11138,
+        "end": 11170,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 11170,
+        "end": 11172,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 11172,
+        "end": 11204,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 11204,
+        "end": 11206,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 11206,
+        "end": 11238,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 11238,
+        "end": 11240,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 11240,
+        "end": 11901,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 11901,
+        "end": 11914,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11915,
+        "end": 11916,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11917,
+        "end": 11930,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11931,
+        "end": 11932,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11933,
+        "end": 11946,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11947,
+        "end": 11948,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11949,
+        "end": 11962,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11963,
+        "end": 11964,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11965,
+        "end": 11978,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11979,
+        "end": 11980,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11981,
+        "end": 11994,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 11995,
+        "end": 11996,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 11997,
+        "end": 12010,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 12011,
+        "end": 12012,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 12013,
+        "end": 12026,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 12027,
+        "end": 12028,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 12045,
+        "end": 12059,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 12059,
+        "end": 12091,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 12091,
+        "end": 12093,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 12093,
+        "end": 12125,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 12125,
+        "end": 12127,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 12127,
+        "end": 12159,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 12159,
+        "end": 12161,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 12161,
+        "end": 12193,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 12193,
+        "end": 12195,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 12195,
+        "end": 13909,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 13909,
+        "end": 13922,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 13923,
+        "end": 13924,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 13925,
+        "end": 13938,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 13939,
+        "end": 13940,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 13941,
+        "end": 13954,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 13955,
+        "end": 13956,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 13957,
+        "end": 13970,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 13971,
+        "end": 13972,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 13973,
+        "end": 13986,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 13987,
+        "end": 13988,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 13989,
+        "end": 14002,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 14003,
+        "end": 14004,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 14005,
+        "end": 14018,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 14019,
+        "end": 14020,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 14021,
+        "end": 14033,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 14033,
+        "end": 14051,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 14051,
+        "end": 14053,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 14053,
+        "end": 14071,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 14071,
+        "end": 14073,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 14073,
+        "end": 14091,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 14091,
+        "end": 14093,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 14093,
+        "end": 15208,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 15208,
+        "end": 15221,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15222,
+        "end": 15223,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 15224,
+        "end": 15237,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15238,
+        "end": 15239,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 15240,
+        "end": 15253,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15254,
+        "end": 15255,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 15256,
+        "end": 15269,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15270,
+        "end": 15271,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 15272,
+        "end": 15285,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15286,
+        "end": 15287,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 15288,
+        "end": 15301,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15302,
+        "end": 15303,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 15304,
+        "end": 15316,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 15316,
+        "end": 15346,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 15346,
+        "end": 15348,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 15348,
+        "end": 15378,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 15378,
+        "end": 15380,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 15380,
+        "end": 15410,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 15410,
+        "end": 15412,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 15412,
+        "end": 15952,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 15984,
+        "end": 15997,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 15998,
+        "end": 15999,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16000,
+        "end": 16013,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16014,
+        "end": 16015,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16080,
+        "end": 16093,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16094,
+        "end": 16095,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16112,
+        "end": 16125,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16126,
+        "end": 16127,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16176,
+        "end": 16189,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16190,
+        "end": 16191,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16192,
+        "end": 16204,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 16204,
+        "end": 16220,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 16220,
+        "end": 16222,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 16222,
+        "end": 16238,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 16238,
+        "end": 16240,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 16240,
+        "end": 16256,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 16256,
+        "end": 16258,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 16258,
+        "end": 16643,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 16643,
+        "end": 16656,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16657,
+        "end": 16658,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16659,
+        "end": 16672,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16673,
+        "end": 16674,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16675,
+        "end": 16688,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16689,
+        "end": 16690,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16691,
+        "end": 16704,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16705,
+        "end": 16706,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16707,
+        "end": 16720,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16721,
+        "end": 16722,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16723,
+        "end": 16736,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 16737,
+        "end": 16738,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 16755,
+        "end": 16767,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 16767,
+        "end": 16789,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 16789,
+        "end": 16791,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 16791,
+        "end": 16813,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 16813,
+        "end": 16815,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 16815,
+        "end": 16837,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 16837,
+        "end": 16839,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 16839,
+        "end": 17207,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 17207,
+        "end": 17220,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 17221,
+        "end": 17222,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 17223,
+        "end": 17236,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 17237,
+        "end": 17238,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 17239,
+        "end": 17252,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 17253,
+        "end": 17254,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 17255,
+        "end": 17268,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 17269,
+        "end": 17270,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 17271,
+        "end": 17284,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 17285,
+        "end": 17286,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 17287,
+        "end": 17299,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 17299,
+        "end": 17325,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 17325,
+        "end": 17327,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 17327,
+        "end": 17353,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 17353,
+        "end": 17355,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 17355,
+        "end": 17381,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 17381,
+        "end": 17383,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 17383,
+        "end": 18039,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 18039,
+        "end": 18052,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18053,
+        "end": 18054,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18055,
+        "end": 18068,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18069,
+        "end": 18070,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18071,
+        "end": 18084,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18085,
+        "end": 18086,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18087,
+        "end": 18100,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18101,
+        "end": 18102,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18103,
+        "end": 18116,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18117,
+        "end": 18118,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18119,
+        "end": 18131,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 18131,
+        "end": 18155,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 18155,
+        "end": 18157,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 18157,
+        "end": 18181,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 18181,
+        "end": 18183,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 18183,
+        "end": 18207,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 18207,
+        "end": 18209,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 18209,
+        "end": 18747,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 18747,
+        "end": 18760,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18763,
+        "end": 18776,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18777,
+        "end": 18778,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18795,
+        "end": 18808,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18809,
+        "end": 18810,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18811,
+        "end": 18824,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18825,
+        "end": 18826,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18827,
+        "end": 18840,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 18841,
+        "end": 18842,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 18843,
+        "end": 18855,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 18855,
+        "end": 18875,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 18875,
+        "end": 18877,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 18877,
+        "end": 18897,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 18897,
+        "end": 18899,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 18899,
+        "end": 18919,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 18919,
+        "end": 18921,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 18921,
+        "end": 19447,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 19447,
+        "end": 19460,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 19461,
+        "end": 19462,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 19463,
+        "end": 19476,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 19477,
+        "end": 19478,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 19479,
+        "end": 19492,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 19493,
+        "end": 19494,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 19495,
+        "end": 19508,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 19509,
+        "end": 19510,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 19511,
+        "end": 19525,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 19525,
+        "end": 19543,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 19543,
+        "end": 19545,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 19545,
+        "end": 19563,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 19563,
+        "end": 19565,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 19565,
+        "end": 19583,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 19583,
+        "end": 19585,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 19585,
+        "end": 19603,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 19603,
+        "end": 19605,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 19605,
+        "end": 20051,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 20051,
+        "end": 20064,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20065,
+        "end": 20066,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20067,
+        "end": 20080,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20081,
+        "end": 20082,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20099,
+        "end": 20112,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20113,
+        "end": 20114,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20115,
+        "end": 20128,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20129,
+        "end": 20130,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20131,
+        "end": 20144,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20145,
+        "end": 20146,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20147,
+        "end": 20159,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 20159,
+        "end": 20177,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20177,
+        "end": 20179,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20179,
+        "end": 20197,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20197,
+        "end": 20199,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20199,
+        "end": 20217,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20217,
+        "end": 20219,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20219,
+        "end": 20541,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 20541,
+        "end": 20554,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20555,
+        "end": 20556,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20557,
+        "end": 20570,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20571,
+        "end": 20572,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20573,
+        "end": 20586,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 20587,
+        "end": 20588,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 20589,
+        "end": 20603,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 20603,
+        "end": 20619,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20619,
+        "end": 20621,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20621,
+        "end": 20637,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20637,
+        "end": 20639,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20639,
+        "end": 20655,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20655,
+        "end": 20657,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20657,
+        "end": 20673,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 20673,
+        "end": 20675,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 20675,
+        "end": 21207,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 21207,
+        "end": 21220,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21221,
+        "end": 21222,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21223,
+        "end": 21236,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21237,
+        "end": 21238,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21239,
+        "end": 21252,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21253,
+        "end": 21254,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21255,
+        "end": 21268,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21269,
+        "end": 21270,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21271,
+        "end": 21284,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21285,
+        "end": 21286,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21287,
+        "end": 21300,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21301,
+        "end": 21302,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21303,
+        "end": 21315,
+        "class": "static_data",
+        "evidence": "S6:04AB..04E9 reads word0/bank/tempo/count and3/4 order roots; directory targets and complete per-song order graph corroborate exact extent."
+      },
+      {
+        "start": 21315,
+        "end": 21337,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 21337,
+        "end": 21339,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 21339,
+        "end": 21361,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 21361,
+        "end": 21363,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 21363,
+        "end": 21385,
+        "class": "lookup_table",
+        "evidence": "S6:04CC initial read and0419 successive80 reads; all intervening reached streams terminate80; explicit relative pattern edges and per-channel cycle in ledger."
+      },
+      {
+        "start": 21385,
+        "end": 21387,
+        "class": "lookup_table",
+        "evidence": "S6:80 zero sentinel03FA reads following relative order root; each returns to the independently consumed nonzero initial list word."
+      },
+      {
+        "start": 21387,
+        "end": 21647,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 21647,
+        "end": 21660,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21661,
+        "end": 21662,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21663,
+        "end": 21676,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21677,
+        "end": 21678,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21679,
+        "end": 21692,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21693,
+        "end": 21694,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21695,
+        "end": 21708,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21709,
+        "end": 21710,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21711,
+        "end": 21724,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21725,
+        "end": 21726,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21727,
+        "end": 21731,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
+      },
+      {
+        "start": 21731,
+        "end": 21744,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21745,
+        "end": 21746,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21747,
+        "end": 21760,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21761,
+        "end": 21762,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21763,
+        "end": 21776,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21777,
+        "end": 21778,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21779,
+        "end": 21792,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21793,
+        "end": 21794,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21795,
+        "end": 21808,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21809,
+        "end": 21810,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21811,
+        "end": 21824,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21825,
+        "end": 21826,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21827,
+        "end": 21840,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21841,
+        "end": 21842,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21843,
+        "end": 21856,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21857,
+        "end": 21858,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21859,
+        "end": 21872,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21873,
+        "end": 21874,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21875,
+        "end": 21888,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21889,
+        "end": 21890,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21891,
+        "end": 21904,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21905,
+        "end": 21906,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21907,
+        "end": 21920,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21921,
+        "end": 21922,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21923,
+        "end": 21936,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21937,
+        "end": 21938,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21939,
+        "end": 21952,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21953,
+        "end": 21954,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21955,
+        "end": 21968,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21969,
+        "end": 21970,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21971,
+        "end": 21984,
+        "class": "static_data",
+        "evidence": "S6:C selection0248 byte-wrap index, bank producer04AF or fixed54E3, all00..0C OPL/state readers0274..0331; only proven prefix,0D/0F excluded."
+      },
+      {
+        "start": 21985,
+        "end": 21986,
+        "class": "static_data",
+        "evidence": "S6:selected slot+0E read03D3 on a known non-event release tick, isolated-root or explicit05C0 retained-pointer/song05 witness;4949 excluded."
+      },
+      {
+        "start": 21989,
+        "end": 22025,
+        "class": "lookup_table",
+        "evidence": "S6:valid effect01..12 at051C..0527 then0547..054F reads18 absolute roots; all roots initializeC/duration and terminate85; zero slot excluded."
+      },
+      {
+        "start": 22025,
+        "end": 22125,
+        "class": "embedded_resource",
+        "evidence": "S6:reachable header/order/effect roots decoded by v1 widths019E..0338/0415..0456; exact token listing, timed events and80/85 exits in ledger; no88..AF."
       }
     ],
     "dispatch_tables": [
@@ -165,7 +3062,7 @@
           1103
         ],
         "evidence": "Static formula SI=03EA+zero_extend((2*token)&FF), token80..AF; eight words03EA..03F9 prove80..87 edges",
-        "closure": "UNRESOLVED:88..AF reads instruction bytes03FA..0449 as near targets; pinned-payload grammar/domain, aliases,transformed code and external INT input closure not established"
+        "closure": "UNRESOLVED raw domain:88..AF reads instruction bytes03FA..0449 as targets; S6 decodes all immutable pinned v1 score/effect roots with zero88..AF tokens, but aliases,transformed code,DF and external INT inputs remain unclosed."
       }
     ]
   },
@@ -184,10 +3081,59 @@
         "evidence": "Literal ASCII driver credit between IRET and entry0072"
       },
       {
+        "start": 1890,
+        "end": 1891,
+        "class": "runtime_data",
+        "evidence": "TANDYSND-relative S10: 01C6 exact one-byte song-start writer,loaded00;no reader identified;0763 left UNKNOWN."
+      },
+      {
+        "start": 1892,
+        "end": 1899,
+        "class": "runtime_data",
+        "evidence": "TANDYSND-relative S10: 0764 exact10 writes01D0/0689;0765..0768 initialized0363/0571/05DA,read-modify-written058A;0769 output0120 and volume/reset writers;076A frame union00B5/058A/reset0649. No blanket zero-fill inference."
+      },
+      {
         "start": 1899,
         "end": 1947,
         "class": "lookup_table",
         "evidence": "02B1..02BB dispatches through24 visible code pointers; higher indexes unresolved"
+      },
+      {
+        "start": 1951,
+        "end": 1954,
+        "class": "runtime_data",
+        "evidence": "TANDYSND-relative S10: Header/97 produce079F,update consumes/reloads phase07A0 after channels;start phase1;gate/01A5-reset path scratch07A1 writer/reader;079B..079E remainUNKNOWN."
+      },
+      {
+        "start": 1954,
+        "end": 1978,
+        "class": "lookup_table",
+        "evidence": "TANDYSND-relative S10: 12 stored near pointers indexed by A0..AB point to complete byte curves;AC..AF reads following curve bytes as pointers,unchecked."
+      },
+      {
+        "start": 1978,
+        "end": 2057,
+        "class": "lookup_table",
+        "evidence": "TANDYSND-relative S10: 12 roots plus05EC fixed07BA;03D9..03F2 byte increment/reset semantics,union of first-highbit-inclusive traversals covers exactly all79 bytes. At07C2 text is also A3 pitch data; no claim of pinned A3 production."
+      },
+      {
+        "start": 1986,
+        "end": 2016,
+        "class": "embedded_resource",
+        "evidence": "TANDYSND-relative S10: ASCII MUSIC BY SOUND IMAGES (C) 1991;also arpeggio pointer slotA3 consumer03D9,curve ends withB1 at07E0. Preserve text/pitch-data overlapping role.",
+        "overlay": true
+      },
+      {
+        "start": 2057,
+        "end": 2201,
+        "class": "lookup_table",
+        "evidence": "TANDYSND-relative S10: Constant0809 lookup03F5/0408;72 stored decreasing period words,record boundary089A,unknown0899 excluded;byte arithmetic runtime128-word domain reads into later state without extending table ownership."
+      },
+      {
+        "start": 2202,
+        "end": 2396,
+        "class": "runtime_data",
+        "evidence": "TANDYSND-relative S10: Four explicit30h records089A/08CA/08FA/092A,all48 bytes individually accounted by producers/start/instrument/note/parser/modifier/output;partial reset and read-only+2F channel bits included;095A word bank produced01AC/consumed02E0. No blanket-zero rationale."
       }
     ],
     "dispatch_tables": [

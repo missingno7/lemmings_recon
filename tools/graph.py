@@ -31,7 +31,7 @@ def body(entry,instructions,outgoing,frontiers,allowed=None):
             kind,target=edge['kind'],edge['target']
             if kind in CALLS:
                 if target is not None:callees.add(target)
-            elif kind in ('interrupt','runtime_interrupt','external_interrupt_chain'):
+            elif kind in ('interrupt','runtime_interrupt','external_interrupt_chain','external_interrupt_return'):
                 services.add((pc,kind))
             elif target is not None:todo.append(target)
     return dict(sites=seen,callees=callees,boundaries=boundaries,problems=problems,services=services,
@@ -45,8 +45,10 @@ def routine_views(analysis,ledger,*,original=False):
     for item in analysis['unresolved']:frontiers.setdefault(item['address'],[]).append(item['kind'])
     # A native span is a scoped view of an existing body, not a new discovery
     # seed or a claim that its containing function has been translated.
+    # Query labels over already-decoded instructions, including JMP entries and
+    # overlapping code/data roles. This never feeds a seed back into analyze().
     symbols={s['address']:s for s in ledger if s['segment']==0 and
-             (s['kind']=='entry' or (s['kind']=='continuation' and (original or s.get('c_implementation'))))};views={}
+             (s['kind']=='entry' or s.get('c_implementation') or s['address'] in instructions)};views={}
     for entry in sorted(set(analysis['routines'])|set(symbols)):
         row=symbols.get(entry,dict(symbol_name=f'entry_{entry:04X}',verification_status='UNRESOLVED'))
         allowed=None
@@ -113,42 +115,54 @@ def tree(entry,views,depth,indent='',ancestors=()):
     if entry in ancestors:print(indent+'  [cycle/shared recursion]');return
     view=views.get(entry)
     if view is None:return
-    if view['boundaries']:print(indent+'  native exits: '+','.join(f'{p:04X}' for p in sorted(view['boundaries'])))
-    if view['problems']:print(indent+'  unresolved: '+str(sorted(view['problems'])))
+    seams(view,indent+'  ')
     if depth:
         for target in sorted(view['callees']):tree(target,views,depth-1,indent+'  ',(*ancestors,entry))
 
-def main():
+def seams(view,indent='  '):
+    """Never hide an open transfer or a provider/device site behind a C tag."""
+    for label,key in (('native exits/shared tails','boundaries'),('unresolved','problems'),
+                      ('platform/IRQ sites','services')):
+        if view[key]:
+            items=(f'{p:04X}:{kind}' for p,kind in sorted(view[key])) if key!='boundaries' else (
+                f'{p:04X}' for p in sorted(view[key]))
+            print(indent+label+': '+', '.join(items))
+
+def bottom_up(entry,views,*,original=False):
+    order,cycles=dependency_order(entry,views)
+    print('Original-body investigation order (C ranges do not stop traversal):' if original else
+          'Pending investigation order; native dependencies retain their bounded seams:')
+    for target in order:
+        view=views.get(target);note=''
+        if target in cycles:note=' [cycle: review as a cluster]'
+        elif view and not any(view[k] for k in ('callees','boundaries','problems','services')):note=' [decoded leaf: contract review required]'
+        print(tag(target,views)+note)
+        if view:seams(view)
+    native=set() if original else {t for p in order if p in views for t in views[p]['callees']
+            if t in views and views[t]['symbol'].get('c_implementation')}
+    # A native root is itself a stopped dependency and must still show its seams.
+    if not original and views[entry]['symbol'].get('c_implementation'):native.add(entry)
+    for target in sorted(native):
+        view=views[target]
+        unported={t for t in view['callees'] if t not in views or not views[t]['symbol'].get('c_implementation')}
+        print('native dependency:',tag(target,views),
+              'unported calls='+','.join(f'{p:04X}' for p in sorted(unported)))
+        seams(view)
+    print('This is an investigation order, not proof of native readiness or complete target domains.')
+
+def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('target',nargs='?');parser.add_argument('--tree',action='store_true')
     parser.add_argument('--depth',type=int,default=3);parser.add_argument('--bottom-up',action='store_true')
     parser.add_argument('--asm',action='store_true',help='follow original CFG rather than clipping to C-tested ranges')
-    args=parser.parse_args();views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'),original=args.asm)
+    args=parser.parse_args(argv);views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'),original=args.asm)
     if args.target is None:
         for entry in sorted(views):print(tag(entry,views))
         return
     entry=address(args.target)
     if entry not in views:parser.error('Target is not a main-image routine entry or native span')
     if args.bottom_up:
-        order,cycles=dependency_order(entry,views)
-        print('Original-body investigation order (C ranges do not stop traversal):' if args.asm else
-              'Pending investigation order; native dependencies retain their bounded seams:')
-        for target in order:
-            view=views.get(target);note=''
-            if target in cycles:note=' [cycle: review as a cluster]'
-            elif view and not any(view[k] for k in ('callees','boundaries','problems','services')):note=' [decoded leaf: contract review required]'
-            print(tag(target,views)+note)
-        native=set() if args.asm else {t for p in order if p in views for t in views[p]['callees']
-                if t in views and views[t]['symbol'].get('c_implementation')}
-        for target in sorted(native):
-            view=views[target]
-            unported={t for t in view['callees'] if t not in views or not views[t]['symbol'].get('c_implementation')}
-            print('native dependency:',tag(target,views),
-                  'exits='+','.join(f'{p:04X}' for p in sorted(view['boundaries'])),
-                  'unported calls='+','.join(f'{p:04X}' for p in sorted(unported)),
-                  'unresolved='+','.join(f'{p:04X}:{kind}' for p,kind in sorted(view['problems'])),
-                  f'platform/IRQ sites={len(view["services"])}')
-        print('This is an investigation order, not proof of native readiness or complete target domains.')
+        bottom_up(entry,views,original=args.asm)
     elif args.tree:tree(entry,views,max(0,args.depth))
     else:details(entry,views)
 if __name__=='__main__':main()

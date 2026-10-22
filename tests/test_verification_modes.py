@@ -25,6 +25,18 @@ class VerificationModeTests(unittest.TestCase):
             with contextlib.redirect_stdout(io.StringIO()):coverage.main(['--inventory'])
             full.assert_not_called()
 
+    def test_inventory_distinguishes_discovered_code_protected_views_and_component_seams(self):
+        with patch.object(coverage,'report',side_effect=AssertionError('no campaigns')):
+            metrics,text=coverage.inventory()
+        pins=json.loads((ROOT/'metadata/protection-views.json').read_text())
+        self.assertEqual(metrics['protected_views']['stream'],pins['stream_metrics'])
+        self.assertEqual(metrics['protected_views']['int1_instruction_count'],pins['int1_instruction_count'])
+        self.assertIn('Counts describe discovered code only',text)
+        self.assertIn('never additional canonical bytes',text)
+        for name in ('main','adlib','tandysnd','pcspeaker','main/protected-stream'):
+            self.assertIn(name,metrics['component_seams'])
+        self.assertTrue(metrics['component_seams']['main']['unresolved'])
+
     def test_static_inventory_rejects_stale_and_wrong_scope_evidence(self):
         with temporary_build_directory(prefix='inventory-evidence-', parent=ROOT/'build') as directory:
             folder=Path(directory);source=folder/'source.txt';source.write_bytes(b'accepted')
@@ -32,7 +44,8 @@ class VerificationModeTests(unittest.TestCase):
             report=dict(verification_scope='static',bounded_unpacker_checks=True,canonical_sha256=coverage.sha(image),
                 byte_exact_asm_bytes=len(image),verification_inputs={'source.txt':coverage.sha(source.read_bytes())})
             path=folder/'static-verification.json'
-            with patch.object(coverage,'BUILD',folder),patch.object(coverage,'ROOT',folder):
+            with patch.object(coverage,'BUILD',folder),patch.object(coverage,'ROOT',folder), patch.object(
+                    verify,'identity_provenance_errors',return_value=[]):
                 self.assertFalse(coverage.static_identity_evidence(image)['current'])
                 path.write_text(json.dumps(report))
                 self.assertTrue(coverage.static_identity_evidence(image)['current'])
@@ -107,11 +120,80 @@ class VerificationModeTests(unittest.TestCase):
                           bounded_extractor_checks=True,
                           verification_inputs={'source.txt': coverage.sha(source.read_bytes())})
             (folder / 'verification.json').write_text(json.dumps(report))
-            with patch.object(coverage, 'BUILD', folder), patch.object(coverage, 'ROOT', folder):
+            with patch.object(coverage, 'BUILD', folder), patch.object(coverage, 'ROOT', folder), patch.object(
+                    verify,'identity_provenance_errors',return_value=[]):
                 self.assertEqual(coverage.contract_verification(), report)
                 source.write_bytes(b'changed input')
                 with self.assertRaisesRegex(ValueError, 'Stale contract verification'):
                     coverage.contract_verification()
+
+    @contextlib.contextmanager
+    def provenance_fixture(self):
+        import build
+        with temporary_build_directory(prefix='identity-provenance-',parent=ROOT/'build') as directory:
+            root=Path(directory)
+            for name in ('tools/common.py','tools/symtab.py','tools/helper.py','tools/dependency.py',
+                         'c/lemmings_sym.h','c/pcspeaker_sym.h','c/sound_latches_sym.h','assets/pinned.dat','nasm.exe'):
+                path=root/name;path.parent.mkdir(exist_ok=True,parents=True)
+                path.write_text('# constructed input\n')
+            (root/'metadata').mkdir()
+            (root/'metadata/inputs.json').write_text(json.dumps(dict(files=[dict(path='assets/pinned.dat')])))
+            tool=root/'nasm.exe'
+            (root/'metadata/toolchain-lock.json').write_text(json.dumps(dict(executables=[
+                dict(path=str(tool),sha256=coverage.sha(tool.read_bytes()))])))
+            helper=root/'tools/helper.py'
+            helper.write_text('import dependency\n')
+            with patch.object(verify,'ROOT',root),patch.object(verify,'verification_sources',return_value=[helper]), patch.object(
+                    coverage,'ROOT',root),patch.object(coverage,'BUILD',root),patch.object(build,'tool',return_value=str(tool)):
+                image=b'constructed image'
+                result=dict(provenance_version=1,verification_scope='static',bounded_unpacker_checks=True,
+                    canonical_sha256=coverage.sha(image),byte_exact_asm_bytes=len(image),
+                    verification_inputs=verify.input_manifest([helper]),verification_runtime=verify.runtime_identity(),
+                    verification_tools=dict(nasm=dict(path=str(tool.resolve()),sha256=coverage.sha(tool.read_bytes()))))
+                path=root/'static-verification.json';path.write_text(json.dumps(result))
+                yield root,image,result
+
+    def test_changed_helper_lock_or_generated_header_invalidates_retained_identity(self):
+        for name in ('tools/helper.py','tools/dependency.py','metadata/toolchain-lock.json','c/lemmings_sym.h'):
+            with self.subTest(name=name),self.provenance_fixture() as (root,image,_):
+                self.assertTrue(coverage.static_identity_evidence(image)['current'])
+                path=root/name
+                if path.suffix=='.json':
+                    data=json.loads(path.read_text());data['changed']=True;path.write_text(json.dumps(data))
+                else:path.write_text('# changed consumed input\n')
+                evidence=coverage.static_identity_evidence(image)
+                self.assertFalse(evidence['current']);self.assertIn(name,evidence['stale_inputs'])
+
+    def test_omitted_dependency_and_legacy_manifest_cannot_claim_current_identity(self):
+        with self.provenance_fixture() as (root,image,result):
+            del result['verification_inputs']['tools/helper.py']
+            (root/'static-verification.json').write_text(json.dumps(result))
+            evidence=coverage.static_identity_evidence(image)
+            self.assertFalse(evidence['current'])
+            self.assertIn('unrecorded input: tools/helper.py',evidence['provenance_errors'])
+            del result['provenance_version']
+            (root/'static-verification.json').write_text(json.dumps(result))
+            self.assertFalse(coverage.static_identity_evidence(image)['current'])
+
+    def test_resolved_tool_is_the_selected_locked_executable_without_starting_it(self):
+        import build,sound,protection
+        with self.provenance_fixture() as (root,_,_):
+            with verify.resolved_tool_usage() as used:
+                for consumer in (build,sound,protection):
+                    self.assertEqual(consumer.tool('nasm'),str((root/'nasm.exe').resolve()))
+                self.assertEqual(used['nasm']['sha256'],coverage.sha((root/'nasm.exe').read_bytes()))
+            (root/'nasm.exe').write_bytes(b'unlocked selected executable')
+            with verify.resolved_tool_usage(),self.assertRaisesRegex(ValueError,'Selected tool identity differs'):
+                sound.tool('nasm')
+
+    def test_selected_tool_path_change_invalidates_retained_evidence(self):
+        import build
+        with self.provenance_fixture() as (root,image,_):
+            alternate=root/'alternate-nasm.exe';alternate.write_bytes((root/'nasm.exe').read_bytes())
+            with patch.object(build,'tool',return_value=str(alternate)):
+                evidence=coverage.static_identity_evidence(image)
+                self.assertFalse(evidence['current'])
+                self.assertIn('resolved tool changed: nasm',evidence['provenance_errors'])
 
 
 if __name__ == '__main__':

@@ -1,15 +1,138 @@
 """Fast exact-image gate; --contracts adds the bounded behavioral campaign."""
 import argparse
+import ast
+import importlib
 import sys
 import time
+from contextlib import contextmanager, ExitStack
 from pathlib import Path
+from unittest.mock import patch
 from common import ROOT, BUILD, read_json, write_json, sha
 from unpack import ASSET, unpack, relocated
 from build import assemble
 from explore import analyze
 import symtab
 
+def local_python_closure(paths):
+    """Conservatively include local imports, including imports inside helpers.
+
+    Both local search roots are checked: test workers also load tools via
+    sys.path. Dynamic worker roots are supplied by their consumed manifests.
+    This reads source only; it neither imports test workers nor runs discovery.
+    """
+    pending=list(paths);seen=set()
+    while pending:
+        path=pending.pop()
+        if path in seen:continue
+        seen.add(path)
+        if path.suffix!='.py':continue
+        tree=ast.parse(path.read_text(encoding='utf-8-sig'))
+        for node in ast.walk(tree):
+            names=([a.name for a in node.names] if isinstance(node,ast.Import) else
+                   [node.module] if isinstance(node,ast.ImportFrom) and node.module else [])
+            for name in names:
+                for folder in ('tools','tests'):
+                    candidate=ROOT/folder/(name.replace('.','/')+'.py')
+                    if candidate.is_file():pending.append(candidate)
+    return seen
+
+def verification_sources():
+    """Declared non-worker inputs for both verification scopes."""
+    inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
+        ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
+         'metadata/regions.json','metadata/encoding-exceptions.json',
+         'metadata/legacy-seeds.json','tools/unpack.py','tools/explore.py',
+         'tools/build.py','tools/check_unpack.py','tools/verify.py',
+         'tools/resources.py','tools/sound.py','tests/sound_unpack.py',
+         'metadata/sound-oracle.json','metadata/sound-hints.json',
+         'tools/protection.py','tests/protection.py','metadata/protection-symbols.json',
+         'metadata/protection-views.json','metadata/protection-cfg.json','metadata/protection-encodings.json',
+         'tools/indirect.py','tests/dispatch.py','metadata/indirect-evidence.json',
+         'tools/interrupts.py','tests/interrupts.py','tests/timer_chain.py','metadata/interrupt-evidence.json')]
+    inputs.append(ROOT/'tools/pcspeaker_symtab.py')
+    inputs.append(ROOT/'tools/sound_latch_symtab.py')
+    inputs.append(ROOT/'c/sound_latches_sym.h')
+    inputs.append(ROOT/'metadata/pcspeaker-producers.json')
+    inputs.append(ROOT/'tests/dat_io.py')
+    inputs.append(ROOT/'tests/decimal_digits.py')
+    inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in read_json(ROOT/'metadata/sound-oracle.json')
+               for kind in ('symbols','regions','encodings')]
+    inputs.append(BUILD/'asm/checked.asm')
+    inputs.extend(BUILD/f'{name}-checked.asm' for name in read_json(ROOT/'metadata/sound-oracle.json'))
+    inputs.extend(BUILD/f'protection-{name}-checked.asm' for name in ('stream','int1'))
+    return inputs
+
+def provenance_inputs(paths):
+    """Complete consumed local closure, plus identities checked by this gate."""
+    paths=set(paths)|{ROOT/p for p in ('tools/common.py','tools/symtab.py',
+        'metadata/inputs.json','metadata/toolchain-lock.json',
+        'c/lemmings_sym.h','c/pcspeaker_sym.h','c/sound_latches_sym.h')}
+    paths.update(ROOT/row['path'] for row in read_json(ROOT/'metadata/inputs.json')['files'])
+    paths.update(Path(row['path']) for row in read_json(ROOT/'metadata/toolchain-lock.json')['executables'])
+    return local_python_closure(paths)
+
+def input_manifest(paths):
+    def key(path):
+        return path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path.resolve())
+    return {key(p):sha(p.read_bytes()) for p in sorted(provenance_inputs(paths))}
+
+def runtime_identity():
+    import capstone,unicorn
+    return dict(python=dict(path=str(Path(sys.executable).resolve()),sha256=sha(Path(sys.executable).read_bytes()),
+                            version=sys.version),
+                packages={m.__name__:dict(version=m.__version__,path=str(Path(m.__file__).resolve()))
+                          for m in (capstone,unicorn)})
+
+@contextmanager
+def resolved_tool_usage():
+    """Bind every assembler/disassembler call to the executable we actually hash.
+
+    Consumers import build.tool by value, so bind those aliases as well. No
+    assembler is launched here. The lock is checked against the selected bytes,
+    rather than assuming the lock's pathname was selected by PATH/the override.
+    """
+    import build
+    resolve=build.tool;used={}
+    def selected(name):
+        path=Path(resolve(name)).resolve();digest=sha(path.read_bytes())
+        lock=read_json(ROOT/'metadata/toolchain-lock.json')['executables']
+        expected=[r['sha256'] for r in lock if Path(r['path']).stem.lower()==name.lower()]
+        if digest not in expected:raise ValueError('Selected tool identity differs from lock: '+str(path))
+        row=dict(path=str(path),sha256=digest)
+        if name in used and used[name]!=row:raise ValueError('Selected tool changed during verification: '+name)
+        used[name]=row
+        return str(path)
+    with ExitStack() as stack:
+        for name in ('build','sound','protection','reconstruct'):
+            stack.enter_context(patch.object(importlib.import_module(name),'tool',selected))
+        yield used
+
+def identity_provenance_errors(result):
+    """Reject legacy/incomplete manifests as retained identity evidence."""
+    errors=[];inputs=result.get('verification_inputs',{})
+    if result.get('provenance_version')!=1:return ['missing full input/tool provenance']
+    required=provenance_inputs(verification_sources())
+    for path in required:
+        key=path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else str(path.resolve())
+        if key not in inputs:errors.append('unrecorded input: '+key)
+    if result.get('verification_runtime')!=runtime_identity():errors.append('runtime identity changed')
+    tools=result.get('verification_tools',{})
+    if 'nasm' not in tools:errors.append('missing resolved NASM identity')
+    for name,row in tools.items():
+        import build
+        path=Path(row['path'])
+        try:
+            same=(path.is_file() and sha(path.read_bytes())==row['sha256'] and
+                  Path(build.tool(name)).resolve()==path.resolve())
+        except (OSError,RuntimeError):same=False
+        if not same:errors.append('resolved tool changed: '+name)
+    return errors
+
 def verify(check_stub=True, *, contracts=False):
+    with resolved_tool_usage() as used:
+        return _verify(check_stub,contracts=contracts,resolved_tools=used)
+
+def _verify(check_stub=True, *, contracts=False, resolved_tools):
     if contracts and not check_stub:
         raise ValueError('Contract verification requires unpacker checks')
     # An edit-loop run must neither replace nor delete the full contract report.
@@ -183,23 +306,7 @@ def verify(check_stub=True, *, contracts=False):
     metrics['verification_scope']='contracts' if contracts else 'static'
     metrics['bounded_unpacker_checks']=bool(check_stub)
     metrics['bounded_extractor_checks']=bool(contracts)
-    inputs=list((ROOT/'src').rglob('*.asm'))+[ROOT/p for p in
-        ('metadata/hints.json','metadata/oracle.json','metadata/symbols.json',
-         'metadata/regions.json','metadata/encoding-exceptions.json',
-         'metadata/legacy-seeds.json','tools/unpack.py','tools/explore.py',
-         'tools/build.py','tools/check_unpack.py','tools/verify.py',
-         'tools/resources.py','tools/sound.py','tests/sound_unpack.py',
-         'metadata/sound-oracle.json','metadata/sound-hints.json',
-         'tools/protection.py','tests/protection.py','metadata/protection-symbols.json',
-         'metadata/protection-views.json','metadata/protection-cfg.json','metadata/protection-encodings.json',
-         'tools/indirect.py','tests/dispatch.py','metadata/indirect-evidence.json',
-         'tools/interrupts.py','tests/interrupts.py','tests/timer_chain.py','metadata/interrupt-evidence.json')]
-    inputs.append(ROOT/'tools/pcspeaker_symtab.py')
-    inputs.append(ROOT/'tools/sound_latch_symtab.py')
-    inputs.append(ROOT/'c/sound_latches_sym.h')
-    inputs.append(ROOT/'metadata/pcspeaker-producers.json')
-    inputs.append(ROOT/'tests/dat_io.py')
-    inputs.append(ROOT/'tests/decimal_digits.py')
+    inputs=verification_sources()
     if contracts:
         inputs.extend(ROOT/path for path in cache_report['input_sha256'])
         inputs.extend(ROOT/path for path in video_report['input_hashes'])
@@ -211,8 +318,10 @@ def verify(check_stub=True, *, contracts=False):
         for name in ('display_status','display_start','display_setup','text_glyph','text_stream','display_pages','background_drawing','palette_channels','palette_rows','palette_ports','palette_row_select','palette_transition','retry_input'):
             report=read_json(BUILD/(name.replace('_','-')+'-contract-original.json'))
             inputs.extend(ROOT/path for path in report['input_hashes'])
-    inputs += [ROOT/f'metadata/{n}-{kind}.json' for n in sound_metrics for kind in ('symbols','regions','encodings')]
-    metrics['verification_inputs']={p.relative_to(ROOT).as_posix():sha(p.read_bytes()) for p in inputs}
+    metrics['verification_inputs']=input_manifest(inputs)
+    metrics['provenance_version']=1
+    metrics['verification_tools']=dict(resolved_tools)
+    metrics['verification_runtime']=runtime_identity()
     write_json(report_path,metrics)
     write_json(BUILD/'analysis.json',analysis)
     print(f'PASS {len(actual)} ASM bytes exact; {len(meta["relocations"])} relocations; no masked differences')

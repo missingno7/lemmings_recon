@@ -1,4 +1,17 @@
 ; Maintained span43CE..4B5B; physical order/UNKNOWN preserved.
+; S8 STATIC DATA CONTRACT (classification/name changes are integration proposals):
+; Text streams below live in the main DS frame, not at numerically equal CS
+; offsets. 4D4D reads {column,row,style,text...,CR} records; column0 ends the
+; stream, column is decremented as a byte, row is used directly, style0 sets
+; BP2 and any nonzero style sets BP0. NUL inside text is a glyph, not an end.
+; LODSB follows incoming DF and wraps SI16; glyph saves/returns are live SS,
+; CL wraps per glyph, returned DS/ES remain live. No length or printable check.
+; All finite stored-stream boundaries here describe DF0, intact headers/CRs
+; and nonaliasing saves; they do not bound arbitrary raw-entry traversal.
+; These process-image tables/text survive4551's0000..0FC9 clear. Startup's
+; ordinary DF0 clear ends2011. GROUND1A18 can overwrite201F..2B4A on a long
+; read (supplied files end1F6A); indexed/string/provider/stack aliases remain.
+; No host string copy, muted service or replacement table closes that domain.
 times -(($-$$) != 0x43ce) db 0
 ; Live latch77 returnsCL2 without touching DX/IF. Other bytes poll201 underCLI,
 ; STI then NOTAL/TESTF0; upper inactivity loops back through the latch read.
@@ -70,6 +83,8 @@ MainMenuAfterCall4434:
     call DrawMenuDecorationRows ; @04437
 MainMenuAfterCall4437:
     lea si,[MainMenuText-GameDataImage] ; @0443A
+; DS4AD9..4B09: two records, CRs4AF3/4B08, terminal column0 at4B09.
+; Credits scroller49CE..4AD8 has a DIFFERENT grammar (FF pause, CR restart).
     call DrawTextStream ; @0443E
 MainMenuAfterCall443E:
     call RefreshMenuLevelGroupGraphic ; @04441
@@ -175,6 +190,13 @@ loc_44D5:
     jmp loc_445B ; @044E6
 ; UNKNOWN: unresolved bytes
 MenuSoundOptionValues:
+; Stored CS44E9..44EB =00,01,03, skipped by JMP44E6; no decoded entry here.
+; Initial1F71: startup clear0; sound setup0596/0606->1,05AE/05D8->2.
+;44D5 writes byte(INC old), resetting only on equality with limit2/3.
+; With valid initial index and stable driver gate this selects0..1 or0..2;
+; corrupt/stale indices or a changed gate are NOT clamped. CS read window for
+; arbitrary prior index is44E9..45E8. No identified ordinary direct table store;
+; CS/SS/device aliases and checksum8397's code-as-data read remain possible.
     db 0x00,0x01,0x03 ; @044E9
 loc_44EC:
 ; Marker4 blocks changes. Increase rejects exactly3, decrease rejects exactly0;
@@ -254,6 +276,16 @@ LevelStartAfterBriefing:
 ; Button/40h tail-fades with inherited RET;20h calls fade, POPs actual AX, JMPs4401.
 ; New wrappers and parent use shared bounded verification; docs/level-briefing.md.
 ShowLevelBriefing:
+; MUTABLE DS4B0A..4B9F, seven records, terminal4B9F. Writers before draw4640:
+;4584 pair4B13..14;458E decimal4B50..52;45A5 percent4B57..5A;
+;45AF pair4B78..79;45B7 time4B83 (byte+30 wraps);45C2 plural4B8B.
+;45D3 copies32 bytes17AB..17CA to4B19..38 only with DF0; DF1 source/dest
+; run178D..17AC/4AFB..4B1A. Text CR4B39 is outside either copy, but copied
+; title bytes may themselves contain CR/NUL; no sanitization is performed.
+;45E5 copies six bytes from4C01+6*zero_extended_group with explicit forward
+; INCs to4B98..9D. Four stored rating rows4C01..4C18 are fixed-width, no NUL;
+; group is unchecked, so byte255 reads51FB..5200, not a fifth rating row.
+; Formatter widths are write footprints, not validation of population/rate.
     mov al,[MenuLevelGroupIndex-GameDataImage] ; @04566
     shl al,1 ; @04569
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @0456B
@@ -348,6 +380,8 @@ BriefingAfter4639:
     lea si,[0x4b0a] ; @0463C
     call DrawTextStream ; @04640
 BriefingAfter4640:
+; Continue prompts: mode0 ->4BA0..4BC2, mode1 ->4BC3..4BE4, all other
+; byte values ->4BE5..4C00. Each includes its own final CR and column0.
     lea si,[0x4ba0] ; @04643
     cmp byte [InputModeByte25A6-GameDataImage],0x0 ; @04647
     jz loc_465D ; @0464C
@@ -453,6 +487,18 @@ SplitPaletteRasterReturn46EA:
     ret ; @046EA
 loc_46EB:
 LevelResultScreen:
+; RESULT STREAMS (DS, inclusive; final byte is column0): time-up4C19..4C2D,
+; all-out4C2E..4C4D; percentages4C4E..4C76, whose four-byte fields4C5D..60
+; and4C71..74 are written by48C4/48CE.48EB saves a menu prompt in DS0021:
+; mode0 4C77..4C9C, mode1 4C9D..4CB8, other4CB9..4CD2, later drawn47A3.
+; Failure retry:4CD3..4CFD /4CFE..4D1F /4D20..4D3E by the same mode rule.
+; Success:4D3F..4D73 has level digits4D5D..5F (474F), generated code4D68..71
+; (5052..51A1) and CR4D72.4D74 is an extra stored00, not consumed by this
+; stream. Next-level prompts start4D75/4DA0/4DC2 and end4D9F/4DC1/4DE0.
+; Assessment4955's nine pointers each lead to two records at4F33,4F77,4FBC,
+;5003,504E,5091,50DE,512C,517A, ending4F76,4FBB,5002,504D,5090,50DD,
+;512B,5179,51CA.48F6 bounds this pointer index0..8 through its comparisons.
+; Final completion text51CB..52BB contains six records;47E7 selects it.
 ; SESSION EXIT (JMP from 0311 after the timer is restored): menu video/palette/
 ; timer, time-up or all-out text by the 0:00 test, then pass/fail by signed
 ; completion >= DS:0041. Passed advances the selection; failed keeps it. After
@@ -593,6 +639,11 @@ loc_481F:
 ; Normal PUSH AX/POP AX is live and can alias output54. UNKNOWN tables remain
 ; explicit; original-byte lookup is canonical data,not an opcode fallback.
 ; Native connected setup and all256 byte inputs: docs/game-prepare.md.
+; Nominal producers: startup clear gives1F6C=0; only decoded local store4852
+; advances it on success.4551's per-level clear excludes it. With stable valid
+; state it cycles0..16; special0FE8 comes from LEVEL header (197D load), not
+; from this table. Supplied files contain special1..4, normal0; no code guard
+; enforces that asset domain. Larger GROUND/other aliases can change1F6C.
 SelectLevelSoundId:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0x0 ; @0482F
     jz loc_4865 ; @04834
@@ -632,10 +683,19 @@ loc_4866:
     ret ; @04876
 ; UNKNOWN: unresolved bytes
 LevelSoundSequenceIds:
+; CS4877..4887:17 IDs 06,07,08,0A,0B,04,0C,0D,0E,0F,05,10..15.
+; Normal success resets only INC==11h; no-success keeps AL0 from4839, hence
+; chooses ID06 regardless of saved cycle. Arbitrary cycle input can read all
+;4877..4976 (including special table and following code), without a clamp.
     db 0x06,0x07,0x08,0x0a,0x0b,0x04,0x0c,0x0d,0x0e,0x0f,0x05,0x10,0x11,0x12,0x13,0x14 ; @04877
 ; UNKNOWN: unresolved bytes
     db 0x15 ; @04887
 SpecialLevelSoundIds:
+; CS4888..488B:01,09,03,02; nonzero special byte is decremented before
+; zero-extension, so raw1..FF reads4888..4986. Raw00 takes the normal path;
+; an internal4866 entry with AL0 instead reads4987. End is RET4876/code488C.
+; Both tables are initialized by stored image, read with CS, never rewritten
+; by this selector. No direct writer found; aliases/checksum are not excluded.
     db 0x01,0x09,0x03,0x02 ; @04888
 ; Actual savedCX; byteINC selection beforeDIV30, then reread selection afterMUL.
 ; Zero remainder ->level30 and DECgroup; FF wraps toAXFF1E. No normalization.
@@ -663,6 +723,8 @@ LevelGroupFormatReturn:
 ; UNKNOWN: unresolved bytes
     db 0x51,0xb1,0x1e,0x8a,0xe8,0x8a,0xc4,0xf6,0xe1,0x02,0xc5,0x59,0xc3 ; @048B0
 DrawResultPercentagesAndPrompt:
+; Percentage helper writes exactly a four-byte field with variable percent
+; position; no new terminator is inserted.48F3 shares DrawTextStream's RET.
     mov al,[StatusCompletionDisplayValue-GameDataImage] ; @048BD
     lea si,[0x4c5d] ; @048C0
     call WritePercentageByteField ; @048C4
@@ -733,6 +795,15 @@ loc_4967:
 ; byte-wrap formatter,actualDS->ES save and six DF-sensitive string copies.
 ; Success waits<=120 cycles/three live input predicates; invalid waits60 cycles.
 MainMenuCodeTransition:
+; CODE TEXT: initial497D fills4DF2..4DFB with ten dots;4DE1..4DFD draws
+; prompt and that input line.503B redraw starts at4DEF inside the same stream.
+; Header4DEF..F1=0F0908, CR4DFC/column0 4DFD; input edits/rotations own ten
+; bytes only in the declared editor domain (4CC9/4D18 stack proofs separate).
+; Accepted4DFE..4E26 has three decimal bytes4E10..12 and six rating bytes
+;4E1F..24; CRs4E14/4E25 and terminal4E26 are not formatter destinations.
+;49C0 uses DF-sensitive MOVSB from4C01+6*formatter_AH. With DF1 destination
+; is4E1A..4E1F, source is(row_start-5)..row_start; do not assume row copies
+; stay within fields under arbitrary DF. Rejected4E27..4E39 is one record.
     call ClearFullDrawingPage ; @04967
 CodeEntryAfterCall4967:
     call InitializeDisplayOrigins ; @0496A
