@@ -1,3 +1,18 @@
+# Purpose
+
+Understanding is the deliverable; C and SDL3 are derived implementations. The
+goal is the `asm-semantic-oracle-v1` milestone defined in docs/semantic-audit.md:
+a complete, byte-exact, readable ASM specification from which C follows without
+guessing. Measure progress by uncertainty closed (evidence-based classification,
+closed control flow and dispatch domains, data ownership/lifetimes, caller-
+observable contracts), not by C bytes, suite counts or host functionality.
+Native C and the host are downstream verification. Their failures report
+findings; their success never closes static obligations or chooses priorities.
+Primary configuration is DOS VGA + AdLib. Complete reconstruction still accounts
+for PC speaker, Tandy, joystick and every other original path; inventory them,
+never discard them. Do not play the original, build gameplay bots or explore by
+replay. Human-recorded BizHawk/DOSBox-X replays will later be supplementary smoke.
+
 # Reconstruction rules
 
 Target only the pinned DOS VGA Lemmings executable and its executable dependencies.
@@ -8,7 +23,10 @@ Never boot the game for discovery. Bounded execution of the unpacker or identifi
 routines with constructed state is permitted for independent verification.
 Do not modify assets or neighboring projects; never commit assets, binary images,
 runtime dumps, or downloaded tool binaries. Do not import the legacy interpreter.
-Keep UNKNOWN bytes explicitly unresolved. No INCBIN in reconstructed ASM. Encoding
+Keep UNKNOWN bytes explicitly unresolved. Classify only from combined evidence:
+initialization, readers, writers, execution paths, overlays, aliases and
+lifetime; one named consumer or a zero fill never classifies a whole run, and
+"not reached by the host" never means dead or unreachable. No INCBIN in reconstructed ASM. Encoding
 exceptions must explain the instruction; no masking unexplained differences.
 The symbol ledger owns names and offsets. Preserve original wrap, flags, segment
 effects, self modification, shared tails and bugs. No shadow game-state copies.
@@ -68,6 +86,30 @@ Distinguish real game/platform behavior from raw-entry oracle transport. Preserv
 existing alias/flag/stack tests, but do not widen supported artificial provider or
 machine-state domains merely to obtain more tests. Narrow native contracts only
 after proving caller/lifetime invariants; never erase an observable quirk.
+
+# Static workstreams and integration
+
+Static analysis is the default method; bounded original execution answers one
+named question. Parallel workers take independent semantic dependencies (a
+frontier's writer domain, a structure's lifetime, a driver's grammar), not byte
+quotas. Workers edit only comments in ASM files they own for that task and
+return names, classifications and hints as an integration patch with evidence,
+resolved dependencies, remaining uncertainty and affected C/tests. The
+supervisor alone applies shared ledger/hints/regions/image_tail changes, rules
+on overlapping findings and runs the exact gate. A resolution must make the
+program more understandable and remove a translator guess; renaming literals or
+recreating historical layout is not progress by itself.
+
+# Platform substitutions
+
+A host or provider substitution names the original service or region it
+bypasses, its input/output/memory/flag/segment contract and its machine
+configuration. The bypassed original obligation stays visible beside the ASM.
+Classify each as a platform substitution with equivalent observable effect,
+omitted/altered original game behavior, or unverified equivalence. Muted sound,
+media-probe policies, IRQ-at-poll scheduling and unbound callbacks define
+supported integration domains; they never complete protected code, sound engines
+or unrestricted interrupt interleavings. Never fabricate success or results.
 
 # Shared verification and native destination
 

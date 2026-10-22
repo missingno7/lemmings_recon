@@ -7,38 +7,49 @@ loop and physical source map. Old checkpoints are in convergence-history.md.
 
 ## Immediate mode
 
-The host boots the original program natively: host/ supplies only DOS entry
-inputs (unpacked image, PSP and command line, stack, IVT, services) and runs
-c/startup.c (with c/protection.c and c/sound_driver_init.c) into the verified
-menu -> level -> session -> result loop. The floppy media probe 063E is an
-explicit policy (`--media-probe=assume-original|reject|unsupported`). Parity:
-tests/startup.py, tests/protection.py, tests/host_journey.py, tests/game_loop.py.
-Sound is a muted sink; no SDL3 yet.
+Static semantic closure toward `asm-semantic-oracle-v1` (semantic-audit.md G),
+VGA game plus AdLib driver first. C already covers nearly all decoded main code,
+so further C or host work adds little understanding; the binding constraint is
+classification, transfer domains and state ownership. The existing C and
+headless host stay as downstream verification only. Evidence base: the read-only
+audits of 2026-10-22 (static risk map, sound images, native integration,
+methodology), whose findings are folded into the items below; their working
+reports are in build/ and are not a status source.
 
-## Priorities
+## Priorities (independent workstreams; supervisor integrates shared metadata)
 
-1. **Executable sound engines.** The INT60/61 targets (PC speaker 0182,
-   AdLib/Tandy driver images) are the remaining behavior-affecting runtime
-   dependency of the native game. Follow their dispatch, tables and command
-   formats in their separate images and translate them so the host can produce
-   audio instead of a muted sink.
-2. **SDL3 presentation over host/.** Interactive window, real-time scheduling,
-   mouse/keyboard mapping and audio output once sound engines exist; the host
-   interface is the boundary. Keep headless parity runs as the acceptance gate.
-3. **Record/graphics lifecycle and callback writers (30A6,1F19,3150,3634,706F).**
-   Trace the same 2D-byte record from per-level clear through creation, action,
-   state transitions and drawing. Preserve shared +20/+26/+27 roles and sample
-   order +2C then +2B; establish allocation/slot and callback-source invariants
-   from producers. Resolve the domain of 715B before narrowing raw adapters or
-   treating the nine initialized callbacks as an exhaustive target proof. The
-   source now names key fields; broader lifetime closure is still CONDITIONAL.
-4. **Protected body and gap 098C..0D9D.** Startup is native except the encoded
-   INT1/INT3 media probe body, which stays a platform outcome. Its sector
-   buffers are runtime overlays and 0D9C..0D9D a proven decode seed; classify the
-   rest only from writer/user evidence. Never linear-sweep or call it dead.
-5. **Unify the composition adapters.** The frame parent dispatches thirteen
-   differently shaped child adapters. Consolidate packet/helper duplication only
-   where a concrete consumer changes and equivalence is checked by its suite.
+1. **Entity record lifetime and the 715B callback domain.** Producer/writer
+   matrix for record+14 across creation 30A6, update 1F19, clone/bulk copies,
+   activation and the 70F0 PUSH / 7159 POP handoff; 2Dh-record allocation and
+   reuse bounds. Largest main control-flow risk.
+2. **AdLib driver grammar and state.** Engine [0000,05A8): INT61 dispatch, 01EA
+   target formula, stream grammar, OPL register writes and timing; state/tables
+   [05A8,0B6E). Then score [0B6E,54E3) and effects [54E3,566D) once the grammar
+   is fixed. Recover original music logic; never approximate it.
+3. **Resource lifetimes.** GROUND request 1000h at DS:1B4B can reach DS:2B4A
+   over 2011/2013/201F/25A0/2608/2778 while supplied files end at 1F6A; order
+   bytes 54EE and override storage 5566..66E5 bounds. Underpins 42A5 and 1407.
+4. **Remaining main transfers.** 42A5 input callback lifetime; 4CC9/4D18 saved-BP
+   invariants; 1407 probe traversal (DF, DS, records) and the 2011/2012 word.
+5. **Renderer storage.** DS 66F0..6748, A948/A949 initialization before use,
+   row footprints and DS/ES/SS handoffs; minimap DF=1 clear over checksum code
+   83AF..83C2 versus DF=0 83C1..83D4.
+6. **Consumed but unclassified tables.** Palette pointer tables 52D4/52E4 and
+   rows; point/pair/word-pattern tables 2698/2778/2788/52BC/531C; UI text,
+   keyboard tables (202E overlap), filenames and menu/result streams; CS tables
+   44E9/4877/4EE7/4F8A/5507 (keep 5517..5532 separate).
+7. **Protected storage and transport.** Overlays 098C/0B9C, 16-byte gap, seed
+   0D9C, dynamic INT1/INT3 frames; smallest service model that removes guesses.
+8. **Alternative executables.** Tandy and PC-speaker images classified to the
+   same bar; inventory joystick/port201 and alternate display paths.
+9. **Tooling truth.** graph.py must address C-domain labels and print every
+   frontier/provider seam in bottom-up views; coverage must reconcile its
+   receipts with the difftest registry; verify.py must record its full input and
+   resolved-tool closure.
+
+Native follow-ups recorded for later, not current priorities: bind entity sound
+services, special-graphics briefing redraw, INT61 rebinding, private IRQ 0F70
+delivery, protection persistence, validated timing; then SDL3.
 
 ## Evidence and persistent open obligations
 

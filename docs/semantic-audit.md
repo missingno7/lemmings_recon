@@ -228,9 +228,44 @@ TESTED C, decoded leaf and apparent normal execution are not readiness proofs.
 | Game loop 43F2/4401 -> 454C/4551 -> 00FB -> 46EB, retry screen 4B1C | READY and translated in the IRQ-at-poll domain | Real 4C47/17C7/16D4 delivery at polls (tests/game_loop.py). 004A FF producer, preemption inside children, sound bodies, startup/protection remain. |
 | Startup/protection 054E..13DB | NOT READY as a whole | Dynamic protected views, gap 098C..0D9D and segment/allocation provenance. |
 | Complete executable sound engines | NOT READY as a whole | Only scoped entries/latches/PC routines translated; unresolved dispatch and unclassified payload remain. |
-| Native whole game/platform/SDL3 | CONDITIONAL | Headless host runs the verified loop with parity (tests/host_journey.py); startup is constructed, sound muted, SDL3 not started. |
+| Native whole game/platform/SDL3 | NOT READY as complete | Host runs the verified loop in a declared domain. Omitted/altered original behavior: NULL entity sound bindings stop sound-enabled actions; special-graphics briefing redraw unbound; INT61 not rebound after 057B; media probe outcomes fabricate registers and russell.dat persistence; chosen timer schedule; private IRQ 0F70 never delivered; joystick unbound. |
 
 Working loop: choose the highest-cost guess -> inspect binary/callers/state ->
 record the semantic contract in ASM/ledger -> exact gate -> readiness decision ->
 translate one coherent READY operation -> targeted/handoff checks -> record only
 changed evidence and next uncertainty. See next-work.md for the five priorities.
+
+## G. Semantic oracle freeze: `asm-semantic-oracle-v1`
+
+The milestone is independent of C or host playability. It is declared only when
+all of the following hold, each recorded beside the ASM or in the ledger:
+
+1. **Executable inventory.** Every original executable component is identified:
+   main image, protected execution views, PC-speaker overlay, AdLib and Tandy
+   driver images, runtime-installed vectors and self-modified operands, each
+   with its installer, extent, lifetime and restore contract.
+2. **Evidence-based classification.** Every stored byte of every component is
+   classified from initialization, readers, writers, execution paths, overlays,
+   aliases and lifetime. No speculative code/data calls; a zero fill, a named
+   prefix or a linear decode never classifies a run. Overlapping roles (code as
+   checksum data, buffers over stored bytes) stay explicit.
+3. **Closed control flow.** Every reachable direct, indirect, shared-tail,
+   interrupt, nonlocal and dispatch transfer is accounted for, with the
+   producer/writer domain that bounds each indirect target set.
+4. **State ownership.** Records, tables, buffers and globals have documented
+   initialization, producers, consumers, extents or explicitly unchecked access,
+   and lifetimes across startup, level, session and frame.
+5. **Translatable contracts.** Routine contracts state caller-observable inputs,
+   results, flags, segments, stack and side effects well enough that C needs no
+   invented behavior.
+6. **Preserved quirks.** Bugs, wrapping, aliasing, interrupt and hardware
+   dependencies are stated where observable.
+7. **Named residue.** Remaining uncertainty is listed and split into genuinely
+   unknown behavior versus unrecoverable detail (historical names, layout).
+
+Priority order for the freeze is the DOS VGA game with the AdLib driver; the
+PC-speaker and Tandy images, joystick and alternate display paths remain in the
+inventory and must be classified before the freeze, but do not block the
+primary native port. A local READY decision permits work only in its domain; a
+complete partition, known target list or zero decoder errors alone does not
+satisfy this bar. Inventory counts describe discovered code, not closure.
