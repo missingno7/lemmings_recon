@@ -8,8 +8,12 @@
 ; Static code frame 0000; semantic module boundaries remain under investigation.
 ; DOS entry: establishes relocated DATA; integrity checks precede initialization.
 ProgramEntry:
+; ENTRY FLAGS (original-code evidence, tools/check_unpack.py): the PKLITE stub
+; executes CLD/STD/CLD and STI before RETF, so this entry receives DF=0, IF=1
+; whatever DOS supplied. The 0000..2011 clear therefore runs forward here; the
+; instruction itself stays DF-sensitive for any other entry.
 ; READINESS CONDITIONAL (c/startup.c): ES=PSP; 1A clock words 259C/259E survive
-; the DF-dependent clear 0000..2011; AH1B pointer is read before POP DS (1FDE).
+; the clear 0000..2011; AH1B pointer is read before POP DS (1FDE).
 ; BIOS 0F saves AL/BH after the option screen set mode 3. Protection at 00E0 is
 ; an explicit seam; JMP 43F2 enters the menu with no invented outer RET.
     mov dx,0x9a9 ; @00000

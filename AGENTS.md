@@ -100,6 +100,22 @@ on overlapping findings and runs the exact gate. A resolution must make the
 program more understandable and remove a translator guess; renaming literals or
 recreating historical layout is not progress by itself.
 
+# Minimal simulation and progressive nativization
+
+We are not building a DOS/PC emulator. For DF, segments, interrupts, BIOS/DOS,
+VGA and timing: first establish their actual effects on game state and
+execution, then model only what preserves those effects in the supported
+configuration, proving invariants from original code and declared platform
+contracts. No arbitrary hardware states, hypothetical interleavings or
+unsupported DOS behavior for completeness' sake; but genuine quirks and
+reachable edge cases stay, and unresolved dependencies stay explicit. Replace
+verified simulated services with native equivalents without changing game
+semantics. The C becomes a clean native engine, not a permanent x86
+transliteration; every simplification cites the original dependency it rests on.
+Results are classed unconditional (original code), platform-conditional (named
+profile assumptions listed) or unresolved; a platform profile never closes
+interrupt interleavings, stack aliases, callback writers or races.
+
 # Platform substitutions
 
 A host or provider substitution names the original service or region it

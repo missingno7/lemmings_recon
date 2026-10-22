@@ -179,8 +179,9 @@ def _verify(check_stub=True, *, contracts=False, resolved_tools):
         raise ValueError('Sound latch C symbol header stale')
     if check_stub:
         from check_unpack import check
-        for load,poison in ((0x1010,0),(0x1213,0xa5),(0x2345,0x5a)):
-            check(load,poison)
+        # Includes DOS-supplied DF/IF variants: the stub hands DF=0, IF=1 to the game.
+        for load,poison,eflags in ((0x1010,0,0x002),(0x1213,0xa5,0x402),(0x2345,0x5a,0x202),(0x1010,0x33,0x602)):
+            check(load,poison,eflags)
     from sound import verify_drivers
     sound_metrics=verify_drivers()
     from protection import verify as verify_protection
