@@ -43,6 +43,10 @@ loc_8123:
 loc_813F:
     push cx ; @0813F
     mov cx,0x28 ; @08140
+; S19 DF-site census repne scasb al, byte ptr es:[di]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_8143:
     repne scasb ; @08143
     jz loc_8160 ; @08145
@@ -56,10 +60,18 @@ loc_8147:
     inc di ; @08157
     mov cx,0x320 ; @08158
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0815B
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @0815D
     ret ; @0815F
 loc_8160:
     push cx ; @08160
+; S19 DF-site census repe scasb al, byte ptr es:[di]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     repe scasb ; @08161
     pop bx ; @08163
     inc bx ; @08164
@@ -84,6 +96,10 @@ loc_8160:
     mov al,0x8 ; @08185
 loc_8187:
     push cx ; @08187
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @08188
     pop cx ; @0818A
     db 0x2b,0xf3 ; ENCODED: sub si,bx (NASM chooses a different encoding) ; @0818B
@@ -112,6 +128,10 @@ loc_819D:
     mov dx,0xa0 ; @081BA
 loc_81BD:
     mov cx,0x2c ; @081BD
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @081C0
     add si,0xa4 ; @081C2
     dec dx ; @081C6

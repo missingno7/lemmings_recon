@@ -273,6 +273,11 @@ LoadAndStartSelectedLevel:
     mov di,0x0 ; @04553
     mov cx,0xfca ; @04556
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04559
+; S19 level-clear-and-copies: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Level clear,odd-header and28-byte object copies use live DF/segments. Loader and service
+; declarations do not certify complete actual entry/ownership domains.
+; Dependencies: Saved segments and actual DF; complete reads; unchecked selectors/counts; IRQ and
+; alias writers.
     rep stosb ; @0455B
     call LoadSelectedLevelResources ; @0455D
 LevelStartAfterResources:
@@ -343,6 +348,10 @@ loc_45C2:
     push ds ; @045CE
     pop es ; @045CF
     mov cx,0x10 ; @045D0
+; S19 DF-site census rep movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @045D3
     mov al,[MenuLevelGroupIndex-GameDataImage] ; @045D5
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @045D8
@@ -882,6 +891,10 @@ CodeEntryAfterCall49A9:
     mov cx,0x6 ; @049B9
     mul cl ; @049BC
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @049BE
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @049C0
     lea si,[CodeAcceptedText-GameDataImage] ; @049C2
     call DrawTextStream ; @049C6

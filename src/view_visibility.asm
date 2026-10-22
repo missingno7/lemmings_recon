@@ -10,6 +10,17 @@ RebuildViewVisibilityMap:
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04111
     mov di,ViewVisibilityMapBase-GameDataImage ; @04113
     mov cx,0x68 ; @04116
+; S19 visibility-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; Stable DS=ES:4119 zeroes0EA8..0F77 at DF0 or0DDA..0EA9 at DF1. DF1 destroys callback words
+; slots4C..4F;4131 writes01 at[0E7E+t,0EA6+t],t=unsigned(origin)>>3.
+; Dependencies: Exact conditional-input footprint; stable count/cursors/segments and no other
+; writers.
+; S19 visibility-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; IRQ1874->3FDE visibility observes1840 input and185F/1872 sound flags before outer
+; POPF18A7/IRET18B1. Foreground DF0 alone does not settle this writer.
+; Profile entries: 33:AX=0003.
+; Dependencies: Input INT33 AX0003 if selected; original sound image/vector/dispatch lifetime;
+; live42A5 callback; nesting and saved-frame writers.
 ; S17 flow-state: Entry410F retains incoming DF and SS through both4119 and4131 and sets
 ; ES from incoming DS. 4119 has AX0,CX0068,DI0EA8: DF0 clears0EA8..0F77; DF1
 ; clears0DDA..0EA9. The following29-byte fill4131 also retains DF. Timer-local service
@@ -28,6 +39,17 @@ RebuildViewVisibilityMap:
     add di,ViewVisibilityMapBase-GameDataImage ; @04127
     mov cx,0x29 ; @0412B
     mov ax,0x101 ; @0412E
+; S19 visibility-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; Stable DS=ES:4119 zeroes0EA8..0F77 at DF0 or0DDA..0EA9 at DF1. DF1 destroys callback words
+; slots4C..4F;4131 writes01 at[0E7E+t,0EA6+t],t=unsigned(origin)>>3.
+; Dependencies: Exact conditional-input footprint; stable count/cursors/segments and no other
+; writers.
+; S19 visibility-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; IRQ1874->3FDE visibility observes1840 input and185F/1872 sound flags before outer
+; POPF18A7/IRET18B1. Foreground DF0 alone does not settle this writer.
+; Profile entries: 33:AX=0003.
+; Dependencies: Input INT33 AX0003 if selected; original sound image/vector/dispatch lifetime;
+; live42A5 callback; nesting and saved-frame writers.
     rep stosb ; @04131
     cli ; @04133
     mov ax,es ; @04134

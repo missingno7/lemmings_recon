@@ -26,11 +26,31 @@ times -(($-$$) != 0x796f) db 0 ; module start assertion
 ; ownership remains an obligation; constructed fixture services cannot close it.
 UpdateMinimapColumn:
     push ds ; @0796F
+; S19 minimap-footprints: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; 796F sets ES=CS,DI83C1,AX0,CX0A. DF0 clears83C1..83D4;DF1 clears83AF..83C2 over checksum
+; instructions/limit83B7.
+; Dependencies: Stable input/saves and no interleaved writers; exact local footprint, not a
+; global DF exclusion.
+; S19 minimap-vs-checksum: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Actual minimap entry DF1 and later execution of modified8363 checksum remain unresolved; no
+; static checksum caller is proved.
+; Dependencies: Actual foreground DF/segments; checksum invocation/lifetime; code/stack aliases
+; and IRQs.
     lea di,[MinimapColumnBits] ; @07970
     mov cx,0xa ; @07974
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @07977
     push cs ; @07979
     pop es ; @0797A
+; S19 minimap-footprints: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; 796F sets ES=CS,DI83C1,AX0,CX0A. DF0 clears83C1..83D4;DF1 clears83AF..83C2 over checksum
+; instructions/limit83B7.
+; Dependencies: Stable input/saves and no interleaved writers; exact local footprint, not a
+; global DF exclusion.
+; S19 minimap-vs-checksum: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Actual minimap entry DF1 and later execution of modified8363 checksum remain unresolved; no
+; static checksum caller is proved.
+; Dependencies: Actual foreground DF/segments; checksum invocation/lifetime; code/stack aliases
+; and IRQs.
 ; S17 flow-state: From796F, fixed known edges/no IRQ/intact saves prove ES=incoming CS,
 ; AX0,CX000A,DI83C1 and DF=incoming DF at this REP STOSW. Therefore DF0 writes83C1..83D4;
 ; DF1 writes83AF..83C2 (word high bytes are forward physical bytes). No DF0 dominance at

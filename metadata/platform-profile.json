@@ -1,0 +1,3338 @@
+{
+  "schema": "platform-profile-v1",
+  "name": "dos-vga-adlib",
+  "scope": "DOS 3.3 compatible services, VGA-compatible video BIOS and INT33 mouse convention; primary AdLib, all alternatives retained",
+  "loader": "NOT an assumption: original PKLITE establishes DF=0 IF=1 at ProgramEntry (06979d5; tools/check_unpack.py)",
+  "limitations": [
+    "No IRQ serialization, no protected-view composition, no physical nonalias/stack survival, no callback-writer closure, no driver allocation/vector lifetime, no hardware timing or audible equivalence is granted.",
+    "The profile is a declared service-preservation requirement, not evidence that an unidentified firmware/TSR satisfies it."
+  ],
+  "services": {
+    "21:AH=0002": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "title": "display character",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified AX; DL character output"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function display character: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0007": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 7,
+      "title": "direct console input without echo",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "AL character; AH unspecified"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function direct console input without echo: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0009": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 9,
+      "title": "display dollar-terminated string",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified AX"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function display dollar-terminated string: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=001B": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 27,
+      "title": "default-drive allocation information",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "AL sectors/cluster; AH unspecified",
+        "bx": "DS:BX media byte pointer",
+        "cx": "bytes/sector",
+        "dx": "clusters",
+        "ds": "media byte segment"
+      },
+      "documented_preserve": [
+        "si",
+        "di",
+        "bp",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "si",
+          "di",
+          "bp",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function default-drive allocation information: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0023": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 35,
+      "title": "FCB file size",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "AL status; AH unspecified; FCB random-record field updated"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function FCB file size: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0025": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "title": "set interrupt vector",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified AX; IVT[AL] becomes DS:DX"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set interrupt vector: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0035": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 53,
+      "title": "get interrupt vector",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified AX",
+        "bx": "vector offset",
+        "es": "vector segment"
+      },
+      "documented_preserve": [
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function get interrupt vector: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=003C": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 60,
+      "title": "create/truncate file",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "handle or DOS error; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function create/truncate file: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=003D": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 61,
+      "title": "open file",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "handle or DOS error; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function open file: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=003E": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "title": "close file",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified on success, DOS error on failure; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function close file: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=003F": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 63,
+      "title": "read handle",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "bytes read or DOS error; requested DS:DX buffer may change; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function read handle: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0040": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 64,
+      "title": "write handle",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "bytes written or DOS error; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function write handle: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0043": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 67,
+      "title": "get file attributes (AL=00)",
+      "qualifiers": {
+        "al": 0
+      },
+      "outputs": {
+        "ax": "unspecified on success or DOS error",
+        "cx": "attributes on success; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function get file attributes (AL=00): MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0048": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 72,
+      "title": "allocate paragraphs",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "allocation segment or DOS error",
+        "bx": "largest block on failure; CF status"
+      },
+      "documented_preserve": [
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function allocate paragraphs: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=0049": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 73,
+      "title": "free block",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified or DOS error; CF status"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function free block: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=004A": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 74,
+      "title": "resize block",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified or DOS error",
+        "bx": "maximum size on failure; CF status"
+      },
+      "documented_preserve": [
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function resize block: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "21:AH=004C": {
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 76,
+      "title": "terminate process",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "no return"
+      },
+      "documented_preserve": [
+        "bx",
+        "cx",
+        "dx",
+        "si",
+        "di",
+        "bp",
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function terminate process: MS-DOS 3.3 section 1.10.4 documents non-result registers except AX; this profile additionally requires DF/IF and live caller saves intact. AX is unspecified unless a result is documented.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      },
+      "nonreturning": true
+    },
+    "10:AH=0000": {
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 0,
+      "title": "set video mode",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "unspecified video BIOS return"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set video mode: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "10:AH=0002": {
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 2,
+      "title": "set cursor position",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set cursor position: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "10:AH=0005": {
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 5,
+      "title": "select active display page",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function select active display page: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "10:AH=000F": {
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 15,
+      "title": "get current video mode",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "AH columns, AL mode",
+        "bx": "BH active page; BL unspecified"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function get current video mode: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "10:AH=0012": {
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 18,
+      "title": "EGA information BL=10",
+      "qualifiers": {
+        "bl": 16
+      },
+      "outputs": {
+        "bx": "BH memory, BL color/mono",
+        "cx": "CH switches, CL feature bits"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function EGA information BL=10: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "10:AX=1A00": {
+      "interrupt": 16,
+      "selector": "ax",
+      "value": 6656,
+      "title": "display combination code",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "AL=1A supported or unrecognized input",
+        "bx": "BL active, BH alternate display code"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function display combination code: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "1A:AH=0000": {
+      "interrupt": 26,
+      "selector": "ah",
+      "value": 0,
+      "title": "read BIOS clock",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "AL midnight count; AH unspecified",
+        "cx": "tick high",
+        "dx": "tick low"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "bx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function read BIOS clock: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "1A:AH=0001": {
+      "interrupt": 26,
+      "selector": "ah",
+      "value": 1,
+      "title": "set BIOS clock",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set BIOS clock: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=0000": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 0,
+      "title": "mouse reset",
+      "qualifiers": {},
+      "outputs": {
+        "ax": "FFFF installed or 0 absent",
+        "bx": "button count"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function mouse reset: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=0002": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 2,
+      "title": "hide cursor",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function hide cursor: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=0003": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 3,
+      "title": "read position/buttons",
+      "qualifiers": {},
+      "outputs": {
+        "bx": "buttons",
+        "cx": "X",
+        "dx": "Y"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function read position/buttons: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=0004": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 4,
+      "title": "set pointer position",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set pointer position: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=0007": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 7,
+      "title": "set horizontal limits",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set horizontal limits: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=0008": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 8,
+      "title": "set vertical limits",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set vertical limits: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=000C": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 12,
+      "title": "set user callback mask/address",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set user callback mask/address: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "33:AX=000F": {
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 15,
+      "title": "set mickey/pixel ratios",
+      "qualifiers": {},
+      "outputs": {},
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://bitsavers.computerhistory.org/pdf/microsoft/mouse/Microsoft_Mouse_Programmers_Reference_1989.pdf",
+      "profile": {
+        "preserve": [
+          "ax",
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_caller_stack": true,
+        "reason": "Function set mickey/pixel ratios: selected VGA-compatible BIOS/mouse normal-return convention, preserving DF/IF, non-result registers and caller saves. IBM BIOS save/restore convention is precedent, not certification of every VGA BIOS or mouse implementation.",
+        "status": "declared configuration requirement; not a universal DOS/BIOS guarantee",
+        "preserve_df": true,
+        "preserve_if": true
+      }
+    },
+    "13:AH=0000": {
+      "interrupt": 19,
+      "selector": "ah",
+      "value": 0,
+      "qualifiers": {},
+      "title": "reset disk system",
+      "outputs": {
+        "ax": "AH status; AL transfer count not relied upon; CF status; ES:BX buffer output for read02 only"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_df": true,
+        "preserve_if": true,
+        "preserve_caller_stack": true,
+        "reason": "INT13 AH00 reset disk system: chosen IBM-compatible BIOS normal-return/save convention; not a universal BIOS guarantee or proof of protected-view composition.",
+        "status": "declared profile requirement"
+      }
+    },
+    "13:AH=0002": {
+      "interrupt": 19,
+      "selector": "ah",
+      "value": 2,
+      "qualifiers": {},
+      "title": "read CHS sectors",
+      "outputs": {
+        "ax": "AH status; AL transfer count not relied upon; CF status; ES:BX buffer output for read02 only"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_df": true,
+        "preserve_if": true,
+        "preserve_caller_stack": true,
+        "reason": "INT13 AH02 read CHS sectors: chosen IBM-compatible BIOS normal-return/save convention; not a universal BIOS guarantee or proof of protected-view composition.",
+        "status": "declared profile requirement"
+      }
+    },
+    "13:AH=0003": {
+      "interrupt": 19,
+      "selector": "ah",
+      "value": 3,
+      "qualifiers": {},
+      "title": "write CHS sectors (candidate producer only)",
+      "outputs": {
+        "ax": "AH status; AL transfer count not relied upon; CF status; ES:BX buffer output for read02 only"
+      },
+      "documented_preserve": [],
+      "documented_stack_return": false,
+      "reference": "https://www.bitsavers.org/pdf/ibm/pc/xt/6361459_PC_XT_Technical_Reference_Apr84.pdf",
+      "profile": {
+        "preserve": [
+          "bx",
+          "cx",
+          "dx",
+          "si",
+          "di",
+          "bp",
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_df": true,
+        "preserve_if": true,
+        "preserve_caller_stack": true,
+        "reason": "INT13 AH03 write CHS sectors (candidate producer only): chosen IBM-compatible BIOS normal-return/save convention; not a universal BIOS guarantee or proof of protected-view composition.",
+        "status": "declared profile requirement"
+      }
+    },
+    "25:vector": {
+      "interrupt": 37,
+      "selector": null,
+      "value": null,
+      "qualifiers": {},
+      "title": "absolute sector read",
+      "outputs": {
+        "ax": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "bx": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "cx": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "dx": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "si": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "di": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "bp": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25"
+      },
+      "documented_preserve": [
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "extra_flags_word": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_df": true,
+        "preserve_if": true,
+        "preserve_caller_stack": true,
+        "reason": "INT25 absolute sector read: DOS3.3 documents segment preservation and extra FLAGS word; this profile additionally requires DF/IF and older caller saves intact. General registers remain destroyed.",
+        "status": "declared profile requirement"
+      }
+    },
+    "26:vector": {
+      "interrupt": 38,
+      "selector": null,
+      "value": null,
+      "qualifiers": {},
+      "title": "absolute sector write",
+      "outputs": {
+        "ax": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "bx": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "cx": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "dx": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "si": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "di": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25",
+        "bp": "documented destroyed; AX status, CF error; DS:BX buffer may change on read25"
+      },
+      "documented_preserve": [
+        "ds",
+        "es",
+        "ss",
+        "cs"
+      ],
+      "documented_stack_return": true,
+      "extra_flags_word": true,
+      "reference": "https://www.pcjs.org/documents/books/mspl13/msdos/dosref33/",
+      "profile": {
+        "preserve": [
+          "ds",
+          "es",
+          "ss",
+          "cs"
+        ],
+        "preserve_df": true,
+        "preserve_if": true,
+        "preserve_caller_stack": true,
+        "reason": "INT26 absolute sector write: DOS3.3 documents segment preservation and extra FLAGS word; this profile additionally requires DF/IF and older caller saves intact. General registers remain destroyed.",
+        "status": "declared profile requirement"
+      }
+    }
+  },
+  "interrupt_sites": [
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0016",
+      "interrupt": 26,
+      "selector": "ah",
+      "value": 0,
+      "function": "1A:AH=0000",
+      "producer": [
+        "0014 xor ah, ah"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0025",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 74,
+      "function": "21:AH=004A",
+      "producer": [
+        "0020 mov ah, 0x4a"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0053",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 53,
+      "function": "21:AH=0035",
+      "producer": [
+        "0050 mov ax, 0x3509"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names requested vector09/08 or byte[1FC6]; ES:BX output"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0060",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 53,
+      "function": "21:AH=0035",
+      "producer": [
+        "005D mov ax, 0x3508"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names requested vector09/08 or byte[1FC6]; ES:BX output"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "006F",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 53,
+      "function": "21:AH=0035",
+      "producer": [
+        "006A mov ah, 0x35"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names requested vector09/08 or byte[1FC6]; ES:BX output"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0081",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "0079 mov ax, 0x2562"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "008D",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "0085 mov ax, 0x2524"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0098",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 27,
+      "function": "21:AH=001B",
+      "producer": [
+        "0096 mov ah, 0x1b"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "00A2",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 15,
+      "function": "10:AH=000F",
+      "producer": [
+        "00A0 mov ah, 0xf"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "00BE",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 0,
+      "function": "10:AH=0000",
+      "producer": [
+        "00BB mov ax, 0xd"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "00C6",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 9,
+      "function": "21:AH=0009",
+      "producer": [
+        "00C0 mov ah, 9"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0273",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 1,
+      "function": "original INT60 AH=01",
+      "producer": [
+        "0270 mov ax, 0x100"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0286",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT60 AH=00",
+      "producer": [
+        "0283 mov ax, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "029F",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 2,
+      "function": "original INT61 AH=02",
+      "producer": [
+        "029C mov ax, 0x200"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "02E1",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 1,
+      "function": "original INT60 AH=01",
+      "producer": [
+        "02DE mov ax, 0x100"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "02F4",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT60 AH=00",
+      "producer": [
+        "02F1 mov ax, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "030F",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 2,
+      "function": "original INT61 AH=02",
+      "producer": [
+        "030C mov ax, 0x200"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0391",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "038E mov ax, 0x403"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "03AA",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "03A7 mov ax, 0x402"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "03B9",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT61 AH=03",
+      "producer": [
+        "03B7 mov ah, 3"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "03BE",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT61 AH=00",
+      "producer": [
+        "03BB mov ax, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "047E",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 4,
+      "function": "33:AX=0004",
+      "producer": [
+        "0475 mov ax, 4"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "04E8",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 12,
+      "function": "33:AX=000C",
+      "producer": [
+        "04E3 mov ax, 0xc"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "04F2",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 9,
+      "function": "21:AH=0009",
+      "producer": [
+        "04F0 mov ah, 9"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "04F7",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 76,
+      "function": "21:AH=004C",
+      "producer": [
+        "04F4 mov ax, 0x4c00"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "055E",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 72,
+      "function": "21:AH=0048",
+      "producer": [
+        "0558 mov ah, 0x48"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0569",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 73,
+      "function": "21:AH=0049",
+      "producer": [
+        "0567 mov ah, 0x49"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0570",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 72,
+      "function": "21:AH=0048",
+      "producer": [
+        "056B mov ah, 0x48"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "057B",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "0576 mov ax, 0x2561"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "059D",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 1,
+      "function": "original INT61 AH=01",
+      "producer": [
+        "059B mov ah, 1"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "05E1",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT61 AH=03",
+      "producer": [
+        "05DF mov ah, 3"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "05E5",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT61 AH=00",
+      "producer": [
+        "05E3 mov ah, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "05EB",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT61 AH=03",
+      "producer": [
+        "05E9 mov ah, 3"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "05EF",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 2,
+      "function": "original INT61 AH=02",
+      "producer": [
+        "05ED mov ah, 2"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "05F3",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT61 AH=00",
+      "producer": [
+        "05F1 mov ah, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "05FA",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 73,
+      "function": "21:AH=0049",
+      "producer": [
+        "05F8 mov ah, 0x49"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "060E",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 15,
+      "function": "10:AH=000F",
+      "producer": [
+        "060C mov ah, 0xf"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0616",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 5,
+      "function": "10:AH=0005",
+      "producer": [
+        "0613 mov ax, 0x580"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0621",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": null,
+      "function": null,
+      "producer": [
+        "060E INT10 AH0F returns BH=current page, BL undocumented; 0610 PUSH BX; 0618 POP AX; 0619 MOV AH,05; 061B XCHG AL,AH -> AX=(saved BL<<8)|05. Actual AH is saved BL, not05."
+      ],
+      "status": "UNRESOLVED dynamic BIOS selector"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0626",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": null,
+      "function": null,
+      "producer": [
+        "060E INT10 AH0F returns BH=current page, BL undocumented; 0610 PUSH BX; 0618 POP AX; 0619 MOV AH,05; 061B XCHG AL,AH -> AX=(saved BL<<8)|05. Actual AH is saved BL, not05."
+      ],
+      "status": "UNRESOLVED dynamic BIOS selector"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "066C",
+      "interrupt": 3,
+      "selector": "ah",
+      "value": null,
+      "function": null,
+      "producer": [
+        "0659+075A install INT3=0DB3; 066C enters original protection handler; no AH/AX service selector"
+      ],
+      "status": "original protection/vector chain"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0E6D",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 61,
+      "function": "21:AH=003D",
+      "producer": [
+        "0E6A mov ax, 0x3d00"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL00 read access"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0E7C",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 63,
+      "function": "21:AH=003F",
+      "producer": [
+        "0E73 mov ah, 0x3f"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0E8F",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "0E8D mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0ECB",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 60,
+      "function": "21:AH=003C",
+      "producer": [
+        "0EC6 mov ah, 0x3c"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0ED8",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 64,
+      "function": "21:AH=0040",
+      "producer": [
+        "0ECF mov ah, 0x40"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0EDC",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "0EDA mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0EF7",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 12,
+      "function": "33:AX=000C",
+      "producer": [
+        "0EF2 mov ax, 0xc"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F01",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 9,
+      "function": "21:AH=0009",
+      "producer": [
+        "0EFF mov ah, 9"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F06",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 76,
+      "function": "21:AH=004C",
+      "producer": [
+        "0F03 mov ax, 0x4c00"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F11",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 0,
+      "function": "33:AX=0000",
+      "producer": [
+        "0F0F xor ax, ax"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F20",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 15,
+      "function": "33:AX=000F",
+      "producer": [
+        "0F17 mov ax, 0xf"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F2B",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 7,
+      "function": "33:AX=0007",
+      "producer": [
+        "0F22 mov ax, 7"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F36",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 8,
+      "function": "33:AX=0008",
+      "producer": [
+        "0F2D mov ax, 8"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F41",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 4,
+      "function": "33:AX=0004",
+      "producer": [
+        "0F38 mov ax, 4"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F46",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 2,
+      "function": "33:AX=0002",
+      "producer": [
+        "0F43 mov ax, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F53",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 12,
+      "function": "33:AX=000C",
+      "producer": [
+        "0F48 mov ax, 0xc"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F60",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "0F55 mov ah, 0x25"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0F7F",
+      "interrupt": 98,
+      "selector": "ah",
+      "value": 9,
+      "function": null,
+      "producer": [
+        "0F72 mov ax, 0x9a9"
+      ],
+      "status": "original protection/vector chain"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0FAE",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "0FA1 mov ah, 0x25"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0FB6",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 0,
+      "function": "10:AH=0000",
+      "producer": [
+        "0FB3 mov ax, 0x8d"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "0FFD",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 0,
+      "function": "10:AH=0000",
+      "producer": [
+        "0FFB xor ah, ah"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1004",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 5,
+      "function": "10:AH=0005",
+      "producer": [
+        "0FFF mov ah, 5"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "100C",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 72,
+      "function": "21:AH=0048",
+      "producer": [
+        "1007 mov ah, 0x48"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1053",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1051 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1059",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1057 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1069",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 9,
+      "function": "21:AH=0009",
+      "producer": [
+        "1067 mov ah, 9"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1071",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 0,
+      "function": "10:AH=0000",
+      "producer": [
+        "106E mov ax, 3"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "10BA",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 7,
+      "function": "21:AH=0007",
+      "producer": [
+        "10B8 mov ah, 7"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "10D9",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "10D7 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "10FB",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 15,
+      "function": "10:AH=000F",
+      "producer": [
+        "10F9 mov ah, 0xf"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1102",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 2,
+      "function": "10:AH=0002",
+      "producer": [
+        "10FD mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1116",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 7,
+      "function": "21:AH=0007",
+      "producer": [
+        "1114 mov ah, 7"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1120",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 7,
+      "function": "21:AH=0007",
+      "producer": [
+        "111E mov ah, 7"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "11A2",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 15,
+      "function": "10:AH=000F",
+      "producer": [
+        "11A0 mov ah, 0xf"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "11A9",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 2,
+      "function": "10:AH=0002",
+      "producer": [
+        "11A4 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1216",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 76,
+      "function": "21:AH=004C",
+      "producer": [
+        "1213 mov ax, 0x4c00"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1222",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1220 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1413",
+      "interrupt": 16,
+      "selector": "ax",
+      "value": 6656,
+      "function": "10:AX=1A00",
+      "producer": [
+        "1410 mov ax, 0x1a00"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1466",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 18,
+      "function": "10:AH=0012",
+      "producer": [
+        "1464 mov ah, 0x12"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "150D",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 15,
+      "function": "10:AH=000F",
+      "producer": [
+        "150B mov ah, 0xf"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1568",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 53,
+      "function": "21:AH=0035",
+      "producer": [
+        "1565 mov ax, 0x3509"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names requested vector09/08 or byte[1FC6]; ES:BX output"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "157C",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "1579 mov ax, 0x2509"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "158E",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "1583 mov ax, 0x2509"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "164E",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "1646 mov ax, 0x2508"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "165D",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 37,
+      "function": "21:AH=0025",
+      "producer": [
+        "1657 mov ax, 0x2560"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL names vector: literal2524/2560/2561/2562/2508/2509, or byte[1FC6]; DS:DX is installed far pointer"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "16D1",
+      "interrupt": 26,
+      "selector": "ah",
+      "value": 1,
+      "function": "1A:AH=0001",
+      "producer": [
+        "16CF mov ah, 1"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "185F",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT60 AH=00",
+      "producer": [
+        "185C mov ax, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1872",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 0,
+      "function": "original INT61 AH=00",
+      "producer": [
+        "186F mov ax, 0"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1922",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 61,
+      "function": "21:AH=003D",
+      "producer": [
+        "191F mov ax, 0x3d00"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL00 read access"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "192D",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 63,
+      "function": "21:AH=003F",
+      "producer": [
+        "1928 mov ah, 0x3f"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1933",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "1931 mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1955",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 9,
+      "function": "21:AH=0009",
+      "producer": [
+        "1953 mov ah, 9"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "195B",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1957 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "196A",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1968 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1972",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1970 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1978",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 2,
+      "function": "21:AH=0002",
+      "producer": [
+        "1976 mov ah, 2"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "19C6",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "19C4 mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1A57",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "1A55 mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1A78",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "1A76 mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1B3F",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "1B3D mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1CD0",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 61,
+      "function": "21:AH=003D",
+      "producer": [
+        "1CCD mov ax, 0x3d00"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL00 read access"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1CF3",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 67,
+      "function": "21:AH=0043",
+      "producer": [
+        "1CEE mov ax, 0x4300"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL00 get attributes"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1D5A",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 35,
+      "function": "21:AH=0023",
+      "producer": [
+        "1D4E mov ah, 0x23"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1DB6",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 63,
+      "function": "21:AH=003F",
+      "producer": [
+        "1DB4 mov ah, 0x3f"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1E17",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 63,
+      "function": "21:AH=003F",
+      "producer": [
+        "1E15 mov ah, 0x3f"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1EDC",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 72,
+      "function": "21:AH=0048",
+      "producer": [
+        "1ED7 mov ah, 0x48"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "1EEE",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 72,
+      "function": "21:AH=0048",
+      "producer": [
+        "1EEC mov ah, 0x48"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "229E",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "229B mov ax, 0x408"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2377",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT60 AH=03",
+      "producer": [
+        "2374 mov ax, 0x30c"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "24CE",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "24CB mov ax, 0x40a"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "26C0",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT60 AH=03",
+      "producer": [
+        "26BD mov ax, 0x313"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "26D3",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "26D0 mov ax, 0x412"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2A68",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2A65 mov ax, 0x40a"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2D0B",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2D08 mov ax, 0x40a"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2D68",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2D65 mov ax, 0x40c"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2E5C",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2E59 mov ax, 0x405"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2EB0",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2EAD mov ax, 0x40c"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2F8C",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT60 AH=03",
+      "producer": [
+        "2F89 mov ax, 0x302"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2F9F",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2F9C mov ax, 0x410"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "2FF5",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "2FF3 mov ah, 4"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "304C",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "3049 mov ax, 0x411"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "30A3",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "30A0 mov ax, 0x40d"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "31F6",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT60 AH=03",
+      "producer": [
+        "31F3 mov ax, 0x313"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "3209",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "3206 mov ax, 0x404"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "3298",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "3295 mov ax, 0x412"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "3F7A",
+      "interrupt": 97,
+      "selector": "ah",
+      "value": 4,
+      "function": "original INT61 AH=04",
+      "producer": [
+        "3F77 mov ax, 0x401"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "3F8D",
+      "interrupt": 96,
+      "selector": "ah",
+      "value": 3,
+      "function": "original INT60 AH=03",
+      "producer": [
+        "3F8A mov ax, 0x313"
+      ],
+      "status": "original driver; live vector/image and raw dispatch obligations retained",
+      "al_producer": "See original AX immediate; 03B9 reads byte[0054] at03B4;2FF5 reads object+1B at2FE9;05E1 AL01,05EB AL00,05E5/05EF/05F3 retain returned AL."
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "425F",
+      "interrupt": 51,
+      "selector": "ax",
+      "value": 3,
+      "function": "33:AX=0003",
+      "producer": [
+        "425C mov ax, 3"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "4B04",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 61,
+      "function": "21:AH=003D",
+      "producer": [
+        "4B01 mov ax, 0x3d00"
+      ],
+      "status": "function inventory",
+      "subfunction": "AL00 read access"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "4B0C",
+      "interrupt": 33,
+      "selector": "ah",
+      "value": 62,
+      "function": "21:AH=003E",
+      "producer": [
+        "4B0A mov ah, 0x3e"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "raw",
+      "address": "4BF2",
+      "interrupt": 16,
+      "selector": "ah",
+      "value": 0,
+      "function": "10:AH=0000",
+      "producer": [
+        "4BEF mov ax, 0x90"
+      ],
+      "status": "function inventory"
+    },
+    {
+      "component": "main",
+      "view": "tf_on",
+      "address": "096F",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_on",
+      "address": "0D9E",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_off",
+      "address": "0D9F",
+      "interrupt": 19,
+      "selector": "AH",
+      "function": null,
+      "producer": [
+        "08C3 XOR AH,AH -> reset00",
+        "0847 MOV byte[SS:BP+0E],02;085A MOV AH,[SS:BP+0E] -> read02; candidate084E selector03 lacks entry"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_off",
+      "address": "0DA1",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_on",
+      "address": "0DA3",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_off",
+      "address": "0DA4",
+      "interrupt": 37,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "0878 MOV byte[SS:BP+0E],25; 08B2 compares selector26"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_off",
+      "address": "0DA9",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_on",
+      "address": "0DAB",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_off",
+      "address": "0DAC",
+      "interrupt": 38,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "08B2 selector==26; candidate 087F writes26 lacks entry"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    },
+    {
+      "component": "main",
+      "view": "tf_off",
+      "address": "0DB1",
+      "interrupt": 3,
+      "selector": "interrupt vector",
+      "function": null,
+      "producer": [
+        "INT3 toggles protected TF view; original handler 0DB3"
+      ],
+      "status": "protected view inventoried separately; not projected through raw main CFG"
+    }
+  ],
+  "absent_vectors": {
+    "16": "No INT16 site in main raw/protected CFG or any of the three reconstructed driver CFGs. Console input uses DOS AH07 and own IRQ09."
+  },
+  "external_chains": [
+    {
+      "address": "1899",
+      "vector": "08",
+      "producer": "1644 install17C7; saved DOS3508 at0060; PUSHF1896/PUSHCS1897/PUSHAX1898 then far JMP",
+      "status": "intact-frame metadata edge only; undocumented provider effects unknown"
+    },
+    {
+      "address": "4C6C",
+      "vector": "08",
+      "producer": "menu timer chain saved08; explicit PUSHF/CS/continuation frame",
+      "status": "intact-frame metadata edge only; undocumented provider effects unknown"
+    },
+    {
+      "address": "16D4",
+      "vector": "09",
+      "producer": "DOS3509 at0053/1568, DOS2509 at157C; keyboard handler uses own IRET",
+      "status": "old09 restored by158E; no original far-chain edge recovered"
+    }
+  ],
+  "critical_error": {
+    "vector": "24",
+    "entry": "18F8",
+    "installer": "008D DOS AX2524, DS=CS, DX18F8",
+    "effect": "STI; save DS; DS=game; critical-error byte1FDF=FF; AL=0, AH=high(game relocated segment); restore DS; actual IRET restores saved DF/IF; frame aliases/nesting open"
+  }
+}

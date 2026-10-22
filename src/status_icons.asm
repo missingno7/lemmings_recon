@@ -35,8 +35,16 @@ DrawStatusIconOutline:
     cli ; @07858
     mov al,0xff ; @07859
     mov ah,[es:di] ; @0785B
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @0785E
     mov ah,[es:di] ; @0785F
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07862
     add di,byte +0x2a ; @07863
     mov cx,0x16 ; @07866
@@ -46,12 +54,20 @@ loc_7869:
     out dx,ax ; @07870
     mov ah,[es:di] ; @07871
     mov al,0x80 ; @07874
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07876
     mov ax,0x108 ; @07877
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0787A
     out dx,ax ; @0787E
     mov ah,[es:di] ; @0787F
     mov al,0x1 ; @07882
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07884
     add di,byte +0x2a ; @07885
     loop loc_7869 ; @07888
@@ -60,8 +76,16 @@ loc_7869:
     out dx,ax ; @07891
     mov al,0xff ; @07892
     mov ah,[es:di] ; @07894
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07897
     mov ah,[es:di] ; @07898
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @0789B
     sti ; @0789C
 StatusIconOutlineReturn:
@@ -104,8 +128,16 @@ loc_78B3:
     mov es,dx ; @078ED
     mov ds,dx ; @078EF
     mov cx,0x18 ; @078F1
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_78F4:
     movsb ; @078F4
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @078F5
     add di,byte +0x2a ; @078F6
     add si,byte +0x2a ; @078F9

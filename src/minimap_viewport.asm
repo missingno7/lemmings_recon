@@ -60,6 +60,10 @@ loc_7AC8:
     cli ; @07AD1
     mov al,[es:di] ; @07AD2
     db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @07AD5
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07AD7
     sti ; @07AD8
     mov al,0x8 ; @07AD9
@@ -69,6 +73,10 @@ loc_7AC8:
     cli ; @07AE2
     mov ah,[es:di] ; @07AE3
     db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @07AE6
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07AE8
     sti ; @07AE9
     mov al,0x8 ; @07AEA
@@ -78,6 +86,10 @@ loc_7AC8:
     cli ; @07AF3
     mov ah,[es:di] ; @07AF4
     db 0x8a,0xc7 ; ENCODED: mov al,bh (NASM chooses a different encoding) ; @07AF7
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07AF9
     sti ; @07AFA
     mov al,0x8 ; @07AFB
@@ -87,6 +99,10 @@ loc_7AC8:
     cli ; @07B04
     mov ah,[es:di] ; @07B05
     db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @07B08
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B0A
     sti ; @07B0B
     add di,0x340 ; @07B0C
@@ -97,6 +113,10 @@ loc_7AC8:
     cli ; @07B19
     mov al,[es:di] ; @07B1A
     db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @07B1D
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B1F
     sti ; @07B20
     mov al,0x8 ; @07B21
@@ -106,6 +126,10 @@ loc_7AC8:
     cli ; @07B2A
     mov ah,[es:di] ; @07B2B
     db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @07B2E
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B30
     sti ; @07B31
     mov al,0x8 ; @07B32
@@ -115,6 +139,10 @@ loc_7AC8:
     cli ; @07B3B
     mov ah,[es:di] ; @07B3C
     db 0x8a,0xc7 ; ENCODED: mov al,bh (NASM chooses a different encoding) ; @07B3F
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B41
     sti ; @07B42
     mov al,0x8 ; @07B43
@@ -124,6 +152,10 @@ loc_7AC8:
     cli ; @07B4C
     mov ah,[es:di] ; @07B4D
     db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @07B50
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B52
     sti ; @07B53
     sub di,byte +0x30 ; @07B54
@@ -147,6 +179,10 @@ loc_7B6D:
     cli ; @07B76
     mov al,[es:di] ; @07B77
     db 0x8a,0xc5 ; ENCODED: mov al,ch (NASM chooses a different encoding) ; @07B7A
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B7C
     sti ; @07B7D
     mov al,0x8 ; @07B7E
@@ -156,6 +192,10 @@ loc_7B6D:
     cli ; @07B87
     mov al,[es:di] ; @07B88
     db 0x8a,0xc1 ; ENCODED: mov al,cl (NASM chooses a different encoding) ; @07B8B
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B8D
     sti ; @07B8E
     mov al,0x8 ; @07B8F
@@ -165,6 +205,10 @@ loc_7B6D:
     cli ; @07B98
     mov al,[es:di] ; @07B99
     db 0x8a,0xc7 ; ENCODED: mov al,bh (NASM chooses a different encoding) ; @07B9C
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07B9E
     sti ; @07B9F
     mov al,0x8 ; @07BA0
@@ -174,6 +218,10 @@ loc_7B6D:
     cli ; @07BA9
     mov al,[es:di] ; @07BAA
     db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @07BAD
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @07BAF
     sti ; @07BB0
     sub di,byte +0x30 ; @07BB1

@@ -1,4 +1,4 @@
-"""Conservative 16-bit flow state over explore's decoded instructions and edges.
+"""Dual-mode 16-bit flow state over explore's decoded instructions and edges.
 
 No decoder, emulator, game execution, or source generation lives here. Procedure
 summaries are symbolic transformers, not an assumed PUSH/POP calling convention.
@@ -12,6 +12,9 @@ report retains both, rather than presenting a conditional result as a proof.
 The optional intact-stack mode excludes non-stack-addressed writes to live saves.
 Undeclared INT services havoc *all* tracked state, including SS/SP/FLAGS. Service
 declarations describe a conditional IRET/frame contract, not proven BIOS/DOS ABIs.
+CONSERVATIVE keeps undocumented service effects unknown. PROFILE uses only the
+function-specific declarations in metadata/platform-profile.json. Neither mode
+closes interleavings, stack aliases, callback writers or driver-vector ownership.
 """
 from __future__ import annotations
 
@@ -19,6 +22,7 @@ import argparse
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from itertools import product
+from functools import lru_cache
 import re
 
 from common import ROOT, BUILD, read_json, write_json, sha
@@ -65,8 +69,8 @@ def add(v, n):
     return TOP if ('unknown-arithmetic',) in out else out
 
 
-def flags(df, iff):
-    return val(('flags', df, iff))
+def flags(df, iff, tf=TOP):
+    return val(('flags', df, iff, tf))
 
 
 def flag_part(v, index):
@@ -74,7 +78,7 @@ def flag_part(v, index):
         return TOP
     result = frozenset()
     for a in v:
-        part = val((a >> (10 if index == 1 else 9)) & 1) if isinstance(a, int) else (
+        part = val((a >> {1: 10, 2: 9, 3: 8}[index]) & 1) if isinstance(a, int) else (
             a[index] if a[0] == 'flags' else
             val(('flag-bit', val(a), index)) if a[0] in ('stack', 'in') else TOP)
         result = union(result, part)
@@ -96,11 +100,12 @@ class State:
     slots: dict = field(default_factory=dict)
     polluted: bool = False
     shadow: object = ZERO
+    tf: object = TOP
 
     @classmethod
     def symbolic(cls):
         return cls({r: val(('in', r)) for r in REGS},
-                   val(('in', 'df')), val(('in', 'if')))
+                   val(('in', 'df')), val(('in', 'if')), tf=val(('in', 'tf')))
 
     @classmethod
     def havoc(cls):
@@ -108,7 +113,7 @@ class State:
 
     def copy(self):
         return State(dict(self.regs), self.df, self.iff, self.sp,
-                     dict(self.slots), self.polluted, self.shadow)
+                     dict(self.slots), self.polluted, self.shadow, self.tf)
 
     def read_slot(self, offset):
         if offset is None:
@@ -159,7 +164,7 @@ def merge(a, b):
         slots, polluted = {}, True
     return State({r: union(a.regs[r], b.regs[r]) for r in REGS},
                  union(a.df, b.df), union(a.iff, b.iff), sp, slots,
-                 polluted, union(a.shadow, b.shadow))
+                 polluted, union(a.shadow, b.shadow), union(a.tf, b.tf))
 
 
 def substitute(v, incoming, base):
@@ -170,13 +175,18 @@ def substitute(v, incoming, base):
         if isinstance(a, int):
             part = val(a)
         elif a[0] == 'in':
-            part = incoming.df if a[1] == 'df' else incoming.iff if a[1] == 'if' else incoming.regs[a[1]]
+            part = (incoming.df if a[1] == 'df' else incoming.iff if a[1] == 'if'
+                    else incoming.tf if a[1] == 'tf' else incoming.regs[a[1]])
         elif a[0] == 'stack':
             part = incoming.read_slot(None if base is None else base + a[1]).value
         elif a[0] == 'sp':
             part = TOP if base is None else val(('sp', (base + a[1]) & 0xffff))
         elif a[0] == 'flags':
-            part = flags(substitute(a[1], incoming, base), substitute(a[2], incoming, base))
+            part = flags(*(substitute(v, incoming, base) for v in a[1:]))
+        elif a[0] == 'bytes':
+            part = pack_bytes(substitute(a[1], incoming, base), substitute(a[2], incoming, base))
+        elif a[0] == 'byte':
+            part = byte_part(substitute(a[1], incoming, base), a[2])
         elif a[0] == 'flag-bit':
             part = flag_part(substitute(a[1], incoming, base), a[2])
         else:
@@ -191,6 +201,7 @@ def instantiate(template, incoming):
     out = incoming.copy()
     out.regs = {r: substitute(template.regs[r], incoming, base) for r in REGS}
     out.df, out.iff = (substitute(v, incoming, base) for v in (template.df, template.iff))
+    out.tf = substitute(template.tf, incoming, base)
     out.shadow = substitute(template.shadow, incoming, base)
     out.sp = None if base is None or template.sp is None else (base + template.sp) & 0xffff
     if template.polluted:
@@ -225,7 +236,7 @@ def getreg(s, name):
     if name in HALVES:
         reg, shift = HALVES[name]
         value = s.regs[reg]
-        return frozenset((a >> shift) & 0xff for a in value) if numbers(value) else TOP
+        return byte_part(value, shift)
     return s.regs.get(name, TOP)
 
 
@@ -238,18 +249,168 @@ def setreg(s, name, value):
     elif name in HALVES:
         reg, shift = HALVES[name]
         old = s.regs[reg]
-        mask = 0xff << shift
-        s.regs[reg] = (frozenset(((a & ~mask) | ((b & 0xff) << shift)) & 0xffff
-                                for a, b in product(old, value))
-                       if numbers(old) and numbers(value) else TOP)
-        if s.regs[reg] is not None and len(s.regs[reg]) > CAP:
-            s.regs[reg] = TOP
+        s.regs[reg] = pack_bytes(value if shift == 0 else byte_part(old, 0),
+                                value if shift == 8 else byte_part(old, 8))
     elif name in REGS:
         s.regs[name] = value
         if name == 'ss':
             # Changing the segment breaks every old physical slot identity.
             s.poison()
             s.shadow = ONE
+
+
+def byte_part(value, shift):
+    if value is None:
+        return TOP
+    result = frozenset()
+    for atom in value:
+        part = val((atom >> shift) & 0xff) if isinstance(atom, int) else (
+            atom[1 if shift == 0 else 2] if atom[0] == 'bytes' else
+            val(('byte', val(atom), shift)) if atom[0] in ('in', 'stack', 'read') else TOP)
+        result = union(result, part)
+    return result
+
+
+def pack_bytes(low, high):
+    if numbers(low) and numbers(high):
+        result = frozenset((a & 0xff) | ((b & 0xff) << 8) for a, b in product(low, high))
+        return result if len(result) <= CAP else TOP
+    return TOP if low is None and high is None else val(('bytes', low, high))
+
+
+@lru_cache(maxsize=1)
+def platform_profile():
+    profile = read_json(ROOT/'metadata/platform-profile.json')
+    if profile['name'] != 'dos-vga-adlib' or profile['schema'] != 'platform-profile-v1':
+        raise ValueError('Unknown platform profile')
+    for key, service in profile['services'].items():
+        assumption = service['profile']
+        if not assumption.get('reason') or not service.get('reference'):
+            raise ValueError(f'Missing function evidence: {key}')
+    return profile
+
+
+def interrupt_entry(state, address, continuation, handler_cs):
+    """CPU INT/IRQ entry: save pre-entry FLAGS, clear IF/TF, retain DF.
+
+    Tracking TF does not compose the separate protected execution CFG.
+    """
+    out = state.copy()
+    out.push(flags(out.df, out.iff, out.tf), address)
+    out.push(out.regs['cs'], address)
+    out.push(val(continuation), address)
+    out.regs['cs'], out.iff, out.tf, out.shadow = handler_cs, ZERO, ZERO, ZERO
+    return out
+
+
+def loader_state():
+    # Original PKLITE CLD/STI, independently asserted by check_unpack.py at all
+    # four DOS DF/IF combinations (06979d5). Never a profile assumption.
+    out = State(df=ZERO, iff=ONE, polluted=True)
+    out.regs.update(cs=val(('reloc', 0)), ds=val(('PSP',)),
+                    es=val(('PSP',)), ss=val(('reloc', 0x143e)))
+    return out
+
+
+class ServiceModel:
+    """Function-selected external ABIs; unknown selectors remain unknown.
+
+    The site inventory is evidence only: it cannot override a live selector
+    corrupted by an IRQ, saved-stack alias, or an unclosed incoming path.
+    """
+    def __init__(self, mode='CONSERVATIVE'):
+        if mode not in ('CONSERVATIVE', 'PROFILE'):
+            raise ValueError(mode)
+        self.mode, self.profile = mode, platform_profile()
+
+    def resolve(self, row, state):
+        vector = 3 if row['mnemonic'] == 'int3' else integer(operands(row)[0])
+        if vector in (0x60, 0x61):
+            return None  # Original drivers require a live-image/dispatch proof.
+        declarations = []
+        for key, service in self.profile['services'].items():
+            if service['interrupt'] != vector:
+                continue
+            if service['selector'] is not None:
+                selector = getreg(state, service['selector'])
+                if not numbers(selector) or not selector or any(x != service['value'] for x in selector):
+                    continue
+            if any(getreg(state, reg) != val(value) for reg, value in service.get('qualifiers', {}).items()):
+                continue
+            preserve = service.get('documented_preserve', [])
+            declaration = dict(evidence=service['reference'], intact_iret_frame=True,
+                preserve=preserve, return_flags={'DF': 'unknown', 'IF': 'unknown'},
+                restore_stack=service.get('documented_stack_return', False),
+                outputs=service['outputs'], function=key, profile_entries=[])
+            declaration['nonreturning'] = service.get('nonreturning', False)
+            declaration['extra_flags_word'] = service.get('extra_flags_word', False)
+            if self.mode == 'PROFILE':
+                assumption = service['profile']
+                declaration.update(preserve=assumption['preserve'],
+                    preserve_caller_stack=assumption['preserve_caller_stack'],
+                    restore_stack=True, return_flags={
+                        flag: 'unknown' for flag, key in (('DF', 'preserve_df'), ('IF', 'preserve_if'))
+                        if not assumption[key]})
+                declaration['profile_entries'] = [key]
+            declarations.append(declaration)
+        if len(declarations) != 1:
+            return None
+        return declarations[0]
+
+
+# Body entries selected by the actual AH decrement chains (AdLib0000..0021,
+# Tandy0000..0018), and speaker's stored001E table for natural AH00/01/03.
+# These are original instructions, never entries in the platform assumptions.
+DRIVER_BODIES = {
+    'adlib': {0: 0x115, 1: 0xa3, 2: 0x3a, 3: 0x22, 4: 0x2a, 5: 0x32},
+    'tandysnd': {0: 0x72, 1: 0x43, 2: 0x31, 3: 0x19, 4: 0x21, 5: 0x29},
+    'pcspeaker': {0: 0x1d4, 1: 0x24f, 3: 0x1b0},
+}
+
+
+@lru_cache(maxsize=3)
+def driver_analyzer(component):
+    analysis, _, _ = load_component(component)
+    return Analyzer(analysis, DRIVER_BODIES[component].values(),
+                    intact_stack=True, irq_mode='disabled').run()
+
+
+def driver_transform(component, function, state, address=0, size=2):
+    """Original-code, returning-path transformer in an explicit bounded domain.
+
+    Preconditions: live immutable component, correct vector/entry/selector,
+    known dispatch edges, no IRQ interleaving, disjoint caller saves/IRET frame.
+    These are separate proof obligations, NOT supplied by the platform profile.
+    No total-return claim is made for stream cycles or unclosed raw dispatch.
+    """
+    body = DRIVER_BODIES.get(component, {}).get(function)
+    if body is None:
+        return State.havoc()
+    frame = interrupt_entry(state, address, (address + size) & 0xffff,
+                            val(('component-CS', component)))
+    # Both61 dispatch chains consume AH down to0 before recognized bodies.
+    setreg(frame, 'ah', ZERO if component != 'pcspeaker' else val((function - 0x10) & 0xff))
+    if component == 'pcspeaker':
+        # 0182 STI precedes the six wrapper saves and table CALL; this helper
+        # retains the returning-path, no-preemption domain only.
+        frame.iff, frame.shadow = ONE, ZERO
+        for reg in ('bx', 'cx', 'dx', 'si', 'di', 'ds'):
+            frame.push(frame.regs[reg], address)
+        frame.regs['ds'] = frame.regs['cs']
+        frame.push(val(0x19a), 0x196)
+    result = None
+    for exit_ in driver_analyzer(component).exits[body].values():
+        out = instantiate(exit_.state, frame)
+        if component == 'pcspeaker':
+            for reg in ('ds', 'di', 'si', 'dx', 'cx', 'bx'):
+                out.regs[reg] = out.pop().value
+            out.pop()  # actual interrupted IP, after helper RET consumed019A
+            out.regs['cs'] = out.pop().value
+            saved = out.pop().value
+            out.df, out.iff = flag_part(saved, 1), flag_part(saved, 2)
+            out.tf = flag_part(saved, 3)
+        result = merge(result, out)
+    return result if result is not None else State.havoc()
 
 
 def memory_offset(s, operand):
@@ -337,10 +498,11 @@ def transfer(row, state, *, intact_stack=False, relocations=(), services=None):
         s.iff = ZERO if m == 'cli' else ONE
         if m == 'sti': s.shadow = ONE
     elif m == 'pushf':
-        s.push(flags(s.df, s.iff), p)
+        s.push(flags(s.df, s.iff, s.tf), p)
     elif m == 'popf':
         f = s.pop().value
         s.df, s.iff = flag_part(f, 1), flag_part(f, 2)
+        s.tf = flag_part(f, 3)
     elif m == 'push':
         s.push(read_operand(s, ops[0], p), p)
     elif m == 'pop':
@@ -402,15 +564,14 @@ def transfer(row, state, *, intact_stack=False, relocations=(), services=None):
     elif m in ('in', 'xlatb'):
         setreg(s, ops[0] if m == 'in' else 'al', TOP)
     elif m in ('int', 'int3'):
-        declaration = (services or {}).get(p)
+        declaration = (services.resolve(row, state) if isinstance(services, ServiceModel)
+                       else (services or {}).get(p))
         if declaration is None:
             return State.havoc()
         if not declaration.get('evidence') or not declaration.get('intact_iret_frame'):
             raise ValueError('Service needs evidence and an explicit intact_iret_frame contract')
         # CPU frame exists even when the body is a platform transformer.
-        s.push(flags(s.df, s.iff), p)
-        s.push(s.regs['cs'], p)
-        s.push(val((p + row['size']) & 0xffff), p)
+        s = interrupt_entry(s, p, (p + row['size']) & 0xffff, TOP)
         frame_sp = s.sp
         frame_slots = {((frame_sp + n) & 0xffff): s.read_slot(frame_sp + n)
                        for n in (0, 2, 4)} if frame_sp is not None else {}
@@ -425,6 +586,8 @@ def transfer(row, state, *, intact_stack=False, relocations=(), services=None):
             if reg not in REGS or reg in ('ss', 'cs'):
                 raise ValueError('IRET transformer set supports general registers/DS/ES only')
             setreg(s, reg, val(tuple(atom) if isinstance(atom, list) else atom))
+        for reg in declaration.get('outputs', {}):
+            setreg(s, reg, TOP)
         # Frame-preserving service also restores its original SS:SP. A service
         # needing another stack/return contract must stay undeclared here.
         s.regs['ss'] = state.regs['ss']
@@ -432,6 +595,10 @@ def transfer(row, state, *, intact_stack=False, relocations=(), services=None):
         s.regs['cs'] = s.pop().value
         f = s.pop().value
         s.df, s.iff = flag_part(f, 1), flag_part(f, 2)
+        s.tf = TOP if isinstance(services, ServiceModel) else flag_part(f, 3)
+        if not declaration.get('restore_stack', True):
+            s.regs['ss'], s.sp = TOP, None
+            s.poison()
         for flag, value in declaration.get('return_flags', {}).items():
             if flag not in ('DF', 'IF') or value not in (0, 1, 'unknown'):
                 raise ValueError('return_flags supports DF/IF with 0, 1, or unknown')
@@ -439,7 +606,11 @@ def transfer(row, state, *, intact_stack=False, relocations=(), services=None):
             else: s.iff = TOP if value == 'unknown' else val(value)
         if declaration.get('return_flags') and s.sp is not None:
             pos = (s.sp - 2) & 0xffff
-            s.write_slot(pos, flags(s.df, s.iff), s.read_slot(pos).pushes)
+            s.write_slot(pos, flags(s.df, s.iff, s.tf), s.read_slot(pos).pushes)
+        if declaration.get('extra_flags_word'):
+            # INT25/26 RETF leaves the CPU's original saved FLAGS on caller
+            # stack; protected ADD SP,2 consumes it and changes arithmetic CF.
+            s.push(flags(state.df, state.iff, state.tf), p)
     elif m in ('nop', 'cmp', 'test', 'out', 'stc', 'clc', 'cmc', 'jmp', 'ljmp',
                'call', 'lcall', 'ret', 'retf', 'iret', 'hlt') or m.startswith('j'):
         pass
@@ -473,6 +644,7 @@ class Analyzer:
         self.dependencies, self.calls = defaultdict(set), {}
         self.queue, self.queued = deque(), set()
         self.events = set()
+        self.service_uses = defaultdict(set)
         self.steps = 0
 
     def offer(self, entry, address, state):
@@ -511,8 +683,15 @@ class Analyzer:
         row = self.instructions[p]
         incoming = self.before(self.states[entry, p])
         m, nxt = row['mnemonic'], (p + row['size']) & 0xffff
-        if m in ('int', 'int3') and p not in self.services:
-            self.events.add((p, 'undeclared_interrupt_service'))
+        if m in ('int', 'int3'):
+            declaration = (self.services.resolve(row, incoming) if isinstance(self.services, ServiceModel)
+                           else self.services.get(p))
+            if declaration is None:
+                self.events.add((p, 'undeclared_interrupt_service'))
+            else:
+                self.service_uses[p].add(declaration.get('function', 'site declaration'))
+                if declaration.get('nonreturning'):
+                    return
         out = transfer(row, incoming, intact_stack=self.intact_stack,
                        relocations=self.relocations, services=self.services)
         edges = self.edges[p]
@@ -522,6 +701,7 @@ class Analyzer:
             if m == 'iret':
                 f = out.pop().value
                 out.df, out.iff = flag_part(f, 1), flag_part(f, 2)
+                out.tf = flag_part(f, 3)
             out.regs['cs'] = cs
             op = operands(row)
             if op: out.sp = None if out.sp is None else (out.sp + int(op[0], 0)) & 0xffff
@@ -601,6 +781,7 @@ class Analyzer:
             out.regs['ss'] = incoming.regs['ss']
             ip, cs, f = out.pop().value, out.pop().value, out.pop().value
             out.regs['cs'], out.df, out.iff = cs, flag_part(f, 1), flag_part(f, 2)
+            out.tf = flag_part(f, 3)
             targets = set(ip) if numbers(ip) else {e['target'] for e in external}
             if not numbers(ip): self.events.add((p, 'unresolved_external_iret_word'))
             for target in sorted(targets): self.offer(entry, target, out)
@@ -677,8 +858,10 @@ def display_atom(a):
     if a[0] == 'in': return 'saved-from-entry:' + a[1]
     if a[0] == 'sp': return f'entry-SP{signed(a[1]):+d}'
     if a[0] == 'stack': return f'saved-from-entry-stack{signed(a[1]):+d}'
-    if a[0] == 'flags': return {'DF': display(a[1], True), 'IF': display(a[2], True)}
-    if a[0] == 'flag-bit': return {'saved-FLAGS-bit': 10 if a[2] == 1 else 9, 'from': display(a[1])}
+    if a[0] == 'flags': return {'DF': display(a[1], True), 'IF': display(a[2], True), 'TF': display(a[3], True)}
+    if a[0] == 'bytes': return {'low': display(a[1]), 'high': display(a[2])}
+    if a[0] == 'byte': return {'byte': 'low' if a[2] == 0 else 'high', 'from': display(a[1])}
+    if a[0] == 'flag-bit': return {'saved-FLAGS-bit': {1: 10, 2: 9, 3: 8}[a[2]], 'from': display(a[1])}
     if a[0] == 'read': return f'memory-read@{a[1]:04X}:{a[2]}'
     return ':'.join(str(p) for p in a)
 
@@ -704,7 +887,7 @@ def signed(n):
 
 
 def state_json(s):
-    return dict(DF=display(s.df, True), IF=display(s.iff, True),
+    return dict(DF=display(s.df, True), IF=display(s.iff, True), TF=display(s.tf, True),
                 segments={r.upper(): display(s.regs[r]) for r in ('cs', 'ds', 'es', 'ss')},
                 registers={r.upper(): display(s.regs[r]) for r in ('ax', 'bx', 'cx', 'dx', 'si', 'di', 'bp')},
                 SP_relative_to_entry=signed(s.sp) if s.sp is not None else 'unknown',
@@ -730,7 +913,11 @@ def load_component(name):
     return analyze_driver(name, image), image, []
 
 
-def report(analysis, image, relocations=(), *, component='main', services=None, entries=()):
+def report_mode(analysis, image, relocations=(), *, component='main', services=None, entries=(),
+                mode='CONSERVATIVE'):
+    if services is not None:
+        raise ValueError('Report modes use metadata/platform-profile.json only; site declarations are transfer-unit probes')
+    services = ServiceModel(mode) if services is None else services
     roots = set(entries)
     for frontier in analysis.get('unresolved', []):
         roots.update(frontier.get('known_targets', []))
@@ -765,15 +952,12 @@ def report(analysis, image, relocations=(), *, component='main', services=None, 
         state.sp = 0
         state.shadow = ZERO
     if component == 'main':
-        dos = State(polluted=True)
-        dos.regs.update(cs=val(('reloc', 0)), ds=val(('PSP',)),
-                        es=val(('PSP',)), ss=val(('reloc', 0x143e)))
-        root_states[0] = dos
+        root_states[0] = loader_state()
         for installation in installations:
             if installation['target_image'] != 'main': continue
             entry = installation['offset']
             if installation.get('kind') != 'far_mouse_callback':
-                handler = State(polluted=True, iff=ZERO)
+                handler = State(polluted=True, iff=ZERO, tf=ZERO)
                 handler.regs['cs'] = val(('reloc', 0))
                 handler.slots = {0: Slot(), 2: Slot(), 4: Slot(flags(TOP, ONE))}
                 # Critical-error INT24 is a synchronous DOS callback, not a
@@ -783,11 +967,12 @@ def report(analysis, image, relocations=(), *, component='main', services=None, 
                 root_states[entry] = handler
         # Installed dynamic INT3 and transformed INT1 are not regular maskable
         # IRQs. INT1 plaintext is outside analyze() and stays an explicit seam.
-        root_states[0xdb3] = State(iff=ZERO, polluted=True)
-        root_states[0xdff] = State(iff=ZERO, polluted=True)
+        root_states[0xdb3] = State(iff=ZERO, tf=ZERO, polluted=True)
+        root_states[0xdff] = State(iff=ZERO, tf=ZERO, polluted=True)
     else:
         entry = 0x182 if component == 'pcspeaker' else 0
         root_states[entry].iff = ZERO
+        root_states[entry].tf = ZERO
         root_states[entry].regs['cs'] = val(('component-CS', component))
     aggregate, _ = strict.project(root_states)
     model, entry_inputs = serial.project(root_states)
@@ -814,24 +999,31 @@ def report(analysis, image, relocations=(), *, component='main', services=None, 
     interesting = investigations
     for entry in sorted(interesting):
         local[f'{entry:04X}'] = {f'{p:04X}': intern(state_json(s)) for (e, p), s in sorted(serial.states.items()) if e == entry}
-    return dict(schema='flowstate-v1', component=component, image_sha256=sha(image),
+    return dict(schema='flowstate-v2', mode=mode,
+        profile='dos-vga-adlib' if mode == 'PROFILE' else None,
+        component=component, image_sha256=sha(image),
         inputs={str(path.relative_to(ROOT)).replace('\\', '/'): sha(path.read_bytes())
                 for path in [ROOT/'tools/flowstate.py', ROOT/'tools/explore.py',
                              ROOT/'metadata/hints.json', ROOT/'metadata/legacy-seeds.json',
                              ROOT/'metadata/interrupt-evidence.json', ROOT/'metadata/sound-hints.json',
-                             ROOT/'metadata/control-frontier.json', ROOT/'metadata/protection-cfg.json']},
+                             ROOT/'metadata/control-frontier.json', ROOT/'metadata/protection-cfg.json',
+                             ROOT/'metadata/platform-profile.json', ROOT/'tools/check_unpack.py']},
         decoded_CFG_sha256=sha(json.dumps(analysis, sort_keys=True, separators=(',', ':')).encode()),
         semantics=dict(arithmetic='16-bit offsets modulo 65536; no flat segment equality assumed',
-            DOS_entry='CS=load,DS=ES=PSP,SS=load+143E,SP=4AF4; DF/IF unspecified by footer',
+            DOS_entry='CS=load,DS=ES=PSP,SS=load+143E,SP=4AF4; DF=0 IF=1 unconditionally from original PKLITE (06979d5/check_unpack.py)',
             whole_machine='TOP when unclosed control/providers/code or frame aliases admit arbitrary reentry',
             decoded_concurrent='decoded CFG only; may-IRQ havocs state, including nested/provider/frame effects',
             serial_intact_saves='conditional: fixed decoded instructions/known edges, no asynchronous IRQ, non-stack writes do not alias live saves',
-            services='undeclared INT havocs registers/segments/DF/IF/SS/SP/saves; no implicit preservation',
+            services='function-selected ABI; undocumented effects unknown in CONSERVATIVE, individually declared preservation in PROFILE; unknown selector/driver lifetime still havocs',
+            IRQ_entry='push interrupted FLAGS/CS/IP; clear IF/TF, retain DF; IRET consumes actual interrupted FLAGS',
             root_SP='DOS absolute 4AF4 is known at entry only; propagated SP is relative to each procedure entry, never a startup-wide stack-depth certificate',
             procedure_states='symbolic per-entry inputs, not proof that an entry is reached',
             stack='word slots modulo16; unproved word-at-FFFF physical overlap is overapproximated',
             target_domain_complete=False),
-        service_declarations={f'{p:04X}': d for p, d in sorted((services or {}).items())},
+        service_declarations=({f'{p:04X}': d for p, d in sorted(services.items())}
+                              if isinstance(services, dict) else {}),
+        selected_services={f'{p:04X}': sorted(names) for p, names in sorted(serial.service_uses.items())},
+        proof_obligations=proof_obligations(),
         roots=[f'{p:04X}' for p in sorted(roots)], installations=installations,
         unavailable_execution_views=(['metadata/protection-cfg.json: TF-on/off stream and INT1 plaintext; not raw-CFG successors'] if component == 'main' else []),
         root_states={f'{p:04X}': state_json(s) for p, s in sorted(root_states.items())},
@@ -843,34 +1035,60 @@ def report(analysis, image, relocations=(), *, component='main', services=None, 
         states=pool, instructions=rows, entry_relative=local)
 
 
+def proof_obligations():
+    return [dict(id=key, status='UNRESOLVED', profile_closes=False, evidence=evidence)
+            for key, evidence in (
+                ('interrupt-interleavings', 'IF=1 admits asynchronous entries, REP internal boundaries and handler STI nesting; vector/PIC/pending phases not certified.'),
+                ('saved-stack-aliases', 'Live SS:SP, map mirrors, dirty maps, service frames and segment/allocation aliases; serial_intact_saves explicitly excludes these.'),
+                ('callback-writer-domains', '715B/42A5/1407 and driver raw dispatch: indexed/string/resource/stack writers and UNKNOWN incoming edges remain.'),
+                ('4013-creation-race', 'S12: 30CC sample through314B publication permits IRQ1874->4013 to reduce limit before count publication; no CLI/barrier. Witness is original-code UNCONDITIONAL; exclusion/survival is UNRESOLVED.'),
+                ('driver-vector-allocation-lifetime', '057B installs before058D decode;05CA replaces with Tandy;05FA frees without INT61 restore; Tandy5958 outside allocation.'),
+                ('protected-view-composition', 'Raw main and TF-on/off/INT1 CFGs are separate; profile cannot replace actual TF/stack/self-modification effects.'),
+                ('hardware-and-provider-memory', 'BIOS/DOS/mouse preservation declarations do not prove device timing, file completeness, hardware audio, callback writers or memory footprints.'))]
+
+
+def report(analysis, image, relocations=(), *, component='main', services=None, entries=(), mode='BOTH'):
+    if mode != 'BOTH':
+        return report_mode(analysis, image, relocations, component=component,
+                           services=services, entries=entries, mode=mode)
+    return dict(schema='flowstate-dual-v1', component=component,
+        profile_source='metadata/platform-profile.json',
+        interrupt_sites=platform_profile()['interrupt_sites'] if component == 'main' else [],
+        external_chains=platform_profile()['external_chains'] if component == 'main' else [],
+        modes={m: report_mode(analysis, image, relocations, component=component,
+                             services=services, entries=entries, mode=m)
+               for m in ('CONSERVATIVE', 'PROFILE')},
+        proof_obligations=proof_obligations(), target_domain_complete=False)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('address', nargs='?', help='hex address or ledger name (main)')
     parser.add_argument('--component', choices=('main', 'adlib', 'tandysnd', 'pcspeaker'), default='main')
     parser.add_argument('--entry', action='append', default=[], help='additional symbolic entry (hex)')
-    parser.add_argument('--services', type=str, help='JSON site -> declared intact-IRET transformer')
+    parser.add_argument('--mode', choices=('BOTH', 'CONSERVATIVE', 'PROFILE'), default='BOTH')
     parser.add_argument('--output', type=str, default=str(BUILD/'flowstate.json'))
     args = parser.parse_args()
-    services = {int(k, 16): v for k, v in read_json(args.services).items()} if args.services else None
     analysis, image, relocations = load_component(args.component)
-    result = report(analysis, image, relocations, component=args.component, services=services,
-                    entries=[int(p, 16) for p in args.entry])
+    result = report(analysis, image, relocations, component=args.component,
+                    entries=[int(p, 16) for p in args.entry], mode=args.mode)
     write_json(args.output, result)
     if args.address:
         from where import address
         p = address(args.address) if args.component == 'main' else int(args.address, 16)
         key = f'{p:04X}'
         import json
-        found = dict(result['instructions'].get(key, {'state': 'undecoded/unknown'}))
-        for scope in ('whole_machine', 'decoded_concurrent', 'serial_intact_saves'):
-            if scope in found: found[scope] = result['states'][found[scope]]
-        print(json.dumps(dict(address=key, **found), indent=2))
-        # Local contexts retain which saved entry word supplies a POP.
-        for entry, states in result['entry_relative'].items():
-            if key in states:
-                print('entry', entry, json.dumps(result['states'][states[key]], sort_keys=True))
+        for mode, mode_result in result.get('modes', {args.mode: result}).items():
+            found = dict(mode_result['instructions'].get(key, {'state': 'undecoded/unknown'}))
+            for scope in ('whole_machine', 'decoded_concurrent', 'serial_intact_saves'):
+                if scope in found: found[scope] = mode_result['states'][found[scope]]
+            print(json.dumps(dict(mode=mode, address=key, **found), indent=2))
+            for entry, states in mode_result['entry_relative'].items():
+                if key in states:
+                    print('entry', entry, json.dumps(mode_result['states'][states[key]], sort_keys=True))
     else:
-        print(args.output, result['work'], 'target_domain_complete=false')
+        print(args.output, {m: r['work'] for m, r in result.get('modes', {args.mode: result}).items()},
+              'target_domain_complete=false')
 
 
 if __name__ == '__main__':

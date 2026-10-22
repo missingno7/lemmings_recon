@@ -22,6 +22,10 @@ ScrollViewLeftStore:
 loc_4179:
 ScrollViewLeftRebuild:
     jmp short RebuildViewVisibilityMap ; @04179
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 ; CONTRACT: live DS:SI NUL scan, no40-character bound; DF and AH wrap remain.
 ; Actual AX/SI saves and glyph CALL/RET carry returned DS/ES/flags into next scan.
 ; S8 STORAGE: reader3B23 starts at DS2083; stored40 characters end

@@ -9,7 +9,9 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from flowstate import (Analyzer, State, Slot, TOP, ZERO, ONE, val, flags,
-                       transfer, merge, instantiate, state_json)
+                       transfer, merge, instantiate, state_json, getreg, setreg,
+                       ServiceModel, platform_profile, loader_state, interrupt_entry,
+                       driver_transform, proof_obligations, report)
 from explore import discover
 
 
@@ -27,6 +29,168 @@ def serial(analysis, entries=()):
 
 
 class FlowStateTests(unittest.TestCase):
+    def test_loader_flags_are_original_code_in_both_modes(self):
+        a = program([row(0, 'nop')], [])
+        result = report(a, b'\x90', mode='BOTH')
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            root = result['modes'][mode]['root_states']['0000']
+            self.assertEqual((root['DF'], root['IF']), (0, 1))
+            # Entry boundary fact is distinct from an enabled-IRQ arrival.
+            self.assertEqual(result['modes'][mode]['states'][
+                result['modes'][mode]['instructions']['0000']['decoded_concurrent']]['DF'], 'unknown')
+
+    def test_driver_vector_root_has_cpu_if_tf_clear_in_both_modes(self):
+        a = program([row(0, 'nop')], [])
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            root = report(a, b'\x90', component='adlib', mode=mode)['root_states']['0000']
+            self.assertEqual((root['IF'], root['TF']), (0, 0))
+            self.assertEqual(root['DF'], 'unknown')
+
+    def test_known_ah_survives_unknown_al_and_substitution(self):
+        s = State()
+        s = transfer(row(0, 'mov', 'ah, 0x3f'), s)
+        self.assertEqual(getreg(s, 'ah'), val(0x3f))
+        self.assertIsNone(getreg(s, 'al'))
+        symbolic = State.symbolic()
+        setreg(symbolic, 'ah', val(0x3f))
+        self.assertEqual(getreg(instantiate(symbolic, s), 'ah'), val(0x3f))
+
+    def test_profile_and_conservative_do_not_share_service_effects(self):
+        s = State(df=ONE, iff=ONE)
+        s.regs.update(ax=val(0x3f00), ds=val(0x1234), es=val(0x5678))
+        conservative = transfer(row(0, 'int', '0x21', 2), s, services=ServiceModel())
+        profile = transfer(row(0, 'int', '0x21', 2), s, services=ServiceModel('PROFILE'))
+        self.assertIsNone(conservative.df)
+        self.assertEqual(profile.df, ONE)  # preserve DF1, never normalize to0
+        self.assertEqual(conservative.regs['ds'], val(0x1234))  # documented DOS non-result register
+        self.assertIsNone(profile.regs['ax'])  # byte count/error is external input
+
+    def test_bios_function_identity_and_outputs(self):
+        model = ServiceModel('PROFILE')
+        for ax, expected in ((0x1a00, '10:AX=1A00'), (0x0f00, '10:AH=000F'),
+                             (0x000d, '10:AH=0000'), (0x0580, '10:AH=0005')):
+            s = State(df=ZERO, iff=ONE)
+            s.regs['ax'] = val(ax)
+            declaration = model.resolve(row(0, 'int', '0x10', 2), s)
+            self.assertEqual(declaration['function'], expected)
+            self.assertEqual(declaration['profile_entries'], [expected])
+        s.regs['ax'] = val(0x1a01)
+        self.assertIsNone(model.resolve(row(0, 'int', '0x10', 2), s))
+
+    def test_ega_subfunction_must_be_bl10(self):
+        s = State()
+        setreg(s, 'ah', val(0x12))
+        self.assertIsNone(ServiceModel('PROFILE').resolve(row(0, 'int', '0x10'), s))
+        setreg(s, 'bl', val(0x10))
+        self.assertEqual(ServiceModel('PROFILE').resolve(row(0, 'int', '0x10'), s)['function'], '10:AH=0012')
+
+    def test_unknown_selector_is_never_filled_from_site_inventory(self):
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            self.assertEqual(transfer(row(0x1413, 'int', '0x10', 2), State(),
+                                     services=ServiceModel(mode)), State.havoc())
+
+    def test_every_declared_function_transforms_in_both_modes(self):
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            model = ServiceModel(mode)
+            for key, definition in platform_profile()['services'].items():
+                with self.subTest(mode=mode, function=key):
+                    s = State(df=ONE, iff=ONE)
+                    s.regs = {r: val(0x1234) for r in s.regs}
+                    if definition['selector']:
+                        setreg(s, definition['selector'], val(definition['value']))
+                    for reg, value in definition['qualifiers'].items():
+                        setreg(s, reg, val(value))
+                    ins = row(0, 'int', hex(definition['interrupt']), 2)
+                    declaration = model.resolve(ins, s)
+                    self.assertIsNotNone(declaration)
+                    out = transfer(ins, s, intact_stack=True, services=model)
+                    self.assertEqual(out.df, ONE if mode == 'PROFILE' else TOP)
+                    for reg in definition['outputs']:
+                        self.assertIsNone(getreg(out, reg))
+
+    def test_function_results_override_preservation(self):
+        s = State(df=ZERO, iff=ONE)
+        s.regs.update(ax=val(0x3509), ds=val(0x1234), es=val(0x7777), bx=val(0x8888))
+        out = transfer(row(0, 'int', '0x21', 2), s, services=ServiceModel('PROFILE'))
+        self.assertIsNone(out.regs['es'])
+        self.assertIsNone(out.regs['bx'])
+        self.assertEqual(out.regs['ds'], s.regs['ds'])
+
+    def test_absolute_disk_extra_flags_word_is_not_iret_balance(self):
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            s = State(df=ONE, iff=ONE)
+            out = transfer(row(0, 'int', '0x25', 2), s, services=ServiceModel(mode))
+            self.assertEqual(out.sp, 0xfffe)
+            self.assertEqual(out.pop().value, flags(ONE, ONE))
+            self.assertEqual(out.sp, 0)
+
+    def test_irq_entry_clears_if_retains_df_and_iret_restores_frame(self):
+        original = State(df=ONE, iff=ONE, tf=ONE)
+        original.regs['cs'] = val(0x1010)
+        irq = interrupt_entry(original, 0x100, 0x1234, val(0x2000))
+        self.assertEqual((irq.df, irq.iff, irq.tf, irq.sp), (ONE, ZERO, ZERO, 0xfffa))
+        self.assertEqual(irq.read_slot(0xfffe).value, flags(ONE, ONE, ONE))
+        a = serial(program([row(0, 'cld'), row(1, 'iret')], [(0, 1, 'fallthrough')]))
+        out = instantiate(a.exits[0][1].state, irq)
+        self.assertEqual((out.df, out.iff, out.tf, out.sp), (ONE, ONE, ONE, 0))
+
+    def test_profile_assumptions_cannot_be_overridden_per_site(self):
+        with self.assertRaisesRegex(ValueError, 'metadata/platform-profile.json only'):
+            report(program([row(0, 'nop')], []), b'\x90', services={0: {}}, mode='PROFILE')
+
+    def test_service_inventory_matches_every_decoded_int_site(self):
+        from flowstate import load_component
+        from common import ROOT, read_json
+        analysis, _, _ = load_component('main')
+        raw = {r['address'] for r in analysis['instructions'] if r['mnemonic'] in ('int', 'int3')}
+        declared = platform_profile()['interrupt_sites']
+        self.assertEqual(raw, {int(r['address'], 16) for r in declared if r['view'] == 'raw'})
+        protected = read_json(ROOT/'metadata/protection-cfg.json')['instructions']
+        self.assertEqual({(r['address'], r['state']) for r in protected if r['mnemonic'] in ('int', 'int3')},
+                         {(int(r['address'], 16), r['view']) for r in declared if r['view'] != 'raw'})
+        for site in declared:
+            self.assertTrue(site['producer'])
+
+    def test_modes_never_disable_concurrent_irq_or_alias_obligations(self):
+        a = program([row(0, 'sti'), row(1, 'nop'), row(2, 'ret')],
+                    [(0, 1, 'fallthrough'), (1, 2, 'fallthrough')])
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            analyzer = Analyzer(a, services=ServiceModel(mode)).run()
+            self.assertIsNone(analyzer.before(analyzer.states[0, 2]).df)
+        self.assertTrue(all(x['profile_closes'] is False for x in proof_obligations()))
+
+    def test_dynamic_tandy_probe_restore_uses_saved_bl_as_bios_ah(self):
+        s = State()
+        s.push(val(0xc001), 0)
+        for ins in (row(1, 'pop', 'ax'), row(2, 'mov', 'ah, 5'), row(3, 'xchg', 'al, ah')):
+            s = transfer(ins, s)
+        self.assertEqual(s.regs['ax'], val(0x0105))
+        self.assertIsNone(ServiceModel('PROFILE').resolve(row(0x626, 'int', '0x10'), s))
+
+    def test_driver_original_code_transformers_preserve_inherited_flags(self):
+        for component, functions in (('adlib', range(6)), ('tandysnd', range(6)), ('pcspeaker', (0, 1, 3))):
+            for function in functions:
+                with self.subTest(component=component, function=function):
+                    s = State.symbolic()
+                    s.df, s.iff = ONE, ZERO
+                    out = driver_transform(component, function, s)
+                    self.assertEqual((out.df, out.iff, out.sp), (ONE, ZERO, 0))
+                    self.assertEqual(out.regs['ds'], s.regs['ds'])
+        self.assertEqual(driver_transform('pcspeaker', 2, State()), State.havoc())
+
+    def test_profile_cannot_bind_a_dangling_driver_vector(self):
+        s = State(df=ZERO, iff=ONE)
+        s.regs['ax'] = val(0x300)
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            self.assertEqual(transfer(row(0, 'int', '0x61'), s,
+                                     services=ServiceModel(mode)), State.havoc())
+
+    def test_termination_has_no_service_fallthrough(self):
+        a = program([row(0, 'mov', 'ax, 0x4c00'), row(1, 'int', '0x21'), row(2, 'std')],
+                    [(0, 1, 'fallthrough'), (1, 2, 'fallthrough')])
+        for mode in ('CONSERVATIVE', 'PROFILE'):
+            self.assertNotIn((0, 2), Analyzer(a, services=ServiceModel(mode), irq_mode='disabled').run().states)
+
     def test_cld_std_preserve_other_flag(self):
         s = State(iff=ONE)
         s = transfer(row(0, 'std'), s)

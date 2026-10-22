@@ -1538,7 +1538,8 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 1878,
@@ -7853,7 +7854,8 @@
     "evidence": [
       "Static direct call target",
       "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md",
-      "S17 flow-state: No caller-independent DF/DS/SS invariant was proved. Undeclared BIOS1413/1466 makes later loop iterations unknown even in serial intact-save analysis. In the explicit sufficient domain (entry13DC DF0/game DS, fixed known edges, intact saves, no IRQBIOS1413/1466/150D preserves DS/DI/caller stack and returns through intact FLAGS/CS/IP), DF0 and game DS hold at every modeled1407 visit. This is a conditional service declaration, not a verified BIOS ABI. Pointer-byte lifetime and four-row traversal bounds remain S4 obligationstarget_domain_complete=false."
+      "S17 flow-state: No caller-independent DF/DS/SS invariant was proved. Undeclared BIOS1413/1466 makes later loop iterations unknown even in serial intact-save analysis. In the explicit sufficient domain (entry13DC DF0/game DS, fixed known edges, intact saves, no IRQBIOS1413/1466/150D preserves DS/DI/caller stack and returns through intact FLAGS/CS/IP), DF0 and game DS hold at every modeled1407 visit. This is a conditional service declaration, not a verified BIOS ABI. Pointer-byte lifetime and four-row traversal bounds remain S4 obligationstarget_domain_complete=false.",
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 93,
@@ -53236,7 +53238,8 @@
       "Maintained706F..715E parent:113 decoded sites, live descriptor field anchors, nine known callback domains plus optional6F7B;715B arbitrary targets remain unresolved. docs/entity-sprite-dispatch.md",
       "Bounded native core/adapter composition through actual child frames; arbitrary live callback targets and provider/IRQ timing remain open.",
       "S12: only decoded CALL3675; DS inherited. No-strip path reaches715B with same DS; optional6F7B saves DS atS-12, sets strip source DS from CX supplied by1FE8, and POPs actual saved DS at6FE0.7157 instead restores sprite CX=(1FE6+BP)&FFFF. Near715B retains CS. Foreground SP P gives entry S=P-8; P4AF4 implies target save4AE6, strip DS save4ADA, disjoint low mirrors/normal maps through48F3 under canonical DS19B9/SS244E. This sufficient placement is not a full stack-lifetime proof; nine-set membership and target_domain_complete remain conditional. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
-      "S17 flow-state: For706F entryS, current DS supplies the word sampled hereit is saved atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX at715B, including the strip path:7159 rereads the saved word, and715A removes alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment guarantee. No target-set membership follows."
+      "S17 flow-state: For706F entryS, current DS supplies the word sampled hereit is saved atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX at715B, including the strip path:7159 rereads the saved word, and715A removes alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment guarantee. No target-set membership follows.",
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 240,
@@ -67216,7 +67219,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "Startup clears 0000..2011, 4551 clears 0000..0FC9 and 0409 stores 00; 01D2 consumes exact FF to add two observed IRQ counter changes per frame. No decoded writer of FF exists; any producer remains UNKNOWN (indexed or unresolved code), so the FF branch is retained, not called dead.",
-      "Stored main image09ADA=00; absolute reader01D2 consumes exactFF; dedicated writer0409 resets00 per session. Startup0031 and level455B clear004A only in forward game-DS domain. All identified ordinary main/protected TF views and activeINT1 absolute operands including word overlap were scanned: no dedicated actual-game FF producer identified. Global absence is NOT proved:1130 indexed main writes,DF-sensitive strings,implicitSS and provider/returned-segment/protected-pointer aliases remain. Raw original WriteReverseLiteral1C82 at ES=gameDS,DI004B,ALFF storesFF via1C83;20E2 at gameDS:SI0024 also reaches004A. Pinned resource footprints miss004A with intact segments; malformed DAT/aliases unchecked. Tandy CS004A is separate song-request storage. FF branch consumes two observed1FCD inequalities; changes coalesce and256 unseen changes can alias equality. Keep branch; externally seeded game_frame tests are transport evidence,not a game producer."
+      "Stored main image09ADA=00; absolute reader01D2 consumes exactFF; dedicated writer0409 resets00 per session. Startup0031 and level455B clear004A only in forward game-DS domain. All identified ordinary main/protected TF views and activeINT1 absolute operands including word overlap were scanned: no dedicated actual-game FF producer identified. Global absence is NOT proved:1130 indexed main writes,DF-sensitive strings,implicitSS and provider/returned-segment/protected-pointer aliases remain. Raw original WriteReverseLiteral1C82 at ES=gameDS,DI004B,ALFF storesFF via1C83;20E2 at gameDS:SI0024 also reaches004A. Pinned resource footprints miss004A with intact segments; malformed DAT/aliases unchecked. Tandy CS004A is separate song-request storage. FF branch consumes two observed1FCD inequalities; changes coalesce and256 unseen changes can alias equality. Keep branch; externally seeded game_frame tests are transport evidence,not a game producer.",
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
     ],
     "verification_status": "UNRESOLVED"
   },

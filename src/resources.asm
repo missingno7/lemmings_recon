@@ -206,6 +206,11 @@ SelectionAfterOddOverrideRead:
     mov cx,0xc ; @019F0
     push ds ; @019F3
     pop es ; @019F4
+; S19 level-clear-and-copies: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Level clear,odd-header and28-byte object copies use live DF/segments. Loader and service
+; declarations do not certify complete actual entry/ownership domains.
+; Dependencies: Saved segments and actual DF; complete reads; unchecked selectors/counts; IRQ and
+; alias writers.
 ; POPULATION HEADER: all80 pinned LEVEL section headers have high00/count<=0050. The nominal120 stored order bytes select40 forward odd rows, also high00/count<=0050; other40 supplied odd rows contain twelve0063 words in the18h-byte header. Forward complete copy is needed for this bound. Do not replace unchecked selectors/short reads/backward copies with a universal50h limit;4013 can race constructor publication even with nominal headers.
 ; With DF=0, copies24 bytes to0FCB..0FE2 and32 to17AB..17CA. Bytes0FE3..0FEA
 ; (including graphics selectors0FE6/0FE8) stay from LEVEL. With DF=1 the word
@@ -215,6 +220,10 @@ SelectionAfterOddOverrideRead:
     rep movsw ; @019F5
     lea di,[LoadedLevelFooterBytes-GameDataImage] ; @019F7
     mov cx,0x10 ; @019FB
+; S19 DF-site census rep movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @019FE
 loc_1A00:
     mov al,[LevelGraphicsSetByte-GameDataImage] ; @01A00
@@ -323,28 +332,60 @@ SetupSpecialGraphicsResource:
     pop es ; @01A87
     mov ds,[GraphicsResourceInputSegment-GameDataImage] ; @01A88
     push di ; @01A8C
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @01A8D
     pop di ; @01A8F
     mov al,0x1f ; @01A90
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @01A92
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @01A93
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01A94
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @01A96
     mov cx,0x18 ; @01A97
     lea di,[SpecialMetadataDuplicateBase-GameDataImage] ; @01A9A
     add di,byte +0x18 ; @01A9E
     mov si,0x10 ; @01AA1
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @01AA4
     mov cx,0x8 ; @01AA6
     lea di,[SpecialMetadata8Base-GameDataImage] ; @01AA9
     add di,byte +0x8 ; @01AAD
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @01AB0
     mov cx,0x8 ; @01AB2
     lea di,[SpecialMetadataRemap8-GameDataImage] ; @01AB5
     push di ; @01AB9
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @01ABA
     pop di ; @01ABC
     mov al,0x6 ; @01ABD
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @01ABF
     pop ds ; @01AC0
     push ds ; @01AC1
@@ -412,6 +453,10 @@ SpecialAfterDatDecode:
     mov ah,0x3e ; @01B3D
     int 0x21 ; @01B3F
     ret ; @01B41
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 DecodeResourceRle:
     lodsb ; @01B42
     cmp al,0x80 ; @01B43
@@ -421,7 +466,15 @@ DecodeResourceRle:
     inc al ; @01B4B
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @01B4D
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @01B4F
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @01B51
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_1B52:
     stosb ; @01B52
     db 0x23,0xff ; ENCODED: and di,di (NASM chooses a different encoding) ; @01B53
@@ -436,6 +489,10 @@ loc_1B62:
     inc al ; @01B62
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @01B64
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @01B66
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_1B68:
     movsb ; @01B68
     db 0x23,0xff ; ENCODED: and di,di (NASM chooses a different encoding) ; @01B69
@@ -517,6 +574,10 @@ sub_1BAD:
 ; saved BX/DS/return words remain ordinary writable memory, not cached values.
 DecodeDatSection:
     push bx ; @01BAF
+; S19 decoder-reset-barriers: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; STD1BB0 is transient:1BB9 calls1D2E,CLD1D34 before DOS/cache selection;normal decoder return
+; CLD1C78. This is not a demonstrated returning foreground DF1 origin.
+; Dependencies: Instruction-order fact; IRQ in transient STD window remains separate.
 ; S17 flow-state: In the fixed decoded stream, STD reaches CALL1BB9 with DF=1. Its
 ; child1D2E executes CLD1D34 before DOS/cache selection, and the ordinary decoder exit
 ; CLD1C78 precedes RET1C79. Thus this STD alone is not a demonstrated returning
@@ -673,6 +734,10 @@ sub_1C73:
 sub_1C75:
     db 0x22,0xf6 ; ENCODED: and dh,dh (NASM chooses a different encoding) ; @01C75
     pop bx ; @01C77
+; S19 decoder-reset-barriers: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; STD1BB0 is transient:1BB9 calls1D2E,CLD1D34 before DOS/cache selection;normal decoder return
+; CLD1C78. This is not a demonstrated returning foreground DF1 origin.
+; Dependencies: Instruction-order fact; IRQ in transient STD window remains separate.
     cld ; @01C78
     ret ; @01C79
 loc_1C7A:
@@ -829,6 +894,10 @@ ReadDatBytes:
     push bx ; @01D31
     push cx ; @01D32
     push dx ; @01D33
+; S19 decoder-reset-barriers: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; STD1BB0 is transient:1BB9 calls1D2E,CLD1D34 before DOS/cache selection;normal decoder return
+; CLD1C78. This is not a demonstrated returning foreground DF1 origin.
+; Dependencies: Instruction-order fact; IRQ in transient STD window remains separate.
     cld ; @01D34
     mov ax,0x9a9 ; @01D35
     mov ds,ax ; @01D38
@@ -912,6 +981,10 @@ loc_1D87:
     lea si,[0x1f96] ; @01DE5
     add di,byte +0x0 ; @01DE9
     mov cx,0xb ; @01DEC
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @01DEF
 loc_1DF1:
     pop di ; @01DF1
@@ -923,6 +996,10 @@ loc_1DF1:
     push ds ; @01DF7
     mov si,[DatCacheReadOffset-GameDataImage] ; @01DF8
     mov ds,[DatCacheReadSegment-GameDataImage] ; @01DFC
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @01E00
     mov ax,ds ; @01E02
     pop ds ; @01E04
@@ -953,12 +1030,24 @@ PrepareDatCacheName:
     db 0x8b,0xf2 ; ENCODED: mov si,dx (NASM chooses a different encoding) ; @01E22
     mov cx,0x8 ; @01E24
     lea di,[0x1f96] ; @01E27
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_1E2B:
     lodsb ; @01E2B
     cmp al,0x2e ; @01E2C
     jz loc_1E58 ; @01E2E
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @01E30
     loop loc_1E2B ; @01E31
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_1E33:
     lodsb ; @01E33
     cmp al,0x2e ; @01E34
@@ -966,10 +1055,18 @@ loc_1E33:
 loc_1E38:
     mov cx,0x3 ; @01E38
     lea di,[0x1f9e] ; @01E3B
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_1E3F:
     lodsb ; @01E3F
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01E40
     jz loc_1E49 ; @01E42
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @01E44
     loop loc_1E3F ; @01E45
     jmp short loc_1E53 ; @01E47
@@ -978,6 +1075,10 @@ loc_1E49:
     db 0x2b,0xc1 ; ENCODED: sub ax,cx (NASM chooses a different encoding) ; @01E4C
     xchg ax,cx ; @01E4E
     mov al,0x20 ; @01E4F
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @01E51
 loc_1E53:
     pop cx ; @01E53
@@ -990,6 +1091,10 @@ loc_1E58:
     db 0x2b,0xc1 ; ENCODED: sub ax,cx (NASM chooses a different encoding) ; @01E5B
     xchg ax,cx ; @01E5D
     mov al,0x20 ; @01E5E
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @01E60
     jmp short loc_1E38 ; @01E62
 SelectCachedDatFile:
@@ -1009,6 +1114,10 @@ loc_1E7B:
     push si ; @01E7D
     push di ; @01E7E
     mov cx,0xb ; @01E7F
+; S19 DF-site census repe cmpsb byte ptr [si], byte ptr es:[di]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     repe cmpsb ; @01E82
     pop di ; @01E84
     pop si ; @01E85

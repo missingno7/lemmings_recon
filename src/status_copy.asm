@@ -27,6 +27,10 @@ CopyStatusRegionToVga:
     mov es,dx ; @0761F
     mov ds,dx ; @07621
     mov cx,0x6e0 ; @07623
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @07626
     pop ds ; @07628
 StatusCopyReturn:

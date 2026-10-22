@@ -1136,13 +1136,29 @@ tandysnd_loc_0183:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @0019A
     mov si,0x95c ; @0019C
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM selects different opcode/operand width) ; @0019F
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @001A1
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM selects different opcode/operand width) ; @001A2
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @001A4
     mov [0x5630],ax ; @001A5
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @001A8
     add ax,0x95c ; @001A9
     mov [0x95a],ax ; @001AC
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @001AF
     mov [0x79f],al ; @001B0
     inc si ; @001B3
@@ -1266,6 +1282,11 @@ tandysnd_loc_02B1:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @002B3
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM selects different opcode/operand width) ; @002B5
     add si,0x76b ; @002B7
+; S19 tandy-frontier: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Pinned DF0 grammar excludes98..9F only in the S15 domain. Actual DF/segment/pointer/allocation
+; and raw command domains remain open.
+; Dependencies: Immutable S15 graph; DF0 header LODS; initialized channels;5958 adjacent
+; ownership; vector lifetime; no reentry/aliases/raw internal entry.
     jmp [si] ; @002BB
 tandysnd_loc_02BD:
     sub al,0xdf ; @002BD
@@ -1290,6 +1311,10 @@ tandysnd_loc_02CD:
     mov si,0x52da ; @002EA
 tandysnd_loc_02ED:
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM selects different opcode/operand width) ; @002ED
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @002EF
     push ax ; @002F0
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @002F1
@@ -1298,12 +1323,28 @@ tandysnd_loc_02ED:
     mov ah,[di+0x2f] ; @002F7
 tandysnd_loc_02FA:
     mov [di+0x2e],ah ; @002FA
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @002FD
     mov [di+0x2c],al ; @002FE
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00301
     mov [di+0x11],al ; @00302
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00305
     mov [di+0xb],al ; @00306
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00309
     mov [di+0xe],al ; @0030A
     mov al,[si] ; @0030D
@@ -1313,10 +1354,18 @@ tandysnd_loc_02FA:
     shr al,1 ; @00315
     mov [di+0x16],al ; @00317
     mov [di+0x17],al ; @0031A
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @0031D
     and al,0xf ; @0031E
     mov [di+0x18],al ; @00320
     mov [di+0x19],al ; @00323
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00326
     mov [di+0x13],al ; @00327
     mov al,[si] ; @0032A
@@ -1326,18 +1375,38 @@ tandysnd_loc_02FA:
     shr al,1 ; @00332
     mov [di+0x1a],al ; @00334
     mov [di+0x1b],al ; @00337
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @0033A
     and al,0xf ; @0033B
     mov [di+0x14],al ; @0033D
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00340
     mov [di+0x25],al ; @00341
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00344
     mov [di+0x26],al ; @00345
     mov [di+0x27],al ; @00348
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @0034B
     mov [di+0x28],al ; @0034C
     db 0x02,0xc0 ; ENCODED: add al,al (NASM selects different opcode/operand width) ; @0034F
     mov [di+0x29],al ; @00351
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00354
     mov [di+0x2a],al ; @00355
     mov [di+0x2b],al ; @00358
@@ -1345,13 +1414,29 @@ tandysnd_loc_02FA:
     cmp al,0x2f ; @0035C
     jz tandysnd_loc_0363 ; @0035E
     jmp tandysnd_loc_023D ; @00360
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 tandysnd_loc_0363:
     lodsb ; @00363
     mov [0x768],al ; @00364
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @00367
     mov [0x767],al ; @00368
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @0036B
     mov [0x765],al ; @0036C
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @0036F
     mov [0x766],al ; @00370
     jmp tandysnd_loc_023D ; @00373

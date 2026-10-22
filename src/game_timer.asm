@@ -154,6 +154,12 @@ GameTimerChain1893:
     pushf ; @01896
     push cs ; @01897
     push ax ; @01898
+; S19 external-08-09: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Two INT08 far chains have caller-built FLAGS/CS/IP and external IRET edges. Undocumented
+; provider segments/registers and frame aliases remain open. IRQ09 owns IRET;old09 is
+; restored,not an invented chain.
+; Dependencies: Provider/frame preservation; vector/PIC/pending/nesting phases; keyboard
+; buffer/save aliases.
 ChecksumWindowEnd:
 GameTimerFarChain1899:
     jmp far [SavedTimerVector-GameDataImage] ; @01899

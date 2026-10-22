@@ -231,6 +231,11 @@ loc_3FEF:
     jg loc_3FEE ; @04009
     mov byte [EntityScanRequest-GameDataImage],0xff ; @0400B
     mov al,[EntitySlotBound-GameDataImage] ; @04010
+; S19 creation-race: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; Original order permits IRQ1874->4013 between30CC limit sampling and314B publication,stepping
+; count past the new limit. Loader IF1/profile preservation does not serialize it.
+; Dependencies: Witness inputs: live unmasked pending game IRQ and qualifying command; later
+; corrupted-state survival remains unresolved.
 ; S17 flow-state: The foreground constructor retains IF across30CC..314B. Under the
 ; documented timer/command eligibility and intact IRET saves, this store may snapshot old
 ; boundB after limit sampling, then foreground publication producesB+1 without recheck.

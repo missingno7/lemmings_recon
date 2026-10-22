@@ -169,6 +169,10 @@ SeedGameFadePalette:
     mov [di+0x7],al ; @0538E
     add di,byte +0x8 ; @05391
     mov cx,0x4 ; @05394
+; S19 DF-site census rep movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @05397
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @05399
     jnz loc_53C9 ; @0539E
@@ -185,6 +189,10 @@ loc_53A1:
     mov [di+0x17],al ; @053B7
     add di,byte +0x18 ; @053BA
     mov cx,0xc ; @053BD
+; S19 DF-site census rep movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @053C0
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @053C2
     jnz loc_53C9 ; @053C7
@@ -277,6 +285,10 @@ WriteAttributePalette:
 loc_5435:
     db 0x8a,0xc3 ; ENCODED: mov al,bl (NASM chooses a different encoding) ; @05435
     out dx,al ; @05437
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @05438
     out dx,al ; @05439
     inc bl ; @0543A
@@ -352,11 +364,23 @@ loc_54A1:
     out dx,al ; @054A8
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @054A9
     inc dx ; @054AB
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_54AC:
     lodsb ; @054AC
     out dx,al ; @054AD
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @054AE
     out dx,al ; @054AF
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @054B0
     out dx,al ; @054B1
     inc ah ; @054B2
@@ -401,10 +425,22 @@ loc_54E9:
     inc di ; @054EC
     out dx,al ; @054ED
     inc dx ; @054EE
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @054EF
     out dx,al ; @054F0
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @054F1
     out dx,al ; @054F2
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @054F3
     out dx,al ; @054F4
     dec dx ; @054F5

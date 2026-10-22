@@ -1256,13 +1256,37 @@ sub_283B:
     pop es ; @02865
     db 0x8b,0xfb ; ENCODED: mov di,bx (NASM chooses a different encoding) ; @02866
     add si,byte +0x16 ; @02868
+; S19 DF-site census movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsw ; @0286B
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @0286C
     add di,0x19d ; @0286D
+; S19 DF-site census movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsw ; @02871
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @02872
     add di,0x19d ; @02873
+; S19 DF-site census movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsw ; @02877
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @02878
     pop es ; @02879
     pop di ; @0287A
@@ -2205,6 +2229,11 @@ loc_30C3:
     mov al,[EntityCreationReload-GameDataImage] ; @030C3
     mov [EntityCreationCountdown-GameDataImage],al ; @030C6
     mov si,EntityRecordsBase-GameDataImage ; @030C9
+; S19 creation-race: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; Original order permits IRQ1874->4013 between30CC limit sampling and314B publication,stepping
+; count past the new limit. Loader IF1/profile preservation does not serialize it.
+; Dependencies: Witness inputs: live unmasked pending game IRQ and qualifying command; later
+; corrupted-state survival remains unresolved.
 ; S17 flow-state: From30A6 entry, IF is inherited at30CC,30D5 and314B; no local
 ; CLI/POPF/IRET/SS load serializes limit sampling through publication. Thus entryIF1 with
 ; an installed/unmasked game timer admits the S12 command4013 interleaving. The after30D5

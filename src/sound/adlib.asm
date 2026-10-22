@@ -989,6 +989,10 @@ adlib_ResetService:
     mov dx,0x388 ; @00045
     lea si,[0x6d] ; @00048
     mov cx,0x1b ; @0004C
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 adlib_loc_004F:
     lodsw ; @0004F
     call adlib_sub_0559 ; @00050
@@ -1216,6 +1220,16 @@ adlib_loc_01CE:
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @001E2
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM selects different opcode/operand width) ; @001E4
     add si,0x3ea ; @001E6
+; S19 adlib-header-reversal: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; DF1 song03 header114C reverses LODS:count4,bank0B6E,orders0FE7/177A/0B70/6C8F;last order is
+; already outside pinned bytes. AdLib never CLDs.
+; Dependencies: Conditional-input instruction/data result; no actual game schedule or safe
+; continuation asserted.
+; S19 adlib-actual-domain: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Raw01EA remains open. Loader DF0 does not prove DF0 at every actual header/reset entry or live
+; AdLib ownership.
+; Dependencies: S13 serial immutable supplied grammar; DF0 header/reset input; no
+; free/replacement/reentry/alias; complete raw dispatch and saved-frame domains.
 ; S17 flow-state: No whole-program DF0 or DS=live-AdLib lifetime theorem was obtained.
 ; S13 exclusion of88..AF still requires serial DF0/intact initialized payload/code/stack
 ; ownership; reversed header LODS and changed saved segments remain outside it. Unknown
@@ -1438,6 +1452,10 @@ adlib_sub_0349:
     db 0x03,0xc0 ; ENCODED: add ax,ax (NASM selects different opcode/operand width) ; @00369
     mov si,0x927 ; @0036B
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM selects different opcode/operand width) ; @0036E
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @00370
     dec bl ; @00371
     db 0x0b,0xc0 ; ENCODED: or ax,ax (NASM selects different opcode/operand width) ; @00373
@@ -1569,6 +1587,11 @@ adlib_sub_044F:
     mov byte [di+0x13],0xff ; @0044F
     nop ; @00453
     jmp adlib_loc_019E ; @00454
+; S19 adlib-header-reversal: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; DF1 song03 header114C reverses LODS:count4,bank0B6E,orders0FE7/177A/0B70/6C8F;last order is
+; already outside pinned bytes. AdLib never CLDs.
+; Dependencies: Conditional-input instruction/data result; no actual game schedule or safe
+; continuation asserted.
 adlib_sub_0457:
 ; Song request state machine: when EE==0 copy ED to AL and EF; otherwise skip
 ; that load and consult retained EF. Ordinary initialized EF is0 whenever
@@ -1602,6 +1625,10 @@ adlib_loc_047F:
     mov si,0xb6c ; @00484
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM selects different opcode/operand width) ; @00487
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM selects different opcode/operand width) ; @00489
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @0048B
     db 0x8b,0xf0 ; ENCODED: mov si,ax (NASM selects different opcode/operand width) ; @0048C
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM selects different opcode/operand width) ; @0048E
@@ -1614,18 +1641,40 @@ adlib_loc_047F:
     mov [0x634],al ; @004A2
     mov [0x648],al ; @004A5
     mov [0x65c],al ; @004A8
+; S19 adlib-header-reversal: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; DF1 song03 header114C reverses LODS:count4,bank0B6E,orders0FE7/177A/0B70/6C8F;last order is
+; already outside pinned bytes. AdLib never CLDs.
+; Dependencies: Conditional-input instruction/data result; no actual game schedule or safe
+; continuation asserted.
     lodsw ; @004AB
     mov [0x5a8],ax ; @004AC
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @004AF
     add ax,0xb6e ; @004B0
     mov [0xb68],ax ; @004B3
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @004B6
     mov [0xb6a],al ; @004B7
+; S19 adlib-header-reversal: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; DF1 song03 header114C reverses LODS:count4,bank0B6E,orders0FE7/177A/0B70/6C8F;last order is
+; already outside pinned bytes. AdLib never CLDs.
+; Dependencies: Conditional-input instruction/data result; no actual game schedule or safe
+; continuation asserted.
     lodsb ; @004BA
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM selects different opcode/operand width) ; @004BB
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM selects different opcode/operand width) ; @004BD
     mov [0xb6c],cx ; @004BF
     mov di,0x5ac ; @004C3
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 adlib_loc_04C6:
     lodsw ; @004C6
     add ax,0xb6e ; @004C7

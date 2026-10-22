@@ -166,6 +166,12 @@ loc_42A1:
 ; intact instructions and no intervening IRQ/provider change to registers).
     mov ax,[InputPollCallback-GameDataImage] ; @042A1
     push dx ; @042A4
+; S19 input-callback: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Live DS:25A0 supplies target before PUSH DX/CALL. Known mouse/joystick choices do not close
+; writers, calibration publication or live segments.
+; Profile entries: 33:AX=0003.
+; Dependencies: 25A0/DS lifetime; GROUND/request/wrap/alias writers; joystick STI; mode1 before
+; complete calibration.
 ; S17 flow-state: The transfer samples AX from live DS:25A0 before PUSH DX/CALL. The
 ; analyzer does not recover a global game-DS or slot-lifetime invariant. Known4252 mouse
 ; service has an undeclared INT33; 4334/4359 retain their actual CLI/STI and returned

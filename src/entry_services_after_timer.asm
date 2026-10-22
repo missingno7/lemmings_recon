@@ -22,6 +22,10 @@ MasterPicEoiReturn18B6:
     db 0xeb,0x00,0x0a,0xc0,0x75,0x0a,0xb0,0x20,0xe6,0x20,0xeb,0x00,0xeb,0x00,0xeb,0x00 ; @018E7
 ; UNKNOWN: unresolved bytes
     db 0xc3 ; @018F7
+; S19 original-int24: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; CPU entry retains DF,clears IF/TF.18F8 STI enables nesting;handler sets1FDF/AL0,restoresDS,IRET
+; restores actual savedFLAGS. AH is high relocated game segment,not universally09.
+; Dependencies: Local effect with intact frame/saves; nested IRQ/aliases remain unresolved.
 CriticalErrorHandler:
     sti ; @018F8
     push ds ; @018F9

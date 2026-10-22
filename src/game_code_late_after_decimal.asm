@@ -93,6 +93,12 @@ loc_4C66:
     pushf ; @04C69
     push cs ; @04C6A
     push ax ; @04C6B
+; S19 external-08-09: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Two INT08 far chains have caller-built FLAGS/CS/IP and external IRET edges. Undocumented
+; provider segments/registers and frame aliases remain open. IRQ09 owns IRET;old09 is
+; restored,not an invented chain.
+; Dependencies: Provider/frame preservation; vector/PIC/pending/nesting phases; keyboard
+; buffer/save aliases.
 MenuTimerFarChain4C6C:
     jmp far [SavedTimerVector-GameDataImage] ; @04C6C
 MenuTimerChainReturn4C70:
@@ -192,6 +198,11 @@ loc_4CC4:
     push cx ; @04CC6
     push dx ; @04CC7
     push bp ; @04CC8
+; S19 saved-bp-dispatch: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Isolated4C7E serial/intact/known-edge summary carries BP503B at both transfers,SP=P-16 atCALL/P
+; atJMP. Actual save/dirty-map/IRQ survival remains unproved.
+; Dependencies: 4C7E frame and fixed paths; absolute SS:SP placement; dirty-map separation; no
+; IRQ/code/provider/frame aliases.
 ; S17 flow-state: For4C7E entry with fixed known edges, intact stack saves and no
 ; asynchronous IRQ, the symbolic summary proves BP503B here and at4D18. Inner BP save is
 ; entrySP-16h (4CC8 after the current frame is rebuilt); outer BP is entrySP-0Ch (4C9F).
@@ -251,6 +262,11 @@ loc_4D02:
 loc_4D10:
     mov word [0x1fc7],0x0 ; @04D10
     mov [di],cl ; @04D16
+; S19 saved-bp-dispatch: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Isolated4C7E serial/intact/known-edge summary carries BP503B at both transfers,SP=P-16 atCALL/P
+; atJMP. Actual save/dirty-map/IRQ survival remains unproved.
+; Dependencies: 4C7E frame and fixed paths; absolute SS:SP placement; dirty-map separation; no
+; IRQ/code/provider/frame aliases.
 ; S17 flow-state: In the4C7E intact-save/known-edge/no-IRQ domain, BP503B and SP=entrySP
 ; reach this JMP. The JMP pushes no continuation:503B ultimately consumes the inherited
 ; caller return. Changing saved outer BP, code, SS or return words remains outside that
@@ -296,6 +312,10 @@ loc_4D45:
     xlatb ; @04D4B
 KeyboardCharacterReadyReturn4D4C:
     ret ; @04D4C
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 ; [04D4D] Code-editor callback503B shares this RET4D77. Header style08 gives BP0; this stream intentionally clobbers BP, restored by editor inner POP4CD1 and distinct outer POP4CDA. At normal header0F0908 and ten non-CR input bytes, x=224..368,y=144,width/height16, three planes; DF0 reaches CR4DFC and terminal header4DFD. Changed header/DF/saved SI can destroy this finite traversal; do not infer callback identity from child BP preservation.
 ; Stream uses live DS:SI and incoming DF. Header: column(1-based), row, style.
 ; Header column0 terminates; style0=>BP2 elseBP0. Only CR ends each text run.
@@ -307,8 +327,16 @@ DrawTextStream:
     jz TextStreamReturn ; @04D50
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @04D52
     dec cl ; @04D54
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @04D56
     db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @04D57
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @04D59
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04D5A
     jnz loc_4D63 ; @04D5C
@@ -316,6 +344,10 @@ DrawTextStream:
     jmp short TextStreamReadCharacter ; @04D61
 loc_4D63:
     db 0x33,0xed ; ENCODED: xor bp,bp (NASM chooses a different encoding) ; @04D63
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 TextStreamReadCharacter:
     lodsb ; @04D65
     cmp al,0xd ; @04D66
@@ -394,6 +426,10 @@ DisplayPageCopyModeOutput:
     mov ds,ax ; @04DE4
     mov es,ax ; @04DE6
     mov cx,0x6d60 ; @04DE8
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @04DEB
 DisplayPageCopyRestoreDataSegment:
     pop ds ; @04DED
@@ -439,6 +475,10 @@ ClearVgaBytes:
     mov ax,0xa000 ; @04E2D
     mov es,ax ; @04E30
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @04E32
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @04E34
 ClearVgaReturn:
     ret ; @04E36

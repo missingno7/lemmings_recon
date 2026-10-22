@@ -251,6 +251,11 @@ pcspeaker_InterruptEntry:
     sub ah,0x10 ; @0018F
     ja pcspeaker_loc_01A1 ; @00192
     shl bl,1 ; @00194
+; S19 speaker-frontier: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Natural AH00/01/03 select01D4/024F/01B0 only with intact live table/image. Raw setters can
+; construct any near target. STI0182 allows nesting; DF does not reverse explicit INC copies.
+; Dependencies: S13 natural producer gates and separated table/saves; raw setter/table and vector
+; lifetime closure; actual IRQ schedule and caller frame.
 ; S17 flow-state: PC-speaker retains an independent flow-state report; main INT60 remains
 ; undeclared until a real component/frame contract is supplied.
 ; Mutable/zero/out-of-table0196 targets and0181/tail UNKNOWN bytes stay unresolved.

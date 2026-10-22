@@ -34,6 +34,10 @@ CopyStatusBackdropToDrawingPage:
     out dx,ax ; @0794B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0794C
     mov cx,0xd ; @0794E
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @07951
     add di,byte +0x1f ; @07953
     mov ax,0x105 ; @07956
@@ -42,6 +46,10 @@ CopyStatusBackdropToDrawingPage:
     mov dx,0x13 ; @0795E
 loc_7961:
     mov cx,0xd ; @07961
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @07964
     add di,byte +0x1f ; @07966
     dec dx ; @07969

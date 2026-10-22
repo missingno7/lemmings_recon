@@ -41,6 +41,10 @@ loc_580E:
     push bx ; @05810
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @05811
     db 0x8a,0xcb ; ENCODED: mov cl,bl (NASM chooses a different encoding) ; @05813
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @05815
     pop bx ; @05817
     pop di ; @05818
@@ -217,6 +221,10 @@ LoadMainResourceSections:
     mov es,[StatusGlyphBufferSegment-GameDataImage] ; @05931
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @05935
     mov cx,0x3e0 ; @05939
+; S19 DF-site census rep movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @0593C
     pop ds ; @0593E
     pop bx ; @0593F
@@ -273,6 +281,10 @@ sub_597D:
     mov es,[StatusGlyphBufferSegment-GameDataImage] ; @059AC
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @059B0
     mov cx,0x720 ; @059B4
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @059B7
     pop ds ; @059B9
 loc_59BA:

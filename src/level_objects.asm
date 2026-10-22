@@ -3,6 +3,11 @@
 %if ($-$$) != 0x378a
     %error "level_objects start moved"
 %endif
+; S19 level-clear-and-copies: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Level clear,odd-header and28-byte object copies use live DF/segments. Loader and service
+; declarations do not certify complete actual entry/ownership domains.
+; Dependencies: Saved segments and actual DF; complete reads; unchecked selectors/counts; IRQ and
+; alias writers.
 ; [0378A] This is a1Ch ground-template-to-object copy at17CB, not a2Dh entity clone. Under intact counters/saves its32 destination starts advance1Ch and incoming DF moves each28-byte copy. Entity indices50 and above overlap neighboring owners; altered saves/segments are separate aliases.
 ; RECORD HANDOFF: main DS is also copied to ES.32 eight-byte definitions at0FEB
 ; select28-byte ground records by their big-endian word at+4. Low16-bit MUL/add
@@ -31,6 +36,10 @@ loc_379B:
     mov cx,0x1c ; @037AD
     mul cx ; @037B0
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @037B2
+; S19 DF-site census rep movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsb ; @037B4
     pop di ; @037B6
     pop cx ; @037B7

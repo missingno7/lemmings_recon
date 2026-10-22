@@ -117,6 +117,10 @@ loc_5BB5:
     push cx ; @05BB5
     db 0x8a,0xca ; ENCODED: mov cl,dl (NASM chooses a different encoding) ; @05BB6
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @05BB8
+; S19 DF-site census rep movsw word ptr es:[di], word ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @05BBA
     pop cx ; @05BBC
     dec ch ; @05BBD
@@ -139,6 +143,10 @@ loc_5BD5:
     db 0x03,0xf5 ; ENCODED: add si,bp (NASM chooses a different encoding) ; @05BDC
     dec ch ; @05BDE
     jnz loc_5BD5 ; @05BE0
+; S19 DF-site census stosw word ptr es:[di], ax: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosw ; @05BE2
     pop cx ; @05BE3
     pop si ; @05BE4

@@ -126,6 +126,11 @@ loc_70BE:
     shr dx,1 ; @070E9
     shr dx,1 ; @070EB
     mov cx,[di+EntityRecordDrawingYBias-EntityRecordsBase] ; @070ED
+; S19 sprite-saved-target: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Isolated intact-save summary carries70F0 callback to7159 AX/715B CALL,DS=entryDS through strip
+; restore. This is not whole-game membership.
+; Dependencies: Record/callback writer closure; target S-6 and strip DS S-12 survival; SS
+; mirrors/dirty maps/IRQ/provider aliases; absolute stack placement.
 ; S17 flow-state: For706F entryS, current DS supplies the word sampled here; it is saved
 ; atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX
 ; at715B, including the strip path:7159 rereads the saved word, and715A removes
@@ -187,9 +192,19 @@ EntitySpriteStripResume:
     pop si ; @07156
     pop cx ; @07157
     pop di ; @07158
+; S19 sprite-saved-target: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Isolated intact-save summary carries70F0 callback to7159 AX/715B CALL,DS=entryDS through strip
+; restore. This is not whole-game membership.
+; Dependencies: Record/callback writer closure; target S-6 and strip DS S-12 survival; SS
+; mirrors/dirty maps/IRQ/provider aliases; absolute stack placement.
 loc_7159:
     pop ax ; @07159
     pop dx ; @0715A
+; S19 sprite-saved-target: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Isolated intact-save summary carries70F0 callback to7159 AX/715B CALL,DS=entryDS through strip
+; restore. This is not whole-game membership.
+; Dependencies: Record/callback writer closure; target S-6 and strip DS S-12 survival; SS
+; mirrors/dirty maps/IRQ/provider aliases; absolute stack placement.
 ; S17 flow-state: CALL AX keeps current CS and pushes715D; it does not use a far field in
 ; record+14. The local transport proof excludes non-stack writes/IRQs aliasing saved
 ; words; S1 rawS=000E still permits the SS:0008 mirror to replace the target. Actual

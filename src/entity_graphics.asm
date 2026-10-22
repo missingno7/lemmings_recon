@@ -16,6 +16,10 @@ loc_5D6B:
     push cx ; @05D6C
 loc_5D6D:
     push cx ; @05D6D
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @05D6E
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @05D6F
     db 0x22,0xf6 ; ENCODED: and dh,dh (NASM chooses a different encoding) ; @05D71
@@ -26,6 +30,10 @@ loc_5D77:
     rcr ah,1 ; @05D79
     dec bh ; @05D7B
     jnz loc_5D77 ; @05D7D
+; S19 DF-site census stosw word ptr es:[di], ax: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_5D7F:
     stosw ; @05D7F
     pop cx ; @05D80
@@ -175,6 +183,10 @@ loc_5E34:
     push ds ; @05E79
     mov ds,[GeneratedGraphicsBufferSegment-GameDataImage] ; @05E7A
     cli ; @05E7E
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_5E7F:
     lodsw ; @05E7F
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @05E80
@@ -184,6 +196,10 @@ loc_5E7F:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05E89
     out dx,ax ; @05E8D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05E8E
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05E90
     mov ah,[es:di] ; @05E91
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @05E94
@@ -191,7 +207,15 @@ loc_5E7F:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05E98
     out dx,ax ; @05E9C
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05E9D
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05E9F
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @05EA0
     mov ah,[es:di] ; @05EA1
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @05EA4
@@ -199,6 +223,10 @@ loc_5E7F:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05EA8
     out dx,ax ; @05EAC
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05EAD
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05EAF
     add di,0xcd ; @05EB0
     loop loc_5E7F ; @05EB4
@@ -236,6 +264,10 @@ sub_5EBA:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05EE3
     out dx,ax ; @05EE7
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05EE8
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05EEA
     mov al,[es:di] ; @05EEB
     xchg bl,al ; @05EEE
@@ -244,6 +276,10 @@ sub_5EBA:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05EF4
     out dx,ax ; @05EF8
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05EF9
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05EFB
     mov al,[es:di] ; @05EFC
     xchg cl,al ; @05EFF
@@ -252,6 +288,10 @@ sub_5EBA:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @05F05
     out dx,ax ; @05F09
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05F0A
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05F0C
     sti ; @05F0D
     ret ; @05F0E
@@ -315,6 +355,10 @@ loc_5F6D:
     mov [ss:0xe],ax ; @05F79
     out dx,ax ; @05F7D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05F7E
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05F80
     mov al,[es:di] ; @05F81
     db 0x8a,0xe3 ; ENCODED: mov ah,bl (NASM chooses a different encoding) ; @05F84
@@ -322,6 +366,10 @@ loc_5F6D:
     mov [ss:0xe],ax ; @05F88
     out dx,ax ; @05F8C
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05F8D
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05F8F
     mov al,[es:di] ; @05F90
     db 0x8a,0xe1 ; ENCODED: mov ah,cl (NASM chooses a different encoding) ; @05F93
@@ -329,6 +377,10 @@ loc_5F6D:
     mov [ss:0xe],ax ; @05F97
     out dx,ax ; @05F9B
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @05F9C
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @05F9E
     mov dx,0x3c4 ; @05F9F
     mov ax,0xf02 ; @05FA2
@@ -406,6 +458,10 @@ loc_600F:
     mov ds,[GeneratedGraphicsBufferSegment-GameDataImage] ; @06028
     mov cx,0xa ; @0602C
     cli ; @0602F
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_6030:
     lodsw ; @06030
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @06031
@@ -415,6 +471,10 @@ loc_6030:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0603A
     out dx,ax ; @0603E
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @0603F
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @06041
     mov ah,[es:di] ; @06042
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @06045
@@ -422,7 +482,15 @@ loc_6030:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @06049
     out dx,ax ; @0604D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @0604E
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @06050
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @06051
     mov ah,[es:di] ; @06052
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @06055
@@ -430,6 +498,10 @@ loc_6030:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @06059
     out dx,ax ; @0605D
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @0605E
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @06060
     add di,0xcd ; @06061
     loop loc_6030 ; @06065
@@ -519,6 +591,10 @@ loc_60E6:
     mov ds,[GeneratedGraphicsBufferSegment-GameDataImage] ; @060FE
     mov cx,0xd ; @06102
     cli ; @06105
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_6106:
     lodsw ; @06106
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @06107
@@ -528,6 +604,10 @@ loc_6106:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @06110
     out dx,ax ; @06114
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06115
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @06117
     mov ah,[es:di] ; @06118
     db 0x8a,0xe7 ; ENCODED: mov ah,bh (NASM chooses a different encoding) ; @0611B
@@ -535,7 +615,15 @@ loc_6106:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0611F
     out dx,ax ; @06123
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06124
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @06126
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsb ; @06127
     mov ah,[es:di] ; @06128
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @0612B
@@ -543,6 +631,10 @@ loc_6106:
     mov [ss:VgaBitMaskMirror-RuntimeStackFrame],ax ; @0612F
     out dx,ax ; @06133
     db 0x8a,0xc4 ; ENCODED: mov al,ah (NASM chooses a different encoding) ; @06134
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @06136
     add di,0xcd ; @06137
     loop loc_6106 ; @0613B

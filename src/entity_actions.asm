@@ -441,40 +441,88 @@ loc_3422:
     mov al,[ss:si] ; @0346E
     mov byte [ss:si],0x2 ; @03471
     inc si ; @03475
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @03476
     mov al,[ss:si] ; @03477
     mov byte [ss:si],0xa ; @0347A
     inc si ; @0347E
+; S19 action5-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; With DF1 and stable record/map,347F stores callback high at+15,3488 low at+14: old cell2 OR old
+; cell1<<8. With DF0 the nine cells write+16..1E instead.
+; Dependencies: Explicit DF and stable live record/map/segments/saves are input premises, not
+; game reachability.
+; S19 action5-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Loader DF0 excludes DOS entry DF1 as an origin. Actual DF0 at both foreground action calls is
+; still unproved.
+; Dependencies: Foreground service/driver/return-frame composition; IRQ/code/stack aliases;
+; callback/record/index/resource writer closure.
     stosb ; @0347F
     mov al,[ss:si] ; @03480
     mov byte [ss:si],0x3 ; @03483
     inc si ; @03487
+; S19 action5-byte-effects: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; With DF1 and stable record/map,347F stores callback high at+15,3488 low at+14: old cell2 OR old
+; cell1<<8. With DF0 the nine cells write+16..1E instead.
+; Dependencies: Explicit DF and stable live record/map/segments/saves are input premises, not
+; game reachability.
+; S19 action5-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Loader DF0 excludes DOS entry DF1 as an origin. Actual DF0 at both foreground action calls is
+; still unproved.
+; Dependencies: Foreground service/driver/return-frame composition; IRQ/code/stack aliases;
+; callback/record/index/resource writer closure.
     stosb ; @03488
     add si,0x19d ; @03489
     mov al,[ss:si] ; @0348D
     mov byte [ss:si],0x2 ; @03490
     inc si ; @03494
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @03495
     mov al,[ss:si] ; @03496
     mov byte [ss:si],0xa ; @03499
     inc si ; @0349D
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @0349E
     mov al,[ss:si] ; @0349F
     mov byte [ss:si],0x3 ; @034A2
     inc si ; @034A6
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @034A7
     add si,0x19d ; @034A8
     mov al,[ss:si] ; @034AC
     mov byte [ss:si],0x2 ; @034AF
     inc si ; @034B3
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @034B4
     mov al,[ss:si] ; @034B5
     mov byte [ss:si],0xa ; @034B8
     inc si ; @034BC
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @034BD
     mov al,[ss:si] ; @034BE
     mov byte [ss:si],0x3 ; @034C1
     inc si ; @034C5
+; S19 DF-site census stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosb ; @034C6
     pop si ; @034C7
     jmp RequestEntityActionFeedback ; @034C8

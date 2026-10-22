@@ -42,6 +42,10 @@ loc_825F:
     mov ax,[es:si] ; @0825F
     or ax,[es:si+0x12c0] ; @08262
     or ax,[es:si+0x2580] ; @08267
+; S19 DF-site census stosw word ptr es:[di], ax: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     stosw ; @0826C
     add si,byte +0x2 ; @0826D
     loop loc_825F ; @08270
@@ -84,6 +88,10 @@ loc_82C7:
     cli ; @082CA
 loc_82CB:
     mov al,[es:di] ; @082CB
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @082CE
     loop loc_82CB ; @082CF
     sti ; @082D1
@@ -110,6 +118,10 @@ loc_82F2:
     cli ; @082F5
 loc_82F6:
     mov al,[es:di] ; @082F6
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @082F9
     loop loc_82F6 ; @082FA
     sti ; @082FC
@@ -130,6 +142,10 @@ loc_8311:
     cli ; @08314
 loc_8315:
     mov al,[es:di] ; @08315
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @08318
     loop loc_8315 ; @08319
     sti ; @0831B
@@ -148,6 +164,10 @@ loc_832E:
     cli ; @08331
 loc_8332:
     mov al,[es:di] ; @08332
+; S19 DF-site census movsb byte ptr es:[di], byte ptr [si]: CONSERVATIVE=UNRESOLVED;
+; PROFILE=UNRESOLVED for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @08335
     loop loc_8332 ; @08336
     sti ; @08338

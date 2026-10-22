@@ -1,3 +1,6 @@
+; S19 loader: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
+; Original PKLITE supplies DF0/IF1 for every DOS DF/IF at ProgramEntry. This is an entry boundary
+; fact, not exclusion of a later IRQ.
 ; S17 flow-state: The pinned footer establishes CS=load, SS=load+143E, SP=4AF4;
 ; DOS/unpacker entry gives DS=ES=PSP. The footer encodes no DF/IF. Do not import
 ; check_unpack fixture FLAGS=0002 as a DOS/startup guarantee. 0003 installs relocated09A9
@@ -35,6 +38,12 @@ ProgramEntry:
     mov di,0x0 ; @00029
     mov cx,0x2012 ; @0002C
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0002F
+; S19 startup-clear: CONSERVATIVE=UNRESOLVED; PROFILE=PLATFORM-CONDITIONAL.
+; Forward clear includes game DS:0000..2011. PROFILE serial projection has DF0; CONSERVATIVE
+; loses DF after early services.
+; Profile entries: 1A:AH=0000, 21:AH=004A.
+; Dependencies: Fixed checksum/setup paths; no asynchronous interference; intact saves and
+; ES=gameDS handoff.
     rep stosb ; @00031
     pop ax ; @00033
     mov [StartupPspSegment1FF6-GameDataImage],ax ; @00034
@@ -249,6 +258,11 @@ GameFrameAfterSelectorScroll:
     call CopyDirtyLevelRowsToDrawingPage ; @001A7
 GameFrameAfterDirtyRows:
     call CopyStatusBackdropToDrawingPage ; @001AA
+; S19 action5-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Loader DF0 excludes DOS entry DF1 as an origin. Actual DF0 at both foreground action calls is
+; still unproved.
+; Dependencies: Foreground service/driver/return-frame composition; IRQ/code/stack aliases;
+; callback/record/index/resource writer closure.
 ; ACTION DF: both01AD and01C5 call3150 with live foreground DF;319E->3336 has no CLD/POPF/INT before347F/3488. Main STD1BB0 has read-child CLD1D34 and normal decoder CLD1C78, so it is not a proved returning DF1 source. Known foreground/service/saved-frame DF and separate IRQ-local visibility DF contracts remain required. IRQ-at-poll scheduling does not exclude the original4013/constructor publication race.
 GameFrameAfterStatusBackdrop:
     call DispatchEntityAction ; @001AD
@@ -269,12 +283,22 @@ GameFrameAfterEntityDrawing:
     call SelectEntityCandidate ; @001BF
 GameFrameAfterSelection:
     call UpdateStatusDisplay ; @001C2
+; S19 action5-actual-df: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Loader DF0 excludes DOS entry DF1 as an origin. Actual DF0 at both foreground action calls is
+; still unproved.
+; Dependencies: Foreground service/driver/return-frame composition; IRQ/code/stack aliases;
+; callback/record/index/resource writer closure.
 GameFrameAfterStatusDisplay:
     call DispatchEntityAction ; @001C5
 GameFrameAfterSecondDispatch:
     cmp byte [GameEndRequested-GameDataImage],0xff ; @001C8
     jnz loc_01D2 ; @001CD
     jmp GameEndWaitForFade ; @001CF
+; S19 double-wait-004a: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; 004A stored/startup/session zero producers are known; actual-game FF producer remains
+; unknown.01D2 on exactFF waits for two observed1FCD changes without local STI/timeout.
+; Dependencies: Indexed/string/word/stack/provider writer domains; timer delivery and
+; wrap/coalescing; raw FF alias witnesses do not prove a game producer.
 ; S14 WRITER SEARCH: no dedicated actual-game FF producer identified.
 ; Stored DS004A=00; startup0031/level455B clear it only with forward game-DS
 ; footprints; their DF1 ranges miss004A. Session0409 resets00 directly.
@@ -600,6 +624,11 @@ InitializeGameSession:
     mov word [PointerX-GameDataImage],0x96 ; @003F8
     mov word [PointerY-GameDataImage],0x64 ; @003FE
     mov byte [LevelCreationLimit-GameDataImage],0xc8 ; @00404
+; S19 double-wait-004a: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; 004A stored/startup/session zero producers are known; actual-game FF producer remains
+; unknown.01D2 on exactFF waits for two observed1FCD changes without local STI/timeout.
+; Dependencies: Indexed/string/word/stack/provider writer domains; timer delivery and
+; wrap/coalescing; raw FF alias witnesses do not prove a game producer.
 ; S14: dedicated session writer resets DS004A=00 after level4551. No
 ; dedicated actual-game FF producer identified; indexed/decoder/segment alias
 ; writers can setFF,so this clear does not prove a persistent zero invariant.
@@ -624,12 +653,20 @@ InitializeGameSession:
     mov di,0x12 ; @0044C
     mov cx,0x42a0 ; @0044F
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00452
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @00454
     push ss ; @00456
     pop es ; @00457
     mov di,0x42b2 ; @00458
     mov cx,0x642 ; @0045B
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @0045E
+; S19 DF-site census rep stosb byte ptr es:[di], al: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED
+; for actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep stosb ; @00460
 ; [00462] The0FB2 child reinstalls all nine drawing callback words after the level455B clear and before046B initialization/header copy. This ordering is needed for first3140 publication and the conditional nine-value preservation proof; it does not close service/IRQ/alias writers.
 ; CONTRACT: 03E7..0461 initializes live DS fields, then clears SS:0012..42B1
@@ -904,9 +941,19 @@ ProbeTandyVideoPage:
     xchg al,ah ; @0061B
     db 0x0b,0xdb ; ENCODED: or bx,bx (NASM chooses a different encoding) ; @0061D
     jnz loc_0626 ; @0061F
+; S19 dynamic-bios-restore: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; 060E savesBX;0618 POP AX,0619 AH05,061B XCHG AL,AH yields AX=(savedBL<<8)|05. AH is saved
+; undocumented BL,not fixed05.
+; Dependencies: Need actual BL convention/provenance through060E and earlier detector; no
+; function/results fabricated.
     int 0x10 ; @00621
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @00623
     ret ; @00625
+; S19 dynamic-bios-restore: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; 060E savesBX;0618 POP AX,0619 AH05,061B XCHG AL,AH yields AX=(savedBL<<8)|05. AH is saved
+; undocumented BL,not fixed05.
+; Dependencies: Need actual BL convention/provenance through060E and earlier detector; no
+; function/results fabricated.
 loc_0626:
     int 0x10 ; @00626
     mov al,0xff ; @00628
@@ -2176,13 +2223,32 @@ DetectVideoAdapters:
     mov byte [MonoCrtcProbeEnableByte-GameDataImage],0xff ; @013F3
     mov cx,0x4 ; @013F8
     lea si,[DisplayProbeRecords-GameDataImage] ; @013FB
+; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
 loc_13FF:
     lodsb ; @013FF
     test al,al ; @01400
+; S19 DF-site census lodsw ax, word ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
+; actual whole-machine DF/segment inputs.
+; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
+; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     lodsw ; @01402
     jz loc_140B ; @01403
     push si ; @01405
     push cx ; @01406
+; S19 probe-sufficient-df-domain: CONSERVATIVE=UNRESOLVED; PROFILE=PLATFORM-CONDITIONAL.
+; Explicit entry13DC DF0/gameDS retains DF0/gameDS at1407 under declared BIOS functions in the
+; serial intact-save domain. This does not prove traversal bounds or pointer writers.
+; Profile entries: 10:AX=1A00, 10:AH=0012, 10:AH=000F.
+; Dependencies: Entry13DC DF0/gameDS; fixed decoded edges; no IRQ; intact saves;
+; pointer-byte/four-row lifetime remains separate.
+; S19 probe-global-traversal: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Global traversal remains open despite the sufficient BIOS-preserving domain. Stored
+; enables/targets are mutable and four-row progression is not certified.
+; Dependencies: 2011/2012 marker overlap at2013; long GROUND/request and indexed/string/alias
+; writers; actual DF/DS and saves.
 ; S17 flow-state: No caller-independent DF/DS/SS invariant was proved. Undeclared
 ; BIOS1413/1466 makes later loop iterations unknown even in serial intact-save analysis.
 ; In the explicit sufficient domain (entry13DC DF0/game DS, fixed known edges, intact
@@ -2610,6 +2676,12 @@ TimerRestoreClockInterrupt:
     int 0x1a ; @016D1
 TimerRestoreReturn:
     ret ; @016D3
+; S19 external-08-09: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
+; Two INT08 far chains have caller-built FLAGS/CS/IP and external IRET edges. Undocumented
+; provider segments/registers and frame aliases remain open. IRQ09 owns IRET;old09 is
+; restored,not an invented chain.
+; Dependencies: Provider/frame preservation; vector/PIC/pending/nesting phases; keyboard
+; buffer/save aliases.
 ; Four actual saves DS/AX/BX/CX. Relocated16D9 supplies the live game frame.
 ; Special7D/7E paths zeroAX before binding lookup, including releases.
 ; The separately popped raw scan owns the83-byte0F78 key-state array.
