@@ -112,8 +112,15 @@ reachable edge cases stay, and unresolved dependencies stay explicit. Replace
 verified simulated services with native equivalents without changing game
 semantics. The C becomes a clean native engine, not a permanent x86
 transliteration; every simplification cites the original dependency it rests on.
-Results are classed unconditional (original code), platform-conditional (named
-profile assumptions listed) or unresolved; a platform profile never closes
+The x86 memory model, physical stack and interrupt machinery are valid
+intermediate mechanisms; replace them once observable effects and required
+ordering are proven equivalent. Never add locks, bounds checks or fixes that
+change original semantics, and never let C undefined behavior stand in for a
+characterized original out-of-range access: model that access explicitly.
+Results are classed proven (original code), platform-conditional (named
+profile assumptions listed), characterized original nondeterminism (race,
+interleaving, overflow or alias with mechanism, trigger, memory effect and
+consequence) or unresolved (blocks its completeness claim); a platform profile never closes
 interrupt interleavings, stack aliases, callback writers or races.
 
 # Platform substitutions

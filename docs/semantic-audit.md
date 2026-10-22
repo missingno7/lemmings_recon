@@ -260,8 +260,22 @@ all of the following hold, each recorded beside the ASM or in the ledger:
    invented behavior.
 6. **Preserved quirks.** Bugs, wrapping, aliasing, interrupt and hardware
    dependencies are stated where observable.
-7. **Named residue.** Remaining uncertainty is listed and split into genuinely
-   unknown behavior versus unrecoverable detail (historical names, layout).
+7. **Classified residue.** Every remaining behavior is in exactly one class:
+   (1) proven from original instructions; (2) platform-conditional, fully
+   understood under the declared machine contract (metadata/platform-profile.json);
+   (3) characterized original nondeterminism: races, interrupt interleavings,
+   overflows and aliases whose mechanism, trigger conditions, affected memory
+   and later observable consequences are understood well enough to reproduce;
+   (4) unresolved semantics: unknown executable targets, unknown effects or
+   missing behavior-affecting dependencies. Class 4 blocks the completeness claim
+   it touches; a named unknown is not a contract. Unrecoverable detail
+   (historical names, layout) is listed separately and never blocks.
+
+The freeze does not require proving that original races, aliases or overflows
+are impossible. If the original permits them, the specification characterizes
+them and implementations preserve them. Keep three layers distinct: the
+complete semantic specification, the supported VGA + AdLib runtime
+configuration, and the techniques of the current C/native host.
 
 Priority order for the freeze is the DOS VGA game with the AdLib driver; the
 PC-speaker and Tandy images, joystick and alternate display paths remain in the
