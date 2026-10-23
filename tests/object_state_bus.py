@@ -58,8 +58,7 @@ def require(condition, message):
 
 
 def hashes():
-    paths = {'AGENTS.md', 'docs/executable.md', 'docs/object-state-bus.md',
-             'metadata/symbols.json', 'metadata/inputs.json',
+    paths = {'metadata/symbols.json', 'metadata/inputs.json',
              'c/regs.h', 'c/special_blit.h', 'c/lemmings_sym.h',
              'assets/vgalemmi.exe', 'tests/object_state_bus.py',
              'tests/object_graphics_bus.py'}

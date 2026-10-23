@@ -375,8 +375,7 @@ def worker(directory):
         'tests/aligned_masked.py','tests/minimap_vga.py','tests/dat_io.py',
         'tests/dat_io_c.py','tools/common.py','tools/unpack.py',
         'tools/cbuild.py','tools/bounded_process.py','metadata/symbols.json',
-        'build/unpack.json','src/planar_drawing.asm',
-        'docs/shifted-drawing.md','docs/shifted-read-mask.md')
+        'build/unpack.json','src/planar_drawing.asm')
     write_json(report_path,dict(image='main',image_sha256=sha(IMAGE),
         case_count=len(fixture_cases),cases=reports,
         mutation_count=len(mutations),mutations_detected=mutations,

@@ -560,7 +560,7 @@ def main():
         'tests/drawing_inputs.py', 'tests/special_blit.py',
         'tests/dat_io.py', 'tests/dat_io_c.py', 'tools/common.py',
         'tools/cbuild.py', 'tools/difftest.py', 'tools/coverage.py',
-        'tools/unpack.py', 'metadata/symbols.json', 'docs/drawing-source.md',
+        'tools/unpack.py', 'metadata/symbols.json',
     )
     input_hashes = {path: sha((ROOT / path).read_bytes()) for path in paths}
     write_json(report, dict(

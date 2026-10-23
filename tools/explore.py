@@ -10,6 +10,7 @@ def discover(image, hints, legacy, relocations=()):
     seeds = {r['offset'] for r in hints['entries']}
     seeds.update(r['offset'] for r in legacy['accepted'])
     work, instructions, edges, unresolved, routines = list(sorted(seeds, reverse=True)), {}, [], [], set(seeds)
+    closed_transfers = []
     occupied = {}
     limit = hints['code_limit']
     relocation_sites = {r['linear'] for r in relocations}
@@ -75,19 +76,23 @@ def discover(image, hints, legacy, relocations=()):
                         work.append(target)
                         break
                     hint=indirect_hints.get(off)
+                    # legitimate_closed: every legitimate writer of the pointer is known and
+                    # stores only these targets; other values arise only from characterized
+                    # corruption (AGENTS.md), so the transfer leaves the frontier.
+                    closed=bool(hint and hint.get('legitimate_closed'))
                     if hint:
                         if ins.bytes.hex()!=hint['bytes']:
                             raise ValueError(f'Indirect evidence bytes differ at {off:04X}')
                         for target in hint.get('targets',[]):
                             edges.append(dict(source=off,target=target,kind='indirect_call' if ins.group(capstone.CS_GRP_CALL) else 'indirect_branch',
-                                              evidence=hint['evidence'],target_domain_complete=False))
+                                              evidence=hint['evidence'],target_domain_complete=closed))
                             work.append(target)
                             if ins.group(capstone.CS_GRP_CALL):routines.add(target)
                     item=dict(address=off,kind='indirect_or_far_transfer',instruction=m+' '+ins.op_str)
                     if hint:
                         item.update(known_targets=hint.get('targets',[]),
-                                    closure=hint['closure'],target_domain_complete=False)
-                    unresolved.append(item)
+                                    closure=hint['closure'],target_domain_complete=closed)
+                    (closed_transfers if closed else unresolved).append(item)
             if m == 'int':
                 edges.append(dict(source=off,target=None,kind='interrupt',vector=ins.operands[0].imm))
                 # Known DOS terminate service is a non-returning platform edge.
@@ -123,6 +128,7 @@ def discover(image, hints, legacy, relocations=()):
             start=at
     return dict(instructions=list(sorted(instructions.values(),key=lambda r:r['address'])),
                 edges=edges, unresolved=sorted(unresolved,key=lambda r:r['address']),
+                closed_transfers=sorted(closed_transfers,key=lambda r:r['address']),
                 routines=sorted(routines), regions=regions, overlays=[r for r in hints['regions'] if r.get('overlay')],
                 metrics=dict(image_bytes=len(image),classified_bytes=sum(c!='unresolved' for c in classes),
                              decoded_instruction_bytes=len(occupied),instructions=len(instructions),

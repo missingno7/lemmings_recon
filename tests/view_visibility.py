@@ -411,8 +411,6 @@ def input_hashes():
         'tests/minimap_vga.py', 'tools/resources.py', 'tools/unpack.py',
         'tools/common.py', 'tools/bounded_process.py', 'tools/cbuild.py',
         'tools/difftest.py',
-        'docs/executable.md',
-        'docs/indirect-callbacks.md', 'docs/entity-display.md', 'AGENTS.md',
     }
     missing = sorted(path for path in paths if not (ROOT / path).is_file())
     oracle_require(not missing, 'required view-visibility inputs missing: ' + ', '.join(missing))

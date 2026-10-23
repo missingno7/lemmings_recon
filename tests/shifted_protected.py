@@ -615,8 +615,7 @@ def worker(build_directory):
         'tests/dat_io.py', 'tests/dat_io_c.py', 'tools/common.py',
         'tools/unpack.py', 'tools/cbuild.py', 'tools/bounded_process.py',
         'metadata/symbols.json', 'build/unpack.json',
-        'src/planar_drawing.asm', 'docs/shifted-drawing.md',
-        'docs/shifted-protected.md')
+        'src/planar_drawing.asm')
     report = dict(
         image='main', image_sha256=sha(IMAGE),
         range_inclusive=f'{START:04X}..{RETF:04X}',

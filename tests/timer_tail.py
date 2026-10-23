@@ -263,7 +263,7 @@ def compare(native,c,core):
 
 
 def hashes():
-    paths=['AGENTS.md','assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
+    paths=['assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
            'src/game_timer.asm','src/entry_services_after_timer.asm','src/game_code_late_after_palette.asm',
            'src/input_poll.asm','src/input_commands.asm','src/view_visibility.asm','src/port201_input.asm',
            'tests/timer_tail.py','tests/verification.py','tests/input_poll.py','tests/ui_commands.py','tests/port_io.py','tests/minimap_vga.py',

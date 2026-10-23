@@ -257,9 +257,6 @@ def make_cases():
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-mask.md',
-        'docs/generated-graphics.md', 'docs/entity-vga.md',
         'src/game_code_late_after_palette.asm', 'src/entity_graphics.asm',
         'src/entity_sprite_planes.asm', 'src/entity_sprite_wide.asm',
         'src/entity_sprite_four_planes.asm', 'src/program.asm',

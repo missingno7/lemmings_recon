@@ -53,8 +53,6 @@ for routine, (entry, _ret, end, code) in ROUTINES.items():
     INSTRUCTIONS[routine] = {ins.address: ins for ins in MD.disasm(code, entry)}
 REPORT = BUILD / 'entity-vga-differential.json'
 INPUT_PATHS = (
-    'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-    'docs/bottom-up.md', 'docs/entity-vga.md',
     'src/game_code_late_after_palette.asm',
     'c/entity_vga.c', 'c/entity_vga.h', 'c/special_blit.h',
     'c/lemmings_sym.h', 'c/regs.h', 'tests/entity_vga.py',

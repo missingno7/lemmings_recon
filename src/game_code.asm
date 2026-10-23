@@ -689,12 +689,8 @@ loc_2379:
     test word [si+EntityRecordStateBits-EntityRecordsBase],0x100 ; @02379
     jnz loc_2383 ; @0237E
     jmp short loc_2386 ; @02380
-; S14 U027: [02382,02383) stored bytes remain UNKNOWN.
-; Neighbours: P 02380 jmp 0x2386; N 02383 call 0x283b.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @02382
 loc_2383:
     call CopyEntityPatternToInteractionMap ; @02383
@@ -1051,12 +1047,8 @@ loc_2693:
     mov [si+EntityRecordFrameSelector-EntityRecordsBase],al ; @0269A
     jnz loc_26A2 ; @0269D
     jmp short loc_26E4 ; @0269F
-; S14 U028: [026A1,026A2) stored bytes remain UNKNOWN.
-; Neighbours: P 0269F jmp 0x26e4; N 026A2 cmp al, 0xa.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @026A1
 loc_26A2:
     cmp al,0xa ; @026A2
@@ -1101,23 +1093,15 @@ loc_26E4:
     cmp word [si+EntityRecordX-EntityRecordsBase],byte +0x10 ; @026EF
     jg loc_26F7 ; @026F2
     jmp short loc_2763 ; @026F4
-; S14 U029: [026F6,026F7) stored bytes remain UNKNOWN.
-; Neighbours: P 026F4 jmp 0x2763; N 026F7 cmp word ptr [si], 0x680.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @026F6
 loc_26F7:
     cmp word [si+EntityRecordX-EntityRecordsBase],0x680 ; @026F7
     jl loc_2700 ; @026FB
     jmp short loc_2763 ; @026FD
-; S14 U030: [026FF,02700) stored bytes remain UNKNOWN.
-; Neighbours: P 026FD jmp 0x2763; N 02700 call 0x5dc6.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @026FF
 loc_2700:
     call PrepareEntityPixelSample ; @02700
@@ -1165,12 +1149,8 @@ EntityState0080AfterThirdPixelCall:
     jmp loc_1FE8 ; @0275D
 loc_2760:
     jmp short loc_2766 ; @02760
-; S14 U031: [02762,02763) stored bytes remain UNKNOWN.
-; Neighbours: P 02760 jmp 0x2766; N 02763 neg byte ptr [si + 0x27].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @02762
 loc_2763:
     neg byte [si+EntityRecordHorizontalStep-EntityRecordsBase] ; @02763
@@ -1574,12 +1554,8 @@ EntityState0400AfterThreeProbePixelCall:
     jnz loc_2AEC ; @02AB6
     inc word [si+EntityRecordY-EntityRecordsBase] ; @02AB8
     jmp short loc_2B28 ; @02ABB
-; S14 U032: [02ABD,02ABE) stored bytes remain UNKNOWN.
-; Neighbours: P 02ABB jmp 0x2b28; N 02ABE call 0x5dc6.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @02ABD
 loc_2ABE:
     call PrepareEntityPixelSample ; @02ABE
@@ -1594,12 +1570,8 @@ EntityState0400AfterTwoProbePixelCall:
     jnz loc_2AEC ; @02AD4
     inc word [si+EntityRecordY-EntityRecordsBase] ; @02AD6
     jmp short loc_2B28 ; @02AD9
-; S14 U033: [02ADB,02ADC) stored bytes remain UNKNOWN.
-; Neighbours: P 02AD9 jmp 0x2b28; N 02ADC call 0x5dc6.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @02ADB
 loc_2ADC:
     call PrepareEntityPixelSample ; @02ADC
@@ -1609,12 +1581,8 @@ EntityState0400AfterOneProbePixelCall:
     jnz loc_2AEC ; @02AE4
     inc word [si+EntityRecordY-EntityRecordsBase] ; @02AE6
     jmp short loc_2B28 ; @02AE9
-; S14 U034: [02AEB,02AEC) stored bytes remain UNKNOWN.
-; Neighbours: P 02AE9 jmp 0x2b28; N 02AEC mov word ptr [si + 8], 0.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @02AEB
 loc_2AEC:
     mov word [si+EntityRecordStateBits-EntityRecordsBase],0x0 ; @02AEC
@@ -1661,12 +1629,8 @@ loc_2B4A:
     cmp al,0xf ; @02B4A
     jnz loc_2B51 ; @02B4C
     jmp short loc_2B66 ; @02B4E
-; S14 U035: [02B50,02B51) stored bytes remain UNKNOWN.
-; Neighbours: P 02B4E jmp 0x2b66; N 02B51 cmp al, 3.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @02B50
 loc_2B51:
     cmp al,0x3 ; @02B51

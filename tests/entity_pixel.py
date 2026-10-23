@@ -414,7 +414,6 @@ def input_hashes():
         'metadata/regions.json', 'metadata/inputs.json',
         'c/entity_pixel.c', 'c/entity_pixel.h', 'c/lemmings_sym.h', 'c/regs.h',
         'tests/entity_pixel.py', 'tests/dat_io.py', 'tests/dat_io_c.py',
-        'docs/entity-pixel.md',
         'tools/cbuild.py', 'tools/difftest.py', 'tools/coverage.py',
         'tools/bounded_process.py', 'tools/unpack.py', 'tools/common.py',
     )

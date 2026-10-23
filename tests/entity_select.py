@@ -912,8 +912,6 @@ def compare_case(native, case, *, core):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-actions.md', 'docs/decimal-field.md',
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/oracle.json', 'metadata/symbols.json',
         'metadata/hints.json', 'metadata/regions.json', 'metadata/inputs.json',

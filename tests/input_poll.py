@@ -517,9 +517,8 @@ def compare(native, c, core, reference=None):
 
 def hashes():
     paths = (
-        'AGENTS.md', 'assets/vgalemmi.exe', 'metadata/oracle.json',
+        'assets/vgalemmi.exe', 'metadata/oracle.json',
         'metadata/inputs.json', 'metadata/toolchain-lock.json',
-        'docs/executable.md', 'docs/port-io.md',
         'src/input_poll.asm', 'src/port201_input.asm',
         'c/input_poll.c', 'c/input_poll.h', 'c/port_io.c', 'c/port_io.h',
         'c/interrupt_service.c', 'c/interrupt_service.h',

@@ -277,7 +277,7 @@ def compare(native,case,core):
 
 
 def input_hashes(native=False):
-    paths=set(rows.input_hashes(native))|{'tests/palette_row_select.py','docs/palette-row-select.md','docs/palette-pointer-frontier.md'}
+    paths=set(rows.input_hashes(native))|{'tests/palette_row_select.py'}
     if native:paths|={'c/palette_row_select.c','c/palette_row_select.h'}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

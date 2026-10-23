@@ -100,12 +100,8 @@ EntityDrawingAfterDirty:
 EntityDrawingAfterPoints:
     pop di ; @0366C
     jmp short EntityDrawingRestoreRecord ; @0366D
-; S14 U042: [0366F,03670) stored bytes remain UNKNOWN.
-; Neighbours: P 0366D jmp 0x367d; N 03670 mov byte ptr [0x50], 0xff.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @0366F
 loc_3670:
     mov byte [EntityWorkGuard-GameDataImage],0xff ; @03670

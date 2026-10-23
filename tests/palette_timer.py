@@ -194,7 +194,7 @@ def compare(native,c,core):
 
 
 def hashes():
-    paths=('AGENTS.md','assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
+    paths=('assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
            'src/palette_frontends.asm','c/palette_ports.c','c/palette_ports.h','c/video_restore.h','c/special_blit.h',
            'c/aligned_read_mask.h','c/regs.h','c/lemmings_sym.h','tests/palette_timer.py','tests/verification.py',
            'tests/minimap_vga.py','tools/unpack.py','tools/resources.py','tools/common.py','tools/cbuild.py',

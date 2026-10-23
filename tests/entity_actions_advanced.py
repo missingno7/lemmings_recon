@@ -563,8 +563,6 @@ MUTATION_WITNESSES = {
 
 def input_hashes():
     paths = [
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-actions.md',
         'src/game_code.asm', 'src/entity_actions.asm', 'src/game_code_late.asm',
         'src/game_code_late_after_palette.asm',
         'src/entity_sprite_planes.asm', 'src/entity_sprite_wide.asm',

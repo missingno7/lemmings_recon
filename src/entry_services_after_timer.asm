@@ -7,11 +7,14 @@ MasterPicEoiOut18B4:
     out 0x20,al ; @018B4
 MasterPicEoiReturn18B6:
     ret ; @018B6
-; S14 U016: [018B7,018F8) stored bytes remain UNKNOWN.
-; Neighbours: P 018B6 ret; N 018F8 sti.
-; Candidate PIC helper18B7: command0B/read20,TEST7F; nonzero sends master EOI20 at18ED. Otherwise sends slaveA0 EOI20,command0B/readA0; nonzero skips master EOI, zero sends master20. EB00 branches are internal candidate delays. No STI/CLI/data store; AL/flags clobber. Hardware contract and incoming entry unproved.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; No incoming edge identified for 18B7..18F7: no direct, table, vector, relocated or
+; protected-view reference reaches it and no data reader uses it, so the bytes
+; stay UNKNOWN (code-looking). Recovered paths bypass it; translators of the
+; neighbouring routines need nothing from it.
+; Read as code: a PIC end-of-interrupt helper. It reads the master ISR (OCW3
+; 0Bh) and sends EOI to port 20h if any of IRQ0..6 is in service; otherwise it
+; sends EOI to the slave (A0h), rereads the slave ISR and sends the master EOI
+; only when no slave IRQ remains in service. JMP $+2 pairs are I/O delays.
 ; UNKNOWN: unresolved bytes
     db 0xb0,0x0b,0xe6,0x20,0xeb,0x00,0xeb,0x00,0xeb,0x00,0xe4,0x20,0xeb,0x00,0xeb,0x00 ; @018B7
 ; UNKNOWN: unresolved bytes
@@ -27,6 +30,19 @@ MasterPicEoiReturn18B6:
 ; CPU entry retains DF,clears IF/TF.18F8 STI enables nesting;handler sets1FDF/AL0,restoresDS,IRET
 ; restores actual savedFLAGS. AH is high relocated game segment,not universally09.
 ; Dependencies: Local effect with intact frame/saves; nested IRQ/aliases remain unresolved.
+; DOS INT24 CRITICAL-ERROR HANDLER. Installed by ProgramEntry at 0085..008D
+; (AH25, DS=CS, DX=18F8); reached only through IVT 24 when DOS reports a device
+; error (typically drive not ready while opening/reading a DAT file).
+; In: DOS critical-error registers (AH/AL/DI/BP:SI) are ignored.
+; Out: DatCriticalErrorFlag 1FDF=FF in the game data segment; AL=00 (ignore);
+; AH = high byte of the relocated game data segment (side effect of MOV AX);
+; DS restored; IRET restores the DOS caller's FLAGS. Everything else unchanged.
+; Consumers: CheckDatFile 1CF7 and LoadDatResource 1B80/1B8A test the flag and
+; route to the resource retry screen; startup 0090, CheckMenuResourceAvailability
+; 4B16 and ShowResourceRetryScreen 4B56 clear it. The handler never aborts or retries itself; what DOS does with
+; AL=00 after return is DOS behavior, not game logic.
+; Platform callback. READY for C: tiny body; host it as the critical-error
+; callback of the DOS file-service seam (c/dat_files.c) that sets the flag.
 CriticalErrorHandler:
     sti ; @018F8
     push ds ; @018F9
@@ -36,11 +52,13 @@ CriticalErrorHandler:
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @01904
     pop ds ; @01906
     iret ; @01907
-; S14 U017: [01908,01916) stored bytes remain UNKNOWN.
-; Neighbours: P 01907 iret; N 01916 push ds.
-; Candidate1908 compares DS1FDE withF8; equal RET1915,else DX03F2/AL03/OUT DX,AL/RET. Would touch floppy DOR only for non-hard-disk FAT ID. No data write/004A producer. Entry unproved.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; No incoming edge identified for 1908..1915: no direct, table, vector, relocated or
+; protected-view reference reaches it and no data reader uses it, so the bytes
+; stay UNKNOWN (code-looking). Recovered paths bypass it; translators of the
+; neighbouring routines need nothing from it.
+; Read as code: unless StartupFatIdByte1FDE is F8 (hard disk) it writes 03 to
+; the floppy digital output register 3F2h (motor bits clear), then RETs.
+; (Immediate 1911 at 0022 is the DOS AH=4A paragraph count, not a pointer.)
 ; UNKNOWN: unresolved bytes
     db 0x80,0x3e,0xde,0x1f,0xf8,0x74,0x06,0xba,0xf2,0x03,0xb0,0x03,0xee,0xc3 ; @01908
 times -(($-$$) != 0x1916) db 0

@@ -297,9 +297,6 @@ def configure_device(case, seed):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/generated-graphics.md',
-        'docs/entity-vga.md', 'docs/entity-mask.md',
         'src/game_code_late_after_palette.asm', 'src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe',
         'metadata/symbols.json', 'metadata/inputs.json', 'metadata/oracle.json',
         'c/entity_mask.c', 'c/entity_mask.h', 'c/generated_graphics.c',

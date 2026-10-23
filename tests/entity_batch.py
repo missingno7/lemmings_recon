@@ -635,8 +635,7 @@ def compare_case(native, case, initial=None, regs=None, device=None,
 def input_hashes():
     paths = set(update.input_hashes())
     paths.update((
-        'src/entry_services.asm', 'docs/entity-simulation.md',
-        'tests/entity_create.py',
+        'src/entry_services.asm', 'tests/entity_create.py',
         'tests/entity_batch.py', 'c/entity_create.c', 'c/entity_create.h',
         'c/entity_batch.c', 'c/entity_batch.h'))
     return {path: sha((ROOT / path).read_bytes()) for path in sorted(paths)}

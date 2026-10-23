@@ -311,8 +311,7 @@ def handoffs(native=None,directory=None):
     return result
 
 def hashes():
-    paths=set(('AGENTS.md','docs/executable.md','docs/bottom-up.md','docs/next-work.md',
-        'docs/sprite-bank.md','assets/vgalemmi.exe','assets/adlib.dat','assets/tandysnd.dat',
+    paths=set(('assets/vgalemmi.exe','assets/adlib.dat','assets/tandysnd.dat',
         'assets/main.dat','c/sprite_bank.c','c/sprite_bank.h','c/lemmings_sym.h','c/regs.h',
         'c/special_blit.h','tests/sprite_bank.py','tests/entity_interactions.py',
         'tests/entity_sprite_layout.py','tests/minimap_vga.py','tests/pcspeaker_dispatch.py',

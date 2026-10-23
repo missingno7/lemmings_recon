@@ -279,7 +279,7 @@ def compare(native, case):
 
 
 def input_hashes(native=False):
-    paths = set(common.input_hashes()) | {'tests/vector_restore.py', 'docs/vector-restore.md'}
+    paths = set(common.input_hashes()) | {'tests/vector_restore.py'}
     if native: paths.update(('c/vector_restore.c','c/vector_restore.h','c/regs.h',
                             'c/special_blit.h','c/lemmings_sym.h','tools/coverage.py','tools/difftest.py'))
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}

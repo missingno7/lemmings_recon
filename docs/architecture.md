@@ -64,8 +64,8 @@ boundaries, not evidence that native game logic must expose every register forev
 Reduce one only after proving its caller/lifetime contract and preserving the
 original adapter evidence; do not rewrite functioning C just for appearance.
 
-The scoped semantic-readiness gate in [semantic-audit.md](semantic-audit.md)
-precedes further C expansion. Current status is [completeness.md](completeness.md),
+Translation readiness and the freeze bar are in [semantic-audit.md](semantic-audit.md).
+Current status is [completeness.md](completeness.md),
 derived by the existing coverage tool's fast `--inventory` mode. It separates
 implementation ranges from matching differential evidence and whole-game closure.
 

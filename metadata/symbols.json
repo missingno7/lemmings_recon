@@ -1556,7 +1556,7 @@
   {
     "address": 216,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
     "symbol_name": "FinalizeStartupServicesAndEnterMenu",
     "aliases": [
@@ -2899,9 +2899,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside ProgramEntry, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 1662
   },
   {
@@ -5866,6 +5867,22 @@
     "evidence": [
       "Runtime overlay only; canonical stored bytes remain UNKNOWN. CALL-next066E supplies0671; ADD031B gives098C; 067B forms SI=CS+0098, DI000C; low12(SI)<=0FDF selects this window. SS:BP+0A/+0C owns pointer; 08CB CLD REP STOSW0100 words fills, BIOS read/07E7/07F0/07F9 and CRC/bit-count consumers use it, 094A zeroes selected512 on cleanup. No permanent BSS or exclusion of another stored interpretation.",
       "Append S18 evidence to existing overlay contract; retain canonical UNKNOWN. On DL>=2 arm06D7->0878/0883->INT25 there is no08CB prefill.06DA reloads pointer regardless returnedCF;06E0 CRC reads offsets00..FD,06E3 reads word+FE. Failure leaving buffer unchanged exposes initial first256 bytes (or zeros from prior completed call). Initial primaryCRC90AA vs EFFE/fallbackCRC0508 vs45D0 rejects. Ordinary063E forcesDL0 and07BE fills1234 before all floppy validation.094A clears selected512;unselected buffer and0B8C..0B9B untouched in disjoint domain. No initial code/data ownership inferred.8363 reset/advance checksum can read entire run but has no static caller; actual indexed/SS/provider aliases remain."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 2956,
+    "segment": 0,
+    "kind": "data",
+    "size": 16,
+    "symbol_name": "ProtectionSectorBufferSlack",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Slack between ProtectionSectorBufferPrimary and ProtectionSectorBufferDmaFallback created by the +0210 fallback displacement; no reader identified."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -9764,10 +9781,12 @@
   {
     "address": 6222,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_184E",
-    "aliases": [],
+    "symbol_name": "GameTimerSpeakerGate184E",
+    "aliases": [
+      "sub_184E"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -9858,9 +9877,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 100
   },
   {
@@ -9882,7 +9902,7 @@
   {
     "address": 6241,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
     "symbol_name": "GameTimerAfterInt601861",
     "aliases": [
@@ -9962,18 +9982,21 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 81
   },
   {
     "address": 6248,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1868",
-    "aliases": [],
+    "symbol_name": "GameTimerAdlibGate1868",
+    "aliases": [
+      "sub_1868"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -10040,18 +10063,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 74
   },
   {
     "address": 6255,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_186F",
-    "aliases": [],
+    "symbol_name": "GameTimerAdlibRequest186F",
+    "aliases": [
+      "sub_186F"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -10110,9 +10136,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 67
   },
   {
@@ -10166,10 +10193,12 @@
   {
     "address": 6270,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_187E",
-    "aliases": [],
+    "symbol_name": "GameTimerMirrorRestore187E",
+    "aliases": [
+      "sub_187E"
+    ],
     "callers": [],
     "callees": [
       6322,
@@ -10219,9 +10248,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 52
   },
   {
@@ -10243,10 +10273,12 @@
   {
     "address": 6286,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_188E",
-    "aliases": [],
+    "symbol_name": "GameTimerLocalEoi188E",
+    "aliases": [
+      "sub_188E"
+    ],
     "callers": [],
     "callees": [
       6322
@@ -10271,9 +10303,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 26
   },
   {
@@ -10311,7 +10344,7 @@
   {
     "address": 6291,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
     "symbol_name": "GameTimerChain1893",
     "aliases": [
@@ -10347,9 +10380,10 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 31
   },
   {
@@ -10387,7 +10421,7 @@
   {
     "address": 6301,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
     "symbol_name": "GameTimerChainReturn189D",
     "aliases": [
@@ -10415,9 +10449,10 @@
     ],
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside GameTimerIrqHandler, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 21
   },
   {
@@ -11886,18 +11921,21 @@
   {
     "address": 7085,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1BAD",
-    "aliases": [],
+    "symbol_name": "DecodeDatPreservingSegmentReturn",
+    "aliases": [
+      "sub_1BAD"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside LoadDatResource, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 2
   },
   {
@@ -12071,10 +12109,12 @@
   {
     "address": 7159,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1BF7",
-    "aliases": [],
+    "symbol_name": "DatTokenLoop",
+    "aliases": [
+      "sub_1BF7"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12084,9 +12124,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12108,10 +12149,12 @@
   {
     "address": 7169,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C01",
-    "aliases": [],
+    "symbol_name": "DatTokenPrefixOne",
+    "aliases": [
+      "sub_1C01"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12121,9 +12164,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12145,10 +12189,12 @@
   {
     "address": 7179,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C0B",
-    "aliases": [],
+    "symbol_name": "DatShortMatch",
+    "aliases": [
+      "sub_1C0B"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12158,9 +12204,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12182,10 +12229,12 @@
   {
     "address": 7195,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C1B",
-    "aliases": [],
+    "symbol_name": "DatKindTwoOrThree",
+    "aliases": [
+      "sub_1C1B"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12195,18 +12244,21 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
     "address": 7200,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C20",
-    "aliases": [],
+    "symbol_name": "DatLongLiteral",
+    "aliases": [
+      "sub_1C20"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12216,9 +12268,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12272,10 +12325,12 @@
   {
     "address": 7221,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C35",
-    "aliases": [],
+    "symbol_name": "DatLongLiteralDone",
+    "aliases": [
+      "sub_1C35"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12285,18 +12340,21 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
     "address": 7224,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C38",
-    "aliases": [],
+    "symbol_name": "DatVariableMatch",
+    "aliases": [
+      "sub_1C38"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12306,9 +12364,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12346,10 +12405,12 @@
   {
     "address": 7239,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C47",
-    "aliases": [],
+    "symbol_name": "DatTokenPrefixZero",
+    "aliases": [
+      "sub_1C47"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12359,9 +12420,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12383,10 +12445,12 @@
   {
     "address": 7249,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C51",
-    "aliases": [],
+    "symbol_name": "DatTwoByteMatch",
+    "aliases": [
+      "sub_1C51"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12396,18 +12460,21 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
     "address": 7257,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C59",
-    "aliases": [],
+    "symbol_name": "DatAfterTwoByteMatch",
+    "aliases": [
+      "sub_1C59"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12417,18 +12484,21 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
     "address": 7260,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C5C",
-    "aliases": [],
+    "symbol_name": "DatShortLiteral",
+    "aliases": [
+      "sub_1C5C"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12438,9 +12508,10 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
@@ -12494,10 +12565,12 @@
   {
     "address": 7279,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C6F",
-    "aliases": [],
+    "symbol_name": "DatTokenEndCheck",
+    "aliases": [
+      "sub_1C6F"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12507,18 +12580,21 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
     "address": 7283,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C73",
-    "aliases": [],
+    "symbol_name": "DatNextToken",
+    "aliases": [
+      "sub_1C73"
+    ],
     "callers": [],
     "callees": [
       7298,
@@ -12528,26 +12604,30 @@
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 127
   },
   {
     "address": 7285,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_1C75",
-    "aliases": [],
+    "symbol_name": "DatDecodeFinish",
+    "aliases": [
+      "sub_1C75"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DecodeDatSection, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 5
   },
   {
@@ -12689,8 +12769,10 @@
     "segment": 0,
     "kind": "entry",
     "size": null,
-    "symbol_name": "sub_1C9F",
-    "aliases": [],
+    "symbol_name": "CopyReverseMatchReturn",
+    "aliases": [
+      "sub_1C9F"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
@@ -43938,10 +44020,12 @@
   {
     "address": 22864,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_5950",
-    "aliases": [],
+    "symbol_name": "MainResourceSections4And5",
+    "aliases": [
+      "sub_5950"
+    ],
     "callers": [],
     "callees": [
       7081,
@@ -44023,9 +44107,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside LoadMainResourceSections, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 107
   },
   {
@@ -44047,10 +44132,12 @@
   {
     "address": 22909,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_597D",
-    "aliases": [],
+    "symbol_name": "MainResourceOptionalSection6",
+    "aliases": [
+      "sub_597D"
+    ],
     "callers": [],
     "callees": [
       7081,
@@ -44116,9 +44203,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside LoadMainResourceSections, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 62
   },
   {
@@ -49247,10 +49335,12 @@
   {
     "address": 27050,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_69AA",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14MaskShift",
+    "aliases": [
+      "sub_69AA"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -49497,18 +49587,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 261
   },
   {
     "address": 27062,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_69B6",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14MaskedWrite",
+    "aliases": [
+      "sub_69B6"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -49755,18 +49848,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 261
   },
   {
     "address": 27133,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_69FD",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14OrPlane1",
+    "aliases": [
+      "sub_69FD"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -49925,18 +50021,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 154
   },
   {
     "address": 27185,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6A31",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14OrPlane1Shift",
+    "aliases": [
+      "sub_6A31"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -50063,18 +50162,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 115
   },
   {
     "address": 27193,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6A39",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14OrPlane1Write",
+    "aliases": [
+      "sub_6A39"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -50201,18 +50303,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 115
   },
   {
     "address": 27221,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6A55",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14OrPlane2",
+    "aliases": [
+      "sub_6A55"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -50283,18 +50388,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 66
   },
   {
     "address": 27249,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6A71",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14OrPlane2Shift",
+    "aliases": [
+      "sub_6A71"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -50357,18 +50465,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 51
   },
   {
     "address": 27257,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6A79",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14OrPlane2Write",
+    "aliases": [
+      "sub_6A79"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -50431,26 +50542,30 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 51
   },
   {
     "address": 27285,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6A95",
-    "aliases": [],
+    "symbol_name": "EntitySprite3Plane14RestoreDs",
+    "aliases": [
+      "sub_6A95"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityShiftedSprite3Plane14, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 2
   },
   {
@@ -51288,10 +51403,12 @@
   {
     "address": 27770,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6C7A",
-    "aliases": [],
+    "symbol_name": "EntityWideSprite32NextMaskedRow",
+    "aliases": [
+      "sub_6C7A"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -51714,18 +51831,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityWideSprite32, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 231
   },
   {
     "address": 27772,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6C7C",
-    "aliases": [],
+    "symbol_name": "EntityWideSprite32OrPlane1",
+    "aliases": [
+      "sub_6C7C"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -51980,18 +52100,21 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityWideSprite32, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 128
   },
   {
     "address": 27847,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6CC7",
-    "aliases": [],
+    "symbol_name": "EntityWideSprite32OrPlane2",
+    "aliases": [
+      "sub_6CC7"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -52110,26 +52233,30 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityWideSprite32, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 53
   },
   {
     "address": 27898,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_6CFA",
-    "aliases": [],
+    "symbol_name": "EntityWideSprite32RestoreDs",
+    "aliases": [
+      "sub_6CFA"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawEntityWideSprite32, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 2
   },
   {
@@ -61020,6 +61147,22 @@
     "confidence": "PROVEN"
   },
   {
+    "address": 33727,
+    "segment": 0,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "UnusedCodeSegmentData83BF",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Zero bytes between MouseIrqMirrorGate83BE and MinimapColumnBits; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 33729,
     "segment": 0,
     "kind": "data",
@@ -61033,6 +61176,38 @@
     "evidence": [
       "796F clears20 CS bytes, 7A39 ORs sampled row masks here, 796F copies19 rows to VGA",
       "With intact saves and ES=CS,797B DF0 clears83C1..83D4;79F4 and20 calls79F8/7A2C initialize BX per row and OR masks via7A55;7A14 reads only83C1..83D3. DF1 clear83AF..83C2 leaves83C3..D4 stale and overwrites checksum code/state. Direct7A39 accepts arbitrary CS:BX; saved CX alias can extend loops."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 33749,
+    "segment": 0,
+    "kind": "data",
+    "size": 75,
+    "symbol_name": "UnusedCodeSegmentData83D5",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Zero bytes between MinimapColumnBits and the 0842 overlay frame; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 34582,
+    "segment": 0,
+    "kind": "data",
+    "size": 242,
+    "symbol_name": "PcSpeakerOverlayReserveSlack",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Unused tail of the 1000-byte 0842 overlay frame after the 758-byte MAIN.DAT section 5; no supported reader identified."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -66233,10 +66408,12 @@
   {
     "address": 39051,
     "segment": 0,
-    "kind": "entry",
+    "kind": "label",
     "size": null,
-    "symbol_name": "sub_988B",
-    "aliases": [],
+    "symbol_name": "PlanarAlignedOpaqueFirstPassLoop",
+    "aliases": [
+      "sub_988B"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [
@@ -66459,9 +66636,10 @@
     ],
     "confidence": "HYPOTHESIS",
     "evidence": [
-      "Signature-matched legacy entry lead"
+      "Signature-matched legacy entry lead",
+      "Basic-block split inherited from a legacy signature seed, not a routine entry: no call site, reached by local fallthrough/branch/return inside DrawPlanarBitmap, whose C range covers it."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "reachable_instruction_bytes": 226
   },
   {
@@ -66659,6 +66837,22 @@
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 122,
     "c_implementation": "c/drawing_dirty.c"
+  },
+  {
+    "address": 39567,
+    "segment": 0,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "CodeSegmentParagraphPadding",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Linker paragraph alignment before game data frame 09A9."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 0,
@@ -68663,6 +68857,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 4069,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelGraphicsSetHighByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LEVEL+1A high byte of BE word whose low byte 0FE6 is read at 1A00/1A1B; no instruction reads 0FE5; 00 in all 80 shipped sections"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 4070,
     "segment": 2473,
     "kind": "data",
@@ -68679,6 +68889,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 4071,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "LevelSpecialGraphicsSetHighByte",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LEVEL+1C high byte of BE word whose low byte 0FE8 is read at 1A26/3742/3952/4836; no reader of 0FE7; 00 in all 80 sections"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 4072,
     "segment": 2473,
     "kind": "data",
@@ -68691,6 +68917,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A26 selects normal/special path; 1A5E maps nonzero value toVGASPEC selector byadding2F"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 4073,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "LevelHeaderUnusedWord1E",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LEVEL+1E..1F (DS 0FE9..0FEA): no direct operand or pointer reader; header reader 36B9 stops at +19; 0000 in all 80 sections; oddtable copy covers +00..+17 only"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69036,6 +69278,38 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 6997,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GroundObjectTemplateUnusedFrameSize0A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Template field +0A (record 0 anchor, stride 1C): only transported by 378A copy; no G/W reader; equals +08 = w*h/2 in all 54 shipped templates"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6999,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GroundObjectTemplateUnusedHalfFrameSize0C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Template field +0C: only transported by 378A copy; equals w*h/4 in all 54 shipped templates"
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 7001,
     "segment": 2473,
     "kind": "data_field",
@@ -69112,6 +69386,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "PROVEN: 3812 ORs full byte with ordinal<<4, no nibble mask.2EE6/2EF9/2F00..2F0C later split live cell into ordinal/action; high kind bits may change ordinal. Writer is rawGROUND192D (request1A18) plus aliases;378A transports to working slot but cell writer rereadsGROUND directly. Short reads keep prior bytes; source template is unchecked. See v4-resources.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7012,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GroundObjectTemplateUnusedScaledBase19",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Template field +19: only transported by 378A copy; equals animation base +15 * 4/5 in all 54 shipped templates"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69203,6 +69493,22 @@
       "7CAE reads selectedrecord+4 LE second/maskcursor intoDI",
       "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains",
       "PROVEN field width from 7CAE in each8-byteGROUNDterrain record; little-endian machineword for2-byte offsets. No inferred role for+6/+7."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7441,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "GroundTerrainRecordUnusedPlaneOffset",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Terrain field +6 (record 0 anchor, stride 8): 7C9A..7CAE reads +0,+1,+2,+4 only; 271/273 shipped records hold src+2*(w*h/8), two hold the mask offset"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70146,8 +70452,10 @@
     "segment": 2473,
     "kind": "data_reference",
     "size": 2,
-    "symbol_name": "StartupArenaTailSegment1FF2",
-    "aliases": [],
+    "symbol_name": "UnusedArenaTailSegment1FF2",
+    "aliases": [
+      "StartupArenaTailSegment1FF2"
+    ],
     "callers": [],
     "callees": [],
     "data_references": [],
@@ -70187,6 +70495,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "PUSH ES 0005 / POP AX 0033 / store 0034 after the 0000..2011 clear; consumed by ParsePspCommandLine 1293."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8184,
+    "segment": 2473,
+    "kind": "data",
+    "size": 6,
+    "symbol_name": "UnusedDataSlack1FF8",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "DS 1FF8..1FFD: no decoded reader or writer besides startup clear 0031; ordinary GROUND reads (0420) end 1F6A; type-002A alias needs an object type absent from shipped data"
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70620,6 +70944,22 @@
     "verification_status": "STATIC"
   },
   {
+    "address": 8321,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "UnusedKeypadCharacterTail",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Scancode table entries 53h/54h ('0','.'), beyond the reader bound 0..52h; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8323,
     "segment": 2473,
     "kind": "data",
@@ -70751,6 +71091,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 8507,
+    "segment": 2473,
+    "kind": "data",
+    "size": 89,
+    "symbol_name": "UnusedDosVersionMessage",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Dollar-terminated DOS version error text; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 8596,
     "segment": 2473,
     "kind": "data",
@@ -70862,6 +71218,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "123F masksAH0F,1242 zero-extends nibble inBX,1246/124A reads224F+0..15 then124C writes liveSI. Stored0123456789abcdef spans224F..225E, no terminator required. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 8799,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "UnusedAlignByte225F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Alignment fill (90); no reader identified."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70990,6 +71362,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "1194 clears prior marker with2020;1198 writes3E2D at selectedSI. Nominal row cursor from110C/116B/1176/117F/1188/11B5..11D8/120C. Two live bytes inside NUL text2384..2526, not separate state. Alternate startup bypass1194 leaves DI/SI unchecked; aliases remain."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 9511,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "UnusedAlignByte2527",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Alignment fill (00) before LastResourceFilenameOffset; no reader identified."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71261,6 +71649,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 9622,
+    "segment": 2473,
+    "kind": "data",
+    "size": 6,
+    "symbol_name": "UnusedBytes2596",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Stored bytes with no field reader; exported verbatim in the 100h-byte russell.dat write from 252A."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 9628,
     "segment": 2473,
     "kind": "data",
@@ -71526,7 +71930,7 @@
     "address": 9880,
     "segment": 2473,
     "kind": "data_reference",
-    "size": 0,
+    "size": 224,
     "symbol_name": "EntityState0400PairBase",
     "aliases": [],
     "callers": [],
@@ -71538,7 +71942,8 @@
       "2A70 adds live record+0E unchecked;21E3 initializes0,2A7B +=2 modulo65536.2A73 reads frame byte,2A75 stores+28 before2A78 reads signed Y-action byte (1/2/3 probe counts, others direct signed addition). Candidate2698..2777 contains8 lead pairs+13*8 repeated pairs but no terminal112 bound; keep extent/classification unresolved. GROUND maximum/large record/cache/aliases can overwrite candidate. See s7-tables.md.",
       "Keep base-only size0.21E3 initializes record+0E=0;2A70 adds it modulo16;2A75 frame store precedes2A78 second-byte read;2A7B increments cursor2 modulo16, no index/sentinel terminal. Collision2AEC exits0400;2B28 signed Y>=00B4 routes20E2. Candidate2698..2777 is8 lead pairs then104 delta2 pairs; collision-free stable nonwrapping sequence gains221 decimal Y over112 decimal pairs. Entry transition21C6 does not normalize Y: isolated Y0=-42 decimal would next read2778 after112,whereas Y0=-41 stops. Not a game reachability claim or supported-domain expansion. Caller Y/+0E/state/alias closure needed for total extent; callback003A differs from point003C.",
       "V1: D8..DD overwrite unchecked2698 pair source with record bytes.2A70 storesframe28 before second delta read,2A7B advances0E by2;live producer/alias sequence determines behavior. Full table extent remains unresolved.",
-      "V3: keep base-only size0/UNKNOWN. B=(2698+live record+0E) mod65536; read byte0,store frame+28,read byte1,increment live cursor2. Actions1/2/3 request collision probes; others add signed byte to Y. Collision exits state; otherwise signedY>=180 deactivates. No count/sentinel. With stable cursor0/bytes and collision-free intact state,Y0 in[-41,32764] decimal exits by112;Y0=0 exits92,last274E/274F;Y0=-42 next reads2778 colors.21C6 does not normalize Y or prove lower bound. SI2671,cursor267F=0 makes frame2699 overwrite action03 with01 before read. Stored extent and actual entry/writer domain remain unresolved; no112 allocation/clamp."
+      "V3: keep base-only size0/UNKNOWN. B=(2698+live record+0E) mod65536; read byte0,store frame+28,read byte1,increment live cursor2. Actions1/2/3 request collision probes; others add signed byte to Y. Collision exits state; otherwise signedY>=180 deactivates. No count/sentinel. With stable cursor0/bytes and collision-free intact state,Y0 in[-41,32764] decimal exits by112;Y0=0 exits92,last274E/274F;Y0=-42 next reads2778 colors.21C6 does not normalize Y or prove lower bound. SI2671,cursor267F=0 makes frame2699 overwrite action03 with01 before read. Stored extent and actual entry/writer domain remain unresolved; no112 allocation/clamp.",
+      "Floater frame/fall pair table, 112 pairs; the unchecked cursor continues into 2778 after the last pair. Optional rename: FloaterFramePairs."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71580,6 +71985,38 @@
     "verification_status": "STATIC"
   },
   {
+    "address": 18280,
+    "segment": 2473,
+    "kind": "data",
+    "size": 320,
+    "symbol_name": "EntityPointFramesUnusedTail",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Point frames 51 and 52, beyond the normal selector range 01..33h; no reader identified in the normal domain."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18600,
+    "segment": 2473,
+    "kind": "data",
+    "size": 23,
+    "symbol_name": "UnusedAuthorCredit",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "ASCIIZ author credit; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 18623,
     "segment": 2473,
     "kind": "data",
@@ -71608,6 +72045,22 @@
     "confidence": "PROVEN",
     "evidence": [
       "Selection3DFA..3E69 selects literal48C6;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'FLOATER'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 18637,
+    "segment": 2473,
+    "kind": "data",
+    "size": 7,
+    "symbol_name": "UnusedStatusLabelBomber",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Unselected status label row 'BOMBER '; no reader identified."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71724,6 +72177,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 18693,
+    "segment": 2473,
+    "kind": "data",
+    "size": 7,
+    "symbol_name": "UnusedStatusLabelSplatter",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Unselected status label row 'SPLATTR'; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 18700,
     "segment": 2473,
     "kind": "data",
@@ -71789,6 +72258,22 @@
       "Stored00;4C95 sets14h;4CAD decrements byte;4CB3 reloads14h, controls cursor blink. Neither byte is startup-cleared."
     ],
     "verification_status": "STATIC"
+  },
+  {
+    "address": 18719,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "UnusedAlignByte491F",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Alignment fill (90); no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 18720,
@@ -72380,6 +72865,22 @@
     "verification_status": "STATIC"
   },
   {
+    "address": 19828,
+    "segment": 2473,
+    "kind": "data",
+    "size": 1,
+    "symbol_name": "UnusedByte4D74",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Extra zero after a text stream terminator; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 19829,
     "segment": 2473,
     "kind": "data",
@@ -72845,6 +73346,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 21372,
+    "segment": 2473,
+    "kind": "data",
+    "size": 256,
+    "symbol_name": "UnusedTwoBitCursorPatterns",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "2-bit-per-pixel crosshair/box cursor images and masks; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 21628,
     "segment": 2473,
     "kind": "lookup_table",
@@ -72859,6 +73376,102 @@
       "5DEE/5DF1/5DF5 and6164/6167/616B constrain index withAND7;6F40/6F43/6F47/6F49 and7054/7058/705B/705D also read indexed masks; imageEF0C..EF13 contains80,40,20,10,08,04,02,01; no immutable runtime guarantee"
     ],
     "verification_status": "STATIC_VERIFIED"
+  },
+  {
+    "address": 21636,
+    "segment": 2473,
+    "kind": "data",
+    "size": 4,
+    "symbol_name": "UnusedTwoBitPixelMasks",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "C0,30,0C,03; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21640,
+    "segment": 2473,
+    "kind": "data",
+    "size": 2,
+    "symbol_name": "UnusedNibblePixelMasks",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "F0,0F; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21642,
+    "segment": 2473,
+    "kind": "data",
+    "size": 36,
+    "symbol_name": "UnusedWordMultiples5A",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LE16 005A*n, n=0..17; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21678,
+    "segment": 2473,
+    "kind": "data",
+    "size": 32,
+    "symbol_name": "UnusedWordMultiples6C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LE16 006C*n, n=0..15; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21710,
+    "segment": 2473,
+    "kind": "data",
+    "size": 16,
+    "symbol_name": "UnusedWordMultiples3C",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LE16 003C*n, n=0..7; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 21726,
+    "segment": 2473,
+    "kind": "data",
+    "size": 16,
+    "symbol_name": "UnusedWordMultiples1E0",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "LE16 01E0*n, n=0..7; no reader identified."
+    ],
+    "verification_status": "UNRESOLVED"
   },
   {
     "address": 21742,
@@ -72893,6 +73506,22 @@
       "19DC reads requested1180 bytes ofoddtable.dat here; selected56-byte slice replaces record header/footer",
       "19D5/19D9/19DC requests5566..66E5; supplied oddtable.dat is1180h=80*38h. Short reads retain previous bytes.19E0/19E4 allows indices0..127; forward n127 reads712E..7165. Supplied order chooses40 indices6..79. DF0 copies24 bytes to0FCB..0FE2 then32 to17AB..17CA; DF1 word windows0FB5..0FCC and178D..17AC, source[slice-36h,slice+1]. Storage survives level reset; each odd read establishes resource-image validity. Gap66E6..66EF and renderer66F0 onward are outside raw write.",
       "Exact1180h destination5566..66E5 from19D5/19D9/19DC,stored zero pre-load state,independent38h source slices19EA..1A02 and supplied80-record layout support runtime_buffer classification. Per-odd-selection validity; short read keeps suffix,normal clears exclude buffer. n0..127 unchecked;DF0 n127 ends7165 and can read renderer/scratch,not extend destination. DF1 source[slice-36h,slice+1],n0 crosses5530..5567.66E6..66EF is outside raw write and remains UNKNOWN; no rounded allocation."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 26342,
+    "segment": 2473,
+    "kind": "data",
+    "size": 10,
+    "symbol_name": "UnusedStorage66E6",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Zero storage with no accessor identified."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -73087,7 +73716,7 @@
     "address": 26374,
     "segment": 2473,
     "kind": "data",
-    "size": 0,
+    "size": 66,
     "symbol_name": "DrawingSourceRowScratch",
     "aliases": [],
     "callers": [],
@@ -73098,7 +73727,8 @@
       "Shifted planar rows copy source bytes and a sentinel to gameDS:6706; named base only,allocation extent and producer domain remain unproven",
       "Source row base; sixteen copy/sentinel -> forward SHR/RCR -> DF LODSB phases listed beside DrawPlanarBitmap. DF0,w=1..254 initializes b..b+w, DF1 initializes b-w..b but carry chain still reads forward. w0 sweeps the segment; wFF output wraps to65536. Base6748 is42h bytes later, not proof of an allocation. Preserve size0 until a producer/allocation proof; do not classify all touched zero bytes.",
       "Keep size0:6706->6748 spacing42h is not allocation. Explicit copy/sentinel e.g895D/8961,forward SHR/RCR898E/8993,LODSB89C3 establish per-row role. For intact saves DF0 footprint[b,b+w],DF1[b-w,b];RCR always forward,w0 loops65536. DF0 w>=42h overlaps mask base;DF1 w>=1 writes6705,w>=2 writes6704. Live preparedDS vs relocated gameES and SS saves matter; no whole zero-run classification or artificial width clamp.",
-      "V3: size0 retained,6706 is transient base. DF0 w42h source sentinel6748 clears first previously built8D66 cached mask byte; larger widths copy across cache. DF1 w1 sentinel6705 overwrites live stride high;w2 sentinel6704 after copying6705. w0 forward RCR loop executes65536 iterations,touches every actual scratch-DS offset; base also had initialSHR and is RCRed last. Each step reads v and CF,then writes(v>>1)|(CF<<7),CF=v&1. Later POPs/strides/returns read changed bytes; no isolated-array,whole-allocation or stored-zero-run classification."
+      "V3: size0 retained,6706 is transient base. DF0 w42h source sentinel6748 clears first previously built8D66 cached mask byte; larger widths copy across cache. DF1 w1 sentinel6705 overwrites live stride high;w2 sentinel6704 after copying6705. w0 forward RCR loop executes65536 iterations,touches every actual scratch-DS offset; base also had initialSHR and is RCRed last. Each step reads v and CF,then writes(v>>1)|(CF<<7),CF=v&1. Later POPs/strides/returns read changed bytes; no isolated-array,whole-allocation or stored-zero-run classification.",
+      "Source-row scratch 6706..6747; every row is written before it is read."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -73106,7 +73736,7 @@
     "address": 26440,
     "segment": 2473,
     "kind": "data",
-    "size": 0,
+    "size": 8192,
     "symbol_name": "DrawingMaskRowScratch",
     "aliases": [],
     "callers": [],
@@ -73117,7 +73747,24 @@
       "Shifted planar rows copy mask bytes and a sentinel to gameDS:6748 and shift live bytes there; named base only,allocation extent and producer domain remain unproven",
       "Mask base; default890E copies each first-plane row; opaque916B fills FF then zero; 8FF7/909C copy masks; 8D66 builds an h-row cache before drawing, BP=copy-end DI with signed-DF step w+1. Row/height/shift domains and allocation extent are unchecked; A948-base=4200h is spacing only. Preserve size0 until a producer/allocation proof; do not classify all touched zero bytes.",
       "Keep size0:6748->A948 spacing4200h does not prove allocation. Ordinary per-row copy/fill/sentinel and shift/read phases establish role;8D66 caches all h rows:8DCD copy,8DD1 zero,8DD2 nextBP=DI,8DE5/8DEA forward shift,8DFE AND with VGA plane3;8E18 resetsBX and8E5B/8EF4/8F69/8FD9 consume across planes. DF0 cache h*(w+1);DF1 row starts step backwards but shift/read forward. h0 means256;w0 RCR65536;wFF output65536;shift0 means256 passes. Nonoverlap h*(w+1)<=4200h is conditional arithmetic,not caller/allocation proof.",
-      "V3: size0 retained.8DCD copy/8DD1 zero,8DD2 nextBP=copy-endDI; all cache rows precede forward consumption8E5B/8EF4/8F69/8FD9. Intact rowstarts6748 +/- r*(w+1) mod65536,h0=256. DF0 h*(w+1)<=4200h is an address inequality,not allocation/caller proof. wFF rowstep256 but output/AND wraps65536. w0 carry sweep reaches every DS offset, including unchanged G:F444=S:4AF4 and G:A950=S:0000 (G=load+09A9,S=load+143E). Saves must be reread. Stored extent/full caller,IRQ,service lifetime remains unresolved."
+      "V3: size0 retained.8DCD copy/8DD1 zero,8DD2 nextBP=copy-endDI; all cache rows precede forward consumption8E5B/8EF4/8F69/8FD9. Intact rowstarts6748 +/- r*(w+1) mod65536,h0=256. DF0 h*(w+1)<=4200h is an address inequality,not allocation/caller proof. wFF rowstep256 but output/AND wraps65536. w0 carry sweep reaches every DS offset, including unchanged G:F444=S:4AF4 and G:A950=S:0000 (G=load+09A9,S=load+143E). Saves must be reread. Stored extent/full caller,IRQ,service lifetime remains unresolved.",
+      "Mask rows and the 8D66 multi-row cache; extent reachable by decoded callers."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 34632,
+    "segment": 2473,
+    "kind": "data",
+    "size": 8704,
+    "symbol_name": "DrawingMaskCacheSlack",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "Zero storage after the reachable mask cache; no accessor identified for decoded callers."
     ],
     "verification_status": "UNRESOLVED"
   },

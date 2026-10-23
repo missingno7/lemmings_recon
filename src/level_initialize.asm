@@ -103,12 +103,8 @@ LevelAfterHeader:
     call SetupSpecialGraphicsResource ; @03749
 LevelInitializeAfterSpecial:
     jmp short loc_376A ; @0374C
-; S14 U043: [0374E,0374F) stored bytes remain UNKNOWN.
-; Neighbours: P 0374C jmp 0x376a; N 0374F mov si, 0x10eb.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @0374E
 ; TERRAIN STREAM: four separate BEbyte reads,liveSI+4,FFFF sentinel; no400record limit.
 ; Child7C67 preserves or changes liveiterator/segments/returnwords; expose changedtargets.

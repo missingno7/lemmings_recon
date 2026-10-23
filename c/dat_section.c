@@ -122,7 +122,7 @@ LmnDatSectionResult lmn_dat_section_core(uint8_t *mem,uint16_t data_segment,
                     }
                 } else {
                     read_bits(mem,&s,1,CS_DatAfterSecondTokenBit);
-                    if(s.value==1) {s.handle=1;read_match(mem,&s,8,CS_sub_1C59);}
+                    if(s.value==1) {s.handle=1;read_match(mem,&s,8,CS_DatAfterTwoByteMatch);}
                     else {
                         read_bits(mem,&s,3,CS_DatAfterShortLiteralLength);s.value=(uint16_t)(s.value+1u);
                         literals(mem,&s,CS_DatAfterShortLiteralByte,CS_DatAfterShortLiteralWrite);

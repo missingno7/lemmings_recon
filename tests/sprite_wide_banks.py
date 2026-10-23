@@ -284,7 +284,7 @@ def edges():
 def hashes():
     paths = set(shared.hashes()) | set(wide.input_hashes())
     paths.update(('c/sprite_wide_banks.c', 'c/sprite_wide_banks.h',
-                  'tests/sprite_wide_banks.py', 'docs/sprite-wide-banks.md'))
+                  'tests/sprite_wide_banks.py'))
     return {path: sha((ROOT / path).read_bytes()) for path in sorted(paths)}
 
 

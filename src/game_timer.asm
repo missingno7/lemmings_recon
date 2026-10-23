@@ -110,7 +110,16 @@ GameTimerAfterInput1843:
     mov al,[TimerCadenceCounter001C-GameDataImage] ; @01847
     and al,0x1 ; @0184A
     jz GameTimerAfterInt601861 ; @0184C
-sub_184E:
+; PC-SPEAKER TICK GATE. Interior block of the game timer IRQ handler, not a
+; callable routine: the only predecessor is the 184C fall-through (the legacy
+; "entry" was a lifter block split). Reached when the just-incremented cadence
+; byte 001C is odd, i.e. every second handler pass.
+; In: DS=game data; 2010 (FF = external INT61 driver resident) and 25A7 bit0.
+; Out: 2010!=FF and 25A7&1 -> AX=0000, INT60 (built-in speaker driver tick,
+; which IRETs to 1861); otherwise branch to 1861 with AX unchanged.
+; Interrupt context with IF clear; the INT60 driver may STI internally.
+; C: covered by c/timer_tail.c (GameTimerTail183E range); no separate core.
+GameTimerSpeakerGate184E:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @0184E
     jz GameTimerAfterInt601861 ; @01853
     test byte [SoundOptionBits-GameDataImage],0x1 ; @01855
@@ -119,13 +128,22 @@ sub_184E:
 ; S13: PC Tick only on newly incremented001C odd,2010!=FF and25A7&1. Allten recovered INT60 producers use00/01/03;effects02/0C/13 select0046/00DC/0145.0182 STI before saves permits preemption of foreground LoadEffect/Stop. Load clearsactive before15 stores and activates last;ordinary nestedTick sees inactive during copy. InactiveTick still updatesphase/PITcache/ports,always61|3;Stop has no immediate hardware output. See pcspeaker_InterruptEntry ledger;actual IRQ/PIC schedule remains open.
 GameTimerInt60185F:
     int 0x60 ; @0185F
+; ADLIB DRIVER SELECT. Join point after the optional speaker tick: target of
+; the three skip branches above and the return address of INT60 itself (not a
+; callable entry). Continues to the INT61 gate only when 2010==FF.
 GameTimerAfterInt601861:
     cmp byte [ExternalSoundDriverEnabled-GameDataImage],0xff ; @01861
     jnz loc_1874 ; @01866
-sub_1868:
+; ADLIB TICK GATE (fall-through, 2010==FF): requires 25A7&3 nonzero. Unlike the
+; speaker gate there is no odd-cadence test, so the external driver is ticked on
+; every handler pass that reaches here.
+GameTimerAdlibGate1868:
     test byte [SoundOptionBits-GameDataImage],0x3 ; @01868
     jz loc_1874 ; @0186D
-sub_186F:
+; ADLIB TICK REQUEST: AX=0000 then INT61 (resident external driver, function 0
+; = timer tick); the driver IRETs to 1874. Only fall-through reaches it.
+; The AdLib engine runs with IF clear and does not STI.
+GameTimerAdlibRequest186F:
     mov ax,0x0 ; @0186F
 ; R2:AX0000 once per handler invocation reaching2010FF/25A7&3 gates,not necessarily once per physical PIT pulse.1840 input precedes;1874 commands/3F7A effect request follows;EOI/old08 chain is later. Stable mouse mode0 uses4252 saves;profile33:AX=0003 plus intact saves/preceding children supplies nominal DS=G,ES inherited,SS live,not global segment/DF closure. AdLib INT clearsIF and its recovered engine neverSTIs: no maskable foreground/update reentry inside it;NMI,escaped01EA,frame/code aliases and external providers remain separate. Main cadence/nesting is not thereby serialized.
 ; [1872] INT61 AH00 is called once per enabled game IRQ with DS:2010==FF and SoundOptionBits&3!=0; unlike INT60 there is no odd TimerCadenceCounter guard. AdLib0115 handles requests before phase decrement and all nine visits; timer/PIT configuration owns real cadence, not a fixed driver Hz.
@@ -143,7 +161,12 @@ GameTimerAfterInt611874:
 GameTimerAfterCommands1877:
     cmp byte [PrivateIrqCounter2002-GameDataImage],0x0 ; @01877
     jnz loc_1881 ; @0187C
-sub_187E:
+; VGA MIRROR RESTORE (fall-through when PrivateIrqCounter2002 is zero, i.e. this
+; IRQ did not interrupt a private mouse-IRQ bridge pass 0F70; that bridge has
+; its own 83BE-gated restore when it unwinds). 587F re-emits the nine SS-mirrored VGA register words so the
+; interrupted foreground keeps its programming after this handler's children.
+; 587F ends with STI before its RET, opening a nesting window until CLI 1881.
+GameTimerMirrorRestore187E:
     call RestoreVgaRegisterMirrors ; @0187E
 loc_1881:
 GameTimerAfterMirrors1881:
@@ -153,10 +176,19 @@ GameTimerAfterMirrors1881:
     and al,0x3 ; @01887
     mov [TimerChainPhase1FE3-GameDataImage],al ; @01889
     jz GameTimerChain1893 ; @0188C
-sub_188E:
+; LOCAL EOI PATH: taken when the incremented 2-bit phase 1FE3 is 1..3 (three of
+; every four handler passes). Sends master PIC EOI (18B2) and skips the BIOS
+; chain. The CALL's operand bytes start ChecksumWindow 188F..1898, so these
+; instruction bytes are also checksum input and must stay byte-exact.
+GameTimerLocalEoi188E:
     call SendMasterPicEoi ; @0188E
 GameTimerAfterEoi1891:
     jmp short GameTimerChainReturn189D ; @01891
+; BIOS CHAIN PATH: taken when phase 1FE3 wraps to 0 (every fourth pass). Builds
+; a synthetic interrupt frame FLAGS(IF=0, from CLI 1881)/CS/189D and far-jumps
+; through SavedTimerVector (the INT08 vector saved at startup). The old handler
+; owns this pass's EOI and IRETs to 189D. If the saved vector is 0000:0000 the
+; jump goes to physical 0000:0000. Bytes up to 1898 are checksum input.
 GameTimerChain1893:
     mov ax,0x189d ; @01893
     pushf ; @01896
@@ -174,6 +206,11 @@ ChecksumWindowEnd:
 GameTimerFarChain1899:
     jmp far [SavedTimerVector-GameDataImage] ; @01899
 ; U1 final-tail window:189D STI shadows MOV189E, so the eligible nesting boundaries are18A3 and18A7, both with26 resident. PUSHF17D0 saved CPU-cleared IF0; intact POPF18A7 restores0, excluding the later POPs until IRET releases the whole frame. EOI alone did not enable nesting:1881 CLI covers local18B4/RET1891. A new IRQ must already be pending or arrive by18A7; the exposed interval is only INC18A3. Reload/retrace and provider duration, not window existence alone, decide each extra level.
+; COMMON HANDLER EXIT, reached by JMP 1891 (local EOI) or by the old INT08
+; handler's IRET (chain path). STI, then publish the foreground handshake:
+; 1FCF=FF (a tick happened) and INC 1FCD (byte, wraps; the foreground ticks
+; when it is >4 signed and zeroes it). POPF/POPs restore the registers saved at
+; 17C7..17D0 from the live stack and the final IRET resumes the interrupted code.
 GameTimerChainReturn189D:
     sti ; @0189D
     mov byte [TimerChainFlag1FCF-GameDataImage],0xff ; @0189E

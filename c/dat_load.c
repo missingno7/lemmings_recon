@@ -34,7 +34,7 @@ static LmnDatFileResult result(const LmnDatFileCall *s,uint16_t fatal) {
 LmnDatFileResult lmn_dat_decode_preserving_segment_core(uint8_t *mem,const LmnDatFileCall *call,
     const LmnDatLoadSegments *segments,const LmnDatIo *io) {
     LmnDatFileCall s=*call;LmnDatSectionCall decoder;LmnDatSectionResult decoded;
-    push(mem,&s,s.segment);push(mem,&s,CS_sub_1BAD);
+    push(mem,&s,s.segment);push(mem,&s,CS_DecodeDatPreservingSegmentReturn);
     decoder=(LmnDatSectionCall){s.handle,s.segment,s.source_cursor,s.extra_segment,s.output_cursor,
         s.stack_segment,s.stack_offset,s.flags};
     decoded=lmn_dat_section_core(mem,segments->read_data,segments->decode_failure_data,&decoder,io);

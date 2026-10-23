@@ -149,89 +149,26 @@ loc_4293:
     pop es ; @0429F
 PollMousePositionReturn42A0:
     ret ; @042A0
-; T3 UNCONDITIONAL in the fixed decoded selection/no-other-writer domain: initial (M,P) is
-; (0,4252), or (2,4252) after 0F64. Mouse/keyboard/escape retain P; every mode1 publication
-; at4A6D/85 first replaces P at4A68/80. Ordinary selection histories call4334/4359 here,
-; never initial4252. The broader raw-M1/intact-slot domain still includes4252 and is
-; retained. Mode0 observed at418C bypasses this slot. Menu/code/level/session reuse does not
-; restore P. Global indexed/resource/renderer/IRQ/frame/provider writers remain UNRESOLVED.
-; P is sampled before PUSH DX/CALL; a later memory-only slot change cannot retarget latched
-; AX. No mode cancellation recheck occurs. An ordinary foreground selection cannot resume
-; inside its own timer poll before IRET; unknown reentry/nesting/aliases remain separate
-; obligations, not profile-closed.
-; R3 writer refinement: supplied ground0o..ground4o.dat each0420 bytes end1F6A,
-; excluding this raw-resource overwrite only; original request remains1000.
-; SlotD3 starts259F:30F3 clears259F..25CB,30FB/3100 put X-high/Y-low at25A0/25A1.
-; Constructor3134 also sets25A6=FF via record+06=FFF6, so even mode0 persistence
-; is not implied by initial selection. Actual survival toD3 remains UNRESOLVED.
-; Visibility4131 can reach this word for corrupted origin; nominal DATA-A origin
-; 0010..0500 aligned8 excludes it. Stack/segment/provider/IRQ domains remain open.
+; INPUT CALLBACK /42A5 CONTRACT. 418C reaches 42A1 only when mode byte 25A6
+; is exactly 1 (4196); mode 0 jumps straight to 4252 without reading 25A0.
+; LEGITIMATE WRITERS. InputPollCallback DS:25A0: image value 4252; the
+; controller menu stores 4334 at 4A68 (CL not 1 or 2) or 4359 at 4A80 (CL=1).
+; Mode 25A6: image 00; 0F64 (keyboard switch) and 4AB5 store 2, 4ABD stores 0,
+; and 4A6D/4A85 store 1 only right after their own pointer store. Startup and
+; level clears (ending 2011/0FC9) and the pinned GROUND files (ending 1F6A)
+; miss 25A0..25A6; menus, code entry and sessions never restore either byte.
+; So mode 1 always follows a joystick store: TARGET SET {4334,4359}, both
+; decoded. 4252 is stored but is never called here. A timer poll between a
+; pointer store and its mode store sees the old mode or the new pointer.
+; Not legitimate: an oversized GROUND file reaching 25A0..25A6, or the record
+; spill after the creation race (record D3 clears 259F..25CB, then stores its
+; coordinates over 25A0): a characterized corrupted-control escape.
 loc_42A1:
-; V2/U02 writer refinement (G.7 classes; full evidence in v2-targets report):
-; PROVEN: ordinary complete LEVEL/odd/GROUND outputs stop at17CA/66E5/1F6A;
-; the five pinned GROUND files each0420 bytes cannot write2013..201E or25A0..25A6.
-; Cache-name padding is not an arbitrary string writer:1E60 count=(k-1)&FFFF
-; when a dot follows k<8 basename bytes; k=0 writesFFFF spaces from1F96.
-; At1E51 an extension NUL after j<3 bytes gives(j-1)&FFFF; j=0 writesFFFF
-; spaces from1F9E. Supplied literal/digit-edited names have k>=4,j=3, excluding
-; these two underflows. Cache-enable1F93 and damaged filenames are separate
-; concrete inputs;1ED7 has no decoded caller, not a proof of dead code.
-; CHARACTERIZED NONDETERMINISM: record B3 owns2013..201E at+14..1F;
-; D3 owns25A0..25A6 at+01..07. Apply each actual indexed store to these SAME
-; bytes. Completed D3 has P=(X>>8)|((Y&FF)<<8), baselines=(Y>>8)|F800, F6FF,
-; and modeFF from3134. It takes keyboard polling, not automatically42A5.
-; A later proper joystick selection repairs P before mode1; an IRQ during
-; construction may instead see each partially published byte. No atomic record.
-; Renderer width0 is a concrete writer, not excluded by nominal nonzero widths:
-; A6 at1DB6 leaves type1A width1DDB=0;20E2 can set height1DDC=FF. A following
-; GROUND read N<=0290 retains both. LEVEL004 section1 command138(decimal)=24BFFD9A,
-; x04BF,y-9,type1A, then admits DX0 through99E2 and selects8D66 (shift7).
-; Survival of the spill/earlier commands is a premise, not a new proved edge.
-; A complete GROUND reload repairs this example; unchanged pinned terrain has
-; no packed-width0 after original clipping. Width0 RCR8DEA visits all DS bytes
-; in order BX+1..BX+0000, with SHR8DE5 first; live POPs then read changed saves.
-; This first pass can change P, mode, rows and SS saves (SS0 aliases DS:A950).
-; Target rule: current AX is the word sampled42A1, including any mixed-byte
-; history; only an intervening register/return writer can change it afterwards.
-; IRQ4C47 saves AX at interruptedSP-08, keyboard16D4 at interruptedSP-0A;
-; corruption of those exact words can change restored AX before42A5. The slot
-; write alone cannot. Known-target finite closure still requires last-writer
-; ownership; unknown42A5 code, old08/INT62/provider writes remain named seams.
-; TARGET/LIFETIME: the second mode read at4196 must equal1; direct entry here
-; bypasses both mode tests. With DS=relocated09A9, the stored word is4252;
-; 4A65/4A68 installs4334 and4A7D/4A80 installs4359. Menu choice CL1 selects
-; the latter, CL2 exits to keyboard mode2, every other CL selects4334.
-; Mode1 is published BEFORE calibration and baseline stores; an IRQ may poll
-; with old baselines. Escape and mouse/keyboard choices do not reset the word.
-; Known-set proof requires that these are the last writes to BOTH slot bytes.
-; GROUND1A18 requests DS:1B4B..2B4A: file offsets0A55/0A56 replace25A0/25A1
-; at returned lengths>=0A56/>=0A57. Supplied420-byte files stop at1F6A instead.
-; Indexed counterexample: creation30F3 at slot211(decimal), SI=259F, clears
-; 259F..25CB;30FB/3100 then overlap this word with X-high/Y-low. The byte
-; counter/limit equality is not a range guard. This is a raw-entry witness,
-; not proof that startup reaches slot211 through earlier overlapping records.
-; Also retain1194/1198 unchecked option-marker cursors, decoder/RLE/cache
-; ES:DI writers, and arbitrary DS/ES/SS aliases, providers and UNKNOWN paths.
-; The startup forward clear0031 ends2011;455B ends0FC9. Neither restores25A0.
-; Thus whole-program writer closure remains open; canonical DS and supplied
-; GROUND files alone do not establish it. Native unsupported-target status
-; is a transport boundary, not an original fallback. See s4 integration report.
-; AX samples the word BEFORE PUSH DX/CALL write SS. Aliasing those writes
-; with25A0 changes later polls, not this already-latched AX target (assuming
-; intact instructions and no intervening IRQ/provider change to registers).
+; AX samples the live word before PUSH DX/CALL; later slot writes affect only
+; later polls. The timer (4C47/17C7) and keyboard (16D4) handlers restore an
+; interrupted AX unchanged.
     mov ax,[InputPollCallback-GameDataImage] ; @042A1
     push dx ; @042A4
-; S19 input-callback: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
-; Live DS:25A0 supplies target before PUSH DX/CALL. Known mouse/joystick choices do not close
-; writers, calibration publication or live segments.
-; Profile entries: 33:AX=0003.
-; Dependencies: 25A0/DS lifetime; GROUND/request/wrap/alias writers; joystick STI; mode1 before
-; complete calibration.
-; S17 flow-state: The transfer samples AX from live DS:25A0 before PUSH DX/CALL. The
-; analyzer does not recover a global game-DS or slot-lifetime invariant. Known4252 mouse
-; service has an undeclared INT33; 4334/4359 retain their actual CLI/STI and returned
-; state, not an invented flag-preserving ABI. DS ownership, resource/indexed writers and
-; live return/save aliases remain open; target_domain_complete=false.
 InputPollCallbackCall42A5:
     call ax ; @042A5
 InputPollCallbackReturn42A7:

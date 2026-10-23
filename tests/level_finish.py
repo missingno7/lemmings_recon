@@ -85,8 +85,7 @@ def put_word(memory, segment, offset, value):
 
 
 def input_hashes():
-    paths = {'AGENTS.md', 'docs/executable.md', 'docs/level-finish.md',
-             'metadata/symbols.json', 'metadata/oracle.json', 'metadata/toolchain-lock.json',
+    paths = {'metadata/symbols.json', 'metadata/oracle.json', 'metadata/toolchain-lock.json',
              'assets/vgalemmi.exe', 'tests/level_finish.py', 'c/lemmings_sym.h',
              'c/minimap_helpers.h', 'c/special_blit.h', 'c/regs.h'}
     paths.update(f'c/{name}.{suffix}' for name in SOURCES for suffix in ('c', 'h'))

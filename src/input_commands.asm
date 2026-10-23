@@ -65,24 +65,16 @@ loc_3EDA:
     cmp ah,0x43 ; @03EDC
     jnz loc_3EE4 ; @03EDF
     jmp short loc_3F5C ; @03EE1
-; S14 U054: [03EE3,03EE4) stored bytes remain UNKNOWN.
-; Neighbours: P 03EE1 jmp 0x3f5c; N 03EE4 inc al.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @03EE3
 loc_3EE4:
     inc al ; @03EE4
     cmp ah,0x44 ; @03EE6
     jnz loc_3EEE ; @03EE9
     jmp short loc_3F5C ; @03EEB
-; S14 U055: [03EED,03EEE) stored bytes remain UNKNOWN.
-; Neighbours: P 03EEB jmp 0x3f5c; N 03EEE mov ax, word ptr [0x14].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @03EED
 loc_3EEE:
     mov ax,[InputButtonsWord-GameDataImage] ; @03EEE
@@ -101,12 +93,8 @@ loc_3F07:
     cmp ax,0xd0 ; @03F0D
     jl loc_3F15 ; @03F10
     jmp short loc_3F92 ; @03F12
-; S14 U056: [03F14,03F15) stored bytes remain UNKNOWN.
-; Neighbours: P 03F12 jmp 0x3f92; N 03F15 cmp byte ptr [0x84], 0.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @03F14
 loc_3F15:
     cmp byte [StatusIconRefreshCounter-GameDataImage],0x0 ; @03F15
@@ -167,12 +155,8 @@ InputCommandsInt603F8D:
 loc_3F8F:
 InputCommandsAfterInt603F8F:
     jmp short loc_3FE9 ; @03F8F
-; S14 U057: [03F91,03F92) stored bytes remain UNKNOWN.
-; Neighbours: P 03F8F jmp 0x3fe9; N 03F92 mov byte ptr [0x62], 0xff.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @03F91
 loc_3F92:
     mov byte [PanelClickLatch0062-GameDataImage],0xff ; @03F92

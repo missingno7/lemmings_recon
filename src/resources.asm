@@ -40,22 +40,14 @@ RawResourceReturn:
 loc_193A:
     mov dx,DatFileErrorMessage-GameDataImage ; @0193A
     jmp short loc_1949 ; @0193D
-; S14 U018: [0193F,01940) stored bytes remain UNKNOWN.
-; Neighbours: P 0193D jmp 0x1949; N 01940 mov dx, 0x21a5.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @0193F
 loc_1940:
     mov dx,ResourceReadErrorMessage-GameDataImage ; @01940
     jmp short loc_1949 ; @01943
-; S14 U019: [01945,01946) stored bytes remain UNKNOWN.
-; Neighbours: P 01943 jmp 0x1949; N 01946 mov dx, 0x21b6.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01945
 loc_1946:
     mov dx,ResourceCloseErrorMessage-GameDataImage ; @01946
@@ -287,12 +279,8 @@ SelectionAfterGroundRead:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @01A29
     jz loc_1A30 ; @01A2B
     jmp short loc_1A5A ; @01A2D
-; S14 U020: [01A2F,01A30) stored bytes remain UNKNOWN.
-; Neighbours: P 01A2D jmp 0x1a5a; N 01A30 push ds.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01A2F
 loc_1A30:
     push ds ; @01A30
@@ -564,12 +552,8 @@ DatAfterResourceOpen:
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01B91
     mov ds,cx ; @01B93
     jmp short DecodeDatPreservingSegment ; @01B95
-; S14 U021: [01B97,01B98) stored bytes remain UNKNOWN.
-; Neighbours: P 01B95 jmp 0x1ba9; N 01B98 push dx.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01B97
 loc_1B98:
     push dx ; @01B98
@@ -590,7 +574,11 @@ DatAfterResourceRetry:
 DecodeDatPreservingSegment:
     push ds ; @01BA9
     call DecodeDatSection ; @01BAA
-sub_1BAD:
+; Return point of CALL 1BAA (legacy lifter split, not an entry): POP DS rereads
+; the caller DS saved at 1BA9 from the live stack, then RET. POP/RET keep the
+; decoder's exit flags (CF=0, ZF=checksum zero, DF=0). c/dat_load.c pushes this
+; address as the decoder's return word; covered with DecodeDatPreservingSegment.
+DecodeDatPreservingSegmentReturn:
     pop ds ; @01BAD
     ret ; @01BAE
 ; V4 DAT HEADER: byte0+1 wraps CH; byte1 supplies XOR checksum; BE+2/+3 is
@@ -676,37 +664,56 @@ loc_1BF0:
     dec si ; @01BF2
     mov dl,[si] ; @01BF3
     db 0x32,0xf2 ; ENCODED: xor dh,dl (NASM chooses a different encoding) ; @01BF5
-sub_1BF7:
+; TOKEN LOOP HEAD of DecodeDatSection. This and the labels down to 1C75 are
+; interior blocks of one routine (legacy lifter splits), not entries: their
+; only predecessors are local branches, fall-throughs and the 1C56 call return.
+; Loop state: SI = byte cursor moving down through the payload, DL = current
+; byte, CH = bits left in DL (header byte0+1 initially, wraps from FF to 0),
+; DH = running XOR checksum (header byte1 ^ every payload byte loaded),
+; DI = output cursor (pre-decremented per byte), BP = output start, ES = output.
+; ReadReverseBits takes bits from the low end of DL and bytes backwards; the
+; first bit read is the most significant bit of each field. Token grammar:
+;   0 0 nnn          literal run, n+1 bytes (1..8)               -> 1C5C
+;   0 1 d8           2-byte match, 8-bit distance                -> 1C51
+;   1 00 d9          3-byte match, 9-bit distance                -> 1C0B
+;   1 01 d10         4-byte match, 10-bit distance               -> 1C0B
+;   1 10 l8 d12      (l+1)-byte match (1..256), 12-bit distance  -> 1C38
+;   1 11 n8          literal run, n+9 bytes (9..264)             -> 1C20
+; Literal bytes are 8-bit fields stored by WriteReverseLiteral (DEC DI, store).
+; Match bytes copy from ES:DI+d+1 after each DEC DI, so runs may overlap.
+; Every token tail joins the end test 1C6F. C: c/dat_section.c.
+DatTokenLoop:
     mov cl,0x1 ; @01BF7
     call ReadReverseBits ; @01BF9
 DatAfterTokenBit:
     cmp ax,0x1 ; @01BFC
-    jnz sub_1C47 ; @01BFF
-sub_1C01:
+    jnz DatTokenPrefixZero ; @01BFF
+; First token bit 1: read the 2-bit kind; kinds 0/1 fall through to 1C0B.
+DatTokenPrefixOne:
     mov cl,0x2 ; @01C01
     call ReadReverseBits ; @01C03
 DatAfterKindBits:
     cmp ax,0x2 ; @01C06
-    jnc sub_1C1B ; @01C09
-sub_1C0B:
+    jnc DatKindTwoOrThree ; @01C09
+; Kind 0/1 match: BX=kind+2 (copy count kind+3), CL=kind+9 distance bits.
+DatShortMatch:
     db 0x8b,0xd8 ; ENCODED: mov bx,ax (NASM chooses a different encoding) ; @01C0B
     add bx,byte +0x2 ; @01C0D
     db 0x8a,0xc8 ; ENCODED: mov cl,al (NASM chooses a different encoding) ; @01C10
     add cl,0x9 ; @01C12
     call ReadAndCopyReverseMatch ; @01C15
 DatAfterShortMatch:
-    jmp short sub_1C6F ; @01C18
-; S14 U022: [01C1A,01C1B) stored bytes remain UNKNOWN.
-; Neighbours: P 01C18 jmp 0x1c6f; N 01C1B cmp ax, 3.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+    jmp short DatTokenEndCheck ; @01C18
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01C1A
-sub_1C1B:
+; Kind 2/3 select: 3 falls through to the long literal, 2 goes to 1C38.
+DatKindTwoOrThree:
     cmp ax,0x3 ; @01C1B
-    jnz sub_1C38 ; @01C1E
-sub_1C20:
+    jnz DatVariableMatch ; @01C1E
+; Long literal: 8-bit count n, then n+9 literal bytes. The remaining count is
+; kept on the stack around each ReadReverseBits (which returns in AX).
+DatLongLiteral:
     mov cl,0x8 ; @01C20
     call ReadReverseBits ; @01C22
 DatAfterLongLiteralLength:
@@ -721,16 +728,15 @@ DatAfterLongLiteralWrite:
     pop ax ; @01C31
     dec ax ; @01C32
     jnz loc_1C28 ; @01C33
-sub_1C35:
-    jmp short sub_1C6F ; @01C35
-; S14 U023: [01C37,01C38) stored bytes remain UNKNOWN.
-; Neighbours: P 01C35 jmp 0x1c6f; N 01C38 mov cl, 8.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Long-literal tail: jump to the end test.
+DatLongLiteralDone:
+    jmp short DatTokenEndCheck ; @01C35
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01C37
-sub_1C38:
+; Kind 2 variable match: 8-bit length l into BX, then a 12-bit distance;
+; copies l+1 bytes (l=0 copies one byte).
+DatVariableMatch:
     mov cl,0x8 ; @01C38
     call ReadReverseBits ; @01C3A
 DatAfterMatchLength:
@@ -738,34 +744,31 @@ DatAfterMatchLength:
     mov cl,0xc ; @01C3F
     call ReadAndCopyReverseMatch ; @01C41
 DatAfterVariableMatch:
-    jmp short sub_1C6F ; @01C44
-; S14 U024: [01C46,01C47) stored bytes remain UNKNOWN.
-; Neighbours: P 01C44 jmp 0x1c6f; N 01C47 mov cl, 1.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+    jmp short DatTokenEndCheck ; @01C44
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01C46
-sub_1C47:
+; First token bit 0: read a second bit; 1 = 2-byte match, 0 = short literal.
+DatTokenPrefixZero:
     mov cl,0x1 ; @01C47
     call ReadReverseBits ; @01C49
 DatAfterSecondTokenBit:
     cmp ax,0x1 ; @01C4C
-    jnz sub_1C5C ; @01C4F
-sub_1C51:
+    jnz DatShortLiteral ; @01C4F
+; 2-byte match: BX=1 (copy count 2), 8-bit distance.
+DatTwoByteMatch:
     mov bx,0x1 ; @01C51
     mov cl,0x8 ; @01C54
     call ReadAndCopyReverseMatch ; @01C56
-sub_1C59:
-    jmp short sub_1C6F ; @01C59
-; S14 U025: [01C5B,01C5C) stored bytes remain UNKNOWN.
-; Neighbours: P 01C59 jmp 0x1c6f; N 01C5C mov cl, 3.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Return address of the 2-byte match call (c/dat_section.c pushes it); jumps to
+; the end test.
+DatAfterTwoByteMatch:
+    jmp short DatTokenEndCheck ; @01C59
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01C5B
-sub_1C5C:
+; Short literal: 3-bit count n, then n+1 literal bytes (count kept on stack).
+DatShortLiteral:
     mov cl,0x3 ; @01C5C
     call ReadReverseBits ; @01C5E
 DatAfterShortLiteralLength:
@@ -780,12 +783,18 @@ DatAfterShortLiteralWrite:
     pop ax ; @01C6B
     dec ax ; @01C6C
     jnz loc_1C62 ; @01C6D
-sub_1C6F:
+; END TEST, shared by all five token tails: continue while DI > BP (unsigned).
+; Checked only after a complete token, so the last token may write below BP;
+; a wrapped DI or output end is not detected.
+DatTokenEndCheck:
     db 0x3b,0xfd ; ENCODED: cmp di,bp (NASM chooses a different encoding) ; @01C6F
-    jna sub_1C75 ; @01C71
-sub_1C73:
-    jmp short sub_1BF7 ; @01C73
-sub_1C75:
+    jna DatDecodeFinish ; @01C71
+; Back edge to the token loop head.
+DatNextToken:
+    jmp short DatTokenLoop ; @01C73
+; NORMAL EXIT: AND DH,DH gives ZF=1 iff the XOR checksum is zero (and CF=0);
+; no caller tests it. POP BX restores the BX saved at 1BAF, CLD, RET.
+DatDecodeFinish:
     db 0x22,0xf6 ; ENCODED: and dh,dh (NASM chooses a different encoding) ; @01C75
     pop bx ; @01C77
 ; S19 decoder-reset-barriers: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
@@ -832,7 +841,10 @@ loc_1C92:
     mov bl,[si] ; @01C98
     mov [es:di],bl ; @01C9A
     loop loc_1C92 ; @01C9D
-sub_1C9F:
+; Exit of the CopyReverseMatch byte loop (fall-through after LOOP; not an entry).
+; Restores CX/DS/SI saved at 1C8B..1C8D from the live stack and RETs. BL keeps
+; the last copied byte; DI points at it. Covered by c/dat.c with its parent.
+CopyReverseMatchReturn:
     pop cx ; @01C9F
     pop ds ; @01CA0
     pop si ; @01CA1
@@ -993,12 +1005,8 @@ loc_1D4E:
     and ax,0xf ; @01D75
     jnz loc_1D7D ; @01D78
     jmp short loc_1D7E ; @01D7A
-; S14 U026: [01D7C,01D7D) stored bytes remain UNKNOWN.
-; Neighbours: P 01D7A jmp 0x1d7e; N 01D7D inc dx.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @01D7C
 loc_1D7D:
     inc dx ; @01D7D

@@ -484,15 +484,24 @@ loc_6992:
     db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @069A2
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @069A4
     db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @069A6
-    jz sub_69B6 ; @069A8
-sub_69AA:
+    jz EntitySprite3Plane14MaskedWrite ; @069A8
+; Interior blocks of DrawEntityShiftedSprite3Plane14 (6957..6A96) down to 6A95:
+; legacy lifter splits, not entries (only local branches/fall-throughs reach
+; them; none is a known 715B callback target). Sibling callbacks keep plain
+; loc_ labels. Pass 1 (map 0Fh, set/reset planes 1..3 = 0) shift step: CH=CL
+; one-bit SHR/RCR steps move the byte-swapped data word (SI) and mask word (BP)
+; right, spilling into AL (data) and AH (mask). CL is the unchecked 0..255 shift.
+EntitySprite3Plane14MaskShift:
     shr si,1 ; @069AA
     rcr al,1 ; @069AC
     shr bp,1 ; @069AE
     rcr ah,1 ; @069B0
     dec ch ; @069B2
-    jnz sub_69AA ; @069B4
-sub_69B6:
+    jnz EntitySprite3Plane14MaskShift ; @069B4
+; Pass 1 row write: three bit-mask/latch-read/STOSB groups (mask BH/data CH,
+; mask BL/data CL, mask spill/data spill), each under its own CLI..STI, then
+; ADD DI,29h. Restores the stacked CX/BX/SI/BP; DEC BP of the saved row count.
+EntitySprite3Plane14MaskedWrite:
     push bx ; @069B6
     push cx ; @069B7
     db 0x8b,0xdd ; ENCODED: mov bx,bp (NASM chooses a different encoding) ; @069B8
@@ -545,7 +554,9 @@ sub_69B6:
     pop bp ; @069F9
     dec bp ; @069FA
     jnz loc_6992 ; @069FB
-sub_69FD:
+; Pass 2 setup (after 14 masked rows): DI reread from the live stack, set/reset
+; off, GC3=10h (OR), bit mask FFh, map mask 02h (plane 1), BP=0Eh rows.
+EntitySprite3Plane14OrPlane1:
     pop di ; @069FD
     push di ; @069FE
     mov ax,0x1 ; @069FF
@@ -573,13 +584,16 @@ loc_6A24:
     db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @06A29
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @06A2B
     db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @06A2D
-    jz sub_6A39 ; @06A2F
-sub_6A31:
+    jz EntitySprite3Plane14OrPlane1Write ; @06A2F
+; Pass 2 shift step: data word shifted right by CL, spill into AL.
+EntitySprite3Plane14OrPlane1Shift:
     shr bx,1 ; @06A31
     rcr al,1 ; @06A33
     dec ch ; @06A35
-    jnz sub_6A31 ; @06A37
-sub_6A39:
+    jnz EntitySprite3Plane14OrPlane1Shift ; @06A37
+; Pass 2 row write: latch read before each of three OR writes, whole row under
+; one CLI..STI, ADD DI,29h.
+EntitySprite3Plane14OrPlane1Write:
     db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @06A39
     cli ; @06A3B
     mov al,[es:di] ; @06A3C
@@ -607,7 +621,9 @@ sub_6A39:
     add di,byte +0x29 ; @06A4F
     dec bp ; @06A52
     jnz loc_6A24 ; @06A53
-sub_6A55:
+; Pass 3 setup: POP DI (final saved destination), DX=3C4h, map mask 04h
+; (plane 2), BP=0Eh rows.
+EntitySprite3Plane14OrPlane2:
     pop di ; @06A55
     mov dx,0x3c4 ; @06A56
     mov ax,0x402 ; @06A59
@@ -625,13 +641,15 @@ loc_6A64:
     db 0x8a,0xe9 ; ENCODED: mov ch,cl (NASM chooses a different encoding) ; @06A69
     db 0x32,0xc0 ; ENCODED: xor al,al (NASM chooses a different encoding) ; @06A6B
     db 0x22,0xed ; ENCODED: and ch,ch (NASM chooses a different encoding) ; @06A6D
-    jz sub_6A79 ; @06A6F
-sub_6A71:
+    jz EntitySprite3Plane14OrPlane2Write ; @06A6F
+; Pass 3 shift step (as pass 2).
+EntitySprite3Plane14OrPlane2Shift:
     shr bx,1 ; @06A71
     rcr al,1 ; @06A73
     dec ch ; @06A75
-    jnz sub_6A71 ; @06A77
-sub_6A79:
+    jnz EntitySprite3Plane14OrPlane2Shift ; @06A77
+; Pass 3 row write (as pass 2).
+EntitySprite3Plane14OrPlane2Write:
     db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @06A79
     cli ; @06A7B
     mov al,[es:di] ; @06A7C
@@ -659,7 +677,8 @@ sub_6A79:
     add di,byte +0x29 ; @06A8F
     dec bp ; @06A92
     jnz loc_6A64 ; @06A93
-sub_6A95:
+; Exit: POP DS restores the caller DS saved at 6957, then RET 6A96.
+EntitySprite3Plane14RestoreDs:
     pop ds ; @06A95
 EntitySprite3Plane14Return:
     ret ; @06A96

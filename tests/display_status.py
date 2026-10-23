@@ -251,7 +251,7 @@ def compare(native,case):
 
 
 def input_hashes(native=False):
-    paths=set(common.input_hashes(False));paths.update(('tests/display_status.py','docs/display-status.md','metadata/inputs.json'))
+    paths=set(common.input_hashes(False));paths.update(('tests/display_status.py','metadata/inputs.json'))
     if native:paths.update(('c/display_status.c','c/display_status.h','c/aligned_read_mask.h','c/lemmings_sym.h','c/regs.h','c/special_blit.h','tools/cbuild.py','tools/difftest.py','tools/coverage.py'))
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

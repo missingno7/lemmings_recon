@@ -25,12 +25,10 @@ loc_835B:
     loop loc_835B ; @0835F
     pop ds ; @08361
     ret ; @08362
-; V3 C: no fresh ordinary/protected incoming edge or decoded operand8363;
-; V3 no adjacent LE16 word8363 anywhere in original main image. Inventory seed
-; V3 is not a caller or proof of deadness. Raw cursor reads everyCS offset except
-; V3 83B7 across possible entries. Keep intact and minimap-DF1-modified views
-; V3 separate; checksum read alone does not classify its input storage.
-; Incremental checksum candidate; static reachability is unresolved.
+; Incremental code checksum, 0800 bytes per call. No call, jump or stored
+; pointer to 8363 exists in the main, protected or sound code, so no incoming
+; edge is identified and its result (83B8/83BD are never read) controls nothing.
+; C implements InitializeCodeChecksum's state writes; 8363 needs no call site.
 ; Phase wraps every256 calls. Cursor stops on equality only, not >=83B7.
 ; Cursor is not stored on the early-limit path; preserve that stale value.
 AdvanceCodeChecksum:
@@ -81,19 +79,13 @@ loc_83A9:
     db 0x8a,0xe0 ; ENCODED: mov ah,al (NASM chooses a different encoding) ; @083AF
     mov [cs:0x83b9],al ; @083B1
     jmp short loc_83A7 ; @083B5
-; S14 U096: [083B7,083B8) stored bytes remain UNKNOWN.
-; Neighbours: P 083B5 jmp 0x83a7; N 083B8 static_data.
-; 8391 compares BX with83B7 and exits before8397:83B7 is excluded from the checksum read. Existing minimap797B DF1 overlay83AF..83C2 zeros this byte; DF0 writes83C1..83D4. Stored90 and bypassing JMP83B5 do not prove padding.
-; No checksum read here: equality stop8391 excludes83B7.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ChecksumLimit:
-; Numeric equality stop at8391, not a byte read or executable entry. Stored90
-; has no proved padding/NOP lifetime: no decoded incoming edge executes83B7,
-; but minimap DF=1 writes it. Keep UNKNOWN; comparison alone cannot classify.
-; 8363 reads CS:[BX] after PUSH CS/POP DS; BX==83B7 exits before XOR, including
-; on wrap. Incoming cursor>83B7 can scan U097/U098 as data in0800-byte chunks;
-; normal8343 initialization starts188F. No static caller of8363 is established.
-; UNKNOWN: unresolved bytes
+; Alignment filler: NOP that word-aligns the checksum state at 83B8 after the
+; last checksum instruction (the backward JMP at 83B5 needs no shortening
+; filler). 8391 compares BX with 83B7 and exits before the read at 8397, so
+; the checksum never reads this byte, including on wrap. No incoming edge
+; identified. The minimap DF=1 clear at 797B overwrites it with 00.
+; DATA: padding
     db 0x90 ; @083B7
 ; DATA: static_data
 StartupCodeChecksumFirstByte:

@@ -743,7 +743,7 @@ MUTATION_WITNESSES = {
 def input_hashes():
     paths = set(basic.input_hashes())
     paths.update((
-        'docs/entity-actions.md', 'c/entity_action_map.c',
+        'c/entity_action_map.c',
         'c/entity_action_map.h', 'tests/entity_action_map.py',
         'tests/entity_pattern.py', 'tests/entity_pattern_bus.py',
         'c/entity_pattern.c', 'c/entity_pattern.h',

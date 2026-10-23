@@ -378,7 +378,7 @@ def compare(native,case,boundary=None):
 
 
 def input_hashes(native=False):
-    paths=set(printer.input_hashes(native));paths.update(('tests/resource_select.py','tests/resource_select_full.py','docs/resource-select.md','docs/resource-select-full.md','metadata/inputs.json','tools/resources.py'))
+    paths=set(printer.input_hashes(native));paths.update(('tests/resource_select.py','tests/resource_select_full.py','metadata/inputs.json','tools/resources.py'))
     paths.update('tests/'+n+'.py' for n in ('dat_io_c','dat_files','dat_load','dat_section','resource_raw','decimal_digits_c'))
     paths.update('assets/'+p.name for p in (ROOT/'assets').glob('*.dat'))
     if native:paths.update('c/'+n+'.'+ext for n in ('resource_select','resource_select_full','decimal_digits','resource_raw','dat_load','dat_files','dat_cache','dat_section','dat_io','dat') for ext in ('c','h'))

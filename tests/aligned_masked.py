@@ -858,7 +858,7 @@ def worker(build_directory):
         'tests/dat_io_c.py', 'tools/common.py', 'tools/unpack.py',
         'tools/cbuild.py', 'tools/bounded_process.py',
         'metadata/symbols.json', 'build/unpack.json', 'src/planar_drawing.asm',
-        'tools/difftest.py', 'tools/coverage.py', 'docs/aligned-masked.md')
+        'tools/difftest.py', 'tools/coverage.py')
     report = dict(
         image='main', image_sha256=sha(IMAGE),
         range_inclusive=f'{START:04X}..{RETF:04X}',

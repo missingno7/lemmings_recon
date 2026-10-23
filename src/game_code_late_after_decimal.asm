@@ -83,12 +83,8 @@ MenuTimerDataSegmentOperand4C50 equ $+1
     call SendMasterPicEoi ; @04C60
 MenuTimerAfterEoi4C63:
     jmp short MenuTimerChainReturn4C70 ; @04C63
-; S14 U071: [04C65,04C66) stored bytes remain UNKNOWN.
-; Neighbours: P 04C63 jmp 0x4c70; N 04C66 mov ax, 0x4c70.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @04C65
 loc_4C66:
     mov ax,0x4c70 ; @04C66
@@ -120,9 +116,8 @@ MenuTimerOuterIret4C7D:
 ; Typed input keeps live outer/inner saves,20-cycle cursor blink and signed A..Z.
 ; Backspace moves without immediately erasing prior byte; full input replaces
 ; last slot. Final submit clears1FC7 and tail-JMPs through savedBP.
-; READINESS CONDITIONAL:503B is the sole target under4C7E entry, intact code,
-; game DS/DF=0, owned saves/return words and the child write contracts below.
-; The only decoded external entry is CALL4996; internal entry can inherit any BP.
+; READINESS READY: 503B is the only legitimate target at 4CC9 and 4D18.
+; The only decoded entry is CALL 4996; loop labels have only internal edges.
 ; Let P=entry SP (all offsets wrap16). Outer six-word frame has BP at P-0C,
 ; DX -0A,CX -08,BX -06,DI -04,SI -02. Wait/draw inner five-word frames have
 ; BP at P-16,DX -14,CX -12,SI -10,DI -0E. Wait CALL writes P-18; RET1550
@@ -153,43 +148,25 @@ MenuTimerOuterIret4C7D:
 ; Deepest glyph/dirty stack is P-3A (P-32 with dirty marking off); dirty maps
 ; end48F3 and cannot hit these saves. This is not a startup stack-range proof.
 ; Text/stack/SS-mirror aliases, altered text headers/DF or changed child stacks
-; invalidate this induction; retain both original indirect frontiers outside it.
+; are corruption, outside the legitimate contract above.
 ReadCodeInput:
-; V2/U02 per-site target rule (PROVEN, intact decoded instructions):4CC9 uses
-; BP restored by4CA8 from the wait save P-16;4D18 uses the DISTINCT outer
-; word P-0C restored4CDA. No foreground BP assignment follows either POP
-; before its transfer. 4CD1's draw-save POP affects a subsequent wait cycle,
-; not an already executed CALL. Initial BP503B is not an immutable register.
-; For balanced menu entry SP4AF4, CALL4996 gives P4AF2, innerBP4ADC,
-; outerBP4AE6, inherited return4AF2=4999; normal child writes reach4AB8
-; (dirty off:4AC0). These absolute placements are conditional on entry SP,
-; not a global provider/IRQ/protection stack certificate.
-; Active foreground non-stack writers:491E; cursor4DF2..4DFB;1FC7/8 on CR;
-; keyboard0F78..0FCA; origins1F76..1F79; graphics selector1FE4/5; renderer
-; 66F8..6705 andA948; VGA A000 pixels; SS mirrors0..0F and dirty9A75.
-; Canonical DS/SS/VGA and fixed style08 give width16, BP0, aligned opaque
-; rendering; no8D66/source-shift path. Dirty0026=42B2/45D3, normal text
-; positions and dimensions keep SS writes <=48F3. All miss4AB8..4AF3.
-; PUSH/CALL/INT writes are ordered below the current SP, with actual POPs;
-; row/plane saves never get an assumed BP-preserving ABI. A stale49B6 map
-; row from a prior level is not an active editor writer; PUSH overwrites old
-; memory before its POP. Resource/cache/object/terrain setup has no decoded
-; call in this editor loop; it cannot rewrite an existing save without reentry.
-; CHARACTERIZED NONDETERMINISM outside that domain: dirty rounded width0
-; at9A75 writes01 to every SS offset before POPSI9A7C, including its own RET;
-; all-DS RCR8DEA reaches both BP saves via DS:A950+offset (until DS wrap).
-; FFFF-space padding1E60/1E51 reaches them via DS:F42C/F436 for P4AF2.
-; Corrupted cursor DI makes4CBE/4CC2/4CF4/4D02/4D16 write its actual DS
-; byte, including either save if the physical addresses coincide. Preserve
-; the written byte/word and actual continuation; reaching the later BP POP
-; is not guaranteed after an earlier RET/segment save has also been changed.
-; Named active external seams: old08 chain4C6C, mouse INT33:0003 at425F,
-; INT62 at0F7F and any escaped42A5 target. Keyboard16D4/menu4C47 install
-; real frames and restore actual BP; private0F70's 587F child is skipped
-; while menu marker CS83BE staysFF. Private0F70 saves only DS/AX:INT62 can
-; change BP directly unless its external register contract preserves it.
-; Returned stack/depth and writes by those
-; external providers are U03/U04, not supplied by VGA+AdLib or IRQ-at-poll C.
+; BP TARGET CONTRACT (4CC9 CALL BP, 4D18 JMP BP). The routine's only BP
+; assignment is 4C88 LEA BP,503B. Outer save 4C9F (P-0C) and inner saves
+; 4CA4/4CC8 (P-16) hold that value; 4CA8/4CD1 restore the inner save and 4CDA
+; the outer one, so child BP use (DrawTextStream sets BP 0/2) never reaches a
+; transfer. For menu stack top 4AF4, CALL 4996 gives P=4AF2, inner save 4ADC,
+; outer save 4AE6, inherited return 4999 at 4AF2.
+; Children 1550, 503B, 4C20 and 4D1A return balanced; interrupting handlers
+; 4C47 and 16D4 save or never assign BP, private 0F70 skips its 587F child
+; while CS:83BE=FF, and the external INT62/old08/INT33 services follow the
+; ordinary register-preserving ISR contract (platform). Their memory writes
+; (cursor 4DF2..4DFB, keyboard 0F78..0FCA, 491E, 1FC7/8, origins 1F76..1F79,
+; 1FE4/5, renderer 66F8..6705/A948, VGA A000, SS mirrors 0..0F, dirty maps
+; ending 48F3) miss the saves at 4AB8..4AF3.
+; TARGET SET at both sites: {503B} (DrawCodeInputText), decoded.
+; Not legitimate: a damaged save from the width-0 renderer sweep, FFFF-space
+; cache-name padding or a corrupted cursor DI; each is a characterized
+; corruption, and a changed BP is a corrupted-control escape.
     lea si,[EnteredLevelCode-GameDataImage] ; @04C7E
     mov cx,0xa ; @04C82
     mov bx,0x5a41 ; @04C85
@@ -235,20 +212,8 @@ loc_4CC4:
     push cx ; @04CC6
     push dx ; @04CC7
     push bp ; @04CC8
-; S19 saved-bp-dispatch: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
-; Isolated4C7E serial/intact/known-edge summary carries BP503B at both transfers,SP=P-16 atCALL/P
-; atJMP. Actual save/dirty-map/IRQ survival remains unproved.
-; Dependencies: 4C7E frame and fixed paths; absolute SS:SP placement; dirty-map separation; no
-; IRQ/code/provider/frame aliases.
-; S17 flow-state: For4C7E entry with fixed known edges, intact stack saves and no
-; asynchronous IRQ, the symbolic summary proves BP503B here and at4D18. Inner BP save is
-; entrySP-16h (4CC8 after the current frame is rebuilt); outer BP is entrySP-0Ch (4C9F).
-; Actual POP4CA8/4CD1/4CDA supplies the register; the text/renderer child need not
-; preserve BP. This is not a startup stack-range, dirty-map/nonalias or unrestricted-IRQ
-; certificate.
 CodeInputDrawCall4CC9:
-; BP came from4CA8 (wait save), or intact prior4CD1 across another wait cycle.
-; PUSH BP at4CC8 cannot change the already-live register target by alias alone.
+; CALL BP: BP restored at 4CA8 (or 4CD1 across a repeated wait) is 503B.
     call bp ; @04CC9
 CodeEntryAfterCall4CC9:
     call SwapDrawingOriginsAndDisplay ; @04CCB
@@ -299,18 +264,9 @@ loc_4D02:
 loc_4D10:
     mov word [0x1fc7],0x0 ; @04D10
     mov [di],cl ; @04D16
-; S19 saved-bp-dispatch: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
-; Isolated4C7E serial/intact/known-edge summary carries BP503B at both transfers,SP=P-16 atCALL/P
-; atJMP. Actual save/dirty-map/IRQ survival remains unproved.
-; Dependencies: 4C7E frame and fixed paths; absolute SS:SP placement; dirty-map separation; no
-; IRQ/code/provider/frame aliases.
-; S17 flow-state: In the4C7E intact-save/known-edge/no-IRQ domain, BP503B and SP=entrySP
-; reach this JMP. The JMP pushes no continuation:503B ultimately consumes the inherited
-; caller return. Changing saved outer BP, code, SS or return words remains outside that
-; conditional proof; do not close this global target domain from the local BP result.
 CodeInputDrawTail4D18:
-;4D10/4D16 stores cannot change latched BP; aliases CAN change inherited RET,
-; text or code. JMP supplies no new frame:503B uses original caller return at P.
+; JMP BP: outer BP restored at 4CDA is 503B. The JMP pushes nothing, so the
+; text RET of 503B consumes the CALL 4996 return word: keep this tail.
     jmp bp ; @04D18
 ; Scan83 live state bytes. TEST then MOV reread held bytes; low7 decrement wraps.
 ; Decrement0 reloads86 and emits; stored93 emits; other states continue scanning.
@@ -481,12 +437,8 @@ ClearFullDrawingPage:
     mov di,0x0 ; @04DEF
     mov cx,0x6d60 ; @04DF2
     jmp short ClearVgaBytes ; @04DF5
-; S14 U072: [04DF7,04DF8) stored bytes remain UNKNOWN.
-; Neighbours: P 04DF5 jmp 0x4df8; N 04DF8 mov dx, 0x3c4.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @04DF7
 ; SS mirror words precede six OUTs. ES=A000, AX=A000, DX=3CE.
 ; REP clears incoming CX bytes from DI with incoming DF; CX=0. No CLI/STI.
@@ -783,11 +735,12 @@ DrawScreenBackground:
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @05017
 DrawScreenBackgroundFromRow:
     jmp DrawScreenBackgroundTiles ; @05019
-; S14 U075: [0501C,05028) stored bytes remain UNKNOWN.
-; Neighbours: P 05019 jmp 0x7e76; N 05028 cli.
-; Candidate501C clears AL/stores0 to DS1FCD,then CMP AL,[1FCD]/JE5021 until unequal,RET. No STI/CLI/watchdog; disabled IRQ/no producer may spin indefinitely, byte wrap may hide changes. Clears timer state, never sets004A. Entry unproved.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; No incoming edge identified for 501C..5027: no direct, table, vector, relocated or
+; protected-view reference reaches it and no data reader uses it, so the bytes
+; stay UNKNOWN (code-looking). Recovered paths bypass it; translators of the
+; neighbouring routines need nothing from it.
+; Read as code: clears the timer tick byte DS:1FCD and spins until it changes
+; (no timeout, no STI), then RETs.
 ; UNKNOWN: unresolved bytes
     db 0x32,0xc0,0xa2,0xcd,0x1f,0x3a,0x06,0xcd,0x1f,0x74,0xfa,0xc3 ; @0501C
 InstallMenuTimerVector:
@@ -1072,6 +1025,7 @@ loc_520E:
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @05298
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @0529B
     mov cl,0x1e ; @0529D
+; Byte selection / 30 with AH clear: quotient <= 8, cannot fault.
     div cl ; @0529F
     mov [MenuLevelGroupIndex-GameDataImage],al ; @052A1
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @052A4

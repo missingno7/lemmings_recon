@@ -72,11 +72,13 @@ loc_5CF8:
     jnz loc_5CDF ; @05D15
 WordMaskGeneratorReturn:
     ret ; @05D17
-; S14 U085: [05D18,05D66) stored bytes remain UNKNOWN.
-; Neighbours: P 05D17 ret; N 05D66 xor dh, dh.
-; Candidate5D18 expands four source bytes/row into five destination bytes for shiftsDH0..7. Chain SHR BL/RCR BH/RCR AL/RCR AH/RCR DL starts with fifth byte0. LODSW follows DF but explicit INC DI always advances destination. Incoming CX=0 wraps LOOP to65536 rows; outer BL=0 wraps to256 repeats. Nested SS saves/rereads and ES writes5D3D/40/45/4A/4D may alias source/saves. SI/BX/CX/DX restore only with intact saves; DI advances,AX/flags clobber. Internal loops alone do not establish entry.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; No incoming edge identified for 5D18..5D65: no direct, table, vector, relocated or
+; protected-view reference reaches it and no data reader uses it, so the bytes
+; stay UNKNOWN (code-looking). Recovered paths bypass it; translators of the
+; neighbouring routines need nothing from it.
+; Read as code: a wider sibling of the reached 5D66. For shifts DH=0..7 it
+; expands each row of four source bytes (two LODSW) into five bytes shifted
+; right by DH bits at ES:DI, BL repeats of CX rows per shift.
 ; UNKNOWN: unresolved bytes
     db 0x32,0xf6,0x52,0x53,0x56,0x53,0x51,0x51,0x53,0xad,0x8b,0xd8,0xad,0x32,0xd2,0x22 ; @05D18
 ; UNKNOWN: unresolved bytes

@@ -274,7 +274,7 @@ def branch_edges(ins):
 def hashes():
     paths = set(wide.hashes()) | set(model.input_hashes())
     paths.update(('c/entity_sprite_banks.c','c/entity_sprite_banks.h',
-                  'tests/entity_sprite_banks.py','docs/entity-sprite-banks.md'))
+                  'tests/entity_sprite_banks.py'))
     # Prose and C-progress fields do not feed this campaign. The generated
     # symbol header still pins every compiled address; the independent static
     # gate validates the ledger and exact maintained ASM. Do not weaken hashes

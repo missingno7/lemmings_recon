@@ -3,7 +3,7 @@
     "address": "066C",
     "kind": "runtime_modified_continuation",
     "evidence": "Installed INT3 handler0DB3 changes saved flags and upcoming code",
-    "closure": "state CFG recovered; incoming domain, aliases and platform contracts pending",
+    "closure": "Legitimate entries arrive with TF clear and continue in the fully derived TF-on stream (metadata/protection-cfg.json, no unresolved transfers)",
     "state_specific_target": "TF-on 066D in metadata/protection-cfg.json"
   },
   {
@@ -22,9 +22,9 @@
       "1490",
       "14A0"
     ],
-    "evidence": "Four original DS:2013 records: enable byte and near pointer; 13FB/1402 supplies AX",
-    "closure": "DF-clear, DS-frame and pointer-write/alias contracts pending",
-    "target_domain_complete": false
+    "evidence": "Four DS:2013 rows {enable,target}; no decoded store writes a target word; enables set by 13E9/13EE/13F3, 145C, startup marker 1194 (e0 via DI=2012 on command-line option paths 10E2/10EC/10F6), cleared by 143A/143F/1444/1483/148A; callers 00C8/0468 run with game DS and DF=0",
+    "closure": "Closed for the legitimate program: the four target words never change, so 1407 calls only 1410 (when the startup marker set e0), 1462, 1490 and 14A0; other values arise only from an oversized GROUND file or the creation-race record spill (characterized escape to CS:0061).",
+    "target_domain_complete": true
   },
   {
     "address": "1899",
@@ -43,9 +43,9 @@
       "4334",
       "4359"
     ],
-    "evidence": "Static DS:25A0=4252; direct stores4A68/4A80 install4334/4359",
-    "closure": "Known direct stores; indexed/string writes, aliases and unknown code remain open",
-    "target_domain_complete": false
+    "evidence": "Reached only with mode 25A6=1 (4196); mode 1 is stored only at 4A6D/4A85, each right after 4A68 (4334) or 4A80 (4359); image 25A0=4252 and 25A6=00; other mode writers 0F64/4AB5 (2), 4ABD (0); clears and pinned GROUND files miss 25A0..25A6",
+    "closure": "Closed for the legitimate program: mode 1 always follows a joystick pointer store, so 42A5 calls only 4334 or 4359 (4252 is stored but never called here); other values arise only from an oversized GROUND file or the creation-race spill record D3 (characterized escape). 4252 stays in the decoded target list as a superset (initial stored value, decoded via JMP 4193).",
+    "target_domain_complete": true
   },
   {
     "address": "4C6C",
@@ -62,9 +62,9 @@
     "known_targets": [
       "503B"
     ],
-    "evidence": "4C88 sets BP=503B; loop pushes and restores BP around callbacks",
-    "closure": "Closed under 4C7E entry and balanced callee stack contract; alternate incoming/alias paths pending",
-    "target_domain_complete": false
+    "evidence": "Only BP assignment 4C88 LEA BP,503B; inner saves 4CA4/4CC8 restored at 4CA8/4CD1; sole entry CALL 4996; children and menu/keyboard IRQ handlers preserve BP and their writes miss the saves",
+    "closure": "Closed for the legitimate program: BP is always 503B at 4CC9; a different value needs a damaged stack save (width-0 sweep, FFFF-space cache-name padding, corrupted cursor), which is a characterized corrupted-control escape.",
+    "target_domain_complete": true
   },
   {
     "address": "4D18",
@@ -72,15 +72,15 @@
     "known_targets": [
       "503B"
     ],
-    "evidence": "4CDA restores saved BP before final JMP; original callback is503B",
-    "closure": "Shared input-loop entry/stack/alias contract pending",
-    "target_domain_complete": false
+    "evidence": "Outer save 4C9F (P-0C) restored at 4CDA; no later BP assignment before 4D18; tail JMP lets 503B return through the CALL 4996 word",
+    "closure": "Closed for the legitimate program: BP is always 503B at 4D18 and the JMP is a tail continuation returning to 4999; other values need a characterized damaged save.",
+    "target_domain_complete": true
   },
   {
     "address": "715B",
     "kind": "near_indirect_call",
-    "evidence": "0FC1..0FF1 initializes nine DS:002E..003E drawing callbacks; object stores read these slots into record+14;70F0/7159 transfers saved pointer to AX",
-    "closure": "Active object record lifecycle, bulk copies, DS-frame and write/alias contracts pending",
+    "evidence": "Slots 002E..003E written only by 0FC1..0FF1 in 03E7 before any draw; record+14 zeroed by 30F3 then written only by the 32 slot-sourced word stores; draws visit k<count<=50h with pinned headers; DF=1 writers 347F/3488/4119 have no legitimate DF=1 producer",
+    "closure": "Closed for the legitimate program: 715B calls only the nine slot callbacks; other values arise only after the characterized creation race spills records past 4F (escape to CS:F(state)).",
     "known_targets": [
       "6170",
       "64D9",
@@ -92,6 +92,6 @@
       "6BDB",
       "6CFC"
     ],
-    "target_domain_complete": false
+    "target_domain_complete": true
   }
 ]

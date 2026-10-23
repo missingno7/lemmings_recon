@@ -1,83 +1,89 @@
-# Next semantic work
+# Next work
 
-The current quantitative inventory is [completeness.md](completeness.md), generated
-with `tools/coverage.py --inventory`. The [audit/readiness matrix](semantic-audit.md)
-explains the current realignment; [bottom-up.md](bottom-up.md) gives the working
-loop and physical source map. Old checkpoints are in convergence-history.md.
+Choose by: what would force a C translator, or now a port maintainer, to guess?
+Addresses are main-image offsets unless a component or DS frame is named;
+`tools/where.py ADDR` finds the line. Counts: [completeness.md](completeness.md).
+Freeze bar: [semantic-audit.md](semantic-audit.md). Method: AGENTS.md.
 
 ## Immediate mode
 
-Static semantic closure toward `asm-semantic-oracle-v1` (semantic-audit.md G),
-VGA game plus AdLib driver first. C already covers nearly all decoded main code,
-so further C or host work adds little understanding; the binding constraint is
-classification, transfer domains and state ownership. The existing C and
-headless host stay as downstream verification only. Evidence base: the read-only
-audits of 2026-10-22 (static risk map, sound images, native integration,
-methodology), whose findings are folded into the items below; their working
-reports are in build/ and are not a status source.
+The VGA + AdLib scope is close to classification and control-flow closure: the
+main image has 450 UNKNOWN bytes (12 code-looking routines with no incoming edge,
+three stored RETs, two protected write-selector MOVs), every legitimate indirect
+transfer has a closed target set, and the AdLib driver has a complete engine
+specification with 9 UNKNOWN bytes and a closed dispatch domain. The binding work
+is now translating that understanding: the AdLib engine, the remaining
+untranslated entries and whole-game composition.
 
-## Freeze status (re-audit 2026-10-23; classes and escape rule in semantic-audit.md G)
+## Closed exceptional behavior (no further investigation)
 
-`asm-semantic-oracle-v1` is not attained. Criteria 4-7 are BLOCKED for both the
-complete specification and VGA + AdLib; classification discipline itself is
-satisfied. Criteria 1-3: inventory met for the main image and protected views;
-classification and control flow blocked (criteria 1-3 re-audit was cut off by
-a provider content flag; its boundary packets are in u2a-freeze-v2.json).
-Working detail: build/static/u2b-freeze-v2.md (not a status source).
+These are characterized original behavior. Implementations preserve them by
+translating the ordinary code over the original memory layout, or report them as
+explicit unsupported-runtime limitations. Reopen one only if a legitimate
+(non-corrupted) path is found to depend on it.
 
-Characterized, outside the supported native runtime domain (class 3; preserve,
-never repair or replace with success):
-- Control escapes closed by the G rule, each with a full boundary packet:
-  no-strip sprite escape at 715B (Packet S), first corrupted detector call to
-  CS:0061 at 1407 (D), partial 25A0 clear calling CS:0000 at 42A5 (I), steel
-  near return to 3709 (R), one-row dirty width-0 return to 0101 (Z).
-- N01 creation race (30CC..314B via 1874 -> 3E6F -> 4013).
-- N06 AdLib request/update ordering (03B9/03BE, F0 last writer wins).
-- W01 width-0 RCR sweep before 8DF1; W02 stale/overlong resource, palette,
-  template and stream relations (these continue into normal gameplay).
-- Level 7 stack crossing mechanism to SP=49B6.
+| Item | Class | What implementations preserve |
+|---|---|---|
+| Control escapes S (no-strip sprite, 715B), D (first corrupted detector call to CS:0061 at 1407), I (partial 25A0 clear calling CS:0000 at 42A5), R (steel near return to 3709), Z (one-row dirty width-0 return to 0101) | characterized corruption escape | Specification ends at the stated transfer; native reports an unsupported escape, never success |
+| N01 creation race (30CC..314B via 1874 -> 3E6F -> 4013) and the record spill it causes | characterized race | Creation and timer IRQ write order over the same record array; later spill evolution is ordinary code over that memory (no surviving-count proof needed) |
+| N06 AdLib request/update ordering (03B9/03BE, FF/F0 last writer wins) | characterized race | Request latch write order |
+| W01 width-0 RCR sweep before 8DF1; W02 stale/overlong resource, palette, template and stream relations | characterized overflow/alias | Renderer and loaders translated over canonical memory, including the out-of-range writes |
+| Level 7 stack crossing to SP=49B6 | characterized alias | Physical stack placement while the stack is modelled; later its observed effect |
+| Former blockers B02-B07, B10, B14 parts that ask for every damaging writer, arbitrary IRQ/stack survival, arbitrary renderer aliases, provider footprints or corrupted returns | not blockers (AGENTS.md) | Nothing beyond the items above |
+| RETF selector-EA limitation of the verification executor | verification transport debt | Not an original semantic question |
 
-Platform-conditional (class 2, metadata/platform-profile.json): PC01 startup
-clear, PC02 1407 detector, PC03 INT33 AX=0003, PC04 DAT/cache file
-continuation, PC05 process-lived AdLib, PC06 startup marker, PC07 graphics
-arena, PC08 completed floppy/protection seam.
+Platform-conditional assumptions stay in metadata/platform-profile.json
+(PC01..PC08: startup clear, 1407 detector, INT33 AX=0003, DAT/cache file
+continuation, process-lived AdLib, startup marker, graphics arena, completed
+floppy/protection seam).
 
-Genuine class-4 blockers (B01-B14), impact order for VGA + AdLib:
-- B01/B02 ordinary spill evolution and surviving count; descriptor/strip/
-  legitimate 715B target domains.
-- B03/B04/B05 ordinary 42A5/1407 writers, editor saves and external register
-  writers, provenance of the named changed cursors and cache paths.
-- B06/B07 caller-rooted stack, IRQ and service survival; renderer/scratch/heap
-  aliases where they affect ordinary gameplay.
-- B08 UNKNOWN storage roles (main + AdLib), 2698/4768/6706 extents, 004A FF
-  producer, 8363 caller; B09 opaque LEVEL/GROUND/terrain fields and 1FF8..1FFD;
-  B10 1FF2 tail and provider memory footprints; B11 protected stored roles.
-- B12 AdLib 01EA domains, allocation failure/preload vectors, BIOS 0621/0626,
-  real OPL/PIT/VGA timing.
-- B13 alternatives (block full freeze, not an AdLib-only port).
-- B14 ordinary processor faults/returns outside the accepted packets.
+## Open semantic items (VGA + AdLib), in impact order
 
-Native follow-ups recorded for later, not current priorities: bind entity sound
-services, special-graphics briefing redraw, INT61 rebinding, private IRQ 0F70
-delivery, protection persistence, validated timing; then SDL3.
+1. **Typed level codes selecting 120..255.** DecodeLevelCode accepts any
+   self-consistent code, so a player can reach selection 120..255 and group 4..8
+   (1F6E). 4EBC then indexes the four-entry sign table CS:4EE7 past its end and
+   uses code bytes as UI+1000 offsets; 197D reads order bytes past DS:5565 into
+   the odd-table buffer. This is an ordinary user-input path: characterize what
+   each such code loads and draws, beside the ASM, so C can model it exactly.
+2. **Code-frame UNKNOWN with no incoming edge** (450 bytes): number formatter
+   1250, parser arms 131A, vector install 1592, timer reload 1696, PIC EOI 18B7,
+   floppy motor off 1908, 357E, 48B0, tick wait 501C, overscan colour 5517,
+   pre-shift 5D18, block copy 71CA; stored RETs 531D/5424/55B6; 084E/087F. They
+   stay UNKNOWN with these reasons unless an edge is found; nothing ordinary
+   depends on them. AdLib 0014 and 05A0..05A7 are the same kind.
+3. **Remaining untranslated main entries:** CriticalErrorHandler 18F8 (READY;
+   host in c/dat_files.c as the DOS critical-error callback), MouseEventReturn
+   0F6F, CopyReverseMatchReturn 1C9F, and the protection entries 063E, 0659,
+   0DB3, 0DBD (startup/protection as a whole, 054E..13DB, beside the derived
+   protected views).
+4. **Protected transitions 066C/0E1C** are hand-offs into the fully derived
+   protected streams; they stay listed until startup/protection composition is
+   translated.
 
-## Evidence and persistent open obligations
+Closed in the 2026-10-23 round (details beside the ASM and in the ledgers): DS
+storage (all 18,026 DS-frame bytes classified; the stack lies outside the image
+at SS = load+143E), legitimate targets of 1407/42A5/4CC9/4D18/715B, opaque
+LEVEL/GROUND/terrain fields (unread), divide sites (none can fault), the 1FF2
+arena tail (unused), the 004A FF producer (none), checksum 8363 (no caller),
+legacy block splits that were miscounted as untranslated routines, and the
+AdLib engine, song titles and command domain.
 
-ASM-only names/comments/offset changes use exact/static checks. Local C changes
-use affected suites; connected behavior adds directly affected handoffs. Shared
-behavior changes require affected consumers, plus `verify.py --contracts` when
-original contracts change. Full `difftest.py --all` and aggregate reporting stay
-explicit acceptance steps. Metadata/comment edits can stale old manifests without
-altering behavior; do not relaunch unrelated campaigns solely to refresh them.
+## Native work after closure, in order
 
-Keep all UNKNOWN runs, protected transitions, 18 conditional callback edges,
-unchecked resource/record tables, RETF selector-EA wrap limitation and explicit
-processor faults unresolved until evidence closes them. Keep real IRQ scheduling,
-BIOS/DOS/device contracts, code/stack aliases and executable dependencies visible.
-Known test stops do not prove full-game behavior. Never boot the original for
-discovery, import the legacy interpreter, or alter assets/neighboring projects.
+1. AdLib music/FX engine in C over the driver memory (READY: src/sound/adlib.asm
+   header), with an OPL register sink and native synthesis; tokens 88..AF are an
+   explicit runtime failure.
+2. Bind entity sound services (today NULL bindings stop sound-enabled actions).
+3. Special-graphics briefing redraw, INT61 rebinding after 057B, private IRQ 0F70
+   delivery, protection persistence (russell.dat), validated timing.
+4. Whole-game lifecycle in the native host: startup, menus, level load, gameplay,
+   results, progression, failure and exit, with a feature matrix
+   (semantic-audit.md).
+5. SDL3.
 
-The destination remains exact readable ASM -> portable C11 game logic with
-explicit platform services -> native platform -> SDL3. Complete native startup,
-scripted input, bounded state/frame/audio checkpoints and longer session checks
-are eventual acceptance requirements; a smoke run is not exhaustive parity.
+## Alternatives (inventoried; do not block VGA + AdLib)
+
+Tandy driver (raw dispatch 98..9F, out-of-allocation state 5958, score bytes),
+PC-speaker dispatcher and trailing bytes, joystick (port 201), alternate
+display/BIOS paths, mode 1 controller alternatives. They complete the full
+freeze and are translated or marked ALTERNATIVE in the C status accounting.

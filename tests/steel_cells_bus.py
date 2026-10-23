@@ -46,9 +46,6 @@ INPUT_PATHS = (
     'tests/dat_io_c.py', 'tests/minimap_vga.py',
     'tools/bounded_process.py', 'tools/cbuild.py', 'tools/common.py',
     'tools/resources.py', 'tools/unpack.py',
-    'docs/executable.md', 'docs/next-work.md',
-    'docs/level-initialize-bus-frontier.md', 'docs/interaction-cells.md',
-    'docs/steel-cells-bus.md',
     'metadata/symbols.json', 'metadata/inputs.json', 'requirements.txt',
     'assets/vgalemmi.exe',
 ) + tuple(f'assets/level{group:03d}.dat' for group in range(10))

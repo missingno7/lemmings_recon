@@ -15,8 +15,9 @@
 ; mask=LE[B2,R3],base=LE[R7,G7],source=LE[B7,R8],sound=R9.
 ; Its cell fields read Xoff=LE[B4,R5],Yoff=LE[G5,B5],width=R6,height=G6,
 ; kind=B6. R/G/B are current slot3 color components. No invalid-type branch.
-; Type002A selects1FE3 timer/selectors, but source LE1FFA reads unowned
-; bytes: this partial map does not close their provenance. Zero-X copy skips
+; Type 002A selects 1FE3 timer/selectors and reads its source from the
+; always-zero word 1FFA. Shipped levels use only types 0, 1 and 3..A, so types
+; 0024/002A arise only from object data outside the shipped files. Zero-X copy skips
 ; all bytes; animation instead stores stale BX in flags. DF1 copies backward
 ; from each source/destination record start.
 ; R1 UNCONDITIONAL input implication: all37B4 copies inherit entry DF. Each copies1C bytes

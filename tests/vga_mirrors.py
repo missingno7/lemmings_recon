@@ -1280,11 +1280,9 @@ def verify_coverage(rows):
 def hash_inputs():
     # Pin the executable, exact maintained ASM, native API and local oracle closure.
     paths = {
-        "AGENTS.md", "assets/vgalemmi.exe", "metadata/inputs.json",
+        "assets/vgalemmi.exe", "metadata/inputs.json",
         "metadata/oracle.json",
         "metadata/toolchain-lock.json",
-        "docs/executable.md",
-        "docs/minimap-vga.md",
         "src/entry_services.asm", "src/game_code_late_after_palette.asm",
         "c/vga_mirrors.c", "c/vga_mirrors.h", "c/lemmings_sym.h",
         "c/regs.h", "c/special_blit.h", "tests/vga_mirrors.py",

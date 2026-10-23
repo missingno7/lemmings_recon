@@ -182,8 +182,8 @@ def compare(native,c,core,reference=None):
 
 
 def hashes():
-    paths=('AGENTS.md','assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
-           'docs/executable.md','docs/minimap-vga.md','src/port201_input.asm','src/entry_services_after_timer.asm',
+    paths=('assets/vgalemmi.exe','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
+           'src/port201_input.asm','src/entry_services_after_timer.asm',
            'c/port_io.c','c/port_io.h','c/lemmings_sym.h','c/aligned_read_mask.h','c/special_blit.h','c/regs.h',
            'tests/port_io.py','tests/verification.py','tests/minimap_vga.py','tools/bounded_process.py',
            'tools/cbuild.py','tools/difftest.py','tools/common.py','tools/unpack.py')

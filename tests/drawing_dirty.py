@@ -434,7 +434,7 @@ def main():
         else:
             raise AssertionError(f'Compiled drawing-dirty mutation {mutation} survived on {name}')
 
-    paths = ('c/drawing_dirty.c', 'c/drawing_dirty.h', 'docs/drawing-dirty.md', 'c/regs.h',
+    paths = ('c/drawing_dirty.c', 'c/drawing_dirty.h', 'c/regs.h',
              'c/lemmings_sym.h', 'c/special_blit.h', 'tests/drawing_dirty.py',
              'tests/dat_io.py', 'tools/common.py', 'tools/cbuild.py',
              'tools/unpack.py', 'metadata/symbols.json', 'metadata/inputs.json',

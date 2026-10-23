@@ -155,23 +155,15 @@ loc_4495:
     cmp al,0x8b ; @0449D
     jnz loc_44A4 ; @0449F
     jmp short loc_451C ; @044A1
-; S14 U063: [044A3,044A4) stored bytes remain UNKNOWN.
-; Neighbours: P 044A1 jmp 0x451c; N 044A4 cmp al, 0x2d.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @044A3
 loc_44A4:
     cmp al,0x2d ; @044A4
     jnz loc_44AB ; @044A6
     jmp short loc_451C ; @044A8
-; S14 U064: [044AA,044AB) stored bytes remain UNKNOWN.
-; Neighbours: P 044A8 jmp 0x451c; N 044AB jmp 0x445b.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @044AA
 loc_44AB:
     jmp short loc_445B ; @044AB
@@ -335,6 +327,8 @@ BriefingAfter458E:
     mul cl ; @04596
     mov cl,[0xfce] ; @04598
 BriefingPercentDivide:
+; Required percentage = required*100/population; every level file and odd-table
+; row has population >= 1 and required <= population, so the quotient is <= 100.
     div cl ; @0459C
     mov [0x41],al ; @0459E
     lea si,[0x4b57] ; @045A1
@@ -451,12 +445,8 @@ BriefingAfter4680:
     test ax,0x40 ; @04693
     jz loc_4680 ; @04696
     jmp short FadeAndClearSplitPalette ; @04698
-; S14 U066: [0469A,0469B) stored bytes remain UNKNOWN.
-; Neighbours: P 04698 jmp 0x46a2; N 0469B call 0x46a2.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @0469A
 loc_469B:
     call FadeAndClearSplitPalette ; @0469B
@@ -562,12 +552,8 @@ loc_471A:
     cmp al,[0x41] ; @04720
     jnl loc_4729 ; @04724
     jmp short loc_4778 ; @04726
-; S14 U067: [04728,04729) stored bytes remain UNKNOWN.
-; Neighbours: P 04726 jmp 0x4778; N 04729 mov byte ptr [0x1f6d], 0xff.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @04728
 loc_4729:
 ResultLevelPassed:
@@ -576,6 +562,7 @@ ResultLevelPassed:
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @04732
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04735
     mov cl,0x1e ; @04737
+; Byte selection / 30 with AH clear: quotient <= 8, cannot fault.
     div cl ; @04739
     mov [MenuLevelGroupIndex-GameDataImage],al ; @0473B
     cmp byte [LevelResourceSelectionByte-GameDataImage],0x78 ; @0473E
@@ -690,12 +677,8 @@ SelectLevelSoundId:
     db 0x22,0xc0 ; ENCODED: and al,al (NASM chooses a different encoding) ; @04839
     jz loc_4840 ; @0483B
     jmp short loc_4866 ; @0483D
-; S14 U068: [0483F,04840) stored bytes remain UNKNOWN.
-; Neighbours: P 0483D jmp 0x4866; N 04840 cmp byte ptr [0x1f6d], 0.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @0483F
 loc_4840:
     cmp byte [LevelOutcomeSuccessByte-GameDataImage],0x0 ; @04840
@@ -749,6 +732,7 @@ FormatSelectedLevelAndGroup:
     mov al,[LevelResourceSelectionByte-GameDataImage] ; @0488F
     inc al ; @04892
     db 0x32,0xe4 ; ENCODED: xor ah,ah (NASM chooses a different encoding) ; @04894
+; Byte selection / 30 with AH clear: quotient <= 8, cannot fault.
     div cl ; @04896
     db 0x8a,0xe8 ; ENCODED: mov ch,al (NASM chooses a different encoding) ; @04898
     mul cl ; @0489A
@@ -764,11 +748,13 @@ loc_48AE:
     pop cx ; @048AE
 LevelGroupFormatReturn:
     ret ; @048AF
-; S14 U070: [048B0,048BD) stored bytes remain UNKNOWN.
-; Neighbours: P 048AF ret; N 048BD mov al, byte ptr [0x40].
-; Candidate48B0 saves CX,CH=entryAL,AL=entryAH,CL1E,MUL CL,ADD AL,CH,restores CX,RET. AL=(30*entryAH+entryAL) mod256; AH remains high product BEFORE ADD (carry is not propagated). AX/flags clobber; no data write/DF use. Entry unproved.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; No incoming edge identified for 48B0..48BC: no direct, table, vector, relocated or
+; protected-view reference reaches it and no data reader uses it, so the bytes
+; stay UNKNOWN (code-looking). Recovered paths bypass it; translators of the
+; neighbouring routines need nothing from it.
+; Read as code: AL = (30*AH + AL) mod 256 with CX preserved; AH keeps the high
+; byte of the 30*AH product (the ADD does not carry into AH). 30 matches the
+; levels per rating, but no caller establishes that meaning.
 ; UNKNOWN: unresolved bytes
     db 0x51,0xb1,0x1e,0x8a,0xe8,0x8a,0xc4,0xf6,0xe1,0x02,0xc5,0x59,0xc3 ; @048B0
 DrawResultPercentagesAndPrompt:

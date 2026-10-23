@@ -4,32 +4,20 @@ BlitSpecialResourceStrip0:
     mov [GraphicsResourceSegment-GameDataImage],ax ; @0823B
     db 0x33,0xdb ; ENCODED: xor bx,bx (NASM chooses a different encoding) ; @0823E
     jmp short loc_8252 ; @08240
-; S14 U093: [08242,08243) stored bytes remain UNKNOWN.
-; Neighbours: P 08240 jmp 0x8252; N 08243 mov bx, 0x28.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @08242
 BlitSpecialResourceStrip1:
     mov bx,0x28 ; @08243
     jmp short loc_8252 ; @08246
-; S14 U094: [08248,08249) stored bytes remain UNKNOWN.
-; Neighbours: P 08246 jmp 0x8252; N 08249 mov bx, 0x50.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @08248
 BlitSpecialResourceStrip2:
     mov bx,0x50 ; @08249
     jmp short loc_8252 ; @0824C
-; S14 U095: [0824E,0824F) stored bytes remain UNKNOWN.
-; Neighbours: P 0824C jmp 0x8252; N 0824F mov bx, 0x78.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @0824E
 BlitSpecialResourceStrip3:
     mov bx,0x78 ; @0824F

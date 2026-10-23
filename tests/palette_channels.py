@@ -107,7 +107,7 @@ class Native:
 
 
 def input_hashes(native=False):
-    paths = set(video.input_hashes(False)) | {'tests/palette_channels.py', 'docs/palette-channels.md'}
+    paths = set(video.input_hashes(False)) | {'tests/palette_channels.py'}
     if native:
         paths |= {'c/palette_channels.c', 'c/palette_channels.h', 'c/video_restore.h',
             'c/regs.h', 'c/special_blit.h', 'c/lemmings_sym.h', 'tools/cbuild.py',

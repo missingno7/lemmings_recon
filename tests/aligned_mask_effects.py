@@ -614,8 +614,7 @@ def _worker(build_directory):
         'tests/aligned_masked.py', 'tests/minimap_vga.py', 'tests/dat_io.py',
         'tests/dat_io_c.py', 'tools/common.py', 'tools/unpack.py',
         'tools/cbuild.py', 'tools/bounded_process.py', 'metadata/symbols.json',
-        'build/unpack.json', 'src/planar_drawing.asm',
-        'docs/aligned-mask-effects.md')
+        'build/unpack.json', 'src/planar_drawing.asm')
     report = dict(
         image='main', image_sha256=sha(IMAGE),
         ranges={str(20 if mode == 0 else 40): dict(

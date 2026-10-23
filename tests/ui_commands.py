@@ -591,9 +591,9 @@ def compare(native, c, core):
 
 def hashes():
     paths = (
-        'AGENTS.md', 'assets/vgalemmi.exe', 'metadata/inputs.json',
+        'assets/vgalemmi.exe', 'metadata/inputs.json',
         'metadata/oracle.json', 'metadata/toolchain-lock.json',
-        'docs/executable.md', 'src/input_commands.asm', 'src/view_visibility.asm',
+        'src/input_commands.asm', 'src/view_visibility.asm',
         'c/ui_commands.c', 'c/ui_commands.h', 'c/interrupt_service.c',
         'c/interrupt_service.h', 'c/view_visibility.c', 'c/view_visibility.h',
         'c/lemmings_sym.h', 'c/special_blit.h', 'c/regs.h',

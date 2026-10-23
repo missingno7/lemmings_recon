@@ -647,8 +647,7 @@ def _worker(build_directory):
         'tests/minimap_vga.py','tests/dat_io.py','tests/dat_io_c.py',
         'tools/common.py','tools/unpack.py','tools/cbuild.py',
         'tools/bounded_process.py','metadata/symbols.json',
-        'build/unpack.json','src/planar_drawing.asm',
-        'docs/shifted-drawing.md','docs/shifted-mask-effects.md')
+        'build/unpack.json','src/planar_drawing.asm')
     body_addresses=sorted(seen)
     retf_exclusions=[c['name'] for c in fixture_cases
         if c.get('stack_device') or c.get('stack_alias') or

@@ -314,8 +314,7 @@ def main():
     paths=('src/program.asm','src/planar_drawing.asm','c/drawing_dispatch.c','c/drawing_dispatch.h','c/lemmings_sym.h',
         'c/special_blit.h','c/regs.h','tests/drawing_dispatch.py','tests/drawing_inputs.py',
         'tests/special_blit.py','tests/dat_io.py','tests/dat_io_c.py','tools/cbuild.py',
-        'tools/difftest.py','tools/unpack.py','tools/coverage.py','metadata/symbols.json',
-        'docs/drawing-dispatch.md','docs/drawing-inputs.md')
+        'tools/difftest.py','tools/unpack.py','tools/coverage.py','metadata/symbols.json')
     entry_tagged_branch_edges=[dict(entry=entry,source=source,target=target)
         for entry,source,target in sorted(edges)]
     branch_edges=sorted({(source,target) for _,source,target in edges})

@@ -66,8 +66,6 @@ INPUTS = tuple(sorted({
     'tools/common.py',
     'tools/resources.py', 'tools/unpack.py', 'metadata/symbols.json',
     'src/game_code.asm', 'src/level_initialize.asm', 'src/program.asm',
-    'docs/level-initialize-frontier.md',
-    'docs/level-header-ownership.md', 'docs/level-header-contract.md',
     'assets/vgalemmi.exe',
     *(f'assets/level{group:03d}.dat' for group in range(10)),
     *(f'assets/{path.name}'

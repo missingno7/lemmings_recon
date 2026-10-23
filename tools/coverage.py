@@ -1,4 +1,5 @@
 """Reproducible, separate byte/translation/execution accounting."""
+import re
 import argparse
 from pathlib import Path
 from common import ROOT,BUILD,read_json,write_json,sha
@@ -79,6 +80,19 @@ def inventory():
         for name,row in metrics['component_seams'].items())
     component_rows='\n'.join(f"| {name} | {row['image_bytes']:,} | {row['classified_bytes']:,} | {row['decoded_instruction_bytes']:,} | {row['translated_code_bytes']:,} | {row['unresolved_transfers']} |"
         for name,row in components.items())
+    # Routine accounting in the style of Pre2: every ledger entry has one C status;
+    # placeholder names count routines whose purpose is still unrecorded.
+    def routine_status(ledger):
+        entries=[row for row in ledger if row['kind']=='entry']
+        status={}
+        for row in entries:status[row['verification_status']]=status.get(row['verification_status'],0)+1
+        placeholders=sum(1 for row in entries if re.match(r'(\w+_)?sub_[0-9A-F]{4}$',row['symbol_name']))
+        return dict(entries=len(entries),status=dict(sorted(status.items())),placeholder_names=placeholders)
+    routines={'main':routine_status(symbols)}
+    routines.update({name:routine_status(read_json(ROOT/f'metadata/{name}-symbols.json')) for name in components})
+    metrics['routine_status']=routines
+    routine_rows='\n'.join(f"| {name} | {row['entries']} | "+', '.join(f'{k} {v}' for k,v in row['status'].items())+
+        f" | {row['placeholder_names']} |" for name,row in routines.items())
     identity=static_identity_evidence(image);metrics['static_identity_evidence']=identity
     identity_text=(f"retained exact-image evidence ({len(image):,} main bytes; recorded input hashes match)"
                    if identity['current'] else identity['reason']+'; run tools/verify.py')
@@ -97,11 +111,19 @@ it does not rerun the exact gate or establish behavior.
 | Classified main bytes | {metrics['classified_bytes']:,}; classification is not semantic closure |
 | Decoded main instructions | {metrics['instructions']:,} sites / {metrics['decoded_instruction_bytes']:,} bytes |
 | UNKNOWN main bytes | {metrics['unresolved_image_bytes']:,} in {metrics['unresolved_byte_runs']} runs; {metrics['unresolved_provisional_code_bytes']:,} bytes inside provisional code frame |
-| Static control-flow frontier | {metrics['unresolved_transfers']} transfers; known target sets remain conditional |
+| Static control-flow frontier | {metrics['unresolved_transfers']} open transfers ({', '.join(f"{r['address']:04X}:{r['kind']}" for r in analysis['unresolved'])}); {len(analysis['closed_transfers'])} indirect transfers closed for the legitimate program |
 | Main C implementation union | {metrics['translated_main_code_bytes']:,} original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
-| Semantic readiness | Scoped qualitative gate and subsystem matrix in [semantic audit](semantic-audit.md); no numeric semantic-completion claim |
+| Semantic freeze | Freeze bar and separate ASM / C / native completeness measures in [semantic audit](semantic-audit.md); open blockers in [next work](next-work.md) |
 | Differential coverage | Per-suite scope and matching consumed hashes required; aggregate not evaluated by this inventory |
 | Whole-game integration | Not established by routine or byte totals; native startup/frame/platform completion remains open |
+
+Routine entries by ledger C status (TESTED: differential suite; STATIC: static-only
+evidence; UNTRANSLATED: no C yet). Placeholder names are routines whose purpose is
+not yet recorded:
+
+| Component | Entries | C status | Placeholder names |
+|---|---:|---|---:|
+{routine_rows}
 
 Loaded executable sound images have separate ledgers and incomplete decoded
 inventories; their C columns likewise describe implementation ranges only:

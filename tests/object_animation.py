@@ -481,8 +481,6 @@ def run_original(case, memory, regs, device, core):
 
 def input_hashes():
     paths = [
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/object-records.md',
         'src/game_code_late.asm', 'src/object_graphics_tick.asm', 'src/program.asm',
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/oracle.json', 'metadata/symbols.json',

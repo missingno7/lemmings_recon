@@ -674,9 +674,7 @@ def input_hashes():
         'entity_interactions', 'pcspeaker_interrupt', 'pcspeaker_dispatch',
         'pcspeaker', 'sound_interrupt', 'sound_latches')
     paths = [
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md', 'docs/bottom-up.md',
         'src/game_code.asm', 'src/entity_graphics.asm', 'src/program.asm',
-        'docs/entity-simulation.md',
         'src/sound/pcspeaker.asm', 'src/sound/adlib.asm', 'src/sound/tandysnd.asm',
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/oracle.json', 'metadata/symbols.json',

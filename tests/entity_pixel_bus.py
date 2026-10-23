@@ -537,7 +537,7 @@ def worker(directory):
              'c/entity_pixel.h', 'c/special_blit.h', 'c/lemmings_sym.h',
              'c/regs.h', 'tests/entity_pixel.py', 'tests/entity_pixel_bus.py',
              'tests/minimap_vga.py', 'tests/dat_io.py', 'tests/dat_io_c.py',
-             'docs/entity-pixel.md', 'tools/cbuild.py', 'tools/difftest.py',
+             'tools/cbuild.py', 'tools/difftest.py',
              'tools/coverage.py', 'tools/bounded_process.py', 'tools/unpack.py',
              'tools/common.py')
     before_hashes = {path: sha((ROOT / path).read_bytes()) for path in paths}

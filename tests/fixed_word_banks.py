@@ -439,7 +439,7 @@ def hashes():
     # Hash only this campaign's maintained sources and helper closure. Other
     # new suites can be authored concurrently without invalidating its snapshot.
     paths = {
-        'AGENTS.md', 'assets/vgalemmi.exe', 'src/game_code_after_sprite_banks.asm',
+        'assets/vgalemmi.exe', 'src/game_code_after_sprite_banks.asm',
         'assets/main.dat', 'assets/adlib.dat', 'assets/tandysnd.dat',
         'metadata/inputs.json', 'metadata/oracle.json', 'metadata/toolchain-lock.json',
         'c/fixed_word_banks.c', 'c/fixed_word_banks.h', 'c/mask_generators.c',

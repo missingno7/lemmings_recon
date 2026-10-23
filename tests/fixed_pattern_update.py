@@ -575,7 +575,7 @@ def compare(native, case, *, core):
 
 def hash_inputs():
     paths = {
-        'AGENTS.md', 'assets/vgalemmi.exe', 'assets/main.dat',
+        'assets/vgalemmi.exe', 'assets/main.dat',
         'assets/adlib.dat', 'assets/tandysnd.dat',
         'metadata/inputs.json', 'metadata/oracle.json',
         'metadata/toolchain-lock.json', 'metadata/sound-oracle.json',

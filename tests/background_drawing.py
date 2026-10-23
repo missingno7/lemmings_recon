@@ -179,7 +179,7 @@ def compare(native, case, core):
 
 
 def input_hashes(native=False):
-    paths = set(glyph.input_hashes(native)) | {'tests/background_drawing.py', 'docs/background-drawing.md'}
+    paths = set(glyph.input_hashes(native)) | {'tests/background_drawing.py'}
     if native: paths |= {'c/background_drawing.c', 'c/background_drawing.h'}
     return {p: sha((ROOT / p).read_bytes()) for p in sorted(paths)}
 

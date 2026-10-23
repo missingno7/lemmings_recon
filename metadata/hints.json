@@ -33,10 +33,22 @@
   ],
   "regions": [
     {
+      "start": 386,
+      "end": 387,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 0180->0186, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
       "start": 1645,
       "end": 2125,
       "class": "state_specific_code",
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2125,
+      "end": 2126,
+      "class": "padding",
+      "evidence": "Protected-stream jump-shortening filler: TF-on JMP 084B->0852 bypasses it; the stream transform of the stored word gives 90 (key from stored word 084B), followed by C6 46 0E 03 = MOV BYTE [BP+0Eh],03 at 084E. No recovered stream state executes or decodes it."
     },
     {
       "start": 2128,
@@ -46,10 +58,22 @@
       "overlay": true
     },
     {
+      "start": 2128,
+      "end": 2130,
+      "class": "static_data",
+      "evidence": "Canonical form of the existing key-data overlay (drop overlay duplicate): INT1 decoder 0E20 and previous-patch restoration 0E0B read stored word 030E as the key for target 0852; 0853 also reads 0851. Also the disp/imm of the unentered MOV at 084E."
+    },
+    {
       "start": 2130,
       "end": 2174,
       "class": "state_specific_code",
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
+    },
+    {
+      "start": 2174,
+      "end": 2175,
+      "class": "padding",
+      "evidence": "Protected-stream jump-shortening filler: TF-on JMP 087C->0883 bypasses it; the stream transform of the stored word gives 90, followed by C6 46 0E 26 = MOV BYTE [BP+0Eh],26 at 087F. No recovered stream state executes or decodes it."
     },
     {
       "start": 2177,
@@ -57,6 +81,12 @@
       "class": "static_data",
       "evidence": "Known key-data overlay within skipped087E..0882; canonical UNKNOWN retained. Derived edge087C->0883 bypasses gap; 0E20 reads stored word260E at0881 for target0883; target0884 also reads0882. Original INT3/shared-tail probes stopping beforeIRET exposeB851; XOR1 at0881 exposesB853. No evidence classifies087E..0880 or proves selector26/write producer.",
       "overlay": true
+    },
+    {
+      "start": 2177,
+      "end": 2179,
+      "class": "static_data",
+      "evidence": "Canonical form of the existing key-data overlay (drop overlay duplicate): 0E20/0E0B read stored word 260E as the key for target 0883; 0884 also reads 0882. Also the disp/imm of the unentered MOV at 087F."
     },
     {
       "start": 2179,
@@ -79,6 +109,18 @@
       "overlay": true
     },
     {
+      "start": 2444,
+      "end": 2956,
+      "class": "runtime_sector_buffer",
+      "evidence": "Canonical form of the existing overlay (drop duplicates): primary 512-byte disk-check sector buffer; CALL-next 066E+031B=098C; 08CB REP STOSW 0100 words, BIOS/DOS reads, CRC 06E0/CMP 06E3 readers, 094A zero clear. Stored initial bytes are read by the CRC when the DL>=2 absolute read fails without prefill (06D7->0878, CF ignored)."
+    },
+    {
+      "start": 2956,
+      "end": 2972,
+      "class": "static_data",
+      "evidence": "16-byte slack between the buffer windows created by the +0210 DMA-fallback displacement (DI 000C vs 021C); same generated stored pattern as both buffers; no reader identified besides checksum 8363."
+    },
+    {
       "start": 2972,
       "end": 3484,
       "class": "runtime_sector_buffer",
@@ -93,6 +135,12 @@
       "overlay": true
     },
     {
+      "start": 2972,
+      "end": 3484,
+      "class": "runtime_sector_buffer",
+      "evidence": "Canonical form of the existing overlay (drop duplicates): DMA-fallback 512-byte sector buffer selected when low12(CS+0098)>0FDF (DI=021C); same writers/readers and initial-content CRC read as the primary buffer."
+    },
+    {
       "start": 3484,
       "end": 3486,
       "class": "static_data",
@@ -105,6 +153,12 @@
       "class": "static_data",
       "evidence": "Update existing seed overlay, do not duplicate. Known key-data overlay; canonical stored bytes remain UNKNOWN. ProtectionDecodeNextWord0E20 reads word(nextIP-2) at CS:0D9C when nextIP0D9E. Stored9090 yields keyDEDE and visible13CC from storedCD12. Both sector buffers end before this seed. Six named shared-verifier handler probes include unchanged/one-bit-perturbed seed at0D9C; no destination executed. No claim these bytes execute as NOPs.",
       "overlay": true
+    },
+    {
+      "start": 3484,
+      "end": 3486,
+      "class": "static_data",
+      "evidence": "Canonical form of the existing seed overlay (drop duplicates): 0E20 reads word 9090 as the key source for target 0D9E; ROL16(NOT 9090,1)=DEDE; CD12 xor DEDE = 13CC. No incoming edge executes these bytes."
     },
     {
       "start": 3486,
@@ -125,6 +179,48 @@
       "evidence": "State-specific protection stream; static word transformation and TF transitions in metadata/protection-cfg.json; original handlers checked at every TF-on instruction point"
     },
     {
+      "start": 3752,
+      "end": 3753,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 0EA6->0EDF, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 3777,
+      "end": 3778,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 0EBF->0EDF, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 4413,
+      "end": 4414,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 113B->11B5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 4499,
+      "end": 4500,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1191->120C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 4826,
+      "end": 4827,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 12D8->1358, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 4841,
+      "end": 4842,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 12E7->1364, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 5313,
+      "end": 5314,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 14BF->1523, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
       "start": 5424,
       "end": 5456,
       "class": "lookup_table",
@@ -138,10 +234,304 @@
       "evidence": "8343: BX=188F CX=000A; XOR AL,CS:[BX] loop"
     },
     {
+      "start": 6463,
+      "end": 6464,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 193D->1949, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 6469,
+      "end": 6470,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1943->1949, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 6703,
+      "end": 6704,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1A2D->1A5A, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 7063,
+      "end": 7064,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1B95->1BA9, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 7194,
+      "end": 7195,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1C18->1C6F, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 7223,
+      "end": 7224,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1C35->1C6F, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 7238,
+      "end": 7239,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1C44->1C6F, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 7259,
+      "end": 7260,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1C59->1C6F, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 7548,
+      "end": 7549,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 1D7A->1D7E, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 9090,
+      "end": 9091,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 2380->2386, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 9889,
+      "end": 9890,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 269F->26E4, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 9974,
+      "end": 9975,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 26F4->2763, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 9983,
+      "end": 9984,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 26FD->2763, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 10082,
+      "end": 10083,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 2760->2766, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 10941,
+      "end": 10942,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 2ABB->2B28, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 10971,
+      "end": 10972,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 2AD9->2B28, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 10987,
+      "end": 10988,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 2AE9->2B28, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 11088,
+      "end": 11089,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 2B4E->2B66, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 12640,
+      "end": 12641,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 315E->31BD, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 12697,
+      "end": 12698,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3197->31C4, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 12732,
+      "end": 12733,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 31BA->320D, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 13729,
+      "end": 13730,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 359F->361C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 13739,
+      "end": 13740,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 35A9->361F, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 13935,
+      "end": 13936,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 366D->367D, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 14158,
+      "end": 14159,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 374C->376A, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 14686,
+      "end": 14687,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 395C->397A, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15112,
+      "end": 15113,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3B06->3B21, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15654,
+      "end": 15655,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D24->3DA5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15684,
+      "end": 15685,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D42->3DA5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15691,
+      "end": 15692,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D49->3DA5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15703,
+      "end": 15704,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D55->3D5B, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15718,
+      "end": 15719,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D64->3D6A, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15728,
+      "end": 15729,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D6E->3DA5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15735,
+      "end": 15736,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3D75->3DA5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 15847,
+      "end": 15848,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3DE5->3E62, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16099,
+      "end": 16100,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3EE1->3F5C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16109,
+      "end": 16110,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3EEB->3F5C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16148,
+      "end": 16149,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3F12->3F92, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16273,
+      "end": 16274,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 3F8F->3FE9, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16526,
+      "end": 16527,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 408C->40B5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16533,
+      "end": 16534,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4093->40CD, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 16563,
+      "end": 16564,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 40B1->40E5, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 17301,
+      "end": 17302,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4393->4396, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 17304,
+      "end": 17305,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4396->4399, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 17571,
+      "end": 17572,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 44A1->451C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 17578,
+      "end": 17579,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 44A8->451C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
       "start": 17641,
       "end": 17644,
       "class": "lookup_table",
       "evidence": "JMP44E6 skips exact00,01,03 bytes before44EC.44DC zero-extended incremented byte indexes CS table at44E0; startupclear0 and0596/0606->1,05AE/05D8->2 seed1F71,44D5 updates. Equality-only wrap at limit2/3, changed driver gates/invalid indices can escape; maximum raw read45E8. No direct ordinary CS table writer identified. CS input bytes are process-image initialization; checksum8397 may read them as data. Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global writer-closure proof."
+    },
+    {
+      "start": 18074,
+      "end": 18075,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4698->46A2, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 18216,
+      "end": 18217,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4726->4778, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 18495,
+      "end": 18496,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 483D->4866, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
     },
     {
       "start": 18551,
@@ -162,6 +552,18 @@
       "evidence": "Read only at 494D as CS:[BX+4955] with BX in {0,2,..,16} set by 48F6 completion-vs-requirement comparisons; nine little-endian DS offsets 4F33..517A, each a valid two-line DrawTextStream start (result assessment messages). tests/level_result.py executes every index."
     },
     {
+      "start": 19557,
+      "end": 19558,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4C63->4C70, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 19959,
+      "end": 19960,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 4DF5->4DF8, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
       "start": 20199,
       "end": 20207,
       "class": "lookup_table",
@@ -180,10 +582,88 @@
       "evidence": "Two eight-word palette pointer tables; static words+all eight nominal slot producers/readers accounted in palette_frontends.asm. Live DS targets, runtime alias writes and unchecked selectors remain; not immutable and no extra extent."
     },
     {
+      "start": 21478,
+      "end": 21479,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 53E4->5425, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 21499,
+      "end": 21500,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 53F9->5401, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 21527,
+      "end": 21528,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 5415->5425, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 21609,
+      "end": 21610,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 5467->548C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
       "start": 21767,
       "end": 21783,
       "class": "lookup_table",
       "evidence": "Exactly16 stored DAC mapping bytes, nominal mapped writerCH/CL0/16,0/8,8/8 through54E9. Unchecked reads do not enlarge table;5517..5532 remains UNKNOWN. CS aliases/checksum reader retained."
+    },
+    {
+      "start": 30565,
+      "end": 30566,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 7763->77A8, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 30575,
+      "end": 30576,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 776D->77A8, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 30610,
+      "end": 30611,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 7790->77A8, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 30617,
+      "end": 30618,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 7797->77FC, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 30624,
+      "end": 30625,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 779E->77FC, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 33058,
+      "end": 33059,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 8120->819D, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 33346,
+      "end": 33347,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 8240->8252, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 33352,
+      "end": 33353,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 8246->8252, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 33358,
+      "end": 33359,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 824C->8252, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
     },
     {
       "start": 33711,
@@ -193,10 +673,22 @@
       "overlay": true
     },
     {
+      "start": 33719,
+      "end": 33720,
+      "class": "padding",
+      "evidence": "Alignment filler NOP word-aligning checksum state 83B8 after the last checksum instruction (backward JMP 83B5 needs no shortening filler). 8391 equality stop excludes it from checksum reads; no incoming edge; minimap DF=1 clear 797B can overwrite it."
+    },
+    {
       "start": 33720,
       "end": 33727,
       "class": "static_data",
       "evidence": "Entry stores 83B8/83BD/83BE; 8343 and 8363 read/write 83B9..83BC"
+    },
+    {
+      "start": 33727,
+      "end": 33729,
+      "class": "static_data",
+      "evidence": "Two zero bytes inside the code-segment data area 83B8..8807, between MouseIrqMirrorGate83BE and MinimapColumnBits 83C1; no reader or writer identified (unused data); no incoming edge."
     },
     {
       "start": 33729,
@@ -205,10 +697,94 @@
       "evidence": "Fixed20-byte minimap column workspace, DF0 ten-word clear797B,20 row targets83C1..83D4 from79F4/79FF via7A55;19 display reads7A14. DF1 clear differs and rows remain stale; no neighboring run classified."
     },
     {
+      "start": 33749,
+      "end": 33824,
+      "class": "static_data",
+      "evidence": "75 zero bytes inside the code-segment data area, between minimap workspace end 83D4 and the paragraph-aligned overlay frame 0842:0000; no reader or writer identified (unused data); no incoming edge."
+    },
+    {
       "start": 33824,
       "end": 34582,
       "class": "runtime_executable_overlay_storage",
       "evidence": "5972 decodes MAIN.DAT section5 (758 bytes) here;165D installs frame0842 offset0182 as INT60. Stored bytes remain canonical zeros."
+    },
+    {
+      "start": 34582,
+      "end": 34824,
+      "class": "static_data",
+      "evidence": "Unused tail of the 1000-byte (03E8) PC-speaker overlay frame 0842:0000..03E7: pinned MAIN.DAT section 5 decoded at 5972 fills 02F6 bytes and the next routine starts at 8808=0842:03E8. No supported loader/reader/writer; only raw out-of-range INT60 LoadEffect selectors (AL>=2F) copy from it and raw command 05 target 0320 would escape to 8740 (corrupted control, not an edge)."
+    },
+    {
+      "start": 34986,
+      "end": 34987,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 88A8->88AC, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 35549,
+      "end": 35550,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 8ADB->8B40, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 36084,
+      "end": 36085,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 8CF2->8D64, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 36749,
+      "end": 36750,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 8F8B->8FF4, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 37689,
+      "end": 37690,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 9337->939C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 38087,
+      "end": 38088,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 94C5->953C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 38151,
+      "end": 38152,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 9505->953C, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 38489,
+      "end": 38490,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 9657->969A, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 39156,
+      "end": 39157,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 98F2->9965, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 39218,
+      "end": 39219,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 9930->9965, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 39318,
+      "end": 39319,
+      "class": "padding",
+      "evidence": "Assembler jump-shortening filler: stored 90 directly after short forward JMP 9994->99B4, which bypasses it. All 83 stored 90 bytes after short forward JMPs in the main code frame are such gaps; no backward short JMP (resolved in pass 1) is followed by 90 except 83B5 (alignment case); no decoded NOP follows any short JMP. No incoming edge (direct, table, vector, relocation, protected view) and no data reader identified; only AdvanceCodeChecksum 8363 (caller unresolved) can read it as checksum input."
+    },
+    {
+      "start": 39567,
+      "end": 39568,
+      "class": "padding",
+      "evidence": "Segment alignment filler 00 between final RET 9A8E and the paragraph boundary 9A90 where game data frame 09A9 begins; no incoming edge or reader identified."
     },
     {
       "start": 39568,
@@ -247,6 +823,12 @@
       "evidence": "4D1A/4D20 scans83 state bytes0F78..0FCA with first-ready index0..52;4D45/4D47/4D4B XLATs live202E+index. Table stored202E..2080, not NUL terminated. Shared202E=4C is also binding15; scan0 translates L. No identified ordinary direct table store; IRQ changes state, not this table. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
     },
     {
+      "start": 47889,
+      "end": 47891,
+      "class": "lookup_table",
+      "evidence": "Keypad '0' and '.' entries continuing the scancode-to-character table at 202E; the extra 8B entry at index 50h pushes them to indices 53h/54h, past the 53h-entry key scan that bounds the XLAT reader. Unread table tail; no reader identified."
+    },
+    {
       "start": 47891,
       "end": 47932,
       "class": "runtime_data",
@@ -263,6 +845,12 @@
       "end": 48075,
       "class": "static_data",
       "evidence": "DOS AH09 pointer at0EFC/0F01; stored dollar terminator213A gives exact initial extent[20D4,213B). DOS scans live bytes without length clamp; CR/LF are payload. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+    },
+    {
+      "start": 48075,
+      "end": 48164,
+      "class": "static_data",
+      "evidence": "Self-evident DOS AH=09 message 'Lemmings Needs DOS version 3.0 or greater...' ending CR/LF '$' at 2193. No reader identified: the main image has no INT 21h AH=30h query and no pointer to 213B."
     },
     {
       "start": 48164,
@@ -307,6 +895,12 @@
       "evidence": "Nibble mask123F plus224F/124A reader bounds16 stored ASCII digits.225F stored90 is excluded. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
     },
     {
+      "start": 48367,
+      "end": 48368,
+      "class": "static_data",
+      "evidence": "Stored 90 fill byte between the hex alphabet (reader bound 225E) and the startup heading at 2260, like the 90 bytes at 0007, 001B, 259B and 491F before even-aligned objects. No reader identified."
+    },
+    {
       "start": 48368,
       "end": 48497,
       "class": "static_data",
@@ -323,6 +917,12 @@
       "end": 49079,
       "class": "runtime_data",
       "evidence": "WriteZeroTerminatedDosText1218 readsDS:BX with explicit forward INC regardless DF; pointer1104/1107 and11AB/11AF, stored NUL2526 bounds intact initial text. DOS02 sees every nonzero byte including CR/LF; saves and returned DS are live. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open. Marker1194/1198 stores2020 to oldDI and3E2D to newSI at nominal239F/23D2/240B/2442/248A; early1194 entry has unchecked cursors, not guaranteed menu rows."
+    },
+    {
+      "start": 49079,
+      "end": 49080,
+      "class": "static_data",
+      "evidence": "Stored 00 between the machine-choice text NUL at 2526 and the word at 2528, aligning that word; the text printer stops at 2526. No reader identified."
     },
     {
       "start": 49080,
@@ -391,6 +991,12 @@
       "evidence": "Stored ASCIIZ 'russell.dat' [258A,2596); NUL2595. Pointers/services0E66/0E6D,0EC2/0ECB. Open/DAT/error printer use liveDS:DX/BX, not host strings; selector arithmetic and providers can change bytes. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
     },
     {
+      "start": 49190,
+      "end": 49196,
+      "class": "static_data",
+      "evidence": "Stored 00 00 00 00 FF 90 between the russell.dat ASCIIZ (NUL 2595) and the clock word 259C; no field reader identified. The protection counter writer 0EC2..0ED8 copies them verbatim into russell.dat as part of 252A..2629."
+    },
+    {
       "start": 49196,
       "end": 49198,
       "class": "runtime_data",
@@ -445,6 +1051,12 @@
       "evidence": "Two exact48-byte current palette rows2638/2668;2650 is interior RGB2638+18h. Stored zeros, nominal source0/7 row writers563E/56E2, split/transition producers and timer/publication readers close nominal row schemas/lifetime. Wider GROUND/record/cache/raw-selector/segment effects remain; no padding claim."
     },
     {
+      "start": 49448,
+      "end": 49672,
+      "class": "lookup_table",
+      "evidence": "Floater (state 0400) frame/fall pair table read by 2A73/2A78 at 2698+[record+0E]; the cursor is seeded 0 at 21E3 and advanced by 2 at 2A7B without a bound. 112 stored pairs (8 opening pairs, then the 8-pair float cycle 13 times) end exactly at EntityPointColors 2778."
+    },
+    {
       "start": 49672,
       "end": 49688,
       "class": "lookup_table",
@@ -457,6 +1069,18 @@
       "evidence": "Only the51 normally consumed A0-byte point frames:042C count50,2D33/2E7B frame0+callback003C,2353 INC/2358 expiry34,3634 signed gate and6E83/6ED2 word readers. Stored signedXY/80 sentinel data;not full array extent. Wider signed/raw selectors and resource/record/cache/stack/segment effects explicitly retained;4768 onward stays unresolved."
     },
     {
+      "start": 57848,
+      "end": 58168,
+      "class": "lookup_table",
+      "evidence": "Two further A0-byte frames (51, 52) in the EntityPointFrames format read by 6E83/6ED2 at 2788+A0*(selector-1). The normal producer expires at selector 34h before drawing, so no reader is identified in the normal selector domain; the unchecked gate at 365F would admit them."
+    },
+    {
+      "start": 58168,
+      "end": 58191,
+      "class": "static_data",
+      "evidence": "Self-evident ASCIIZ 'WRITTEN BY RUSSELL KAY' between the point frames and the status labels. No reader identified."
+    },
+    {
       "start": 58191,
       "end": 58198,
       "class": "static_data",
@@ -467,6 +1091,12 @@
       "end": 58205,
       "class": "static_data",
       "evidence": "Selection3DFA..3E69 selects literal48C6;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'FLOATER'; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
+    },
+    {
+      "start": 58205,
+      "end": 58212,
+      "class": "static_data",
+      "evidence": "Seven-byte label 'BOMBER ' inside the fixed seven-byte status label array 48BF..4912 copied by 3E58; the selector 3DF6..3E6D never picks this row. No reader identified."
     },
     {
       "start": 58212,
@@ -511,6 +1141,12 @@
       "evidence": "Selection3DFA..3E69 selects literal48FE;3E53/3E58 copies exactly7 bytes forward to2083..2089. Stored fixed-width label 'FALLER '; no local NUL/CR. Process image persists across menu/level; no identified direct row writer, but aliases remain."
     },
     {
+      "start": 58261,
+      "end": 58268,
+      "class": "static_data",
+      "evidence": "Seven-byte label 'SPLATTR' inside the status label array 48BF..4912; the selector 3DF6..3E6D never picks this row. No reader identified."
+    },
+    {
       "start": 58268,
       "end": 58275,
       "class": "static_data",
@@ -535,6 +1171,12 @@
       "evidence": "Stored00;4C95 sets14h;4CAD decrements byte;4CB3 reloads14h, controls cursor blink. Neither byte is startup-cleared."
     },
     {
+      "start": 58287,
+      "end": 58288,
+      "class": "static_data",
+      "evidence": "Stored 90 fill byte after LevelCodePayloadByte 491D and CodeInputBlinkCountdown 491E, aligning MenuPackedPalette4920. No reader or writer identified."
+    },
+    {
       "start": 58288,
       "end": 58352,
       "class": "lookup_table",
@@ -547,10 +1189,22 @@
       "evidence": "Menu animation record0, exact used words+0/+2/+4/+6/+8 atDS4960..4969.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte496A excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
     },
     {
+      "start": 58362,
+      "end": 58363,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 0 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
+    },
+    {
       "start": 58363,
       "end": 58373,
       "class": "runtime_data",
       "evidence": "Menu animation record1, exact used words+0/+2/+4/+6/+8 atDS496B..4974.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte4975 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58373,
+      "end": 58374,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 1 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
     },
     {
       "start": 58374,
@@ -559,10 +1213,22 @@
       "evidence": "Menu animation record2, exact used words+0/+2/+4/+6/+8 atDS4976..497F.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte4980 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
     },
     {
+      "start": 58384,
+      "end": 58385,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 2 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
+    },
+    {
       "start": 58385,
       "end": 58395,
       "class": "runtime_data",
       "evidence": "Menu animation record3, exact used words+0/+2/+4/+6/+8 atDS4981..498A.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte498B excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58395,
+      "end": 58396,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 3 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
     },
     {
       "start": 58396,
@@ -571,10 +1237,22 @@
       "evidence": "Menu animation record4, exact used words+0/+2/+4/+6/+8 atDS498C..4995.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte4996 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
     },
     {
+      "start": 58406,
+      "end": 58407,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 4 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
+    },
+    {
       "start": 58407,
       "end": 58417,
       "class": "runtime_data",
       "evidence": "Menu animation record5, exact used words+0/+2/+4/+6/+8 atDS4997..49A0.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49A1 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58417,
+      "end": 58418,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 5 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
     },
     {
       "start": 58418,
@@ -583,10 +1261,22 @@
       "evidence": "Menu animation record6, exact used words+0/+2/+4/+6/+8 atDS49A2..49AB.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49AC excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
     },
     {
+      "start": 58428,
+      "end": 58429,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 6 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
+    },
+    {
       "start": 58429,
       "end": 58439,
       "class": "runtime_data",
       "evidence": "Menu animation record7, exact used words+0/+2/+4/+6/+8 atDS49AD..49B6.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49B7 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58439,
+      "end": 58440,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 7 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
     },
     {
       "start": 58440,
@@ -595,10 +1285,22 @@
       "evidence": "Menu animation record8, exact used words+0/+2/+4/+6/+8 atDS49B8..49C1.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49C2 excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
     },
     {
+      "start": 58450,
+      "end": 58451,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 8 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
+    },
+    {
       "start": 58451,
       "end": 58461,
       "class": "runtime_data",
       "evidence": "Menu animation record9, exact used words+0/+2/+4/+6/+8 atDS49C3..49CC.4FF8/500C initializes only+0 (8000 if+2==8000, otherwise40*(index+1));4F96/4FA7..4FD6 reads and4FAF/4FB9 writes+0. Fixed ten iterations, stride0B from4F9F/4FF8. Original stored initialized words survive per-level/session clears. Final byte49CD excluded: neither loop consumes it; no meaning inferred from stored00. Aliased returnedSI/CX/DS can escape fixed domain."
+    },
+    {
+      "start": 58461,
+      "end": 58462,
+      "class": "runtime_data",
+      "evidence": "Unread +0A byte of menu animation record 9 (MenuAnimationRecords: ten 0Bh-byte records 4960..49CD, stride at 4FF2/5011). No access uses offset +0A; the byte belongs to its record."
     },
     {
       "start": 58462,
@@ -701,6 +1403,12 @@
       "end": 59396,
       "class": "runtime_data",
       "evidence": "4D4D header/4D65 character grammar, reader4755/4759; exact stored stream[4D3F,4D74), terminal column0 at4D73. 4D3F:column5,row14,style0,text[4D42,4D61),CR4D61; 4D62:column13,row15,style0,text[4D65,4D72),CR4D72. DF0/intact stream only: NUL in text is glyph; no length/character guard; SI16/CL8 wrap, live saves and returned DS/ES. Stored process lifetime; named formatter/editor writes for mutable fields, physical aliases remain."
+    },
+    {
+      "start": 59396,
+      "end": 59397,
+      "class": "static_data",
+      "evidence": "Stored 00 after the access-code text stream terminator at 4D73 and before the stream at 4D75; DrawTextStream returns at 4D73. No reader identified."
     },
     {
       "start": 59397,
@@ -841,10 +1549,22 @@
       "evidence": "Two96-byte stored fixed-pattern inputs,3*16 LE16 rows each.5CC1/5CDD normalforward read counts and7218 generated group schema agree;original bytes persist through normalclears/GROUND/odd. DF1/aliases retained, no classification of neighboring run."
     },
     {
+      "start": 60940,
+      "end": 61196,
+      "class": "static_data",
+      "evidence": "Four 64-byte images of sixteen 4-byte rows at 2 bits per pixel: a dashed crosshair and its cross mask, a box and its frame mask, the same cursors FixedWordPatternA/B hold in word-plane form. No reader identified in this VGA build."
+    },
+    {
       "start": 61196,
       "end": 61204,
       "class": "lookup_table",
       "evidence": "DS:547C byte table indexed byAND7 at5DEE/6164 and6F40/7058, read5DF5/616B/6F49/705D; image80,40,20,10,08,04,02,01; identifies only these8 storedbytes,not immutable live DS or adjacent extent"
+    },
+    {
+      "start": 61204,
+      "end": 61310,
+      "class": "lookup_table",
+      "evidence": "Sibling tables after PixelBitMasks: 2-bit (C0,30,0C,03) and 4-bit (F0,0F) pixel masks, then LE16 multiples of 5Ah (18), 6Ch (16), 3Ch (8) and 1E0h (8). Self-evident index tables; no reader identified."
     },
     {
       "start": 61310,
@@ -859,10 +1579,34 @@
       "evidence": "Exactly DS5566..66E5 requested1180h raw-load destination19D5/19D9/19DC,stored zero pre-load state,38h source slices and supplied80-record layout. Valid after complete odd read;short suffix remains old;normal clears exclude it. Unchecked0..127 slice reads and DF1 overlap explicit;do not include66E6..66EF or renderer fields."
     },
     {
+      "start": 65910,
+      "end": 65920,
+      "class": "runtime_buffer",
+      "evidence": "Ten stored zeros between the end of the 1180h-byte OddLevelOverrideBuffer (66E5) and the renderer words at 66F0. No writer or reader identified; only the unchecked override source index n >= 80 (19EA..1A02) reads across it."
+    },
+    {
       "start": 65920,
       "end": 65942,
       "class": "runtime_data",
       "evidence": "Exact eleven live renderer words DS66F0..6704: ordered initializers8808,882D..8840,888E/8891,source entries and clipping; readers/aliases beside DrawPlanarBitmap. Stored zero only initial image; no extent extension to scratch."
+    },
+    {
+      "start": 65942,
+      "end": 66008,
+      "class": "runtime_buffer",
+      "evidence": "Renderer source-row scratch: shifted bodies copy w bytes plus a zero sentinel to ES:6706 (ES = relocated 09A9) before shifting and reading the row, per row and plane. Decoded callers keep w <= 1Fh, so DF0 rows end by 6725; DF1 rows reach 6705/6704 downward."
+    },
+    {
+      "start": 66008,
+      "end": 74200,
+      "class": "runtime_buffer",
+      "evidence": "Renderer mask-row scratch (890E, 8FF7, 909C, 916B) and the 8D66 read-mask cache, built row by row at stride w+1 before forward reuse. With the decoded callers' widths below 100h pixels and at most 256 rows, h*(w+1) <= 2000h ends at 8747."
+    },
+    {
+      "start": 74200,
+      "end": 82904,
+      "class": "runtime_buffer",
+      "evidence": "Zero-initialized continuation of the renderer mask cache up to the image end (6748..A947 spans 100h rows of 42h). No accessor identified for decoded caller inputs; reached only by the characterized width-0 full-DS RCR sweep and raw unchecked widths."
     },
     {
       "start": 82904,
@@ -874,7 +1618,7 @@
   "runtime_frontiers": [
     {
       "address": 1644,
-      "evidence": "INT3 vector0DB3 toggles saved TF/IF at SS:[SP+0B] and transforms upcoming code; static fallthrough is not a proved runtime stream"
+      "evidence": "INT3 vector 0DB3 toggles saved TF/IF and transforms upcoming code; its callers (0635 from startup 00E0->062B; 0E99/0EB2 in 0E66, which has no decoded caller) all run with TF clear, as no main code sets TF outside this toggle, so execution continues in the fully derived TF-on stream at 066D (metadata/protection-cfg.json: 372 sites, 0 unresolved transfers)"
     }
   ],
   "blocked_decode_ranges": [
@@ -919,8 +1663,9 @@
         5264,
         5280
       ],
-      "evidence": "Four original DS:2013 records: enable byte and near pointer; 13FB/1402 supplies AX",
-      "closure": "DF-clear, DS-frame and pointer-write/alias contracts pending"
+      "evidence": "Four DS:2013 rows {enable,target}; no decoded store writes a target word; enables set by 13E9/13EE/13F3, 145C, startup marker 1194 (e0 via DI=2012 on command-line option paths 10E2/10EC/10F6), cleared by 143A/143F/1444/1483/148A; callers 00C8/0468 run with game DS and DF=0",
+      "closure": "Closed for the legitimate program: the four target words never change, so 1407 calls only 1410 (when the startup marker set e0), 1462, 1490 and 14A0; other values arise only from an oversized GROUND file or the creation-race record spill (characterized escape to CS:0061).",
+      "legitimate_closed": true
     },
     {
       "address": 17061,
@@ -930,8 +1675,9 @@
         17204,
         17241
       ],
-      "evidence": "Static DS:25A0=4252; direct stores4A68/4A80 install4334/4359",
-      "closure": "Known direct stores; indexed/string writes, aliases and unknown code remain open"
+      "evidence": "Reached only with mode 25A6=1 (4196); mode 1 is stored only at 4A6D/4A85, each right after 4A68 (4334) or 4A80 (4359); image 25A0=4252 and 25A6=00; other mode writers 0F64/4AB5 (2), 4ABD (0); clears and pinned GROUND files miss 25A0..25A6",
+      "closure": "Closed for the legitimate program: mode 1 always follows a joystick pointer store, so 42A5 calls only 4334 or 4359 (4252 is stored but never called here); other values arise only from an oversized GROUND file or the creation-race spill record D3 (characterized escape). 4252 stays in the decoded target list as a superset (initial stored value, decoded via JMP 4193).",
+      "legitimate_closed": true
     },
     {
       "address": 19657,
@@ -939,8 +1685,9 @@
       "targets": [
         20539
       ],
-      "evidence": "4C88 sets BP=503B; loop pushes and restores BP around callbacks",
-      "closure": "Closed under 4C7E entry and balanced callee stack contract; alternate incoming/alias paths pending"
+      "evidence": "Only BP assignment 4C88 LEA BP,503B; inner saves 4CA4/4CC8 restored at 4CA8/4CD1; sole entry CALL 4996; children and menu/keyboard IRQ handlers preserve BP and their writes miss the saves",
+      "closure": "Closed for the legitimate program: BP is always 503B at 4CC9; a different value needs a damaged stack save (width-0 sweep, FFFF-space cache-name padding, corrupted cursor), which is a characterized corrupted-control escape.",
+      "legitimate_closed": true
     },
     {
       "address": 19736,
@@ -948,8 +1695,9 @@
       "targets": [
         20539
       ],
-      "evidence": "4CDA restores saved BP before final JMP; original callback is503B",
-      "closure": "Shared input-loop entry/stack/alias contract pending"
+      "evidence": "Outer save 4C9F (P-0C) restored at 4CDA; no later BP assignment before 4D18; tail JMP lets 503B return through the CALL 4996 word",
+      "closure": "Closed for the legitimate program: BP is always 503B at 4D18 and the JMP is a tail continuation returning to 4999; other values need a characterized damaged save.",
+      "legitimate_closed": true
     },
     {
       "address": 29019,
@@ -965,8 +1713,9 @@
         27611,
         27900
       ],
-      "evidence": "0FC1..0FF1 initializes nine DS:002E..003E drawing callbacks; object stores read these slots into record+14;70F0/7159 transfers saved pointer to AX",
-      "closure": "Active object record lifecycle, bulk copies, DS-frame and write/alias contracts pending"
+      "evidence": "Slots 002E..003E written only by 0FC1..0FF1 in 03E7 before any draw; record+14 zeroed by 30F3 then written only by the 32 slot-sourced word stores; draws visit k<count<=50h with pinned headers; DF=1 writers 347F/3488/4119 have no legitimate DF=1 producer",
+      "closure": "Closed for the legitimate program: 715B calls only the nine slot callbacks; other values arise only after the characterized creation race spills records past 4F (escape to CS:F(state)).",
+      "legitimate_closed": true
     }
   ],
   "external_transfers": [

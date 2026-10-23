@@ -58,7 +58,13 @@ AdLib command dispatch 01EA indexes table 03EA using doubled AL. Eight visible
 entries at 03EA..03F9 cover commands 80..87. However the preceding comparisons allow
 80..AF; commands 88..AF would read pointers from following instruction bytes. The
 table is not silently expanded into code, and no bounds check or bug fix is added.
-Prove the command producer/stream domain or model those paths explicitly.
+The legitimate domain is closed: the shipped streams and every main-image INT61
+request reach 01EA only with 80..82 and 84..87. Tokens 88..AF are a characterized
+corrupted-control escape (they need an externally written stream byte or pointer,
+a song header read with DF=1, for which no producer exists, or a raw engine
+entry); a native port reports them as an explicit runtime failure. The complete
+engine, song, instrument and command specification is the header of
+src/sound/adlib.asm.
 
 Tandy dispatch 02BB indexes 076B. Twenty-four visible entries at 076B..079A cover
 80..97; control flow allows 80..9F, so 98..9F remain unresolved. The table adds targets

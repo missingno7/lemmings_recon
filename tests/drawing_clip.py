@@ -528,7 +528,7 @@ def main():
         'tests/dat_io.py', 'tools/common.py', 'tools/cbuild.py',
         'tools/difftest.py', 'tools/coverage.py', 'tools/unpack.py',
         'metadata/symbols.json', 'assets/vgalemmi.exe',
-        'docs/drawing-clip.md', 'tools/bounded_process.py',
+        'tools/bounded_process.py',
     )
     routine_bytes = IMAGE[ENTRY:END]
     mutations = [

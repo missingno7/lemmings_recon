@@ -1,49 +1,20 @@
-# Bottom-up semantic reconstruction
+# Source map and graph views
 
-The permanent oracle is maintained ASM plus ledger-owned names, offsets and
-proven data contracts. The original binary is the final authority. The
-[semantic audit](semantic-audit.md) defines READY/CONDITIONAL/NOT READY by scope;
-C presence, byte classification and semantic readiness are different facts.
-
-## Working loop
-
-1. Choose the uncertainty that would force a translator to guess or prevent the
-   next complete game operation. Use [next-work.md](next-work.md), not a byte quota.
-2. Follow the original body, callers, shared tails, state producers/consumers and
-   hardware/IRQ crossings. `graph.py --asm` ignores C-range truncation; the
-   default graph still shows native scopes. Neither view proves reachability.
-3. Recover boundaries, state/table/lifetime ownership, then purpose names and
-   caller-observed contracts. Local labels and literal naming come afterward.
-   Put reusable semantics beside ASM and names/offsets in the ledger. Do not
-   leave the only explanation in a C fixture or duplicate a running status table.
-4. Run the exact gate. Record a scoped readiness decision. A known leaf may be
-   READY while its parent is CONDITIONAL; do not wait for global UNKNOWN closure.
-5. Translate or connect a coherent READY operation. Preserve existing C and
-   strong adapter evidence. New parent cases check handoffs/shared state rather
-   than re-running exhaustive child matrices. Reduce machine-shaped interfaces
-   only after proving their actual call/lifetime contract.
-6. Run the affected verification tier; record changed evidence, remaining
-   uncertainty and the next semantic dependency. No fixed mutation quota.
+The working loop is in AGENTS.md; priorities are in [next-work.md](next-work.md).
+This document keeps the physical source map and the tool views used for it.
 
 ```powershell
 .venv/Scripts/python.exe tools/where.py 03E7 --disasm 24
 .venv/Scripts/python.exe tools/graph.py 03E7 --asm --tree --depth 1
 .venv/Scripts/python.exe tools/graph.py 03E7 --asm --bottom-up
 .venv/Scripts/python.exe tools/graph.py 03E7 --tree
-.venv/Scripts/python.exe tools/verify.py
-.venv/Scripts/python.exe tools/coverage.py --inventory
 ```
 
-Default graph C ranges remain scoped. The original-body view follows decoded
-branches/shared tails and calls even where C already exists, and reports C byte
-overlap without labelling the whole body TESTED. Both retain UNKNOWN,
-conditional indirect targets, device sites and protected execution frontiers.
-Syntactic DS/ES/SS tags alone do not establish state ownership.
-
-Pre2 contributes the question-driven loop, canonical memory and immediate
-semantic feedback into source. Overkill contributes a concrete readiness bar.
-Their exact segment/stack models and historical linker modules are not copied.
-See the audit for the observed methodology and evidence-domain differences.
+`--asm` follows decoded branches, shared tails and calls even where C already
+exists and reports C byte overlap without labelling the whole body TESTED. The
+default view keeps native C scopes. Both retain UNKNOWN, conditional indirect
+targets, device sites and protected execution frontiers. Syntactic DS/ES/SS tags
+alone do not establish state ownership.
 
 ## Maintained source ownership
 

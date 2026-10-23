@@ -383,7 +383,7 @@ def compare(native, case):
 
 def input_hashes(native=False):
     paths = set(common.input_hashes(False))
-    paths.update(('tests/timer_restore.py', 'docs/timer-restore.md'))
+    paths.update(('tests/timer_restore.py',))
     if native: paths.update(('c/timer_restore.c', 'c/timer_restore.h', 'c/lemmings_sym.h',
                              'c/regs.h', 'c/special_blit.h', 'tools/cbuild.py', 'tools/difftest.py', 'tools/coverage.py'))
     return {p: sha((ROOT / p).read_bytes()) for p in sorted(paths)}

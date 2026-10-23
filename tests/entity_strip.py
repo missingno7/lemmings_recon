@@ -672,8 +672,6 @@ def static_edges():
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md', 'docs/bottom-up.md',
-        'docs/entity-display.md', 'docs/entity-vga.md',
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/oracle.json', 'metadata/inputs.json',
         'metadata/symbols.json', 'metadata/regions.json', 'metadata/hints.json',

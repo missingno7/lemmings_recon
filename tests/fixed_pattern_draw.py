@@ -774,7 +774,7 @@ def case_edges(rows):
 
 def input_hashes():
     paths = {
-        'AGENTS.md', 'assets/vgalemmi.exe', 'assets/main.dat',
+        'assets/vgalemmi.exe', 'assets/main.dat',
         'assets/adlib.dat', 'assets/tandysnd.dat',
         'metadata/inputs.json', 'metadata/oracle.json',
         'metadata/sound-oracle.json', 'metadata/toolchain-lock.json',

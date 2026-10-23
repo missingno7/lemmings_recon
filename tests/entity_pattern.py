@@ -369,8 +369,7 @@ def input_hashes():
     paths = (
         'assets/vgalemmi.exe', 'metadata/symbols.json',
         'c/entity_pattern.c', 'c/entity_pattern.h', 'c/lemmings_sym.h', 'c/regs.h',
-        'tests/entity_pattern.py', 'tests/dat_io_c.py', 'tests/dat_io.py', 'docs/entity-pattern.md',
-        'tools/cbuild.py', 'tools/difftest.py', 'tools/coverage.py',
+        'tests/entity_pattern.py', 'tests/dat_io_c.py', 'tests/dat_io.py', 'tools/cbuild.py', 'tools/difftest.py', 'tools/coverage.py',
         'tools/bounded_process.py', 'tools/unpack.py', 'tools/common.py',
     )
     return {path: sha((ROOT / path).read_bytes()) for path in paths}

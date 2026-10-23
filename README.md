@@ -8,7 +8,7 @@ original instruction execution is confined to bounded verification.
 **The complete game is not runnable yet.** Exact binary identity, classification,
 semantic readiness, C ranges, differential evidence and whole-game integration
 are separate. See the reproducible [current status](docs/completeness.md),
-[semantic audit and readiness gate](docs/semantic-audit.md), and
+[freeze bar and completeness measures](docs/semantic-audit.md), and
 [next work](docs/next-work.md). Historical counts are archived in
 [convergence history](docs/convergence-history.md).
 
@@ -43,8 +43,9 @@ reports from the complete `difftest.py --all` campaign and `coverage.py` without
 - `tools/`: exact build/discovery/symbol tools and bounded suite orchestration.
 - `docs/`: executable/architecture/contracts, current status and current roadmap.
 
+The working method is in [AGENTS.md](AGENTS.md).
 [Executable scope](docs/executable.md) pins the packed EXE, decompressed/relocated
-representations and three loaded sound images. [Bottom-up method](docs/bottom-up.md)
+representations and three loaded sound images. [Source map](docs/bottom-up.md)
 records physical module ownership; [architecture](docs/architecture.md) and
 [verification](docs/verification.md) explain native boundaries and evidence.
 All original assets and historical tools are private local inputs. Never boot

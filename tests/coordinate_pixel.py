@@ -701,8 +701,6 @@ def compare_null_bus(native, case):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-pixel.md', 'docs/coordinate-pixel.md',
         'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
         'metadata/regions.json', 'metadata/inputs.json', 'src/program.asm',
         'src/entity_graphics.asm', 'c/coordinate_pixel.c',

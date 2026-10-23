@@ -71,8 +71,6 @@ EXPECTED_CHILD_RETURNS = {
 }
 
 INPUT_PATHS = (
-    'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-    'docs/bottom-up.md', 'docs/generated-graphics.md',
     'src/game_code_late_after_palette.asm',
     'c/generated_graphics.c', 'c/generated_graphics.h',
     'c/mask_generators.c', 'c/mask_generators.h', 'c/lemmings_sym.h',

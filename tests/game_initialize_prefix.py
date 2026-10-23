@@ -429,7 +429,7 @@ def hashes():
     paths={'tests/game_initialize_prefix.py','tests/video_probe.py','tests/verification.py','tests/minimap_vga.py',
         'tools/cbuild.py','tools/bounded_process.py','tools/common.py',
         'tools/unpack.py','metadata/oracle.json','metadata/toolchain-lock.json','assets/vgalemmi.exe',
-        'src/entry_services.asm','src/palette_frontends.asm','docs/game-initialize.md'}
+        'src/entry_services.asm','src/palette_frontends.asm'}
     paths.update(level.input_hashes())
     # Registry additions do not change this suite's declared limits or inputs.
     paths.discard('tools/difftest.py')

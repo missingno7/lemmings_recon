@@ -176,12 +176,8 @@ loc_88A6:
 PlanarIncomingFlagGate:
     jz PlanarDrawingAbortReturn ; @088A6
     jmp short loc_88AC ; @088A8
-; S14 U099: [088AA,088AB) stored bytes remain UNKNOWN.
-; Neighbours: P 088A8 jmp 0x88ac; N 088AB retf.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @088AA
 loc_88AB:
 PlanarDrawingAbortReturn:
@@ -568,12 +564,8 @@ loc_8ABB:
     dec bp ; @08AD8
     jnz loc_8ADE ; @08AD9
     jmp short loc_8B40 ; @08ADB
-; S14 U100: [08ADD,08ADE) stored bytes remain UNKNOWN.
-; Neighbours: P 08ADB jmp 0x8b40; N 08ADE add si, word ptr es:[0x66f8].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @08ADD
 loc_8ADE:
     add si,[es:DrawingSourcePlaneExtent-GameDataImage] ; @08ADE
@@ -965,12 +957,8 @@ loc_8CCA:
     dec bp ; @08CEF
     jnz loc_8CF5 ; @08CF0
     jmp short loc_8D64 ; @08CF2
-; S14 U101: [08CF4,08CF5) stored bytes remain UNKNOWN.
-; Neighbours: P 08CF2 jmp 0x8d64; N 08CF5 add si, word ptr es:[0x66f8].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @08CF4
 loc_8CF5:
     add si,[es:DrawingSourcePlaneExtent-GameDataImage] ; @08CF5
@@ -1484,12 +1472,8 @@ loc_8F84:
     dec bp ; @08F88
     jnz loc_8F8E ; @08F89
     jmp short loc_8FF4 ; @08F8B
-; S14 U102: [08F8D,08F8E) stored bytes remain UNKNOWN.
-; Neighbours: P 08F8B jmp 0x8ff4; N 08F8E add si, word ptr es:[0x66f8].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @08F8D
 loc_8F8E:
     add si,[es:DrawingSourcePlaneExtent-GameDataImage] ; @08F8E
@@ -2148,12 +2132,8 @@ loc_9318:
     dec bp ; @09334
     jnz loc_933A ; @09335
     jmp short loc_939C ; @09337
-; S14 U103: [09339,0933A) stored bytes remain UNKNOWN.
-; Neighbours: P 09337 jmp 0x939c; N 0933A add si, word ptr es:[0x66f8].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @09339
 loc_933A:
     add si,[es:DrawingSourcePlaneExtent-GameDataImage] ; @0933A
@@ -2412,12 +2392,8 @@ loc_94A2:
     dec bp ; @094C2
     jnz loc_94C8 ; @094C3
     jmp short loc_953C ; @094C5
-; S14 U104: [094C7,094C8) stored bytes remain UNKNOWN.
-; Neighbours: P 094C5 jmp 0x953c; N 094C8 push ds.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @094C7
 loc_94C8:
     push ds ; @094C8
@@ -2465,12 +2441,8 @@ loc_94E2:
     dec bp ; @09502
     jnz loc_9508 ; @09503
     jmp short loc_953C ; @09505
-; S14 U105: [09507,09508) stored bytes remain UNKNOWN.
-; Neighbours: P 09505 jmp 0x953c; N 09508 push ds.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @09507
 loc_9508:
     push ds ; @09508
@@ -2682,12 +2654,8 @@ loc_962C:
     dec bp ; @09654
     jnz loc_965A ; @09655
     jmp short loc_969A ; @09657
-; S14 U106: [09659,0965A) stored bytes remain UNKNOWN.
-; Neighbours: P 09657 jmp 0x969a; N 0965A push ds.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @09659
 loc_965A:
     push ds ; @0965A
@@ -3014,7 +2982,14 @@ loc_9887:
 ; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
 ; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     movsb ; @0988A
-sub_988B:
+; LOOP of the pass-1 row byte copy inside PlanarAlignedOpaqueBody (983B), not a
+; separate entry: the only static predecessor is the MOVSB at 988A (legacy
+; lifter split; no decoded direct, table or known indirect edge targets it).
+; Runs inside the row's CLI..STI window: each byte is an ES latch read then
+; MOVSB, CX=00CLh bytes (CL=0 gives 65536). Covered by c/aligned_opaque.c.
+; An arbitrary computed entry here belongs to the global indirect-transfer
+; obligations, not to a separate routine contract.
+PlanarAlignedOpaqueFirstPassLoop:
     loop loc_9887 ; @0988B
     sti ; @0988D
     push ds ; @0988E
@@ -3078,12 +3053,8 @@ loc_98D1:
     dec bp ; @098EF
     jnz loc_98F5 ; @098F0
     jmp short loc_9965 ; @098F2
-; S14 U107: [098F4,098F5) stored bytes remain UNKNOWN.
-; Neighbours: P 098F2 jmp 0x9965; N 098F5 push ds.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @098F4
 loc_98F5:
     push ds ; @098F5
@@ -3125,12 +3096,8 @@ loc_990F:
     dec bp ; @0992D
     jnz loc_9933 ; @0992E
     jmp short loc_9965 ; @09930
-; S14 U108: [09932,09933) stored bytes remain UNKNOWN.
-; Neighbours: P 09930 jmp 0x9965; N 09933 push ds.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @09932
 loc_9933:
     push ds ; @09933
@@ -3190,12 +3157,8 @@ loc_9981:
     add ax,0x8 ; @0998F
     js loc_9981 ; @09992
     jmp short loc_99B4 ; @09994
-; S14 U109: [09996,09997) stored bytes remain UNKNOWN.
-; Neighbours: P 09994 jmp 0x99b4; N 09997 cmp ax, word ptr [0x66f2].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @09996
 loc_9997:
     cmp ax,[DrawingWidthPixels-GameDataImage] ; @09997
@@ -3336,10 +3299,9 @@ loc_9A87:
     pop di ; @09A8C
     pop si ; @09A8D
     ret ; @09A8E
-; S14 U110: [09A8F,09A90) stored bytes remain UNKNOWN.
-; Neighbours: P 09A8E ret; N 09A90 static_data.
-; Stored00 after RET9A8E,immediately before game-data image09A90. No owner/producer proves alignment or data. Raw checksum high cursor can read it; provisional code_limit09A90 is not a no-code or reachability proof.
-; Checksum8397 reads this run in raw high-cursor domain above83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Segment alignment filler: pads the code segment to the paragraph boundary
+; 9A90 where the game data frame 09A9 begins. No incoming edge or reader
+; identified.
+; DATA: padding
+CodeSegmentParagraphPadding:
     db 0x00 ; @09A8F

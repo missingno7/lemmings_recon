@@ -43,6 +43,8 @@ def routine_views(analysis,ledger,*,original=False):
         outgoing.setdefault(edge['source'],[]).append(edge)
         if edge['kind'] in CALLS:callers.setdefault(edge['target'],set()).add(edge['source'])
     for item in analysis['unresolved']:frontiers.setdefault(item['address'],[]).append(item['kind'])
+    # Closed dispatch sites stay visible: their targets are known for the legitimate program.
+    for item in analysis.get('closed_transfers',[]):frontiers.setdefault(item['address'],[]).append('indirect_closed_legitimate')
     # A native span is a scoped view of an existing body, not a new discovery
     # seed or a claim that its containing function has been translated.
     # Query labels over already-decoded instructions, including JMP entries and

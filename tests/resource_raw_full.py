@@ -301,7 +301,7 @@ def compare(native,case):
 
 
 def input_hashes(native=False):
-    paths=set(printer.input_hashes(native));paths.update(('tests/resource_raw_full.py','docs/resource-raw-full.md','docs/resource-raw.md'))
+    paths=set(printer.input_hashes(native));paths.update(('tests/resource_raw_full.py',))
     if native:paths.update(('c/resource_raw.c','c/resource_raw.h','c/resource_raw_full.c','c/resource_raw_full.h','c/dat_io.h'))
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

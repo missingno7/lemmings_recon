@@ -228,7 +228,7 @@ def compare(native,case):
 
 
 def input_hashes(native=False):
-    paths=set(status.input_hashes(native));paths.update(('tests/display_start.py','docs/display-start.md'))
+    paths=set(status.input_hashes(native));paths.update(('tests/display_start.py',))
     if native:paths.update(('c/display_start.c','c/display_start.h'))
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

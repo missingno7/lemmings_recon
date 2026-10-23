@@ -212,7 +212,7 @@ def compare(native, case, core):
 
 
 def input_hashes(native=False):
-    paths = set(glyph.input_hashes(native)) | {'tests/text_stream.py', 'docs/text-stream.md'}
+    paths = set(glyph.input_hashes(native)) | {'tests/text_stream.py'}
     if native: paths |= {'c/text_stream.c', 'c/text_stream.h'}
     return {p: sha((ROOT / p).read_bytes()) for p in sorted(paths)}
 

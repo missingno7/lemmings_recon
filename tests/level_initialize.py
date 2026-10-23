@@ -370,8 +370,7 @@ def input_hashes():
     dependencies |= {'c/object_state.h','c/object_cells.h','c/steel_cells.h','c/object_coordinates.h',
         'c/minimap_helpers.h','c/lemmings_sym.h','c/regs.h','c/special_blit.h',
         'metadata/symbols.json','metadata/oracle.json','metadata/inputs.json','metadata/toolchain-lock.json',
-        'assets/vgalemmi.exe','docs/executable.md','docs/level-initialize.md',
-        'tests/object_graphics_bus.py','tests/level_initialize.py','tools/cbuild.py',
+        'assets/vgalemmi.exe','tests/object_graphics_bus.py','tests/level_initialize.py','tools/cbuild.py',
         'tools/coverage.py','tools/difftest.py','tools/bounded_process.py'}
     dependencies |= {p.relative_to(ROOT).as_posix() for p in (ROOT/'src').glob('*.asm')}
     dependencies |= {asset for case in cases() for asset in case.get('assets',())}

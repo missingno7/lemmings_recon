@@ -33,9 +33,7 @@ VGA_SIZE = VGA_END - VGA_BASE
 MEM = ctypes.POINTER(ctypes.c_uint8)
 REPORT = BUILD / 'object-coordinates-bus-differential.json'
 INPUT_PATHS = (
-    'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-    'docs/level-initialize-bus-frontier.md', 'docs/object-records.md',
-    'docs/object-coordinates-bus.md', 'src/level_objects.asm',
+    'src/level_objects.asm',
     'c/object_coordinates_bus.c', 'c/object_coordinates_bus.h',
     'c/object_coordinates.c', 'c/object_coordinates.h', 'c/special_blit.h',
     'c/regs.h', 'c/lemmings_sym.h', 'tests/object_coordinates_bus.py',

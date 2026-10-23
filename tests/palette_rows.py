@@ -277,7 +277,7 @@ def compare(native,case,core):
 
 
 def input_hashes(native=False):
-    paths=set(channels.input_hashes(native))|{'tests/palette_rows.py','docs/palette-rows.md'}
+    paths=set(channels.input_hashes(native))|{'tests/palette_rows.py'}
     if native:paths|={'c/palette_rows.c','c/palette_rows.h'}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

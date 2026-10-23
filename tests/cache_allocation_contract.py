@@ -439,8 +439,6 @@ def loaded_input_paths():
     # Preserve executable/contract inputs, excluding unrelated progress prose.
     paths = {
         'tests/cache_allocation_contract.py',
-        'docs/executable.md', 'docs/dat-cache.md',
-        'docs/cache-allocation.md',
         'src/game_code.asm', 'src/resources.asm', 'src/image_tail.asm',
         'src/entry_services.asm', 'src/program.asm',
         'metadata/symbols.json', 'metadata/oracle.json',

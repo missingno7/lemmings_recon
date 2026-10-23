@@ -673,7 +673,7 @@ def run_worker(directory):
         f'assets/ground{n}o.dat' for n in range(5))
     paths = ('c/object_graphics.c', 'c/object_graphics.h', 'c/special_blit.h',
         'c/regs.h', 'c/lemmings_sym.h', 'tests/object_graphics_bus.py',
-        'docs/object-graphics-bus.md', 'tests/object_graphics.py',
+        'tests/object_graphics.py',
         'tests/minimap_vga.py',
         'tests/dat_io.py', 'tests/dat_io_c.py',
         'tools/bounded_process.py', 'tools/cbuild.py', 'tools/common.py',

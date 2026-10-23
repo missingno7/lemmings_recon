@@ -107,7 +107,7 @@ class GraphTests(unittest.TestCase):
         views=routine_views(analyze(),read_json(ROOT/'metadata/symbols.json'),original=True)
         out=io.StringIO()
         with contextlib.redirect_stdout(out):bottom_up(0x706F,views,original=True)
-        self.assertIn('715B:indirect_or_far_transfer',out.getvalue())
+        self.assertIn('715B:indirect_closed_legitimate',out.getvalue())
         self.assertIn('platform/IRQ sites:',out.getvalue())
 
     def test_native_root_and_tree_print_service_and_external_return_sites(self):

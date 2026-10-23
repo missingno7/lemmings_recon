@@ -684,8 +684,7 @@ MUTATION_WITNESSES = {
 
 def input_hashes():
     paths = [
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-actions.md', 'src/game_code.asm', 'src/entity_actions.asm',
+        'src/game_code.asm', 'src/entity_actions.asm',
         'src/program.asm', 'src/sound/pcspeaker.asm', 'src/sound/adlib.asm',
         'src/sound/tandysnd.asm', 'assets/vgalemmi.exe', 'assets/main.dat',
         'assets/adlib.dat', 'assets/tandysnd.dat', 'metadata/oracle.json',

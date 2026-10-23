@@ -78,11 +78,8 @@ loc_5309:
     call WriteSequentialDacPalette ; @05314
     mov cx,0x1008 ; @05317
     jmp WriteSequentialDacPalette ; @0531A
-; S14 U077: [0531D,0531E) stored bytes remain UNKNOWN.
-; Neighbours: P 0531A jmp 0x548c; N 0531E xor al, al.
-; StoredC3; RET spelling is only a candidate instruction,no recovered entry reaches it. Retain checksum/alias obligations; no padding or unused-life claim.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; Stored C3 after an unconditional JMP: a RET with no incoming edge identified,
+; so it stays UNKNOWN. No recovered path of the surrounding routine reaches it.
 ; UNKNOWN: unresolved bytes
     db 0xc3 ; @0531D
 TransitionPaletteToSlot1:
@@ -212,12 +209,8 @@ PublishUpperEightPaletteColors:
     mov si,[cs:si] ; @053DE
     add si,byte +0x8 ; @053E1
     jmp short WriteAttributePalette ; @053E4
-; S14 U078: [053E6,053E7) stored bytes remain UNKNOWN.
-; Neighbours: P 053E4 jmp 0x5425; N 053E7 lea si, [0x52e4].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @053E6
 loc_53E7:
     lea si,[RgbPalettePointerTable] ; @053E7
@@ -231,12 +224,8 @@ PublishEightPaletteColors:
 ; mapped DAC; all other words tail-JMP attribute writer. No new caller frame.
     mov cx,0x8 ; @053F6
     jmp short loc_5401 ; @053F9
-; S14 U079: [053FB,053FC) stored bytes remain UNKNOWN.
-; Neighbours: P 053F9 jmp 0x5401; N 053FC mov al, 2.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @053FB
 PublishMenuPalette:
     mov al,0x2 ; @053FC
@@ -252,23 +241,16 @@ SelectAndPublishPalette:
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @05410
     mov si,[cs:si] ; @05412
     jmp short WriteAttributePalette ; @05415
-; S14 U080: [05417,05418) stored bytes remain UNKNOWN.
-; Neighbours: P 05415 jmp 0x5425; N 05418 lea si, [0x52e4].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @05417
 loc_5418:
     lea si,[RgbPalettePointerTable] ; @05418
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @0541C
     mov si,[cs:si] ; @0541E
     jmp WriteMappedDacPalette ; @05421
-; S14 U081: [05424,05425) stored bytes remain UNKNOWN.
-; Neighbours: P 05421 jmp 0x54c4; N 05425 cli.
-; StoredC3; RET spelling is only a candidate instruction,no recovered entry reaches it. Retain checksum/alias obligations; no padding or unused-life claim.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; Stored C3 after an unconditional JMP: a RET with no incoming edge identified,
+; so it stays UNKNOWN. No recovered path of the surrounding routine reaches it.
 ; UNKNOWN: unresolved bytes
     db 0xc3 ; @05424
 ; 5425: CH first index, CL count (zero ->65536), DS:SI bytes follow DF.
@@ -319,12 +301,8 @@ BasePaletteAfterFirstDac:
     lea si,[0x2608] ; @05460
     mov cx,0x1008 ; @05464
     jmp short WriteSequentialDacPalette ; @05467
-; S14 U082: [05469,0546A) stored bytes remain UNKNOWN.
-; Neighbours: P 05467 jmp 0x548c; N 0546A lea si, [0x2608].
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @05469
 loc_546A:
     lea si,[0x2608] ; @0546A
@@ -468,11 +446,14 @@ MappedDacPaletteReturn5506:
 ; UNKNOWN: unresolved bytes
 MappedDacPaletteIndexes:
     db 0x00,0x01,0x02,0x03,0x04,0x05,0x14,0x07,0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,0x3f ; @05507
-; S14 U083: [05517,05533) stored bytes remain UNKNOWN.
-; Neighbours: P 05516 lookup_table; N 05533 lea si, [0x2668].
-; Candidate5517 BX0311,DX=[DS1FDA],ADD DL,6 (byte wrap),IN AL,DX; saves DX,MOV DL,C0,outputs BL11 then BH03,restores DX,IN,MOV DL,C0,outputs20,RET. DH survives MOV DL: normal03B4/03D4 CRTC bases select03C0 attribute overscan index11/value03/enable20, not literal00C0 Tandy PSG. AX/BX/DX/flags clobber,no data store. Entry unproved.5507..5516 is separately classified DAC mapping table; cannot classify this suffix from that prefix.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; No incoming edge identified for 5517..5532: no direct, table, vector, relocated or
+; protected-view reference reaches it and no data reader uses it, so the bytes
+; stay UNKNOWN (code-looking). Recovered paths bypass it; translators of the
+; neighbouring routines need nothing from it.
+; The DAC mapping table 5507..5516 ends before it. Read as code: it resets the
+; attribute flip-flop by reading input status (DS:1FDA)+6, writes attribute
+; index 11h (overscan colour) = 03, rereads status and writes 20h to re-enable
+; the display, all through port DH:C0 (3C0h for the normal CRTC bases).
 ; UNKNOWN: unresolved bytes
     db 0xbb,0x11,0x03,0x8b,0x16,0xda,0x1f,0x80,0xc2,0x06,0xec,0x52,0xb2,0xc0,0x8a,0xc3 ; @05517
 ; UNKNOWN: unresolved bytes
@@ -538,11 +519,8 @@ loc_5593:
     db 0x03,0xf8 ; ENCODED: add di,ax (NASM chooses a different encoding) ; @055AE
     mov di,[cs:di] ; @055B0
     jmp StepRgbPaletteRow ; @055B3
-; S14 U084: [055B6,055B7) stored bytes remain UNKNOWN.
-; Neighbours: P 055B3 jmp 0x56e2; N 055B7 cmp word ptr [0x1f7c], 4.
-; StoredC3; RET spelling is only a candidate instruction,no recovered entry reaches it. Retain checksum/alias obligations; no padding or unused-life claim.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
+; Stored C3 after an unconditional JMP: a RET with no incoming edge identified,
+; so it stays UNKNOWN. No recovered path of the surrounding routine reaches it.
 ; UNKNOWN: unresolved bytes
     db 0xc3 ; @055B6
 ; Shared transition selects mode once. JZ is tested before status waits;

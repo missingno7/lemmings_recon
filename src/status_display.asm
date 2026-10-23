@@ -3,7 +3,10 @@ times -(($-$$) != 0x3ac8) db 0 ; module start assertion
 ; [03AC8] Calls minimap796F before viewport7A5A with live incoming DF; no entry CLD.
 ; DF1 minimap clear writes CS83AF..83C2 over checksum code/state; caller-wide DF domain open.
 ; CONTRACT: two minimap CALLs fall through into live status rendering at3ACE.
-; The100*completion byte DIV uses live CL; divisor0 skips DIV, overflow is#DE.
+; Percentage saved = 100*completions/limit (byte DIV by CL). Completions never
+; exceed the limit (4013 lowers the limit only to the created count), so the
+; quotient is at most 100 (200 in the characterized creation race) and DIV
+; cannot fault; a zero limit skips the division.
 ; Non100 formatting retains the leading209C byte. All child frames are actual SS.
 ; Counts use live value/snapshot/refresh triples; zero forces drawing, counter2
 ; acknowledges through FF then INC0. Counters and selectors also gate input.
@@ -40,12 +43,8 @@ loc_3AEF:
     mov byte [si],0x30 ; @03AFF
     mov byte [si+0x1],0x30 ; @03B02
     jmp short loc_3B21 ; @03B06
-; S14 U045: [03B08,03B09) stored bytes remain UNKNOWN.
-; Neighbours: P 03B06 jmp 0x3b21; N 03B09 inc ah.
-; Stored90; adjacent bypassing JMP is not proof of NOP execution,assembler padding,alignment or an unused lifetime. Unknown computed/return/IRQ entries and segment/index aliases remain.
-; Checksum8397 reads this run in reset/advance domain below83B7; caller unresolved; no structural classification follows.
-; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
-; UNKNOWN: unresolved bytes
+; Jump-shortening filler: NOP after a short forward JMP; no incoming edge or reader identified.
+; DATA: padding
     db 0x90 ; @03B08
 loc_3B09:
     inc ah ; @03B09

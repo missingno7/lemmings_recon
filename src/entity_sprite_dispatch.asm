@@ -1,37 +1,27 @@
 ; Maintained 706F..715E entity sprite parent; physical order unchanged.
-; T2 target theorem (UNCONDITIONAL input implications; global domain UNRESOLVED):
-; P={6170,64D9,65D8,66D7,6817,6957,6A97,6BDB,6CFC}. With initialized preserved
-; slots,genuine completed records,DF0 at all action5/visibility writers,disjoint
-; other writers and intact70F0 target/save/DS/return transport,the following hold.
-; NO RACE: nominal original headers/order plus serialized publication give
-; count<=50 and targets inP (DATA-CONDITIONAL; never an instruction clamp).
-; RACE WITHOUT SPILL: while all processed records remain00..4F,the same P
-; implication holds; racing0047 alone writes no callback. This condition can
-; be transient; pending excess creation is not prevented by the scan request.
-; RACE WITH SPILL: constructor still installs live002E,but P is not preserved.
-; DF0 visibility can replace50..54 callbacks by0000/0001/0100/0101; keyboard
-; writes55/56; object animation intersects85/87/8A/8C/8F/91,plus later owners.
-; No claimed exhaustive target superset or actually executed new edge follows.
-; Concrete UNCONDITIONAL local implication: completed slot50 X=Y=0,then DF0
-; visibility at origin00A0 zeros callback0EAC but marks0ED3=1. Empty terrain
-; lets state0004 fall without replacing+14; with no intervening append/writer,
-; point compare fails and7077 folds X+bias=-8 to0158,whose gate is0ED3.
-; +20 was also cleared,so no strip;715B receives0000 with intact saves.
-; This bounded instruction-feasible sequence disproves spill preservation;
-; actual whole-session arrival/schedule is UNRESOLVED,not an observed CALL0000.
-; In ANY case,DF1 action5/visibility or save/segment aliases remove the P proof.
-; Stale normal selection stays slot-aligned but can outlive count wrap/liveness;
-; its DF0 word stores alone preserve P. PROFILE supplies no race exclusion,
-; cursor bounds,writer lock or save-alias proof. Keep target_domain_complete=false.
+; CALLBACK /715B TARGET CONTRACT. The target is record+14 sampled at 70F0.
+; LEGITIMATE WRITERS. Slots DS:002E..003E are written only by 0FC1..0FF1
+; (6170,64D9,65D8,66D7,6817,6957,6A97,6BDB,6CFC) in session setup 03E7, after
+; the startup/level clears that zero them and before any draw (3634 runs only
+; from game frames). Record+14 is zeroed by the 30F3 clear and then written
+; only by the 32 explicit word stores (constructor 3140 and the state/action
+; stores), each loading AX from one slot. Draws visit constructed records
+; k<count; the pinned level headers bound count to 50h (records 0088..0E97).
+; Action 5 (347F/3488) and visibility 4119 rewrite +14 only with DF=1. No
+; legitimate path has DF=1 there: the only main STD (1BB0) is cleared by CLD
+; 1D34, and the game timer (whose commands reach 4119) is installed at 0492/
+; 0183 only after DAT decoding and restored at 02FB before the next load.
+; TARGET SET: the nine slot values, all decoded.
+; Not legitimate: the creation race (timer 1874->3E6F->4013 snapshots the
+; limit between 30CC and 314B) lets records spill past 4F; visibility,
+; keyboard, animation and palette writers then overlay spilled +14 words. The
+; call goes to CS:F(state): a characterized corrupted-control escape where the
+; specification ends. A saved-target overwrite by the strip mirrors needs an
+; entry SP near 000E, which no legitimate caller has.
 times -(($-$$) != 0x706f) db 0 ; module start assertion
-; UNCONDITIONAL intact-save known-edge arithmetic: the strip/nine callback closure peaks20 bytes below entryS;caller near frame is additional. DI S-2,alignment S-4,callback S-6 and strip DS S-12 remain live physical SS words. Mirror-only witnesses at small artificialSP do not establish actual placement. UNRESOLVED caller-rooted depth,record targets,dirty-map writes,service/nesting and saved-frame survival;the apparent512-byte gap has a pinned object row49B6..49C5.
-; R3 nine-target membership remains conditional:DATA-A nominal order/header,
-; forward reset,serialized count/limit publication,genuine record/selection,
-; initialized slot preservation,DF0 at action5 and every visibility entry,and
-; no other indexed/resource/frame writer. AdLib+mode0 does not close these.
-; Independent transport:70F0 sample atSS:S-6 and stripDS atS-12 must survive;
-; rawS000E mirror overwrite0F02 remains valid outside proved stack placement.
-; Both flowstate modes retain global TOP/target_domain_complete=false.
+; STACK: the strip/callback closure peaks 20h bytes below entry S (caller frame
+; additional). DI S-2, alignment S-4, callback S-6 and strip DS S-12 are live
+; SS words.
 ; CONTRACT: live DS:DI entity record; +00/+04 form wrapped X for visibility,
 ; +02/+06 form signed-clamped Y. +28 plus optional +29 selects the frame;
 ; +27==1 suppresses that add, +2A==FF suppresses eight-way alignment scaling.
@@ -39,18 +29,9 @@ times -(($-$$) != 0x706f) db 0 ; module start assertion
 ; +0A supplies SI and +12 supplies BX. These uses do not prove record bounds.
 ; Visibility miss bypasses both children. Restored AL from +20 gates the strip.
 ; +14 is PUSHed at 70F0, then reread from live SS at 7159 before CALL AX 715B.
-; Real 7155/715D child returns, saved DI and outer RET remain live; the known
-; initialized callback slots do not close changed targets or provider aliases.
-; CALLBACK DOMAIN: in the initialized-slot / genuine-record / no-alias writer
-; domain,30A6 publishes+14 from002E and the32 explicit word stores listed by
-; 1F19 preserve{6170,64D9,65D8,66D7,6817,6957,6A97,6BDB,6CFC}. This is an
-; inductive preservation result for those writers, not an entry validation here.
-; Action5 with DF=1 overwrites high+15 at347F and low+14 at3488 with old map
-; bytes after3459 copied002E. Slot50 starts0E98; visibility4119 clears its+14 at
-; 0EAC. Even slots below50 can be hit by DF=1 visibility clear0DDA..0EA9.
+; Real 7155/715D child returns, saved DI and outer RET remain live SS words.
 ; DS is inherited (ordinary frame relocated09A9);706F itself never sets it.
-; +14 may therefore be any live word outside the stated producer domain, and
-; a near CALL uses the current CS, not an implied far segment from the record.
+; A near CALL uses the current CS, not an implied far segment from the record.
 ;
 ; Let S be entry SP, with intact code, stable SS and ordinary CALL/RET balance.
 ; Saved DI is SS:S-2, alignment S-4, callback S-6; selector AX at70FF and DX
@@ -74,17 +55,6 @@ times -(($-$$) != 0x706f) db 0 ; module start assertion
 ; saves; the outer pop/RET is not an abstract host restore. No IF/DF promise is
 ; added: strip and raster children force IF through CLI/STI and retain DF.
 ; Offsets/SP wrap16; word high byte follows physical low+1 with20-bit wrap.
-; READINESS: CONDITIONAL nine-target preservation under initialized slots,
-; completed publication, DF=0 action/map lifetime, disjoint writers and intact
-; live saves/services. Raw706F and whole-program715B target domains stay OPEN.
-; S12 BOUND: for a reset array, pinned nominal headers limit creation to50h
-; only if4013 snapshots cannot race30CC limit sampling through314B. With this
-; serialized handoff, genuine cursors, initialized/live unchanged callback
-; slots, DF0 at action5 AND visibility writers, no other writer/alias and
-; intact SS target transport, every715B target is IN the nine-value set.
-; This is membership preservation; it does not prove all nine occur per level.
-; Count50 alone is insufficient:DF1 visibility clears slots4C..4F callbacks;
-; DF0 visibility reaches slot50 after an unchecked/raced capacity spill.
 ; DS AT715B: no-strip path inherits706F DS exactly. Strip6F7C saves that DS,
 ;6FAB sets source DS=CX and6FE0 restores the live saved word;7155..715A do
 ; not repair DS. CX restored at7157 is the sprite source segment computed
@@ -96,37 +66,12 @@ times -(($-$$) != 0x706f) db 0 ; module start assertion
 ; balance, callback save is4AE6 and strip DS save4ADA, clear of low SS mirrors
 ; and the normal dirty maps ending48F3. This is a sufficient local placement,
 ; not a proof that arbitrary prior execution preserves that SP/SS/DS domain.
-; READINESS remains CONDITIONAL; target_domain_complete must remain false.
-; V1 POST-SPILL DISPATCH (G.7, build/static/v1-spill.md): characterized owner
-; aliases below are reproduction rules, not newly proved incoming CFG edges.
-; With valid DF0 origins, completed visibility rebuilds yield callback50 in
-; {0000,0100,0101},51..53 in{0000,0001,0100,0101},54 in{0000,0001,0101}.
-; Individual bytes are01 iff inside marker[0EA6+t,0ECE+t],else00 after clear.
-; Rebuild at0080 also marks slot50+20=01: it takes the strip. At00A0 the
-; marker0EBA..0EE2 leaves+20=0 yet marks0ED3; this is the no-strip witness.
-; Both require actual update/gates/save survival; neither is an observed call.
-; IRQ09 changes each callback byte of55/56 independently to00 or94 (scan
-;15/16 or42/43). With last full callback store6170 and no other writer the
-; nine combinations are6170,6100,6194,0070,0000,0094,9470,9400,9494.
-; Key-repeat4D1A has a different recurrence and is not a game-frame writer.
-; Animation target replacements:85=(oldLow)|(lo8(O01)<<8);87=B05;
-;8A=O09;8C=hi8(B0D)|(F0D<<8);8F=hi8(O11)|(oldHigh<<8);
-;91=F15|(oldHigh<<8). B,F,O are live7C0A results,including staleBX on
-; zero definitions,not immutable GROUND templates; see level_objects.asm.
-; Conditional CALL0000 reenters ProgramEntry using the relocated DS operand,
-; not a renderer/RET.0100 executes06 PUSH ES;0101 executesBE8300 MOV SI,83;
-; both join0104,skipping the00FB session CALL (0100 retains an extra word).
-;0001 enters relocated operand0001,then DA06E83A at0004 (x87 escape).
-; At canonical load1010 the prefix isB9198E MOV CX,8E19; other loads differ.
-; Keyboard values0070/0094/6100/6194/9470/9494 enter instruction interiors;
-;9400 is an existing renderer interior,not its entry ABI.9470 is another
-; relocated operand and later meets x87/DWORD POP encodings. Do not execute
-; these bytes using a nine-callback host ABI or infer ordinary return balance.
-; Variable animation/palette words can select code,data or UNKNOWN bytes in
-; current CS; exact static target partitions/byte prefixes are in V1 report.
-; Actual modified bytes,processor/provider continuation and SS save aliases
-; retain U03/U04/U10. No platform profile or native unknown-target stop
-; supplies that continuation. Full715B target_domain_complete remains false.
+; READINESS READY for the legitimate domain: the nine targets above.
+; SPILL ESCAPES (characterized, not legitimate): rebuilt visibility gives
+; slots 50..54 callbacks in {0000,0001,0100,0101}, keyboard make/break writes
+; 00/94 bytes into slots 55/56, animation and palette writers overlay slots
+; 84..98 and D3..D8. The transfer then reaches CS:F(state); no nine-callback
+; ABI applies and native code reports an unsupported escape.
 DrawObjectSprite:
     push di ; @0706F
     mov bx,[di+EntityRecordX-EntityRecordsBase] ; @07070
@@ -188,17 +133,7 @@ loc_70BE:
     shr dx,1 ; @070E9
     shr dx,1 ; @070EB
     mov cx,[di+EntityRecordDrawingYBias-EntityRecordsBase] ; @070ED
-; S19 sprite-saved-target: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
-; Isolated intact-save summary carries70F0 callback to7159 AX/715B CALL,DS=entryDS through strip
-; restore. This is not whole-game membership.
-; Dependencies: Record/callback writer closure; target S-6 and strip DS S-12 survival; SS
-; mirrors/dirty maps/IRQ/provider aliases; absolute stack placement.
-; S17 flow-state: For706F entryS, current DS supplies the word sampled here; it is saved
-; atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX
-; at715B, including the strip path:7159 rereads the saved word, and715A removes
-; alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity
-; (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment
-; guarantee. No target-set membership follows.
+; Callback sampled here is saved at SS:S-6 and reread at 7159 (both paths).
     push word [di+EntityRecordSpriteCallback-EntityRecordsBase] ; @070F0
     mov al,[di+EntityRecordStripSelector-EntityRecordsBase] ; @070F3
     mov di,[di+EntityRecordY-EntityRecordsBase] ; @070F6
@@ -254,24 +189,10 @@ EntitySpriteStripResume:
     pop si ; @07156
     pop cx ; @07157
     pop di ; @07158
-; S19 sprite-saved-target: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
-; Isolated intact-save summary carries70F0 callback to7159 AX/715B CALL,DS=entryDS through strip
-; restore. This is not whole-game membership.
-; Dependencies: Record/callback writer closure; target S-6 and strip DS S-12 survival; SS
-; mirrors/dirty maps/IRQ/provider aliases; absolute stack placement.
 loc_7159:
     pop ax ; @07159
     pop dx ; @0715A
-; S19 sprite-saved-target: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
-; Isolated intact-save summary carries70F0 callback to7159 AX/715B CALL,DS=entryDS through strip
-; restore. This is not whole-game membership.
-; Dependencies: Record/callback writer closure; target S-6 and strip DS S-12 survival; SS
-; mirrors/dirty maps/IRQ/provider aliases; absolute stack placement.
-; S17 flow-state: CALL AX keeps current CS and pushes715D; it does not use a far field in
-; record+14. The local transport proof excludes non-stack writes/IRQs aliasing saved
-; words; S1 rawS=000E still permits the SS:0008 mirror to replace the target. Actual
-; startup-wide stack placement, DF-sensitive record writers and returned DS/SS/provider
-; lifetime remain unclosed; target_domain_complete=false.
+; CALL AX in current CS pushes 715D; target set at the module header.
 EntitySpriteIndirectCall:
     call ax ; @0715B
 EntitySpriteRestoreDI:

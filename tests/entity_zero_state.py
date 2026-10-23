@@ -867,7 +867,6 @@ def compare_case(native, case, *, core):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/bottom-up.md',
         'src/game_code.asm', 'src/program.asm', 'assets/vgalemmi.exe',
         'metadata/symbols.json', 'metadata/hints.json', 'metadata/regions.json',
         'metadata/inputs.json',

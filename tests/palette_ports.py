@@ -322,7 +322,7 @@ def compare(native,case):
 
 
 def input_hashes(native=False):
-    paths=set(video.input_hashes(False))|{'tests/palette_ports.py','tests/display_status.py','docs/palette-ports.md','docs/palette-pointer-frontier.md','c/aligned_read_mask.h'}
+    paths=set(video.input_hashes(False))|{'tests/palette_ports.py','tests/display_status.py','c/aligned_read_mask.h'}
     if native:paths|={'c/palette_ports.c','c/palette_ports.h','c/lemmings_sym.h','tools/cbuild.py','tools/difftest.py','tools/coverage.py'}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

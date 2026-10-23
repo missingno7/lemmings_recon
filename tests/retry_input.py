@@ -352,8 +352,7 @@ def producer_matrix():
 
 
 def input_hashes(native=False):
-    paths = set(common.input_hashes(False)) | {'tests/retry_input.py', 'docs/retry-input.md',
-        'tools/bounded_process.py', 'docs/executable.md', 'docs/interrupts.md', 'src/game_code_late.asm', 'src/entry_services.asm', 'src/image_tail.asm', 'metadata/symbols.json'}
+    paths = set(common.input_hashes(False)) | {'tests/retry_input.py', 'tools/bounded_process.py', 'src/game_code_late.asm', 'src/entry_services.asm', 'src/image_tail.asm', 'metadata/symbols.json'}
     if native: paths |= {'c/retry_input.c', 'c/retry_input.h', 'c/special_blit.h', 'c/regs.h',
         'c/lemmings_sym.h', 'tools/cbuild.py', 'tools/difftest.py', 'tools/coverage.py'}
     return {p: sha((ROOT / p).read_bytes()) for p in sorted(paths)}

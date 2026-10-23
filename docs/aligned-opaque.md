@@ -82,5 +82,5 @@ the temporary game segment after a row, and selecting the wrong final plane
 mask. The complete case list, branch edges, executed addresses and input hashes
 are in `build/aligned-opaque-differential.json`. The body requires intact code,
 constructed memory and quiescent IRQs. It does not translate the arbitrary
-incoming `sub_988B` shared-loop entry, and the far renderer entry at `8822`
+incoming `PlanarAlignedOpaqueFirstPassLoop` block (the first-pass LOOP, not a separate routine entry), and the far renderer entry at `8822`
 remains `UNTRANSLATED`.

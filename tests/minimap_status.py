@@ -510,9 +510,6 @@ def input_hashes():
     paths = (
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/symbols.json',
-        'docs/executable.md', 'docs/next-work.md', 'docs/bottom-up.md',
-        'docs/minimap.md', 'docs/minimap-viewport.md', 'docs/minimap-vga.md',
-        'docs/status-display.md',
         'src/program.asm', 'src/game_code_late.asm',
         'src/minimap.asm', 'src/minimap_viewport.asm',
         'c/minimap_status.c', 'c/minimap_status.h',

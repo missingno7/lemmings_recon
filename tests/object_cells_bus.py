@@ -37,9 +37,7 @@ RESULT_FIELDS = ('value', 'cell_cursor', 'remaining_records',
                  'object_ordinal', 'stack_offset', 'flags')
 REPORT = BUILD / 'object-cells-bus-differential.json'
 INPUT_PATHS = (
-    'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-    'docs/level-initialize-bus-frontier.md', 'docs/interaction-cells.md',
-    'docs/object-cells-bus.md', 'src/level_objects.asm',
+    'src/level_objects.asm',
     'c/object_cells_bus.c', 'c/object_cells_bus.h', 'c/object_cells.c',
     'c/object_cells.h', 'c/special_blit.h', 'c/regs.h', 'c/lemmings_sym.h',
     'tests/object_cells_bus.py', 'tests/object_cells.py',

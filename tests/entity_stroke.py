@@ -716,8 +716,6 @@ def compare_case(native, case, *, core):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-stroke.md',
         'src/entity_graphics.asm', 'src/program.asm', 'assets/vgalemmi.exe', 'metadata/symbols.json', 'metadata/hints.json',
         'metadata/regions.json', 'metadata/inputs.json',
         'c/entity_stroke.c', 'c/entity_stroke.h', 'c/entity_pixel.c',

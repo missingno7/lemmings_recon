@@ -1,161 +1,152 @@
 # Purpose
 
-Understanding is the deliverable; C and SDL3 are derived implementations. The
-goal is the `asm-semantic-oracle-v1` milestone defined in docs/semantic-audit.md:
-a complete, byte-exact, readable ASM specification from which C follows without
-guessing. Measure progress by uncertainty closed (evidence-based classification,
-closed control flow and dispatch domains, data ownership/lifetimes, caller-
-observable contracts), not by C bytes, suite counts or host functionality.
-Native C and the host are downstream verification. Their failures report
-findings; their success never closes static obligations or chooses priorities.
-Primary configuration is DOS VGA + AdLib. Complete reconstruction still accounts
-for PC speaker, Tandy, joystick and every other original path; inventory them,
-never discard them. Do not play the original, build gameplay bots or explore by
-replay. Human-recorded BizHawk/DOSBox-X replays will later be supplementary smoke.
+Understanding is the deliverable. The byte-exact semantic ASM is the permanent
+specification of the pinned DOS VGA Lemmings executable and its executable
+dependencies (protected views, AdLib, Tandy and PC-speaker images). Portable C11
+and the SDL3 host are derived implementations and downstream verification:
 
-# Reconstruction rules
+```
+VGALEMMI.EXE + sound images <- byte exact -> semantic ASM <- bounded differential tests -> C11 -> native/SDL3
+```
 
-Target only the pinned DOS VGA Lemmings executable and its executable dependencies.
-Read docs/executable.md and docs/next-work.md before changing the oracle.
-Priority: static identity, readable exact ASM, complete code/data/CFG accounting,
-then portable C11 and bounded differential tests; SDL3 comes last.
-Never boot the game for discovery. Bounded execution of the unpacker or identified
-routines with constructed state is permitted for independent verification.
-Do not modify assets or neighboring projects; never commit assets, binary images,
-runtime dumps, or downloaded tool binaries. Do not import the legacy interpreter.
-Keep UNKNOWN bytes explicitly unresolved. Classify only from combined evidence:
-initialization, readers, writers, execution paths, overlays, aliases and
-lifetime; one named consumer or a zero fill never classifies a whole run, and
-"not reached by the host" never means dead or unreachable. No INCBIN in reconstructed ASM. Encoding
-exceptions must explain the instruction; no masking unexplained differences.
-The symbol ledger owns names and offsets. Preserve original wrap, flags, segment
-effects, self modification, shared tails and bugs. No shadow game-state copies.
-Run tools/verify.py and relevant tests after changes. Coverage of bytes, translated
-code and executed instructions are separate. Never claim unresolved code is dead.
-The default verifier is the fast identity/ASM/relocation gate. Run
-tools/verify.py --contracts for the full original-only behavioral campaign before
-aggregate coverage acceptance, or when its shared contracts change. Use the
-affected bounded native suites with tools/difftest.py SUITE [SUITE ...] during
-development; --plan previews limits and --list lists suites. The complete native
-campaign requires tools/difftest.py --all; do not restart the whole
-campaign merely to refresh an unrelated edit. A retained report is accepted only
-when its scope and input hashes match; file preservation does not renew evidence.
-Run native differential suites through tools/difftest.py or the run_bounded helper
-in tools/bounded_process.py with a timeout and Windows process-tree commit limit. Keep native
-callback traces bounded; ctypes callback exceptions cannot stop a C loop.
-Timeout, memory-limit or access-budget exhaustion fails verification and must not
-count as a detected differential mutant. Reap workers and remove owned temporary
-DLL directories even after failure. Do not launch unbounded native mutant calls.
-Keep compile and DLL temporary directories under build/ with
-tools/bounded_process.py's temporary_build_directory(..., parent=BUILD).
-Only delegate independent, bounded investigations or C clusters after static
-boundaries are reliable. Workers report the uncertainty resolved, original
-evidence, state/contract changes and regressions; derive counts from the ledger
-and reports instead of duplicating checkpoint bookkeeping.
-For compile-only mutation preflights, use tools/cbuild.py's build() with numeric
-mutation IDs, or include -Wundef with -Werror and retain effective argv/exit for
-every variant. Placeholder macro values and artifact names are not build evidence.
+Priorities: 1. exact identity (absolute); 2. semantic clarity for a translator;
+3. game/platform separation where the program really has it; 4. historical
+resemblance (secondary). Measure progress by how much more of the actual game is
+understood and faithfully reconstructable, not by bytes, suites or test counts.
+Primary configuration is DOS VGA + AdLib. PC speaker, Tandy, joystick and every
+other original path stay inventoried and are eventually understood; they never
+block the primary port and are never discarded.
 
-# Bottom-up convergence
+# Execution policy
 
-Read docs/bottom-up.md when selecting the next region. Use fresh tools/graph.py
---tree and --bottom-up views; TESTED C domains retain their platform/fatal seams.
-Choose the uncertainty that would force a future C translator to guess. Prioritize
-state ownership, record fields, tables, initialization, segment/flag contracts and
-shared tails before local-label cleanup. Keep contracts beside the ASM and names
-in the ledger. Refine physical modules without changing byte order or classifications.
-Choose a coherent semantic operation, not the next CALL instruction or byte gain.
-Translate a leaf when it is the missing dependency; compose already-understood
-call sequences together. Parent checks concentrate on handoffs and shared state;
-do not repeat each child's exhaustive matrix without a new interaction risk.
-Carry original live DS/ES/SS effects explicitly; do not copy Pre2's segment/stack
-assumptions without proving the same contract here. Bootstrap generation must not overwrite
-maintained semantic source. Current dependency order is recorded in docs/next-work.md.
+Static analysis is the default. Never boot or play the original for discovery; no
+gameplay bots, no replay exploration. Run original code (the unpacker or one
+routine at a known boundary with constructed state) only to settle a named
+question static work cannot. Human-recorded BizHawk/DOSBox-X replays will later be
+supplementary end-to-end smoke; they never replace static or routine evidence.
 
-# Semantic readiness before C expansion
+# The loop
 
-Use the scoped gate and matrix in docs/semantic-audit.md. READY requires known
-entry/control flow, relevant state owners/producers/consumers, caller-observed
-inputs/results/side effects, shared-tail/indirect dependencies and platform/IRQ
-seams, with remaining uncertainty stated. CONDITIONAL permits an explicit bounded
-domain; NOT READY means resolve the semantic blocker first. TESTED and decoded
-leaf status are not readiness. Do not demand global UNKNOWN closure before any C.
-For the next cluster, write its short readiness decision beside its ASM contract
-before implementation. Move discovered semantics back to ASM/ledger in that batch.
-Distinguish real game/platform behavior from raw-entry oracle transport. Preserve
-existing alias/flag/stack tests, but do not widen supported artificial provider or
-machine-state domains merely to obtain more tests. Narrow native contracts only
-after proving caller/lifetime invariants; never erase an observable quirk.
+1. Pick the uncertainty that would force a C translator to guess
+   (docs/next-work.md): an unknown function or edge, record/table, resource format,
+   state transition, sound/render algorithm or behavior-affecting platform effect.
+2. Investigate: `tools/where.py ADDR --disasm N`, `tools/graph.py ADDR --asm`,
+   grep. Use `flowstate.py`, `indirect.py`, `protection.py` when they answer that
+   concrete question; they are not mandatory stages.
+3. Improve the source, in order of value: classify UNKNOWN bytes; state, records,
+   fields, tables, dispatch, buffers, state machines; routine contracts (inputs,
+   results, flags/registers/segments callers consume, side effects, shared tails,
+   nonlocal exits, interrupt context); platform vs game; local labels last.
+4. `tools/verify.py` (about 8 s). If it fails, fix or revert before continuing.
+5. Translate understood, coherent operations into C; check them with the affected
+   bounded suite. Compose already-understood children; do not re-prove them.
 
-# Static workstreams and integration
+There is no separate audit or proof stage between these steps. When a cluster's
+translation readiness is not obvious, put one READY/CONDITIONAL line naming the
+bounding dependency beside its ASM contract.
 
-Static analysis is the default method; bounded original execution answers one
-named question. Parallel workers take independent semantic dependencies (a
-frontier's writer domain, a structure's lifetime, a driver's grammar), not byte
-quotas. Workers edit only comments in ASM files they own for that task and
-return names, classifications and hints as an integration patch with evidence,
-resolved dependencies, remaining uncertainty and affected C/tests. The
-supervisor alone applies shared ledger/hints/regions/image_tail changes, rules
-on overlapping findings and runs the exact gate. A resolution must make the
-program more understandable and remove a translator guess; renaming literals or
-recreating historical layout is not progress by itself.
+# Classification
 
-# Minimal simulation and progressive nativization
+Classification (what kind of bytes) and semantics (what they mean) are separate.
 
-We are not building a DOS/PC emulator. For DF, segments, interrupts, BIOS/DOS,
-VGA and timing: first establish their actual effects on game state and
-execution, then model only what preserves those effects in the supported
-configuration, proving invariants from original code and declared platform
-contracts. No arbitrary hardware states, hypothetical interleavings or
-unsupported DOS behavior for completeness' sake; but genuine quirks and
-reachable edge cases stay, and unresolved dependencies stay explicit. Replace
-verified simulated services with native equivalents without changing game
-semantics. The C becomes a clean native engine, not a permanent x86
-transliteration; every simplification cites the original dependency it rests on.
-The x86 memory model, physical stack and interrupt machinery are valid
-intermediate mechanisms; replace them once observable effects and required
-ordering are proven equivalent. Never add locks, bounds checks or fixes that
-change original semantics, and never let C undefined behavior stand in for a
-characterized original out-of-range access: model that access explicitly.
-Results are classed proven (original code), platform-conditional (named
-profile assumptions listed), characterized original nondeterminism (race,
-interleaving, overflow or alias with mechanism, trigger, memory effect and
-consequence) or unresolved (blocks its completeness claim); a platform profile never closes
-interrupt interleavings, stack aliases, callback writers or races.
+- Data: classify when evidence shows the kind: readers/writers, a consumer's
+  stride or index arithmetic, or self-evident content (DOS `$` strings, text,
+  scancode/character maps, zero storage that every decoded accessor writes before
+  reading). Unread bytes inside a proven structure belong to that structure. Data
+  with no identified reader is still data: give it a conservative name (`Unused*`,
+  `*Slack`) and say "no reader identified"; its meaning may stay open.
+- Code: only with a proven incoming edge (direct, table, vector, overlay load).
+  Code-looking bytes without one stay UNKNOWN unless their content proves data.
+- UNKNOWN only where the kind genuinely cannot be decided yet (for example
+  protected or self-modified bytes whose runtime decode is unresolved). A zero
+  fill alone, or one consumer of one field, never classifies a long run.
+- Never call unresolved code dead or unreachable. Keep overlapping roles explicit.
 
-# Platform substitutions
+# Exceptional behavior and blockers
 
-A host or provider substitution names the original service or region it
-bypasses, its input/output/memory/flag/segment contract and its machine
-configuration. The bypassed original obligation stays visible beside the ASM.
-Classify each as a platform substitution with equivalent observable effect,
-omitted/altered original game behavior, or unverified equivalence. Muted sound,
-media-probe policies, IRQ-at-poll scheduling and unbound callbacks define
-supported integration domains; they never complete protected code, sound engines
-or unrestricted interrupt interleavings. Never fabricate success or results.
+Every behavior is in one class: proven from original code; platform-conditional
+under metadata/platform-profile.json; characterized original race, overflow,
+alias or corruption; or unresolved. A characterization states cause, trigger,
+write order, affected memory and resulting control-transfer expression. Then:
 
-# Shared verification and native destination
+- A corrupted-control escape ends the specification at "control transfers to
+  CS:F(state) with the characterized machine state". Do not decode bytes reached
+  only that way or follow arbitrary later machine states. Natively it is an
+  explicit runtime limitation, never success, a no-op or invented recovery.
+- Corruption that continues through ordinary code is preserved by translating
+  that ordinary code over the same memory layout. It needs no separate proof of
+  every later state, damaging writer or surviving count.
+- Not blockers: arbitrary interrupt arrival schedules, unbounded stack/memory
+  corruption outcomes, hypothetical DF/segment/register states with no legitimate
+  producer, re-investigation of an already characterized race. Study them only to
+  resolve a concrete semantic ambiguity of the legitimate program.
+- Real blockers: unknown legitimate callback or dispatch targets, unresolved
+  ordinary control flow, missing behavior-affecting data or format knowledge.
 
-New focused suites use tests/verification.py for original instruction execution,
-canonical bus access, guarded native callbacks and state comparison. Add a shared
-capability when required; do not add another bespoke engine for a tiny leaf.
-Keep fixture providers and independent game expectations outside that engine.
-Migrate affected existing consumers incrementally and preserve their contracts.
-Choose mutation witnesses by distinct contract risks, not a fixed quota.
-Prefer a connected leaf/parent subsystem milestone over isolated byte gains.
-ASM names/comments/offset expressions require the fast exact gate and affected
-static/accounting checks. If emitted bytes and C behavior do not change, do not
-rerun native campaigns just to renew coarse metadata/comment hashes. Their old
-reports remain historical until a genuinely required run refreshes them.
-Local C changes use the affected suite; connected changes add the directly
-affected parent; shared behavior uses affected consumers and --contracts when
-original contracts change; --all remains explicit aggregate acceptance.
-Current quantitative status lives only in docs/completeness.md, reproducible with
-tools/coverage.py --inventory. Current priorities live only in docs/next-work.md;
-old checkpoint narratives belong in docs/convergence-history.md. Subsystem docs
-describe contracts and recorded domains, not perpetual freshness or another total.
-The destination is portable C11 plus explicit platform services and SDL3; no
-intermediate DOS-C target is required. Every behavior-affecting code dependency
-must be explained and implemented in C; unsupported alternatives do not count as
-complete. See docs/architecture.md and docs/verification.md for the native smoke
-test and separate evidence dimensions.
+# Fixed constraints
+
+- Read docs/executable.md before changing the oracle. Never modify assets/,
+  metadata/inputs.json or neighbouring projects; never commit assets, binary
+  images, runtime dumps or downloaded tool binaries; never import the legacy
+  interpreter.
+- No INCBIN or byte includes. Encoding exceptions explain the instruction; never
+  mask differences.
+- The symbol ledgers own names and offsets (`rename.py`, `define.py`; `symtab.py`
+  regenerates C headers). Bootstrap generators (`reconstruct.py`,
+  `sound.py --generate`) never overwrite maintained source.
+- Preserve original wrap, flags, segment effects, self modification, shared tails
+  and bugs, documented at their sites. No shadow game-state copies: C works over
+  the canonical original memory layout.
+- Comments explain purpose, contracts, state meaning, hardware effects, quirks and
+  real uncertainty in plain readable English. No per-instruction narration, test
+  checkpoint narratives or audit evidence codes in maintained source.
+
+# Verification
+
+- ASM names/comments/classification: `tools/verify.py`, plus static/accounting
+  tests only if their inputs changed.
+- C change: the affected suite, `tools/difftest.py SUITE` (`--plan`, `--list`).
+  A connected change adds only the directly affected parent's handoff checks.
+- Changed original extraction/unpacker contracts: `tools/verify.py --contracts`.
+- `tools/difftest.py --all` plus `tools/coverage.py` is explicit aggregate
+  acceptance only. Comment or metadata edits never require rerunning campaigns;
+  old reports remain historical until a genuinely required run refreshes them.
+- Choose mutation witnesses by distinct contract risk, not quota. Do not widen
+  artificial provider or machine-state domains to gain tests. New suites use
+  tests/verification.py; no new CPU engines.
+- Native safety: run native suites only through difftest.py or
+  `bounded_process.run_bounded` with a timeout and process-tree commit limit; keep
+  callback traces bounded; timeouts and limit exhaustion fail (never count as a
+  detected mutant); reap workers; temporary build dirs stay under build/ via
+  `temporary_build_directory(..., parent=BUILD)`. Compile-only mutation preflights
+  use `cbuild.build()` with numeric IDs (or `-Wundef -Werror`) and keep argv/exit.
+
+# Progressive nativization
+
+We are not building a DOS emulator. Model DF, segments, stack, interrupts,
+BIOS/DOS, VGA and timing only as far as they affect game state and output, then
+replace them with native equivalents once the observable effects and ordering are
+shown equivalent; every simplification cites the original dependency. Never add
+locks, bounds checks, fixes or reordered writes; model characterized out-of-range
+accesses explicitly instead of relying on C undefined behavior. A platform
+substitution names the original service it bypasses, its contract and whether it
+is equivalent, altered or unverified, and the bypassed obligation stays visible
+beside the ASM. Never fabricate success.
+
+# Parallel workers
+
+Workers take independent semantic problems with disjoint file ownership and edit
+only files they own for the task. Shared metadata (hints.json, symbols.json,
+regions) comes back as patch files under build/proposals/; the supervisor rules
+on overlaps, integrates, runs the exact gate and commits. A worker reports the
+uncertainty it resolved, its evidence, what remains uncertain and the affected
+C/tests. Audits, test infrastructure or documentation are not worker products by
+themselves.
+
+# Documents
+
+Status: docs/completeness.md (`tools/coverage.py --inventory`). Priorities:
+docs/next-work.md. Freeze bar and completeness measures: docs/semantic-audit.md.
+History: docs/convergence-history.md. Subsystem docs describe contracts, not
+progress. One source of truth: never copy counts or narratives between documents;
+every tool, report and metadata file needs a current consumer.

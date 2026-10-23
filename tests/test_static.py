@@ -67,6 +67,16 @@ class StaticTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             discover(bytes.fromhex('ffd0c3c3'),hints,{'accepted':[]})
 
+    def test_legitimately_closed_indirect_leaves_the_frontier(self):
+        hints=dict(entries=[{'offset':0}],regions=[],code_limit=4,
+                   indirect_transfers=[dict(address=0,bytes='ffd0',targets=[3],legitimate_closed=True,
+                       evidence='Constructed callback slot',closure='Only legitimate writer stores 3')])
+        result=discover(bytes.fromhex('ffd0c3c3'),hints,{'accepted':[]})
+        known=[e for e in result['edges'] if e['kind']=='indirect_call']
+        self.assertTrue(known[0]['target_domain_complete'])
+        self.assertEqual(result['unresolved'],[])
+        self.assertEqual(result['closed_transfers'][0]['known_targets'],[3])
+
     def test_external_iret_chain_has_explicit_conditional_return(self):
         hints=dict(entries=[{'offset':0}],regions=[],code_limit=5,
             external_transfers=[dict(address=0,bytes='ff2e0000',pointer={'frame':0,'offset':0},

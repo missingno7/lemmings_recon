@@ -475,8 +475,7 @@ def original_case(case, memory, regs, device, *, core):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/status-display.md', 'assets/vgalemmi.exe',
+        'assets/vgalemmi.exe',
         'assets/main.dat', 'assets/adlib.dat', 'assets/tandysnd.dat',
         'metadata/oracle.json', 'metadata/symbols.json', 'metadata/inputs.json',
         'metadata/regions.json', 'metadata/hints.json', 'metadata/toolchain-lock.json',

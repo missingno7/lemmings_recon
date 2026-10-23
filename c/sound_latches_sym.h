@@ -30,6 +30,8 @@
 #define ADLIB_sub_01B3 0x01B3u
 #define ADLIB_KeyOffTimedEvent 0x01C0u
 #define ADLIB_sub_01C0 0x01C0u
+#define ADLIB_ControlToken 0x01CEu
+#define ADLIB_SetDuration 0x01ECu
 #define ADLIB_SetOperatorLevels 0x01F4u
 #define ADLIB_SelectInstrument 0x0248u
 #define ADLIB_StepChannelPitch 0x0339u
@@ -41,6 +43,7 @@
 #define ADLIB_ReleaseBeforeNextEvent 0x03CAu
 #define ADLIB_sub_03CA 0x03CAu
 #define ADLIB_StreamCommandTargets 0x03EAu
+#define ADLIB_RedirectOrderList 0x03FAu
 #define ADLIB_AdvanceOrder 0x0415u
 #define ADLIB_sub_0415 0x0415u
 #define ADLIB_EnterPattern 0x041Fu
@@ -57,12 +60,19 @@
 #define ADLIB_sub_0457 0x0457u
 #define ADLIB_ProcessEffectRequest 0x051Cu
 #define ADLIB_sub_051C 0x051Cu
+#define ADLIB_GrantEffectChannel 0x053Du
 #define ADLIB_WriteOplRegister 0x0559u
 #define ADLIB_sub_0559 0x0559u
 #define ADLIB_SongHeaderWord0 0x05A8u
+#define ADLIB_UnusedWord05AA 0x05AAu
 #define ADLIB_Channels 0x05ACu
+#define ADLIB_UnusedJukeboxScreenText 0x0660u
+#define ADLIB_UnusedJukeboxScancodeMap 0x0829u
+#define ADLIB_UnusedNoCardMessage 0x0889u
 #define ADLIB_OplBasePort 0x08A3u
+#define ADLIB_UnusedWord08A5 0x08A5u
 #define ADLIB_LevelToAttenuation 0x08A7u
+#define ADLIB_FrequencyTable 0x0927u
 #define ADLIB_FrequencyRowStart00 0x0927u
 #define ADLIB_FrequencyRowStart01 0x0947u
 #define ADLIB_FrequencyRowStart02 0x0967u
@@ -77,6 +87,7 @@
 #define ADLIB_FrequencyRowStart11 0x0A87u
 #define ADLIB_NoteOctave 0x0AA7u
 #define ADLIB_NoteSemitone 0x0B07u
+#define ADLIB_AlignmentSlack0B67 0x0B67u
 #define ADLIB_MusicInstrumentBank 0x0B68u
 #define ADLIB_TempoReload 0x0B6Au
 #define ADLIB_TempoPhase 0x0B6Bu
@@ -172,9 +183,11 @@
 #define ADLIB_Song03InstrumentBank 0x13A5u
 #define ADLIB_Instrument13A5 0x13A5u
 #define ADLIB_Instrument13B5 0x13B5u
+#define ADLIB_UnusedInstrument13C5 0x13C5u
 #define ADLIB_Instrument13D5 0x13D5u
 #define ADLIB_Instrument13E5 0x13E5u
 #define ADLIB_Instrument13F5 0x13F5u
+#define ADLIB_UnusedInstrument1405 0x1405u
 #define ADLIB_Instrument1415 0x1415u
 #define ADLIB_Song04Header 0x1425u
 #define ADLIB_Song04Channel0Orders 0x1431u
@@ -230,6 +243,7 @@
 #define ADLIB_Pattern1A29 0x1A29u
 #define ADLIB_Pattern1A4D 0x1A4Du
 #define ADLIB_Pattern1A6B 0x1A6Bu
+#define ADLIB_UnusedPattern1A8D 0x1A8Du
 #define ADLIB_Pattern1A91 0x1A91u
 #define ADLIB_Pattern1A98 0x1A98u
 #define ADLIB_Pattern1AA7 0x1AA7u
@@ -377,6 +391,7 @@
 #define ADLIB_Instrument2ECD 0x2ECDu
 #define ADLIB_Instrument2EDD 0x2EDDu
 #define ADLIB_Instrument2EED 0x2EEDu
+#define ADLIB_UnusedInstrument2EFD 0x2EFDu
 #define ADLIB_Song0AHeader 0x2F0Du
 #define ADLIB_Song0AChannel0Orders 0x2F1Bu
 #define ADLIB_Song0AChannel1Orders 0x2F3Du
@@ -502,10 +517,20 @@
 #define ADLIB_Pattern3DEF 0x3DEFu
 #define ADLIB_Pattern3E0D 0x3E0Du
 #define ADLIB_Song0CInstrumentBank 0x3E50u
+#define ADLIB_UnusedInstrument3E50 0x3E50u
+#define ADLIB_UnusedInstrument3E60 0x3E60u
 #define ADLIB_Instrument3E70 0x3E70u
 #define ADLIB_Instrument3E80 0x3E80u
+#define ADLIB_UnusedInstrument3E90 0x3E90u
+#define ADLIB_UnusedInstrument3EA0 0x3EA0u
+#define ADLIB_UnusedInstrument3EB0 0x3EB0u
+#define ADLIB_UnusedInstrument3EC0 0x3EC0u
 #define ADLIB_Instrument3ED0 0x3ED0u
+#define ADLIB_UnusedInstrument3EE0 0x3EE0u
 #define ADLIB_Instrument3EF0 0x3EF0u
+#define ADLIB_UnusedInstrument3F00 0x3F00u
+#define ADLIB_UnusedInstrument3F10 0x3F10u
+#define ADLIB_UnusedInstrument3F20 0x3F20u
 #define ADLIB_Instrument3F30 0x3F30u
 #define ADLIB_Song0DHeader 0x3F40u
 #define ADLIB_Song0DChannel0Orders 0x3F4Cu
@@ -528,6 +553,7 @@
 #define ADLIB_Instrument4133 0x4133u
 #define ADLIB_Instrument4143 0x4143u
 #define ADLIB_Instrument4153 0x4153u
+#define ADLIB_UnusedInstrument4163 0x4163u
 #define ADLIB_Song0EHeader 0x4173u
 #define ADLIB_Song0EChannel0Orders 0x417Fu
 #define ADLIB_Song0EChannel1Orders 0x4197u
@@ -591,6 +617,7 @@
 #define ADLIB_Song10InstrumentBank 0x493Bu
 #define ADLIB_Instrument493B 0x493Bu
 #define ADLIB_Instrument494B 0x494Bu
+#define ADLIB_UnusedInstrument495B 0x495Bu
 #define ADLIB_Instrument496B 0x496Bu
 #define ADLIB_Instrument497B 0x497Bu
 #define ADLIB_Instrument498B 0x498Bu
@@ -633,6 +660,7 @@
 #define ADLIB_Song12InstrumentBank 0x4E53u
 #define ADLIB_Instrument4E53 0x4E53u
 #define ADLIB_Instrument4E63 0x4E63u
+#define ADLIB_UnusedInstrument4E73 0x4E73u
 #define ADLIB_Instrument4E83 0x4E83u
 #define ADLIB_Instrument4E93 0x4E93u
 #define ADLIB_Instrument4EA3 0x4EA3u
@@ -715,6 +743,7 @@
 #define ADLIB_Instrument55B3 0x55B3u
 #define ADLIB_Instrument55C3 0x55C3u
 #define ADLIB_Instrument55D3 0x55D3u
+#define ADLIB_EffectDirectory 0x55E3u
 #define ADLIB_EffectDirectoryBase 0x55E3u
 #define ADLIB_Effect01Stream 0x5609u
 #define ADLIB_Effect02Stream 0x560Du

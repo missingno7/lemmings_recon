@@ -447,7 +447,7 @@ def input_hashes():
            'tests/entity_countdown.py','tests/sound_latches.py','tests/minimap_vga.py',
            'metadata/symbols.json','metadata/oracle.json','metadata/toolchain-lock.json',
            'metadata/sound-oracle.json','src/game_code.asm','src/image_tail.asm',
-           'docs/entity-countdown.md','assets/vgalemmi.exe','assets/main.dat']
+           'assets/vgalemmi.exe','assets/main.dat']
     for driver in sound.TAILS:
         paths += [f'metadata/{driver}-symbols.json',f'src/sound/{driver}.asm',f'assets/{driver}.dat']
     return {name:sha((ROOT/name).read_bytes()) for name in paths}

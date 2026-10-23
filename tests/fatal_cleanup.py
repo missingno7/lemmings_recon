@@ -460,7 +460,7 @@ def compare(native,case):
 
 def input_hashes(native=False):
     paths=set(timer.input_hashes(False))|set(vectors.input_hashes(False))
-    paths.update(('tests/fatal_cleanup.py','docs/fatal-cleanup.md'))
+    paths.update(('tests/fatal_cleanup.py',))
     if native:paths.update(('c/fatal_cleanup.c','c/fatal_cleanup.h','c/timer_restore.c','c/timer_restore.h',
         'c/vector_restore.c','c/vector_restore.h','c/video_restore.c','c/video_restore.h','c/lemmings_sym.h',
         'c/regs.h','c/special_blit.h','tools/cbuild.py','tools/coverage.py','tools/difftest.py'))

@@ -575,7 +575,6 @@ def compare_case(native, case, *, core):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/bottom-up.md',
         'src/game_code.asm', 'src/entity_graphics.asm',
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat',

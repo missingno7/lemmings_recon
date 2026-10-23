@@ -764,8 +764,6 @@ def input_paths():
         'metadata/toolchain-lock.json', 'src/program.asm', 'src/decimal_fields.asm',
         'src/entity_selection.asm', 'src/game_code_late_after_selection.asm',
         'src/game_code_late_after_decimal.asm', 'src/image_tail.asm',
-        'docs/executable.md', 'docs/next-work.md', 'docs/bottom-up.md',
-        'docs/entity-actions.md', 'docs/decimal-field.md',
         'c/decimal_field.c', 'c/decimal_field.h', 'c/regs.h',
         'c/special_blit.h', 'c/lemmings_sym.h', 'tests/decimal_field.py',
         'tests/minimap_vga.py', 'tools/unpack.py', 'tools/common.py',

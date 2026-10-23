@@ -640,8 +640,7 @@ def _worker(build_directory):
         'tests/minimap_vga.py','tests/dat_io.py','tests/dat_io_c.py',
         'tools/common.py','tools/unpack.py','tools/cbuild.py',
         'tools/bounded_process.py','metadata/symbols.json','build/unpack.json',
-        'src/planar_drawing.asm','docs/shifted-drawing.md',
-        'docs/shifted-mask-effects.md','docs/shifted-masked.md')
+        'src/planar_drawing.asm')
     report=dict(image='main',image_sha256=sha(IMAGE),
         ranges={'890E..8B41':dict(inclusive='890E..8B41',
             range_sha256=sha(IMAGE[START:END]),physical_code_bytes=564,

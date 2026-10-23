@@ -290,7 +290,7 @@ def edges():
 def hashes():
     paths = set(shared.hashes()) | set(aligned.input_hashes())
     paths.update(('c/sprite_shift_banks.c', 'c/sprite_shift_banks.h',
-                  'tests/sprite_shift_banks.py', 'docs/sprite-shift-banks.md'))
+                  'tests/sprite_shift_banks.py'))
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 
 

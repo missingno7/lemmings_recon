@@ -346,7 +346,7 @@ def compare(native,case):
 
 
 def input_hashes(native=False):
-    paths=set(cleanup.input_hashes(native));paths.update(('tests/file_error.py','docs/file-error.md'))
+    paths=set(cleanup.input_hashes(native));paths.update(('tests/file_error.py',))
     if native:paths.update(('c/file_error.c','c/file_error.h'))
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

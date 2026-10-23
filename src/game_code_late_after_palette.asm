@@ -240,7 +240,15 @@ LoadMainResourceSections:
     mov es,[UiGraphicsBufferSegment-GameDataImage] ; @05945
     mov ds,[UiGraphicsBufferSegment-GameDataImage] ; @05949
     call DecodeDatPreservingSegment ; @0594D
-sub_5950:
+; Return point of the section-3 decode CALL 594D inside LoadMainResourceSections
+; (legacy lifter split, not an entry). Continues the open main.dat handle (BX):
+; section 4 to ([1FEE]+0F21h):0000 (word add wraps; second half of the UI image),
+; then section 5, the built-in PC-speaker driver, into the code image at the
+; relocated segment operand 5968 (load+0842h, overlaying image 08420..08715;
+; later entered as INT60 at 0842:0182). Each decode keeps BX and returns with the
+; caller DS restored from the live stack. PUSH BX/POP BX at 5964 is a no-op pair.
+; Covered by c/main_resources.c with its parent.
+MainResourceSections4And5:
     pop ds ; @05950
     push ds ; @05951
     mov ax,[UiGraphicsBufferSegment-GameDataImage] ; @05952
@@ -264,7 +272,13 @@ MainResourceSoundSegmentOperand5968 equ $+1
     pop ds ; @05975
     cmp byte [ConfigurationOption200E-GameDataImage],0xff ; @05976
     jnz loc_59BA ; @0597B
-sub_597D:
+; Optional section 6, taken only when ConfigurationOption200E equals FFh (the
+; /d, /x or interactive option path); otherwise the routine returns at 59BA.
+; Decodes to [1FE4]:0000, repeats the section-2 plane copy (57D1 to VGA F91F,
+; same literal inputs), then copies 0720h glyph bytes from source 1900 to
+; [1FEC]:00A0, keeping the first A0h bytes from section 2. The REP MOVSB follows
+; live DF. Falls through to the shared RET 59BA. Covered by c/main_resources.c.
+MainResourceOptionalSection6:
     push ds ; @0597D
     mov es,[GraphicsResourceSegment-GameDataImage] ; @0597E
     mov ds,[GraphicsResourceSegment-GameDataImage] ; @05982

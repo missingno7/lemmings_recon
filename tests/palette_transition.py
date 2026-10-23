@@ -333,7 +333,7 @@ def compare(native,case,core):
 
 
 def input_hashes(native=False):
-    paths=set(rows.input_hashes(native))|set(ports.input_hashes(native))|{'tests/palette_transition.py','docs/palette-transition.md'}
+    paths=set(rows.input_hashes(native))|set(ports.input_hashes(native))|{'tests/palette_transition.py'}
     paths|={'tests/verification.py','tests/minimap_vga.py','tools/difftest.py','src/input_menu_and_retry.asm','src/palette_frontends.asm','c/lemmings_sym.h','c/regs.h'}
     if native:
         for source in source_files('palette_transition'):

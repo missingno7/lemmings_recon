@@ -25,8 +25,6 @@ INPUTS = (
     'c/regs.h', 'c/special_blit.h',
     'tools/cbuild.py',
     'metadata/symbols.json', 'src/game_code.asm', 'src/level_initialize.asm',
-    'docs/level-header.md', 'docs/level-header-contract.md',
-    'docs/level-header-ownership.md',
 )
 
 

@@ -845,8 +845,6 @@ def producer_handoff(native):
 
 def input_hashes():
     paths = (
-        'AGENTS.md', 'docs/executable.md', 'docs/next-work.md',
-        'docs/bottom-up.md', 'docs/entity-simulation.md',
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/oracle.json', 'metadata/symbols.json',
         'metadata/hints.json', 'metadata/regions.json', 'metadata/inputs.json',
@@ -867,7 +865,6 @@ def input_hashes():
         'tests/sound_latches.py', 'tests/minimap_vga.py', 'tools/resources.py',
         'tools/bounded_process.py', 'tools/cbuild.py', 'tools/common.py',
         'tools/coverage.py', 'tools/difftest.py', 'tools/unpack.py',
-        'docs/entity-display.md', 'docs/indirect-callbacks.md',
         'requirements.txt',
     )
     return {path: sha((ROOT / path).read_bytes()) for path in paths}

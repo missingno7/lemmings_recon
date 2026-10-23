@@ -257,7 +257,7 @@ def compare(native,case,core):
 
 
 def input_hashes(native=False):
-    paths=set(glyph.input_hashes(False))|{'tests/display_pages.py','tests/test_vga_write_mode1.py','docs/minimap-vga.md','docs/display-pages.md'}
+    paths=set(glyph.input_hashes(False))|{'tests/display_pages.py','tests/test_vga_write_mode1.py'}
     if native:paths|={'c/display_pages.c','c/display_pages.h','c/vga_clear.c','c/vga_clear.h','c/video_restore.h','c/regs.h','c/special_blit.h','c/lemmings_sym.h','tools/cbuild.py','tools/difftest.py','tools/coverage.py'}
     return {p:sha((ROOT/p).read_bytes()) for p in sorted(paths)}
 

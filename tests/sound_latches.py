@@ -378,7 +378,7 @@ def input_hashes():
              'tools/bounded_process.py', 'tools/sound_latch_symtab.py',
              'tools/resources.py', 'tools/common.py', 'tests/sound_latches.py',
              'tests/minimap_vga.py', 'metadata/sound-oracle.json',
-             'metadata/toolchain-lock.json', 'docs/sound-latches.md']
+             'metadata/toolchain-lock.json']
     for name in TAILS:
         paths += [f'src/sound/{name}.asm', f'metadata/{name}-symbols.json',
                   f'metadata/{name}-regions.json', f'assets/{name}.dat']

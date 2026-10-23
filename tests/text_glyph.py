@@ -224,7 +224,7 @@ def compare(native, case, mode):
 
 
 def input_hashes(native=False):
-    paths = set(video.input_hashes(False)) | {'tests/text_glyph.py', 'docs/text-glyph.md'}
+    paths = set(video.input_hashes(False)) | {'tests/text_glyph.py'}
     pending = [ROOT / 'tests/text_glyph.py']
     while pending:
         for node in ast.walk(ast.parse(pending.pop().read_text(encoding='utf-8-sig'))):

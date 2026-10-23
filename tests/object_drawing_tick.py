@@ -640,8 +640,7 @@ def input_hashes():
         'aligned_read_mask', 'shifted_mask_effects', 'shifted_opaque', 'shifted_masked',
         'shifted_protected', 'shifted_read_mask')
     paths = {f'c/{name}{ext}' for name in c_sources for ext in ('.c', '.h')}
-    paths |= {'AGENTS.md', 'docs/executable.md', 'docs/next-work.md', 'docs/bottom-up.md',
-        'docs/object-records.md', 'src/object_graphics_tick.asm',
+    paths |= {'src/object_graphics_tick.asm',
         'src/program.asm', 'c/regs.h', 'c/lemmings_sym.h', 'c/special_blit.h',
         'c/object_animation.c', 'c/object_animation.h',
         'metadata/symbols.json', 'metadata/inputs.json', 'metadata/oracle.json',

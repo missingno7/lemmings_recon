@@ -120,10 +120,18 @@ loc_6C15:
     add di,byte +0x27 ; @06C73
     pop cx ; @06C76
     dec cx ; @06C77
-    jz sub_6C7C ; @06C78
-sub_6C7A:
+    jz EntityWideSprite32OrPlane1 ; @06C78
+; Interior blocks of DrawEntityWideSprite32 (6BDB..6CFB) down to 6CFA: legacy
+; lifter splits, not entries (only local branches/fall-throughs reach them; none
+; is a known 715B callback target). Here: pass 1 row back edge, taken while the
+; count reread from the stack and decremented is nonzero (DEC CX/JZ/JMP form).
+EntityWideSprite32NextMaskedRow:
     jmp short loc_6C15 ; @06C7A
-sub_6C7C:
+; Pass 2 setup after the masked pass: DI=BP (destination base), set/reset
+; off, GC3=10h (OR), bit mask FFh, MOV DL,C4h keeps DH, map mask 02h (plane 1),
+; CX=20h rows. Each row: latch read before each of five writes (LODSW, AH,
+; LODSW, AH, LODSB) under one CLI..STI, ADD DI,27h, POP CX, LOOP.
+EntityWideSprite32OrPlane1:
     db 0x8b,0xfd ; ENCODED: mov di,bp (NASM chooses a different encoding) ; @06C7C
     mov ax,0x1 ; @06C7E
     mov [ss:0xc],ax ; @06C81
@@ -193,7 +201,9 @@ loc_6CA3:
     add di,byte +0x27 ; @06CC1
     pop cx ; @06CC4
     loop loc_6CA3 ; @06CC5
-sub_6CC7:
+; Pass 3 setup: DI=BP again, map mask 04h (plane 2), CX=20h rows; same row
+; body as pass 2.
+EntityWideSprite32OrPlane2:
     db 0x8b,0xfd ; ENCODED: mov di,bp (NASM chooses a different encoding) ; @06CC7
     mov dl,0xc4 ; @06CC9
     mov ax,0x402 ; @06CCB
@@ -254,7 +264,8 @@ loc_6CD6:
     add di,byte +0x27 ; @06CF4
     pop cx ; @06CF7
     loop loc_6CD6 ; @06CF8
-sub_6CFA:
+; Exit: POP DS restores the caller DS saved at 6BDB, then RET 6CFB.
+EntityWideSprite32RestoreDs:
     pop ds ; @06CFA
 EntityWideSprite32Return:
     ret ; @06CFB
