@@ -448,7 +448,7 @@
     "address": 58,
     "segment": "driver-relative",
     "kind": "continuation",
-    "size": null,
+    "size": 51,
     "symbol_name": "adlib_ResetService",
     "aliases": [
       "adlib_loc_003A"
@@ -457,8 +457,15 @@
     "evidence": [
       "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "semantic_contract": "003A saves DS/AX/DI/SI/CX/DX; StopMusic uses retained count, then27 DF-sensitive reset packets, then clears all9 modes; leaves F0/EF/phase and most state. BX/ES/BP untouched in ordinary body. Live IRET applies caller frame."
+    "verification_status": "TESTED",
+    "semantic_contract": "003A saves DS/AX/DI/SI/CX/DX; StopMusic uses retained count, then27 DF-sensitive reset packets, then clears all9 modes; leaves F0/EF/phase and most state. BX/ES/BP untouched in ordinary body. Live IRET applies caller frame.",
+    "c_code_ranges": [
+      [
+        58,
+        109
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 109,
@@ -477,7 +484,7 @@
     "address": 163,
     "segment": "driver-relative",
     "kind": "continuation",
-    "size": null,
+    "size": 74,
     "symbol_name": "adlib_DetectService",
     "aliases": [
       "adlib_loc_00A3"
@@ -486,8 +493,15 @@
     "evidence": [
       "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "semantic_contract": "Status test at literal0388 while writes use08A3; result AL=1 iff first&E0=0 and second&E0=C0 else0. Ordinary return AH=21,BX=8000|(first&E0),CX=0,DX=0388; DS restored,SI/DI/BP/ES untouched; actual IRET frame flags."
+    "verification_status": "TESTED",
+    "semantic_contract": "Status test at literal0388 while writes use08A3; result AL=1 iff first&E0=0 and second&E0=C0 else0. Ordinary return AH=21,BX=8000|(first&E0),CX=0,DX=0388; DS restored,SI/DI/BP/ES untouched; actual IRET frame flags.",
+    "c_code_ranges": [
+      [
+        163,
+        237
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 237,
@@ -556,7 +570,7 @@
     "address": 277,
     "segment": "driver-relative",
     "kind": "continuation",
-    "size": null,
+    "size": 98,
     "symbol_name": "adlib_UpdateService",
     "aliases": [
       "adlib_loc_0115"
@@ -565,14 +579,21 @@
     "evidence": [
       "Entry0000 direct command dispatcher target/IRET boundary; see sound-latches.md"
     ],
-    "verification_status": "UNTRANSLATED",
-    "semantic_contract": "Save AX/BX/CX/DX/DI/SI/DS/ES, select DS=ES=CS; song request then effect request then phase DEC then9 ascending channel visits; mode2 every update, others phase0 only; phase reload after scan; actual saved register restores/IRET, BP untouched."
+    "verification_status": "TESTED",
+    "semantic_contract": "Save AX/BX/CX/DX/DI/SI/DS/ES, select DS=ES=CS; song request then effect request then phase DEC then9 ascending channel visits; mode2 every update, others phase0 only; phase reload after scan; actual saved register restores/IRET, BP untouched.",
+    "c_code_ranges": [
+      [
+        277,
+        375
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 375,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 39,
     "symbol_name": "adlib_AdvanceChannel",
     "aliases": [
       "adlib_sub_0177"
@@ -1154,20 +1175,27 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        375,
+        414
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 414,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 21,
     "symbol_name": "adlib_StreamFetch",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "Channel countdown expiry0194 and instrument/length/control/effect tails enter byte fetch; BX increments once before token classification."
     ],
-    "verification_status": "STATIC",
+    "verification_status": "TESTED",
     "stream_schema_version": 1,
     "stream_schema": [
       {
@@ -1234,13 +1262,20 @@
     "format_contract": "Relative base0B6E; directory absolute words for IDs01..15; header word0,relative bank word,tempo byte,count byte,relative order words; order word0 sentinel followed by relative list pointer; instrument stride16 but only00..0C,0E read; effect directory absolute at55E3+2*ID,bank54E3. Every pointer/arithmetic wraps per original instruction; no extent checks.",
     "pinned_payload_contract": "See adlib_SongDirectory.payload_audit and per-header/order/stream/bank symbols:21 songs/69 channels,378 score roots,18 FX roots; zero88..AF at token boundaries. Raw unchecked01EA seam is unchanged.",
     "pinned_level_contract": "2179 C1 immediately precedes217A B0 6F, so0248..0338 loads current05AC pair DL=00/DH=03 in this same fetch; writes40/43. No incoming order points to217A. Raw-entry B-family uses liveDX without reload.",
-    "producer_domain_contract": "S13: adlib_StreamCommandTargets.producer_domain closes all recovered main ID -> retained stream-pointer -> token paths in its serial initialized DF0/nonalias/live-image domain, even arbitrary byte request IDs. Raw01EA remains unresolved outside it."
+    "producer_domain_contract": "S13: adlib_StreamCommandTargets.producer_domain closes all recovered main ID -> retained stream-pointer -> token paths in its serial initialized DF0/nonalias/live-image domain, even arbitrary byte request IDs. Raw01EA remains unresolved outside it.",
+    "c_code_ranges": [
+      [
+        414,
+        435
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 435,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 13,
     "symbol_name": "adlib_FinishTimedEvent",
     "aliases": [
       "adlib_sub_01B3"
@@ -1279,13 +1314,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        435,
+        448
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 448,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 14,
     "symbol_name": "adlib_KeyOffTimedEvent",
     "aliases": [
       "adlib_sub_01C0"
@@ -1342,65 +1384,100 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        448,
+        462
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 462,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 30,
     "symbol_name": "adlib_ControlToken",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "StreamFetch 01A3 JS branches here for tokens 80..FF; classifies duration, instrument, level and table commands."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        462,
+        492
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 492,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 8,
     "symbol_name": "adlib_SetDuration",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "Tokens E0..FF branch here from 01D2: duration +11 := token-DF."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        492,
+        500
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 500,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 84,
     "symbol_name": "adlib_SetOperatorLevels",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "B0..BF comparison01DA..01DE branches here; consumes one byte and uses live DL/DH for OPL register numbers, without reloading channel+05."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        500,
+        584
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 584,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 241,
     "symbol_name": "adlib_SelectInstrument",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "C0..DF comparison01D4..01D8 branches here; mixed byte/word index maps C0 to01F0, C1..DF to00..01E0; writes16-byte-stride instrument consumers."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        584,
+        825
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 825,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 16,
     "symbol_name": "adlib_StepChannelPitch",
     "aliases": [
       "adlib_sub_0339"
@@ -1507,13 +1584,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        825,
+        841
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 841,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 97,
     "symbol_name": "adlib_WriteChannelPitch",
     "aliases": [
       "adlib_sub_0349"
@@ -1597,7 +1681,7 @@
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm",
       "S6 wrapped pitch indexesF5/F7/F8/FB/FC read header/order bytes; row words 1..15 are never selected because the selector is always a multiple of 20h, even for raw indexes; they are unread entries of adlib_FrequencyTable. See payload_audit."
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "pinned_payload_pitch_reads": [
       {
         "index": 245,
@@ -1778,13 +1862,20 @@
           7110
         ]
       }
-    ]
+    ],
+    "c_code_ranges": [
+      [
+        841,
+        938
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 938,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 32,
     "symbol_name": "adlib_StopMusicChannels",
     "aliases": [
       "adlib_sub_03AA"
@@ -1835,13 +1926,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        938,
+        970
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 970,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 32,
     "symbol_name": "adlib_ReleaseBeforeNextEvent",
     "aliases": [
       "adlib_sub_03CA"
@@ -1908,7 +2006,14 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        970,
+        1002
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1002,
@@ -2588,20 +2693,27 @@
     "address": 1018,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 27,
     "symbol_name": "adlib_RedirectOrderList",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "AdvanceOrder 041D JCXZ target for a zero order word: follows the relative redirect word once."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1018,
+        1045
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1045,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 10,
     "symbol_name": "adlib_AdvanceOrder",
     "aliases": [
       "adlib_sub_0415"
@@ -3131,13 +3243,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1045,
+        1055
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1055,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 17,
     "symbol_name": "adlib_EnterPattern",
     "aliases": [
       "adlib_sub_041F"
@@ -3667,13 +3786,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1055,
+        1072
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1072,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 10,
     "symbol_name": "adlib_SetTranspose",
     "aliases": [
       "adlib_sub_0430"
@@ -4203,13 +4329,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1072,
+        1082
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1082,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 13,
     "symbol_name": "adlib_EndChannel",
     "aliases": [
       "adlib_sub_043A"
@@ -4242,13 +4375,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1082,
+        1095
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1095,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 8,
     "symbol_name": "adlib_SetAscendingPitchStep",
     "aliases": [
       "adlib_sub_0447"
@@ -4778,13 +4918,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1095,
+        1103
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1103,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 8,
     "symbol_name": "adlib_SetDescendingPitchStep",
     "aliases": [
       "adlib_sub_044F"
@@ -5314,13 +5461,20 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1103,
+        1111
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1111,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 197,
     "symbol_name": "adlib_ProcessSongRequest",
     "aliases": [
       "adlib_sub_0457"
@@ -5635,15 +5789,22 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED",
+    "verification_status": "TESTED",
     "semantic_contract": "EE0 copies ED into AL/EF; otherwise consults retained EF without loading AL. Ordinary EF0 while EE!=0 queues song changes. Nonzero EF clears ED/EF, AL>=16 stops music, else selects header. Count unchecked. All9 modes cleared; only count records initialized; all9 keyoff and OPL global setup; phase1.",
-    "public_boundary_invariant": "Loaded EF0 is preserved at every serial recognized public-service boundary with ordinary memory/stack:0461 sets it only inside processing;0473 clears it before selection. Thus EE!=0 impliesEF0 under that invariant, regardless of AH03/AH05 latch values. The raw EE!=0/EF!=0 liveAL path is still real outside it."
+    "public_boundary_invariant": "Loaded EF0 is preserved at every serial recognized public-service boundary with ordinary memory/stack:0461 sets it only inside processing;0473 clears it before selection. Thus EE!=0 impliesEF0 under that invariant, regardless of AH03/AH05 latch values. The raw EE!=0/EF!=0 liveAL path is still real outside it.",
+    "c_code_ranges": [
+      [
+        1111,
+        1308
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1308,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 33,
     "symbol_name": "adlib_ProcessEffectRequest",
     "aliases": [
       "adlib_sub_051C"
@@ -6223,27 +6384,41 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED",
-    "semantic_contract": "F0 in01..12, first mode0 in064C/0638/0624/0610 wins; otherwise latch retained. Clear F0,set mode2,slide0,fetch absolute stream immediately. Following ascending channel scan may advance the allocated channel again in this same service."
+    "verification_status": "TESTED",
+    "semantic_contract": "F0 in01..12, first mode0 in064C/0638/0624/0610 wins; otherwise latch retained. Clear F0,set mode2,slide0,fetch absolute stream immediately. Following ascending channel scan may advance the allocated channel again in this same service.",
+    "c_code_ranges": [
+      [
+        1308,
+        1341
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1341,
     "segment": "driver-relative",
     "kind": "label",
-    "size": null,
+    "size": 28,
     "symbol_name": "adlib_GrantEffectChannel",
     "aliases": [],
     "confidence": "PROVEN",
     "evidence": [
       "ProcessEffectRequest 0534 branch target when a free effect record is found."
     ],
-    "verification_status": "STATIC"
+    "verification_status": "TESTED",
+    "c_code_ranges": [
+      [
+        1341,
+        1369
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1369,
     "segment": "driver-relative",
     "kind": "entry",
-    "size": null,
+    "size": 71,
     "symbol_name": "adlib_WriteOplRegister",
     "aliases": [
       "adlib_sub_0559"
@@ -6299,8 +6474,15 @@
       "Static call/table target or signature-matched legacy lead",
       "S2 static instruction/producer/state audit; maintained semantic contract beside body in src/sound/adlib.asm"
     ],
-    "verification_status": "UNTRANSLATED",
-    "semantic_contract": "AL register/AH value; DS08A3 base; OUT base +12 IN, OUT(base+1) +47 IN. AH preserved,AL final input,DX live-stack restored. Flags from INC(base) except CF preserved. No hardware status retry/timeout; base+1 wraps16."
+    "verification_status": "TESTED",
+    "semantic_contract": "AL register/AH value; DS08A3 base; OUT base +12 IN, OUT(base+1) +47 IN. AH preserved,AL final input,DX live-stack restored. Flags from INC(base) except CF preserved. No hardware status retry/timeout; base+1 wraps16.",
+    "c_code_ranges": [
+      [
+        1369,
+        1440
+      ]
+    ],
+    "c_implementation": "c/adlib_engine.c"
   },
   {
     "address": 1448,

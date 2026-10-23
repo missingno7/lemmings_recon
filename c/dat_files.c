@@ -126,6 +126,48 @@ static void apply(uint8_t *mem,LmnRegs *r,const LmnDatFileResult *out) {
 void lmn_dat_open_file_adapter(uint8_t *mem,LmnRegs *r,const LmnDatFileServices *services) {
     LmnDatFileCall call=call_from_regs(r);LmnDatFileResult out=lmn_dat_open_file_core(mem,&call,services);apply(mem,r,&out);
 }
+/* INT24 critical-error callback, main 18F8. The only game-state effect is the
+   byte store; the returned AL=00 asks DOS to ignore. AH is the high byte of the
+   relocated game data segment because the original loads it through AX. */
+uint16_t lmn_dat_critical_error_core(uint8_t *mem,uint16_t game_data_segment) {
+    uint16_t value=game_data_segment;
+    mem[physical(game_data_segment,SEG09A9_DatCriticalErrorFlag)]=0xff;
+#if FILE_MUTATION == 4
+    return value;
+#else
+    return (uint16_t)(value&0xff00u);
+#endif
+}
+/* Entered at CS:18F8 with the DOS INT24 IRET frame at SS:SP. STI, PUSH DS,
+   the store, POP DS and IRET all use live canonical memory; the XOR flags are
+   discarded by IRET. The game segment is the intact relocated MOV AX operand. */
+void lmn_dat_critical_error_adapter(uint8_t *mem,LmnRegs *r) {
+    uint16_t frame_flags,entry_ds=r->ds,game=word(mem,r->cs,(uint16_t)(CS_CriticalErrorHandler+3u));
+    uint32_t p;
+    r->flags=(uint16_t)(r->flags|0x200u);
+    r->sp=(uint16_t)(r->sp-2u);p=physical(r->ss,r->sp);
+    mem[p]=(uint8_t)r->ds;mem[(p+1u)&0xfffffu]=(uint8_t)(r->ds>>8);
+    r->ds=game;
+#if FILE_MUTATION == 5
+    mem[physical(entry_ds,SEG09A9_DatCriticalErrorFlag)]=0xff;
+    r->ax=(uint16_t)(game&0xff00u);
+#else
+    (void)entry_ds;
+    r->ax=lmn_dat_critical_error_core(mem,r->ds);
+#endif
+    r->flags=(uint16_t)((r->flags&(0xffffu^ARITH))|PF|ZF);
+#if FILE_MUTATION != 6
+    r->ds=word(mem,r->ss,r->sp);
+#endif
+    r->sp=(uint16_t)(r->sp+2u);
+    r->ip=word(mem,r->ss,r->sp);r->cs=word(mem,r->ss,(uint16_t)(r->sp+2u));
+    frame_flags=word(mem,r->ss,(uint16_t)(r->sp+4u));r->sp=(uint16_t)(r->sp+6u);
+#if FILE_MUTATION == 7
+    (void)frame_flags;
+#else
+    r->flags=(uint16_t)((frame_flags&0x7fd5u)|2u);
+#endif
+}
 void lmn_dat_check_file_adapter(uint8_t *mem,LmnRegs *r,const LmnDatFileServices *services) {
     LmnDatFileCall call=call_from_regs(r);
     uint16_t retry_segment=word(mem,r->cs,(uint16_t)(CS_CheckDatFile+0x33u));

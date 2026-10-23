@@ -113,6 +113,7 @@ SUITES = (
     Suite('pcspeaker_bus', 180, 384, 'pcspeaker-bus-differential.json', 'component'),
     Suite('pcspeaker_dispatch', 180, 384, 'pcspeaker-dispatch-differential.json', 'component'),
     Suite('pcspeaker_interrupt', 180, 384, 'pcspeaker-interrupt-differential.json', 'component'),
+    Suite('adlib_engine', 1500, 768, 'adlib-engine-differential.json', 'component'),
     Suite('entity_interactions', 180, 384, 'entity-interactions-differential.json', 'instruction'),
     Suite('entity_finish', 180, 384, 'entity-finish-differential.json', 'instruction'),
     Suite('entity_zero_state', 180, 384, 'entity-zero-state-differential.json', 'instruction'),

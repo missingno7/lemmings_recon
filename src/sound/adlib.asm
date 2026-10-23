@@ -12,6 +12,12 @@
 ; the detection status reads) is a platform service; update cadence is owned
 ; by the main program; stream tokens 88..AF are a characterized corrupted-
 ; control escape that native code reports as an unsupported state.
+; Translated: c/adlib_engine.c (all instructions of 0000..059F except the
+; UNKNOWN bytes 0014 and 05A0..05A7), differential suite tests/adlib_engine.py.
+; Native boundary: every OUT/IN of 0559 and of the detection status reads is
+; one LmnOplPorts callback in original order (port taken live from [08A3]);
+; 88..AF return LMN_ADLIB_ENGINE_STREAM_ESCAPE at 01EA before JMP [SI].
+; Arithmetic flags inside a service are unobservable (every exit is IRET).
 ;
 ; ---------------------------------------------------------------------------
 ; Lifetime and installation (main program side)
@@ -278,8 +284,9 @@ adlib_EffectDirectoryBase equ adlib_EffectDirectory
 ; undefined); each DEC sets AF/ZF/SF/PF/OF and keeps CF. None of this reaches
 ; the caller: IRET restores the FLAGS word pushed by INT 61h on the caller's
 ; stack. The native prefix in c/sound_latches.c implements this dispatcher and
-; the three setters (docs/sound-latches.md); AH=0/1/2 stop there at the entry
-; of the untranslated service bodies.
+; the three setters (docs/sound-latches.md); for AH=0/1/2 it stops at the
+; service labels, whose bodies are c/adlib_engine.c (composed by
+; lmn_adlib_int61_adapter). The services see AH already reduced to 0.
 ; ---------------------------------------------------------------------------
 adlib_InterruptEntry:
     db 0x22,0xe4 ; ENCODED: and ah,ah (NASM selects different opcode/operand width) ; @00000

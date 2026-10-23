@@ -41,8 +41,12 @@ MasterPicEoiReturn18B6:
 ; route to the resource retry screen; startup 0090, CheckMenuResourceAvailability
 ; 4B16 and ShowResourceRetryScreen 4B56 clear it. The handler never aborts or retries itself; what DOS does with
 ; AL=00 after return is DOS behavior, not game logic.
-; Platform callback. READY for C: tiny body; host it as the critical-error
-; callback of the DOS file-service seam (c/dat_files.c) that sets the flag.
+; DOS calls it from inside the failing INT21 service (AH3D/AH43 here) on its own
+; stack, before that service returns; after AL=00 DOS either returns success or
+; (when ignore is disallowed, DOS 3.1+) CF=1/AX=53. The wrappers test carry OR
+; 1FDF, so both continuations reach the error route. Pushed DS stays as residue
+; at the frame's SP-2. C: lmn_dat_critical_error_core/_adapter (c/dat_files.c),
+; invoked by the DOS file-service provider; tests/dat_files.py, direct + connected.
 CriticalErrorHandler:
     sti ; @018F8
     push ds ; @018F9

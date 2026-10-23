@@ -815,17 +815,26 @@ def report():
             controls['translated_code_bytes']!=sum(
                 s['translated_code_bytes'] for s in controls['components'].values())):
         raise ValueError('Sound control component coverage is incomplete')
+    # The AdLib engine receipt covers the whole decoded AdLib code (dispatcher
+    # included); other drivers are still covered by the control receipt alone.
+    engine=receipt('adlib-engine-differential.json')
+    for path,digest in engine['input_hashes'].items():
+        if sha((ROOT/path).read_bytes())!=digest:
+            raise ValueError('Stale AdLib engine differential report for '+path)
+    if engine['image_sha256']!=m['sound']['adlib']['image_sha256']:
+        raise ValueError('AdLib engine oracle changed')
     for name,component in controls['components'].items():
         if component['image_sha256']!=m['sound'][name]['image_sha256']:
             raise ValueError('Sound control oracle changed: '+name)
-        if component['translated_code_bytes']!=m['sound'][name]['c_bytes']:
+        scope=engine['translated_code_bytes'] if name=='adlib' else component['translated_code_bytes']
+        if scope!=m['sound'][name]['c_bytes']:
             raise ValueError('Sound control C byte scope changed: '+name)
     m['all_images_translated_c_routines']=m['translated_c_routines']+sum(s['c_routines'] for s in m['sound'].values())
     # Each component ledger owns its byte union. Bus/dispatcher/composition
     # receipts overlap and cannot be added as extra translated storage.
     m['all_images_translated_c_bytes']=m['translated_c_code_bytes']+sum(s['c_bytes'] for s in m['sound'].values())
-    m['all_images_differential_cases']=m['differential_cases']+pc['case_count']+controls['case_count']
-    m['all_images_mutations_detected']=m['mutations_detected']+pc['mutation_count']+controls['mutation_count']
+    m['all_images_differential_cases']=m['differential_cases']+pc['case_count']+controls['case_count']+engine['case_count']
+    m['all_images_mutations_detected']=m['mutations_detected']+pc['mutation_count']+controls['mutation_count']+engine['mutation_count']
     c_executed=len(executed)+sum(len(sites) for sites in component_sites.values())
     m['all_images_original_c_instructions_executed']=c_executed
     m['protection']=verified['protection']

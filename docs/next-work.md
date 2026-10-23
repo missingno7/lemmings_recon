@@ -39,21 +39,30 @@ floppy/protection seam).
 
 ## Open semantic items (VGA + AdLib), in impact order
 
-1. **Typed level codes selecting 120..255.** DecodeLevelCode accepts any
-   self-consistent code, so a player can reach selection 120..255 and group 4..8
-   (1F6E). 4EBC then indexes the four-entry sign table CS:4EE7 past its end and
-   uses code bytes as UI+1000 offsets; 197D reads order bytes past DS:5565 into
-   the odd-table buffer. This is an ordinary user-input path: characterize what
-   each such code loads and draws, beside the ASM, so C can model it exactly.
+1. **Lemming records beyond 80 through ordinary input: differential cases.**
+   Typed level codes reach every selection 0..255 (rule beside DecodeLevelCode).
+   Selections 156, 158, 212 and 214, after an odd-table level was loaded, load
+   odd row 54 (population 99); records 50..62 overlay visibility columns, key
+   state, the LEVEL header, object definitions and terrain. The full map,
+   consequences and escape conditions are beside CreateEntityRecordIfDue: play
+   continues with altered state; a visibility rebuild at view origin 160..210
+   (or 98..168 while record 50 falls) or scans 15/16/42/43 send 715B to
+   CS:0000/0001/0101 or key-derived targets (characterized escape, native
+   LMN_ENTITY_SPRITE_DISPATCH_UNKNOWN_CALLBACK). C over canonical memory
+   reproduces it with no clamps. Still to do: the six differential cases in
+   build/proposals/spill.md (creation 50..62, rebuild/update/draw, key scans,
+   object ticks, editor key repeat, status time). Whether such a level can be
+   completed depends on runtime state (level bitmap, stale objects, input), not
+   on missing semantics. Before any odd-table load, selections 120..255 stay in
+   the insert-disk retry loop; displays for groups 4..8 read memory DOS never
+   initialized (the host zero-fills: platform-conditional).
 2. **Code-frame UNKNOWN with no incoming edge** (450 bytes): number formatter
    1250, parser arms 131A, vector install 1592, timer reload 1696, PIC EOI 18B7,
    floppy motor off 1908, 357E, 48B0, tick wait 501C, overscan colour 5517,
    pre-shift 5D18, block copy 71CA; stored RETs 531D/5424/55B6; 084E/087F. They
    stay UNKNOWN with these reasons unless an edge is found; nothing ordinary
    depends on them. AdLib 0014 and 05A0..05A7 are the same kind.
-3. **Remaining untranslated main entries:** CriticalErrorHandler 18F8 (READY;
-   host in c/dat_files.c as the DOS critical-error callback), MouseEventReturn
-   0F6F, CopyReverseMatchReturn 1C9F, and the protection entries 063E, 0659,
+3. **Remaining untranslated main entries:** MouseEventReturn 0F6F, CopyReverseMatchReturn 1C9F, and the protection entries 063E, 0659,
    0DB3, 0DBD (startup/protection as a whole, 054E..13DB, beside the derived
    protected views).
 4. **Protected transitions 066C/0E1C** are hand-offs into the fully derived
@@ -70,9 +79,8 @@ AdLib engine, song titles and command domain.
 
 ## Native work after closure, in order
 
-1. AdLib music/FX engine in C over the driver memory (READY: src/sound/adlib.asm
-   header), with an OPL register sink and native synthesis; tokens 88..AF are an
-   explicit runtime failure.
+1. Native OPL synthesis behind `LmnOplPorts` (the AdLib engine itself is in
+   c/adlib_engine.c), driven by AH=00 at the game timer cadence.
 2. Bind entity sound services (today NULL bindings stop sound-enabled actions).
 3. Special-graphics briefing redraw, INT61 rebinding after 057B, private IRQ 0F70
    delivery, protection persistence (russell.dat), validated timing.

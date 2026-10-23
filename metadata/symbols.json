@@ -10562,8 +10562,19 @@
       "Signature-matched legacy entry lead",
       "Original explicit installation and bounded/original-byte evidence in metadata/interrupt-evidence.json; behavioral coverage remains separately scoped"
     ],
-    "verification_status": "UNTRANSLATED",
-    "reachable_instruction_bytes": 16
+    "verification_status": "TESTED",
+    "reachable_instruction_bytes": 16,
+    "c_implementation": "c/dat_files.c",
+    "c_code_ranges": [
+      [
+        6392,
+        6408
+      ]
+    ],
+    "verification_evidence": [
+      "tests/dat_files.py (difftest dat_files): 19 direct INT24-frame cases and 6 connected AH43/AH3D cases execute all 8 original 18F8..1907 sites; full 1 MiB memory, all registers and full 16-bit IRET flags compared",
+      "Compiled handler mutants 4 (AL not zeroed), 5 (flag stored through incoming DS), 6 (DS not restored), 7 (IRET keeps handler flags) each detected by both a connected and a direct case"
+    ]
   },
   {
     "address": 6422,

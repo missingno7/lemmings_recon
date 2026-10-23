@@ -24,6 +24,7 @@ def source_files(cluster="checksum"):
     if cluster=="protection":return (ROOT/"c/protection.c",ROOT/"c/interrupt_service.c",ROOT/"c/timer_restore.c",ROOT/"c/vector_restore.c",ROOT/"c/video_restore.c")
     if cluster=="sound_driver_init":return (ROOT/'c/sound_driver_init.c',ROOT/'c/interrupt_service.c',*source_files('dat_load'))
     if cluster == "pklite_unpack": return (ROOT/"c/pklite_unpack.c",)
+    if cluster=="adlib_engine":return (ROOT/"c/adlib_engine.c",ROOT/"c/sound_latches.c")
     if cluster=="game_loop":
         return tuple(dict.fromkeys((ROOT/"c/game_loop.c",
             *(p for d in ("game_session","level_start","level_result","resource_retry") for p in source_files(d)))))
@@ -222,6 +223,9 @@ def build(output=None, mutation=0, cluster="checksum", *, dependency_library=Non
     if cluster=="entity_countdown":defines=["-DENTITY_COUNTDOWN_MUTATION="+str(mutation)]
     if cluster=="sound_interrupt":defines=["-DSOUND_INTERRUPT_MUTATION="+str(mutation)]
     if cluster=="sound_latches":defines=["-DSOUND_LATCH_MUTATION="+str(mutation)]
+    if cluster=="adlib_engine":
+        if not isinstance(mutation,int):raise ValueError("adlib_engine mutation must be numeric")
+        defines=["-Wundef","-DSOUND_LATCH_MUTATION=0","-DADLIB_ENGINE_MUTATION="+str(mutation)]
     if cluster=="generated_graphics":defines=["-DMUTATION=0","-DGENERATED_GRAPHICS_MUTATION="+str(mutation)]
     if cluster=="entity_stroke":defines=["-DMUTATION=0","-DSTROKE_MUTATION="+str(mutation)]
     if cluster=="keyboard_input":defines=["-DKEYBOARD_INPUT_MUTATION="+str(mutation),"-DKEYBOARD_PORT_MUTATION="+str(mutation),"-DPORT_IO_MUTATION=0","-DINPUT_POLL_MUTATION=0","-DINTERRUPT_SERVICE_MUTATION=0","-DDISPLAY_STATUS_MUTATION=0"]

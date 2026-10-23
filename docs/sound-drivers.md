@@ -76,12 +76,22 @@ assume the static image length bounds every runtime access.
 Both AdLib/Tandy entry dispatcher prefixes and six command3/4/5 latch setters
 now have scoped native C verification:106 unique bytes,65 sites and27 edges.
 The766 fixtures cover all256 AH values for both drivers, live stack/IRET and
-VGA aliases, with ten completed mutants. AH0/1/2 stop before the untranslated
-update, detection and reset bodies; AH6..FF preserves five DEC AH operations
-and actual IRET. UNKNOWN AdLib0014 remains outside C coverage. See
-sound-latches.md. Playback, port timing, unchecked stream dispatch and broader
-code/data/CFG ownership remain open. Byte-exact assembly and matched
-signatures do not establish complete driver readiness.
+VGA aliases, with ten completed mutants. AH6..FF preserves five DEC AH
+operations and actual IRET. See sound-latches.md.
+
+The complete AdLib engine (update 0115, detection 00A3, reset 003A, stream
+commands, instruments, pitch, song/effect requests and the OPL write path 0559)
+is translated in c/adlib_engine.c over the driver's own memory: all 1,329 decoded
+AdLib bytes are in C (UNKNOWN 0014 and 05A0..05A7 excluded). `lmn_adlib_int61_adapter`
+composes the existing dispatcher with the service bodies. OPL access goes through
+an explicit port boundary (`LmnOplPorts`): each register write is OUT base,reg;
+12 IN base; OUT base+1,value; 47 IN base+1, with the base reread from [08A3].
+Tokens 88..AF return an explicit stream-escape status. tests/adlib_engine.py
+compares original and C per INT61 call (memory, ordered RAM/port events,
+registers and flags) over shipped songs and effects, detection, reset and
+constructed stream states. A native OPL backend feeds the (register, value)
+writes to a synthesis core and calls AH=00 at the game timer cadence (main 1872,
+plus once after each AH=03 request). The Tandy engine remains untranslated.
 
 Further installation analysis identified MAIN.DAT section 5 as a 758-byte
 PC-speaker component loaded over main zero storage at relative frame 0842. It now

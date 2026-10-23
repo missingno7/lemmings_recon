@@ -45,8 +45,17 @@ and connected for full native completion. Active near-return words and instructi
 bytes stay intact in this verification domain; arbitrary segment/stack-control
 clobbers and interrupt races are not proved by these tests.
 
-tests/dat_files.py compares original wrappers/cache helpers against compiled C in
-40 constructed cases. All 69 wrapper instruction sites and sixteen wrapper branch
+The INT24 critical-error callback CriticalErrorHandler (18F8) is translated in
+c/dat_files.c. DOS invokes it on its own stack inside a failing AH3D/AH43 service;
+it sets 1FDF = FF and returns AL = 00 (ignore). The native file-service provider
+calls `lmn_dat_critical_error_core` during the service; the wrappers never set the
+flag themselves. Whether DOS then reports success or CF=1/AX=53 is DOS behavior;
+both outcomes reach the retry route through the live flag. 0090, 4B16 and 4B56
+clear it. IRQ nesting after its STI is not modelled.
+
+tests/dat_files.py compares original wrappers/cache helpers and the INT24 callback
+against compiled C, both on direct INT24 frames and connected AH3D/AH43 failures
+delivered by the DOS fixture. All 69 wrapper instruction sites and sixteen wrapper branch
 edges execute. It compares full 1 MiB memory, all registers, defined exit flags,
 DOS service arguments and complete retry-callee input snapshots. Cases cover every
 cache-enable/select decision, both DF values on direct/open paths, open errors,
@@ -56,8 +65,9 @@ second retry observes a changed saved SI, which would expose host-temporary rest
 
 The retry fixture returns through the actual original pushed continuation with
 deliberate AX/BX/BP/SI/DI/DS/ES/CX/DX and flag clobbers. It executes no original
-4B1C body. Three compiled wrapper mutations are detected: opening on a cache hit,
-ignoring the critical-error byte, and unwinding the fatal outer frame. Dependencies
+4B1C body. Compiled mutations cover opening on a cache hit, ignoring the
+critical-error byte, unwinding the fatal outer frame, and the callback's AL value,
+flag store segment, DS restore and IRET flags. Dependencies
 are compiled without their own mutation macros. Original execution has a
 one-million-instruction budget per case; the suite process has a 120-second cap in
 the standard runner, including native calls. Repeated permanent failures can loop

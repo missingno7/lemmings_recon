@@ -14,7 +14,7 @@ it does not rerun the exact gate or establish behavior.
 | Decoded main instructions | 15,417 sites / 35,826 bytes |
 | UNKNOWN main bytes | 450 in 17 runs; 450 bytes inside provisional code frame |
 | Static control-flow frontier | 2 open transfers (066C:runtime_modified_continuation, 0E1C:runtime_modified_target); 5 indirect transfers closed for the legitimate program |
-| Main C implementation union | 35,686 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
+| Main C implementation union | 35,702 original instruction bytes in explicit ledger ranges; not fresh aggregate acceptance |
 | Semantic freeze | Freeze bar and separate ASM / C / native completeness measures in [semantic audit](semantic-audit.md); open blockers in [next work](next-work.md) |
 | Differential coverage | Per-suite scope and matching consumed hashes required; aggregate not evaluated by this inventory |
 | Whole-game integration | Not established by routine or byte totals; native startup/frame/platform completion remains open |
@@ -25,8 +25,8 @@ not yet recorded:
 
 | Component | Entries | C status | Placeholder names |
 |---|---:|---|---:|
-| main | 237 | STATIC 1, TESTED 229, UNTRANSLATED 7 | 0 |
-| adlib | 20 | TESTED 4, UNTRANSLATED 16 | 0 |
+| main | 237 | STATIC 1, TESTED 230, UNTRANSLATED 6 | 0 |
+| adlib | 20 | TESTED 20 | 0 |
 | tandysnd | 43 | TESTED 4, UNTRANSLATED 39 | 0 |
 | pcspeaker | 4 | TESTED 4 | 0 |
 
@@ -35,7 +35,7 @@ inventories; their C columns likewise describe implementation ranges only:
 
 | Component | Image bytes | Classified bytes | Decoded code bytes | C code union | Open transfers |
 |---|---:|---:|---:|---:|---:|
-| adlib | 22,125 | 22,116 | 1,329 | 57 | 0 |
+| adlib | 22,125 | 22,116 | 1,329 | 1,329 | 0 |
 | tandysnd | 21,702 | 20,115 | 1,802 | 49 | 1 |
 | pcspeaker | 758 | 588 | 211 | 211 | 1 |
 

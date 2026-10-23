@@ -2182,91 +2182,108 @@ loc_3059:
 EntityInteractionThirdSoundReturn:
 loc_30A5:
     ret ; @030A5
-; R3 primary configuration does not close capacity:DATA-A nominal headers<=50
-; imply0088..0E97 only with stable counters/cursors and serialization of30CC
-; limit sample through314B publication against1874->4013. PROFILE preserves
-; services,not this original race; later spill survival remains UNRESOLVED.
-; SlotB3 numerically overlaps probe records;slotD3 overlaps25A0 and mode25A6.
-; Do not infer these indices are reached,or clamp the original equality-only gate.
 CreateEntityRecordIfDue:
-; T2 UNCONDITIONAL race arithmetic,assuming no other counter/limit writer:
-; one successful4013 during30CC..314B changes(L,B) to(B,B+1 mod100).
-; With that limit fixed,the pending publication plusFF further successes
-; makes100 publications,then equality returns at countB. Byte count<=FF;
-; 100 distinct slot addresses exist,not an unbounded contiguous array. With
-; B=4F the session total before that stop is14F publications if all survive.
-; Repeated in-flight snapshots can postpone equality without an arithmetic
-; bound on total publications. These are recurrence bounds,NOT a survival
-; proof or a finite-time gameplay guarantee; actual maximal surviving count
-; is UNRESOLVED. The one-race suffix can numerically include every byte index.
-; T2 exact spill initializer: clear[S,S+2C]; then+00/+02=live spawn words,
-; +04=FFF8,+06=FFF6,+08=0004,+0A=0000,+0C=0A42,+10=005A,+12=003C,
-; +14=live002E,+23=03,+27=01,+29=04; every other byte remains00.
-; Sources are read AFTER clearing; no copied spawn cache exists. Index50
-; clears0E98..0EC4,then reads its zeroed first spawn pair,so X=Y=0 absent
-; interference. It installsFFF8/FFF6 into spawn pair1 and0004/0000 into
-; pair2,0A42/0000 into pair3. Later indices read these live,possibly changed
-; by visibility or updates; no common zero-coordinate theorem follows.
-; Other owners:50..54 callback words are visibility bytes,55..56 keyboard;
-; 57..84 intersect loaded LEVEL,84..98 object graphics,98..AF GROUND/special
-; metadata,AF..B3 process globals/vectors/graphics segments,then tables/text,
-; resource names/input/palettes and pair/point lookups throughFF:2D87.
-; Exact split slots,known owners and retained UNKNOWN gaps are in T2 report.
-; No new storage classification follows from this overlay; higher owners can
-; write+14 outside the nine targets even with DF0. Arrays/segments/stack aliases
-; and IRQ interleavings remain separate from PLATFORM/DATA assumptions.
-; V1 OWNER LIFETIME: the complete clear means old LEVEL/GROUND/text/pair/point
-; words at a future +08/+14 do NOT become entity state/targets on append.
-; Completed construction installs0004/live002E in every numeric slot; all
-; subsequent values follow last actual byte writes in shared memory. Numeric
-; spill classes and field-to-owner intersections for50..FF are in V1 report.
-; Setup-only loaded LEVEL/GROUND owners do not spontaneously restore bytes
-; during a frame. A real redraw/reload can replace them and keeps its own
-; unchecked type/length/DF contract; it is not a new constructor or snapshot.
-; Concrete completedB1 (S1FA5),before another writer: saved08=0000:0000;
-; saved09=0000:(highByte(live002E)); savedPrivate=0000:0000,selector1FC6=0;
-; keymask1FC7=0300,PIT1FC9=0000. If game timer reaches its phase-zero1899
-; before repair,it far-JMPs IVT bytes at0000:0000,not main CS:0000. Other
-; phases EOI locally; the next phase is(byte(old1FE3)+1)&3. This is an
-; explicit changed-control mechanism,not proof thatB2 or later cannot occur.
-; CompletedB2 installs live002E as sprite segment1FE6,zeroes most remaining
-; arena selectors,sets1FE4=003C and1FE3=00;readers use those changed segments.
-; CompletedB3 sets probe2013=70/target2014=0061 with initialized6170;other
-; three enable/target rows are zero. Detector is not a per-frame reader.
-; D3 straddles25A0 with X-high/Y-low,sets input mode25A6=FF
-; viaFFF6 Y bias,and sound bits25A7=04 via state0004. Later input uses its
-; actual mode checks; no callback is implicitly invoked solely by slot damage.
-; DF0 level reset0000..0FC9 does not repair any owner above0FC9. Count wrap
-; alone neither restores them nor visitsFF;continued low-count frames may
-; consume their damaged globals/lookups before another high-slot append.
-; Record producer for the update and drawing consumers above.
-; Gate002B must differ from FF;0055 must equal FF. Byte DEC0048 wraps and
-; only zero reloads0048 from live0049. Equality0047==0043 prevents creation;
-; there is no upper-bound clamp. SI=0088+45*unsigned(bound), BX=0E98+4*(bound&3).
-; The45-byte clear advances DI with INC, independently of DF. Coordinates are
-; fetched only after the clear: bound50h makes SI=0E98 and destroys their source.
-; Ordered record stores and the late callback002E read precede live INC0043.
-; No array extent, coordinate cache, host record or corrected bound is implied.
-; Publication is INC0043 after3147, not the earlier+26 clear. An old inactive
-; record within the bound is never chosen by this routine. The clear writes
-; DS:[SI..SI+2C], followed by initialization, so after a reset the retained old
-; bytes of later slots are irrelevant until appended and individually cleared.
-; Known byte bound alone permits index00..FF (last slot2D5B..2D87); the walk
-; after INC-to00 then ignores all slots. No DOS allocation is performed here.
-; Coordinate source BX=0E98+4*(index&3) is read live AFTER the clear. Index50
-; clears all four source pairs; it also overlaps the visibility map at0EA8.
-; CAPACITY DOMAIN: complete pinned LEVEL reads plus forward selected odd copies
-; give header low-byte limits01..50h; all80 base headers have high byte00.
-; The40 selected overrides also have high00 and limit<=50; unselected dummy
-; rows have0063.36CD discards the high byte, so arbitrary headers permit00..FF.
-; 0404's C8 is overwritten before the known first creation0483.4013 normally
-; stops at the current bound, but its IRQ race above can step past that limit.
-; With serialized limit changes, reset bound0 and L<=50, no creation can
-; cross0088..0E97. A stable starting bound B and limit L permit (L-B)&FF
-; successful publications before equality; B>L wraps. Starting0 never wraps
-; for a stable byte L, whereas FF!=L permits indexFF then INC-to00. Mutable
-; limits avoiding equality have no finite publication-count bound. These are
-; byte arithmetic contracts, not evidence of gameplay reaching every index.
+; CREATION CONTRACT. Appends one entity record when due; called once per game
+; frame at 01B0 and once at level start (0483, after the 0480 visibility build).
+; Gates: EntityUpdateGate 002B must not be FF and EntityCreationGate 0055 must
+; be FF. The byte DEC of 0048 wraps; only zero reloads it from live 0049 and
+; continues. Equality of the limit 0047 with the bound 0043 is the only stop:
+; there is no unsigned limit test, clamp or free-slot search. Index n=[0043]
+; selects SI=0088+2D*n (byte MUL, so n=00..FF; slot FF is 2D5B..2D87) and the
+; spawn pair BX=0E98+4*(n&3).
+; Order: clear SI..SI+2C with INC DI (independent of DF), THEN read X and Y from
+; the live pair, then store +27=01, +25=00, +24 AND 01, +08 OR 0004, +0A=0000,
+; +0C=0A42, +10=005A, +12=003C, +28=00, +23=03, +04=FFF8, +06=FFF6, +29=04,
+; +14=live word 002E (6170 as installed at 0FC1), +2A=00, +24 AND 01, and
+; publish last with INC 0043. Every other byte stays zero. The cleared +14=0,
+; +26=0 state exists only before publication, outside the bound.
+; Lifetime: deactivation (+26=FF) never frees a slot or lowers 0043; only the
+; level-start clear 4551 (0000..0FC9) resets the bound. Old bytes in later
+; slots, and old LEVEL or text words under them, never become state or callback
+; values: each slot is cleared when appended.
+;
+; CAPACITY. Records 00..4F fill 0088..0E97. The limit is the low byte of LEVEL
+; header +02 (36CD); 4010/4013 (nuke) later replace it with the current bound.
+; All 80 pinned LEVEL headers and the 40 odd overrides reached through the
+; stored 120-entry order table give limits 01..50, so ordinary levels stay in
+; 0088..0E97 as long as no limit change races publication. Two original paths
+; go further, and nothing here bounds them:
+; 1. Typed level codes 156, 158, 212 and 214, after any odd override was loaded
+;    earlier in the process, select level006 section 6 with oddtable row 54,
+;    whose twelve header words are 0063: limit 63, so records 50..62 are
+;    appended over 0E98..11EE, one every four frames (rate 99 gives 0049=04).
+; 2. Creation race: the timer path 1874->3E6F->4010/4013 can store the current
+;    bound B as the limit after 30CC sampled the old limit (the simplest window
+;    is after 30D5) and before 314B publishes. The pending record then makes the
+;    bound B+1, so equality returns only after the byte bound wraps: up to FF
+;    further records, or more if repeated snapshots keep missing equality. No
+;    CLI brackets 30CC..314B. At B=4F this appends record 50 under a header 50.
+;
+; SPILL MAP (one memory: a record past 4F is not a separate allocation).
+;   50  0E98..0EC4  +00..+0F: the four spawn pairs; +10..+2C: visibility
+;                   columns 00..1C (+14 column 04, +20 column 10, +26 col 16)
+;   51..53          visibility columns 1D..A3, every field
+;   54  0F4C..0F78  visibility columns A4..CF; +2C: key-state byte for scan 00
+;   55  0F79..0FA5  key-state bytes, scans 01..2D (+14/+15: scans 15/16)
+;   56  0FA6..0FD2  scans 2E..52 (+14/+15: scans 42/43, +24: 0FCA), then LEVEL
+;                   header +00..+07; its +26 is the header release-rate low byte
+;   57  0FD3..0FFF  header +08..+1F (skills, view origin, graphics bytes; +14
+;                   on 0FE7/0FE8), then object definitions 0..2
+;   58..5D          object definitions 2..31; 5D +0A onward is terrain
+;   5E..62          terrain definitions, up to 11EE
+; Race-only indices continue over terrain, steel, footer, object working
+; records 17CB, GROUND 1B4B and process globals from 1F6B. Index B1 rewrites the
+; saved timer vectors at 1FA5.. (08=0000:0000, 09=0000:high byte of 002E, key
+; mask 1FC7=0300, PIT 1FC9=0000); a later game-timer phase zero (1899) then
+; far-jumps to 0000:0000. B2 sets the sprite segment 1FE6 to live 002E and
+; 1FE4=003C. B3 (SI 1FFF) gives probe 2013=70 and target 2014=0061. D3 (SI 259F)
+; puts X-high/Y-low into InputPollCallback 25A0, sets input mode 25A6=FF and
+; sound bits 25A7=04. Aligned slots end at 2D87. The level clear 4551 repairs
+; none of these owners above 0FC9.
+;
+; CONSEQUENCES OF RECORDS 50..62 (all through ordinary code over the same bytes).
+; - Spawn: record 50 clears the pairs before reading pair 0, so it starts at
+;   (0,0). Later records read record 50's live fields: n&3=1 its +04/+06
+;   (FFF8/FFF6), 2 its +08/+0A (0004/0000 while falling), 3 its +0C/+0E
+;   (0A42/0000), 0 its current X/Y. In level006 section 6 column X=0 is left of
+;   every terrain piece, so record 50 falls, is deactivated at the bottom and
+;   freezes those values. 5DC6 uses an unsigned X/8 on a D0-byte row, so a
+;   spawn X outside the level probes pixels of another row; 2047 only reverses
+;   +27 when a walker's X leaves [0010,0680).
+; - Visibility: 706F and 5726 draw and dirty-mark an entity only if the byte at
+;   0EA8+X'/8 is exactly 01, so once 50..54 exist every entity is shown only in
+;   columns whose record byte happens to be 01. Each rebuild 410F (01A0 edge
+;   scroll, every frame the pointer rests on X=8 or 148 even at a scroll limit;
+;   minimap click at 3FDE) rewrites 50 +10..+2C, all of 51..53 and 54 +00..+2B
+;   as 00 outside and 01 inside the 29-byte marker at 0EA6+origin/8: +26 becomes
+;   00/01 (deactivated records return), +20 00/01 and +14 0000/0001/0100/0101.
+; - Keyboard IRQ 179E stores 94 (make) or 00 (break) into single bytes of
+;   54..56, including both +14 bytes and record 55's +26 (scan 27). The game
+;   frame never reads 0F78..0FCA. After the level the code editor 4D1A treats
+;   each byte with bit 7 set as a held, auto-repeating key; 4551 never clears 0FCA.
+; - Header bytes have no reader during play (046B copied them before the first
+;   creation); the next level start reloads the LEVEL image. Object definitions
+;   are read every frame: 7C0A (X, type byte) and 7BB8 (X, Y, flags) animate
+;   and draw objects at the overlapping record bytes, and a zero X makes 7C0A
+;   store stale BX into that object's working flags. Definitions 9..31 become
+;   nonzero and draw stale working records 17CB+1C*j from earlier levels.
+;   Interaction cells (exits, traps, water) were written at level start and stay.
+; - Status: time byte 20A7 starts at 93 and counts down 99 minutes; the glyph
+;   routine skips minute values other than space, %, :, digits and capitals.
+; - ESCAPE: 715B near-CALLs the live +14 word in the current CS. A rebuilt or
+;   key-written +14 is called when the record has +26!=FF, its update made no
+;   +14 store first (a rebuilt +20=01 expires in 2E04 and installs live 002E or
+;   003C instead), +14 differs from live 003C and its column byte is 01. Example:
+;   once record 52 exists, any rebuild with view origin 160..210 gives it state
+;   0001/0101 (22DF only advances +28), +20=00, +26=00, X'=0202 in a marked
+;   column and +14=0000 (origin <=1B8), 0001 (1C0) or 0101 (>=1C8); that frame's
+;   draw transfers control to CS:+14 with DI at the record. The specification
+;   ends there. A live falling record 50 does the same at origin 98..168 and,
+;   being drawn earlier in the pass, escapes first where both apply.
+; - 5726 writes its first dirty row before checking the map end, at
+;   SS:map+1+col+5*(Y'&FFF8); rebuilt or key-written Y bytes put it outside the
+;   321-byte map (record 52 above: three 01 bytes in SS 4C3B..4C51 for map
+;   42B2, 4F5C..4F72 for map 45D3, above the initial SP 4AF4).
     cmp byte [EntityUpdateGate-GameDataImage],0xff ; @030A6
     jnz loc_30B0 ; @030AB
     jmp loc_314F ; @030AD
@@ -2282,17 +2299,7 @@ loc_30C3:
     mov al,[EntityCreationReload-GameDataImage] ; @030C3
     mov [EntityCreationCountdown-GameDataImage],al ; @030C6
     mov si,EntityRecordsBase-GameDataImage ; @030C9
-; S19 creation-race: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
-; Original order permits IRQ1874->4013 between30CC limit sampling and314B publication,stepping
-; count past the new limit. Loader IF1/profile preservation does not serialize it.
-; Dependencies: Witness inputs: live unmasked pending game IRQ and qualifying command; later
-; corrupted-state survival remains unresolved.
-; S17 flow-state: From30A6 entry, IF is inherited at30CC,30D5 and314B; no local
-; CLI/POPF/IRET/SS load serializes limit sampling through publication. Thus entryIF1 with
-; an installed/unmasked game timer admits the S12 command4013 interleaving. The after30D5
-; case is sufficient; the full stale sampled-limit window begins after30CC. This analyzer
-; does not infer PIC masks, pending IRQ delivery, command eligibility, or survival of
-; later corrupted records from IF alone.
+; The limit sampled here may be replaced by 4013 before 314B publishes (see above).
     mov al,[LevelCreationLimit-GameDataImage] ; @030CC
     mov ah,[EntitySlotBound-GameDataImage] ; @030CF
     db 0x3a,0xc4 ; ENCODED: cmp al,ah (NASM chooses a different encoding) ; @030D3
@@ -2309,15 +2316,6 @@ loc_30C3:
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @030EC
     mov cx,0x2d ; @030EE
     db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @030F1
-; V2/U02 B3/D3 overlay reproduction:B3 SI1FFF clears2013..201E and3140 current002E
-; writes2013/14. With002E6170,this gives e0=70,first target0061,other targets0. Recurring
-; +14 state writes change this same pair;3262 +1F=08 changes201E (last target high).
-; D3 SI259F gives callback25A0/1=X-high/Y-low;baselines25A2/3=Y-high/F8,25A4/5=FF/F6;
-; 3134 leaves25A6(mode)=FF. Clear's temporary mode0 and completed modeFF both bypass42A5.
-; Proper joystick selection repairs callback before mode1; a damaged non-member word alone
-; is not a42A5 call witness. Aligned byte-index records0..FF end2D87,so do not directly
-; reach ordinary editor DS:F42C/F436. Actual corrupted pointers/DS use their physical address.
-; [030F3] Unchecked producer witness, not a startup-reachability claim: slot byte179(decimal) yields SI1FFF and clear1FFF..202B, overlapping2011/2012 and four probe records;3140 writes record+14 at2013/2014. Slot211 gives SI259F, clear259F..25CB, then30FB/3100 straddle InputPollCallback25A0/25A1 with X-high/Y-low. Equality with mutable0047 is not a range bound. A closed target lifetime needs actual record/counter bounds or later reinitialization, including earlier overlapping globals.
 loc_30F3:
     mov byte [di],0x0 ; @030F3
     inc di ; @030F6

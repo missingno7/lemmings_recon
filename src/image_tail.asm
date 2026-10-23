@@ -220,7 +220,13 @@ MinimapSourceColumnByteOffset:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x32,0x00,0x00,0x32,0x00,0x00,0x63,0x00,0x00,0x63 ; @09AEE
 ; DATA: static_data
     db 0x00,0x00,0x63,0x00,0x00,0x63,0x00,0x00,0x63,0x00,0x00,0x63,0x00,0x00,0x63,0x00 ; @09AFE
-; [09B18] EntityRecordsBase remains a first45-byte anchor, not an array allocation. See1F19/30A6 lifetime matrix:byte counters,append publication,level reset,DF=1 action5 callback bytes and slot50/visibility overlap. Preserve existing bytes/classifications/equates; proposed ledger evidence is in symbols updates.
+; EntityRecordsBase (DS 0088) anchors the first 2Dh-byte entity record, not an
+; array allocation. Records 00..4F fill 0088..0E97; the byte bound 0043 is
+; checked only for equality with the limit 0047. Oddtable row 54 (limit 63)
+; appends records 50..62 over the spawn pairs 0E98, visibility map 0EA8,
+; key-state bytes 0F78, LEVEL header 0FCB, object definitions 0FEB and terrain
+; definitions up to 11EE; the creation race can go further. Those owners and
+; the records share the bytes; see the creation contract at 30A6.
 ; DATA: static_data
     db 0x00,0x63,0x00,0x00,0x02,0x03,0x00,0x3c,0x3c,0x90,0x00,0x00,0x00,0x00,0x00,0x00 ; @09B0E
 ; DATA: static_data

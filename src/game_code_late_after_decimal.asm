@@ -525,6 +525,11 @@ MenuSoundBackgroundReturn:
 ; Marker4 handshake; reread live group index after selector publication.
 ; BL is zero-extended then doubled; CS source table indexing is unchecked.
 ; See docs/menu-cache.md for producers and two-page handoffs.
+; Ordinary input reaches groups above 3: a typed code for selection 120..255
+; stores group 4..8, and the menu's increase key then steps on through 9..255
+; and wraps to 0. Each such group draws 72x27x4 bytes from whatever the word
+; after the four-entry table (CS:4EEF onward, i.e. following code) points at;
+; see the table comment below.
 RefreshMenuLevelGroupGraphic:
     mov al,[MenuLevelGroupRedrawCache-GameDataImage] ; @04EA2
     cmp al,0x4 ; @04EA5
@@ -556,8 +561,15 @@ MenuLevelGroupReturn:
 ; S8 Four little-endian CS words57F4,5428,505C,4C90;4ECD reads after zero-extension and doubling
 ; livegroup1F6E, UI1FEE+1000 published4EC2. Four72x27x4 plane sources of03CCh in MAIN UIbank.
 ; RET4EE6/code4EEF close exact8 bytes. Startupclear/4827 seed0,4502/4532 cycle nominal0..3 with
-; equalityguards,473B/52A1 write selection/30. Unchecked fullbyte permits0..8 fromdecode (FF
-; selection ->8) and corruptvalues through255, rawreads4EE7..50E6. No identified direct CS table
+; equalityguards,473B/52A1 write selection/30. The full byte is unchecked and ordinary input
+; reaches every value: decode52A1 stores 4..8 for typed selections 120..255, then the 4502
+; increase key (it refuses only exactly 3) walks 9..255 and wraps to 0, so 4ECD reads 4EE7..50E6.
+; Groups 4..8 take the source word from the next instruction bytes: 4 -> EEA1, 5 -> A31F,
+; 6 -> 1FE4, 7 -> C033, 8 -> 14BB (offsets in UI+1000). With the normal allocation, 6 and 8
+; read static MAIN section 4 bytes at +2DD4 and +22AB; 4, 5 and 7 read the graphics input
+; buffer 1FF4 at 4F71, 03EF and 2103 (03CC bytes each), i.e. the first VGAGR/VGASPEC section
+; of the most recently loaded level, or never-written allocated memory before any level load.
+; The result is a garbage picture, never a fault. No identified direct CS table
 ; writer. CS input bytes are process-image initialization; checksum8397 may read them as data.
 ; Lack of direct stores does not exclude dynamic/SS/device/IRQ/protection aliases; not a global
 ; writer-closure proof.
@@ -918,6 +930,15 @@ LevelCodeEncodeReturn:
 ; keeps the selection write and in-place inverse rotation. Success updates
 ; group=unsigned selection/30 and low4 payload, returns ZF1 via SUB AH,AH.
 ; Live saved SI may alias input/template; no rollback. docs/level-code.md.
+; ACCEPTED DOMAIN: the 4C7E editor submits letters A..Z followed by dots; a dot
+; in byte 9 always fails the checksum, so only ten-letter codes pass. A code is
+; accepted exactly when byte9 = 'J' +
+; (sum of bytes 0..8 mod 16) and, with s = ((b7-'B')&F) | ((b8-'C')&F)<<4,
+; bytes 0..6 rotated left 8-(s&7) times carry s in bits b0.3,b1.2,b2.2,b3.0,
+; b4.1,b5.0 and b6.3:2. Template bits are not checked. Every s in 00..FF has
+; accepted codes, so group = s/30 is 0..8. Selections 78..FF (120..255) are
+; ordinary user input: 4EBC, 197D, 4566 and 49C0 then index their tables
+; past the stored 120 levels (see their comments).
 DecodeLevelCode:
     lea si,[EnteredLevelCode-GameDataImage] ; @051A2
     cmp word [si],0x4942 ; @051A6

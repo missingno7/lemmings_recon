@@ -13,6 +13,10 @@ typedef struct LmnSoundLatchResult {
     uint16_t data_segment, stack_offset, flags;
 } LmnSoundLatchResult;
 
+/* UNTRANSLATED (historical name) = the dispatcher stopped at a service body
+   label (AH=0/1/2) without consuming the interrupt frame. For AdLib those
+   bodies continue in c/adlib_engine.c (lmn_adlib_int61_adapter composes this
+   dispatcher with them); Tandy bodies remain untranslated. */
 enum { LMN_SOUND_CONTROL_IRET=0, LMN_SOUND_CONTROL_UNTRANSLATED=1 };
 
 typedef struct LmnSoundControlResult {
@@ -37,7 +41,8 @@ void lmn_tandy_latch4_adapter(uint8_t *,LmnRegs *,const LmnRasterBus *);
 void lmn_tandy_latch5_adapter(uint8_t *,LmnRegs *,const LmnRasterBus *);
 
 /* Execute the entry-0 dispatcher through a recognized service target or IRET.
-   AH=0/1/2 stop at their still-untranslated service bodies. */
+   AH=0/1/2 stop at their service body labels (continuation = 0115/00A3/003A
+   for AdLib, served by c/adlib_engine.c; Tandy bodies are untranslated). */
 LmnSoundControlResult lmn_adlib_control_core(
     uint8_t *,const LmnSoundLatchCall *,const LmnRasterBus *);
 LmnSoundControlResult lmn_tandy_control_core(

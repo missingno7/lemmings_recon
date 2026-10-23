@@ -124,6 +124,16 @@ FileErrorCleanupTail:
 ; are01..A0, select LEVEL000..009 and contain40 odd overrides (indices6..79).
 ; 5205 publishes a decoded byte before validation; neither local producers nor
 ; the table's initial bytes prove a closed live index/writer domain.
+; TYPED SELECTIONS 78..FF: an accepted code can store any selection, so index
+; 78+k reads override-buffer byte 5566+k (k 0..87h). That buffer is stored zero
+; until the first odd override load, and afterwards holds oddtable.dat (the 19DC
+; full read is the only identified writer). Zero gives FF: level015.dat is not
+; supplied, so the 1CD9 attribute check repeats the 4B1C insert-disk screen on
+; every key until such a file appears. After a load, bytes 0..87h are rows 0..2 of the
+; unused-duplicate entries: header words 0063 (even k -> 00 -> retry; odd k ->
+; 63 -> level006 section1 direct) and the title text, whose characters select
+; real level001/002/005/006/007 sections; 'n' (6E) selects odd row 54, whose
+; header gives population, required, rate, time and skills 99.
 LoadSelectedLevelResources:
     mov bl,[LevelResourceSelectionByte-GameDataImage] ; @0197D
     db 0x32,0xff ; ENCODED: xor bh,bh (NASM chooses a different encoding) ; @01981

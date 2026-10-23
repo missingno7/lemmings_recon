@@ -22,8 +22,9 @@ accesses apply to both saves and the latch. No tail performs port I/O.
 Both entry dispatcher prefixes now have direct C cores. The initial AND AH,AH
 clears CF/OF and defines PF/ZF/SF; AF is undefined on the AH0 exit. Up to five
 DEC AH operations preserve CF and define the other arithmetic flags. AH0/1/2
-stop explicitly at the untranslated update/detection/reset bodies, without
-consuming the interrupt frame. AH3/4/5 directly compose the setter cores and
+stop at the update/detection/reset bodies without consuming the interrupt frame;
+for AdLib those bodies are translated in c/adlib_engine.c, which composes this
+dispatcher (see sound-drivers.md). AH3/4/5 directly compose the setter cores and
 leave AH zero. AH6..FF executes all five decrements and IRET with AH reduced
 by five; these commands are not silently rejected or clamped. Each core reports
 its continuation and exit kind. The adapters consume IRET only for IRET exits.
