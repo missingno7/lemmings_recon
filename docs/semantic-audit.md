@@ -271,6 +271,23 @@ all of the following hold, each recorded beside the ASM or in the ledger:
    it touches; a named unknown is not a contract. Unrecoverable detail
    (historical names, layout) is listed separately and never blocks.
 
+Control-escape completion rule. A corruption-induced control escape is class 3
+when (a) the trigger, affected state, write order, memory footprint and the
+control-transfer expression are proven; (b) the CPU state at the escape boundary
+(registers, FLAGS, segments, stack, committed memory) is characterized; (c) the
+escape is shown to follow from the characterized corruption, not from an
+unresolved legitimate callback or dispatch path; and (d) every effect before
+the escape that can influence later normal gameplay is accounted for. The
+specification then ends that path with "control transfers to CS:F(state) with
+the characterized machine state; execution continues in the original image and
+machine environment" and does not enumerate instructions reached only that way.
+This closes the semantic characterization, not the native implementation: a
+characterized but unsupported escape is an explicit runtime equivalence
+limitation, never replaced by success, a no-op, recovery or invented logic.
+It never dismisses genuine unknown callbacks, ordinary reachable code,
+corruption that continues through normal gameplay, or behavior-affecting
+UNKNOWN storage.
+
 The freeze does not require proving that original races, aliases or overflows
 are impossible. If the original permits them, the specification characterizes
 them and implementations preserve them. Keep three layers distinct: the
