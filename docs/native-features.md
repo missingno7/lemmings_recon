@@ -108,7 +108,7 @@ Skill labels follow the panel order; the ledger names only action selectors
 | Terrain, sprites, masks, generated banks, text | DrawPlanarBitmap 8822, sprite routines 6170..7218, DrawTextStream 4D4D | c/drawing_*.c, entity_sprite_*.c, text_*.c | drawing, sprite, mask and text suites | VERIFIED |
 | Palettes, fades, DAC/attribute writes | palette routines 52F4..570C, game fades 03C1/03D7 | c/palette_*.c, game_transition.c | palette suites, palette_timer, game_transition | VERIFIED |
 | Raster split palette (playfield/panel) | RefreshRasterSplitPalette 46B9, timer palette 5473/553D | c/palette_transition.c, palette_ports.c | palette_transition, palette_timer | PARTIALLY_VERIFIED: host PPM is an instantaneous DAC capture, no per-line palette history |
-| Live display | VGA scanout | none (SDL3 later) | - | BLOCKED |
+| Live display | VGA scanout | host/sdl_main.c: scanout rendered per emulated display period, 4:3 letterbox | host_smoke --sdl (offscreen, 130 frames identical to the headless runner) | PARTIALLY_VERIFIED: the raster palette split is shown with the DAC at present time |
 
 ## Audio
 
@@ -116,7 +116,7 @@ Skill labels follow the panel order; the ledger names only action selectors
 |---|---|---|---|---|
 | AdLib music, one song per level | SelectLevelSoundId 482F, AdLib update 0115 from timer 1872 | c/game_prepare.c, c/adlib_engine.c; host Nuked OPL3 (OPL2 mode) with per-access bus timing | game_prepare, adlib_engine (shipped songs per INT61 call), sound_latches; host smoke: music RMS and note onsets in audio.wav | VERIFIED (OPL core differences are unverified equivalence) |
 | AdLib effects (entity, panel, interaction requests AH 04) | RequestEntityActionFeedback 31E5, 3F7A, 2F9F/2FF5/304C/30A3 | c/entity_action_sound.c, ui_commands.c, adlib_engine.c | entity_action_sound, entity_interactions, adlib_engine; host-observed effects with music off | VERIFIED |
-| Live audio output | OPL ports 0388/0389 | WAV file only (`--audio`) | host smoke | BLOCKED (no device until SDL3) |
+| Live audio output | OPL ports 0388/0389 | host/sdl_main.c: OPL output streamed to an SDL audio stream (WAV with `--audio` in the headless runner) | host smoke (WAV level and onsets); SDL stream not compared automatically | IMPLEMENTED_UNTESTED for the device; samples identical to the WAV path |
 | PC-speaker effects (default `/a` profile) | INT60 component 0842:0182, MAIN.DAT section 5 | c/pcspeaker*.c (4 entries TESTED); host INT60 is a muted, counting sink | pcspeaker, pcspeaker_bus, pcspeaker_dispatch, pcspeaker_interrupt | PARTIALLY_VERIFIED: no audio rendered |
 
 ## Input and timing
@@ -151,13 +151,12 @@ Skill labels follow the panel order; the ledger names only action selectors
 
 In impact order:
 
-1. **No live device or real-time pacing.** Original dependency: VGA scanout of
-   modes 0D/10 (CRTC start, attribute map, DAC, raster palette split), PIT/raster
-   cadence (five IRQ08 per game frame) and OPL output on 0388/0389. Needed: the
-   SDL3 front end presenting planes and DAC per display frame, including the
-   panel split; live mouse/keyboard mapped to the INT33 state and IRQ09
-   scan codes; virtual PIT advanced by wall clock; OPL audio streamed instead of
-   written to WAV.
+1. **Live device polish.** The SDL3 front end (host/sdl_main.c) presents the
+   scanout, streams OPL audio, maps keys to set-1 IRQ09 bytes and the mouse to
+   the INT33 range, and paces PIT time by the wall clock; scripted runs match
+   the headless runner frame for frame. Remaining: the raster palette split is
+   shown with one DAC per frame, PC-speaker audio, joystick, and a human check
+   of input feel and pacing.
 2. **Timing model not validated.** Original dependency: measured reload
    (CalibrateGameTimerReload 15AD), game/menu timer IRQs 17C7/4C47 and the
    raster palette split at 46B9/5473/553D; IRQs can arrive at any instruction.

@@ -123,6 +123,25 @@ level case, never a patch to live game state or an asset file.
 
 ## Unsupported and verification limits
 
+## SDL3 front end
+
+`.venv/Scripts/python.exe tools/hostbuild.py --sdl` builds `build/lemmings.exe`
+with the pinned SDL3 release (metadata/sdl3.json, fetched and hash-checked by
+tools/fetch_sdl3.py into build/third_party; nothing downloaded is committed).
+Run it from the repository root (`build\lemmings.exe`; `--assets DIR`,
+`--sound=speaker`, `--media-probe=reject` are optional). The game runs exactly
+as in the headless runner; host/sdl_main.c adds only devices at foreground
+polls: the scanout is rendered once per emulated display period and scaled to
+4:3, SDL scancodes become set-1 make/break bytes on IRQ09 (E0 prefix for
+extended keys, SDL repeats as typematic makes), the mouse maps into the INT33
+range the game set, PIT time is paced to the wall clock, and OPL output streams
+to SDL audio. Alt+Enter toggles fullscreen; closing the window stops the game.
+`--script/--frames/--log` drive it like the headless runner, and
+`tools/host_smoke.py --sdl` checks under the offscreen/dummy drivers that it
+reproduces the headless AdLib run frame for frame. Limits: the raster palette
+split is presented with the DAC at present time, the PC speaker is silent and
+the joystick is unbound.
+
 ## Sound
 
 When the game installs INT61 at its driver allocation:0000 (DOS AH25 at 057B),

@@ -54,9 +54,24 @@ def special_smoke(exe):
     assert len(rows)==40 and (output/'briefing.ppm').is_file()
     return dict(frames=len(rows),briefing_sha256=sha((output/'briefing.ppm').read_bytes()))
 
+def sdl_smoke(reference):
+    """SDL3 front end under the offscreen video and dummy audio drivers must
+    reproduce the headless AdLib run frame for frame (same scripted input)."""
+    import os
+    from hostbuild import build_sdl
+    exe=build_sdl(BUILD/'lemmings.exe');output=BUILD/'host-smoke-sdl';output.mkdir(exist_ok=True)
+    env=dict(os.environ,SDL_VIDEO_DRIVER='offscreen',SDL_AUDIO_DRIVER='dummy')
+    run_bounded([str(exe),'--assets',str(ROOT/'assets'),'--script',str(ROOT/'host/smoke.script'),'--frames','130',
+        '--no-pace','--log',str(output/'frames.csv')],cwd=ROOT,timeout=120,memory_mib=512,check=True,env=env,
+        stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+    rows=list(csv.DictReader((output/'frames.csv').open(newline='')))
+    assert rows==reference,'SDL front end diverges from the headless runner'
+    return dict(frames=len(rows))
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--existing',action='store_true',help='Use the already built release executable')
+    p.add_argument('--sdl',action='store_true',help='Also build the SDL3 front end and compare it offscreen')
     a=p.parse_args();output=BUILD/'host-smoke';output.mkdir(exist_ok=True)
     exe=BUILD/'lemmings-headless.exe'
     if not a.existing:build_host(exe)
@@ -83,12 +98,14 @@ def main():
         images.append(dict(path=q.relative_to(ROOT).as_posix(),geometry=geometry,colors=colors,sha256=sha(q.read_bytes())))
     adlib=adlib_smoke(exe)
     special=special_smoke(exe)
+    sdl=sdl_smoke(list(csv.DictReader((BUILD/'host-smoke-adlib/frames.csv').open(newline='')))) if a.sdl else None
     assert before=={q:sha((ROOT/q).read_bytes()) for q in before},'smoke inputs changed'
-    write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,adlib=adlib,special=special,
+    write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,adlib=adlib,special=special,sdl=sdl,
         cadence='five IRQ08 per game tick; five17044-unit display periods within8 units',
         ppm=images,input_hashes=before,executable_sha256=sha(exe.read_bytes()),stdout=result.stdout,
         limits=dict(seconds=60,process_commit_mib=256,polls=100000,accesses=500000000)))
     print(result.stdout,end='');print(f'PASS host smoke: {seconds:.3f}s,20 frames,3 PPMs; display-locked cadence checked')
+    if sdl:print(f"PASS SDL3 front end: {sdl['frames']} frames identical to the headless runner")
     print(f"PASS special-graphics smoke: Fun 22 briefing and {special['frames']} frames")
     print(f"PASS AdLib smoke: {adlib['frames']} frames, {adlib['int61_requests']} INT61 requests, {adlib['audio_frames']} audio frames, music RMS {adlib['music_rms']}, {adlib['music_onsets']} note onsets")
 if __name__=='__main__':main()

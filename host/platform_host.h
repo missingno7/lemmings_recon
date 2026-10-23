@@ -69,6 +69,14 @@ int lmn_host_ppm(LmnHost *,const char *path);
 /* Optional stereo 16-bit WAV of the OPL output at 49716 Hz, timed by the PIT
    clock; frames before opening are written as silence. Close fixes the header. */
 int lmn_host_open_audio(LmnHost *,const char *path);
+/* Live audio: called with each block of rendered stereo frames (49716 Hz). */
+typedef void (*LmnHostAudioSink)(void *context,const int16_t *frames,size_t count);
+void lmn_host_set_audio_sink(LmnHost *,LmnHostAudioSink,void *context);
+/* Current scanout as packed RGB (640x350 in mode 10, else 320x200); rgb may
+   be NULL to query the size. Uses the DAC at this instant. */
+int lmn_host_render_rgb(const LmnHost *,uint8_t *rgb,unsigned *width,unsigned *height);
+/* INT33 coordinate range last set by the game (functions 7/8). */
+void lmn_host_mouse_range(const LmnHost *,uint16_t *min_x,uint16_t *max_x,uint16_t *min_y,uint16_t *max_y);
 int lmn_host_close_audio(LmnHost *);
 uint64_t lmn_host_audio_frames(const LmnHost *);
 uint64_t lmn_host_hash(const LmnHost *);

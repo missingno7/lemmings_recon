@@ -58,6 +58,7 @@ struct LmnHost {
     uint8_t opl_address,opl_status,opl_control;
     uint64_t opl_bus_ns;
     FILE *audio; uint64_t audio_frames; int audio_failed;
+    LmnHostAudioSink audio_sink; void *audio_context;
 };
 static uint32_t phys(uint16_t seg,uint16_t off) { return (((uint32_t)seg<<4)+off)&MASK; }
 static uint16_t word(const uint8_t *m,uint16_t seg,uint16_t off) {
@@ -384,11 +385,16 @@ static uint64_t opl_clock(LmnHost *h) {
 /* Render OPL output up to the OPL bus clock (stereo 16-bit frames). */
 static void render_audio(LmnHost *h) {
     uint64_t target=opl_clock(h)*OPL_RATE/UINT64_C(1000000000);
-    while(h->audio && !h->audio_failed && h->audio_frames<target) {
-        int16_t frame[2];
-        OPL3_Generate(&h->opl,frame);
-        if(fwrite(frame,sizeof(frame[0]),2,h->audio)!=2)h->audio_failed=1;
+    int16_t block[2*256];size_t n=0;
+    if(!h->audio && !h->audio_sink){h->audio_frames=target;return;}
+    while(!h->audio_failed && h->audio_frames<target) {
+        OPL3_Generate(&h->opl,block+2*n);
         h->audio_frames++;
+        if(++n==256 || h->audio_frames==target) {
+            if(h->audio && fwrite(block,sizeof(block[0]),2*n,h->audio)!=2*n)h->audio_failed=1;
+            if(h->audio_sink)h->audio_sink(h->audio_context,block,n);
+            n=0;
+        }
     }
 }
 /* AdLib card ports 0388 (address/status) and 0389 (data). Platform model:
@@ -573,6 +579,10 @@ int lmn_host_close_audio(LmnHost *h) {
     h->audio=NULL;return ok;
 }
 uint64_t lmn_host_audio_frames(const LmnHost *h){return h->audio_frames;}
+void lmn_host_set_audio_sink(LmnHost *h,LmnHostAudioSink sink,void *context){render_audio(h);h->audio_sink=sink;h->audio_context=context;}
+void lmn_host_mouse_range(const LmnHost *h,uint16_t *min_x,uint16_t *max_x,uint16_t *min_y,uint16_t *max_y){
+    *min_x=h->mouse_min_x;*max_x=h->mouse_max_x;*min_y=h->mouse_min_y;*max_y=h->mouse_max_y;
+}
 void lmn_host_destroy(LmnHost *h){size_t i;if(!h)return;if(h->audio)lmn_host_close_audio(h);for(i=0;i<FILE_CAP;i++)if(h->files[i].file)fclose(h->files[i].file);free(h);}
 uint8_t *lmn_host_memory(LmnHost *h){return h->memory;}
 LmnHostVga *lmn_host_vga(LmnHost *h){return &h->vga;}
@@ -588,6 +598,11 @@ void lmn_host_set_hooks(LmnHost *h,void *c,LmnHostPollHook p,LmnHostObserveHook 
 void lmn_host_automatic_timer(LmnHost *h,int enabled){h->automatic=enabled!=0;}
 int lmn_host_set_time(LmnHost *h,uint64_t time){if(time<h->now)return 0;h->now=time;return 1;}
 int lmn_host_enqueue(LmnHost *h,const LmnHostEvent *e){
+    /* Drop already delivered events so a live session never fills the queue. */
+    if(h->event_cursor && h->event_count==EVENT_CAP){
+        memmove(h->events,h->events+h->event_cursor,(h->event_count-h->event_cursor)*sizeof(h->events[0]));
+        h->event_count-=h->event_cursor;h->event_cursor=0;
+    }
     if(!e || e->kind<1 || e->kind>3 || h->event_count==EVENT_CAP || (h->event_count && e->time<h->events[h->event_count-1].time)){fail(h,"invalid/full/out-of-order input script");return 0;}
     h->events[h->event_count++]=*e;return 1;
 }
@@ -652,19 +667,26 @@ LmnStartupResult lmn_host_boot(LmnHost *h,uint16_t load,const char *command,enum
 }
 static uint64_t hash_bytes(uint64_t value,const void *data,size_t size){const uint8_t *p=data;size_t i;for(i=0;i<size;i++){value^=p[i];value*=UINT64_C(1099511628211);}return value;}
 uint64_t lmn_host_hash(const LmnHost *h){uint64_t v=UINT64_C(14695981039346656037);v=hash_bytes(v,h->memory,sizeof(h->memory));v=hash_bytes(v,h->vga.planes,sizeof(h->vga.planes));v=hash_bytes(v,h->vga.dac,sizeof(h->vga.dac));return hash_bytes(v,h->vga.crtc,sizeof(h->vga.crtc));}
-int lmn_host_ppm(LmnHost *h,const char *path) {
-    LmnHostVga *v=&h->vga;unsigned width=v->mode==0x10?640:320,height=v->mode==0x10?350:200;
-    unsigned x,y,p,start=((unsigned)v->crtc[12]<<8)|v->crtc[13],pitch=v->crtc[0x13]*2;FILE *fp=fopen(path,"wb");
-    if(!fp)return 0;
-    fprintf(fp,"P6\n%u %u\n255\n",width,height);
-    for(y=0;y<height;y++)for(x=0;x<width;x++) {
-        unsigned at=(start+y*pitch+x/8)&65535,color=0,index;uint8_t rgb[3];
+int lmn_host_render_rgb(const LmnHost *h,uint8_t *rgb,unsigned *width,unsigned *height) {
+    const LmnHostVga *v=&h->vga;unsigned w=v->mode==0x10?640:320,ht=v->mode==0x10?350:200;
+    unsigned x,y,p,start=((unsigned)v->crtc[12]<<8)|v->crtc[13],pitch=v->crtc[0x13]*2;
+    *width=w;*height=ht;
+    if(!rgb)return 1;
+    for(y=0;y<ht;y++)for(x=0;x<w;x++) {
+        unsigned at=(start+y*pitch+x/8)&65535,color=0,index;uint8_t *out=rgb+3*(y*w+x);
         for(p=0;p<4;p++)color|=((v->planes[p][at]>>(7-(x&7)))&1)<<p;
         index=v->attr[color]&63;
         if(v->attr[0x10]&128)index=(index&15)|((v->attr[0x14]&15)<<4);else index|=(v->attr[0x14]&12)<<4;
         index&=v->pel_mask;
-        for(p=0;p<3;p++){unsigned c=v->dac[index][p];rgb[p]=(uint8_t)((c<<2)|(c>>4));}
-        if(fwrite(rgb,1,3,fp)!=3){fclose(fp);return 0;}
+        for(p=0;p<3;p++){unsigned c=v->dac[index][p];out[p]=(uint8_t)((c<<2)|(c>>4));}
     }
+    return 1;
+}
+int lmn_host_ppm(LmnHost *h,const char *path) {
+    static uint8_t rgb[640*350*3];unsigned w,ht;FILE *fp;
+    lmn_host_render_rgb(h,rgb,&w,&ht);
+    fp=fopen(path,"wb");if(!fp)return 0;
+    fprintf(fp,"P6\n%u %u\n255\n",w,ht);
+    if(fwrite(rgb,3,(size_t)w*ht,fp)!=(size_t)w*ht){fclose(fp);return 0;}
     return fclose(fp)==0;
 }

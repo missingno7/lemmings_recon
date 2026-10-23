@@ -1,0 +1,8 @@
+{
+  "version": "3.4.18",
+  "url": "https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-devel-3.4.18-mingw.zip",
+  "size": 5472877,
+  "sha256": "cd98158c8d025a816f430a600b4e9526524e6219ee884ec72bd498b80fd3bf58",
+  "target": "x86_64-w64-mingw32",
+  "license": "Zlib"
+}
