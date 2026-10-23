@@ -45,6 +45,15 @@ loc_7C01:
     loop loc_7BC3 ; @07C07
 DrawLevelObjectGraphicsReturn:
     ret ; @07C09
+; V4 FIELD HANDOFF: active working records are copied from live GROUND types
+; at setup/redraw. Opaque+0A..0D/+19..1A has no established typed consumer.
+; Animation writes frame before live stride/base reads, then+17 and flags.
+; Reset occurs only on equal limit; no >= clamp; limit0 retains byte wrap.
+; This type gate uses definition low+5, while389F compares full BE word1.
+; Malformed0101 therefore differs between consumers. Trigger2FCE sets bit1;
+; 2FE9 reads working+1B and sends the full nonzero byte as AH04 INT61.
+; AdLib's validation belongs to051C, not the working-record schema.
+; V1 Mixed object/entity rule and all84..98 field hits are in level_objects.asm/V1 report. Callback85 high=lo(O01);87=B05 including staleBX;8A=O09;8C low=hi(B0D),high=F0D;8F low=hi(O11);91 low=F15. Fresh retained8A descriptor givesF09*(F800|Y-high)+003C. No template immutability or actual gate/survival proof.
 ; T2 UNCONDITIONAL:7C4C/7C59/7C5C intersect entity callback bytes85:17FE,87:1857/1858,8A:18DE/18DF,8C:1938/1939,8F:19BF,91:1A19. Respect definition/flag/frame gates and staleBX. Frame01B6 precedes entity draw01BC;actual high-spill survival UNRESOLVED.
 ; ANIMATION:32 big-endian definitions stride8; mutable graphics stride1C.
 ; ZeroX stores staleBX at+00, without loading flags; type gating reads only+05.

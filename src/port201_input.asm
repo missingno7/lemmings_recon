@@ -37,6 +37,13 @@ times -(($-$$) != 0x4334) db 0
 ; Raw direct callback/calibration entries keep arbitrary DL, including FF. Wrappers still STI
 ; unconditionally and retain unbounded/wrapped timing; no hardware equivalence is supplied.
 PollPort201ButtonsLow:
+; V2/U02: these two fixed wrappers have no non-stack writer into25A0..25A6,
+; the detector rows, or canonical editor saves4ADC/4AE6. Their only direct
+; DS outputs are0051 and0014/15;4386 writes registers only. CALL/IRQ frames
+; use live SS. A substituted/unbound joystick does not close those originals.
+; In an editor-time menu IRQ,4C47 saves BP before polling and POP4C76 restores
+; the actual saved word; measurement's BP scratch therefore does not by itself
+; retarget4CC9/4D18. An altered saved word/SS or escaped42A5 target does.
 ; CALLBACK PRODUCER:4A68 stores4334 before4A6D publishes mode1;4A70 calibrates
 ; through this same entry. DS must still name the game frame at each access.
 ; This wrapper writes only0051 and0014 directly, not25A0. Its CALL/IRQ stack

@@ -10,6 +10,7 @@ RebuildViewVisibilityMap:
     db 0x33,0xc0 ; ENCODED: xor ax,ax (NASM chooses a different encoding) ; @04111
     mov di,ViewVisibilityMapBase-GameDataImage ; @04113
     mov cx,0x68 ; @04116
+; V1 Correction:origin0080 marks0EB6..0EDE including50+20=0EB8,so strip runs.00A0 marks0EBA..0EE2,leaves20=0,callback0EAC=0 and gate0ED3=1. Exact t2..A0 callbacks50={0000,0100,0101},51..53=allfour zero/one words,54={0000,0001,0101};all fields follow clear/marker byte rule. Actual saves/control premises remain.
 ; T2 UNCONDITIONAL conditional-input footprint:DF0 zero0EA8..0F77,marker0EA6+t..0ECE+t;DF1 zero0DDA..0EA9,marker0E7E+t..0EA6+t. DF0 callback50..54 can become0000/0001/0100/0101;clear can reactivate+26. At origin0080,slot50 callback0EAC=0 and wrapped-X gate0ED3=1;empty-terrain update may preserve it to715B with intact saves/no append. Actual whole-session arrival UNRESOLVED.
 ; R1: visibility4119/4131 retain entry DF; foreground0480 and IRQ3FDE are distinct callers.
 ; In the sufficient serial/intact mouse-mode0/live-AdLib domain, INT33 AX0003 profile plus

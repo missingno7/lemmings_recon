@@ -59,6 +59,19 @@ DrawEntityRecords:
 ; all outside the nine. DF1 zeros4C..4E callbacks;4F is0100 at t2,else0000
 ; for t>=3. Actual origin/DF/record survival is a separate UNRESOLVED domain;
 ; nominal header origin bounds are DATA-CONDITIONAL,not granted by VGA/profile.
+; V1 consumer eligibility: countn snapshots a byte and stable saves enumerate
+; k<n,including every spill50..FE when n>k. Drawing only skips exact+26=FF;
+; an owner value00/01/94 is active.365A compares the LIVE callback against
+; live003C,then signed+28>=1 chooses direct6E83; otherwise visibility7086
+; requires exact01 at0EA8+((wrap(X+biasX)+negative-fold0160)>>3).
+; This unchecked visibility index is NOT restricted to the rebuilt map.
+; Minimap6FE2 accepts signedY in[20,B0),then uses wrappedX;dirty5726 reads
+; X/04/02/06/08/20 before sprite dispatch. They can damage real SS saves
+; before the callback sample. A missed minimap or dirty gate does not itself
+; skip the later sprite call. Point path reads00/02/28 and live004D count,
+;2788+A0*byte(frame-1),2778 colors; spillDD..FF changes those same lookups.
+; Thus source-data corruption can affect ordinary records too. No host stop
+; or presumed record capacity is an original gate. See V1 per-index matrix.
     mov di,EntityRecordsBase-GameDataImage ; @03634
     mov cl,[EntitySlotBound-GameDataImage] ; @03637
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @0363B

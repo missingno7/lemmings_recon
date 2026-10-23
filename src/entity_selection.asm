@@ -6,6 +6,15 @@ times -(($-$$) != 0x3cde) db 0 ; module start assertion
 ; pointer fields survive sentinel resets. Signed wrapped geometry retains0680->00D0.
 ; PUSH/POP AX, formatter CALL/RET, selected pointer and templates remain live.
 ; See docs/entity-actions.md; UNKNOWN holes and record extents remain unresolved.
+; V1 owner/consumer handoff: anyspill50..FE withk<count and+26!=FF reaches
+; geometry,without a capacity/state validity check. It reads00/02/04/06,
+; then24 and08 for bucket choice;the final chosen label also reads25.
+; Stores3CEE clear2083..208D,3DF3 formats208B..208D,and3E58 copies2083..2089.
+; These aliasB5 tail/B6 prefix AFTER drawing,notB6 callback209A/209B.
+; Normal text owners cannot supply an old ASCII callback after construction:
+;30F3 erased it and3140 installed002E. B6's count/percent/time writers hit
+; other fields (2095..97,209C..9E,20A7/20A9/20AA); no per-frame owner write
+; to209A/209B is identified. Raw/reload/segment/frame writers remain explicit.
 SelectEntityCandidate:
     mov cl,[EntitySlotBound-GameDataImage] ; @03CDE
     db 0x22,0xc9 ; ENCODED: and cl,cl (NASM chooses a different encoding) ; @03CE2

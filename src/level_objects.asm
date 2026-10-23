@@ -3,6 +3,22 @@
 %if ($-$$) != 0x378a
     %error "level_objects start moved"
 %endif
+; V4 SOURCE/WORKING SCHEMA; words are LE, B denotes byte:
+; +00 flagsW,+02 frameB,+03 limitB,+04 widthB,+05 heightB,+06 strideW,
+; +08 maskDeltaW,+0A..0D opaque,+0E cellXW,+10 cellYW,+12 cellWidthB,
+; +13 cellHeightB,+14 kindB,+15 animationBaseW,+17 currentSourceW,
+; +19..1A opaque,+1B soundB. Opaque field roles remain UNRESOLVED.
+; 37C2 reads GROUND directly; tick/draw reads working17CB+1C*j.397A recopy
+; resets active slots, unlike tick animation. Source=(1B4B+1C*BEtype)&FFFF;
+; every start congruent3 mod4 is possible. Type0024 reads known RGB row1F3B:
+; flags=LE[R0,G0],frame=B0,limit=R1,width=G1,height=B1,stride=LE[R2,G2],
+; mask=LE[B2,R3],base=LE[R7,G7],source=LE[B7,R8],sound=R9.
+; Its cell fields read Xoff=LE[B4,R5],Yoff=LE[G5,B5],width=R6,height=G6,
+; kind=B6. R/G/B are current slot3 color components. No invalid-type branch.
+; Type002A selects1FE3 timer/selectors, but source LE1FFA reads unowned
+; bytes: this partial map does not close their provenance. Zero-X copy skips
+; all bytes; animation instead stores stale BX in flags. DF1 copies backward
+; from each source/destination record start.
 ; R1 UNCONDITIONAL input implication: all37B4 copies inherit entry DF. Each copies1C bytes
 ; from its wrapped unchecked type*1C source. SavedSI/CX/DI restore after the REP, while outer
 ; DI adds1C even if REP ran backward. PROFILE supplies no missing entry DF or allocation bound;
@@ -36,6 +52,31 @@ CopyLevelObjectGraphicsRecords:
 ; DATA-CONDITIONAL original GROUND files0420 bytes cover1B4B..1F6A; the1000
 ; raw-read request is larger and is not an allocation/ownership certificate.
 ; Neither short-file exclusion nor PROFILE closes these record/renderer aliases.
+; V1 RECURRING MIXED GRAMMAR (G.7 CHARACTERIZED NONDETERMINISM under stated
+; spill/entry premises):7C0A still walks32 recordsG_j=17CB+1C*j,definitions
+; D_j=0FEB+8*j,using LIVE bytes after the entity update,not file templates.
+; For BEword(D_j)==0,store incoming/staleBX atG_j+00 without loading flags.
+; Otherwise typeLow==1 with0055!=FF skips ALL stores and retainsBX.
+; Other nonzero definitions loadB=LEword(G_j);ifB&2,increment byteframe,
+; wrap it to0 only on equality with byte limit,and clearB bit1 only when
+; that equality AND B bit0 hold. StoreF at+02 before reading stride+06 and
+; base+15,then storeO=wrap16(F*stride+base) at+17;finally storeB at+00.
+; IfB&2==0,only+00 is stored. StaleBX flows across zero/skip records and
+; initially comes from3944's caller; no invented zero seed. Exact stores
+; intersect callbacks85(high),87(both),8A(both),8C(low flag-high/high frame),
+;8F(low offset-high),91(low frame). V1 report gives every other field hit.
+; State+08 is also overlapped in86(high flags),8B(flags),8E(offset),
+;90(flag-high/frame),93(offset-high),95(frame);dispatch uses first-match bits.
+; For an unchanged freshly constructed8A descriptor,G09 stride=F800|Y-high,
+; base=003C;an enabled update therefore writesO09=F09*stride+003C,not the
+; arbitrary base0/stride0 witness.85 similarly getsO01=F01*FFF8+7000
+; and target70|(lo8(O01)<<8) when its constructor descriptor is retained.
+; These formulas characterize mixed bytes without asserting that the needed
+; definition/animation gates or high spill actually survive in a full session.
+; Reciprocal corruption: entity stores also replace object widths/heights,
+; masks/offsets and BE definitions. Frame01B9 draws objects BEFORE01BC entities;
+; its unchecked8822 path may change saves/control first. Zero dimensions keep
+; original decrement/wrap behavior; no resource bounds or frame survival added.
     push ds ; @0378A
     pop es ; @0378B
     lea bx,[LevelObjectDefinitions-GameDataImage] ; @0378C
@@ -68,6 +109,13 @@ loc_37B9:
     add di,byte +0x1c ; @037BC
     loop loc_379B ; @037BF
     ret ; @037C1
+; V4 CELL KIND is ORed without a nibble mask; high kind bits may change the
+; ordinal.2F00..2F0C splits the cell byte; kind4 ->2FB6 selects a working record
+; by its high nibble. Zero dimensions mean100h steps with intact row saves;
+; explicit stores ignore DF. If cells alias pushed BX/DX, later rows use the
+; actual POP values. Named LEVEL007 section1/object10 decimal +GROUND3o type5
+; writes A5 atSS:4816..4825 and49B6..49C5. This data fact neither bounds the
+; stack nor proves later read/survival of that upper row.
 ; U1 Level7 row headroom:depth302 ends49C6 without touching49B6..49C5;304 first writes49C4..49C5. For frame depth32, nine timer levels with eight26-byte tails and deepest62 end exactly49C6;ten cross. Initialization0498 depth34 plus nine gives304, with AdLib0559 PUSH DX writingDL/DH at49C4/49C5 if the active channel takes0349/038A. One retained keyboard scan frame16 plus frame32,eight timer tails26 and deepest62 gives318/SP49B6. This is conditional timing/stack arithmetic, not evidence those arrivals happen or that a later game reader observes the row; see U1 report.
 ; DATA-CONDITIONAL supplied-record footprint: level007.dat zero-based section1/object ordinal10,section0070 bytes021000AC0005000F (loaded DS103B),ground3o.dat type5 template008C has xoff0,yoff2,width16,height2,kind05. Original wrapped formula yields SS4816..4825 then49B6..49C5,valueA5. Thus interaction cells extend into dirty storage and above48F3 even without altered inputs. No interval-wide allocation/classification follows. UNCONDITIONAL row PUSH DX/BX atS-2/S-4 and POPs are live; writer/frame separation remains UNRESOLVED.
 ; UNCONDITIONAL lifetime implication:046B/376D/3770 precede game-vector install0492. Nominal DF0 second dirty-copy8219 clears4816..4825;00454/00460 neither DF clears49B6..49C5. The upper row can persist into later levels/stack traffic;actual read/survival and eligible-provider nesting remain UNRESOLVED.
@@ -138,6 +186,12 @@ loc_382F:
     jmp short loc_37CB ; @03836
 loc_3838:
     ret ; @03838
+; V4 STEEL +3 only participates in the all-zero test; nonzero+3 alone activates
+; one cell atSS:0012. Characterized return alias: entrySP4AF2 contains3770,
+; main DS and a stable distinct SS, first record10 2E 00 00, others zero.
+; X20,row2E,one byte09 atSS:4AF2; RET389E consumes3709. Row frames lie below
+; that cell. No bounds fix or repaired return is equivalent. Subsequent execution
+; at3709 is not asserted here.
 ; UNCONDITIONAL raw-input alias witness: steel bytes10 2E 00 00 give x32,row46,width1,height1 and write09 atSS4AF2. This can replace a near caller word there. DATA-CONDITIONAL all80 supplied unmodified LEVEL steel spans stay within00A7..41CB under intact row saves; this is not an unchecked-input bound or a global stack theorem.
 ; STEEL INTERACTION CELLS:32 four-byte records atDS172B, skip only if both words0.
 ; X coordinate combines AH and AL bit7; row is AL&7F. DH high/low nibbles encode

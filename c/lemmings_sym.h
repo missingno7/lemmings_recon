@@ -1173,6 +1173,7 @@
 #define SEG09A9_FirstObjectDefinitionX 0x0FEBu
 #define SEG09A9_LevelObjectDefinitions 0x0FEBu
 #define SEG09A9_FirstObjectDefinitionY 0x0FEDu
+#define SEG09A9_FirstObjectDefinitionType 0x0FEFu
 #define SEG09A9_FirstObjectDefinitionFlags 0x0FF1u
 #define SEG09A9_LevelTerrainDefinitions 0x10EBu
 #define SEG09A9_LevelSteelDefinitions 0x172Bu
@@ -1187,7 +1188,14 @@
 #define SEG09A9_FirstObjectGraphicsMaskOffset 0x17D3u
 #define SEG09A9_FirstObjectGraphicsAnimationBase 0x17E0u
 #define SEG09A9_FirstObjectGraphicsFrameOffset 0x17E2u
+#define SEG09A9_FirstObjectGraphicsSoundId 0x17E6u
 #define SEG09A9_GroundResourceBuffer 0x1B4Bu
+#define SEG09A9_GroundObjectTemplateRecords 0x1B4Bu
+#define SEG09A9_FirstGroundObjectInteractionX 0x1B59u
+#define SEG09A9_FirstGroundObjectInteractionY 0x1B5Bu
+#define SEG09A9_FirstGroundObjectCellWidth 0x1B5Du
+#define SEG09A9_FirstGroundObjectCellHeight 0x1B5Eu
+#define SEG09A9_FirstGroundObjectCellKind 0x1B5Fu
 #define SEG09A9_GroundTerrainGraphicsRecords 0x1D0Bu
 #define SEG09A9_GroundTerrainRecordWidthByte 0x1D0Bu
 #define SEG09A9_GroundTerrainRecordHeightByte 0x1D0Cu

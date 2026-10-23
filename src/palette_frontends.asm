@@ -147,6 +147,7 @@ TransitionPaletteToSlot2:
     mov cx,0x10 ; @0536E
     mov bx,0x200 ; @05371
     jmp PaletteTransitionSharedBody ; @05374
+; V1 Actual seed events with original pointers/DF0 give D3 packed callback25B3/B4=W(1F0E),D4 RGB callback25E0/E1=W(1F33). Seeds are not silent per-frame repairs. Current source-row step rules affectD6..D8;target ownership alone does not imply writes.
 ; GAME FADE SEED: live CS slots6/5 own DI/SI; actual PUSH DS/POP ES,DF words.
 ; With stored pointers/DF0:packed25AF=DS1F0B, then1F0B..1F12 ->25B0..25B7;
 ; RGB25CD..25CF=DS1F23..1F25, then1F23..1F3A ->25D0..25E7.

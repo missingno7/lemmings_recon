@@ -38,19 +38,31 @@ Platform-conditional (class 2): PC01 startup clear, PC02 1407 detector DF0/DS,
 PC03 INT33 AX=0003 preservation, PC04 DOS file-service continuations, PC05
 process-lived AdLib binding, PC06 startup marker recurrence.
 
-Genuine semantic blockers (class 4), in impact order for VGA + AdLib:
-- U01 715B values and control after record spill.
-- U02 42A5/1407/4CC9/4D18 target and writer domains.
-- U03 global lowest SP and saved-frame/segment alias survival.
+Moved out of class 4 on 2026-10-23 (beside the ASM): spill owner spans and
+initial fields for indices 50..FF (proven) with per-index 715B, visibility,
+keyboard, editor and palette consequences (characterized); constructor damage
+to headers/resources/graphics/globals/vectors (proven); width-0 renderer pass
+excluded for complete original files (proven) and its only route characterized
+(GROUND short-read suffix + level 4 type 1A negative Y); complete LEVEL and
+GROUND field schemas (proven); invalid object type reading palette rows as a
+template, short/long reads (GROUND count 04A7 replaces selector 1FF0) and
+missing terrain terminator (characterized); protected-view local composition,
+stack residue map and the stack-wrap-dependent INT25/26 carry (proven).
+
+Genuine semantic blockers (class 4) remaining, in impact order for VGA + AdLib:
+- U01 sharp surviving record count; control after escaped callback targets.
+- U02 concrete changed-cursor triggers (1194/1198/124C/4131/5397/53C0/563E/
+  56E2/editor DI) and the 1ED7/1C83/1C9A cache paths; escaped targets.
+- U03 global lowest SP and saved-frame/segment survival; editor entry SS:SP.
 - U04 actual IRQ/PIC/old INT08/INT62/mouse/INT24 nesting and schedules.
-- U05 remaining UNKNOWN storage (code frame, DS, protected, sound), 2698 extent,
-  point suffix 4768+, scratch allocation, 004A FF producer, 8363 caller.
-- U06 resource/terrain/object field ownership and allocation/short-read effects.
+- U05 stored roles of UNKNOWN storage (131 main, 454 driver runs), 2698/point/
+  scratch extents, 004A FF activation, 8363 caller.
+- U06 opaque LEVEL header +1A/+1C/+1E, template +0A..0D/+19..1A, terrain +6..7,
+  1FF2 tail and 1FF8..1FFD owners, provider memory footprints.
 - U07 AdLib 01EA under DF=1/transformed pointers, failure/preload vector cases,
   dynamic BIOS selector 0621/0626, real OPL/PIT/VGA timing.
-- U08 alternatives: Tandy 02BB/5958, PC-speaker 0196 and tail, joystick timing,
-  alternate display/palette/option routes (block full freeze, not the AdLib port).
-- U09 protected-view composition, stored 098C..0D9D roles, media/persistence.
+- U08 alternatives (block full freeze, not the AdLib port).
+- U09 stored roles of 098C..0D9B and skipped prefixes; alternate write path.
 - U10 effects of reachable processor faults and changed returns.
 
 Native follow-ups recorded for later, not current priorities: bind entity sound

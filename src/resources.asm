@@ -195,6 +195,13 @@ loc_19C4:
     lea ax,[OddLevelOverrideBuffer-GameDataImage] ; @019D5
     mov cx,0x1180 ; @019D9
     call ReadRawResourceFile ; @019DC
+; V4 OVERRIDE HANDOFF: POP AX rereads the saved decremented order; SHR AL,1;
+; MUL DH(38) ignores original AH and permits0..127 slices. DF0 copies18h header
+; bytes and20h footer bytes; camera/graphics0FE3..0FEA stay from LEVEL.
+; DF1 copies words at0FCB,0FC9,..0FB5 then17AB,17A9,..178D.
+; Each word's high byte is physical+1; source likewise runs backward. No CLD.
+; A short oddtable read keeps the old suffix. An invalid slice reads following
+; live storage; no blank/default/header-validation branch exists.
 SelectionAfterOddOverrideRead:
     pop ax ; @019DF
     shr al,1 ; @019E0
@@ -231,6 +238,14 @@ SelectionAfterOddOverrideRead:
 ; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
 ; alias,writer/vector and protected-view composition stay separate. No boundary CLD assumed.
     rep movsw ; @019FE
+; V4 GROUND:1A18 requests1000 ->DS:1B4B..2B4A; returned AX count is untested.
+; Named ground0o..ground4o.dat each have0420 bytes:16*1C templates,64*8 terrain,
+; 60 palette bytes. For a preserving forward DOS read of N bytes, only prefix N
+; is replaced; the suffix retains pre-call bytes. Larger files cross config,
+; cache, vector, selector, input and palette owners. N04A7 replaces1FF0;
+; N04AB replaces1FF4.1A35/1A49/1A4D/1A67 immediately use the new values.
+; Graphics byte0FE6 is reread after GROUND; ground/VGAGR names need not agree.
+; These are characterized state effects, not an invented invalid-file failure.
 loc_1A00:
     mov al,[LevelGraphicsSetByte-GameDataImage] ; @01A00
     lea si,[GroundFilenameSelector-GameDataImage] ; @01A03
@@ -318,6 +333,13 @@ SelectionAfterSpecialLoad:
     int 0x21 ; @01A78
 SelectionSpecialReturn:
     ret ; @01A7A
+; V4 PALETTE PREFIX under DF0: decoded VGASPEC+00..17 ->1F23..1F3A
+; (first three forced1F,1F,00) and1F53..1F6A (unmodified duplicate);
+; +18..1F ->1F1B..1F22; +20..27 ->1F0B..1F12 (first forced06).
+; CS slot3 rows1F13(full10 packed)/1F3B(full30 RGB) retain their first halves;
+; slot5 rows1F0B(8)/1F23(18) seed the UI/game palette. All sizes are hex.
+; RLE starts at input:0038. Four strips reuse level:8000..CAFF; then VGAGR
+; replaces the heap. DF, saves, source and output are live, without staging.
 ; CONTRACT: loaded VGASPEC input atsegment[1FF4]:0010; main DS owns metadata.
 ; Prefix40 bytes ->four live metadata destinations; four RLE/strip pairs consume
 ; input from0038 and reuse heap[1FF0]:8000. Re-read pointers after saved-DS pushes.
@@ -465,6 +487,12 @@ SpecialAfterDatDecode:
     mov ah,0x3e ; @01B3D
     int 0x21 ; @01B3F
     ret ; @01B41
+; V4 MALFORMED RLE:80 terminates;00..7F copies n+1 bytes;81..FF repeats
+; 257-n times. There is no output/source-end guard. LODSB/MOVSB/STOSB follow
+; live DF; SI wrap does not adjust DS. DI==0 after a write advances ES by1000,
+; even under DF1. Repeat rollover MOV AX,ES changes AL for remaining repeats.
+; Missing80 reads stale input and writes further segments. Unknown code/frame/
+; provider aftermath stays unresolved; no fabricated failure or image bound.
 ; S19 DF-site census lodsb al, byte ptr [si]: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED for
 ; actual whole-machine DF/segment inputs.
 ; Use live DF/segments and saves. Local decoded effects remain in s19-platform.json; IRQ,frame
@@ -565,6 +593,15 @@ DecodeDatPreservingSegment:
 sub_1BAD:
     pop ds ; @01BAD
     ret ; @01BAE
+; V4 DAT HEADER: byte0+1 wraps CH; byte1 supplies XOR checksum; BE+2/+3 is
+; read then POPped over; BE+4/+5 alone determines the wrapped output end.
+; +6/+7 is not read by this decoder; BE+8/+9 minus A determines payload count
+; (9 ->FFFF). Both reads ignore actual AX count. A short header overlays prior
+; buffer bytes; a short payload overlays the current header/suffix. Later bits
+; and lengths use that mix. Output size0 still executes a token before DI<=BP.
+; LEVEL start0FCB,size0,literal1 writes0FCA; literal264 writes0EC3..0FCA.
+; Checksum AND only returns flags. Errors jump04D0 without unwind; normal CLD.
+; Static extractor validation and host allocation bounds are not original checks.
 ; CONTRACT: BX handle, DS:SI source buffer, ES:DI output; incoming ES may change
 ; inside ReadDatBytes. Sizes use low16-bit header words, with original wrap.
 ; Header bit count0 is valid:seed DL joins checksum, first read refills backwards.
@@ -762,6 +799,13 @@ DatReadFailure:
     mov ax,0x9a9 ; @01C7A
     mov ds,ax ; @01C7D
     jmp loc_04D0 ; @01C7F
+; V2/U02 malformed/partial output recurrence:BP=initialDI;endDI=BP+low16(BEsize),wrapped.
+; Each literal predecrementsDI then writesAL; match predecrementsDI,readsES:DI+distance+1,
+; then writes1C9A. Only after a complete token does unsignedDI<=BP stop. Ignored short counts
+; at1E17 leave old header/payload bytes; pinned0800 LEVEL output is not a universal bound.
+; With nonwrapped BP0FCB, size>=1049 includes2013,>=15D6 includes25A0;>=E462 can reach
+; nominal editor saveG:F42C if invoked while it is live. Actual byte order,token overshoot,
+; segment/saves and continuation decide other cases. No editor-loop file call is decoded.
 ; S14 raw alias witness: ES=game DS,DI004B,ALFF makes DEC DI/store1C83
 ; set DS004A=FF. This original leaf does not validate destination ownership.
 ; Pinned LEVEL starts0FCB; witness does not establish a game-path004A producer
@@ -1107,6 +1151,18 @@ loc_1E53:
     pop es ; @01E55
     pop dx ; @01E56
     ret ; @01E57
+; V2/U02 name writer domain:dot after k<8 basename bytes gives1E60 count(k-1)&FFFF,
+; start1F96+DFsign*k. k0 writesFFFF spaces:DF0 misses only1F95,DF1 only1F97. Extension
+; NUL after j<3 bytes gives1E51 count(j-1)&FFFF,start1F9E+DFsign*j; j0 misses1F9D/1F9F.
+; Both underflows cover2013..201E,25A0..25A6,and ordinary stack saves atG:F42C/F436,
+; setting bytes20 before actual POPs. Known code filename literals/digit edits have basename
+; length4..8,extension3,so exclude these underflows while names are intact. Optional cache
+; 1F93 must actually be enabled;1ED7's missing decoded caller is not a dead-code proof.
+; Miss1DE1 descriptor+0B,1DEF name copy and1E00 requested-length hit/output use actual
+; cache cursors/ES/DI;13-byte descriptor is not included in reserved file-size paragraphs.
+; Canonical separate DOS-owned blocks plus pinned lengths exclude low-table writes only
+; for their bounded extents; padding corruption,mis-sized descriptors and changed saves
+; follow these concrete writes rather than an arbitrary cache-alias exemption.
 loc_1E58:
     mov ax,0x7 ; @01E58
     db 0x2b,0xc1 ; ENCODED: sub ax,cx (NASM chooses a different encoding) ; @01E5B

@@ -13,6 +13,15 @@ org 0x0dff
 ; Without aliases/intervening writers, IRET preserves interrupted FLAGS. Stack
 ; offsets and SI arithmetic wrap at 16 bits; far memory uses the loaded DS,
 ; not necessarily this handler's CS. Do not suppress below-SP residue or aliases.
+; Composed-frame rule (PROVEN, intact live frame): if Q is interrupted SP,
+; hardware leaves FLAGS/CS/IP atQ-2/-4/-6; pushes leave AX/SI/DS atQ-8/-A/-C.
+; Shared tail push DS0E29 leaves the interrupted next CS atQ-E after POP IVT0+2.
+; Thus maximum local handler cost is0E bytes, not just the six-byte CPU frame.
+; At trap after068F, Q=P-20h for063E entrySP P: its CS residue P-24h becomes
+; local B+1E (B=P-42h), later read by LES07A0 and091E. See stream.asm.
+; STI's one-instruction shadow covers PUSH AX0E00, not the whole handler;
+; subsequent IRQs may observe/alter saves, old/new patches and split IVT0
+; publication. Actual nested writer/schedule domains remain UNRESOLVED.
 ProtectionInt1Handler:
     sti ; @00DFF int1_plaintext
     push ax ; @00E00 int1_plaintext

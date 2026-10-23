@@ -5751,7 +5751,8 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Static direct call target",
-      "Main ledger; preserve existing extent. 063E forces DL=0; 0640..0652 saves six registers and IVT0..4; 066C enters protected state; 0786 frame setup preserves DL, excluding 069B absolute arm for ordinary disjoint startup. 094A clears chosen512/restores eleven INT1E-table bytes; 0976 restores IVT; 0E3A returns signature CF. Raw stack/IRQ/alias and media service contracts remain explicit, not boolean whole-RAM equivalence."
+      "Main ledger; preserve existing extent. 063E forces DL=0; 0640..0652 saves six registers and IVT0..4; 066C enters protected state; 0786 frame setup preserves DL, excluding 069B absolute arm for ordinary disjoint startup. 094A clears chosen512/restores eleven INT1E-table bytes; 0976 restores IVT; 0E3A returns signature CF. Raw stack/IRQ/alias and media service contracts remain explicit, not boolean whole-RAM equivalence.",
+      "Append V5 composition evidence to existing main ledger row; retain extent and references. 0677 overwrites CL04, hence InitializeProtectionLocalFrame sees (entryCX&FF00)|0004, never9299: composed063E always reads BIOS tick046C. For P=entrySP,B=P-42, INT1 after068F leaves CS atP-24=B+1E, consumed by LES07A0/091E with segment0 from0795. Final raw restoration leaves the residue map beside0970, rather than unchanged below-SP RAM. Normal TF/IF view order is proven as a local instruction relation, completed platform domain requires explicit TF-clear INT13 returns, intact frames and no intervening writer; not a whole-machine alias/IRQ proof or media boolean. Bounded original encoded-body PASS/FAIL executions through existing tests/protection_fixture.py confirmed these two consumed residues and final map; report build/static/v5-protected.md."
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 47
@@ -7856,7 +7857,8 @@
       "Static direct call target",
       "Exact detector/calibration/game-video ownership and full typed BIOS transport; docs/video-probe.md",
       "S17 flow-state: No caller-independent DF/DS/SS invariant was proved. Undeclared BIOS1413/1466 makes later loop iterations unknown even in serial intact-save analysis. In the explicit sufficient domain (entry13DC DF0/game DS, fixed known edges, intact saves, no IRQBIOS1413/1466/150D preserves DS/DI/caller stack and returns through intact FLAGS/CS/IP), DF0 and game DS hold at every modeled1407 visit. This is a conditional service declaration, not a verified BIOS ABI. Pointer-byte lifetime and four-row traversal bounds remain S4 obligationstarget_domain_complete=false.",
-      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations.",
+      "V2/U02: reset/carry and byte-level session recurrence documented in integration notes. DS/DF/DI are live; callback PUSH SI/CX at Q-2/Q-4, CALL at Q-6. Stable DF1 pairs are(2013,2012),(2010,200F),(200D,200C),(200A,2009); changing DF between LODSB/LODSW can move +/-1 instead of +/-3. Known four-target set is conditional on row words, loop saves and named BIOS services; B3/resource/RCR writers are characterized, not excluded by VGA."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 93,
@@ -53242,7 +53244,8 @@
       "S12: only decoded CALL3675; DS inherited. No-strip path reaches715B with same DS; optional6F7B saves DS atS-12, sets strip source DS from CX supplied by1FE8, and POPs actual saved DS at6FE0.7157 instead restores sprite CX=(1FE6+BP)&FFFF. Near715B retains CS. Foreground SP P gives entry S=P-8; P4AF4 implies target save4AE6, strip DS save4ADA, disjoint low mirrors/normal maps through48F3 under canonical DS19B9/SS244E. This sufficient placement is not a full stack-lifetime proof; nine-set membership and target_domain_complete remain conditional. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
       "S17 flow-state: For706F entryS, current DS supplies the word sampled hereit is saved atSS:S-6. The known-edge/no-IRQ/intact-save summary transports that very read to AX at715B, including the strip path:7159 rereads the saved word, and715A removes alignment. DS at715B equals 706F entry DS only under actual strip DS-save integrity (strip saveS-12h). ES can be incoming ES orA000 and CX is not a main-data segment guarantee. No target-set membership follows.",
       "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations.",
-      "UNCONDITIONAL intact-save transport:715B AX=70F0 sampled+14,saveS-6;stripDS saveS-12 separately survives. No-race DATA-CONDITIONAL prefix and race-without-spill preserve nine only with full writer/DF/source premises. Spill permits DF0 visibility/keyboard/animation writes;static visible slot50 witness carries0000. Global domain UNRESOLVED in CONSERVATIVE/PROFILE;no new CFG edge."
+      "UNCONDITIONAL intact-save transport:715B AX=70F0 sampled+14,saveS-6;stripDS saveS-12 separately survives. No-race DATA-CONDITIONAL prefix and race-without-spill preserve nine only with full writer/DF/source premises. Spill permits DF0 visibility/keyboard/animation writes;static visible slot50 witness carries0000. Global domain UNRESOLVED in CONSERVATIVE/PROFILE;no new CFG edge.",
+      "V1: exact visibility callback sets50={0000,0100,0101},51..53={0000,0001,0100,0101},54={0000,0001,0101}; corrected00A0 no-strip witness (0080 sets20=01). Keyboard/animation byte functions,loaded opcode interiors and reciprocal effects are maintained in ASM/build/static/v1-spill.md. Changed saves/control remain open."
     ],
     "verification_status": "TESTED",
     "reachable_instruction_bytes": 240,
@@ -53285,7 +53288,8 @@
     "confidence": "high",
     "evidence": [
       "Actual POPped AX is a live near target; unknown targets remain explicit before CALL",
-      "S12: CALL AX in current CS; AX is actual SS save from70F0 through7159, not a fresh field/table read. Supported membership theorem requires nominal<=50 producer domain, reset/serialized4013 publication, genuine cursors, unchanged initialized slots, DF0 at action5 and visibility, no other writer/alias and intact target/DS/return saves. DF1 action5/visibility, DF0 spill after4013 IRQ race, raw save aliases and unknown writer/segment/platform domains refute unconditional closure. Keep target_domain_complete=false; do not add speculative edges for RAM words0000/0100/0101. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness."
+      "S12: CALL AX in current CS; AX is actual SS save from70F0 through7159, not a fresh field/table read. Supported membership theorem requires nominal<=50 producer domain, reset/serialized4013 publication, genuine cursors, unchanged initialized slots, DF0 at action5 and visibility, no other writer/alias and intact target/DS/return saves. DF1 action5/visibility, DF0 spill after4013 IRQ race, raw save aliases and unknown writer/segment/platform domains refute unconditional closure. Keep target_domain_complete=false; do not add speculative edges for RAM words0000/0100/0101. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
+      "V1: near currentCS CALL715B pushes715D;field updates after70F0 alone do not retarget saved word. Extra candidates enter ProgramEntry/instruction interiors/renderer interiors;0001/9470 depend on relocated load. Target>=9A90 fetches liveDS:T-9A90,not stored original bytes. No new CFG edge or complete domain claim."
     ],
     "verification_status": "STATIC"
   },
@@ -67110,7 +67114,8 @@
       "Live byte0043:DF-clear0031/455B reset;314B INC publishes a completely cleared/initialized new slot.30CF reads index; no inactive-slot reuse, decrement or compaction in decoded producer/deactivators.1F2E/3637/3CDE consume bound including inactive slots. Stable byte bound n walks[0088,0088+2D*n), max exclusive2D5B; constructor indexFF reaches2D5B..2D87 then wraps bound00. Physical storage extent and service/alias/UNKNOWN writers remain unproved;50h is only the disjoint prefix before0E98, not a checked maximum.",
       "S12: byte0043 is reset by forward455B and incremented only after completed constructor stores at314B in the decoded direct domain; inactive slots retain their count. With stable starting B and limit L, (L-B)&FF publications precede equality; fresh B0 never wraps for stable byte L. Nominal pinned headers<=50 bound the prefix only with serialized limit writes: IRQ1874->4013 after30D5 and before314B can install limit B then publish B+1, defeating the stop and permitting subsequent spill. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
       "R3 UNCONDITIONAL recurrence: byte-indexed0088+2D*count,equality-only limit,314B publication wrap. DATA assumption A nominal header<=50 bounds prefix0088..0E97 only with stable counters/cursors and serialization of30CC..314B against4013. Profile grants no serialization. Spill50 overlaps spawn/visibility; numericB3/D3 footprints reach probe/input storage,but later corrupted-state survival is UNRESOLVED.",
-      "UNCONDITIONAL: published byte count is not allocation/active count. Stable scans cover00..n-1,neverFF.314B wrapsFF->00; constructor may addressFF.4013 race defeats DATA-CONDITIONAL nominal50 bound. Actual maximal surviving count UNRESOLVED; T2 report."
+      "UNCONDITIONAL: published byte count is not allocation/active count. Stable scans cover00..n-1,neverFF.314B wrapsFF->00; constructor may addressFF.4013 race defeats DATA-CONDITIONAL nominal50 bound. Actual maximal surviving count UNRESOLVED; T2 report.",
+      "V1: exhaustive numeric50..FF field/owner matrix. Stable byte count admits k<count throughFE,neverFF. FF construction publishes00;stale equality-only scanner may visitFF and shared point damage survives. No actual surviving-count proof or capacity clamp."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -67228,7 +67233,8 @@
     "evidence": [
       "Startup clears 0000..2011, 4551 clears 0000..0FC9 and 0409 stores 00; 01D2 consumes exact FF to add two observed IRQ counter changes per frame. No decoded writer of FF exists; any producer remains UNKNOWN (indexed or unresolved code), so the FF branch is retained, not called dead.",
       "Stored main image09ADA=00; absolute reader01D2 consumes exactFF; dedicated writer0409 resets00 per session. Startup0031 and level455B clear004A only in forward game-DS domain. All identified ordinary main/protected TF views and activeINT1 absolute operands including word overlap were scanned: no dedicated actual-game FF producer identified. Global absence is NOT proved:1130 indexed main writes,DF-sensitive strings,implicitSS and provider/returned-segment/protected-pointer aliases remain. Raw original WriteReverseLiteral1C82 at ES=gameDS,DI004B,ALFF storesFF via1C83;20E2 at gameDS:SI0024 also reaches004A. Pinned resource footprints miss004A with intact segments; malformed DAT/aliases unchecked. Tandy CS004A is separate song-request storage. FF branch consumes two observed1FCD inequalities; changes coalesce and256 unseen changes can alias equality. Keep branch; externally seeded game_frame tests are transport evidence,not a game producer.",
-      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations."
+      "Append S19 evidence without changing identity/extent: original PKLITE entry DF0/IF1 is unconditional (06979d5/check_unpack.py),superseding S17 footer-only uncertainty. Exact dual-mode claims/dependencies are in s19-platform.json; profile assumptions never close IRQ,saved-stack alias,callback-writer or4013 race obligations.",
+      "V3 final search: replace obsolete assertion no decoded FF writer exists. Only decoded absolute DS operands overlapping004A:reader01D2,zero writer0409; stored00 and forward startup/level clears zero it. No dedicated actual post0409 game FF producer found in ordinary/protected views.1C83 at ES=gameDS,DI004B,ALFF and20E2 at SI0024 really writeFF. Indexed/string/stack/returned-segment/modified-code domains remain open,so actual producer UNRESOLVED; retain branch. ExactFF consumes two observed1FCD inequalities;coalescence/256 unseen ticks can prolong equality;no timeout/localSTI/CLD. Fixture seeds do not prove producer."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68153,7 +68159,8 @@
       "1F2B and30C9 slot base;30D3..30F3 clear one2D-byte slot;1FEC stride2D; whole array extent/max count unproven. docs/entity-simulation.md",
       "First slot only,2Dh bytes at DS:0088.30C9..30F7 computes0088+2D*unsigned0043 and clears45 bytes with explicit INC DI independent of DF;30F9..3147 initializes before314B bound publication.20E2/22EE/2339/2FD1 mark+26=FF without decrement/free/reuse; normal reuse is DF-clear455B level reset. No decoded whole-record clone;378A copies distinct1Ch graphics records,283B copies interaction pattern to SS. Indices00..4F end0E97;index50 overwrites0E98 spawn pairs and aliases visibility.45 is first-slot width, never whole-array extent. See maintained1F19 contract.",
       "S12: retain size2D as first-slot schema, not new whole-array classification. Nominal header/order/full-read DF0 domain plus reset and serialized limit/publication gives at most50h slots, numeric prefix0088..0E97 (0E10 bytes). Neither byte counter nor equality guard allocates that extent. Index50 clears0E98..0EC4, destroying four spawn pairs before their read and overlapping visibility; raw/dummy limits or the4013 IRQ publication race permit spill. Byte-indexed selection reaches indexFF at2D5B..2D87 outside the prefix. Full serialization must cover after30CC limit sampling through314B: IRQ-before30D3 restores the stale AL; the after30D5 race is one sufficient witness.",
-      "UNCONDITIONAL: size2D is first-slot schema,not total allocation. Slot50 starts0E98; clear precedes spawn reads. Byte-index constructor footprint0088..2D87; stable published walk ends2D5A at countFF. Exact initializer/per-index shared owners in T2 report; no new classification."
+      "UNCONDITIONAL: size2D is first-slot schema,not total allocation. Slot50 starts0E98; clear precedes spawn reads. Byte-index constructor footprint0088..2D87; stable published walk ends2D5A at countFF. Exact initializer/per-index shared owners in T2 report; no new classification.",
+      "V1: completed constructor erases45 bytes then writes coordinates/state0004/live002E callback;old LEVEL/text/lookup words never survive simply as old callbacks. Every slot50..FF and field is mapped to its owner;later values follow actual byte writes in the same memory. No new allocated extent."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68535,7 +68542,8 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Keyboard16D4 literal indexed field extent and consumers; docs/keyboard-input.md",
-      "UNCONDITIONAL:179E writes00/94 to0F78..0FCA;4D23 reads,4D3A updates repeat byte. Callback55=0F8D,56=0FBA overlaps scans15/42 (high bytes next scans). Later keyboard writes may leave nine-target set; actual high-spill arrival UNRESOLVED."
+      "UNCONDITIONAL:179E writes00/94 to0F78..0FCA;4D23 reads,4D3A updates repeat byte. Callback55=0F8D,56=0FBA overlaps scans15/42 (high bytes next scans). Later keyboard writes may leave nine-target set; actual high-spill arrival UNRESOLVED.",
+      "V1: IRQ177F..179E writes94/00 per actual make/break index<53. Callback55 is scans15/16,56 scans42/43;after6170 exactly6170,6100,6194,0070,0000,0094,9470,9400,9494 in this event family.4D1A repeat is a separate actual editor path. State/geometry/activity aliases retain original masks."
     ],
     "verification_status": "STATIC"
   },
@@ -68568,7 +68576,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "197D decodes selected LEVEL section here; all80 pinned sections decode to2048 bytes, matched in bounded decoder tests",
-      "19AA/19B3 and 19BA/19BE repeatedly decode into0FCB; all80 pinned LEVEL sections output0800h. Header0FCB..0FEA, objects0FEB..10EA, terrain10EB..172A, steel172B..17AA, footer17AB..17CA. Supplied-file extent, not decoder limit. Payload requests0060..06C4; maximum source ends168E. Startup initializes once;4551 excludes record; each selection replaces it before4566/36B6/378A consumers. See resources.asm and build/static/s3-resource.md."
+      "19AA/19B3 and 19BA/19BE repeatedly decode into0FCB; all80 pinned LEVEL sections output0800h. Header0FCB..0FEA, objects0FEB..10EA, terrain10EB..172A, steel172B..17AA, footer17AB..17CA. Supplied-file extent, not decoder limit. Payload requests0060..06C4; maximum source ends168E. Startup initializes once;4551 excludes record; each selection replaces it before4566/36B6/378A consumers. See resources.asm and build/static/s3-resource.md.",
+      "PROVEN local evidence: All80 sections in assets/level000.dat..level009.dat output0800. Field partition header20,objects100,terrain640,steel80,footer20.19F5 forward override replaces first18 only;19FE footer20.4551 clear excludes record. Decoder low length/request/short count unvalidated: proposed size is named-file image, not write bound. Header+1A/+1C/+1E..1F semantic roles remain unresolved."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68734,6 +68743,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 4079,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "FirstObjectDefinitionType",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: BE definition+4/+5 loads37A4/37A7 and37CB/37CE select wrapped1B4B+1C*type, no bounds check;38AC/38AF compares full word1;7C1E/7C21 compares only lowbyte1. Different malformed high bytes can gate animation without generating spawn coordinates."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 4081,
     "segment": 2473,
     "kind": "data",
@@ -68810,7 +68835,9 @@
     "confidence": "PROVEN",
     "evidence": [
       "378A copies32 wrapped unchecked28-byte ground templates toDS17CB..1B4A;394F/7BB8/7C0A consume live slots; first-word-zero leaves stale bytes",
-      "UNCONDITIONAL:378A setup copies1Ch templates. Recurring7C0A writes+00/+02/+17 at7C5C/7C4C/7C59;callback overlaps85(high),87(both),8A(both),8C(two stores),8F(low),91(low). Definition/flag/frame gates,staleBX and wrap retained. High-spill survival UNRESOLVED."
+      "UNCONDITIONAL:378A setup copies1Ch templates. Recurring7C0A writes+00/+02/+17 at7C5C/7C4C/7C59;callback overlaps85(high),87(both),8A(both),8C(two stores),8F(low),91(low). Definition/flag/frame gates,staleBX and wrap retained. High-spill survival UNRESOLVED.",
+      "V1: ordered7C15..7C5C transducer and all recurring field hits84..98. Six callback functions85/87/8A/8C/8F/91 preserve staleBX/zero-definition/type/equality/byte-wrap. Fresh retained8A descriptor givesF09*(F800|Y-high)+003C,not arbitrary base0. Draw01B9 reads damaged dimensions/offsets before entity01BC;actual saves/control stay open.",
+      "PROVEN local evidence: 32*1C nominal working slots, copied378A/397A for nonzero BE X. DF1 copies backwards from each slot start; zeroX leaves all1C bytes stale.7C4C/7C59/7C5C mutateframe/offset/flags;2FCE ORsflag2. GROUND+0A..0D/+19..1A are transported but their semantic readers remain unresolved. Raw/alias writer domains are not bounded by this size."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68959,6 +68986,22 @@
     "verification_status": "UNRESOLVED"
   },
   {
+    "address": 6118,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "FirstObjectGraphicsSoundId",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: template+1B transported by378A to working17CB+1C*j;2FE9 reads live byte after triggered-object/sound gates,2FEC skipszero,2FF3/2FF5 sends full nonzero byte asAH04 INT61 request. No clamp here; admitted AdLib051C separately rejects>=13. Stale zero-X slots and unchecked type copies remain visible."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
     "address": 6987,
     "segment": 2473,
     "kind": "data",
@@ -68971,7 +69014,104 @@
     "confidence": "PROVEN",
     "evidence": [
       "1A18 requests1000 bytes ofground?o.dat into main data frame atthis offset",
-      "Existing size1000h is requested write ceiling, not exclusive allocation:1A11/1A15/1A18 requests1B4B..2B4A; five supplied GROUND files are0420h and end1F6A. Maximum crosses selection/cache/IRQ/allocation fields,2011 word,2013 records,U112,callback25A0 and U113 through2B4A. Actual file:16*1Ch object templates,64*8 terrain records,60h trailing metadata. Short reads retain stale suffix. No whole-run classification or normal supplied-file overwrite claim."
+      "Existing size1000h is requested write ceiling, not exclusive allocation:1A11/1A15/1A18 requests1B4B..2B4A; five supplied GROUND files are0420h and end1F6A. Maximum crosses selection/cache/IRQ/allocation fields,2011 word,2013 records,U112,callback25A0 and U113 through2B4A. Actual file:16*1Ch object templates,64*8 terrain records,60h trailing metadata. Short reads retain stale suffix. No whole-run classification or normal supplied-file overwrite claim.",
+      "PROVEN local evidence: 1000 is1A15 requested count, not an exclusiveallocation. Named ground0o.dat..ground4o.dat each0420: object1C0,terrain200,palette60.192D does not compareAX withCX; prefix-only partial replacement. N04A7 replaces1FF0, N04AB replaces1FF4, immediately read by1A35/1A49/1A4D/1A67; long input redirects graphics destinations. Fullrequest ends2B4A; preserve neighboring owner/lifetime and alias obligations."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 6987,
+    "segment": 2473,
+    "kind": "data",
+    "size": 448,
+    "symbol_name": "GroundObjectTemplateRecords",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN named-file premise assets/ground0o.dat..ground4o.dat: first16*1C bytes precede terrain1D0B.378A copies1C bytes to17CB+1C*j for nonzero-X definitions, incomingDF and live saves retained. Nominal extent only: type is unchecked16-bit and source can be any offset congruent3 mod4. Does not reclassify read ceiling1000 or opaque template bytes."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7001,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "FirstGroundObjectInteractionX",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: 37E9 adds LE word to unsigned definitionX>>2 with16-bit wrap. Writer is rawGROUND192D (request1A18) plus aliases;378A transports to working slot but cell writer rereadsGROUND directly. Short reads keep prior bytes; source template is unchecked. See v4-resources.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7003,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 2,
+    "symbol_name": "FirstGroundObjectInteractionY",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: 37F6 adds LE word to unsigned definitionY>>2;37F9 decrements before lowword MUL1A0 at37FE. Writer is rawGROUND192D (request1A18) plus aliases;378A transports to working slot but cell writer rereadsGROUND directly. Short reads keep prior bytes; source template is unchecked. See v4-resources.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7005,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "FirstGroundObjectCellWidth",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: 3815 loadsDH;381D/3821/3823 explicit forward byte write/DEC, zero gives100h columns if row saves remain intact. Writer is rawGROUND192D (request1A18) plus aliases;378A transports to working slot but cell writer rereadsGROUND directly. Short reads keep prior bytes; source template is unchecked. See v4-resources.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7006,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "FirstGroundObjectCellHeight",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: 3818 loadsDL;382B/382D DEC loop, zero gives100h rows if live savedDX survives. Writer is rawGROUND192D (request1A18) plus aliases;378A transports to working slot but cell writer rereadsGROUND directly. Short reads keep prior bytes; source template is unchecked. See v4-resources.md."
+    ],
+    "verification_status": "UNRESOLVED"
+  },
+  {
+    "address": 7007,
+    "segment": 2473,
+    "kind": "data_field",
+    "size": 1,
+    "symbol_name": "FirstGroundObjectCellKind",
+    "aliases": [],
+    "callers": [],
+    "callees": [],
+    "data_references": [],
+    "confidence": "PROVEN",
+    "evidence": [
+      "PROVEN: 3812 ORs full byte with ordinal<<4, no nibble mask.2EE6/2EF9/2F00..2F0C later split live cell into ordinal/action; high kind bits may change ordinal. Writer is rawGROUND192D (request1A18) plus aliases;378A transports to working slot but cell writer rereadsGROUND directly. Short reads keep prior bytes; source template is unchecked. See v4-resources.md."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68987,7 +69127,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "7C8D masks terrain selector to0..63;7C9A..7CAE uses eight-byte records atDS1D0B,width/height bytes andtwoLEoffsetwords;512bytes liesinside1056-byte suppliedGROUNDinput"
+      "7C8D masks terrain selector to0..63;7C9A..7CAE uses eight-byte records atDS1D0B,width/height bytes andtwoLEoffsetwords;512bytes liesinside1056-byte suppliedGROUNDinput",
+      "PROVEN local evidence: 64*8 records consumed7C67: word1&3F selects;7CA4/+0 width,7CA8/+1 height,7CAB/+2 LE source,7CAE/+4 LE mask. Bytes+6/+7 have no established typed reader and retain unresolved semantic roles. RawGROUND/short/stale and alias writes remain; size is nominal table, no immutability claim."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -68995,7 +69136,7 @@
     "address": 7435,
     "segment": 2473,
     "kind": "data",
-    "size": 0,
+    "size": 1,
     "symbol_name": "GroundTerrainRecordWidthByte",
     "aliases": [],
     "callers": [],
@@ -69004,7 +69145,9 @@
     "confidence": "PROVEN",
     "evidence": [
       "7CA4 reads selectedrecord+0 asDL pixelwidth;7CA6 clearsDH",
-      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains",
+      "V2/U02:7CA4 supplies zero-extended pixel width; actual packed width is low8(clippedDX>>3). All unchanged complete pinned LEVEL/GROUND normal terrain streams have nonzero packed widths under original680/A4 clipping. Object callers clear BP0; fixed editor glyph width10h/BP0 cannot enter8D66. SpillA6 base1DB6 leaves type1A width1DDB(+25)=0;20E2 deactivation writes height1DDC(+26)=FF. Subsequent GROUND N<=0290 retains it; LEVEL004 section1 terrain ordinal138 decimal=24BFFD9A has x04BF,y-9,type1A,BP0F4F and can reach8D66 with packed width0 if prior continuations survive. Complete reload repairs the example. See v2-targets report for exact RCR transform/stack effect.",
+      "PROVEN field width from 7CA4 in each8-byteGROUNDterrain record; little-endian machineword for2-byte offsets. No inferred role for+6/+7."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69012,7 +69155,7 @@
     "address": 7436,
     "segment": 2473,
     "kind": "data",
-    "size": 0,
+    "size": 1,
     "symbol_name": "GroundTerrainRecordHeightByte",
     "aliases": [],
     "callers": [],
@@ -69021,7 +69164,9 @@
     "confidence": "PROVEN",
     "evidence": [
       "7CA8 reads selectedrecord+1 asCL height;7CB3 setsCH4",
-      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains",
+      "V2/U02: negative-Y9967 path returns through99E2 without DX/CX zero rejection, including y+height=0. With width0,heightFF from spilledA6 deactivation at1DDB/1DDC, y-9 leaves heightF6 and admits width0. Canonical first width0 cached RCR pass covers all DS offsets including SS aliasA950..FFFF; subsequent POPs consume changed saves. This is a characterized overflow/partial-read domain, not unchanged pinned-file reachability.",
+      "PROVEN field width from 7CA8 in each8-byteGROUNDterrain record; little-endian machineword for2-byte offsets. No inferred role for+6/+7."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69029,7 +69174,7 @@
     "address": 7437,
     "segment": 2473,
     "kind": "data",
-    "size": 0,
+    "size": 2,
     "symbol_name": "GroundTerrainRecordSourceOffset",
     "aliases": [],
     "callers": [],
@@ -69038,7 +69183,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "7CAB reads selectedrecord+2 LE sourcecursor intoSI",
-      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains",
+      "PROVEN field width from 7CAB in each8-byteGROUNDterrain record; little-endian machineword for2-byte offsets. No inferred role for+6/+7."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69046,7 +69192,7 @@
     "address": 7439,
     "segment": 2473,
     "kind": "data",
-    "size": 0,
+    "size": 2,
     "symbol_name": "GroundTerrainRecordMaskOffset",
     "aliases": [],
     "callers": [],
@@ -69055,7 +69201,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "7CAE reads selectedrecord+4 LE second/maskcursor intoDI",
-      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains"
+      "Record-relative field alias in first of64 eightbyteGROUNDterrainrecords; alias size0 does not reclassify storedbytes or validate producer/allocation domains",
+      "PROVEN field width from 7CAE in each8-byteGROUNDterrain record; little-endian machineword for2-byte offsets. No inferred role for+6/+7."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69079,7 +69226,7 @@
     "address": 7955,
     "segment": 2473,
     "kind": "data",
-    "size": null,
+    "size": 16,
     "symbol_name": "SpecialMetadata8Base",
     "aliases": [],
     "callers": [],
@@ -69087,7 +69234,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "1AA9 LEA base; 1AAD adds8 for resource-prefix bytes18..1F"
+      "1AA9 LEA base; 1AAD adds8 for resource-prefix bytes18..1F",
+      "PROVEN local evidence: Full16-byte packed leveltarget row selected by CS52D4 slot3, despite historical name8Base. GROUND file3C8..3D7. Special prefix1AA9/1AAD usesbase+8 and copies only last8 (1F1B..1F22). First8 retainGROUND/stale bytes. Packed channels are bits(5,2),(4,1),(3,0). Preserve oldname to avoid unrelated rename."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69111,7 +69259,7 @@
     "address": 7995,
     "segment": 2473,
     "kind": "data",
-    "size": null,
+    "size": 48,
     "symbol_name": "SpecialMetadataDuplicateBase",
     "aliases": [],
     "callers": [],
@@ -69119,7 +69267,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "1A9A LEA base; 1A9E adds18 for second24-byte metadata copy"
+      "1A9A LEA base; 1A9E adds18 for second24-byte metadata copy",
+      "PROVEN local evidence: Full48-byte interleaved RGB leveltarget selected by CS52E4 slot3. GROUND file3F0..41F. Special1A9A/1A9E computesbase+18, copies24 only at1F53..1F6A. First24 retainGROUND/stale bytes. Slot5 separately1F23..1F3A gets firstcopy with firsttriple overwritten1F,1F,00."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69600,7 +69749,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "DOS AH35 AL08 at005D returns ES:BX;0062/0066 save pointer used by far chains1899/4C6C and restore16B7"
+      "DOS AH35 AL08 at005D returns ES:BX;0062/0066 save pointer used by far chains1899/4C6C and restore16B7",
+      "V1: completedB1 clears1FBE..1FC1 to0000:0000. If next game phase increment&3 is0 before repair,1899 far-JMPs physicalIVT0000:0000 with actual synthetic IRET frame,not mainCS:0000. Other phases locallyEOI;actual timing/external bytes/later high-index survival not inferred."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -69906,7 +70056,8 @@
     "data_references": [],
     "confidence": "high",
     "evidence": [
-      "1019 publishes allocation result+1000h modulo16bits;59BC producer ES;7112 source segment plus computed BP. No allocation bound or immutability claim"
+      "1019 publishes allocation result+1000h modulo16bits;59BC producer ES;7112 source segment plus computed BP. No allocation bound or immutability claim",
+      "V1: B2 constructor writes live002E to1FE6 as both record+14 and actual sprite segment;7112 uses it before715B. Other arena selectors zero/change. Later allocation1019 is a real writer,not implicit per-frame repair."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70002,7 +70153,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "AllocateStartupGraphicsArena 1037 stores base+4771 paragraphs (wrapped ADD); purpose beyond allocation not inferred."
+      "AllocateStartupGraphicsArena 1037 stores base+4771 paragraphs (wrapped ADD); purpose beyond allocation not inferred.",
+      "PROVEN local evidence: 1037 storesA+4771 after UI+2F7E and ADD17F3. NextboundaryA+4971, arithmetic2000-byte interval. No direct decoded operand reader found. Purpose/used extent unresolved; not proven scratch or dead. MAIN UI output17F00 ends relative476DF, leaving30-byte slack before47710; neither slack nor tail is classified from arithmetic."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70296,7 +70448,8 @@
       "13DC iterates four enable-byte/near-pointer records;1407 calls the live pointer; flags mutated by display probes",
       "Stored four enable-byte/near-word records:2013:00,1410;2016:00,1462;2019:00,1490;201C:00,14A0. 13F8/13FB set CX4/SI2013;13FF TEST/1402 LODSW preserves enable ZF. DS-frame, DF=0 at every LODS, preserved SI/CX saves and intact pointers close1407 locally. 13E9/13EE/13F3 enable only last three. 1194 with DI2012 can set first enable20. Known probe writers only change enables/pairs under preserved DS/DI; BIOS changes, GROUND request, unchecked record179, strings/stack/UNKNOWN paths prevent whole-lifetime closure.",
       "R3 UNCONDITIONAL schema/lifetime: startup1194 DI2012 can set first enable20 without changing pointer words; level reset/session setup do not restore records. DATA assumption A excludes supplied GROUND overwrites. SlotB3 base1FFF clears records and3140=6170 yields first target0061. Local forward traversal requires intact pointer words,DF0/gameDS/DI2006 and savedSI/CX/returns. PROFILE entries10:AX=1A00,10:AH=0012(BL10),10:AH=000F preserve only the stated local domain. Global writer/race/alias closure remains UNRESOLVED.",
-      "UNCONDITIONAL stored four enable/LE16 rows2013..201E,targets1410/1462/1490/14A0.13DC reinitializes only later enables before EVERY detector call;first enable and ALL target words persist across calibrations/menu/4551/03E7/session reuse.00C8 precedes main resources;0468 follows455D resources each entered session. Nonzero old reload does not skip15D5. DATA-CONDITIONAL GROUND0420 excludes its overwrite only;global record/renderer/frame/provider writers UNRESOLVED. Exact recurrence and BIOS premises in t3-input-probe.md."
+      "UNCONDITIONAL stored four enable/LE16 rows2013..201E,targets1410/1462/1490/14A0.13DC reinitializes only later enables before EVERY detector call;first enable and ALL target words persist across calibrations/menu/4551/03E7/session reuse.00C8 precedes main resources;0468 follows455D resources each entered session. Nonzero old reload does not skip15D5. DATA-CONDITIONAL GROUND0420 excludes its overwrite only;global record/renderer/frame/provider writers UNRESOLVED. Exact recurrence and BIOS premises in t3-input-probe.md.",
+      "V2/U02: per-session R_n is the live table after intervening writers. Exact200E=FF or2011=C8/190 bypass retains it; every other calibration rearms enables1..3 toFF, never repairs target words or e0. B3 maps entire table at record+14..1F; constructor002E=6170 yields e0=70, first target0061, remaining targets0000. Later +14 stores replace e0/target-low;3262 +1F=08 changes final target-high. Actual escaped callback/return controls subsequent visits. DF/DS and saved SI/CX determine actual LODS recurrence; nominal BIOS-preserving domain remains platform-conditional."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70478,7 +70631,8 @@
     "data_references": [],
     "confidence": "PROVEN",
     "evidence": [
-      "3B23 supplies2083 to NUL reader417B; stored40 chars2083..20AA and NUL20AB. Selection3CEE clears11 prefix bytes,3DF3 formats208B..8D,3E58 copies7 label bytes to2083..89. Count368A/3AB7 writes2095..97;3ABD/3AFB..3B1E write209C..9E, non100 keeps209C;36E2 writes20A7,040E/0413 set20A9/AA,021F..0246 borrow/count down. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+      "3B23 supplies2083 to NUL reader417B; stored40 chars2083..20AA and NUL20AB. Selection3CEE clears11 prefix bytes,3DF3 formats208B..8D,3E58 copies7 label bytes to2083..89. Count368A/3AB7 writes2095..97;3ABD/3AFB..3B1E write209C..9E, non100 keeps209C;36E2 writes20A7,040E/0413 set20A9/AA,021F..0246 borrow/count down. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open.",
+      "V1: B5/B6 erase status bytes/NUL;selection2083..8D,count2095..97,percent209C..9E,time20A7/20A9/AA hit other fields,notB6 callback209A/B.417B reads actual NUL/DF,no40-byte bound. No old ASCII callback survives completed construction."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -70870,7 +71024,8 @@
     "evidence": [
       "0E7C one-byte read from russell.dat; 0E89 modulo-10 increment; 0E9E/0EB7 set 9; 0EC2 writes 0100 live DS bytes starting here.",
       "0E75/0E79/0E7C requestsone russell.dat byte; supplied file100h does not enlarge read.0E7E..0E89 increments wrapped byte and resets>=0Ah; open failure0EAA zeros.0ED1/0ED4/0ED8 exports100h bytes FROM252A..2629 including filenames/clocks/callback/options/palette prefix, not intoRAM. Process startup-protection state with file persistence; excluded from startup/per-level clears.",
-      "0E75/0E7C requests one byte from russell.dat; success increments live byte, read count/CF unchecked;0EAC open failure zeros.0ED4..0ED8 exports100h bytes252A..2629 from RAM, not RAM initialization. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open."
+      "0E75/0E7C requests one byte from russell.dat; success increments live byte, read count/CF unchecked;0EAC open failure zeros.0ED4..0ED8 exports100h bytes252A..2629 from RAM, not RAM initialization. Stored process-image initialization lies beyond startup DF0 clear0000..2011 and per-level4551 clear0000..0FC9. No immutability inferred: long GROUND1A18 may overwrite through2B4A (supplied0420-byte files end1F6A); indexed/string/stack/segment/service aliases remain open.",
+      "Append exact recurrence, not a general modulo10 interpretation: u=(live byte+1)&FF; c=u if u<0A else0. Thus old00..08 skip with01..09; old09..FF request media with0, including FF wrap. Read CF/count are unchecked; short/error reads consume retained RAM. 0E8C saves complete AX across close and writer; 0E94/0E95 test saved AL, so DOS output AX does not choose the branch with intact saves. Writer creates/truncates hidden filename258A and exports live252A..2629, with unchecked errors/short writes and close. Persistent recurrence is conditional on actual successful file results; rejected probes set9 and attempt a second export before0EDF."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71154,7 +71309,9 @@
       "42A1 loads live callback;initial4252;4A68/4A80 store4334/4359;target domain remains conditional",
       "4252 stored word; direct4A68/4A80 install4334/4359 before publishing mode1 and calibration. Mode0/2/escape do not restore it. 42A1 samples before PUSH DX and CALL42A5. Known set is closed only if these are the last writes of both bytes in canonical DS and no intervening register/code change. GROUND file offsets0A55/0A56 and unchecked creation slot211 SI259F (clear30F3 and coordinate stores30FB/3100) are concrete other writers under named entry domains, not startup reachability claims. Raw strings, marker cursors, other indexed stores, provider/IRQ/physical aliases and UNKNOWN execution remain open.",
       "R3 UNCONDITIONAL: mode0 bypasses42A5 without reading this word;4ABD does not restore it. Stored4252 and direct4A68/4A80=4334/4359 remain a last-writer domain only. DATA assumption A excludes GROUND overrun; nominal-origin theorem excludes4131. SlotD3 numerically overlaps this word and changes25A6 too; arrival/survival, indexed/string/stack/provider/IRQ closure remain UNRESOLVED.33:AX=0003 PROFILE preservation does not close writers.",
-      "UNCONDITIONAL in fixed decoded selection/no-other-writer domain: stored4252; only absolute word stores4A68=4334,4A80=4359. Mouse4ABD/keyboard4AB5/escape4A4B/menu/code/level/session paths retain this word. Every ordinary mode1 publication first replaces it, so ordinary42A5 target set is4334/4359;4252 belongs only to broader intact-slot/raw-mode1 domain. Pointer can change while prior mode1 remains1 before publication; baselines follow. Global indexed/resource/renderer/frame/provider writer closure UNRESOLVED; see t3-input-probe.md."
+      "UNCONDITIONAL in fixed decoded selection/no-other-writer domain: stored4252; only absolute word stores4A68=4334,4A80=4359. Mouse4ABD/keyboard4AB5/escape4A4B/menu/code/level/session paths retain this word. Every ordinary mode1 publication first replaces it, so ordinary42A5 target set is4334/4359;4252 belongs only to broader intact-slot/raw-mode1 domain. Pointer can change while prior mode1 remains1 before publication; baselines follow. Global indexed/resource/renderer/frame/provider writer closure UNRESOLVED; see t3-input-probe.md.",
+      "V1: D3 starts259F;25A0/1=hi(X),lo(Y),mode25A6=FF fromFFF6 Y bias,sound25A7=04 fromstate0004.418C uses actual non0/non1 keyboard path,not automatic invocation of damaged25A0. Rebind/frame/segment domains stay open.",
+      "V2/U02: 42A1 samples before PUSH DX/CALL. Natural mode1 installs4334/4359; mode0 bypasses. Pinned GROUND0420 cannot reach25A0. D3 overlays word at+01/+02 with X-high/Y-low but completed constructor leaves modeFF; proper joystick selection repairs before mode1. Width0 cached-mask first RCR pass, FFFF cache-name padding and malformed DAT have explicit write recurrences; finite whole-program target closure still depends on actual last writers/escaped code and interrupt saves. See build/static/v2-targets.md and maintained input_poll comments."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71208,7 +71365,8 @@
       "418C selects0 mouse/1 indirect callback/other accelerated keyboard;0F64 fallback2;4A6D/4A85/4AB5/4ABD writers",
       "Stored00;0F64/4AB5 write02,4ABD writes00,4A6D/4A85 write01 BEFORE calibration.418C/4196 select00 mouse,01 callback,all other bytes keyboard; briefing/result prompts use00/01/other. Selection does not restore25A0/baselines. Excluded from ordinary startup/level clear; GROUND maximum and general indexed/string/SS/provider writers remain. No boolean normalization or closed three-value raw domain.",
       "R3 UNCONDITIONAL: observed0 at418C routes direct4252;1 routes42A5;others keyboard. Successful initial mouse configuration and4ABD selection do not make this immutable or restore25A0. Constructor slotD3 base259F clears mode then3134 record+06=FFF6 leaves25A6=FF. This is a numeric writer witness; actual high-slot survival and whole-session mode persistence remain UNRESOLVED.",
-      "UNCONDITIONAL decoded dedicated stores:0F64=2 on disabled/absent mouse;4AB5=2 on key3 or controllerCL2;4ABD=0 on allowed key1;4A6D/4A85=1 after complete callback word4334/4359 store. Initial0; successful0F08 does not explicitly reset0. Menu/code/session/result transitions preserve mode under no-other-writer premise.418C mode0 direct4252; second4196 comparison1 uses42A5,other keyboard. SlotD3 constructor can leaveFF; global lifetime UNRESOLVED."
+      "UNCONDITIONAL decoded dedicated stores:0F64=2 on disabled/absent mouse;4AB5=2 on key3 or controllerCL2;4ABD=0 on allowed key1;4A6D/4A85=1 after complete callback word4334/4359 store. Initial0; successful0F08 does not explicitly reset0. Menu/code/session/result transitions preserve mode under no-other-writer premise.418C mode0 direct4252; second4196 comparison1 uses42A5,other keyboard. SlotD3 constructor can leaveFF; global lifetime UNRESOLVED.",
+      "V2/U02: D3+07 is the high byte of record geometry+06. Constructor3134 FFF6 leaves modeFF, so a damaged callback does not alone imply a42A5 call. Transient constructor clear0 bypasses the slot; proper4A68/80 publishes pointer before mode1. Sampling1 before a writer or a different concrete mode writer is required for a damaged-slot call. Pinned GROUND file does not extend here."
     ],
     "verification_status": "STATIC"
   },
@@ -71324,7 +71482,8 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Observed DS source operand in timer palette paths; no private copy, sole owner, allocation extent or complete initialization is inferred",
-      "Stored48 zero bytes; slot0 writable current row, packed16 or RGB16*3. 531E/536C/5329/534B select source0;563E/56E2 write in place. 553D publishes0..7 then interior2650 colors8..15 in RGB;53CA adds24 for upper8. Not reset each frame; GROUND/record/cache/alias writers remain. Size48 is nominal row, not raw cursor bound."
+      "Stored48 zero bytes; slot0 writable current row, packed16 or RGB16*3. 531E/536C/5329/534B select source0;563E/56E2 write in place. 553D publishes0..7 then interior2650 colors8..15 in RGB;53CA adds24 for upper8. Not reset each frame; GROUND/record/cache/alias writers remain. Size48 is nominal row, not raw cursor bound.",
+      "V1: D6 callback263A/B in row;D7 low callback2667 is RGB last byte. Packed/RGB exact byte/channel recurrence and all relevant state-field hits recorded. Current mutable source rows differ from target ownership;no implicit snapshot or clamp."
     ],
     "verification_status": "STATIC"
   },
@@ -71358,7 +71517,8 @@
     "confidence": "STRONGLY_SUPPORTED",
     "evidence": [
       "Observed DS source operand in timer palette paths; no private copy, sole owner, allocation extent or complete initialization is inferred",
-      "Stored48 zero bytes; slot7 lower/full current row. 5473 reads8 packed/RGB colors,46E6 publishes8.5329 always steps16 here toward black;534B steps8 or16 toward25E8/25F0 or menu4920/4930 per03CE/467B producers.563E/56E2 in-place writers; no frame reset. Resource/record/cache/alias writers remain."
+      "Stored48 zero bytes; slot7 lower/full current row. 5473 reads8 packed/RGB colors,46E6 publishes8.5329 always steps16 here toward black;534B steps8 or16 toward25E8/25F0 or menu4920/4930 per03CE/467B producers.563E/56E2 in-place writers; no frame reset. Resource/record/cache/alias writers remain.",
+      "V1: D7 high callback2668 row start;D8 callback2694/95 RGB offsets2C/2D. RGB nominal writes all these;packed only2668..77. Apply original signed twice-step RGB and encoded packed channels in order,including constructor bytes6170."
     ],
     "verification_status": "STATIC"
   },
@@ -71376,7 +71536,9 @@
     "evidence": [
       "State0400 from1F85;unchecked pair index initialized at21E3 then advanced without bound;actual pixel returns and shared1FE8/20E2 tails. Pair base names only a reference, bytes/extent remain UNKNOWN. docs/entity-simulation.md",
       "2A70 adds live record+0E unchecked;21E3 initializes0,2A7B +=2 modulo65536.2A73 reads frame byte,2A75 stores+28 before2A78 reads signed Y-action byte (1/2/3 probe counts, others direct signed addition). Candidate2698..2777 contains8 lead pairs+13*8 repeated pairs but no terminal112 bound; keep extent/classification unresolved. GROUND maximum/large record/cache/aliases can overwrite candidate. See s7-tables.md.",
-      "Keep base-only size0.21E3 initializes record+0E=0;2A70 adds it modulo16;2A75 frame store precedes2A78 second-byte read;2A7B increments cursor2 modulo16, no index/sentinel terminal. Collision2AEC exits0400;2B28 signed Y>=00B4 routes20E2. Candidate2698..2777 is8 lead pairs then104 delta2 pairs; collision-free stable nonwrapping sequence gains221 decimal Y over112 decimal pairs. Entry transition21C6 does not normalize Y: isolated Y0=-42 decimal would next read2778 after112,whereas Y0=-41 stops. Not a game reachability claim or supported-domain expansion. Caller Y/+0E/state/alias closure needed for total extent; callback003A differs from point003C."
+      "Keep base-only size0.21E3 initializes record+0E=0;2A70 adds it modulo16;2A75 frame store precedes2A78 second-byte read;2A7B increments cursor2 modulo16, no index/sentinel terminal. Collision2AEC exits0400;2B28 signed Y>=00B4 routes20E2. Candidate2698..2777 is8 lead pairs then104 delta2 pairs; collision-free stable nonwrapping sequence gains221 decimal Y over112 decimal pairs. Entry transition21C6 does not normalize Y: isolated Y0=-42 decimal would next read2778 after112,whereas Y0=-41 stops. Not a game reachability claim or supported-domain expansion. Caller Y/+0E/state/alias closure needed for total extent; callback003A differs from point003C.",
+      "V1: D8..DD overwrite unchecked2698 pair source with record bytes.2A70 storesframe28 before second delta read,2A7B advances0E by2;live producer/alias sequence determines behavior. Full table extent remains unresolved.",
+      "V3: keep base-only size0/UNKNOWN. B=(2698+live record+0E) mod65536; read byte0,store frame+28,read byte1,increment live cursor2. Actions1/2/3 request collision probes; others add signed byte to Y. Collision exits state; otherwise signedY>=180 deactivates. No count/sentinel. With stable cursor0/bytes and collision-free intact state,Y0 in[-41,32764] decimal exits by112;Y0=0 exits92,last274E/274F;Y0=-42 next reads2778 colors.21C6 does not normalize Y or prove lower bound. SI2671,cursor267F=0 makes frame2699 overwrite action03 with01 before read. Stored extent and actual entry/writer domain remain unresolved; no112 allocation/clamp."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -71411,7 +71573,9 @@
     "evidence": [
       "6E8C base plus byte(selector-1)*A0; low signed X/high signed Y, low80 skips. Total extent UNKNOWN",
       "A0h-byte frames of50h LE words, signed lowX/highY;low80 skips only its point.042C count50. Normal2D33/2E7B frame0 +callback003C,2353 INC and2358 expiry34 gives consumed51-frame prefix2788..4767 with stable state/slots/services.365F signed gate admits1..7F;raw byte(selector-1) admitsall256,zero->FF. Full table extent beyond4767 UNKNOWN (do not bound by4913 text). GROUND first3C3 bytes/record prefix/cache/aliases remain writers.",
-      "Keep total size0 and existing classified normal51-frame prefix2788..4767.2D33/2E7B seed0,2353 increments,2358 exits at34 before draw.4768..4807/4808..48A7 each matchA0-byte schema with16/12 decimal non-skipped words;last word48A6=F480 still skips on low80.48A8..48BE is NUL-terminated WRITTEN BY RUSSELL KAY with no established dedicated consumer.365F admits positive signed selectors01..7F but does not produce34/35;raw selector0 wrapsFF. Shape/raw out-of-prefix reads do not establish total53-frame allocation. Suffix remains UNKNOWN."
+      "Keep total size0 and existing classified normal51-frame prefix2788..4767.2D33/2E7B seed0,2353 increments,2358 exits at34 before draw.4768..4807/4808..48A7 each matchA0-byte schema with16/12 decimal non-skipped words;last word48A6=F480 still skips on low80.48A8..48BE is NUL-terminated WRITTEN BY RUSSELL KAY with no established dedicated consumer.365F admits positive signed selectors01..7F but does not produce34/35;raw selector0 wrapsFF. Shape/raw out-of-prefix reads do not establish total53-frame allocation. Suffix remains UNKNOWN.",
+      "V1: DD..FF overwrite point prefix;DD also colors2778.6ED2 skips only low80;zero pairs are real(0,0),descriptor words become signedXY pairs if read. FF source-data effect exists despite no stable byte-bound draw eligibility;no new full extent or classification.",
+      "V3: keep total size0/existing51-frame prefix. Normal0->INC/exact34 expiry excludes suffix with intact records/slots. B=2788+A0*byte(selector-1), jth word at B+2*j modulo65536, low80 skips else signedX/Y.34/35 start4768/4808;36 starts author48A8,first5257 means(+87,+82) decimal;50h-word read ends4947 crossing labels/palette. Signed caller01..7F covers through76E7,raw byte selectors throughC787. Count0 executes65536 loads/two DS word cycles if savedBX/CX survive; data stay live. Suffix role/total extent and anomalous producer unresolved; no53-frame hint."
     ],
     "verification_status": "STATIC"
   },
@@ -72933,7 +73097,8 @@
     "evidence": [
       "Shifted planar rows copy source bytes and a sentinel to gameDS:6706; named base only,allocation extent and producer domain remain unproven",
       "Source row base; sixteen copy/sentinel -> forward SHR/RCR -> DF LODSB phases listed beside DrawPlanarBitmap. DF0,w=1..254 initializes b..b+w, DF1 initializes b-w..b but carry chain still reads forward. w0 sweeps the segment; wFF output wraps to65536. Base6748 is42h bytes later, not proof of an allocation. Preserve size0 until a producer/allocation proof; do not classify all touched zero bytes.",
-      "Keep size0:6706->6748 spacing42h is not allocation. Explicit copy/sentinel e.g895D/8961,forward SHR/RCR898E/8993,LODSB89C3 establish per-row role. For intact saves DF0 footprint[b,b+w],DF1[b-w,b];RCR always forward,w0 loops65536. DF0 w>=42h overlaps mask base;DF1 w>=1 writes6705,w>=2 writes6704. Live preparedDS vs relocated gameES and SS saves matter; no whole zero-run classification or artificial width clamp."
+      "Keep size0:6706->6748 spacing42h is not allocation. Explicit copy/sentinel e.g895D/8961,forward SHR/RCR898E/8993,LODSB89C3 establish per-row role. For intact saves DF0 footprint[b,b+w],DF1[b-w,b];RCR always forward,w0 loops65536. DF0 w>=42h overlaps mask base;DF1 w>=1 writes6705,w>=2 writes6704. Live preparedDS vs relocated gameES and SS saves matter; no whole zero-run classification or artificial width clamp.",
+      "V3: size0 retained,6706 is transient base. DF0 w42h source sentinel6748 clears first previously built8D66 cached mask byte; larger widths copy across cache. DF1 w1 sentinel6705 overwrites live stride high;w2 sentinel6704 after copying6705. w0 forward RCR loop executes65536 iterations,touches every actual scratch-DS offset; base also had initialSHR and is RCRed last. Each step reads v and CF,then writes(v>>1)|(CF<<7),CF=v&1. Later POPs/strides/returns read changed bytes; no isolated-array,whole-allocation or stored-zero-run classification."
     ],
     "verification_status": "UNRESOLVED"
   },
@@ -72951,7 +73116,8 @@
     "evidence": [
       "Shifted planar rows copy mask bytes and a sentinel to gameDS:6748 and shift live bytes there; named base only,allocation extent and producer domain remain unproven",
       "Mask base; default890E copies each first-plane row; opaque916B fills FF then zero; 8FF7/909C copy masks; 8D66 builds an h-row cache before drawing, BP=copy-end DI with signed-DF step w+1. Row/height/shift domains and allocation extent are unchecked; A948-base=4200h is spacing only. Preserve size0 until a producer/allocation proof; do not classify all touched zero bytes.",
-      "Keep size0:6748->A948 spacing4200h does not prove allocation. Ordinary per-row copy/fill/sentinel and shift/read phases establish role;8D66 caches all h rows:8DCD copy,8DD1 zero,8DD2 nextBP=DI,8DE5/8DEA forward shift,8DFE AND with VGA plane3;8E18 resetsBX and8E5B/8EF4/8F69/8FD9 consume across planes. DF0 cache h*(w+1);DF1 row starts step backwards but shift/read forward. h0 means256;w0 RCR65536;wFF output65536;shift0 means256 passes. Nonoverlap h*(w+1)<=4200h is conditional arithmetic,not caller/allocation proof."
+      "Keep size0:6748->A948 spacing4200h does not prove allocation. Ordinary per-row copy/fill/sentinel and shift/read phases establish role;8D66 caches all h rows:8DCD copy,8DD1 zero,8DD2 nextBP=DI,8DE5/8DEA forward shift,8DFE AND with VGA plane3;8E18 resetsBX and8E5B/8EF4/8F69/8FD9 consume across planes. DF0 cache h*(w+1);DF1 row starts step backwards but shift/read forward. h0 means256;w0 RCR65536;wFF output65536;shift0 means256 passes. Nonoverlap h*(w+1)<=4200h is conditional arithmetic,not caller/allocation proof.",
+      "V3: size0 retained.8DCD copy/8DD1 zero,8DD2 nextBP=copy-endDI; all cache rows precede forward consumption8E5B/8EF4/8F69/8FD9. Intact rowstarts6748 +/- r*(w+1) mod65536,h0=256. DF0 h*(w+1)<=4200h is an address inequality,not allocation/caller proof. wFF rowstep256 but output/AND wraps65536. w0 carry sweep reaches every DS offset, including unchanged G:F444=S:4AF4 and G:A950=S:0000 (G=load+09A9,S=load+143E). Saves must be reread. Stored extent/full caller,IRQ,service lifetime remains unresolved."
     ],
     "verification_status": "UNRESOLVED"
   },

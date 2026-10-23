@@ -30,6 +30,17 @@ ClearLevelDrawingTail:
 InitializeLevelFromRecord:
 sub_36B6 equ InitializeLevelFromRecord
     call InitializeLevelDrawing ; @036B6
+; V4 LEVEL FIELD CONTRACT (DS:0FCB, nominal 0800 bytes from LEVEL000..009):
+; +00 release, +02 creation, +04 required numerator, +06 time, +08..16 eight
+; skill counts are BE words, read high then low. Only low bytes are published,
+; except +18: wrapped word+10 ->0000, then three logical SHRs ->0002.
+; 36D6's 0044 copy has no closed all-consumer role; 4591 separately uses raw
+; +05*64h / raw+03 at459C (byte DIV faults for zero or quotient>FF).
+; Header +1B/+1D are byte-only graphics/special selectors (1A00/1A26/3742).
+; +1A/+1C/+1E..1F roles remain UNRESOLVED; zero file values do not mean padding.
+; 4551 forward clear stops at0FC9; resource/working bytes survive until replaced.
+; DAT short counts/malformed tokens use mixed prior/header/payload bytes;
+; a C shadow header or zero-fill would change that behavior.
 ApplyLevelHeader:
     mov di,LoadedLevelRecord-GameDataImage ; @036B9
     mov ah,[di] ; @036BC

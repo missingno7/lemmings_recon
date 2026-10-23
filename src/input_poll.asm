@@ -6,6 +6,7 @@
 ; Calibrated X uses one more SAR than Y; unchecked scale selector is not fixed.
 ; Contracts: docs/input-poll.md and docs/architecture.md.
 times -(($-$$) != 0x418c) db 0
+; V1 D3 constructor gives25A0/1=hi(X),lo(Y),25A6=FF,25A7=04. The actual mode tests choose the non0/non1 keyboard branch;do not infer callback invocation merely from the overlapping target word.
 ; R3 UNCONDITIONAL branch contract: mode0 observed by418C jumps directly4252,
 ; bypassing42A5 without reading25A0. This empty per-invocation42A5 domain is not
 ; pointer immutability:4ABD restores mode0 only, leaving any joystick word.
@@ -166,6 +167,36 @@ PollMousePositionReturn42A0:
 ; Visibility4131 can reach this word for corrupted origin; nominal DATA-A origin
 ; 0010..0500 aligned8 excludes it. Stack/segment/provider/IRQ domains remain open.
 loc_42A1:
+; V2/U02 writer refinement (G.7 classes; full evidence in v2-targets report):
+; PROVEN: ordinary complete LEVEL/odd/GROUND outputs stop at17CA/66E5/1F6A;
+; the five pinned GROUND files each0420 bytes cannot write2013..201E or25A0..25A6.
+; Cache-name padding is not an arbitrary string writer:1E60 count=(k-1)&FFFF
+; when a dot follows k<8 basename bytes; k=0 writesFFFF spaces from1F96.
+; At1E51 an extension NUL after j<3 bytes gives(j-1)&FFFF; j=0 writesFFFF
+; spaces from1F9E. Supplied literal/digit-edited names have k>=4,j=3, excluding
+; these two underflows. Cache-enable1F93 and damaged filenames are separate
+; concrete inputs;1ED7 has no decoded caller, not a proof of dead code.
+; CHARACTERIZED NONDETERMINISM: record B3 owns2013..201E at+14..1F;
+; D3 owns25A0..25A6 at+01..07. Apply each actual indexed store to these SAME
+; bytes. Completed D3 has P=(X>>8)|((Y&FF)<<8), baselines=(Y>>8)|F800, F6FF,
+; and modeFF from3134. It takes keyboard polling, not automatically42A5.
+; A later proper joystick selection repairs P before mode1; an IRQ during
+; construction may instead see each partially published byte. No atomic record.
+; Renderer width0 is a concrete writer, not excluded by nominal nonzero widths:
+; A6 at1DB6 leaves type1A width1DDB=0;20E2 can set height1DDC=FF. A following
+; GROUND read N<=0290 retains both. LEVEL004 section1 command138(decimal)=24BFFD9A,
+; x04BF,y-9,type1A, then admits DX0 through99E2 and selects8D66 (shift7).
+; Survival of the spill/earlier commands is a premise, not a new proved edge.
+; A complete GROUND reload repairs this example; unchanged pinned terrain has
+; no packed-width0 after original clipping. Width0 RCR8DEA visits all DS bytes
+; in order BX+1..BX+0000, with SHR8DE5 first; live POPs then read changed saves.
+; This first pass can change P, mode, rows and SS saves (SS0 aliases DS:A950).
+; Target rule: current AX is the word sampled42A1, including any mixed-byte
+; history; only an intervening register/return writer can change it afterwards.
+; IRQ4C47 saves AX at interruptedSP-08, keyboard16D4 at interruptedSP-0A;
+; corruption of those exact words can change restored AX before42A5. The slot
+; write alone cannot. Known-target finite closure still requires last-writer
+; ownership; unknown42A5 code, old08/INT62/provider writes remain named seams.
 ; TARGET/LIFETIME: the second mode read at4196 must equal1; direct entry here
 ; bypasses both mode tests. With DS=relocated09A9, the stored word is4252;
 ; 4A65/4A68 installs4334 and4A7D/4A80 installs4359. Menu choice CL1 selects

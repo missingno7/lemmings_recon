@@ -99,6 +99,14 @@ FirstObjectGraphicsFrameOffset equ LevelObjectGraphicsRecords+0x17
 GameTransitionFlags equ GameDataImage+0x004E
 GameEndRequested equ GameDataImage+0x004F
 FrameDoubleWaitFlag004A equ GameDataImage+0x004A
+FirstObjectDefinitionType equ GameDataImage+0x0FEF
+GroundObjectTemplateRecords equ GameDataImage+0x1B4B
+FirstGroundObjectInteractionX equ GameDataImage+0x1B59
+FirstGroundObjectInteractionY equ GameDataImage+0x1B5B
+FirstGroundObjectCellWidth equ GameDataImage+0x1B5D
+FirstGroundObjectCellHeight equ GameDataImage+0x1B5E
+FirstGroundObjectCellKind equ GameDataImage+0x1B5F
+FirstObjectGraphicsSoundId equ GameDataImage+0x17E6
 GameFadePackedTarget25A8 equ GameDataImage+0x25A8
 GameFadeRgbTarget25B8 equ GameDataImage+0x25B8
 SplitPackedTarget25E8 equ GameDataImage+0x25E8
@@ -705,6 +713,11 @@ TypeOneObjectCoordinates:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0AA3E
 ; DATA: static_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0AA4E
+; V4 LEVEL nominal0800: header20,objects100,terrain640,steel80,footer20.
+; Header+1A/+1C/+1E..1F roles remain unresolved, not proven reserved padding.
+; Short reads and malformed decoder continuations use live prior bytes;4551
+; excludes this image. Entity56h at0FA6 clears into header0FCB. These are shared
+; bytes, not shadow resource/game structures.
 LoadedLevelRecord:
     db 0x00,0x00,0x00 ; @0AA5B
 ; DATA: static_data
@@ -1089,6 +1102,12 @@ LevelObjectGraphicsRecords:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0B5BE
 ; DATA: static_data
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0B5CE
+; V4 GROUND nominal0420, request ceiling1000: templates1B4B..1D0A,
+; terrain1D0B..1F0A,palettes1F0B..1F6A. Template+0A..0D/+19..1A and terrain
+; +6/+7 roles remain UNRESOLVED despite copies/nonzero file values.
+; Packed rows1F0B(8),1F13(10); RGB rows1F23(18),1F3B(30); sizes hex.
+; Special setup overlays the stated halves; short files retain other bytes.
+; No whole-run classification or exclusive1000-byte allocation follows.
 ; [0B5DB] GROUND1000h is write ceiling, not exclusive4096-byte allocation.1A18
 ; can writeDS1B4B..2B4A including callback25A0; supplied files are0420h
 ; only, ending1F6A. Startup clear initializes once;4551 stops0FC9. File
@@ -1755,6 +1774,9 @@ BasePaletteSource2608:
     db 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 ; @0C112
 ; UNKNOWN: unresolved bytes
     db 0x00,0x00,0x00,0x00,0x00,0x00 ; @0C122
+; V3 P:2698..2777 remains UNKNOWN,size0. Stable cursor0,Y0=0 signed
+; V3 height exit after92 pairs does not define allocation;Y0=-42 reads2778 colors
+; V3 next. Full live pair grammar and frame/action alias at2A6D require no clamp.
 ; S16 candidate2698..2777 is8 lead pairs then104 delta2 pairs,not a sentinel-terminated allocation. Original cursor wrap and signedY/collision terminal are specified beside2A6D. No caller-wideY/+0E/state/alias closure proves112 entries;retain UNKNOWN and EntityState0400PairBase size0. Ordinary003A callback is not point-cloud003C.
 ; Candidate0400 pairs2698..2777:8 lead pairs then13*8 repeats,2bytes frame/signedY-action;producer+0E has no terminal112 guard. Do not set full size/class solely from colors2778 adjacency. GROUND/record/cache/aliases remain;see2A6D integration note.
 ; Unchecked pair reference at2A6D; naming the base does not establish extent.
@@ -2810,6 +2832,10 @@ EntityState0400PairBase:
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E1D2
 ; UNKNOWN: unresolved bytes
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E1E2
+; V3 F:4768..48BE stored roles remain UNKNOWN. Signed-admitted selector36
+; V3 starts48A8 author text,word5257 gives(+87,+82) decimal;50h words end4947
+; V3 across labels/palette. This is an unchecked read overlay,not point ownership.
+; V3 Stable ordinary producer0->33,expiry34 does not select the suffix.
 ; [0E1F8] S16 UNKNOWN4768..48BE:two candidate point blocks4768..4807/4808..48A7,then WRITTEN BY RUSSELL KAY plusNUL48A8..48BE. Normal producer stops before34;no dedicated author-text cursor found. Neither apparent frame shape nor raw index admission proves total allocation or no alternate use.
 ; UNKNOWN: unresolved bytes
     db 0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80,0x80 ; @0E1F2
@@ -4112,6 +4138,9 @@ DrawingSourceRowAdvance:
     db 0x00,0x00 ; @10192
 DrawingActiveDestinationRowAdvance:
     db 0x00,0x00 ; @10194
+; V3 S:6706..A947 zeros do not prove allocation. Keep transient row/cache
+; V3 RMW,zero-width fullDS carry sweep and its physicalSS aliases explicit. DF1
+; V3 reads stale forward bytes;both bases size0,source/cache/SS owners remain live.
 ; S16 UNKNOWN zero run6706..A947 has renderer source-row base6706 andmask/cache base6748,not proved allocations42h/4200h. Copy/fill+sentinel initializes[b,b+w]DF0/[b-w,b]DF1;SHR/RCR always forward,w0=65536RCR,wFF INCCL wrap=65536output,shift0=256passes. Source re-produced each row/plane,mask usually each row;DF0 sourcew>=42h overlapsmask,DF1w>=1 reaches6705,w>=2 reaches6704. Keep scratch ledger sizes0 and unknown run;liveDS/ES/SS/provider/IRQ aliases remain.
 ; [10196] Source-row base6706: copy CL bytes plus zero sentinel through DF, shift forward then LODSB through DF.
 ; Difference to6748 is42h, not a proven allocation extent; keep size0 and adjacent UNKNOWN.

@@ -25,6 +25,11 @@ loc_835B:
     loop loc_835B ; @0835F
     pop ds ; @08361
     ret ; @08362
+; V3 C: no fresh ordinary/protected incoming edge or decoded operand8363;
+; V3 no adjacent LE16 word8363 anywhere in original main image. Inventory seed
+; V3 is not a caller or proof of deadness. Raw cursor reads everyCS offset except
+; V3 83B7 across possible entries. Keep intact and minimap-DF1-modified views
+; V3 separate; checksum read alone does not classify its input storage.
 ; Incremental checksum candidate; static reachability is unresolved.
 ; Phase wraps every256 calls. Cursor stops on equality only, not >=83B7.
 ; Cursor is not stored on the early-limit path; preserve that stale value.
@@ -60,6 +65,15 @@ loc_83A7:
 loc_83A9:
     mov [cs:0x83ba],al ; @083A9
     mov al,0xff ; @083AD
+; V3 Cprefix:797B DF1,actualES=CS zeros83AF..83C2. Later83A9 writes
+; V3 accumulator83BA;8366 wrote nonzero phaseP at83B9;cursor83BB/BC stays live.
+; V3 Initially83AF..83B8 decodes FIVE ADD byte[BX+SI],AL with ALFF,DSCS
+; V3 if target avoids these opcode bytes.83B9 opcode isP,nextbyte accumulator,
+; V3 then stale cursor;do not treat as ten zero ADDs or intendedPOP/RET.
+; V3 Constructed changed-view entry:phase0,acc0,cursor83B7,SI7C49,AH0,disjointSS.
+; V3 P becomes1:firstfive ADDs decrementCS0000 by5;83B9 is ADD word[BX+SI],AX
+; V3 (AX00FF). InitialBA A9 becomesB4 AA. Code corruption prefix is characterized;
+; V3 actual game caller/DF1 arrival and complete later control remain UNRESOLVED.
 ; S17 flow-state: The796F local flow-state contract inherits DF at797B; no global DF0
 ; exclusion was established. DF1 clear83AF..83C2 intersects this instruction stream.
 ; Treat any later execution as a modified view requiring its own provenance. No static

@@ -15,6 +15,17 @@ AdvanceEntityRecords:
 ; to indices00..FE; stale alone does not make them arbitrary DS addresses.
 ; UNRESOLVED: survival of counters,cursors,segments,saves and subsequent control
 ; after spill; numeric walks are not evidence every high slot is reached.
+; V1 UPDATE AFTER SPILL:1F19 visits any constructedk<count,not only00..4F.
+; +26 exactFF skips;nonzero+20 first runs2E04 and its returned ZF gates the
+; state dispatch. +24 bit80 overrides +08. Otherwise first-match priority is
+; 0002,8000,0004,0400,0001,0008,0010,0020,0040,0080,0100,0200,0800,
+;1000,2000,4000;zero has its own2047 path. Mixed owner bytes use this exact
+; order,not a repaired enum. Even inactive records retain owner corruption.
+; Visibility/keyboard/object animation can replace state and drawing fields
+; independently; the V1 event rules therefore preserve every live byte.
+; A new descriptor follows the actual transition stores above,not +08 alone.
+; Direct SS maps cannot hit DS0088..2D87 in the canonical frames,but may
+; change live saves/returns and redirect later accesses (separate U03/U04).
 ; RECORD LIFETIME / WRITER CONTRACT (static, all offsets below hex).
 ; These are observed roles in one live 2Dh slot, not a historical C struct.
 ; Canonical DS is relocated09A9; none of 1F19..3633 loads/restores DS itself.
@@ -382,6 +393,12 @@ loc_20D6:
     cmp bp,0xb4 ; @020D9
     jnl loc_20E2 ; @020DD
     jmp loc_1FE8 ; @020DF
+; V2/U02 concrete dimension owner:spilled indexA6 has SI1DB6. Constructor3107 leaves
+; record+25=0 at1DDB;20E2,after signed BP>=B4 at20D9,writes+26=FF at1DDC. These are
+; GROUND terrain type1A's width/height,file290/291,not separate state. A followingGROUND
+; short readN<=290 retains both; complete read repairs. LEVEL004 section1 command138
+; (decimal)24BFFD9A is a named negative-Y/masked40 trigger for width0 at8DE3. Earlier
+; spill/command/return survival remains a premise; no executed game path or new edge claimed.
 MarkEntityInactive:
 loc_20E2:
 ; Direct peer JMPs skip20D6 store/CMP; preserve incoming registers/FLAGS.
@@ -1506,6 +1523,12 @@ loc_2A57:
 EntityState0200AfterSound:
 loc_2A6A:
     jmp loc_29C1 ; @02A6A
+; V3 P: B2698+live+0E wraps16; frame store precedes action read; live cursor+=2.
+; V3 No sentinel/count. Stable cursor0/bytes,no collision,Y0[-41,32764] decimal
+; V3 exits by112;Y0=0 exits92,last274E/274F;Y0=-42 next reads2778 colors.
+; V3 These are implications,not game entry invariants;21C6 leavesY. SI2671 with
+; V3 cursor267F=0 aliases frame+28 to2699,turning initial action03 into01 before
+; V3 its read:one probe instead of three. Keep UNKNOWN extent/size0.
 ; S16 terminal is NOT a pair count:21E3 seeds+0E=0;2A7B adds2 modulo16 without sentinel. Frame store2A75 precedes second-byte read2A78,so record/table aliases are observable. Collision2AEC changes state;otherwise2B28 signedY>=B4 deactivates via20E2.21C6 leavesY unchanged. Candidate112 pairs gains221 decimal Y with stable nonwrapping no-collision state;Y0=-42 decimal reaches cursorE0/Y179 then reads2778 colors,Y0=-41 stops at112. Static conditional arithmetic only,not game reachability/native-domain expansion. No proven total pair extent;keep base size0.
 ; PAIR SCHEMA: DS2698+liveWord0E wraps;21E3=0,2A7B+=2.2A73->2A75 frame+28 store precedes2A78 signed Y/probe-action read, so a record/table alias can change the second byte. Candidate2698..2777 contains8 lead pairs then13 repetitions of8 pairs;112 is not a code bound. Height check2B28 and field initialization do not prove a total table extent;large records/GROUND/cache/aliases remain. See entity_points.asm and build/static/s7-tables.md; keep UNKNOWN extent.
 ; State0400 from1F85. Sparse known2A6D..2B34 excludes three UNKNOWN bytes.
@@ -2228,6 +2251,30 @@ CreateEntityRecordIfDue:
 ; No new storage classification follows from this overlay; higher owners can
 ; write+14 outside the nine targets even with DF0. Arrays/segments/stack aliases
 ; and IRQ interleavings remain separate from PLATFORM/DATA assumptions.
+; V1 OWNER LIFETIME: the complete clear means old LEVEL/GROUND/text/pair/point
+; words at a future +08/+14 do NOT become entity state/targets on append.
+; Completed construction installs0004/live002E in every numeric slot; all
+; subsequent values follow last actual byte writes in shared memory. Numeric
+; spill classes and field-to-owner intersections for50..FF are in V1 report.
+; Setup-only loaded LEVEL/GROUND owners do not spontaneously restore bytes
+; during a frame. A real redraw/reload can replace them and keeps its own
+; unchecked type/length/DF contract; it is not a new constructor or snapshot.
+; Concrete completedB1 (S1FA5),before another writer: saved08=0000:0000;
+; saved09=0000:(highByte(live002E)); savedPrivate=0000:0000,selector1FC6=0;
+; keymask1FC7=0300,PIT1FC9=0000. If game timer reaches its phase-zero1899
+; before repair,it far-JMPs IVT bytes at0000:0000,not main CS:0000. Other
+; phases EOI locally; the next phase is(byte(old1FE3)+1)&3. This is an
+; explicit changed-control mechanism,not proof thatB2 or later cannot occur.
+; CompletedB2 installs live002E as sprite segment1FE6,zeroes most remaining
+; arena selectors,sets1FE4=003C and1FE3=00;readers use those changed segments.
+; CompletedB3 sets probe2013=70/target2014=0061 with initialized6170;other
+; three enable/target rows are zero. Detector is not a per-frame reader.
+; D3 straddles25A0 with X-high/Y-low,sets input mode25A6=FF
+; viaFFF6 Y bias,and sound bits25A7=04 via state0004. Later input uses its
+; actual mode checks; no callback is implicitly invoked solely by slot damage.
+; DF0 level reset0000..0FC9 does not repair any owner above0FC9. Count wrap
+; alone neither restores them nor visitsFF;continued low-count frames may
+; consume their damaged globals/lookups before another high-slot append.
 ; Record producer for the update and drawing consumers above.
 ; Gate002B must differ from FF;0055 must equal FF. Byte DEC0048 wraps and
 ; only zero reloads0048 from live0049. Equality0047==0043 prevents creation;
@@ -2298,6 +2345,14 @@ loc_30C3:
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @030EC
     mov cx,0x2d ; @030EE
     db 0x8b,0xfe ; ENCODED: mov di,si (NASM chooses a different encoding) ; @030F1
+; V2/U02 B3/D3 overlay reproduction:B3 SI1FFF clears2013..201E and3140 current002E
+; writes2013/14. With002E6170,this gives e0=70,first target0061,other targets0. Recurring
+; +14 state writes change this same pair;3262 +1F=08 changes201E (last target high).
+; D3 SI259F gives callback25A0/1=X-high/Y-low;baselines25A2/3=Y-high/F8,25A4/5=FF/F6;
+; 3134 leaves25A6(mode)=FF. Clear's temporary mode0 and completed modeFF both bypass42A5.
+; Proper joystick selection repairs callback before mode1; a damaged non-member word alone
+; is not a42A5 call witness. Aligned byte-index records0..FF end2D87,so do not directly
+; reach ordinary editor DS:F42C/F436. Actual corrupted pointers/DS use their physical address.
 ; [030F3] Unchecked producer witness, not a startup-reachability claim: slot byte179(decimal) yields SI1FFF and clear1FFF..202B, overlapping2011/2012 and four probe records;3140 writes record+14 at2013/2014. Slot211 gives SI259F, clear259F..25CB, then30FB/3100 straddle InputPollCallback25A0/25A1 with X-high/Y-low. Equality with mutable0047 is not a range bound. A closed target lifetime needs actual record/counter bounds or later reinitialization, including earlier overlapping globals.
 loc_30F3:
     mov byte [di],0x0 ; @030F3

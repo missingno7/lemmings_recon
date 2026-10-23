@@ -1346,7 +1346,8 @@
     "confidence": "PROVEN",
     "evidence": [
       "0DB3 installs this address as INT1 after negating 59 bytes",
-      "Protected ledger metadata/protection-symbols.json; state=int1_plaintext. All59 bytes are simultaneous plaintext after INT3 byte-NEG. STI opens IRQ window. Prologue AX/SI/DS saves leave T=entrySP-6; restore old word via IVT0, guard displaced plaintext AL==CC; else frame-derived next-word patch. IRET uses liveSS; wrapping and aliases not normalized."
+      "Protected ledger metadata/protection-symbols.json; state=int1_plaintext. All59 bytes are simultaneous plaintext after INT3 byte-NEG. STI opens IRQ window. Prologue AX/SI/DS saves leave T=entrySP-6; restore old word via IVT0, guard displaced plaintext AL==CC; else frame-derived next-word patch. IRET uses liveSS; wrapping and aliases not normalized.",
+      "Append to protected ledger metadata/protection-symbols.json, state=int1_plaintext, not canonical encoded symbol. For interrupted SP Q: FLAGS/CS/IP atQ-2/-4/-6, AX/SI/DS atQ-8/-A/-C, shared-tail push/pop leaves nextCS atQ-E. The post068F trap leaves CS at localB+1E and this is actually loaded at07A0 and091E. STI shadow covers0E00 PUSH AX only; IRQs can observe subsequent old/new patch and split IVT0 publication. Actual nested writer/frame survival remains U03/U04; no implicit serialization."
     ],
     "verification_status": "UNTRANSLATED",
     "reachable_instruction_bytes": 59

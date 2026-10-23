@@ -1060,6 +1060,12 @@ loc_8D64:
     pop ds ; @08D64
 PlanarShiftedProtectedFarReturn:
     retf ; @08D65
+; V3 S: unchanged G=load+09A9,S=load+143E give G:A950=S:0000,
+; V3 G:F444=S:4AF4. w0 first RCR loop touches all65536 DS offsets before
+; V3 any later POP can reload a damaged save. Read v/oldCF,write(v>>1)|(oldCF<<7),
+; V3 CF=v&1; initialSHR and finalRCR both touch rowbase. Later saves/strides/returns
+; V3 read actual changed bytes. DF0 w42h source sentinel6706+42h=6748 clears
+; V3 first already-built cache byte. No disjoint allocation or frame survival proof.
 ; S19 renderer-handoffs: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; InputDS D,relocated scratch G,VGA ES and live SS saves are separate owners. Actual POPs restore
 ; saved words;8D66 builds all cache rows before forward consumption. Global caller/storage
@@ -1141,6 +1147,21 @@ loc_8DC0:
 loc_8DE1:
     push bx ; @08DE1
     push cx ; @08DE2
+; V2/U02 width0 producer/transform:CL is low8(clippedDX>>3), restored from8DC0 saves.
+; Only terrain7CB5 and fixed-width decoration4F7F can normally route to masked408D66;
+; objects39BD/7BF9 clear BP0; editor4DBB has width10h/BP0. Decoration width78 has no clipping.
+; Complete pinned normal terrain streams, layout680/A4, have no prepared packed width0.
+; Concrete retained-spill trigger:A6 base1DB6 -> width type1A at1DDB(+25)=0, deactivation
+; 20E2 ->height1DDC(+26)=FF; nextGROUND short countN<=290 retains them. LEVEL004 section1
+; terrain ordinal138(decimal)24BFFD9A,x04BF,y-9,type1A gives BP0F4F;99E2 admits DX0.
+; If earlier commands/returns survive,shift7 selects8D66. FullGROUND reload repairs this case.
+; First pass:SHR8DE5 atb=BX,thenINC8DE9 once;RCR8DEA/INC8DEE/LOOP8DEF withCX0 visits
+; b+1..b+0000,65536 writes modulo16, independent ofDF. Each byte becomes(old>>1)|(CF<<7),
+; CF=oldbit0; first byte b is shifted twice. G selected8DD8 includes SS0..56AF viaG:A950.
+; Slot4252 becomes2129/21A9,word1410 becomes0A08/0A88,saved503B becomesA81D/A89D after
+; this pass. These are memory outcomes,not asserted CFG edges. POPCX/BX8DF1/2 and later
+; saved segments/counts/returns read transformed memory,so do not repeat the original row/pass
+; counts mechanically. Survival to the triggering call is U01/U03,not an immutability theorem.
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @08DE3
     shr byte [bx],1 ; @08DE5
     nop ; @08DE7

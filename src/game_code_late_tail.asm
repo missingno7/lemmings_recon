@@ -1,5 +1,14 @@
 ; Maintained image span07C67..07EB1; terrain, scroll and background contracts.
 times -(($-$$) != 0x7c67) db 0 ; module start assertion
+; V4 TERRAIN SCHEMA: LEVEL word0 left=word&1FFF; bits13/14/15 select controls.
+; Word1 signed SAR7 minus4 gives y(-104..FB); low6=index; bit6 is ignored.
+; GROUND1D0B+8*index: widthB+0,heightB+1,LE source+2,LE mask+4.
+; +6/+7 roles remain UNRESOLVED, not padding. Source frame is live1FE4,
+; normally input+1 here. Object+08 is a mask delta; terrain+04 is direct.
+; 3752/3962 has no400-command cap. Without FFFF and with stable DS/SI/returns,
+; SI=(10EB+4*k)&FFFF reads steel172B,footer17AB,working17CB,GROUND1B4B,
+; then wraps FFFF->0003;4000h starts can repeat. Child/saved SI/DS changes
+; remain visible. Escaped code/frame continuation is separate unresolved work.
 ; TERRAIN: packed AX x/flags, BX signed-y/type; index low6 selects liveGROUNDrecord.
 ; Preserve live SS savedSI/coordinates, relocated farCALL frame, returnedDS/ES/flags.
 ; Prefix7C67..7CB4, farcallee8822, livePOPSI7CBA andnearRET7CBB; no hidden state.

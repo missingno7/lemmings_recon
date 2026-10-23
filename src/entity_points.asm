@@ -1,5 +1,11 @@
 ; Maintained 6E83..6F7A point-cloud leaf.
 times -(($-$$) != 0x6e83) db 0 ; module start assertion
+; V3 F: B2788+A0*byte(selector-1);jth word at DS:(B+2*j) mod10000.
+; V3 34->4768,35->4808,36->48A8 author;word5257 means(+87,+82) decimal,
+; V3 normal50h words end4947 crossing labels/palette. Signed01..7F admits this;
+; V3 normal producer expires34 before draw. Count0 means65536 word reads/twoDS
+; V3 cycles only if savedBX/CX survive;dirty/save aliases can change subsequent
+; V3 cursor/count/data. No suffix ownership or total53-frame size follows.
 ; S16 suffix4768..4807 and4808..48A7 has16/12 decimal non-skipped low-byte words atA0 stride;last word48A6=F480 still skips on low80.48A8..48BE is author text plusNUL,no identified dedicated consumer. Normal2358 stops selector34 before draw;365F admission01..7F does not produce34/35. Do not infer total53 frames from shape or unchecked reads;keep suffixUNKNOWN,total size0,and existing51-frame prefix only.
 ; CONTRACT: unchecked byte selector, live DS point/color/mask inputs.
 ; Count zero executes 65536 iterations; low 80h skips only its point.
@@ -78,6 +84,7 @@ DrawEntityPointCloud:
     sub dx,byte +0x10 ; @06EC9
     mov cl,[EntityPointCount-GameDataImage] ; @06ECC
     db 0x32,0xed ; ENCODED: xor ch,ch (NASM chooses a different encoding) ; @06ED0
+; V1 DD..FF overwrite live color/point prefix;low00 is an actual zero-X point,not skipped padding(only80 skips).FF can damage sources though stable byte-count update/draw/select never enumerate it. Full extent/writer/segment closure unchanged.
 loc_6ED2:
     mov ax,[bx] ; @06ED2
     add bx,byte +0x2 ; @06ED4

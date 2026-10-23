@@ -3,7 +3,30 @@
 ; Bytes outside this view retain stored encoding and canonical region classifications.
 bits 16
 org 0x066d
-; R1 PLATFORM-CONDITIONAL sufficient DF domain:063E entryDF0,knownDL0/1 floppy paths,\n; original identified TF/INT1/INT3 views and intact nonalias saves retainDF0 on every known\n; normal return with profile13:AH=0000/0002. Sole live setter08D2 clears;070E/0718,094A/096D\n; and0970/0982 restore their own saved FLAGS;INT3 XOR high03 leavesDF intact.\n; CONSERVATIVE disk-return DF is unknown. Actual dynamic views/frames/caller provenance,\n; IRQ scheduling/aliases and absolute/raw write alternatives remain separate obligations.
+; Composition contract (V5): PROVEN instruction relation; PLATFORM-CONDITIONAL
+; completed startup domain uses profile INT13 AH00/02, TF-clear disk returns,
+; intact live saves/code/IVT/table/buffer and no intervening writer. These extra
+; frame/view premises are not supplied merely by selecting VGA + AdLib.
+; 063E saves six registers and ten IVT words, installs CS:0DB3, sets SI=CS,
+; DS=SS, then raw066C INT3 negates INT1 and exposes TF-on066D. With entry IF=I,
+; stream IF=1-I; INT1 entry clears IF/TF, STI enables IRQs inside that handler,
+; and its IRET restores the interrupted IF/TF/DF. INT3 enabling skips that STI.
+; Every BIOS call is TF-on0D9E -> raw0D9F INT13 -> raw0DA1 INT3 -> TF-on0DA2
+; RET -> actual near continuation. IF is I in the raw gate, 1-I in the stream.
+; Final TF-on096F INT3 -> raw0970 restores vectors/registers -> raw0E3A tail.
+; For D completed disk gates there are 2*D+2 handler negations, restoring all
+; 59 stored INT1 bytes. Each old stream word is restored before the next patch;
+; final INT3 restores096F (stored low3E, not the disable guard's CC).
+; Disk-returned TF/IF, changed live frames and IRQ/physical aliases can break
+; this relation; their actual domains remain UNRESOLVED. No quiescence follows
+; from main-stream IF=0: plaintext INT1 executes STI on every ordinary trap.
+; Native063E completed outcome owns actual AX/BX/DX/FLAGS and below-SP residue,
+; preserves DS/ES/CX/SI/DI/BP/CS/SS and pre-RET SP, restores IVT0..4/table/code,
+; and clears ONLY the selected512 bytes, retaining the other window/gap/seed.
+; Platform/device/critical-error events must be carried separately. A boolean
+; cannot supply this whole state packet; current C uses an opaque provider seam.
+; DF0 persists in the stated startup/profile domain:08D2 CLD,070E/0718,
+; 094A/096D and0970/0982 use their real FLAGS saves; INT3 changes TF/IF only.
 ; State inventory (half-open byte ranges; not one simultaneously loaded image):
 ; tf_on: [066D,084D),[0852,087E),[0883,0970),[0D9E,0D9F),
 ;        [0DA2,0DA4),[0DAA,0DAC),[0DB2,0DB3).
@@ -12,8 +35,8 @@ org 0x066d
 ; is the separate byte-negated plaintext view in int1.asm. INT3 at 066C
 ; creates the first TF-on point; the table below's gates toggle saved TF/IF.
 ; Conditional CFG alternatives are retained, not proof every arm is reachable.
-; READINESS: CONDITIONAL known startup DL=0, TF clear, disjoint RAM and bounded
-; INT13 services; arbitrary incoming frames, aliases and IRQ interleavings open.
+; READINESS: CONDITIONAL known startup DL=0, TF clear, disjoint RAM and named
+; INT13 returns as above; arbitrary frames, aliases and IRQ interleavings open.
 ProtectedDiskEntry:
     push ax ; @0066D tf_on
     call ProtectionBufferAddressFromCall ; @0066E tf_on
@@ -27,6 +50,10 @@ ProtectionBufferAddressFromCall:
     add ax,0x31b ; @00672 tf_on
     nop ; @00675 tf_on
     push ax ; @00676 tf_on
+; CL is overwritten BEFORE0786: at079A CX=(entryCX & FF00)|0004, never9299.
+; Thus the recovered063E prelude ALWAYS takes the BIOS tick read07A3. The
+; helper's CX9299/DH shortcut is a separate raw-entry contract, not a startup
+; option (even an incoming063E CX9299 becomes9204). CX is restored at0986.
     mov cl,0x4 ; @00677 tf_on
     shr ax,cl ; @00679 tf_on
     db 0x03,0xf0 ; ENCODED: add si,ax (NASM chooses a different encoding) ; @0067B tf_on
@@ -169,9 +196,17 @@ InitializeProtectionLocalFrame:
 ; sector count; +0A/+0C selected buffer offset/segment; +0E service selector.
 ; +0F/+11 unaligned saved INT1E far pointer; +13..+1D its 11 saved bytes.
 ; +1E scratch count/result; +20 scratch segment (0, later FFE0 on absolute arm).
-; Not a zeroed struct: +1E is read by LES before initialization, but ES=0
-; from +20, and tick read is constant ES:046C, ignoring the loaded SI value.
-; CX=9299 bypasses tick read and uses input DH; initial head=bit0, cylinder=bit2.
+; Not a zeroed struct. For composed063E let P=entry SP and B=P-42h=local BP.
+; INT1 after POP AX068F runs at SP=P-20h and leaves FLAGS atP-22h, CS atP-24h,
+; nextIP0690 atP-26h. SUB SP,22h and later traps are belowB, so B+1E=P-24h
+; still holds that CS at07A0 and091E. This is a consumed interrupt residue,
+; not arbitrary uninitialized storage in the intact composed domain. 0795
+; supplies segment0 at+20; LES07A0 loads BX=CS/ES=0, then constant ES:046C
+; ignores BX. LES091E likewise loads SI=CS before constant IVT reads0078/007A.
+; Raw helper entries have no such +1E guarantee. Raw CX9299 bypasses the tick
+; read and uses DH; composed063E cannot supply it because0677 setsCL04.
+; Tick head=bit0, cylinder=bit2. Floppy+08/+09 have no local producer/reader;
+; they retain entry RAM here, whereas the absolute helper writes count1.
 ; Default BP operands use SS even when LDS in an absolute arm changes DS.
     mov [bp+0x4],ax ; @00786 tf_on
     mov [bp+0x6],bx ; @00789 tf_on
@@ -275,6 +310,10 @@ ReadProtectionBiosSector:
 ; not an alternate key algorithm. Neither084B nor any recovered edge enters
 ; 084D/084E. This proves a candidate spelling, not a reachable write service;
 ; leave UNKNOWN. Its immediate/key bytes0850/0851 have overlapping roles.
+; Conditional alternate producer contract, not a recovered caller: a valid
+; TF-on084D/084E entry writes selector03, then0852 supplies AH03/AL01 and
+; the SAME live ES:BX/CX/DX as the read helper to0D9F INT13. CF-clear exits;
+; CF-set write attempts repeat up to3, with CX/BP saved, other outputs live.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x7e,0xc5,0x44,0x0e,0x03 ; @0084D
 protected_loc_0852:
@@ -314,6 +353,10 @@ ReadProtectionAbsoluteSector:
 ; and TF-off INT26 gate0DAC, but no recovered entry supplies this candidate
 ; producer. Preserve UNKNOWN and the conditional absolute-write alternative;
 ; raw linear decoding alone does not expose this interpretation.
+; Conditional alternate producer087E/087F writes26 then0883 builds the SAME
+; count1 legacy/extended packet;08B2 selects0DAB/0DAC INT26. This specifies
+; the candidate's effect if entered, not its incoming/lifetime domain. The
+; actual0878 entry always overwrites selector with25 before skipping here.
 ; UNKNOWN: stored bytes outside the derived instruction graph
     db 0x7e,0x59,0x44,0x0e,0x26 ; @0087E
 protected_loc_0883:
@@ -480,6 +523,17 @@ protected_loc_096F:
 ; restoring IVT0..4 and saved registers; JMP0989 bypasses all storage to 0E3A.
     int3 ; @0096F tf_on
 protected_loc_0970:
+; Stable final residue, modulo16 offsets and intact saves: P=063E entrySP,
+; F=FLAGS just after096F's toggle (before the admission CMPs). P-02..P-0C
+; retain saved DS,ES,CX,SI,DI,BP in that order. P-0E is overwritten with F
+; by0981; P-10..P-20 retain entry IVT words0002..0012 in increasing address
+; order as SP descends. P-22=F,P-24=CS,P-26=0970,P-28=resultAX,
+; P-2A=pre096F SI,P-2C=pre096F DS,P-2E=handlerCS. For the floppy profile
+; those last SI/DS are saved-table-offset+0B and SS. Deeper residue includes
+; live local fields and service/branch-dependent handler saves, not zeros.
+; These are memory effects despite final SP=P. 0976 consumes the saved IVT,
+; 0982 consumes F,0983..0988 consume six saves. No local pointer escape or
+; later dedicated reader is identified; global SS/alias readers remain U03.
     pushf ; @00970 tf_off
     pop cx ; @00971 tf_off
     db 0x33,0xf6 ; ENCODED: xor si,si (NASM chooses a different encoding) ; @00972 tf_off
@@ -667,6 +721,11 @@ protected_loc_0DA3:
 ; TF-off INT25 returns an extra FLAGS word on the stack; ADD SP,2 discards it
 ; and changes arithmetic FLAGS including CF. Preserve 16-bit SP wrap. Then
 ; raw INT3 enables TF before RET; DOS carry is not transparently propagated.
+; Precisely, let G=SP before INT25, with the DOS RETF leaving its extra word
+; at G-2. ADD (G-2 mod10000),2 returns SP=G and CF=1 iff G=0000 or0001.
+; With intact frame/flags,08AC therefore exits after ONE DOS request for every
+; other G even on DOS error; only those two wrap cases take its LOOP retry.
+; Other ADD flags derive from the actual16-bit SP sum; DF is unaffected.
     int3 ; @00DA3 tf_on
 protected_loc_0DA4:
     int 0x25 ; @00DA4 tf_off

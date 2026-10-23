@@ -17,6 +17,16 @@ sub_3150:
 ; callback=old_row0_cell2 OR(old_row0_cell1<<8),including0000 for empty cells.
 ; The map/source/save alias premises and actual foreground DF remain UNRESOLVED;
 ; the platform profile cannot validate a cursor or remove this byte writer.
+; V1 spilled-record actions use the SAME predicates and stores as prefix
+; records: pointer publication does not create a separate allocation. Each
+; successful state/descriptor store also writes its overlapped owner at S+f;
+; selectors2/3/4 affect24/25/20 even if+14 remains unchanged. Canonical
+; cursor range excludesFF selection but not above-new-count stale pointers.
+; On DF1 action5,copy old cells in original interleaved order: a prior SS
+; replacement or aliased save can alter later source bytes. The simplified
+; target=cell2|(cell1<<8) requires disjoint DS/SS/stack/source lifetimes.
+; Actual foregroundDF1 producer remains UNRESOLVED; this byte rule is PROVEN
+; conditional instruction behavior,not a new real-session DF1 schedule.
 ; RECORD POINTER DOMAIN:317C loads live DS:0058, with no alignment or0043 range
 ; check. The normal producer3CDE scans0088+k*2D, skips exact+26=FF and stores
 ; bucket pointers at3D8E/3D9C, then chosen0058 at3DC6/3DDA. Zero bound returns

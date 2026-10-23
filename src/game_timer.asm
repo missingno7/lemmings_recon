@@ -162,6 +162,7 @@ GameTimerChain1893:
     pushf ; @01896
     push cs ; @01897
     push ax ; @01898
+; V1 CompletedB1 clears saved08=0000:0000. If next original phase increment&3==0 before repair,the actual far chain goes to physicalIVT0000:0000 with its synthetic IRET frame,not mainCS:0000. Other phasesEOI locally;actual schedule/external bytes/continued high-count survival remain open.
 ; U1 old08 is a distinct extension:32 bytes at far-chain entry plus unknown provider B08 on this SS. CLI1881 makes synthetic FLAGS1896 IF0, so intact provider IRET returnsIF0 before189D. BIOS/provider owns this path's EOI; no second local EOI. Its own IF1-after-EOI window, INT1C/callback stack use and timing are UNRESOLVED and may retain32+B08 rather than26. PROFILE preservation supplies no transient high-water bound.
 ; S19 external-08-09: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; Two INT08 far chains have caller-built FLAGS/CS/IP and external IRET edges. Undocumented

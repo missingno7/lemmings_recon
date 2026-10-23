@@ -1,3 +1,4 @@
+; [0001] V1 If a spilled715B near target enters0001,current loaded relocation bytes decide the alternate opcode. Canonical1010 prefixB9198E meansMOV CX,8E19;0004 DA06E83A is x87 escape,0008 SUB W[B8A2],-7D,then000D. Another load changes0001 bytes;do not decode the unrelocated09A9 operand as universal runtime control.
 ; S19 loader: CONSERVATIVE=UNCONDITIONAL; PROFILE=UNCONDITIONAL.
 ; Original PKLITE supplies DF0/IF1 for every DOS DF/IF at ProgramEntry. This is an entry boundary
 ; fact, not exclusion of a later IRQ.
@@ -299,6 +300,11 @@ GameFrameAfterSecondDispatch:
     cmp byte [GameEndRequested-GameDataImage],0xff ; @001C8
     jnz loc_01D2 ; @001CD
     jmp GameEndWaitForFade ; @001CF
+; V3 W: final absoluteDS census reader01D2/zero store0409; no dedicated
+; V3 actual post0409 game FF producer. Raw1C83 with ES=gameDS,DI004B,ALFF and
+; V3 20E2 with SI0024 are genuine FF writers; do not assert none exist. Activation
+; V3 remains UNRESOLVED. FF observes two timer inequalities,not necessarily two
+; V3 IRQs. Tests seed the byte; they do not establish original producer/schedule.
 ; S19 double-wait-004a: CONSERVATIVE=UNRESOLVED; PROFILE=UNRESOLVED.
 ; 004A stored/startup/session zero producers are known; actual-game FF producer remains
 ; unknown.01D2 on exactFF waits for two observed1FCD changes without local STI/timeout.
@@ -974,6 +980,12 @@ loc_0626:
     int 0x10 ; @00626
     mov al,0xff ; @00628
     ret ; @0062A
+; V5 classes: PROVEN FAT gate/counter recurrence/fatal control; completed media
+; operation PLATFORM-CONDITIONAL on named disk returns and intact view/frame
+; domain. VGA+AdLib alone supplies none of those physical/IRQ premises. F8
+; skips063E only for saved increment result01..09. A skipped call leaves both
+; sector windows untouched; it does not execute the protected clear/transport.
+; File persistence is observable across launches; no game permission latch.
 CheckStartupProtection:
 ; Startup admission check. FAT id 1FDE != F8 probes original floppy media
 ; (063E); F8 uses the russell.dat run counter (0E66): media checked only when
@@ -995,6 +1007,21 @@ loc_0635:
     jmp loc_0EDF ; @0063A
 loc_063D:
     ret ; @0063D
+; V5 composed contract supersedes the older incomingCX9299 shortcut wording:
+; 0677 setsCL04, so079A cannot see9299 from this entry;07A3 always reads046C.
+; P=entrySP,B=P-42h. Post068F INT1 leaves CS atP-24h=B+1E, read by07A0
+; and091E with segment0. This consumed residue is not uninitialized here.
+; Pre-RET packet: preserve DS/ES/CX/SI/DI/BP/CS/SS and SP=P, near word atP;
+; return actual AX/BX CRCs (or zero/zero body failure), DH from live execution,
+; DL=frame drive; actual admission FLAGS, DF0/TF0 and IF=entryIF in the named
+; TF-clear/IF-preserving disk domain. RET then consumes the live near word.
+; Restore IVT0..4,11 table bytes and encoded code; zero selected512 only;
+; retain all other stored bytes except actual platform/IRQ events and stack
+; writes. Final below-SP map lives beside stream0970; deeper provider/path
+; residue is not erased. A boolean alone does not determine this packet.
+; Named profile13:AH0000/0002 supplies preservation, not media bytes, IRQ
+; quiescence, a lowestSP proof or every TF/frame/memory output. Explicit
+; TF-clear return is still required. Unrestricted composition is UNRESOLVED.
 ProbeOriginalFloppyMedia:
 ; CONDITIONAL: known 0635/0E99/0EB2 calls enter with TF clear and ordinary
 ; disjoint code, IVT, SS stack, game DS and floppy-table storage. DL is forced
@@ -1036,6 +1063,10 @@ loc_064A:
     add si,byte +0x2 ; @0064C
     cmp si,byte +0x14 ; @0064F
     jnz loc_064A ; @00652
+; At intact first arrival,064F's final CMP14,14 supplies arithmetic FLAGS44;
+;0654 saves DF/IF/TF plus that result, not entry arithmetic flags. Ten IVT
+;words and six register saves occupy20h bytes below063E entrySP.0656/0659
+;is CALL-next (no later childRET);0669 restores the actual saved FLAGS.
     pushf ; @00654
     cli ; @00655
     call InstallProtectionInt3FromReturnAddress ; @00656
@@ -1182,6 +1213,12 @@ ProtectionAbsoluteReadDecodeSeed:
     db 0xf6,0x8e,0xde,0x8f,0x44,0x12,0x83,0xee,0x02,0x83,0xfe,0xec,0x75,0xf5,0x51,0x9d ; @00973
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x5d,0x5f,0x5e,0x59,0x07,0x1f,0xe9,0xae,0x04 ; @00983
+; V5 retains canonical UNKNOWN for1040 initial bytes098C..0D9B: two whole
+; runtime512-byte buffers and16-byte spacer do not explain their initial
+; stored structure. The seed0D9C..0D9D has proven original key-data use.
+; No new hint/classification follows from candidate decode or absent edges.
+; Alternate084D/084E and087E/087F selector stores have specified conditional
+; effects in stream.asm; their actual incoming/lifetime domains stay open.
 ; S18 stored-role audit: retain UNKNOWN098C..0D9B and084D..084F/087E..0880.
 ; Owned stream.asm records an initial-byte reader on the DL>=2 absolute arm:
 ; 06D7 calls0878 without prefill,ignores returnedCF,CRC06E0 reads selected
@@ -1362,6 +1399,12 @@ ProtectionInt13DecodeSeed:
     db 0x12,0xcd,0x13,0xcc,0x1b,0xab,0xcd,0x25,0x83,0xc4,0x02,0xcc,0x39,0xab,0xcd,0x26 ; @00D9E
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x83,0xc4,0x02,0xcc,0x39 ; @00DAE
+; For stream IF=1-entryIF, each protected gate INT3 restores IF=entryIF
+; while TFoff. Raw INT13 must return TFoff; its following INT3 reenables TF
+; and streamIF. Final096F disables TF, then0970..0988 restores saved state.
+; Every disk gate adds two NEG passes; initial/final toggles add two more.
+; INT3 itself has no STI; enabling jumps0E1C and skips INT1's STI. Active
+; INT1 does STI, so a main IFclear interval is not an IRQ exclusion proof.
 ProtectionInt3Handler:
 ; Plain stored INT3 body; live hardware frame at entry SS:S is IP,CS,FLAGS.
 ; PUSH AX/SI/DS leaves T=S-6; saved IP/CS/FLAGS are T+6/+8/+A. No new stack
@@ -1431,6 +1474,13 @@ ProtectionEncodedInt1:
     db 0x3d,0x50,0xd9,0x75,0x08,0x81,0xfb,0x0a,0x27,0x75,0x02,0xf8,0xc3,0x3d,0xf8,0x9c ; @00E4A
 ; CODE: stored state_specific_code; execution views in src/protection
     db 0x75,0x08,0x81,0xfb,0x8c,0x1a,0x75,0x02,0xf8,0xc3,0xf9,0xc3 ; @00E5A
+; Exact byte recurrence: u=(live252A+1)&FF; retainu ifu<0A else0. This is
+; modulo10 only on the valid00..09 domain. All old09..FF request media.
+; ReadCF/count ignored; empty/error reads retain actual RAM.0E8C saves AX
+; across close/writer;0E94 restores it,0E95 tests that AL. Writer-returned
+; AX/FLAGS cannot change this branch unless the saved stack is overwritten.
+; First export precedes a zero-counter probe; failure stores9 and exports
+; again before fatal cleanup. Open failure sets0, exports, then probes.
 loc_0E66:
 CheckProtectionRunCounter:
     lea dx,[ProtectionCounterFilename-GameDataImage] ; @00E66
@@ -1491,6 +1541,11 @@ loc_0EAA:
 ; No resolved incoming execution edge or relocation fixup intersects this run. Numeric word/address matches are not proved code pointers; computed/stack/provider aliases remain open.
 ; UNKNOWN: unresolved bytes
     db 0x90 ; @00EC1
+; Create/truncate hidden file(CX2), use returnedAX as handle even on CFfail,
+; write0100 live DS bytes252A..2629, then close. Ignore every result/count.
+; Only one byte is ever imported at0E7C: the remaining exported fields are
+; not a restored save-state block. Success/failure/media and INT24 events
+; are actual platform inputs; persistent-file success is not fabricated.
 WriteProtectionCounterFile:
     lea dx,[ProtectionCounterFilename-GameDataImage] ; @00EC2
     mov ah,0x3c ; @00EC6
@@ -1658,6 +1713,14 @@ RestoreVideoPageInterrupt:
     int 0x10 ; @01004
 RestoreVideoReturn:
     ret ; @01006
+; V4 ARENA: successful AH48 returns A;5571 paragraphs form one process block.
+; A is level/MAIN/menu work; A+1000 sprite; A+2D0C generated; A+2E72 word;
+; A+2F02 glyph; A+2F7E UI; A+4771 tail; A+4971 input. Segment ADDs wrap.
+; UI3+4 output17F00 ends at relative476DF; next boundary47710 leaves30 bytes,
+; without classification. No direct reader of1FF2 tail identified; purpose open.
+; No decoded per-level free/reallocation. This allocator does not zero memory.
+; AH49 sites0569/05FA concern sound. Actual allocation/nonalias/stack/provider
+; ownership requires explicit platform/admission premises; VGA+AdLib is insufficient.
 AllocateStartupGraphicsArena:
 ; One 5571-paragraph DOS block: base->1FE4/1FF0, +1000 1FE6, +2D0C 1FE8,
 ; +2E72 1FEA, +2F02 1FEC, +2F7E 1FEE, +4771 1FF2, +4971 1FF4 (wrapping ADDs).
@@ -2181,6 +2244,22 @@ loc_13BA:
     jmp short loc_13BA ; @013D9
 loc_13DB:
     ret ; @013DB
+; V2/U02 per-session recurrence (PROVEN reset/carry; PLATFORM-CONDITIONAL BIOS traversal):
+; R is the live2013..201E after intervening resource/indexed writers, not a cached probe result.
+; Each executed detector clears pairs2006..2009, sets e1/e2/e3=FF, retains e0 and all words.
+; Successful1410 clears e1/e2/e3; removal of a low1 pair reenables e3. Failed1410 retains them.
+; Recognized1462 retains e1 and clears e3 if lookup=1, else e2; BL10 clears neither.
+; CRTC/final pair swaps do not alter enables. Apply this anew each executed detector.
+; B3+14..1F aliases every row byte. Constructor with002E6170 leaves e0=70,target0061,
+; other targets0; +14 state stores change first-enable/target-low,3262 +1F changes last-high08.
+; The loop rearms flags but never repairs those words. No claim that escaped0061 returns.
+; Current target is actual LODSW value, with TEST ZF retained unless an intervening FLAGS
+; writer changes it. LODSB step=DFsign1, LODSW step=DFsign2; different signs permit net+/-1.
+; Actual POPCX/POPSI after a child define subsequent counter/cursor, not a four-row snapshot.
+; Stable DF1 pairs(2013,2012),(2010,200F),(200D,200C),(200A,2009) consume option bytes.
+; Known four-target domain needs live gameDS, DF0 throughout, rows/saves and INT10:1A00,
+; 12/BL10 and conditional0F preservation. Old08/INT62, actual INT10 memory/frame effects
+; and escaped target code remain concrete dependencies; VGA+AdLib does not close them.
 ; T3 per-call recurrence (UNCONDITIONAL instruction implication; BIOS traversal
 ; PLATFORM-CONDITIONAL): preserve e0=2013 and all four pointer words; clear adapter pairs;
 ; replace later enables with FF on EACH detector call. Successful1410 clears later flags,
@@ -2543,6 +2622,12 @@ RestoreKeyboardVectorReturn:
     db 0x1e,0x33,0xc0,0x8e,0xd8,0xc7,0x06,0x24,0x00,0xd4,0x16,0x8c,0x0e,0x26,0x00,0xc7 ; @01592
 ; UNKNOWN: unresolved bytes
     db 0x06,0x20,0x00,0xc7,0x17,0x8c,0x0e,0x22,0x00,0x1f,0xc3 ; @015A2
+; V2/U02 calibration recurrence:00C8 once at startup;0468 each entered session, after455D
+; resource load and0462/0465, before046B/0492. Exact200E=FF bypasses; otherwise2011=C8/190
+; bypasses. Every other word invokes13DC even with nonzero old1FC9; old reload is used later.
+; Bypasses retain table/pairs. Menu/result/level-clear do not reset e0/words;1194 atDI2012
+; can set first-enable20 and selector-high20. Between calls use each actual writer, including
+; B3 and partialGROUND/RCR, then rearm only enables1..3 if detector actually runs.
 ; T3 UNCONDITIONAL call/lifetime: only decoded calls00C8 at startup and0468 every entered
 ; session; only detector call15D5.200E==FF skips detector; else exact2011=00C8/0190 skips it;
 ; ALL other words call13DC even if old1FC9!=0.15F8..15FD old-reload override happens AFTER
@@ -2851,6 +2936,7 @@ loc_177F:
     test cl,0x80 ; @01796
     jz loc_179E ; @01799
     or cl,0x14 ; @0179B
+; V1 IRQ09 writes94/00 independently to actual scan byte<53. Callbacks55:15/16,56:42/43;after6170 key-only nine words are6170,6100,6194,0070,0000,0094,9470,9400,9494.4D1A repeat is a separate editor path;no game-frame decrement invented.
 ; T2 UNCONDITIONAL:scan15 maps0F8D(slot55 callback low),scan42 maps0FBA(slot56 callback low);accepted make/break writes94/00,next scans affect high bytes.4D3A repeat handling also writes these bytes. Spill retains keyboard ownership;no membership guard.
 loc_179E:
     mov [bx],cl ; @0179E

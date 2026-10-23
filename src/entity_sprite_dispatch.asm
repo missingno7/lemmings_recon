@@ -13,7 +13,7 @@
 ; writes55/56; object animation intersects85/87/8A/8C/8F/91,plus later owners.
 ; No claimed exhaustive target superset or actually executed new edge follows.
 ; Concrete UNCONDITIONAL local implication: completed slot50 X=Y=0,then DF0
-; visibility at origin0080 zeros callback0EAC but marks0ED3=1. Empty terrain
+; visibility at origin00A0 zeros callback0EAC but marks0ED3=1. Empty terrain
 ; lets state0004 fall without replacing+14; with no intervening append/writer,
 ; point compare fails and7077 folds X+bias=-8 to0158,whose gate is0ED3.
 ; +20 was also cleared,so no strip;715B receives0000 with intact saves.
@@ -97,6 +97,36 @@ times -(($-$$) != 0x706f) db 0 ; module start assertion
 ; and the normal dirty maps ending48F3. This is a sufficient local placement,
 ; not a proof that arbitrary prior execution preserves that SP/SS/DS domain.
 ; READINESS remains CONDITIONAL; target_domain_complete must remain false.
+; V1 POST-SPILL DISPATCH (G.7, build/static/v1-spill.md): characterized owner
+; aliases below are reproduction rules, not newly proved incoming CFG edges.
+; With valid DF0 origins, completed visibility rebuilds yield callback50 in
+; {0000,0100,0101},51..53 in{0000,0001,0100,0101},54 in{0000,0001,0101}.
+; Individual bytes are01 iff inside marker[0EA6+t,0ECE+t],else00 after clear.
+; Rebuild at0080 also marks slot50+20=01: it takes the strip. At00A0 the
+; marker0EBA..0EE2 leaves+20=0 yet marks0ED3; this is the no-strip witness.
+; Both require actual update/gates/save survival; neither is an observed call.
+; IRQ09 changes each callback byte of55/56 independently to00 or94 (scan
+;15/16 or42/43). With last full callback store6170 and no other writer the
+; nine combinations are6170,6100,6194,0070,0000,0094,9470,9400,9494.
+; Key-repeat4D1A has a different recurrence and is not a game-frame writer.
+; Animation target replacements:85=(oldLow)|(lo8(O01)<<8);87=B05;
+;8A=O09;8C=hi8(B0D)|(F0D<<8);8F=hi8(O11)|(oldHigh<<8);
+;91=F15|(oldHigh<<8). B,F,O are live7C0A results,including staleBX on
+; zero definitions,not immutable GROUND templates; see level_objects.asm.
+; Conditional CALL0000 reenters ProgramEntry using the relocated DS operand,
+; not a renderer/RET.0100 executes06 PUSH ES;0101 executesBE8300 MOV SI,83;
+; both join0104,skipping the00FB session CALL (0100 retains an extra word).
+;0001 enters relocated operand0001,then DA06E83A at0004 (x87 escape).
+; At canonical load1010 the prefix isB9198E MOV CX,8E19; other loads differ.
+; Keyboard values0070/0094/6100/6194/9470/9494 enter instruction interiors;
+;9400 is an existing renderer interior,not its entry ABI.9470 is another
+; relocated operand and later meets x87/DWORD POP encodings. Do not execute
+; these bytes using a nine-callback host ABI or infer ordinary return balance.
+; Variable animation/palette words can select code,data or UNKNOWN bytes in
+; current CS; exact static target partitions/byte prefixes are in V1 report.
+; Actual modified bytes,processor/provider continuation and SS save aliases
+; retain U03/U04/U10. No platform profile or native unknown-target stop
+; supplies that continuation. Full715B target_domain_complete remains false.
 DrawObjectSprite:
     push di ; @0706F
     mov bx,[di+EntityRecordX-EntityRecordsBase] ; @07070

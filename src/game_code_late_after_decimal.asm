@@ -155,6 +155,41 @@ MenuTimerOuterIret4C7D:
 ; Text/stack/SS-mirror aliases, altered text headers/DF or changed child stacks
 ; invalidate this induction; retain both original indirect frontiers outside it.
 ReadCodeInput:
+; V2/U02 per-site target rule (PROVEN, intact decoded instructions):4CC9 uses
+; BP restored by4CA8 from the wait save P-16;4D18 uses the DISTINCT outer
+; word P-0C restored4CDA. No foreground BP assignment follows either POP
+; before its transfer. 4CD1's draw-save POP affects a subsequent wait cycle,
+; not an already executed CALL. Initial BP503B is not an immutable register.
+; For balanced menu entry SP4AF4, CALL4996 gives P4AF2, innerBP4ADC,
+; outerBP4AE6, inherited return4AF2=4999; normal child writes reach4AB8
+; (dirty off:4AC0). These absolute placements are conditional on entry SP,
+; not a global provider/IRQ/protection stack certificate.
+; Active foreground non-stack writers:491E; cursor4DF2..4DFB;1FC7/8 on CR;
+; keyboard0F78..0FCA; origins1F76..1F79; graphics selector1FE4/5; renderer
+; 66F8..6705 andA948; VGA A000 pixels; SS mirrors0..0F and dirty9A75.
+; Canonical DS/SS/VGA and fixed style08 give width16, BP0, aligned opaque
+; rendering; no8D66/source-shift path. Dirty0026=42B2/45D3, normal text
+; positions and dimensions keep SS writes <=48F3. All miss4AB8..4AF3.
+; PUSH/CALL/INT writes are ordered below the current SP, with actual POPs;
+; row/plane saves never get an assumed BP-preserving ABI. A stale49B6 map
+; row from a prior level is not an active editor writer; PUSH overwrites old
+; memory before its POP. Resource/cache/object/terrain setup has no decoded
+; call in this editor loop; it cannot rewrite an existing save without reentry.
+; CHARACTERIZED NONDETERMINISM outside that domain: dirty rounded width0
+; at9A75 writes01 to every SS offset before POPSI9A7C, including its own RET;
+; all-DS RCR8DEA reaches both BP saves via DS:A950+offset (until DS wrap).
+; FFFF-space padding1E60/1E51 reaches them via DS:F42C/F436 for P4AF2.
+; Corrupted cursor DI makes4CBE/4CC2/4CF4/4D02/4D16 write its actual DS
+; byte, including either save if the physical addresses coincide. Preserve
+; the written byte/word and actual continuation; reaching the later BP POP
+; is not guaranteed after an earlier RET/segment save has also been changed.
+; Named active external seams: old08 chain4C6C, mouse INT33:0003 at425F,
+; INT62 at0F7F and any escaped42A5 target. Keyboard16D4/menu4C47 install
+; real frames and restore actual BP; private0F70's 587F child is skipped
+; while menu marker CS83BE staysFF. Private0F70 saves only DS/AX:INT62 can
+; change BP directly unless its external register contract preserves it.
+; Returned stack/depth and writes by those
+; external providers are U03/U04, not supplied by VGA+AdLib or IRQ-at-poll C.
     lea si,[EnteredLevelCode-GameDataImage] ; @04C7E
     mov cx,0xa ; @04C82
     mov bx,0x5a41 ; @04C85
