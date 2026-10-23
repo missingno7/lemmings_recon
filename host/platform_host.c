@@ -4,6 +4,8 @@
 #include "special_setup.h"
 #include "resource_retry.h"
 #include "main_resources.h"
+#include "adlib_engine.h"
+#include "opl3.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +50,13 @@ struct LmnHost {
     LmnSoundDriverInitServices sound_init;
     LmnProtectionServices protection;
     LmnStartupServices startup;
+    /* AdLib platform: the game-installed INT61 vector is served by the C
+       driver engine over the loaded driver bytes; its OPL ports drive the
+       Nuked OPL3 core (OPL2-compatible mode) and a minimal status/timer model. */
+    LmnPcSpeakerBinding pc_binding; LmnSoundDriverBinding sound_binding;
+    LmnOplPorts opl_ports; opl3_chip opl;
+    uint8_t opl_address,opl_status,opl_control;
+    FILE *audio; uint64_t audio_frames; int audio_failed;
 };
 static uint32_t phys(uint16_t seg,uint16_t off) { return (((uint32_t)seg<<4)+off)&MASK; }
 static uint16_t word(const uint8_t *m,uint16_t seg,uint16_t off) {
@@ -299,6 +308,7 @@ static uint16_t clock_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *b
     else fail(h,"unbound INT1A function");
     return h->error[0]?1:0;
 }
+static uint16_t adlib_body(void *,uint8_t *,LmnRegs *,const LmnRasterBus *);
 static uint16_t dos_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
     LmnHost *h=ctx;unsigned fn=r->ax>>8,n=r->ax&255;LmnDatDosResult d;LmnDatFileServiceResult f;
     uint16_t flags=word(m,r->ss,(uint16_t)(r->sp+4));size_t i;(void)bus;
@@ -307,6 +317,12 @@ static uint16_t dos_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus
         /* Explicit muted service for the installed MAIN.DAT PC-speaker entry.
            Other live vectors still have to match their bound providers. */
         if(n==0x60 && r->ds==(uint16_t)(h->load+0x842) && r->dx==0x182){h->mute60.code_segment=r->ds;h->mute60.instruction_pointer=r->dx;}
+        /* 057B installs the sound driver at its allocation:0000 before loading
+           it (054E). Bind that live vector to the C AdLib engine. */
+        if(n==0x61 && r->dx==0){
+            h->mute61=(LmnInterruptService){h,adlib_body,r->ds,0};
+            h->sound_binding=(LmnSoundDriverBinding){r->ds,LMN_SOUND_DRIVER_ADLIB};
+        }
     }
     else if(fn==0x35){r->bx=word(m,0,(uint16_t)(n*4));r->es=word(m,0,(uint16_t)(n*4+2));}
     else if(fn==0x1b){r->ds=0x600;r->bx=0x100;}
@@ -349,6 +365,55 @@ static uint16_t mouse_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *b
         break;
     default:fail(h,"unbound INT33 function");break;
     }return h->error[0]?1:0;
+}
+enum { OPL_RATE=49716 };
+/* Render OPL output up to the current PIT time (stereo 16-bit frames). */
+static void render_audio(LmnHost *h) {
+    uint64_t target=h->now*OPL_RATE/LMN_HOST_PIT_HZ;
+    while(h->audio && !h->audio_failed && h->audio_frames<target) {
+        int16_t frame[2];
+        OPL3_Generate(&h->opl,frame);
+        if(fwrite(frame,sizeof(frame[0]),2,h->audio)!=2)h->audio_failed=1;
+        h->audio_frames++;
+    }
+}
+/* AdLib card ports 0388 (address/status) and 0389 (data). Platform model:
+   register writes go to the OPL core in call order; register 04 is the timer
+   control the driver's detection uses (Nuked OPL3 has no timers). Profile
+   assumption: a started, unmasked timer has expired by the next status read,
+   i.e. the driver's delay loop outlasts 80us*(256-T1) as on the machines the
+   detection was written for. Reads of either port return the status byte. */
+static void opl_out(void *ctx,uint8_t *m,uint16_t port,uint8_t value,uint16_t flags) {
+    LmnHost *h=ctx;(void)m;(void)flags;
+    if(port==0x388)h->opl_address=value;
+    else if(port==0x389) {
+        render_audio(h);
+        if(h->opl_address==4) {
+            if(value&0x80)h->opl_status=0;
+            else h->opl_control=value;
+        } else OPL3_WriteReg(&h->opl,h->opl_address,value);
+    } else fail(h,"OPL port outside 0388/0389");
+}
+static uint8_t opl_in(void *ctx,uint8_t *m,uint16_t port,uint16_t flags) {
+    LmnHost *h=ctx;(void)m;(void)flags;
+    if(port!=0x388 && port!=0x389){fail(h,"OPL port outside 0388/0389");return 0xff;}
+    if((h->opl_control&1) && !(h->opl_control&0x40))h->opl_status|=0xC0;
+    if((h->opl_control&2) && !(h->opl_control&0x20))h->opl_status|=0xA0;
+    return h->opl_status;
+}
+/* INT61 at the game-installed driver segment:0000. Only the pinned AdLib image
+   is served (its dispatcher prefix is checked); the Tandy engine is not
+   translated, so a Tandy image there stops the host explicitly. */
+static uint16_t adlib_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
+    static const uint8_t prefix[14]={0x22,0xe4,0x75,0x03,0xe9,0x0e,0x01,0xfe,0xcc,0x75,0x03,0xe9,0x95,0x00};
+    LmnHost *h=ctx;uint16_t status;
+    if(memcmp(m+phys(r->cs,0),prefix,sizeof(prefix))){fail(h,"INT61 target is not the pinned AdLib driver");return 1;}
+    h->sound_requests++;
+    status=lmn_adlib_int61_core(m,r,bus,&h->opl_ports);
+    if(status!=LMN_ADLIB_ENGINE_IRET) {
+        char message[96];snprintf(message,sizeof(message),"AdLib engine stop %u at %04x:%04x",status,r->cs,r->ip);fail(h,message);return 1;
+    }
+    return 0;
 }
 static uint16_t muted_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
     LmnHost *h=ctx;(void)m;(void)r;(void)bus;h->sound_requests++;return 0;
@@ -446,7 +511,8 @@ static void bind(LmnHost *h) {
     h->briefing=(LmnBriefingServices){NULL,&h->ports,&h->bus};h->start=(LmnLevelStartServices){&h->segments,&h->full,&h->briefing,&h->bus,h->ds};
     h->probe=(LmnVideoProbeServices){&h->bios,&h->ports,&h->bus};h->level=(LmnLevelInitializeServices){&h->segments,&h->special,&h->bus,&h->ports};
     h->initialize=(LmnGameInitializeServices){&h->probe,&h->ports,&h->bus,&h->level,h->ds,0,&h->mouse,&h->dos,&h->poll};
-    h->frame=(LmnGameFrameServices){&h->ports,&h->bus,&h->mute60,&h->mute61,&h->dos,&h->clock,NULL,NULL,&h->poll,h->ds};
+    h->pc_binding=(LmnPcSpeakerBinding){(uint16_t)(h->load+0x842)};h->opl_ports=(LmnOplPorts){h,opl_out,opl_in};
+    h->frame=(LmnGameFrameServices){&h->ports,&h->bus,&h->mute60,&h->mute61,&h->dos,&h->clock,&h->pc_binding,&h->sound_binding,&h->poll,h->ds};
     h->session=(LmnGameSessionServices){&h->initialize,&h->frame,h,observe_frame};
     h->result=(LmnLevelResultServices){&h->ports,&h->bus,&h->video,&h->poll,h->ds};
     h->loop=(LmnGameLoopServices){&h->video,&h->dos,&h->ports,&h->bus,&h->poll,&h->start,&h->session,&h->result,h,observe_loop,h->ds,h->load};
@@ -460,9 +526,35 @@ LmnHost *lmn_host_create(const char *assets) {
     strcpy(h->assets,assets);h->load=0x1010;h->ds=0x19b9;h->next_handle=7;h->pit_reload=0x4000;h->pit_control=0x36;
     h->mouse_x=150;h->mouse_y=100;h->mouse_max_x=639;h->mouse_max_y=349;h->port61=0x15;
     h->max_polls=100000;h->max_accesses=500000000;h->automatic=1;h->next_irq=LMN_HOST_DISPLAY_TICKS;
+    OPL3_Reset(&h->opl,OPL_RATE);
     bind(h);video_mode(h,0x0d);return h;
 }
-void lmn_host_destroy(LmnHost *h){size_t i;if(!h)return;for(i=0;i<FILE_CAP;i++)if(h->files[i].file)fclose(h->files[i].file);free(h);}
+static void put32(uint8_t *p,uint32_t v){p[0]=(uint8_t)v;p[1]=(uint8_t)(v>>8);p[2]=(uint8_t)(v>>16);p[3]=(uint8_t)(v>>24);}
+static int write_wav_header(FILE *fp,uint64_t frames) {
+    uint8_t header[44];uint64_t bytes=frames*4;uint32_t data=bytes>0xffffffd3u?0xffffffd3u:(uint32_t)bytes;
+    memcpy(header,"RIFF",4);put32(header+4,36+data);memcpy(header+8,"WAVEfmt ",8);
+    put32(header+16,16);header[20]=1;header[21]=0;header[22]=2;header[23]=0;
+    put32(header+24,OPL_RATE);put32(header+28,OPL_RATE*4);header[32]=4;header[33]=0;header[34]=16;header[35]=0;
+    memcpy(header+36,"data",4);put32(header+40,data);
+    return fseek(fp,0,SEEK_SET)==0 && fwrite(header,1,44,fp)==44;
+}
+int lmn_host_open_audio(LmnHost *h,const char *path) {
+    if(h->audio)return 0;
+    h->audio=fopen(path,"wb");if(!h->audio)return 0;
+    h->audio_frames=h->now*OPL_RATE/LMN_HOST_PIT_HZ;h->audio_failed=!write_wav_header(h->audio,0);
+    {uint64_t silent=h->audio_frames;h->audio_frames=0;while(h->audio_frames<silent && !h->audio_failed){int16_t zero[2]={0,0};if(fwrite(zero,2,2,h->audio)!=2)h->audio_failed=1;h->audio_frames++;}}
+    return !h->audio_failed;
+}
+int lmn_host_close_audio(LmnHost *h) {
+    int ok;
+    if(!h->audio)return 1;
+    render_audio(h);
+    ok=!h->audio_failed && write_wav_header(h->audio,h->audio_frames);
+    if(fclose(h->audio))ok=0;
+    h->audio=NULL;return ok;
+}
+uint64_t lmn_host_audio_frames(const LmnHost *h){return h->audio_frames;}
+void lmn_host_destroy(LmnHost *h){size_t i;if(!h)return;if(h->audio)lmn_host_close_audio(h);for(i=0;i<FILE_CAP;i++)if(h->files[i].file)fclose(h->files[i].file);free(h);}
 uint8_t *lmn_host_memory(LmnHost *h){return h->memory;}
 LmnHostVga *lmn_host_vga(LmnHost *h){return &h->vga;}
 const LmnGameLoopServices *lmn_host_services(LmnHost *h){return &h->loop;}

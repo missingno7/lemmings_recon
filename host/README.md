@@ -34,8 +34,11 @@ relocations. It establishes a DOS PSP at load-10h, a length-counted command line
 entry DS/ES=PSP, SS:SP=load+143E:4AF4, external IVT services and BIOS inputs.
 `lmn_host_boot` then calls `lmn_startup_core` at0000 and admits the game loop only
 at43F2. There is no post-startup constructor or repeated MAIN.DAT load.
-The runner uses `/v /o /a`: VGA palette, preset options and the original01/01
-sound fallback. Other sound-driver/platform profiles remain bounded seams.
+The runner uses `/v /o /a` by default: VGA palette, preset options and the
+original 01/01 PC-speaker fallback. `--sound=adlib` drops `/a`, so native
+startup (054E) allocates the driver block, installs INT61 and loads adlib.dat;
+`--audio` writes `OUTPUT_DIR/audio.wav`. Tandy and joystick profiles remain
+bounded seams.
 
 DOS owns the initial PSP allocation; native startup shrinks it with4A. Its48
 request allocates one5571-paragraph block at3000, below9000: graphics3000,
@@ -116,10 +119,32 @@ level case, never a patch to live game state or an asset file.
 
 ## Unsupported and verification limits
 
-INT60/61 are explicitly muted sinks: requests are counted, returned CPU state is
-preserved, and actual AdLib/Tandy/PC-speaker command semantics and audio are
-unsupported. The native-installed PC-speaker vector at (load+0842):0182 has an
-explicit muted binding; other installed vectors must match their own providers. A game-installed vector that does not match a bound provider stops;
+## Sound
+
+When the game installs INT61 at its driver allocation:0000 (DOS AH25 at 057B),
+the host binds that live vector to `lmn_adlib_int61_core` (c/adlib_engine.c),
+which runs the translated AdLib driver over the loaded driver bytes. The
+provider checks the pinned AdLib dispatcher prefix at that segment; a Tandy
+image (its engine is untranslated) stops the host explicitly. The timer IRQ
+(1872), startup detection and the entity sound requests (AH=04 effect latch,
+through the frame services' AdLib and PC-speaker bindings) all reach the
+driver this way.
+
+Platform substitution, OPL ports 0388/0389: the engine's OPL writes go in call
+order to the pinned Nuked OPL3 core (third_party/Nuked-OPL3, LGPL-2.1, git
+submodule) in OPL2-compatible mode, rendered at its native 49,716 Hz and timed
+by the PIT clock. Register 04 (timers) is handled by a minimal status model,
+since the core has no timers: a started, unmasked timer reports expiry (C0/A0)
+by the next status read, and bit 7 clears the flags. This assumes the
+detection delay outlasts 80us*(256-T1), as on the machines the driver targeted;
+on real hardware the outcome depends on CPU speed. Reads of either port return
+the status byte. Remaining OPL2/OPL3 differences of the core (for example the
+OPL2 waveform-select enable) are unverified equivalence.
+
+INT60 (PC speaker) is a muted sink: requests are counted and CPU state is
+preserved, but PC-speaker audio is not rendered. The native-installed
+PC-speaker vector at (load+0842):0182 has an explicit muted binding; other
+installed vectors must match their own providers. A game-installed vector that does not match a bound provider stops;
 the host does not silently redirect it. Other video modes, chain4/odd-even memory,
 arbitrary BIOS/DOS calls, joystick ports, asynchronous callback bodies, nested
 IRQs, instruction-boundary preemption and cycle-exact timing remain unsupported. The arena allocator is this constructed machine, not a full

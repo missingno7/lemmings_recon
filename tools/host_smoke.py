@@ -8,6 +8,30 @@ from bounded_process import run_bounded
 from common import ROOT,BUILD,sha,write_json
 from hostbuild import build_host,sources
 
+def adlib_smoke(exe):
+    """Original AdLib driver path: native startup loads adlib.dat, the game-installed
+    INT61 runs the C engine, and its OPL writes drive Nuked OPL3 into audio.wav."""
+    import array,math,re,wave
+    output=BUILD/'host-smoke-adlib';output.mkdir(exist_ok=True)
+    result=run_bounded([str(exe),str(ROOT/'assets'),str(ROOT/'host/smoke.script'),'60',str(output),
+        '--media-probe=assume-original','--sound=adlib','--audio'],
+        cwd=ROOT,timeout=60,memory_mib=256,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+    (output/'runner.log').write_text(result.stdout,encoding='utf-8')
+    requests=int(re.search(r'sound-requests=(\d+)',result.stdout)[1])
+    rows=list(csv.DictReader((output/'frames.csv').open(newline='')))
+    assert len(rows)==60 and requests>=len(rows)
+    with wave.open(str(output/'audio.wav')) as w:
+        assert (w.getframerate(),w.getnchannels(),w.getsampwidth())==(49716,2,2)
+        frames=w.getnframes();samples=array.array('h',w.readframes(frames))
+    # Audio length follows the PIT clock of the run (rendered up to the final time).
+    assert frames>=int(rows[-1]['pit_time'])*49716//1193182
+    gameplay=int(re.search(r'capture gameplay pit_time=(\d+)',result.stdout)[1])*49716//1193182
+    tail=samples[gameplay*2:]
+    rms=math.sqrt(sum(x*x for x in tail)/max(1,len(tail)))
+    assert rms>100,'no OPL output after gameplay start'
+    return dict(frames=len(rows),int61_requests=requests,audio_frames=frames,gameplay_rms=round(rms,1),
+        wav_sha256=sha((output/'audio.wav').read_bytes()))
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--existing',action='store_true',help='Use the already built release executable')
@@ -35,10 +59,12 @@ def main():
         pixels=header[3];assert len(pixels)==geometry[0]*geometry[1]*3
         colors=len(set(zip(pixels[::3],pixels[1::3],pixels[2::3])));assert colors>=8
         images.append(dict(path=q.relative_to(ROOT).as_posix(),geometry=geometry,colors=colors,sha256=sha(q.read_bytes())))
+    adlib=adlib_smoke(exe)
     assert before=={q:sha((ROOT/q).read_bytes()) for q in before},'smoke inputs changed'
-    write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,
+    write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,adlib=adlib,
         cadence='five IRQ08 per game tick; five17044-unit display periods within8 units',
         ppm=images,input_hashes=before,executable_sha256=sha(exe.read_bytes()),stdout=result.stdout,
         limits=dict(seconds=60,process_commit_mib=256,polls=100000,accesses=500000000)))
     print(result.stdout,end='');print(f'PASS host smoke: {seconds:.3f}s,20 frames,3 PPMs; display-locked cadence checked')
+    print(f"PASS AdLib smoke: {adlib['frames']} frames, {adlib['int61_requests']} INT61 requests, {adlib['audio_frames']} audio frames, gameplay RMS {adlib['gameplay_rms']}")
 if __name__=='__main__':main()

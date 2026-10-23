@@ -45,10 +45,19 @@ static int script(LmnHost *h,const char *path) {
     }
     return fclose(fp)==0;
 }
-int main(int argc,char **argv) {
+int main(int raw_argc,char **raw_argv) {
     LmnHost *h;LmnRegs r;LmnGameLoopResult out;LmnStartupResult boot;Runner s={0};char path[1200];uint64_t frames;char *end;
-    enum LmnHostMediaPolicy policy;
-    if(argc<6 || argc>8){fputs("usage: lemmings-headless ASSETS SCRIPT FRAMES OUTPUT_DIR --media-probe=assume-original|reject|unsupported [STOP_POLL_HEX [SHOT_FRAMES_CSV]]\n",stderr);return 2;}
+    enum LmnHostMediaPolicy policy;int argc=0,adlib=0,audio=0,i;char *argv[16];
+    /* --sound=adlib selects the original AdLib driver (no /a switch, so 054E
+       loads adlib.dat); --sound=speaker (default) keeps /a, the PC-speaker
+       fallback. --audio writes OUTPUT_DIR/audio.wav from the OPL output. */
+    for(i=0;i<raw_argc;i++) {
+        if(!strcmp(raw_argv[i],"--sound=adlib"))adlib=1;
+        else if(!strcmp(raw_argv[i],"--sound=speaker"))adlib=0;
+        else if(!strcmp(raw_argv[i],"--audio"))audio=1;
+        else if(argc<16)argv[argc++]=raw_argv[i];
+    }
+    if(argc<6 || argc>8){fputs("usage: lemmings-headless ASSETS SCRIPT FRAMES OUTPUT_DIR --media-probe=assume-original|reject|unsupported [STOP_POLL_HEX [SHOT_FRAMES_CSV]] [--sound=speaker|adlib] [--audio]\n",stderr);return 2;}
     if(!strcmp(argv[5],"--media-probe=assume-original"))policy=LMN_HOST_MEDIA_ASSUME_ORIGINAL;
     else if(!strcmp(argv[5],"--media-probe=reject"))policy=LMN_HOST_MEDIA_REJECT;
     else if(!strcmp(argv[5],"--media-probe=unsupported"))policy=LMN_HOST_MEDIA_UNSUPPORTED;
@@ -66,17 +75,19 @@ int main(int argc,char **argv) {
     snprintf(path,sizeof(path),"%s/frames.csv",s.output);s.log=fopen(path,"w");
     if(!s.log){lmn_host_destroy(h);return 2;}
     fputs("frame,pit_time,irq08,ip,fnv1a64_ram_planes_dac_crtc\n",s.log);
-    boot=lmn_host_boot(h,0x1010,"/v /o /a",policy);r=boot.registers;
+    if(audio){snprintf(path,sizeof(path),"%s/audio.wav",s.output);if(!lmn_host_open_audio(h,path)){fclose(s.log);lmn_host_destroy(h);return 2;}}
+    boot=lmn_host_boot(h,0x1010,adlib?"/v /o":"/v /o /a",policy);r=boot.registers;
     printf("startup=%u child=%u service=%u at=%04x:%04x media-policy=%s\n",boot.status,boot.child_status,boot.service_status,r.cs,r.ip,argv[5]);
     if(boot.status!=LMN_STARTUP_READY || !script(h,argv[2])){
         fprintf(stderr,"host setup: %s\n",lmn_host_error(h));fclose(s.log);lmn_host_destroy(h);return 1;
     }
     lmn_host_set_limits(h,100000,500000000,frames);lmn_host_set_hooks(h,&s,poll_hook,observe);
     out=lmn_host_run(h,&r);
-    printf("stop=%u core=%04x child=%u service=%u at=%04x:%04x frames=%" PRIu64 " irq08=%" PRIu64 " inputs=%" PRIu64 " sound-muted=%" PRIu64 " error=%s\n",
+    printf("stop=%u core=%04x child=%u service=%u at=%04x:%04x frames=%" PRIu64 " irq08=%" PRIu64 " inputs=%" PRIu64 " sound-requests=%" PRIu64 " error=%s\n",
         out.status,out.core_entry,out.child_status,out.service_status,out.registers.cs,out.registers.ip,
         lmn_host_frames(h),lmn_host_irqs(h),lmn_host_inputs(h),lmn_host_sound_requests(h),lmn_host_error(h));
     {int ok=!s.failed && !lmn_host_error(h)[0] && (lmn_host_frames(h)>=frames || (s.stop_site && out.registers.ip==s.stop_site));
      if(fclose(s.log))ok=0;
+     if(audio){printf("audio frames=%" PRIu64 "\n",lmn_host_audio_frames(h));if(!lmn_host_close_audio(h))ok=0;}
      lmn_host_destroy(h);return ok?0:1;}
 }

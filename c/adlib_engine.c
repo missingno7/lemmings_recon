@@ -919,11 +919,31 @@ uint16_t lmn_adlib_service_adapter(uint8_t *memory,LmnRegs *regs,
     return status;
 }
 
+uint16_t lmn_adlib_int61_core(uint8_t *memory,LmnRegs *regs,
+    const LmnRasterBus *bus,const LmnOplPorts *ports) {
+    /* AH=3/4/5 and AH>=6 stop at their own IRET in sound_latches.c;
+       AH=0/1/2 continue at 0115/00A3/003A with AH reduced to zero. */
+    LmnSoundLatchCall call;
+    LmnSoundControlResult result;
+    call.driver_segment=regs->cs;
+    call.data_segment=regs->ds;
+    call.stack_segment=regs->ss;
+    call.stack_offset=regs->sp;
+    call.value=regs->ax;
+    call.flags=regs->flags;
+    result=lmn_adlib_control_core(memory,&call,bus);
+    regs->ax=result.value;
+    regs->ds=result.data_segment;
+    regs->sp=result.stack_offset;
+    regs->flags=result.flags;
+    regs->ip=result.continuation;
+    if(result.exit_kind==LMN_SOUND_CONTROL_IRET)return LMN_ADLIB_ENGINE_IRET;
+    return lmn_adlib_service_core(memory,regs,bus,ports);
+}
+
 uint16_t lmn_adlib_int61_adapter(uint8_t *memory,LmnRegs *regs,
     const LmnRasterBus *bus,const LmnOplPorts *ports) {
-    /* AH=3/4/5 and AH>=6 complete with their own IRET in sound_latches.c;
-       AH=0/1/2 continue at 0115/00A3/003A with AH reduced to zero. */
-    if(lmn_adlib_control_adapter(memory,regs,bus)==LMN_SOUND_CONTROL_IRET)
-        return LMN_ADLIB_ENGINE_IRET;
-    return lmn_adlib_service_adapter(memory,regs,bus,ports);
+    uint16_t status=lmn_adlib_int61_core(memory,regs,bus,ports);
+    if(status==LMN_ADLIB_ENGINE_IRET)interrupt_return(memory,regs,bus);
+    return status;
 }

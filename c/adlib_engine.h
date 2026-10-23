@@ -55,6 +55,14 @@ uint16_t lmn_adlib_service_core(uint8_t *memory, LmnRegs *regs,
 uint16_t lmn_adlib_service_adapter(uint8_t *memory, LmnRegs *regs,
     const LmnRasterBus *bus, const LmnOplPorts *ports);
 
+/* INT 61h service from driver offset 0000 stopped before its IRET: the
+   dispatcher core of c/sound_latches.c, then for AH=0/1/2 the service core.
+   This is the pre-IRET provider shape used by the software-interrupt
+   transport (c/interrupt_service.h) when the game's live INT61 vector points
+   at the loaded driver. */
+uint16_t lmn_adlib_int61_core(uint8_t *memory, LmnRegs *regs,
+    const LmnRasterBus *bus, const LmnOplPorts *ports);
+
 /* Complete INT 61h service from driver offset 0000: the dispatcher prefix
    and latch setters of c/sound_latches.c, then for AH=0/1/2 the service
    bodies above and their IRET. Returns an LMN_ADLIB_ENGINE_* status. */

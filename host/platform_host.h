@@ -66,5 +66,10 @@ void lmn_host_write(LmnHost *,uint32_t,uint8_t);
 void lmn_host_out(LmnHost *,uint16_t,uint16_t,unsigned width);
 uint8_t lmn_host_in(LmnHost *,uint16_t);
 int lmn_host_ppm(LmnHost *,const char *path);
+/* Optional stereo 16-bit WAV of the OPL output at 49716 Hz, timed by the PIT
+   clock; frames before opening are written as silence. Close fixes the header. */
+int lmn_host_open_audio(LmnHost *,const char *path);
+int lmn_host_close_audio(LmnHost *);
+uint64_t lmn_host_audio_frames(const LmnHost *);
 uint64_t lmn_host_hash(const LmnHost *);
 #endif

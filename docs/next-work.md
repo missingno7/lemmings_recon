@@ -79,11 +79,14 @@ AdLib engine, song titles and command domain.
 
 ## Native work after closure, in order
 
-1. Native OPL synthesis behind `LmnOplPorts` (the AdLib engine itself is in
-   c/adlib_engine.c), driven by AH=00 at the game timer cadence.
-2. Bind entity sound services (today NULL bindings stop sound-enabled actions).
-3. Special-graphics briefing redraw, INT61 rebinding after 057B, private IRQ 0F70
-   delivery, protection persistence (russell.dat), validated timing.
+1. Done: the headless host runs the original AdLib driver path (`--sound=adlib`):
+   game-installed INT61 -> c/adlib_engine.c -> Nuked OPL3 -> audio.wav, with
+   entity sound bindings supplied (host/README.md, Sound). Still open: an audio
+   device (SDL3), PC-speaker audio rendering, Tandy.
+2. Feature matrix of the native host (semantic-audit.md, native completeness).
+3. Special-graphics briefing redraw, private IRQ 0F70 delivery, protection
+   persistence (russell.dat), validated timing; the host's fixed poll budget
+   (100,000) stops runs at about 141 frames.
 4. Whole-game lifecycle in the native host: startup, menus, level load, gameplay,
    results, progression, failure and exit, with a feature matrix
    (semantic-audit.md).
