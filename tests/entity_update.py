@@ -18,6 +18,7 @@ from cbuild import build
 from common import BUILD, sha, write_json
 import entity_cadence as cadence
 import entity_countdown as countdown
+import entity_create as spill
 import entity_interactions as interactions
 import entity_late_states as late_states
 import entity_state2 as state2
@@ -315,6 +316,42 @@ def cases():
     return rows
 
 
+# Row-54 spill frame slice, stage 2 (after the 410F rebuild proved in
+# view_visibility): records 00..62 from entity_create.spill_state, DS:0000 and
+# the visibility map rebuilt at each characterized origin, then one 1F19 pass
+# over all 63h slots. Terrain is the suite's zero VGA (no pixels; X=0 and the
+# other spill spawns lie outside every row-54 terrain piece anyway) and the SS
+# interaction cells are zero (no exits/traps). Canonical DS 19B9 and SS 244E
+# (relocated 143E) with the stack near the initial SP 4AF4. Records 50..54 then
+# hold rebuilt bytes: 00/01 states, +20 countdowns that expire in 2E04 and
+# install 002E/003C, and revived +26.
+SPILL_ORIGINS = (0x0160, 0x01B8, 0x01C0, 0x01C8, 0x0210, 0x0218, 0x0280,
+                 0x0098, 0x0090)
+SPILL_EVENT_LIMIT, SPILL_INSTRUCTION_LIMIT = 200_000, 400_000
+SPILL_STACK_SEGMENT = (LOAD + 0x143E) & 0xFFFF
+
+
+def spill_cases():
+    rows = []
+    for index, origin in enumerate(SPILL_ORIGINS):
+        rows.append(dict(
+            name=f'row54-spill-update-origin-{origin:04X}', spill_origin=origin,
+            seed=0x1F1954 + index, gate=0, bound=spill.SPILL_LIMIT,
+            scan_request=0, scan_cursor=0, flags=0x0246, ds=DATA_SEGMENT,
+            ss=SPILL_STACK_SEGMENT, sp=0x4AF2, outer_return=0x01B6,
+            slot2e=0x6170, slot3c=0x6BDB, driver='adlib', enabled=0, options=0,
+            vga=True, event_limit=SPILL_EVENT_LIMIT,
+            instruction_limit=SPILL_INSTRUCTION_LIMIT))
+    return rows
+
+
+def spill_install(memory, ds, origin, count=spill.SPILL_LIMIT):
+    spill.spill_state(memory, ds, count=count)
+    put16(memory, ds, 0x0000, origin)
+    put16(memory, ds, 0x0002, origin >> 3)
+    spill.spill_visibility(memory, ds, origin)
+
+
 def setup(case):
     """Build the executable and one or two live records for 1F19."""
     template = dict(case)
@@ -394,6 +431,10 @@ def setup(case):
                         countdown=template.get('scan_candidate_countdown', 0),
                         inactive=0)
 
+    if template.get('spill_origin') is not None:
+        spill_install(memory, ds, template['spill_origin'],
+                      template.get('spill_count', spill.SPILL_LIMIT))
+
     if wants_vga:
         # Parent readback configures this independent device through its word
         # OUTs; interaction.setup's VGA initializer is specific to SS=A000.
@@ -414,6 +455,7 @@ class UpdateAccess(interactions.Access):
 
     def __init__(self, case, memory, regs, device):
         super().__init__(case, memory, regs, device)
+        self.event_limit = case.get('event_limit', EVENT_LIMIT)
         self.countdown_frame_armed = False
 
     def _provider(self, kind, address):
@@ -481,7 +523,7 @@ def original(case, memory, regs, device, *, core):
         main_ret_continuations=MAIN_RET_CONTINUATIONS,
         main_call_returns=MAIN_CALL_RETURNS,
         stop_offsets=stops, access_factory=UpdateAccess,
-        instruction_limit=INSTRUCTION_LIMIT)
+        instruction_limit=case.get('instruction_limit', INSTRUCTION_LIMIT))
     if case.get('provider') == 'live-counter':
         oracle_require('live-counter' in observed['used'] and
                        observed['regs']['si'] == RECORD + 2 * 0x2D and
@@ -607,6 +649,46 @@ def expected_child(case, observed):
     return 0, 0xFFFF
 
 
+def assert_spill_update(case, regs, observed):
+    """Characterized row-54 effects (creation contract at 30A6): every slot is
+    visited; record 52 rebuilt at 0160..0210 keeps its non-callback +14 and
+    only advances +28 (22DF); a rebuilt +20=01 expires in 2E04 and installs a
+    real callback (record 50 at 0090)."""
+    ds, memory, origin = regs['ds'], observed['memory'], case['spill_origin']
+    record50, record52 = 0x0088 + 0x50 * 0x2D, 0x0088 + 0x52 * 0x2D
+    count = case.get('spill_count', spill.SPILL_LIMIT)
+    oracle_require(get8(memory, ds, 0x42) == 0 and get8(memory, ds, 0x43) == count,
+                   case['name'] + ': update pass did not visit every published slot')
+    if 0x0160 <= origin <= 0x0210:
+        expected = 0x0000 if origin <= 0x01B8 else (0x0001 if origin == 0x01C0 else 0x0101)
+        oracle_require(get16(memory, ds, record52 + 0x14) == expected and
+                       get8(memory, ds, record52 + 0x28) == 1 and
+                       get8(memory, ds, record52 + 0x20) == 0 and
+                       get8(memory, ds, record52 + 0x26) == 0,
+                       case['name'] + ': record 52 left the characterized rebuilt state')
+    if origin == 0x0090:
+        oracle_require(get16(memory, ds, record50 + 0x14) in spill.CALLBACK_SLOT_WORDS,
+                       case['name'] + ': record 50 countdown did not install a callback')
+    if origin == 0x0098:
+        oracle_require(get16(memory, ds, record50 + 0x14) == 0 and
+                       get8(memory, ds, record50 + 0x20) == 0,
+                       case['name'] + ': record 50 did not keep +14=0000')
+
+
+def spill_after_update(origin, count=spill.SPILL_LIMIT):
+    """Original-only post-1F19 RAM for the drawing/object stages of the slice
+    (count < 63h: the same level start with only records 00..count-1 yet)."""
+    case = next(row for row in spill_cases() if row['spill_origin'] == origin)
+    case = dict(case, spill_count=count)
+    memory, regs, device, _pc, _sound = setup(case)
+    observed = original(case, bytearray(memory), dict(regs),
+                        copy.deepcopy(device), core=True)
+    oracle_require(observed['status'] == 0,
+                   case['name'] + ': row-54 update pass did not complete')
+    assert_spill_update(case, regs, observed)
+    return observed['memory'], regs['ds']
+
+
 def compare_case(native, case, *, core):
     memory, regs, device, pc_binding, sound_binding = setup(case)
     label = case['name'] + (' core' if core else ' adapter')
@@ -649,6 +731,8 @@ def compare_case(native, case, *, core):
     if case.get('provider'):
         oracle_require(case['provider'] in expected['used'],
                        label + ': declared provider was not observed')
+    if case.get('spill_origin') is not None:
+        assert_spill_update(case, regs, expected)
     own_sites = {address for source, address in expected['sites']
                  if source == 'main' and address in OWN_INS}
     own_edges = {(source_ip, target) for source, source_ip, target in expected['edges']
@@ -685,6 +769,7 @@ def input_hashes():
         'metadata/pcspeaker-regions.json', 'metadata/pcspeaker-symbols.json',
         'requirements.txt',
         'tests/entity_update.py', 'tests/entity_interactions.py',
+        'tests/entity_create.py', 'assets/level006.dat', 'assets/oddtable.dat',
         'tests/entity_cadence.py', 'tests/entity_countdown.py',
         'tests/entity_zero_state.py', 'tests/entity_state2.py',
         'tests/entity_state4.py', 'tests/entity_state8.py',
@@ -775,6 +860,18 @@ def original_only():
                          edges=[list(edge) for edge in sorted(own_edges)],
                          events=len(observed['events']), steps=observed['steps']))
         gc.collect()
+    for case in spill_cases():
+        memory, regs, device, _pc, _sound = setup(case)
+        observed = original(case, bytearray(memory), dict(regs),
+                            copy.deepcopy(device), core=False)
+        oracle_require(observed['status'] == 0 and
+                       observed['continuation'] == case['outer_return'],
+                       case['name'] + f': row-54 pass boundary {observed["status"]}')
+        assert_spill_update(case, regs, observed)
+        rows.append(dict(name=case['name'], status=observed['status'],
+                         continuation=observed['continuation'], sites=[], edges=[],
+                         events=len(observed['events']), steps=observed['steps']))
+        gc.collect()
     expected_edges = OWN_EDGES - {INFEASIBLE_EDGE}
     oracle_require(covered == set(OWN_INS),
                    f'parent site union {len(covered)}/{len(OWN_INS)}; '
@@ -807,6 +904,16 @@ def worker(directory):
             total_events += row['event_count']
             total_steps += row['steps']
         gc.collect()
+    spill_rows = []
+    for case in spill_cases():
+        for core in (True, False):
+            row = compare_case(native, case, core=core)
+            spill_rows.append(row)
+            integrated_sites.update(row['integrated_sites'])
+            total_events += row['event_count']
+            total_steps += row['steps']
+        gc.collect()
+    rows.extend(spill_rows)
     expected_edges = OWN_EDGES - {INFEASIBLE_EDGE}
     oracle_require(sites == set(OWN_INS),
                    f'native original site union {len(sites)}/{len(OWN_INS)}; '
@@ -846,6 +953,7 @@ def worker(directory):
         translated_code_bytes=EXPECTED_OWN_BYTES, instruction_sites=EXPECTED_OWN_SITES,
         own_static_branch_edges=EXPECTED_OWN_EDGES,
         parent_feasible_branch_edges=len(expected_edges), case_count=len(specs),
+        row54_spill_case_count=len(spill_rows) // 2,
         core_adapter_comparisons=len(rows), mutation_count=len(mutations),
         mutations=mutations, executed_instruction_addresses=sorted(sites),
         static_instruction_addresses=sorted(OWN_INS),
@@ -871,8 +979,13 @@ def worker(directory):
                'The adapter executes all three live outer RETs; the logical core '
                'stops before them. Comparison includes full 1 MiB RAM, all registers, '
                'defined FLAGS, ordered VGA/port bus events, live stack returns and '
-               'VGA planes/latches.'))
+               'VGA planes/latches. Row-54 spill: one pass over records 00..62 '
+               '(level006 s6 + oddtable row 54) after the visibility rebuild at '
+               'nine characterized origins, zero terrain and interaction cells, '
+               'canonical DS 19B9/SS 244E; spill-limited bus/instruction budgets '
+               f'{SPILL_EVENT_LIMIT}/{SPILL_INSTRUCTION_LIMIT}.'))
     print(f'PASS entity update: {len(specs)} fixtures x core/adapter, '
+          f'{len(spill_rows) // 2} row-54 spill passes x core/adapter, '
           f'{len(sites)} sites/{len(edges)} feasible edges, {total_events} events, '
           f'{len(mutations)} completed mutants', flush=True)
 

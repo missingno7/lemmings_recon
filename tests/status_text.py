@@ -192,7 +192,28 @@ def make_cases():
              ss=0xFFFF, sp=0x000F, seed=0x417B11),
         dict(name='ordinary-data-stack-alias', text='A:Z', ah=0x10,
              ds=0x5200, ss=0x5200, seed=0x417B12),
-    ]
+    ] + spill_cases(line40)
+
+
+# Row-54 header word +06 is 0063, so 36E2 stores minutes 63+30=93 at 20A7
+# (040E/0413 set the tens/ones to '0'); the 01FA..0246 countdown then walks
+# the high byte 93..30 over 99 minutes. The status line at canonical
+# DS:2083 is drawn with the glyph selector contract: 93..5B and 40..3B are
+# skipped (stale pixels stay), 5A..41 draw capitals, 3A draws ':'.
+SPILL_MINUTES = ((0x93, '00'), (0x5A, '30'), (0x3A, '05'))
+
+
+def spill_cases(line40):
+    rows = []
+    for index, (minute, seconds) in enumerate(SPILL_MINUTES):
+        text = line40[:0x24] + chr(minute) + ':' + seconds + line40[0x28:]
+        oracle_require(len(text) == 40 and line40[0x25] == ':',
+                       'row-54 status line construction changed')
+        rows.append(dict(name=f'row54-status-time-minute-{minute:02x}', text=text,
+                         ah=0x20, ds=(LOAD + 0x09A9) & 0xFFFF, si=0x2083,
+                         ss=(LOAD + 0x143E) & 0xFFFF, sp=0x4AF2, flags=0x0246,
+                         df=False, seed=0x417B54 + index, plane_projection=True))
+    return rows
 
 
 def make_device(seed):

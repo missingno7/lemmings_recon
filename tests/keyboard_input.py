@@ -13,6 +13,7 @@ import input_poll as poll
 import text_stream as text
 import background_drawing as background
 import palette_transition as palette
+import entity_create as spill
 from bounded_process import run_bounded,temporary_build_directory
 from cbuild import build
 from common import BUILD,sha,write_json
@@ -200,8 +201,34 @@ def cases():
         ('missing-palette-output',{'missing_out':True,'expected':3,'child_status':2}),
     )]
     rows += [dict(name=f'{entry}-load-{load:04x}',entry=entry,load=load) for entry in RANGES for load in base.LOADS]
+    rows += spill_irq_rows()
     return [dict(load=0x1010,seed=0x16D4+i,raw=0x20,suppression=0,controller=0,flags=0xD7,
                  selection_chars=(0x33,) if c['entry'] in ('mode','screen') else (0x32,))|c for i,c in enumerate(rows)]
+
+
+# Row-54 spill: records 54..56 occupy the key-state bytes 0F78..0FCA
+# (entity_create.spill_state, records 00..62 appended). Make/break of scans
+# 15/16 and 42/43 rewrite the +14 callback bytes of records 55 and 56; scan 27
+# rewrites record 55's +26 skip gate. Canonical DS 19B9 and the pinned
+# bindings; every other key byte is the record byte it overlaps.
+SPILL_DS=0x19B9
+SPILL_SCANS={0x15:(0x0F79,0x14),0x16:(0x0F79,0x15),0x42:(0x0FA6,0x14),0x43:(0x0FA6,0x15),0x27:(0x0F79,0x26)}
+def spill_irq_rows():
+    return [dict(name=f'irq-row54-scan-{scan:02x}-{"break" if release else "make"}',entry='irq',
+                 raw=scan|(0x80 if release else 0),runtime_ds=SPILL_DS,spill=True,
+                 bindings=PINNED_BINDINGS,keymask=0)
+            for scan in SPILL_SCANS for release in (False,True)]
+
+
+def spill_expected(c,ref):
+    """Characterized record bytes after the IRQ store (creation contract 30A6)."""
+    scan=c['raw']&0x7F;record,field=SPILL_SCANS[scan];value=0 if c['raw']&0x80 else 0x94
+    check(0xF78+scan==record+field and ref['memory'][physical(SPILL_DS,record+field)]==value,
+          c['name']+': IRQ key byte did not land on the characterized record field')
+    if field in (0x14,0x15):
+        word=get16(ref['memory'],SPILL_DS,record+0x14)
+        expected=(0x6100|value) if field==0x14 else ((value<<8)|0x70)
+        check(word==expected,c['name']+f': record +14 {word:04X}, expected {expected:04X}')
 
 
 def setup(c):
@@ -235,6 +262,7 @@ def setup(c):
         base.put8(memory,ds,0x200C,0xFF)
         for start,value in ((0x2638,0),(0x2608,1),(0x4920,2)):
             for i in range(64):base.sync_memory_byte(memory,device,ds,start+i,value)
+    if c.get('spill'):spill.spill_state(memory,SPILL_DS)
     put16(memory,0,0x84,BINDING[1]);put16(memory,0,0x86,BINDING[0])
     put16(memory,0,0x24,0xD123);put16(memory,0,0x26,0x6800)
     put16(memory,c['load'],0x16D9,(c['load']+0x9A9)&0xFFFF if c.get('late_operand') else ds)
@@ -560,7 +588,7 @@ def independent(c,memory,r,ref,core):
         check(get16(ref['memory'],ds,0x14)==buttons,'independent special buttons differ')
         check(ref['memory'][physical(ds,0x1FD0)]==latch,'independent scan latch differs')
         for i in range(83):
-            value=(0 if release else 0x94) if i==scan else 0x37
+            value=(0 if release else 0x94) if i==scan else memory[physical(ds,0xF78+i)]
             check(ref['memory'][physical(ds,0xF78+i)]==value,'independent key-state array differs')
         saved=dict(r)
         if core:saved['ip']=0x17B3
@@ -575,6 +603,7 @@ def compare(native,c,core):
     ref=Machine(c,bytearray(memory),dict(r),copy.deepcopy(device),core).run()
     check((ref['status'],ref['child_status'],ref['service_status'])==(c.get('expected',0),c.get('child_status',0),c.get('service_status',0)),c['name']+': unexpected stop')
     independent(c,memory,r,ref,core)
+    if c.get('spill'):spill_expected(c,ref)
     if native:base.compare_states(c['name'],native.run(c,memory,r,device,core),ref)
     return ref
 
@@ -691,6 +720,65 @@ def handoff(native,load):
     return stages
 
 
+SPILL_READER_CALLS=112
+def spill_keyboard(native):
+    """Row-54 key bytes as record bytes, on the same RAM: the code-entry
+    reader 4D1A polled repeatedly over the residual records 54..56 (creation
+    state; bit-7 bytes F8/FF/F6 act as held keys), then IRQ make of scan 15
+    (94 into record 55 +14) and further polls. Each stage compares original
+    and C over the previous stage's RAM."""
+    c=[row for row in cases() if row['name']=='reader-empty'][0]|dict(name='reader-row54',runtime_ds=SPILL_DS,spill=True,
+        bindings=PINNED_BINDINGS,keymask=0,seed=0x4D1A54)
+    memory,r,device=setup(c)
+    ref=dict(memory=bytearray(memory),regs=dict(r),device=copy.deepcopy(device))
+    actual=dict(memory=bytearray(memory),regs=dict(r),device=copy.deepcopy(device)) if native else None
+    stages=[];emitted=[]
+    def frame(state,ip):
+        regs=dict(state['regs']);regs['sp']=(regs['sp']-2)&0xFFFF
+        put16(state['memory'],regs['ss'],regs['sp'],0xD00D,state['device']);regs['ip']=ip;return regs
+    def poll(index,first):
+        nonlocal ref,actual
+        regs=dict(r) if first else frame(ref,0x4D1A);before=bytearray(ref['memory'])
+        out=Machine(c,ref['memory'],regs,ref['device'],False).run()
+        check(out['status']==0,c['name']+': reader stopped');independent(c,before,regs,out,False)
+        if actual is not None:
+            nr=dict(r) if first else frame(actual,0x4D1A)
+            actual=native.run(c,actual['memory'],nr,actual['device'],False,copy_state=False)
+            base.compare_states(f'{c["name"]}-poll{index:03d}',actual,out)
+        ref=out;stages.append((f'{c["name"]}-poll{index:03d}',out))
+        if out['regs']['ax']&255!=255:emitted.append((index,83-out['regs']['cx'],out['regs']['ax']&255))
+    for index in range(SPILL_READER_CALLS):poll(index,index==0)
+    # Residual bytes count down from their own value: the first emission is
+    # record 55 +02 (Y low F6 at scan 03, '2'; 76h..13h takes 99 polls), then
+    # +06 (scan 07, '6'), then +00 (scan 01, F8) which the pinned table
+    # translates to Esc; each poll stops at its first hit.
+    check(emitted[:3]==[(98,3,0x32),(99,7,0x36),(100,1,0x1B)],c['name']+f': residual emissions {emitted[:4]}')
+    residual=len(emitted)
+    ic=dict(c,name='reader-row54-irq-scan-15',entry='irq',raw=0x15)
+    def enter(state):
+        regs=dict(state['regs'])
+        for value in (regs['flags'],regs['cs'],regs['ip']):
+            regs['sp']=(regs['sp']-2)&0xFFFF
+            put16(state['memory'],regs['ss'],regs['sp'],value,state['device'])
+        regs.update(cs=c['load'],ip=0x16D4,flags=regs['flags']&~0x300);return regs
+    put16(ref['memory'],ic['load'],0x16D9,SPILL_DS)
+    regs=enter(ref);saved=dict(ref['regs']);before=bytearray(ref['memory'])
+    out=Machine(ic,ref['memory'],regs,ref['device'],False).run()
+    check(out['status']==0 and out['regs']==saved,ic['name']+': IRQ did not restore interrupted state')
+    spill_expected(ic,out)
+    if actual is not None:
+        nr=enter(actual);actual=native.run(ic,actual['memory'],nr,actual['device'],False,copy_state=False)
+        base.compare_states(ic['name'],actual,out)
+    ref=out;stages.append((ic['name'],out))
+    c=dict(c,name='reader-row54-after-scan-15')
+    for index in range(13):poll(index,False)
+    # 94 counts 13h on its first decrement, but the poll stops at the earlier
+    # residual hit (scan 06), so scan 15 ('Y') is emitted on the second poll.
+    check(emitted[residual:residual+2]==[(0,6,0x35),(1,0x15,0x59)],
+          c['name']+f': held scan 15 (record 55 +14) emissions {emitted[residual:residual+3]}')
+    return stages
+
+
 def screen_handoff(native,load):
     """Screen -> calibration -> input on actual returned RAM and device planes."""
     c=next(c for c in cases() if c['name']=='screen-controller')|dict(load=load,axis_samples=(3,1,1,0),selection_chars=(0x32,0x32))
@@ -732,6 +820,8 @@ def worker(directory=None,snapshot=None):
             record(c['name'],core,compare(native,c,core))
         gc.collect()
         if (c['entry']=='irq' and c['raw']%32==0) or (c['name'].startswith(('reader-byte-','choice-byte-')) and int(c['name'][-2:],16)%32==0) or (not c['name'].startswith(('irq-scan','reader-byte','reader-index','choice-byte'))):print('CHECKED '+c['name'],flush=True)
+    for name,ref in spill_keyboard(native):record(name,False,ref)
+    gc.collect();print('CHECKED row-54 key-byte reader/IRQ chain',flush=True)
     for load in base.LOADS:
         for name,ref in handoff(native,load):record(name,False,ref)
         for name,ref in screen_handoff(native,load):record(name,False,ref)
@@ -758,7 +848,7 @@ def worker(directory=None,snapshot=None):
         reference_limits=dict(retf_selector_ea_wrap_sp=[0xFFFE,0xFFFF]),
         mutation_count=len(mutations),mutations=mutations,input_hashes=before,rows=rows,
         limits=dict(timeout_seconds=SECONDS,process_commit_mib=MEMORY_MIB,instructions=MAX_STEPS,events=MAX_EVENTS,screen_instructions=2_000_000,screen_events=600_000),
-        scope='Keyboard16D4, controller17B4/17BE, DOS installer1562, reader4D1A, choice43CE and complete input-selection screen4A01..4AC4 with native text/glyph/renderer, EOI/input/display children; same-RAM configuration-to-input handoffs. Screen preparation4A01..4A2D composes tested native children; enclosing menu continuation4401 remains untranslated. Declared RETF observation rejects selector-EA wrap at SPFFFE/FFFF pending an independent oracle; no scheduling/platform-body proof.'))
+        scope='Keyboard16D4, controller17B4/17BE, DOS installer1562, reader4D1A, choice43CE and complete input-selection screen4A01..4AC4 with native text/glyph/renderer, EOI/input/display children; same-RAM configuration-to-input handoffs. Row-54 spill: IRQ make/break of scans 15/16/42/43/27 over records 55/56 (canonical DS19B9, records 00..62 appended), and a same-RAM 4D1A poll chain over the residual record bytes plus a scan-15 make. Screen preparation4A01..4A2D composes tested native children; enclosing menu continuation4401 remains untranslated. Declared RETF observation rejects selector-EA wrap at SPFFFE/FFFF pending an independent oracle; no scheduling/platform-body proof.'))
     print(f'PASS keyboard: {len(rows)} comparisons,{len(set(OWN)&sites)} own sites,{len(EDGES)} own outcomes,{len(mutations)} mutants',flush=True)
 
 

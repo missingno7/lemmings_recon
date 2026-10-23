@@ -81,7 +81,9 @@ int main(int raw_argc,char **raw_argv) {
     if(boot.status!=LMN_STARTUP_READY || !script(h,argv[2])){
         fprintf(stderr,"host setup: %s\n",lmn_host_error(h));fclose(s.log);lmn_host_destroy(h);return 1;
     }
-    lmn_host_set_limits(h,100000,500000000,frames);lmn_host_set_hooks(h,&s,poll_hook,observe);
+    /* Safety budgets scale with the requested session frames: menus and the
+       briefing take about 100,000 polls, a gameplay frame several hundred. */
+    lmn_host_set_limits(h,100000+frames*2000,500000000+frames*10000000,frames);lmn_host_set_hooks(h,&s,poll_hook,observe);
     out=lmn_host_run(h,&r);
     printf("stop=%u core=%04x child=%u service=%u at=%04x:%04x frames=%" PRIu64 " irq08=%" PRIu64 " inputs=%" PRIu64 " sound-requests=%" PRIu64 " error=%s\n",
         out.status,out.core_entry,out.child_status,out.service_status,out.registers.cs,out.registers.ip,

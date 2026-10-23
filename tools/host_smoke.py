@@ -42,6 +42,18 @@ def adlib_smoke(exe):
         music_rms=round(music_rms,1),music_onsets=onsets,
         wav_sha256=sha((output/'audio.wav').read_bytes()))
 
+def special_smoke(exe):
+    """Fun 22 uses special graphics (vgaspec): the briefing redraw must reach
+    SetupSpecialGraphicsResource 1A7B through bound services and play on."""
+    output=BUILD/'host-smoke-special';output.mkdir(exist_ok=True)
+    result=run_bounded([str(exe),str(ROOT/'assets'),str(ROOT/'host/fun22.script'),'40',str(output),
+        '--media-probe=assume-original','--sound=adlib'],
+        cwd=ROOT,timeout=60,memory_mib=256,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+    (output/'runner.log').write_text(result.stdout,encoding='utf-8')
+    rows=list(csv.DictReader((output/'frames.csv').open(newline='')))
+    assert len(rows)==40 and (output/'briefing.ppm').is_file()
+    return dict(frames=len(rows),briefing_sha256=sha((output/'briefing.ppm').read_bytes()))
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--existing',action='store_true',help='Use the already built release executable')
@@ -49,7 +61,7 @@ def main():
     exe=BUILD/'lemmings-headless.exe'
     if not a.existing:build_host(exe)
     paths={*sources(),*(ROOT/'c').glob('*.h'),ROOT/'host/main.c',ROOT/'host/platform_host.h',
-        ROOT/'host/smoke.script',ROOT/'tools/hostbuild.py',Path(__file__),ROOT/'tools/bounded_process.py',
+        ROOT/'host/smoke.script',ROOT/'host/fun22.script',ROOT/'tools/hostbuild.py',Path(__file__),ROOT/'tools/bounded_process.py',
         *(ROOT/'assets').iterdir()}
     before={q.relative_to(ROOT).as_posix():sha(q.read_bytes()) for q in sorted(paths) if q.is_file()}
     began=time.perf_counter()
@@ -70,11 +82,13 @@ def main():
         colors=len(set(zip(pixels[::3],pixels[1::3],pixels[2::3])));assert colors>=8
         images.append(dict(path=q.relative_to(ROOT).as_posix(),geometry=geometry,colors=colors,sha256=sha(q.read_bytes())))
     adlib=adlib_smoke(exe)
+    special=special_smoke(exe)
     assert before=={q:sha((ROOT/q).read_bytes()) for q in before},'smoke inputs changed'
-    write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,adlib=adlib,
+    write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,adlib=adlib,special=special,
         cadence='five IRQ08 per game tick; five17044-unit display periods within8 units',
         ppm=images,input_hashes=before,executable_sha256=sha(exe.read_bytes()),stdout=result.stdout,
         limits=dict(seconds=60,process_commit_mib=256,polls=100000,accesses=500000000)))
     print(result.stdout,end='');print(f'PASS host smoke: {seconds:.3f}s,20 frames,3 PPMs; display-locked cadence checked')
+    print(f"PASS special-graphics smoke: Fun 22 briefing and {special['frames']} frames")
     print(f"PASS AdLib smoke: {adlib['frames']} frames, {adlib['int61_requests']} INT61 requests, {adlib['audio_frames']} audio frames, music RMS {adlib['music_rms']}, {adlib['music_onsets']} note onsets")
 if __name__=='__main__':main()

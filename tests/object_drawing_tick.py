@@ -438,6 +438,72 @@ def animation_handoff(directory, tick_lib):
     return row
 
 
+def spill_handoff(directory, tick_lib):
+    """Row-54 spill: 01B6 animation then the 01B9 7BB8 tick over the same RAM,
+    in the four-frame window after record 57 (object_animation's
+    'row54-spill-after-record-57': records 00..57 after one original update
+    pass). Record 57 zeroes definitions 0 (entrance) and 1 and replaces
+    definition 2's X/Y/type-high bytes, so the tick skips 0/1 and draws object
+    2 at record-byte coordinates. Renderer layout and source pixels are this
+    suite's finite fixtures. With all of 57..5D present the startup (zero)
+    working records of definitions 9..31 make 8822 wrap zero width/height:
+    a single such object exceeds 4M VGA trace events, beyond this suite's
+    bounded budget, so that full state is covered only by the 7C0A case."""
+    anim_case = next(case for case in animation_suite.cases()
+                     if case['name'] == 'row54-spill-after-record-57')
+    memory, regs, device = animation_suite.setup(anim_case)
+    game_data_segment = regs['ds']
+    regs['es'] = 0xA000
+    fixtures._put_renderer_layout(memory, game_data_segment, source_segment=0x5000)
+    _put16(memory, game_data_segment, fixtures.field('GraphicsResourceSegment'), 0x5000)
+    fixtures._put_source_pixels(memory, 0x5000)
+    original_state = animation_suite.run_original(
+        anim_case, bytearray(memory), dict(regs), copy.deepcopy(device), core=False)
+    animation_suite.verify_case_contract(anim_case, original_state, core=False)
+    animation_suite.verify_spill_contract(anim_case, memory, original_state)
+    rows = []
+    for producer in ('original', 'native'):
+        if producer == 'native':
+            # animation_handoff keeps its m0 DLL loaded in `directory`.
+            spill_directory = Path(directory) / 'row54-spill'
+            spill_directory.mkdir(exist_ok=True)
+            native_animation = animation_suite.Native(spill_directory, mutation=0)
+            state = native_animation.run(anim_case, memory, regs, device, core=False)
+            mask = original_state['flags_mask']
+            drawing.common.require(
+                state['memory'] == original_state['memory'] and
+                all(state['regs'][name] == original_state['regs'][name]
+                    for name in animation_suite.REG_NAMES if name != 'flags') and
+                not ((state['regs']['flags'] ^ original_state['regs']['flags']) & mask) and
+                state['status'] == original_state['status'],
+                'row-54 animation handoff: native producer state differs from original')
+            animation_suite.compare_events('row-54 animation handoff',
+                                           state['events'], original_state['events'])
+            del native_animation
+        else:
+            state = original_state
+        definitions = fixtures.field('LevelObjectDefinitions')
+        active = [index for index in range(32)
+                  if _read16(state['memory'], game_data_segment, definitions + 8 * index)]
+        drawing.common.require(active == list(range(2, 9)),
+            f'row-54 tick: unexpected active definitions {active}')
+        tick_case = _case(f'row54-spill-animation-to-drawing-{producer}', (),
+                          _seed=0xA54, independent=False)
+        tick_memory = bytearray(state['memory'])
+        tick_regs = dict(state['regs'])
+        tick_regs['ip'] = ENTRY
+        _put16(tick_memory, tick_regs['ss'], tick_regs['sp'], 0x01BC)
+        prepared = dict(memory=tick_memory, regs=tick_regs,
+                        game_data_segment=game_data_segment)
+        for core in (True, False):
+            row = compare(tick_lib, tick_case, core=core, prepared=prepared)
+            row['producer'] = f'object_animation:row54-spill-overlapped-definitions/{producer}'
+            row['active_definitions'] = active
+            rows.append(row)
+        gc.collect()
+    return rows
+
+
 def library(directory, mutation=0):
     path = Path(directory) / f'object-drawing-tick-{mutation}.dll'
     build(path, mutation, 'object_drawing_tick')
@@ -690,6 +756,11 @@ def worker(directory, selection=()):
         return
     handoff_row = animation_handoff(directory, lib)
     results.append(handoff_row)
+    spill_rows = spill_handoff(directory, lib)
+    results.extend(spill_rows)
+    for spill_row in spill_rows:
+        print(f'PASS {spill_row["name"]}: {spill_row["child_calls"]} child calls, '
+              f'{spill_row["bus_events"]} events, {spill_row["seconds"]}s', flush=True)
     sites.update(handoff_row['executed_instruction_addresses'])
     edges.update(map(tuple, handoff_row['branch_edges']))
     integrated_sites.update(handoff_row['executed_instruction_addresses'])
@@ -733,7 +804,9 @@ def worker(directory, selection=()):
             'all 32 record positions, active/inactive LOOP paths, live DS scroll and resource '
             'segment, caller save/child far-return/provider seams, DF/IF, full RAM/registers/'
             'defined FLAGS/ordered bus/VGA, independent child inputs and planar output. '
-            'The 8822 body is already translated and is not counted as new caller bytes.'))
+            'The 8822 body is already translated and is not counted as new caller bytes. '
+            'Row-54 spill handoff: original and native 7C0A producer, then 7BB8 over '
+            'definitions overlaid by record 57 (records 00..57 after one update pass).'))
     print(f'PASS object drawing tick: {len(baseline) + 1} cases, {len(LOCAL)} caller sites, '
           f'{len(edges)} caller edges, {len(mutations)} completed mutants', flush=True)
 

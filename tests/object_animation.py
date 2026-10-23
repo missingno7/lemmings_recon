@@ -266,7 +266,81 @@ def cases():
         rows.append(make_case(f'all-frame-bytes-{group}', records=tuple(batch),
                               flags=(0x0ED7 if group & 1 else 0x02D7),
                               seed=200 + group))
+    rows.append(dict(make_case('row54-spill-overlapped-definitions', entry='gate',
+                               gate=0x00, type_gate=0xFF, flags=0x0246,
+                               ss=(LOAD + 0x143E) & 0xFFFF, sp=0x4AF2,
+                               outer_return=0x01B9, seed=0x7C54),
+                     spill=SPILL_ORIGIN))
+    rows.append(dict(make_case('row54-spill-after-record-57', entry='gate',
+                               gate=0x00, type_gate=0xFF, flags=0x0246,
+                               ss=(LOAD + 0x143E) & 0xFFFF, sp=0x4AF2,
+                               outer_return=0x01B9, seed=0x7C57),
+                     spill=SPILL_ORIGIN, spill_count=0x58))
     return rows
+
+
+# Row-54 spill (creation contract at 30A6): records 57..5D overlay object
+# definitions 0FEB..10EA. State = entity_update.spill_after_update(0280): the
+# level-start records 00..62 after one original 1F19 pass with the unscrolled
+# view; the frame then reaches 01B6 -> 3944 -> 7C0A. Working records G_j for
+# the nine level006 s6 objects are the 378A copies of their GROUND (ground2o)
+# templates, made at level start from the unspilled definitions; G_9..G_31
+# keep their startup image bytes (no earlier level in this constructed
+# session). Definition 0 (entrance) has X=0 after record 57, so the stale BX
+# is stored into G_0; definitions 9..31 become nonzero record bytes. The
+# second case is the reachable four-frame window after record 57 and before
+# record 58 (records 00..57): definitions 0/1 zero, 2 partly record bytes.
+SPILL_ORIGIN = 0x0280
+SPILL_COPY_RANGES = ((0x0000, 0x0004), (0x002B, 0x002C), (0x0043, 0x004A),
+                     (0x0055, 0x0056), (0x0088, 0x11EF))
+
+
+def install_spill(case, memory, ds):
+    import entity_update
+    import entity_create as spill
+    post, post_ds = entity_update.spill_after_update(
+        case['spill'], case.get('spill_count', spill.SPILL_LIMIT))
+    oracle_require(post_ds == ds, case['name'] + ': spill DS differs')
+    for start, end in SPILL_COPY_RANGES:
+        for offset in range(start, end):
+            put8(memory, ds, offset, get8(post, post_ds, offset))
+    level = spill.spill_level_record()
+    ground = (ROOT / f'assets/ground{level[0x1B]}o.dat').read_bytes()
+    ground_buffer = 0x1B4B
+    for index, value in enumerate(ground):
+        put8(memory, ds, ground_buffer + index, value)
+    image_ds = 0x09A9 << 4
+    active = []
+    for index in range(32):
+        definition = level[0x20 + 8 * index:0x28 + 8 * index]
+        record = GRAPHICS + index * 0x1C
+        if definition[0] or definition[1]:
+            kind = (definition[4] << 8) | definition[5]
+            template = ground[kind * 0x1C:(kind + 1) * 0x1C]
+            oracle_require(len(template) == 0x1C,
+                           case['name'] + f': GROUND template {kind} is short')
+            active.append(index)
+        else:
+            template = IMAGE[image_ds + record:image_ds + record + 0x1C]
+        for offset, value in enumerate(template):
+            put8(memory, ds, record + offset, value)
+    oracle_require(active == list(range(9)),
+                   case['name'] + f': level006 s6 active objects {active}')
+
+
+def verify_spill_contract(case, initial, result):
+    """Characterized row-54 animation facts over the overlapped definitions."""
+    ds = result['regs']['ds']
+    xs = [(get8(initial, ds, DEFINITIONS + 8 * j) << 8) |
+          get8(initial, ds, DEFINITIONS + 8 * j + 1) for j in range(32)]
+    oracle_require(xs[0] == 0 and get16(result['memory'], ds, GRAPHICS) == case['bx'],
+                   case['name'] + ': entrance definition did not store the stale BX into G_0')
+    if case.get('spill_count', 0x63) == 0x63:
+        oracle_require(any(xs[9:]),
+                       case['name'] + ': no definition 9..31 became nonzero')
+    else:
+        oracle_require(xs[1] == 0 and not any(xs[9:]) and all(xs[3:9]),
+                       case['name'] + ': record-57 window definitions differ')
 
 
 def setup(case):
@@ -320,6 +394,8 @@ def setup(case):
         put16(memory, data_segment, gfx + 6, spec.get('stride', 1))
         put16(memory, data_segment, gfx + 0x15, spec.get('base', 0))
 
+    if case.get('spill'):
+        install_spill(case, memory, data_segment)
     put16(memory, regs['ss'], regs['sp'], case['outer_return'])
     device = None
     if case['vga']:
@@ -492,6 +568,8 @@ def input_hashes():
         'requirements.txt', 'c/object_animation.c', 'c/object_animation.h',
         'c/regs.h', 'c/special_blit.h', 'c/lemmings_sym.h',
         'tests/object_animation.py', 'tests/entity_interactions.py',
+        'tests/entity_create.py', 'tests/entity_update.py', 'assets/level006.dat',
+        'assets/oddtable.dat', 'assets/ground2o.dat',
         'tests/sound_latches.py', 'tests/pcspeaker_dispatch.py',
         'tests/pcspeaker_interrupt.py', 'tests/minimap_vga.py',
         'tests/dat_io_c.py', 'tools/bounded_process.py', 'tools/cbuild.py',
@@ -588,6 +666,8 @@ def compare_case(native, case, *, core, null_bus=False):
                             copy.deepcopy(device), core)
     verify_case_contract(case, expected, core=core)
     verify_independent_projection(case, memory, expected)
+    if case.get('spill'):
+        verify_spill_contract(case, memory, expected)
     actual = native.run(case, memory, regs, device, core=core, null_bus=null_bus)
     require(actual['status'] == expected['status'],
             f'{label}: status {actual["status"]}/{expected["status"]}')
@@ -650,6 +730,8 @@ def original_only():
                                     copy.deepcopy(device), core)
             verify_case_contract(case, expected, core=core)
             verify_independent_projection(case, memory, expected)
+            if case.get('spill'):
+                verify_spill_contract(case, memory, expected)
             all_sites.update(expected['sites'])
             all_edges.update(expected['edges'])
     oracle_require(all_sites == OWN_SITES,
@@ -730,7 +812,9 @@ def worker(directory):
                'adapters consume the live outer RET. Coverage includes each record slot, '
                'all 256 frame bytes, wrap/equality/greater-than limits, stale BX, low-byte '
                'type gating, live providers, stack/record aliases, physical 20-bit RET '
-               'wrap, DF/IF, VGA aperture, and selected null-bus calls.'))
+               'wrap, DF/IF, VGA aperture, and selected null-bus calls. Row-54 spill: '
+               'definitions overlaid by records 57..5D after one original update '
+               'pass, GROUND-copied working records for the nine real objects.'))
     print(f'PASS object animation: {len(specs)} fixtures, {len(all_sites)} sites/'
           f'{len(all_edges)} edges, {total_events} events, '
           f'{len(mutations)} completed mutants', flush=True)

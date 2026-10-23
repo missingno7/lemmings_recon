@@ -1,0 +1,32 @@
+# Fun 22 (special graphics, vgaspec) via its level code: menu code entry, briefing, gameplay
+0 mouse 150 100 0
+800 key 60
+950 key 188
+1800 key 33
+1950 key 161
+2100 key 35
+2250 key 163
+2400 key 48
+2550 key 176
+2700 key 23
+2850 key 151
+3000 key 36
+3150 key 164
+3300 key 38
+3450 key 166
+3600 key 38
+3750 key 166
+3900 key 34
+4050 key 162
+4200 key 32
+4350 key 160
+4500 key 25
+4650 key 153
+4800 key 28
+4950 key 156
+6500 mouse 150 100 1
+6600 mouse 150 100 0
+7500 key 59
+7600 key 187
+9500 mouse 150 100 1
+9600 mouse 150 100 0

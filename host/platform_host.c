@@ -43,7 +43,7 @@ struct LmnHost {
     LmnDatFileServices files_service; LmnDatIo io; LmnRawResourceServices raw;
     LmnResourceSelectionServices selection; LmnResourceSelectionFullServices full;
     LmnDatLoadSegments segments; LmnSpecialSetupServices special;
-    LmnBriefingServices briefing; LmnLevelStartServices start;
+    LmnLevelRedrawServices redraw; LmnBriefingServices briefing; LmnLevelStartServices start;
     LmnVideoProbeServices probe; LmnLevelInitializeServices level;
     LmnGameInitializeServices initialize; LmnGameFrameServices frame;
     LmnGameSessionServices session; LmnLevelResultServices result; LmnGameLoopServices loop;
@@ -524,7 +524,10 @@ static void bind(LmnHost *h) {
     h->file_error=(LmnFileErrorServices){&h->video,&h->cleanup,h,console,console};
     h->selection=(LmnResourceSelectionServices){&h->files_service,&h->io,&h->raw};h->full=(LmnResourceSelectionFullServices){&h->selection,&h->file_error,&h->cleanup};
     h->special=(LmnSpecialSetupServices){&h->files_service,&h->io,&h->bus,h,close_file};
-    h->briefing=(LmnBriefingServices){NULL,&h->ports,&h->bus};h->start=(LmnLevelStartServices){&h->segments,&h->full,&h->briefing,&h->bus,h->ds};
+    /* Special-graphics levels (DS:0FE8 nonzero) redraw the preview through the
+       same DAT segments and special-resource setup as level initialization. */
+    h->redraw=(LmnLevelRedrawServices){&h->segments,&h->special,&h->bus,&h->ports};
+    h->briefing=(LmnBriefingServices){&h->redraw,&h->ports,&h->bus};h->start=(LmnLevelStartServices){&h->segments,&h->full,&h->briefing,&h->bus,h->ds};
     h->probe=(LmnVideoProbeServices){&h->bios,&h->ports,&h->bus};h->level=(LmnLevelInitializeServices){&h->segments,&h->special,&h->bus,&h->ports};
     h->initialize=(LmnGameInitializeServices){&h->probe,&h->ports,&h->bus,&h->level,h->ds,0,&h->mouse,&h->dos,&h->poll};
     h->pc_binding=(LmnPcSpeakerBinding){(uint16_t)(h->load+0x842)};h->opl_ports=(LmnOplPorts){h,opl_out,opl_in};

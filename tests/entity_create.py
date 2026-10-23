@@ -112,6 +112,121 @@ def put16(memory, segment, offset, value):
     memory[(address + 1) & MASK] = (value >> 8) & 0xFF
 
 
+# ---------------------------------------------------------------------------
+# Row-54 spill fixture: more than 80 records (see the creation contract at
+# 30A6 and EntityRecordsBase). Shared with the >80-record cases of
+# view_visibility, entity_update, entity_drawing, keyboard_input,
+# object_animation, object_drawing_tick and status_glyph. The DS state is the
+# one level start publishes for typed codes 156/158/212/214 (after an odd
+# override was loaded): level006 section 6 with oddtable row 54 copied over
+# header +00..+17 and the footer +7E0..+7FF by the 197D loader; 36B9 header
+# copy (0047=63, 0067=63, 20A7=63+30, origin word +18 0270 -> 0000=0280,
+# 0002=0050); 39D1/39E6 countdown 14 and reload 04 for rate 99; 0FC1 callback
+# slots; 3773 spawn pairs from the type-1 entrance (0310,0008) -> (0328,0026);
+# 0480 visibility rebuild at the initial origin. Records are then appended in
+# order by the 30A6 store sequence (independent_memory below), without
+# intervening update frames. Nothing here boots the game: every value is the
+# documented producer's effect over the pinned assets.
+SPILL_LEVEL_ASSET, SPILL_ODD_ASSET = 'assets/level006.dat', 'assets/oddtable.dat'
+SPILL_SECTION, SPILL_ODD_ROW, ODD_ROW_SIZE = 6, 54, 0x38
+SPILL_LIMIT, SPILL_RELOAD, SPILL_START_COUNTDOWN = 0x63, 0x04, 0x14
+SPILL_ORIGIN = 0x0280
+SPILL_SPAWN = (0x0328, 0x0026)
+LEVEL_RECORD, LEVEL_RECORD_SIZE = 0x0FCB, 0x0800
+VISIBILITY_MAP, VISIBILITY_BYTES, VISIBILITY_MARK = 0x0EA8, 0xD0, 0x29
+KEY_STATE = 0x0F78
+CALLBACK_SLOT_WORDS = (0x6170, 0x64D9, 0x65D8, 0x66D7, 0x6817,
+                       0x6957, 0x6A97, 0x6BDB, 0x6CFC)
+
+
+def spill_level_record():
+    """level006 section 6 after the 197D odd-row-54 override (DF0 copy)."""
+    from resources import decode_section, section_spans
+    level = (ROOT / SPILL_LEVEL_ASSET).read_bytes()
+    odd = (ROOT / SPILL_ODD_ASSET).read_bytes()
+    start, end = section_spans(level)[SPILL_SECTION]
+    record = bytearray(decode_section(level[start:end])[0][:LEVEL_RECORD_SIZE])
+    row = odd[ODD_ROW_SIZE * SPILL_ODD_ROW:ODD_ROW_SIZE * (SPILL_ODD_ROW + 1)]
+    record[0:0x18] = row[0:0x18]
+    record[0x7E0:0x800] = row[0x18:0x38]
+    words = [int.from_bytes(record[i:i + 2], 'big') for i in range(0, 0x18, 2)]
+    oracle_require(words == [SPILL_LIMIT] * 12 and
+                   int.from_bytes(record[0x18:0x1A], 'big') == 0x0270 and
+                   record[0x20:0x28] == bytes.fromhex('03100008 0001800f'),
+                   'row-54 level image no longer matches the characterized header/entrance')
+    return bytes(record)
+
+
+def spill_visibility(memory, ds, origin):
+    """Map effect of the 410F rebuild with DF clear and ES=DS (proved by
+    view_visibility): 68h zero words at 0EA8, then 29h bytes 01 at
+    0EA6+origin/8. The marker bytes it writes elsewhere are not modelled."""
+    for index in range(VISIBILITY_BYTES):
+        put8(memory, ds, VISIBILITY_MAP + index, 0)
+    start = (((origin & 0xFFFF) >> 3) - 2 + VISIBILITY_MAP) & 0xFFFF
+    for index in range(VISIBILITY_MARK):
+        put8(memory, ds, start + index, 1)
+
+
+def create_record(memory, ds, bound):
+    """The 30A6 effect after both gates and a due countdown (no providers)."""
+    start = (RECORD_BASE + (bound & 0xFF) * RECORD_SIZE) & 0xFFFF
+    coordinate = (COORDINATE_BASE + 4 * (bound & 3)) & 0xFFFF
+    for index in range(RECORD_SIZE):
+        put8(memory, ds, start + index, 0)
+    put16(memory, ds, start, get16(memory, ds, coordinate))
+    put16(memory, ds, start + 2, get16(memory, ds, coordinate + 2))
+    put8(memory, ds, start + 0x27, 1)
+    put8(memory, ds, start + 0x25, 0)
+    put8(memory, ds, start + 0x24, get8(memory, ds, start + 0x24) & 1)
+    put16(memory, ds, start + 0x08, get16(memory, ds, start + 0x08) | 4)
+    put16(memory, ds, start + 0x0A, 0)
+    put16(memory, ds, start + 0x0C, 0x0A42)
+    put16(memory, ds, start + 0x10, 0x005A)
+    put16(memory, ds, start + 0x12, 0x003C)
+    put8(memory, ds, start + 0x28, 0)
+    put8(memory, ds, start + 0x23, 3)
+    put16(memory, ds, start + 0x04, 0xFFF8)
+    put16(memory, ds, start + 0x06, 0xFFF6)
+    put8(memory, ds, start + 0x29, 4)
+    put16(memory, ds, start + 0x14, get16(memory, ds, 0x002E))
+    put8(memory, ds, start + 0x2A, 0)
+    put8(memory, ds, start + 0x24, get8(memory, ds, start + 0x24) & 1)
+    return start
+
+
+def spill_state(memory, ds, *, count=SPILL_LIMIT, origin=SPILL_ORIGIN):
+    """Install the row-54 level-start DS and append records 00..count-1."""
+    record = spill_level_record()
+    for index, value in enumerate(record):
+        put8(memory, ds, LEVEL_RECORD + index, value)
+    put16(memory, ds, 0x0000, origin)
+    put16(memory, ds, 0x0002, (origin >> 3) & 0xFFFF)
+    for index, value in enumerate(CALLBACK_SLOT_WORDS):
+        put16(memory, ds, 0x002E + 2 * index, value)
+    put8(memory, ds, 0x002B, 0)
+    put8(memory, ds, 0x0055, 0xFF)
+    put8(memory, ds, 0x0043, 0)
+    put8(memory, ds, 0x0047, SPILL_LIMIT)
+    put8(memory, ds, 0x0064, SPILL_LIMIT)
+    put8(memory, ds, 0x0067, SPILL_LIMIT)
+    put8(memory, ds, 0x0048, SPILL_START_COUNTDOWN)
+    put8(memory, ds, 0x0049, SPILL_RELOAD)
+    put8(memory, ds, 0x20A7, (SPILL_LIMIT + 0x30) & 0xFF)
+    for pair in range(4):
+        put16(memory, ds, COORDINATE_BASE + 4 * pair, SPILL_SPAWN[0])
+        put16(memory, ds, COORDINATE_BASE + 4 * pair + 2, SPILL_SPAWN[1])
+    spill_visibility(memory, ds, origin)
+    for scan in range(0x53):
+        put8(memory, ds, KEY_STATE + scan, 0)
+    for bound in range(count):
+        create_record(memory, ds, bound)
+    put8(memory, ds, 0x0043, count)
+    if count:
+        put8(memory, ds, 0x0048, SPILL_RELOAD)
+    return memory
+
+
 def cases():
     """All raw bounds plus focused gates, aliases, providers and RET seams."""
     rows = [
@@ -529,6 +644,10 @@ class Native:
 
 def compare_case(native, case, *, core):
     initial, regs, _device = setup(case)
+    return compare_prepared(native, case, initial, regs, core=core)
+
+
+def compare_prepared(native, case, initial, regs, *, core):
     expected_memory, info = independent_memory(case, initial)
     oracle = original(case, initial, regs, core=core)
     assert_independent(case, initial, oracle)
@@ -574,8 +693,101 @@ def compare_case(native, case, *, core):
                 events=len(oracle['events']), steps=oracle['steps'])
 
 
+SPILL_FIRST = 0x50
+SPILL_CHAIN_CALLS = (SPILL_LIMIT - SPILL_FIRST) * SPILL_RELOAD + SPILL_RELOAD
+# Spawn source per spill index (creation-only chain: record 50 is not updated
+# between creations, so pair 0 is still its creation X/Y).
+SPILL_SPAWNS = {0x50: (0x0000, 0x0000), 0x51: (0xFFF8, 0xFFF6),
+                0x52: (0x0004, 0x0000), 0x53: (0x0A42, 0x0000),
+                0x54: (0x0000, 0x0000)}
+
+
+def spill_chain_start():
+    template = dict(name='row54-chain', bound=SPILL_FIRST, limit=SPILL_LIMIT,
+                    update_gate=0, creation_gate=0xFF, countdown=SPILL_RELOAD,
+                    reload=SPILL_RELOAD, callback=0x6170, flags=0x0ED7,
+                    df=False, seed=0x30A654)
+    memory, regs, _ = setup(template)
+    spill_state(memory, DATA_SEGMENT, count=SPILL_FIRST)
+    return memory, regs
+
+
+def spill_chain_case(call, bound, countdown):
+    return dict(name=f'row54-call-{call:02d}-bound-{bound:02X}', bound=bound,
+                limit=SPILL_LIMIT, update_gate=0, creation_gate=0xFF,
+                countdown=countdown, reload=SPILL_RELOAD, callback=0x6170,
+                flags=0x0ED7, df=False, seed=0x30A654 + call)
+
+
+def assert_spill_step(case, before, after, info):
+    """Characterized row-54 facts (creation contract at 30A6)."""
+    ds, name = DATA_SEGMENT, case['name']
+    if not info['created']:
+        masked = bytearray(after)
+        masked[physical(ds, 0x0048)] = before[physical(ds, 0x0048)]
+        oracle_require(masked == before,
+                       name + ': a non-creating row-54 call changed more than 0048')
+        return
+    bound = info['selected_bound']
+    start = info['record_start']
+    oracle_require(start == (RECORD_BASE + bound * RECORD_SIZE) & 0xFFFF,
+                   name + ': spill record address is not 0088+2D*n')
+    if bound in SPILL_SPAWNS:
+        got = (get16(after, ds, start), get16(after, ds, start + 2))
+        oracle_require(got == SPILL_SPAWNS[bound],
+                       f'{name}: spawn {got[0]:04X},{got[1]:04X} differs from '
+                       f'the characterized record-50 source')
+    if bound == 0x56:
+        oracle_require(bytes(after[physical(ds, LEVEL_RECORD):
+                                   physical(ds, LEVEL_RECORD) + 8]) ==
+                       bytes.fromhex('0000010004000000'),
+                       name + ': record 56 did not overwrite LEVEL header +00..+07')
+    if bound == 0x57:
+        oracle_require(bytes(after[physical(ds, 0x0FEB):physical(ds, 0x0FF3)]) ==
+                       bytes(8), name + ': record 57 did not zero object definition 0')
+    if bound == SPILL_LIMIT - 1:
+        oracle_require(start + RECORD_SIZE - 1 == 0x11EE and
+                       after[physical(ds, 0x11EF)] == before[physical(ds, 0x11EF)],
+                       name + ': last row-54 record does not end at 11EE')
+
+
+def spill_chain(native=None):
+    """Sequential original (and optional native) creation calls 50..62 and the
+    equality stop at 63, each over the previous call's whole RAM."""
+    memory, regs = spill_chain_start()
+    rows, created = [], []
+    for call in range(SPILL_CHAIN_CALLS):
+        bound = get8(memory, DATA_SEGMENT, 0x0043)
+        countdown = get8(memory, DATA_SEGMENT, 0x0048)
+        case = spill_chain_case(call, bound, countdown)
+        expected_memory, info = independent_memory(case, memory)
+        assert_spill_step(case, memory, expected_memory, info)
+        for core in (True, False):
+            if native is not None:
+                rows.append(compare_prepared(native, case, memory, regs, core=core))
+                continue
+            observed = original(case, memory, regs, core=core)
+            assert_independent(case, memory, observed)
+            expected_continuation = RETURN_IP if core else create_expected_return(
+                case, expected_memory)
+            oracle_require((observed['status'], observed['continuation']) ==
+                           (0, expected_continuation),
+                           case['name'] + ': original boundary changed')
+            rows.append(dict(name=case['name'], core=core,
+                             events=len(observed['events']), steps=observed['steps']))
+        if info['created']:
+            created.append(info['selected_bound'])
+        memory = bytearray(expected_memory)
+        gc.collect()
+    oracle_require(created == list(range(SPILL_FIRST, SPILL_LIMIT)) and
+                   get8(memory, DATA_SEGMENT, 0x0043) == SPILL_LIMIT,
+                   f'row-54 chain created {[hex(b) for b in created]}')
+    return rows
+
+
 def input_hashes():
     paths = (
+        SPILL_LEVEL_ASSET, SPILL_ODD_ASSET,
         'assets/vgalemmi.exe', 'assets/main.dat', 'assets/adlib.dat',
         'assets/tandysnd.dat', 'metadata/oracle.json', 'metadata/symbols.json',
         'metadata/hints.json', 'metadata/regions.json', 'metadata/inputs.json',
@@ -638,9 +850,11 @@ def original_campaign(before):
     oracle_require(edges == OWN_EDGES,
                    f'entity-create original edge union differs: '
                    f'missing={sorted(OWN_EDGES-edges)} extra={sorted(edges-OWN_EDGES)}')
+    spill_rows = spill_chain()
     oracle_require(before == input_hashes(),
                    'entity-create input hashes changed during original campaign')
     print(f'PASS entity create original: {len(specs)} fixtures x core/adapter, '
+          f'row-54 chain {len(spill_rows) // 2} calls, '
           f'{len(covered)} sites/{len(edges)} edges, '
           f'{sum(row["events"] for row in rows)} events; bounded original only',
           flush=True)
@@ -665,6 +879,10 @@ def worker(directory, hash_path):
             event_count += row['events']
             step_count += row['steps']
         gc.collect()
+    spill_rows = spill_chain(baseline)
+    for row in spill_rows:
+        event_count += row['events']
+        step_count += row['steps']
     oracle_require(sites == set(OWN_INS),
                    f'entity-create native site union misses {sorted(set(OWN_INS)-sites)}')
     oracle_require(edges == OWN_EDGES,
@@ -701,7 +919,10 @@ def worker(directory, hash_path):
         image='main', image_sha256=sha(IMAGE), code_range=[ENTRY, END],
         translated_code_bytes=170, instruction_sites=len(OWN_INS),
         own_branch_edges=len(OWN_EDGES), case_count=len(specs),
-        core_adapter_comparisons=len(rows), mutation_count=len(mutations),
+        core_adapter_comparisons=len(rows),
+        row54_chain_calls=len(spill_rows) // 2,
+        row54_chain_comparisons=len(spill_rows),
+        mutation_count=len(mutations),
         mutations=mutations,
         executed_instruction_addresses=sorted(sites),
         static_instruction_addresses=sorted(OWN_INS),
@@ -724,8 +945,14 @@ def worker(directory, hash_path):
                'live callback/bound changes and actual SS:SP RET. Compares full '
                '1 MiB ordinary RAM, all registers, defined FLAGS and ordered '
                'memory bus events at logical pre-RET core and actual-RET adapter '
-               'boundaries. No array extent or VGA access is inferred.'))
+               'boundaries. No array extent or VGA access is inferred. '
+               'Row-54 chain: level006 section 6 with oddtable row 54 and records '
+               '00..4F appended in order; 80 sequential calls (reload 04) create '
+               '50..62 over spawn pairs, visibility, key bytes, LEVEL header, object '
+               'and terrain definitions, then stop on equality at 63, each '
+               'compared over the previous whole RAM.'))
     print(f'PASS entity create: {len(specs)} fixtures x core/adapter, '
+          f'row-54 chain {len(spill_rows) // 2} calls x core/adapter, '
           f'{len(sites)} sites/{len(edges)} edges, {event_count} events, '
           f'{len(mutations)} completed mutants', flush=True)
 

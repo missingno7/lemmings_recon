@@ -18,6 +18,7 @@ import capstone
 from bounded_process import run_bounded, temporary_build_directory
 from cbuild import build
 from common import BUILD, sha, write_json
+import entity_create as spill
 import entity_interactions as interactions
 from unpack import ASSET, unpack, relocated
 
@@ -192,7 +193,34 @@ def make_cases():
              load=0x2345, seed=0x410F1B),
         dict(name='provider-changes-live-pop-es', **common,
              provider='live-pop-es', provider_es=0x6100, seed=0x410F1C),
-    ]
+    ] + spill_cases()
+
+
+# Row-54 spill (records 00..62 present, see entity_create.spill_state): the
+# rebuild rewrites record 50 +10..+2C, records 51..53 and record 54 +00..+2B.
+# Origins are the characterized witnesses; record 52's rebuilt +14 is the
+# non-callback word a later 715B CALL would use (0160..0210), or the record is
+# left undrawn/repaired (0218, 0280); record 50 gets +20=00 at 0098 and +20=01
+# (repair) at 0090.
+SPILL_ORIGINS = {0x0160: 0x0000, 0x01B8: 0x0000, 0x01C0: 0x0001,
+                 0x01C8: 0x0101, 0x0210: 0x0101, 0x0218: None, 0x0280: None,
+                 0x0098: None, 0x0090: None}
+SPILL_RECORD_50_COUNTDOWN = {0x0098: 0x00, 0x0090: 0x01}
+
+
+def spill_cases():
+    load = interactions.MAIN_SEG
+    rows = []
+    for index, (origin, callback) in enumerate(SPILL_ORIGINS.items()):
+        rows.append(dict(name=f'row54-spill-rebuild-origin-{origin:04X}',
+                         base=origin, marker_a=0x0042, marker_b=0x0057,
+                         load=load, ds=(load + 0x09A9) & 0xFFFF,
+                         es=0x6C20, ss=(load + 0x143E) & 0xFFFF, sp=0x4AF2,
+                         flags=0x0202, outer_return=0x01A3, spill=True,
+                         record52_callback=callback,
+                         record50_countdown=SPILL_RECORD_50_COUNTDOWN.get(origin),
+                         seed=0x410F54 + index))
+    return rows
 
 
 def setup(case):
@@ -222,6 +250,8 @@ def setup(case):
                    f'{runtime_stack_segment:04X}/{expected_runtime:04X}')
 
     ds = regs['ds']
+    if case.get('spill'):
+        spill.spill_state(memory, ds)
     put16(memory, ds, 0x0000, case.get('base', 0x0180))
     put16(memory, ds, 0x0026, case.get('marker_a', 0x0042))
     put16(memory, ds, 0x0028, case.get('marker_b', 0x0057))
@@ -392,6 +422,23 @@ def assert_independent(case, initial_memory, initial_regs, runtime_stack_segment
     if case.get('provider'):
         oracle_require(result['used'] == used,
                        f'{case["name"]}: provider effects {result["used"]}/{used}')
+    if case.get('spill'):
+        ds = initial_regs['ds']
+        record50, record52 = 0x0088 + 0x50 * 0x2D, 0x0088 + 0x52 * 0x2D
+        if case.get('record52_callback') is not None:
+            got = get16(result['memory'], ds, record52 + 0x14)
+            oracle_require(got == case['record52_callback'] and
+                           get8(result['memory'], ds, record52 + 0x20) == 0 and
+                           get8(result['memory'], ds, record52 + 0x26) == 0 and
+                           get16(result['memory'], ds, record52) == 0x0101 and
+                           get16(result['memory'], ds, record52 + 4) == 0x0101,
+                           f'{case["name"]}: rebuilt record 52 +14 {got:04X}, '
+                           f'not the characterized {case["record52_callback"]:04X}')
+        if case.get('record50_countdown') is not None:
+            oracle_require(get8(result['memory'], ds, record50 + 0x20) ==
+                           case['record50_countdown'] and
+                           get16(result['memory'], ds, record50 + 0x14) == 0,
+                           f'{case["name"]}: rebuilt record 50 +20/+14 differ')
     oracle_require(observed_sites(result) == VIS_SITES - ({RETURN} if core else set()),
                    f'{case["name"]}: owned sites differ at requested boundary')
     oracle_require(observed_edges(result) == VIS_EDGES,
@@ -407,6 +454,7 @@ def input_hashes():
         'c/view_visibility.c', 'c/view_visibility.h', 'c/lemmings_sym.h',
         'c/special_blit.h', 'c/regs.h',
         'tests/view_visibility.py', 'tests/entity_interactions.py',
+        'tests/entity_create.py', 'assets/level006.dat', 'assets/oddtable.dat',
         'tests/pcspeaker_dispatch.py', 'tests/sound_latches.py',
         'tests/minimap_vga.py', 'tools/resources.py', 'tools/unpack.py',
         'tools/common.py', 'tools/bounded_process.py', 'tools/cbuild.py',
@@ -614,7 +662,9 @@ def worker(directory, hash_path):
             'PUSH DS/POP ES through actual SS:SP, including a live saved-word provider change; runtime marker segment is distinct from live SS',
             'live DS:0026/0028 marker reads, CLI write phase, restored ES and final STI',
             'full 1 MiB RAM, 13 logical register roles, defined FLAGS and ordered byte accesses',
-            'independent sequential clear/fill/marker projection; no semantic extent or lifetime inferred']))
+            'independent sequential clear/fill/marker projection; no semantic extent or lifetime inferred',
+            'row-54 spill: records 00..62 present (level006 s6 + oddtable row 54); rebuilds at '
+            'origins 0090..0280 rewrite records 50..54 with the characterized record-50/52 fields']))
     print(f'PASS view visibility: {len(specs)} fixtures x core/adapter, '
           f'{len(sites)}/27 sites, {total_events} bus events, '
           f'{len(mutants)} completed mutants', flush=True)

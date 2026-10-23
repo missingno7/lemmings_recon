@@ -25,6 +25,10 @@ frame16 or the requested limit if smaller), and requested `frame-NNNNNN.ppm`.
 `frames.csv` records each0105 observation, PIT-clock time, IP and a specified
 FNV-1a64 hash of RAM, four planes, DAC and CRTC bytes. Capture failure fails the
 runner. A frame/poll stop is terminal for this invocation, not a coroutine save.
+Safety budgets scale with the requested frames: 100,000 + 2,000 per frame
+foreground polls and 500M + 10M per frame bus accesses. A screen waiting for
+input the script never supplies (for example the level result screen) ends
+the run when the poll budget is exhausted.
 Run this executable under `run_bounded` for external time/process-commit limits.
 
 ## Native startup and media policy

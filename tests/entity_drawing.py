@@ -19,6 +19,7 @@ from cbuild import build
 from common import BUILD, sha, write_json
 import decimal_field
 import entity_dirty
+import entity_create as spill
 import entity_interactions as interactions
 import entity_minimap
 import entity_points
@@ -561,6 +562,85 @@ def make_cases():
     return cases
 
 
+# Row-54 spill frame slice, stage 3: records 00..62 (entity_create.spill_state)
+# after the 410F rebuild at a characterized origin (view_visibility) and one
+# original 1F19 pass (entity_update.spill_after_update). The record/global
+# bytes 0000..0003, 002E..0044 and 0088..11EE of that original RAM replace this
+# suite's constructed record table; sprite banks, dirty-map base 1F76=3000,
+# point tables and VGA stay the suite's finite fixtures. Expected: the first
+# drawn record with a non-callback +14 stops at 715B (C: unknown callback)
+# with AX=+14 and the record pointer in the 706F PUSH DI word at entry SP-8
+# (DI itself already holds the computed VGA offset); otherwise the pass
+# completes.
+SPILL_DRAW_ORIGINS = {
+    0x0160: (0x0E98, 0x0000),   # record 50 alive, column 2B marked
+    0x01B8: (0x0EF2, 0x0000),   # record 52, rebuilt +14
+    0x01C0: (0x0EF2, 0x0001),
+    0x01C8: (0x0EF2, 0x0101),
+    0x0210: (0x0EF2, 0x0101),
+    0x0218: None,               # record 52 column 40 unmarked
+    0x0280: None,               # 51/52 countdowns repair, nothing escapes
+    0x0098: (0x0E98, 0x0000),   # record 50 +20=00
+    0x0090: None,               # record 50 +20=01 expired and repaired
+}
+SPILL_COPY_RANGES = ((0x0000, 0x0004), (0x002E, 0x0045), (0x0088, 0x11EF))
+# Keyboard channel: after the 0090 rebuild and update, an IRQ make stores 94
+# at 0F78+scan (proved over these bytes by keyboard_input's row-54 IRQ cases):
+# scan 15/16 rewrite record 55's +14 to 6194/9470 and record 55 (column 2A,
+# marked at 0090) is the first record drawn with a non-callback word.
+SPILL_KEY_CASES = {0x15: (0x0F79, 0x6194), 0x16: (0x0F79, 0x9470)}
+
+
+def spill_cases():
+    rows = []
+    for index, (origin, escape) in enumerate(SPILL_DRAW_ORIGINS.items()):
+        rows.append(dict(
+            name=f'row54-spill-draw-origin-{origin:04X}', seed=0x363454 + index,
+            bound=1, initial_count=0xABCD, initial_pass_count=0x5A, load=LOAD,
+            ds=(LOAD + 0x09A9) & 0xFFFF, ss=(LOAD + 0x143E) & 0xFFFF, sp=0x4AF2,
+            es=0x6200, si=0xBEEF, flags=0x0246, outer_return=0x01BF,
+            map_visible=False, all_active=False, provider=None,
+            records=[dict(skip=0xFF)], record_offsets=[RECORDS],
+            saved_di=0x0100, saved_cx=1, returned_ds=0x2000,
+            spill_origin=origin, spill_escape=escape))
+    for index, (scan, escape) in enumerate(SPILL_KEY_CASES.items()):
+        rows.append(dict(rows[-1], name=f'row54-spill-draw-origin-0090-key-{scan:02X}-make',
+                         seed=0x3634A0 + index, spill_key=scan, spill_escape=escape))
+    return rows
+
+
+def install_spill(case, memory, device):
+    import entity_update
+    post, post_ds = entity_update.spill_after_update(case['spill_origin'])
+    oracle_require(post_ds == case['ds'], case['name'] + ': spill DS differs')
+    for start, end in SPILL_COPY_RANGES:
+        for offset in range(start, end):
+            put8(memory, case['ds'], offset, get8(post, post_ds, offset), device)
+    if case.get('spill_key') is not None:
+        put8(memory, case['ds'], spill.KEY_STATE + case['spill_key'], 0x94, device)
+
+
+def assert_spill_draw(case, expected, *, core):
+    name, escape = case['name'], case['spill_escape']
+    if escape is None:
+        oracle_require(expected['status'] == READY,
+                       f'{name}: row-54 draw pass did not complete ({expected["status"]})')
+        oracle_require(get8(expected['memory'], expected['regs']['ds'], PASS_COUNT) != 0,
+                       name + ': row-54 draw pass visited no record')
+        return
+    record, target = escape
+    oracle_require(expected['raw_status'] == 107 and expected['status'] == CHILD_STOP and
+                   expected['child_entry'] == 0x706F and expected['child_status'] == 1,
+                   f'{name}: row-54 draw did not stop at the 715B unknown-callback seam '
+                   f'({expected["raw_status"]})')
+    saved = get16(expected['memory'], case['ss'], (case['sp'] - 8) & 0xFFFF)
+    oracle_require(expected['continuation'] == 0x715B and
+                   expected['regs']['ax'] == target and saved == record and
+                   get16(expected['memory'], expected['regs']['ds'], record + 0x14) == target,
+                   f'{name}: 715B stop AX/record {expected["regs"]["ax"]:04X}/'
+                   f'{saved:04X}, expected {target:04X}/{record:04X}')
+
+
 def configured_vga(seed):
     device = MinimapVga(0x3634 ^ seed, read_map=0)
     device.seq[2] = 0x0F
@@ -685,6 +765,8 @@ def setup(case):
     if case.get('provider') == 'saved-di-rewrite':
         # If the saved-DI rewrite is ignored, the ordinary next record is B5h.
         put8(memory, case['ds'], 0x00DB, 0xFF, device)
+    if case.get('spill_origin') is not None:
+        install_spill(case, memory, device)
     return memory, regs, device
 
 
@@ -787,6 +869,8 @@ def compare(native, case, *, core):
     expected = run_original(case, initial_memory, initial_regs,
                             initial_device, core=core)
     assert_oracle_contract(case, expected, initial_memory, core=core)
+    if case.get('spill_origin') is not None:
+        assert_spill_draw(case, expected, core=core)
     label = f'{case["name"]} {"core" if core else "adapter"}'
     actual = native.run(case, bytearray(initial_memory), dict(initial_regs),
                         copy.deepcopy(initial_device), core=core)
@@ -859,6 +943,8 @@ def input_hashes():
         'c/decimal_field.c', 'c/decimal_field.h',
         'c/lemmings_sym.h', 'c/regs.h', 'c/special_blit.h',
         'tests/entity_drawing.py', 'tests/entity_interactions.py',
+        'tests/entity_create.py', 'tests/entity_update.py',
+        'assets/level006.dat', 'assets/oddtable.dat',
         'tests/entity_minimap.py', 'tests/entity_dirty.py',
         'tests/entity_points.py', 'tests/entity_sprite_dispatch.py',
         'tests/entity_sprite_aligned.py', 'tests/entity_sprite_shifted.py',
@@ -904,12 +990,14 @@ def original_campaign(hash_path):
     integrated_sites, integrated_edges = set(), set()
     total_steps = total_events = total_observer_reads = 0
     rows = []
-    for case in fixture_rows:
+    for case in fixture_rows + spill_cases():
         boundaries = []
         for core in (True, False):
             memory, regs, device = setup(case)
             expected = run_original(case, memory, regs, device, core=core)
             assert_oracle_contract(case, expected, memory, core=core)
+            if case.get('spill_origin') is not None:
+                assert_spill_draw(case, expected, core=core)
             boundaries.append(dict(core=core, status=expected['status'],
                                    raw_status=expected['raw_status'],
                                    continuation=expected['continuation'],
@@ -988,7 +1076,7 @@ def worker(directory, hash_path):
     integrated_sites, integrated_edges = set(), set()
     total_steps = total_events = total_observer_reads = 0
     rows = []
-    for case in fixture_rows:
+    for case in fixture_rows + spill_cases():
         boundaries = []
         for core in (True, False):
             expected = compare(baseline, case, core=core)
@@ -1081,7 +1169,12 @@ def worker(directory, hash_path):
         domain='DrawEntityRecords 3634..368D, excluding UNKNOWN 366F; finite '
                'record bounds, signed selector gates, all nine known sprite targets, '
                'point/minimap/dirty/sprite child seams, changed nested returns, live '
-               'SS providers, guard and DS flow, and the shared frame-free decimal tail'))
+               'SS providers, guard and DS flow, and the shared frame-free decimal tail. '
+               'Row-54 spill slice: records 00..62 after the original 410F rebuild '
+               'and 1F19 pass at nine characterized origins; the first non-callback '
+               '+14 stops both sides at 715B (C unknown-callback status) with equal '
+               'machine state, otherwise the 63h-slot pass completes; two key-channel '
+               'cases (scan 15/16 make at origin 0090) stop at record 55'))
     print(f'PASS entity drawing: {len(rows)} cases at core+adapter; '
           f'{CODE_BYTES} parent bytes/{len(parent_sites)} sites/'
           f'{len(parent_edges)} edges; {total_events} bus events; '

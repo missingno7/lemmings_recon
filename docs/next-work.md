@@ -39,7 +39,7 @@ floppy/protection seam).
 
 ## Open semantic items (VGA + AdLib), in impact order
 
-1. **Lemming records beyond 80 through ordinary input: differential cases.**
+1. **Lemming records beyond 80 through ordinary input.**
    Typed level codes reach every selection 0..255 (rule beside DecodeLevelCode).
    Selections 156, 158, 212 and 214, after an odd-table level was loaded, load
    odd row 54 (population 99); records 50..62 overlay visibility columns, key
@@ -49,9 +49,14 @@ floppy/protection seam).
    (or 98..168 while record 50 falls) or scans 15/16/42/43 send 715B to
    CS:0000/0001/0101 or key-derived targets (characterized escape, native
    LMN_ENTITY_SPRITE_DISPATCH_UNKNOWN_CALLBACK). C over canonical memory
-   reproduces it with no clamps. Still to do: the six differential cases in
-   build/proposals/spill.md (creation 50..62, rebuild/update/draw, key scans,
-   object ticks, editor key repeat, status time). Whether such a level can be
+   reproduces it with no clamps. Differential cases now cover creation 50..62,
+   visibility rebuild/update/draw at the characterized origins (both sides stop
+   at the same 715B boundary), key scans, object ticks, editor key repeat and
+   the status time (entity_create, view_visibility, entity_update,
+   entity_drawing, keyboard_input, object_animation, object_drawing_tick,
+   status_text). Not covered: 7BB8 with all of 57..5D (zero-size working
+   records exceed trace budgets), multi-frame falling with real terrain, and
+   the time-up path. Whether such a level can be
    completed depends on runtime state (level bitmap, stale objects, input), not
    on missing semantics. Before any odd-table load, selections 120..255 stay in
    the insert-disk retry loop; displays for groups 4..8 read memory DOS never
@@ -85,8 +90,8 @@ AdLib engine, song titles and command domain.
    device (SDL3), PC-speaker audio rendering, Tandy.
 2. Feature matrix of the native host (semantic-audit.md, native completeness).
 3. Special-graphics briefing redraw, private IRQ 0F70 delivery, protection
-   persistence (russell.dat), validated timing; the host's fixed poll budget
-   (100,000) stops runs at about 141 frames.
+   persistence (russell.dat), validated timing. (The host's safety budgets now
+   scale with frames; a scripted run plays a level through time-up to 46EB.)
 4. Whole-game lifecycle in the native host: startup, menus, level load, gameplay,
    results, progression, failure and exit, with a feature matrix
    (semantic-audit.md).
