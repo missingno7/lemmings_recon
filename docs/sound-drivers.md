@@ -89,8 +89,11 @@ an explicit port boundary (`LmnOplPorts`): each register write is OUT base,reg;
 Tokens 88..AF return an explicit stream-escape status. tests/adlib_engine.py
 compares original and C per INT61 call (memory, ordered RAM/port events,
 registers and flags) over shipped songs and effects, detection, reset and
-constructed stream states. A native OPL backend feeds the (register, value)
-writes to a synthesis core and calls AH=00 at the game timer cadence (main 1872,
+constructed stream states. A native OPL backend must keep the original
+spacing of the writes: the delay reads in 0559 are what separate a key-off from
+the following key-on, so rendering all writes of one update at a single instant
+silences every retriggered note (host/README.md, Sound). It feeds the (register,
+value) writes to a synthesis core and calls AH=00 at the game timer cadence (main 1872,
 plus once after each AH=03 request). The Tandy engine remains untranslated.
 
 Further installation analysis identified MAIN.DAT section 5 as a 758-byte

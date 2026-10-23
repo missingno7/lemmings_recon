@@ -56,6 +56,7 @@ struct LmnHost {
     LmnPcSpeakerBinding pc_binding; LmnSoundDriverBinding sound_binding;
     LmnOplPorts opl_ports; opl3_chip opl;
     uint8_t opl_address,opl_status,opl_control;
+    uint64_t opl_bus_ns;
     FILE *audio; uint64_t audio_frames; int audio_failed;
 };
 static uint32_t phys(uint16_t seg,uint16_t off) { return (((uint32_t)seg<<4)+off)&MASK; }
@@ -366,10 +367,23 @@ static uint16_t mouse_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *b
     default:fail(h,"unbound INT33 function");break;
     }return h->error[0]?1:0;
 }
-enum { OPL_RATE=49716 };
-/* Render OPL output up to the current PIT time (stereo 16-bit frames). */
+enum { OPL_RATE=49716, ISA_IO_NS=1000 };
+/* OPL bus clock. The driver spaces its register writes with port reads
+   (12 after the address, 47 after the data byte) because the chip needs time
+   to latch them; a key-off, frequency and key-on sequence therefore spans
+   about 6 OPL samples, so the chip sees the key-off and restarts the note.
+   Each original port access advances this clock by one AT-bus I/O cycle
+   (platform assumption: ~1 us per ISA access); between services it follows
+   the PIT clock. Collapsing an update to one instant would merge key-off and
+   key-on and lose every retriggered note. */
+static uint64_t opl_clock(LmnHost *h) {
+    uint64_t pit=h->now*UINT64_C(1000000000)/LMN_HOST_PIT_HZ;
+    if(h->opl_bus_ns<pit)h->opl_bus_ns=pit;
+    return h->opl_bus_ns;
+}
+/* Render OPL output up to the OPL bus clock (stereo 16-bit frames). */
 static void render_audio(LmnHost *h) {
-    uint64_t target=h->now*OPL_RATE/LMN_HOST_PIT_HZ;
+    uint64_t target=opl_clock(h)*OPL_RATE/UINT64_C(1000000000);
     while(h->audio && !h->audio_failed && h->audio_frames<target) {
         int16_t frame[2];
         OPL3_Generate(&h->opl,frame);
@@ -385,6 +399,7 @@ static void render_audio(LmnHost *h) {
    detection was written for. Reads of either port return the status byte. */
 static void opl_out(void *ctx,uint8_t *m,uint16_t port,uint8_t value,uint16_t flags) {
     LmnHost *h=ctx;(void)m;(void)flags;
+    opl_clock(h);h->opl_bus_ns+=ISA_IO_NS;
     if(port==0x388)h->opl_address=value;
     else if(port==0x389) {
         render_audio(h);
@@ -396,6 +411,7 @@ static void opl_out(void *ctx,uint8_t *m,uint16_t port,uint8_t value,uint16_t fl
 }
 static uint8_t opl_in(void *ctx,uint8_t *m,uint16_t port,uint16_t flags) {
     LmnHost *h=ctx;(void)m;(void)flags;
+    opl_clock(h);h->opl_bus_ns+=ISA_IO_NS;
     if(port!=0x388 && port!=0x389){fail(h,"OPL port outside 0388/0389");return 0xff;}
     if((h->opl_control&1) && !(h->opl_control&0x40))h->opl_status|=0xC0;
     if((h->opl_control&2) && !(h->opl_control&0x20))h->opl_status|=0xA0;
@@ -541,7 +557,7 @@ static int write_wav_header(FILE *fp,uint64_t frames) {
 int lmn_host_open_audio(LmnHost *h,const char *path) {
     if(h->audio)return 0;
     h->audio=fopen(path,"wb");if(!h->audio)return 0;
-    h->audio_frames=h->now*OPL_RATE/LMN_HOST_PIT_HZ;h->audio_failed=!write_wav_header(h->audio,0);
+    h->audio_frames=opl_clock(h)*OPL_RATE/UINT64_C(1000000000);h->audio_failed=!write_wav_header(h->audio,0);
     {uint64_t silent=h->audio_frames;h->audio_frames=0;while(h->audio_frames<silent && !h->audio_failed){int16_t zero[2]={0,0};if(fwrite(zero,2,2,h->audio)!=2)h->audio_failed=1;h->audio_frames++;}}
     return !h->audio_failed;
 }

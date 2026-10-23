@@ -133,7 +133,14 @@ driver this way.
 Platform substitution, OPL ports 0388/0389: the engine's OPL writes go in call
 order to the pinned Nuked OPL3 core (third_party/Nuked-OPL3, LGPL-2.1, git
 submodule) in OPL2-compatible mode, rendered at its native 49,716 Hz and timed
-by the PIT clock. Register 04 (timers) is handled by a minimal status model,
+by an OPL bus clock. The driver's delay reads (12 after each address write, 47
+after each data write) are not idle time: they space the register writes so
+the chip latches each one. Every music note is written as key-off, frequency,
+key-on within one update, and only that spacing (about 6 OPL samples) lets the
+envelope see the key-off and restart the note. The host therefore advances
+the OPL bus clock by one AT-bus I/O cycle (assumed 1 us) per original port
+access and renders audio up to it before each write; between services the
+clock follows the PIT. Register 04 (timers) is handled by a minimal status model,
 since the core has no timers: a started, unmasked timer reports expiry (C0/A0)
 by the next status read, and bit 7 clears the flags. This assumes the
 detection delay outlasts 80us*(256-T1), as on the machines the driver targeted;
