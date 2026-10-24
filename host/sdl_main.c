@@ -30,7 +30,8 @@ typedef struct App {
     uint64_t next_present,next_slice,emu_base,wall_base;
     uint16_t mouse_x,mouse_y,buttons;
     int pace,quit,failed;
-    FILE *log;
+    FILE *log,*audio_log;
+    uint64_t audio_delivered,audio_origin_pit;
     uint8_t rgb[640*350*3];
 } App;
 
@@ -161,6 +162,8 @@ static uint16_t poll_hook(void *context,LmnHost *h,LmnRegs *r,uint16_t site) {
 
 static void observe(void *context,LmnHost *h,const LmnRegs *r,uint16_t kind) {
     App *a=context;
+    if(a->audio_log && kind && r->ip==0x105)
+        fprintf(a->audio_log,"%" PRIu64 ",%" PRIu64 "\n",lmn_host_time(h)-a->audio_origin_pit,a->audio_delivered);
     if(a->log && kind && r->ip==0x105)
         fprintf(a->log,"%" PRIu64 ",%" PRIu64 ",%" PRIu64 ",%04x,%016" PRIx64 "\n",
             lmn_host_frames(h),lmn_host_time(h),lmn_host_irqs(h),r->ip,lmn_host_hash(h));
@@ -168,6 +171,7 @@ static void observe(void *context,LmnHost *h,const LmnRegs *r,uint16_t kind) {
 
 static void audio_sink(void *context,const int16_t *frames,size_t count) {
     App *a=context;
+    a->audio_delivered+=count;
     if(a->audio)SDL_PutAudioStreamData(a->audio,frames,(int)(count*4));
 }
 
@@ -190,7 +194,7 @@ static int script(LmnHost *h,const char *path) {
 
 int main(int argc,char **argv) {
     App a;LmnStartupResult boot;LmnGameLoopResult out;LmnRegs r;
-    const char *assets="assets",*script_path=NULL,*log_path=NULL;
+    const char *assets="assets",*script_path=NULL,*log_path=NULL,*audio_log_path=NULL;
     enum LmnHostMediaPolicy policy=LMN_HOST_MEDIA_ASSUME_ORIGINAL;
     uint64_t frames=0;int adlib=1,i,status=0;
     SDL_AudioSpec spec={SDL_AUDIO_S16,2,OPL_RATE};
@@ -204,6 +208,7 @@ int main(int argc,char **argv) {
         else if(!strcmp(argv[i],"--assets") && i+1<argc)assets=argv[++i];
         else if(!strcmp(argv[i],"--script") && i+1<argc)script_path=argv[++i];
         else if(!strcmp(argv[i],"--log") && i+1<argc)log_path=argv[++i];
+        else if(!strcmp(argv[i],"--audio-log") && i+1<argc)audio_log_path=argv[++i];
         else if(!strcmp(argv[i],"--frames") && i+1<argc)frames=strtoull(argv[++i],NULL,10);
         else {
             fprintf(stderr,"usage: lemmings [--assets DIR] [--sound=adlib|speaker] [--media-probe=assume-original|reject]\n"
@@ -223,16 +228,19 @@ int main(int argc,char **argv) {
     else fprintf(stderr,"audio unavailable: %s\n",SDL_GetError());
     a.host=lmn_host_create(assets);
     if(!a.host){fprintf(stderr,"cannot create host\n");SDL_Quit();return 1;}
-    lmn_host_set_audio_sink(a.host,audio_sink,&a);
     if(log_path){a.log=fopen(log_path,"w");if(!a.log){fprintf(stderr,"cannot write %s\n",log_path);status=1;goto done;}
         fputs("frame,pit_time,irq08,ip,fnv1a64_ram_planes_dac_crtc\n",a.log);}
     boot=lmn_host_boot(a.host,0x1010,adlib?"/v /o":"/v /o /a",policy);r=boot.registers;
     if(boot.status!=LMN_STARTUP_READY || (script_path && !script(a.host,script_path))) {
         fprintf(stderr,"startup failed: %s\n",lmn_host_error(a.host));status=1;goto done;
     }
+    /* Audio starts at the current game time: startup ran before any live
+       device existed, and its elapsed time is not queued as stale audio. */
+    lmn_host_set_audio_sink(a.host,audio_sink,&a);
+    if(audio_log_path){a.audio_log=fopen(audio_log_path,"w");if(!a.audio_log){status=1;goto done;}}
     lmn_host_set_limits(a.host,UINT64_MAX,UINT64_MAX,frames);
     lmn_host_set_hooks(a.host,&a,poll_hook,observe);
-    a.emu_base=lmn_host_time(a.host);a.wall_base=SDL_GetTicksNS();
+    a.emu_base=a.audio_origin_pit=lmn_host_time(a.host);a.wall_base=SDL_GetTicksNS();
     a.next_present=a.next_slice=a.emu_base;
     out=lmn_host_run(a.host,&r);
     printf("stop=%u core=%04x at=%04x:%04x frames=%" PRIu64 " error=%s\n",out.status,out.core_entry,
@@ -240,6 +248,7 @@ int main(int argc,char **argv) {
     if(a.failed || (lmn_host_error(a.host)[0] && !a.quit))status=1;
 done:
     if(a.log && fclose(a.log))status=1;
+    if(a.audio_log && fclose(a.audio_log))status=1;
     lmn_host_destroy(a.host);
     if(a.audio)SDL_DestroyAudioStream(a.audio);
     if(a.texture)SDL_DestroyTexture(a.texture);

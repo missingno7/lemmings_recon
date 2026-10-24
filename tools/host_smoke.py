@@ -62,11 +62,15 @@ def sdl_smoke(reference):
     exe=build_sdl(BUILD/'lemmings.exe');output=BUILD/'host-smoke-sdl';output.mkdir(exist_ok=True)
     env=dict(os.environ,SDL_VIDEO_DRIVER='offscreen',SDL_AUDIO_DRIVER='dummy')
     run_bounded([str(exe),'--assets',str(ROOT/'assets'),'--script',str(ROOT/'host/smoke.script'),'--frames','130',
-        '--no-pace','--log',str(output/'frames.csv')],cwd=ROOT,timeout=120,memory_mib=512,check=True,env=env,
-        stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+        '--no-pace','--log',str(output/'frames.csv'),'--audio-log',str(output/'audio.csv')],cwd=ROOT,timeout=120,
+        memory_mib=512,check=True,env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
     rows=list(csv.DictReader((output/'frames.csv').open(newline='')))
     assert rows==reference,'SDL front end diverges from the headless runner'
-    return dict(frames=len(rows))
+    # A live device consumes audio as it is produced: the samples delivered to
+    # the SDL stream must track game time, never a backlog of earlier silence.
+    lags=[int(t)*49716//1193182-int(d) for t,d in csv.reader((output/'audio.csv').open(newline=''))]
+    assert len(lags)==len(rows) and max(abs(x) for x in lags)<710,f'audio delivery lag {max(lags)}..{min(lags)} samples'
+    return dict(frames=len(rows),audio_lag_samples=[min(lags),max(lags)])
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)

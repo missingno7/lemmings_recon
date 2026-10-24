@@ -481,6 +481,10 @@ static uint16_t foreground(void *ctx,uint8_t *m,LmnRegs *r,uint16_t site) {
     LmnHost *h=ctx;uint16_t status=0;unsigned delivered=0;(void)m;
     if(++h->polls>h->max_polls)fail(h,"foreground poll budget exhausted");
     if(h->error[0] || (h->max_frames && h->frames>=h->max_frames))return LMN_HOST_STOP;
+    /* The OPL chip runs continuously: advance it with emulated time, not only
+       when the driver writes a register, so a live consumer receives audio at
+       the moment the game produces it. */
+    render_audio(h);
     if(h->poll_hook){status=h->poll_hook(h->hook_context,h,r,site);if(status)return status;}
     if(h->automatic) {
         /* A poll is a short CPU timeslice, not a whole display frame. In
