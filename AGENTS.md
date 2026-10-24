@@ -133,6 +133,15 @@ substitution names the original service it bypasses, its contract and whether it
 is equivalent, altered or unverified, and the bypassed obligation stays visible
 beside the ASM. Never fabricate success.
 
+The platform models one declared real machine (host/README.md, Declared
+machine). Derive device answers and timing from that machine's registers and
+datasheet behavior; never pick values, schedules or overrides because a run then
+looks right, and never compensate one invented answer with another. Devices run
+continuously in emulated time (raster, PIT, OPL, scanout), not only when the CPU
+touches them; delay loops, port-read counts and raster waits are part of the
+original's timing and stay observable. A reference model in a test must not
+simply copy the host's assumption it is meant to check.
+
 # Parallel workers
 
 Workers take independent semantic problems with disjoint file ownership and edit

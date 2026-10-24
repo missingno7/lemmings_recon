@@ -2,8 +2,8 @@
 
    The game runs exactly as in the headless runner; this file only supplies
    platform devices at the host's foreground polls:
-   - display: the VGA scanout (planes, attribute map, DAC) rendered once per
-     emulated display period and scaled to a 4:3 window;
+   - display: each frame the emulated beam completes (composed row by row
+     with the palette of its own moment) is shown, scaled to a 4:3 window;
    - keyboard: SDL scancodes become PC set-1 make/break bytes delivered as IRQ09,
      with the E0 prefix for extended keys as a real keyboard sends it; SDL key
      repeats are typematic repeats (repeated make codes);
@@ -27,7 +27,7 @@ typedef struct App {
     SDL_Window *window; SDL_Renderer *renderer; SDL_Texture *texture;
     SDL_AudioStream *audio;
     unsigned texture_w,texture_h;
-    uint64_t next_present,next_slice,emu_base,wall_base;
+    uint64_t shown_frame,next_slice,emu_base,wall_base;
     uint16_t mouse_x,mouse_y,buttons;
     int pace,quit,failed;
     FILE *log,*audio_log;
@@ -153,9 +153,10 @@ static uint16_t poll_hook(void *context,LmnHost *h,LmnRegs *r,uint16_t site) {
         pump(a);
         if(a->pace)pace(a,now);
     }
-    if(now>=a->next_present) {
+    if(lmn_host_display_frames(h)!=a->shown_frame) {
+        /* The beam completed a frame: show it, as the monitor would. */
+        a->shown_frame=lmn_host_display_frames(h);
         present(a);
-        a->next_present=now+LMN_HOST_DISPLAY_TICKS-(now-a->next_present)%LMN_HOST_DISPLAY_TICKS;
     }
     return (a->quit || a->failed)?LMN_HOST_STOP:0;
 }
@@ -241,7 +242,7 @@ int main(int argc,char **argv) {
     lmn_host_set_limits(a.host,UINT64_MAX,UINT64_MAX,frames);
     lmn_host_set_hooks(a.host,&a,poll_hook,observe);
     a.emu_base=a.audio_origin_pit=lmn_host_time(a.host);a.wall_base=SDL_GetTicksNS();
-    a.next_present=a.next_slice=a.emu_base;
+    a.next_slice=a.emu_base;a.shown_frame=lmn_host_display_frames(a.host);
     out=lmn_host_run(a.host,&r);
     printf("stop=%u core=%04x at=%04x:%04x frames=%" PRIu64 " error=%s\n",out.status,out.core_entry,
         out.registers.cs,out.registers.ip,lmn_host_frames(a.host),lmn_host_error(a.host));

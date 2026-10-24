@@ -28,7 +28,7 @@ are main-image offsets from `metadata/symbols.json`.
 | Program entry, PSP, arena, MAIN.DAT sections, handoff to the menu | ProgramEntry 0000, AllocateStartupGraphicsArena 1007, LoadMainResourceSections 58D2, sprite/mask generators 59BB..5D66 | c/startup.c, c/main_resources.c and generators; `lmn_host_boot` (native PKLITE load, 63 relocations) | startup, main_resources, host_vga (native boot, arena, MAIN.DAT output hashes), host_journey (native startup-to-menu every poll to 446D) | VERIFIED |
 | Command-line switches /a /e /v /n /d /p /o /x /m /2 /4 /i | ParsePspCommandLine 1293, ParsePspTimerReloadDecimal 13A8 | c/startup.c | startup: 12 command tails including all switches, case folding, /i edge values | VERIFIED (host passes only `/v /o` or `/v /o /a`) |
 | Machine-type screen (VGA/EGA, PC, high-performance, PS/2, Amstrad, exit) | SelectStartupDisplayAndOptions 106E, MarkStartupOptionAndRedraw 1194 | c/startup.c | startup: option keys, arrows, exit row, escape | PARTIALLY_VERIFIED: host requires /o (DOS AH07 is unbound and fails) |
-| Video adapter probe, raster/PIT timer calibration | DetectVideoAdapters 13DC..1523, CalibrateGameTimerReload 15AD, MeasureRasterPitCounter 1602 | c/video_probe.c; host INT10 1A00/12/0F and display-status model | video_probe, startup, host_vga | VERIFIED (host machine is one declared display model) |
+| Video adapter probe, raster/PIT timer calibration | DetectVideoAdapters 13DC..1523, CalibrateGameTimerReload 15AD, MeasureRasterPitCounter 1602 | c/video_probe.c; host declared colour-VGA machine (BIOS 1A00/12 answers, CRTC-derived raster) | video_probe, startup, host_vga (VGA known answers, detection 03/03, 355-line reload) | VERIFIED |
 | Sound driver selection (AdLib detect, Tandy probe, PC-speaker fallback), adlib.dat load, INT61 install | InitializeSoundDriver 054E, ProbeTandyVideoPage 060C | c/sound_driver_init.c; host binds the installed INT61 to c/adlib_engine.c | sound_driver_init; host smoke with `--sound=adlib` | VERIFIED |
 | Protection counter (russell.dat) and skip decision | CheckStartupProtection 062B, WriteProtectionCounterFile 0EC2 | c/protection.c; host read-only DOS files | protection (PASS, reject, skip, file errors); host_vga forced policy profiles | PARTIALLY_VERIFIED: host denies the create/write, so the counter never advances on disk (shipped byte 08 becomes 09 and skips the probe every run) |
 | Original-floppy media probe and INT1/INT3 protected streams | ProbeOriginalFloppyMedia 063E, 0659, ProtectionInt3Handler 0DB3, 0DBD (UNTRANSLATED) | host `media_probe` named policy (`--media-probe=assume-original/reject/unsupported`) | protection (raw probe parity on original-built fixtures); host_vga policies | PARTIALLY_VERIFIED: platform substitution; probe body not translated, PASS result is an explicit policy |
@@ -107,8 +107,8 @@ Skill labels follow the panel order; the ledger names only action selectors
 | Mode 10 menus/briefing, mode 0D gameplay, page swap, CRTC start | SetupDisplayModeAndLayout 4BE7, SwapDrawingOriginsAndDisplay 4C20, ProgramDisplayStartFromValue 4C36 | c/display_*.c; host VGA (4 planes, latches, write modes 0..3, read modes 0/1) | display suites, host_vga (generated device traces), host smoke PPMs | VERIFIED |
 | Terrain, sprites, masks, generated banks, text | DrawPlanarBitmap 8822, sprite routines 6170..7218, DrawTextStream 4D4D | c/drawing_*.c, entity_sprite_*.c, text_*.c | drawing, sprite, mask and text suites | VERIFIED |
 | Palettes, fades, DAC/attribute writes | palette routines 52F4..570C, game fades 03C1/03D7 | c/palette_*.c, game_transition.c | palette suites, palette_timer, game_transition | VERIFIED |
-| Raster split palette (playfield/panel) | RefreshRasterSplitPalette 46B9, timer palette 5473/553D | c/palette_transition.c, palette_ports.c | palette_transition, palette_timer | PARTIALLY_VERIFIED: host PPM is an instantaneous DAC capture, no per-line palette history |
-| Live display | VGA scanout | host/sdl_main.c: scanout rendered per emulated display period, 4:3 letterbox | host_smoke --sdl (offscreen, 130 frames identical to the headless runner) | PARTIALLY_VERIFIED: the raster palette split is shown with the DAC at present time |
+| Raster split palette (playfield/panel) | RefreshRasterSplitPalette 46B9, timer palette 5473/553D | c/palette_transition.c, palette_ports.c; host beam-raced scanout | palette_transition, palette_timer; host: panel colours written at scanline 320, playfield restore at 412 | VERIFIED (split line measured; IRQ delivery at polls can add up to ~3 lines) |
+| Live display | VGA scanout | host/sdl_main.c: each frame the emulated beam completes, 4:3 letterbox | host_smoke --sdl (offscreen, 130 frames identical to the headless runner, audio delivery within one frame of game time) | VERIFIED for scripted runs; live input feel unconfirmed |
 
 ## Audio
 
@@ -126,7 +126,7 @@ Skill labels follow the panel order; the ledger names only action selectors
 | Mouse (INT33 position/buttons, ranges) | PollMousePosition 4252, InitializeMouseDriverHooks 0F08 | c/input_poll.c; host INT33 0/2/3/4/7/8/0F/0C | input_poll, startup (mouse absent), host_journey | VERIFIED (scripted events only) |
 | Keyboard IRQ, bindings, character table, keyboard control mode | KeyboardIrqHandler 16D4, ReadKeyboardCharacter 4D1A, PollInputState 418C | c/keyboard_input.c, input_poll.c; host IRQ09 at polls | keyboard_input, input_poll, game_session; host-observed keyboard mode reaches gameplay | VERIFIED |
 | Mouse callback and private mouse IRQ bridge | MouseEventReturn 0F6F (RETF, UNTRANSLATED), MouseIrqBridge 0F70 | c/mouse_irq_bridge.c; host accepts only the 0F6F registration and never raises the private IRQ | mouse_irq_bridge | IMPLEMENTED_UNTESTED in host: platform substitution (host mouse never touches VGA registers) |
-| Game and menu timers, BIOS chain, display-locked tick | GameTimerIrqHandler 17C7, MenuTimerIrqHandler 4C47, GameTimerTail 183E, 1872 | c/timer_tail.c; host PIT/PIC and 17044-unit display model, IRQ08 delivered at polls | timer_tail, game_timer, menu_timer, palette_timer, host smoke (5 IRQ08 per game frame, display period within 8 units) | PARTIALLY_VERIFIED: IRQ-at-poll scheduling and one display model; no validated real-time pacing |
+| Game and menu timers, BIOS chain, display-locked tick | GameTimerIrqHandler 17C7, MenuTimerIrqHandler 4C47, GameTimerTail 183E, 1872 | c/timer_tail.c; host PIT counting the programmed reload, CRTC-derived 70.09 Hz raster, IRQ08 delivered at polls | timer_tail, game_timer, menu_timer, palette_timer, host smoke (5 IRQ08 per game frame, 5 VGA frames within one poll quantum), host_vga | PARTIALLY_VERIFIED: IRQs arrive only at foreground polls, never inside a child or ISR |
 
 ## Files, errors and persistence
 
@@ -154,15 +154,14 @@ In impact order:
 1. **Live device polish.** The SDL3 front end (host/sdl_main.c) presents the
    scanout, streams OPL audio, maps keys to set-1 IRQ09 bytes and the mouse to
    the INT33 range, and paces PIT time by the wall clock; scripted runs match
-   the headless runner frame for frame. Remaining: the raster palette split is
-   shown with one DAC per frame, PC-speaker audio, joystick, and a human check
-   of input feel and pacing.
-2. **Timing model not validated.** Original dependency: measured reload
-   (CalibrateGameTimerReload 15AD), game/menu timer IRQs 17C7/4C47 and the
-   raster palette split at 46B9/5473/553D; IRQs can arrive at any instruction.
-   Needed: a validated display/PIT profile for the presentation layer and an
-   explicit statement of which original interleavings the poll-point delivery
-   omits (the creation race stays characterized original behavior).
+   the headless runner frame for frame. Remaining: PC-speaker audio, joystick,
+   and a human check of input feel and pacing.
+2. **IRQ delivery granularity.** The host is now one declared machine (colour
+   VGA, CRTC-derived raster, PIT counting its reload; host/README.md), and the
+   game's own calibration places the panel split at scanline 320. IRQs are
+   still delivered only at foreground polls (up to ~3 lines late, never inside
+   a child or ISR); state which original interleavings that omits (the
+   creation race stays characterized original behavior).
 3. **Exit to DOS not composed.** Original dependency: 04D0 cleanup (timer,
    vectors, video mode, DOS 4C). The loop stops at 04D0. Needed: run
    `lmn_fatal_cleanup_core` and map its terminal DOS request to application exit.

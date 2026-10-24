@@ -87,23 +87,53 @@ read modes0/1 and write modes0..3 implement map mask, set/reset, rotation, logic
 function, read map, compare/care and bit mask. DAC components are six bits with
 independent read/write cursors and rollover. Mode0D uses the BIOS200-line
 attribute map0..7/16..23; mode10 uses the350-line EGA map including14/38..3F.
-PPM scans the current CRTC start and offset, attribute map, PEL mask and DAC.
-It is an instantaneous page/palette capture, not a retained raster-color history.
+## Declared machine
 
-The virtual clock is in1193182Hz PIT units. Its stated display machine has
-17044-unit frames,54-unit horizontal lines and a10% vertical retrace interval.
-IN3DA advances8 units and reports horizontal display disable independently of
-vertical retrace. Ordinary foreground polls advance128 units in automatic mode;
-no IRQ is delivered inside a child or ISR. Status and foreground time advance the
-same clock. Channel0 implements reload low/high programming and count latching;
+The host models one real machine, an IBM-compatible AT with a colour VGA, and
+derives device behavior from that machine's registers instead of choosing
+values that make a run look right. Every device runs continuously in emulated
+PIT time (1,193,182 Hz), not only when the CPU touches it.
+
+- BIOS: INT10 AH=1A00 reports an active colour VGA (BL=08); AH=12 BL=10 reports
+  colour addressing, 256 KB and switch settings 9 (CX=0F09), as a VGA BIOS does.
+  The game's adapter detection therefore classifies the display as VGA and
+  calibrates its timer over 320 scanlines.
+- VGA registers: a BIOS mode set loads the standard IBM VGA CRTC tables and
+  sequencer clocking for modes 03h/0Dh/10h and the miscellaneous output (clock
+  select, colour addressing). In colour addressing the monochrome ports
+  3B4/3B5/3BA are not decoded (reads return FF), so the monochrome probe fails
+  as on real hardware.
+- Raster: timing comes from those registers: dot clock 25.175/28.322 MHz,
+  horizontal total and char width, vertical total, display end and retrace.
+  Mode 0Dh is 449 lines of 800 clocks (70.09 Hz, 17,024.4 PIT units) with 400
+  visible lines and retrace on lines 412..414. Input status 1 bit 0 is set
+  whenever the beam is outside the active display (horizontal and vertical
+  blanking), bit 3 during the retrace pulse. A status polling iteration costs
+  4 PIT units (3.35 us, a 12 MHz 286-class AT). Any cost below the 6.4 us
+  horizontal blank gives identical raster counts; slower reads would step over
+  blanks and corrupt the game's line-counting loops (the earlier 8-unit read did).
+- PIT channel 0 counts the programmed reload from the BIOS power-on state
+  (65536, 18.2 Hz); the host never chooses an IRQ time. With the faithful raster
+  the game's calibration measures 355 lines (reload 348Dh), so its timer IRQ
+  arrives at scanline 320 where it switches DAC 10h..17h to the status-panel
+  colours, and the retrace handler restores the playfield colours at line 412.
+- Scanout: rows are composed as the emulated beam passes them, from the planes,
+  attribute map and DAC of that moment, with the CRTC start address latched at
+  vertical retrace. Captures and the SDL front end show the last completed
+  frame, so mid-frame palette changes appear on the rows the original raster
+  put them on.
+
+Remaining approximations: foreground polls advance 128 units of CPU time and
+IRQs are delivered only at polls (up to about 3 lines late, and never inside a
+child or ISR); horizontal pixel panning and the line-compare split are not
+rendered. Channel 0 implements reload low/high programming and count latching;
 PIC masking, in-service state and EOI gate delivery. Pending IRQs coalesce as a
 PIC request; deferred keys remain queued.
 
-For200E!=FF in mode0D, a reload expires just before the next retrace, and the
-game IRQ waits through retrace before re-arming. The host preserves that actual
-guest re-arm; it does not add another full frame after the handler returns.
-Menu and FF-mode PIT requests retain their free-running divisor phase.
-For FF the deadline uses the programmed PIT divisor (normally4000). The native
+The game's timer handler waits for vertical retrace and re-arms the PIT from
+its end, so with the measured reload it fires once per frame at the panel
+scanline. Menu and FF-mode PIT requests keep their free-running divisor phase
+(normally 4000 in FF mode). The native
 timer itself owns the four-IRQ BIOS chain and signed counter/tick gate after five
 IRQs; the host never synthesizes those game-state writes. The saved BIOS provider
 increments0040:006C and acknowledges the PIC. Scripted verification disables the
@@ -131,7 +161,7 @@ tools/fetch_sdl3.py into build/third_party; nothing downloaded is committed).
 Run it from the repository root (`build\lemmings.exe`; `--assets DIR`,
 `--sound=speaker`, `--media-probe=reject` are optional). The game runs exactly
 as in the headless runner; host/sdl_main.c adds only devices at foreground
-polls: the scanout is rendered once per emulated display period and scaled to
+polls: each frame the emulated beam completes is shown, scaled to
 4:3, SDL scancodes become set-1 make/break bytes on IRQ09 (E0 prefix for
 extended keys, SDL repeats as typematic makes), the mouse maps into the INT33
 range the game set, PIT time is paced to the wall clock, and OPL output streams

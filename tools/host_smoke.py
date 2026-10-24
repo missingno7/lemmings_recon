@@ -8,6 +8,8 @@ from bounded_process import run_bounded
 from common import ROOT,BUILD,sha,write_json
 from hostbuild import build_host,sources
 
+FRAME_PIT=449*800*1193182/25175000
+
 def adlib_smoke(exe):
     """Original AdLib driver path: native startup loads adlib.dat, the game-installed
     INT61 runs the C engine, and its OPL writes drive Nuked OPL3 into audio.wav."""
@@ -92,7 +94,11 @@ def main():
     assert len(rows)==20 and len({row['fnv1a64_ram_planes_dac_crtc'] for row in rows})==20
     for left,right in zip(rows[-10:],rows[-9:]):
         assert int(right['irq08'])-int(left['irq08'])==5
-        assert abs(int(right['pit_time'])-int(left['pit_time'])-5*17044)<=8
+        # Mode 0Dh raster from the standard VGA CRTC table: 449 lines of 800
+        # clocks at 25.175 MHz (70.09 Hz); the game ticks every fifth frame.
+        # Retrace is observed by 4-unit status polls, so a boundary carries up
+        # to one poll quantum of phase.
+        assert abs(int(right['pit_time'])-int(left['pit_time'])-5*FRAME_PIT)<=4
     images=[]
     for name,geometry in (('menu',(640,350)),('briefing',(640,350)),('gameplay',(320,200))):
         q=output/(name+'.ppm');header=q.read_bytes().split(b'\n',3)
@@ -105,7 +111,7 @@ def main():
     sdl=sdl_smoke(list(csv.DictReader((BUILD/'host-smoke-adlib/frames.csv').open(newline='')))) if a.sdl else None
     assert before=={q:sha((ROOT/q).read_bytes()) for q in before},'smoke inputs changed'
     write_json(output/'smoke.json',dict(accepted=True,seconds=seconds,frames=20,adlib=adlib,special=special,sdl=sdl,
-        cadence='five IRQ08 per game tick; five17044-unit display periods within8 units',
+        cadence='five IRQ08 per game tick; five VGA frames (449x800 clocks at 25.175 MHz) within one 4-unit status poll',
         ppm=images,input_hashes=before,executable_sha256=sha(exe.read_bytes()),stdout=result.stdout,
         limits=dict(seconds=60,process_commit_mib=256,polls=100000,accesses=500000000)))
     print(result.stdout,end='');print(f'PASS host smoke: {seconds:.3f}s,20 frames,3 PPMs; display-locked cadence checked')

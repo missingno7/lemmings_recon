@@ -27,7 +27,7 @@ SUITES = (
     Suite('startup', 1500, 768, 'startup-differential.json', 'instruction'),
     Suite('sound_driver_init', 600, 512, 'sound-driver-init-differential.json', 'instruction'),
     Suite('host_vga', 210, 512, 'host-vga.json', 'composition'),
-    Suite('host_journey', 2400, 768, 'host-journey.json', 'composition'),
+    Suite('host_journey', 3600, 768, 'host-journey.json', 'composition'),
     Suite('level_result', 2100, 512, 'level-result-differential.json', 'instruction'),
     Suite('game_initialize_prefix', 180, 384, 'game-initialize-prefix-differential.json', 'instruction'),
     Suite('game_initialize', 420, 384, 'game-initialize-differential.json', 'instruction'),

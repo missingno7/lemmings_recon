@@ -86,7 +86,10 @@ AdLib engine, song titles and command domain.
 
 0. Done: SDL3 front end build/lemmings.exe (host/README.md): live display,
    input, wall-clock pacing and streamed OPL audio; scripted runs match the
-   headless runner frame for frame.
+   headless runner frame for frame. The host now models one declared machine
+   (colour VGA BIOS answers, CRTC-derived raster, PIT counting its reload,
+   devices running continuously in time, beam-raced scanout) instead of tuned
+   answers; see host/README.md, Declared machine.
 1. Done: the headless host runs the original AdLib driver path (`--sound=adlib`):
    game-installed INT61 -> c/adlib_engine.c -> Nuked OPL3 -> audio.wav, with
    entity sound bindings supplied (host/README.md, Sound). Still open: an audio

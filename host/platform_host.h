@@ -17,7 +17,7 @@ typedef struct LmnHostVga {
 } LmnHostVga;
 typedef struct LmnHost LmnHost;
 enum { LMN_HOST_MEMORY=1<<20, LMN_HOST_PIT_HZ=1193182,
-       LMN_HOST_DISPLAY_TICKS=17044, LMN_HOST_STOP=0xCA11 };
+       LMN_HOST_STOP=0xCA11 };
 enum { LMN_HOST_EVENT_MOUSE=1, LMN_HOST_EVENT_KEY=2, LMN_HOST_EVENT_IRQ08=3 };
 /* Timed input in PIT clock units. Explicit IRQ08 events are for exact bounded
    verification; the runner normally enables the automatic PIT scheduler. */
@@ -79,5 +79,10 @@ int lmn_host_render_rgb(const LmnHost *,uint8_t *rgb,unsigned *width,unsigned *h
 void lmn_host_mouse_range(const LmnHost *,uint16_t *min_x,uint16_t *max_x,uint16_t *min_y,uint16_t *max_y);
 int lmn_host_close_audio(LmnHost *);
 uint64_t lmn_host_audio_frames(const LmnHost *);
+/* Raster frames the emulated beam has started since the last mode set; a
+   change means lmn_host_render_rgb has a newly completed frame. */
+uint64_t lmn_host_display_frames(const LmnHost *);
+/* PIT time of the last BIOS mode set: raster position is measured from it. */
+uint64_t lmn_host_raster_epoch(const LmnHost *);
 uint64_t lmn_host_hash(const LmnHost *);
 #endif

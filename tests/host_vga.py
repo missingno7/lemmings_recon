@@ -53,7 +53,19 @@ def worker(directory):
     assert [h.call('in',0x3c9) for _ in range(6)]==[1,0,63,22,33,44]
     h.call('out',0x3d4,0x120c,2);h.call('out',0x3d4,0x340d,2)
     assert list(h.vga.crtc[12:14])==[0x12,0x34]
-    assert [h.call('in',0x3da) for _ in range(8)]==[0,0,0,0,0,1,1,0]
+    # Input status 1 known answers from the VGA mode 0Dh specification (standard
+    # BIOS CRTC table), independent of the host formula: 12.5875 MHz pixels,
+    # 400-pixel lines (320 active), 449 lines (400 active), retrace 412..414.
+    # Bit 0: outside the active display; bit 3: vertical retrace pulse.
+    h.call('out',0x3c4,0x0901,2)   # mode 0Dh clocking: 8-dot characters, dot clock / 2
+    epoch=h.call('raster_epoch');frame_px=449*400
+    first=((h.call('time')-epoch)*12587500//1193182)//frame_px+1   # next whole frame
+    def status_at(line,pixel):
+        target=first*frame_px+line*400+pixel
+        assert h.call('set_time',epoch-(-target*1193182//12587500));return h.call('in',0x3da)
+    assert [status_at(*pos) for pos in ((0,8),(0,330),(199,100),(399,300),(405,100),(413,100),(448,100))]==[0,1,0,0,1,9,1]
+    # Colour addressing: the monochrome CRTC and status ports are not decoded.
+    assert (h.call('in',0x3cc)&1)==1 and h.call('in',0x3ba)==0xff and h.call('in',0x3b5)==0xff
     # Native entry, arena48 and MAIN.DAT producers; no constructor stores.
     counter=(ct.c_uint8*1)(9)
     assert h.call('file_overlay',b'russell.dat',counter,1)
@@ -63,6 +75,11 @@ def worker(directory):
     assert (regs.cs,regs.ip,regs.ss,regs.sp)==(0x1010,0x43F2,0x244E,0x4AF4)
     assert v.get16(h.memory,ds,0x1FE4)==0x3000 and v.get16(h.memory,ds,0x1FF4)==0x7971
     assert h.memory[v.physical(ds,0x25A7)]==h.memory[v.physical(ds,0x1F71)]==1
+    # VGA BIOS answers make the game's detection VGA-class (pair 03/03), so it
+    # counts 320 lines from retrace end: 35 blank lines plus 319.8 displayed
+    # lines = 354.8 lines of 400 pixels at 12.5875 MHz, about 13452 PIT units.
+    assert v.get16(h.memory,ds,0x2006)==0x0303
+    assert abs(v.get16(h.memory,ds,0x1FC9)-round(354.8*400*1193182/12587500))<=12
     assert v.get16(h.memory,0,32)==0x700 and v.get16(h.memory,0,34)==0xB000
     assert bytes(h.memory[v.physical(0x1010,0x98C):v.physical(0x1010,0xB8C)])==bytes(512)
     assert v.get16(h.memory,0x1010,0xD9C)==0x9090

@@ -57,6 +57,12 @@ struct LmnHost {
     LmnOplPorts opl_ports; opl3_chip opl;
     uint8_t opl_address,opl_status,opl_control;
     uint64_t opl_bus_ns;
+    /* VGA beyond the public register file: miscellaneous output (clock select
+       and colour/mono addressing), the raster epoch of the current timing, and
+       the scanout composed row by row as the emulated beam passes. */
+    uint8_t vga_misc;uint64_t raster_epoch,scan_frame;unsigned scan_rows;
+    uint16_t scan_start_latched,scan_start_shown;int scan_latched,scan_ready,scan_cur;
+    uint8_t scan_rgb[2][640*350*3];
     FILE *audio; uint64_t audio_frames; int audio_failed;
     LmnHostAudioSink audio_sink; void *audio_context;
 };
@@ -115,6 +121,74 @@ static void bus_write(void *ctx,uint8_t *m,uint32_t p,uint8_t value,uint16_t fla
     }
     m[p]=value;
 }
+/* Declared machine: an IBM-compatible AT with a colour VGA. The BIOS mode set
+   loads the standard IBM VGA register tables; raster timing is derived from
+   those registers exactly as the CRTC generates it, not chosen separately. */
+static const uint8_t vga_crtc_03[25]={0x5f,0x4f,0x50,0x82,0x55,0x81,0xbf,0x1f,0x00,0x4f,0x0d,0x0e,0,0,0,0,
+    0x9c,0x8e,0x8f,0x28,0x1f,0x96,0xb9,0xa3,0xff};
+static const uint8_t vga_crtc_0d[25]={0x2d,0x27,0x28,0x90,0x2b,0x80,0xbf,0x1f,0x00,0xc0,0,0,0,0,0,0,
+    0x9c,0x8e,0x8f,0x14,0x00,0x96,0xb9,0xe3,0xff};
+static const uint8_t vga_crtc_10[25]={0x5f,0x4f,0x50,0x82,0x54,0x80,0xbf,0x1f,0x00,0x40,0,0,0,0,0,0,
+    0x83,0x85,0x5d,0x28,0x0f,0x63,0xba,0xe3,0xff};
+typedef struct Raster {
+    uint64_t pixel_hz;unsigned line_pixels,char_width,total_lines,display_lines,display_pixels;
+    unsigned retrace_start,retrace_end,rows,scan_per_row,width;
+} Raster;
+static void raster(const LmnHost *h,Raster *t) {
+    const uint8_t *c=h->vga.crtc;unsigned ov=c[7],vrs;
+    uint64_t clock=((h->vga_misc>>2)&3)==1?28322000u:25175000u;
+    t->char_width=(h->vga.seq[1]&1)?8:9;
+    t->pixel_hz=(h->vga.seq[1]&8)?clock/2:clock;
+    t->line_pixels=(c[0]+5u)*t->char_width;
+    t->display_pixels=(c[1]+1u)*t->char_width;
+    t->total_lines=(c[6]|((ov&1u)<<8)|((ov&0x20u)<<4))+2u;
+    t->display_lines=(c[0x12]|((ov&2u)<<7)|((ov&0x40u)<<3))+1u;
+    vrs=c[0x10]|((ov&4u)<<6)|((ov&0x80u)<<2);
+    t->retrace_start=vrs;
+    t->retrace_end=vrs+(((c[0x11]&15u)-vrs)&15u?((c[0x11]&15u)-vrs)&15u:16u);
+    t->scan_per_row=((c[9]&31u)+1u)*((c[9]&0x80u)?2u:1u);
+    t->rows=t->display_lines/t->scan_per_row;
+    t->width=h->vga.mode==0x10?640:320;
+    if(t->rows>350)t->rows=h->vga.mode==0x10?350:200;
+}
+/* Beam position at the current time: frame number and scanline/pixel. */
+static void beam(const LmnHost *h,const Raster *t,uint64_t *frame,unsigned *line,unsigned *x) {
+    uint64_t dt=h->now-h->raster_epoch;
+    uint64_t px=(dt/LMN_HOST_PIT_HZ)*t->pixel_hz+((dt%LMN_HOST_PIT_HZ)*t->pixel_hz)/LMN_HOST_PIT_HZ;
+    uint64_t frame_px=(uint64_t)t->line_pixels*t->total_lines,in=px%frame_px;
+    *frame=px/frame_px;*line=(unsigned)(in/t->line_pixels);*x=(unsigned)(in%t->line_pixels);
+}
+static void scan_row(LmnHost *h,const Raster *t,unsigned y) {
+    const LmnHostVga *v=&h->vga;unsigned x,p,start=h->scan_start_shown,pitch=v->crtc[0x13]*2u;
+    uint8_t *out=h->scan_rgb[h->scan_cur]+3u*y*t->width;
+    for(x=0;x<t->width;x++) {
+        unsigned at=(start+y*pitch+x/8)&65535,color=0,index;
+        for(p=0;p<4;p++)color|=((v->planes[p][at]>>(7-(x&7)))&1)<<p;
+        index=v->attr[color]&63;
+        if(v->attr[0x10]&128)index=(index&15)|((v->attr[0x14]&15)<<4);else index|=(v->attr[0x14]&12)<<4;
+        index&=v->pel_mask;
+        for(p=0;p<3;p++){unsigned c=v->dac[index][p];out[3*x+p]=(uint8_t)((c<<2)|(c>>4));}
+    }
+}
+/* Compose the display as the beam scans: every visible row is produced at the
+   time it is displayed, from the planes, attribute map and DAC of that moment,
+   so mid-frame palette changes (the status panel split) appear where the
+   original's raster put them. The start address is latched at vertical
+   retrace, as the CRTC does. Call before any display-state change and whenever
+   time advances. */
+static void scanout(LmnHost *h) {
+    Raster t;uint64_t frame;unsigned line,x,target;
+    raster(h,&t);beam(h,&t,&frame,&line,&x);
+    if(frame!=h->scan_frame) {
+        while(h->scan_rows<t.rows)scan_row(h,&t,h->scan_rows++);
+        h->scan_ready=h->scan_cur+1;h->scan_cur^=1;
+        h->scan_frame=frame;h->scan_rows=0;h->scan_latched=0;h->scan_start_shown=h->scan_start_latched;
+    }
+    target=line>=t.display_lines?t.rows:line/t.scan_per_row+1;
+    if(target>t.rows)target=t.rows;
+    while(h->scan_rows<target)scan_row(h,&t,h->scan_rows++);
+    if(!h->scan_latched && line>=t.retrace_start){h->scan_start_latched=(uint16_t)((h->vga.crtc[12]<<8)|h->vga.crtc[13]);h->scan_latched=1;}
+}
 /* Mode 0Dh has byte-addressed planar scanout, 40 bytes/line; mode10h
    uses 80. High bit on BIOS mode requests preserves display storage. */
 static void video_mode(LmnHost *h,uint8_t request) {
@@ -123,21 +197,19 @@ static void video_mode(LmnHost *h,uint8_t request) {
     v->mode=mode;
     if(!(request&128)) {memset(v->planes,0,sizeof(v->planes));memset(h->memory+0xa0000,0,65536);}
     memset(v->seq,0,sizeof(v->seq));memset(v->gc,0,sizeof(v->gc));
+    v->seq[1]=mode==0x0d?0x09:mode==0x10?0x01:0x00;
     v->seq[2]=15;v->seq[4]=6;v->gc[6]=5;v->gc[7]=15;v->gc[8]=255;
-    memset(v->crtc,0,sizeof(v->crtc));v->crtc[0x13]=(mode==0x10)?40:20;v->crtc[0x17]=0xe3;
+    memset(v->crtc,0,sizeof(v->crtc));
+    memcpy(v->crtc,mode==0x0d?vga_crtc_0d:mode==0x10?vga_crtc_10:vga_crtc_03,25);
+    h->vga_misc=mode==0x10?0xa3:mode==0x0d?0x63:0x67;
+    h->raster_epoch=h->now;h->scan_frame=0;h->scan_rows=0;h->scan_ready=0;h->scan_latched=0;
+    h->scan_start_latched=h->scan_start_shown=0;
     for(i=0;i<16;i++)v->attr[i]=(uint8_t)(mode==0x0d?(i>=8?i+8:i):(i>=8?i+48:i==6?20:i));
     v->attr[0x10]=1;v->attr[0x14]=0;v->pel_mask=255;
 }
-static void rearm_timer(LmnHost *h) {
-    if(h->vga.mode==0x0d && h->memory[phys(h->ds,0x200e)]!=255) {
-        /* The measured reload expires BEFORE retrace. The game handler then
-           waits through retrace and re-arms from its end. Scheduling a whole
-           frame after that end would incorrectly halve the IRQ rate. */
-        uint64_t deadline=(h->now/LMN_HOST_DISPLAY_TICKS)*LMN_HOST_DISPLAY_TICKS+LMN_HOST_DISPLAY_TICKS*9/10;
-        if(deadline<=h->now)deadline+=LMN_HOST_DISPLAY_TICKS;
-        h->next_irq=deadline;
-    }else h->next_irq=h->now+h->pit_reload;
-}
+/* Channel 0 counts the programmed reload; the game's own raster calibration
+   places its IRQ, so the host never chooses the IRQ time. */
+static void rearm_timer(LmnHost *h) {h->next_irq=h->now+h->pit_reload;}
 static void out8(void *ctx,uint8_t *m,uint16_t p,uint8_t value,uint16_t flags) {
     LmnHost *h=ctx;LmnHostVga *v=&h->vga;(void)m;(void)flags;
     if(!access_ok(h))return;
@@ -146,15 +218,19 @@ static void out8(void *ctx,uint8_t *m,uint16_t p,uint8_t value,uint16_t flags) {
     case 0x3c5:if(v->si<5)v->seq[v->si]=value;else fail(h,"unsupported sequencer register");break;
     case 0x3ce:v->gi=value;break;
     case 0x3cf:if(v->gi<9)v->gc[v->gi]=value;else fail(h,"unsupported GC register");break;
-    case 0x3b4:case 0x3d4:v->ci=value;break;
-    case 0x3b5:case 0x3d5:if(v->ci<32)v->crtc[v->ci]=value;else fail(h,"unsupported CRTC register");break;
-    case 0x3c0:
+    case 0x3b4:case 0x3b5:case 0x3ba:if(h->vga_misc&1)break; /* colour addressing: not decoded */
+        if(p==0x3b4)v->ci=value;else if(p==0x3b5){scanout(h);if(v->ci<32)v->crtc[v->ci]=value;else fail(h,"unsupported CRTC register");}
+        break;
+    case 0x3d4:if(!(h->vga_misc&1))break;v->ci=value;break;
+    case 0x3d5:if(!(h->vga_misc&1))break;scanout(h);if(v->ci<32)v->crtc[v->ci]=value;else fail(h,"unsupported CRTC register");break;
+    case 0x3c2:scanout(h);h->vga_misc=value;break;
+    case 0x3c0:scanout(h);
         if(!v->attr_data)v->ai=value&31;else v->attr[v->ai]=value;
         v->attr_data^=1;break;
-    case 0x3c6:v->pel_mask=value;break;
+    case 0x3c6:scanout(h);v->pel_mask=value;break;
     case 0x3c7:v->dac_read=value;v->dac_read_component=0;break;
     case 0x3c8:v->dac_write=value;v->dac_component=0;break;
-    case 0x3c9:
+    case 0x3c9:scanout(h);
         v->dac[v->dac_write][v->dac_component++]=value&63;
         if(v->dac_component==3){v->dac_component=0;v->dac_write++;}break;
     case 0x43:
@@ -180,18 +256,24 @@ static uint8_t in8(void *ctx,uint8_t *m,uint16_t p,uint16_t flags) {
     if(!access_ok(h))return 0;
     switch(p) {
     case 0x3da:case 0x3ba:
-        /* Display enable is a horizontal signal, independent of vertical
-           retrace. Coupling bit0 to bit3 would turn every raster row wait
-           into a frame wait and lose input between briefing polls. Fixed
-           54-PIT-cycle lines and a 10% vertical blank define this machine. */
-        count=(uint32_t)(h->now%LMN_HOST_DISPLAY_TICKS);
-        value=(uint8_t)((h->now%54>=40?1:0)|(count>=LMN_HOST_DISPLAY_TICKS*9/10?8:0));
-        h->now+=8;h->status_reads++;v->attr_data=0;return value;
+        /* Input status 1 from the CRTC raster: bit 0 while the beam is outside
+           the active display (horizontal or vertical blanking), bit 3 during
+           the vertical retrace pulse. A polling iteration (IN, TEST, Jcc)
+           takes 4 PIT units (3.35 us), a 12 MHz 286-class AT. Any cost below
+           the 6.4 us horizontal blank gives the game identical raster counts;
+           a slower one steps over blanks and corrupts line-counting loops. */
+        if((p==0x3ba)==((h->vga_misc&1)!=0))return 0xff; /* other addressing: not decoded */
+        {Raster t;uint64_t frame;unsigned line,x;(void)count;
+         raster(h,&t);beam(h,&t,&frame,&line,&x);
+         value=(uint8_t)((line<t.display_lines && x<t.display_pixels)?0:1)|((line>=t.retrace_start && line<t.retrace_end)?8:0);}
+        h->now+=4;h->status_reads++;v->attr_data=0;scanout(h);return value;
+    case 0x3b5:if(h->vga_misc&1)return 0xff;return v->ci<32?v->crtc[v->ci]:0;
+    case 0x3cc:return h->vga_misc;
     case 0x3c4:return v->si;
     case 0x3c5:return v->si<5?v->seq[v->si]:0;
     case 0x3ce:return v->gi;
     case 0x3cf:return v->gi<9?v->gc[v->gi]:0;
-    case 0x3b5:case 0x3d5:return v->ci<32?v->crtc[v->ci]:0;
+    case 0x3d5:if(!(h->vga_misc&1))return 0xff;return v->ci<32?v->crtc[v->ci]:0;
     case 0x3c1:return v->attr[v->ai];
     case 0x3c6:return v->pel_mask;
     case 0x3c7:return 3;
@@ -294,8 +376,12 @@ static void retry_ui(void *ctx,uint8_t *m,const LmnDatFileCall *call,LmnDatRetry
 static void saved_flags(uint8_t *m,const LmnRegs *r,uint16_t flags){putword(m,r->ss,(uint16_t)(r->sp+4),flags);}
 static uint16_t bios_body(void *ctx,uint8_t *m,LmnRegs *r,const LmnRasterBus *bus) {
     LmnHost *h=ctx;(void)m;(void)bus;
-    if(r->ax==0x1a00){r->ax=(r->ax&0xff00)|0x1a;r->bx=7;}
-    else if((r->ax>>8)==0x12){r->bx&=0xff00;r->cx&=0xff00;}
+    if(r->ax==0x1a00){r->ax=(r->ax&0xff00)|0x1a;r->bx=8;} /* active colour VGA, no inactive display */
+    else if(r->ax>>8==0x12 && (r->bx&255)==0x10){
+        /* EGA information as a colour VGA BIOS reports it: colour addressing,
+           256 KB, switch settings 9 (enhanced colour display), feature bits F. */
+        r->bx=0x0003;r->cx=0x0f09;
+    }
     else if((r->ax>>8)==0x0f){r->ax=(uint16_t)(0x5000|h->vga.mode);r->bx&=255;}
     else if(!(r->ax>>8))video_mode(h,(uint8_t)r->ax);
     else if((r->ax>>8)==5){h->vga.crtc[12]=0;h->vga.crtc[13]=0;}
@@ -485,6 +571,7 @@ static uint16_t foreground(void *ctx,uint8_t *m,LmnRegs *r,uint16_t site) {
        when the driver writes a register, so a live consumer receives audio at
        the moment the game produces it. */
     render_audio(h);
+    scanout(h);
     if(h->poll_hook){status=h->poll_hook(h->hook_context,h,r,site);if(status)return status;}
     if(h->automatic) {
         /* A poll is a short CPU timeslice, not a whole display frame. In
@@ -552,9 +639,9 @@ static void bind(LmnHost *h) {
 LmnHost *lmn_host_create(const char *assets) {
     LmnHost *h=calloc(1,sizeof(*h));if(!h)return NULL;
     if(!assets || strlen(assets)>=sizeof(h->assets)){free(h);return NULL;}
-    strcpy(h->assets,assets);h->load=0x1010;h->ds=0x19b9;h->next_handle=7;h->pit_reload=0x4000;h->pit_control=0x36;
+    strcpy(h->assets,assets);h->load=0x1010;h->ds=0x19b9;h->next_handle=7;h->pit_reload=65536;h->pit_control=0x36; /* BIOS power-on: 18.2 Hz */
     h->mouse_x=150;h->mouse_y=100;h->mouse_max_x=639;h->mouse_max_y=349;h->port61=0x15;
-    h->max_polls=100000;h->max_accesses=500000000;h->automatic=1;h->next_irq=LMN_HOST_DISPLAY_TICKS;
+    h->max_polls=100000;h->max_accesses=500000000;h->automatic=1;h->next_irq=65536;
     OPL3_Reset(&h->opl,OPL_RATE);
     bind(h);video_mode(h,0x0d);return h;
 }
@@ -583,6 +670,8 @@ int lmn_host_close_audio(LmnHost *h) {
     h->audio=NULL;return ok;
 }
 uint64_t lmn_host_audio_frames(const LmnHost *h){return h->audio_frames;}
+uint64_t lmn_host_display_frames(const LmnHost *h){return h->scan_frame;}
+uint64_t lmn_host_raster_epoch(const LmnHost *h){return h->raster_epoch;}
 void lmn_host_set_audio_sink(LmnHost *h,LmnHostAudioSink sink,void *context){render_audio(h);h->audio_sink=sink;h->audio_context=context;}
 void lmn_host_mouse_range(const LmnHost *h,uint16_t *min_x,uint16_t *max_x,uint16_t *min_y,uint16_t *max_y){
     *min_x=h->mouse_min_x;*max_x=h->mouse_max_x;*min_y=h->mouse_min_y;*max_y=h->mouse_max_y;
@@ -673,6 +762,13 @@ static uint64_t hash_bytes(uint64_t value,const void *data,size_t size){const ui
 uint64_t lmn_host_hash(const LmnHost *h){uint64_t v=UINT64_C(14695981039346656037);v=hash_bytes(v,h->memory,sizeof(h->memory));v=hash_bytes(v,h->vga.planes,sizeof(h->vga.planes));v=hash_bytes(v,h->vga.dac,sizeof(h->vga.dac));return hash_bytes(v,h->vga.crtc,sizeof(h->vga.crtc));}
 int lmn_host_render_rgb(const LmnHost *h,uint8_t *rgb,unsigned *width,unsigned *height) {
     const LmnHostVga *v=&h->vga;unsigned w=v->mode==0x10?640:320,ht=v->mode==0x10?350:200;
+    if(h->scan_ready && v->mode!=3) {
+        /* Last frame the beam completed, with each row's own palette (graphics
+           modes; text mode keeps the instantaneous planar capture). */
+        *width=w;*height=ht;
+        if(rgb)memcpy(rgb,h->scan_rgb[h->scan_ready-1],(size_t)w*ht*3);
+        return 1;
+    }
     unsigned x,y,p,start=((unsigned)v->crtc[12]<<8)|v->crtc[13],pitch=v->crtc[0x13]*2;
     *width=w;*height=ht;
     if(!rgb)return 1;

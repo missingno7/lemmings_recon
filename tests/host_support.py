@@ -32,7 +32,7 @@ class Host:
         self.bind('vga',[],ct.POINTER(Vga))
         self.bind('services',[],ct.POINTER(loop.Services))
         self.bind('error',[],ct.c_char_p)
-        for name in ('time','frames','irqs','sound_requests','inputs','hash'):self.bind(name,[],ct.c_uint64)
+        for name in ('time','frames','irqs','sound_requests','inputs','hash','raster_epoch'):self.bind(name,[],ct.c_uint64)
         self.bind('set_limits',[ct.c_uint64]*3,None)
         self.bind('set_hooks',[ct.c_void_p,POLL,OBSERVE],None)
         self.bind('automatic_timer',[ct.c_int],None)
