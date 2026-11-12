@@ -22,8 +22,18 @@ block the primary port and are never discarded.
 Static analysis is the default. Never boot or play the original for discovery; no
 gameplay bots, no replay exploration. Run original code (the unpacker or one
 routine at a known boundary with constructed state) only to settle a named
-question static work cannot. Human-recorded BizHawk/DOSBox-X replays will later be
-supplementary end-to-end smoke; they never replace static or routine evidence.
+question static work cannot.
+
+Whole-game lockstep is verification, not discovery: the original may run from
+boot in the shared verification engine beside the native host, both fed the same
+fixed input script, comparing per-frame machine state (RAM, planes, DAC, CRTC).
+Scripts are fixed in advance (human recordings, or level solutions from outside
+this project); never generate, search or adapt input against the original. A
+divergence names the first differing frame and memory; resolve it by reading the
+ASM at that boundary and fixing the translation or host there, never by fitting
+native code or device answers to the original's output. Lockstep runs complement
+static and routine evidence; they never replace them. Human-recorded
+BizHawk/DOSBox-X replays remain supplementary end-to-end smoke.
 
 # The loop
 

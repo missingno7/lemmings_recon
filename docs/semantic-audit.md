@@ -83,8 +83,9 @@ configuration with statuses VERIFIED, PARTIALLY_VERIFIED, IMPLEMENTED_UNTESTED,
 INTENTIONALLY_UNSUPPORTED, BLOCKED or UNRESOLVED. It covers startup, menus, level
 load, gameplay, results, progression, failure and exit, plus rendering, music,
 effects, input and timing. Unsupported alternatives are listed explicitly.
-Human-recorded replays later add end-to-end smoke; they do not replace routine
-evidence.
+Whole-game lockstep against the original from boot (AGENTS.md, Execution policy)
+is the composed acceptance for these rows; human-recorded replays add end-to-end
+smoke. Neither replaces routine evidence.
 
 ## Translation readiness
 

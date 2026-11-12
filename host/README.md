@@ -226,3 +226,33 @@ startup-to-menu case compares every boundary/poll through446D against original
 menu instructions from the returned handoff state, including the01 sound fields.
 The host journey records checkpoint state rather than ordered C bus traffic;
 empty trace projections are explicit on both sides of the shared comparator.
+
+tests/host_lockstep.py is whole-level lockstep under the same reference and
+platform profile: menu, F1, briefing and a full session to the result screen,
+driven by a fixed external solution script (AGENTS.md, Execution policy). Script
+frame F sets the INT33 AX=3 answer for the five IRQ08 delivered at the 0179 wait
+that precedes frame F's work. Like host_journey, the tick schedule is the
+game_loop convention, not free-running PIT arrival. It has three modes:
+
+- `--record` runs the exact reference beside the native host, comparing every
+  poll and boundary, and stores one hash of the agreed state per 0179 poll in
+  `build/lockstep/<script>-<key>.json`, keyed by executable, script and schedule.
+  It is the only slow step (about 26 minutes for Fun 1) and is redone only when
+  the schedule or reference harness changes, never for a C change.
+- the default (`tools/difftest.py host_lockstep`, the receipt) runs the native
+  host alone and reports the first frame hash that differs from the log, in
+  seconds.
+- `--diagnose F` runs native to the matched poll before frame F, seeds the exact
+  reference from that native state, and compares every poll through F+2,
+  printing the first differing RAM and registers. The host does not expose the
+  PIT counter phase, so a port 40h read during diagnosis fails rather than guess.
+
+`--mutate NAME_MUTATION=N` builds the host DLL with one existing mutation switch
+to confirm that check and diagnose locate a native fault; it never records or
+passes. Pinned Unicorn 2.1.4 grows native memory on every emu_start while a code
+hook is installed, so recording replaces the Unicorn instance every 100 frames
+(state is the mapped memory plus registers). The default script is
+`build/solutions/fun01.txt`, the Fun 1 solution from the external
+retro-foundry-games/Lemmings repository: input data, not committed, its SHA256
+in the log and receipt. Only selection 0 is reached from the constructed menu
+state; other levels need a code-entry or next-level prefix in the driver.
