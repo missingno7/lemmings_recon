@@ -228,8 +228,13 @@ The host journey records checkpoint state rather than ordered C bus traffic;
 empty trace projections are explicit on both sides of the shared comparator.
 
 tests/host_lockstep.py is whole-level lockstep under the same reference and
-platform profile: menu, F1, briefing and a full session to the result screen,
-driven by a fixed external solution script (AGENTS.md, Execution policy). Script
+platform profile: menu, level-code entry, F1, briefing and a full session to the
+result screen, driven by a fixed external solution script (AGENTS.md, Execution
+policy). A script's header names its selection; selection 0 starts with F1, any
+other is entered as F2, the ten characters EncodeLevelCode would produce from the
+live template and payload (docs/level-code.md), and Enter, so decoding changes
+only the selection and group. The reference serves every file unmodified (unlike
+game_loop's zero-minute selection-1 fixture). Script
 frame F sets the INT33 AX=3 answer for the five IRQ08 delivered at the 0179 wait
 that precedes frame F's work. Like host_journey, the tick schedule is the
 game_loop convention, not free-running PIT arrival. It has three modes:
@@ -237,11 +242,15 @@ game_loop convention, not free-running PIT arrival. It has three modes:
 - `--record` runs the exact reference beside the native host, comparing every
   poll and boundary, and stores one hash of the agreed state per 0179 poll in
   `build/lockstep/<script>-<key>.json`, keyed by executable, script and schedule.
-  It is the only slow step (about 26 minutes for Fun 1) and is redone only when
-  the schedule or reference harness changes, never for a C change.
-- the default (`tools/difftest.py host_lockstep`, the receipt) runs the native
-  host alone and reports the first frame hash that differs from the log, in
-  seconds.
+  It is the only slow step (about 2 s per frame) and is redone only when the
+  schedule, the hash or the reference harness changes, never for a C change.
+  Without a script it records every script in `build/solutions` that has no log,
+  `--jobs N` at a time, longest first.
+- the default checks the native host alone against the log and reports the
+  first frame hash that differs, in seconds. Without a script
+  (`tools/difftest.py host_lockstep`, the receipt) it checks every script in
+  `build/solutions` that has a log and lists the unrecorded ones. Recording is
+  hours per level, so a new script is recorded once, deliberately.
 - `--diagnose F` runs native to the matched poll before frame F, seeds the exact
   reference from that native state, and compares every poll through F+2,
   printing the first differing RAM and registers. The host does not expose the
@@ -251,8 +260,7 @@ game_loop convention, not free-running PIT arrival. It has three modes:
 to confirm that check and diagnose locate a native fault; it never records or
 passes. Pinned Unicorn 2.1.4 grows native memory on every emu_start while a code
 hook is installed, so recording replaces the Unicorn instance every 100 frames
-(state is the mapped memory plus registers). The default script is
-`build/solutions/fun01.txt`, the Fun 1 solution from the external
-retro-foundry-games/Lemmings repository: input data, not committed, its SHA256
-in the log and receipt. Only selection 0 is reached from the constructed menu
-state; other levels need a code-entry or next-level prefix in the driver.
+(state is the mapped memory plus registers). The scripts are the Fun 1-30 and
+Tricky 1-15 solutions from the external retro-foundry-games/Lemmings repository:
+input data, not committed, their SHA256 in each log and in the receipt. Taxing
+and Mayhem have no external solutions.

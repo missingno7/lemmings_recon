@@ -172,10 +172,12 @@ In impact order:
    keep the read-only skip, stated as a platform substitution.
 5. **Composed coverage of long play.** Multi-frame skill lifecycles, saved
    lemmings at exits, trap kills, explosions and the game end after selection 77h
-   are verified only per routine or per screen, except Fun 1: host_lockstep
-   compares a full winning playthrough (menu to result screen) at every poll.
-   Needed: the same for the other levels, which needs a code-entry or
-   next-level prefix in the lockstep driver, then human-recorded replays.
+   are verified per routine or per screen, and by host_lockstep: full winning
+   playthroughs (menu, level code, briefing, session, result) of 36 of the 45
+   external Fun/Tricky solutions match the original at every frame poll.
+   Needed: original recordings for the other nine (one-time, hours each),
+   Taxing/Mayhem and failure paths (no scripts), audio output (not hashed),
+   then human-recorded replays.
 
 Not blocking VGA + AdLib: PC-speaker audio (muted sink), Tandy engine
 (untranslated), joystick (port 201 unbound), the machine-type screen without

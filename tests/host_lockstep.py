@@ -35,11 +35,13 @@ ticks delivered at the 0179 poll before frame F's work (018F). The script's
 recorder froze one INT33 answer from 018F of F to 018F of F+1, so panel ticks
 see a frame's input one frame earlier here; both machines receive the same.
 
-Usage: tools/difftest.py host_lockstep, or
-  python tests/host_lockstep.py [SOLUTION.txt] [--record|--diagnose F] [--frames N] [--mutate NAME_MUTATION=N]
+Usage: tools/difftest.py host_lockstep (checks every recorded script), or
+  python tests/host_lockstep.py [--record] [--jobs N]        every script in build/solutions
+  python tests/host_lockstep.py SOLUTION.txt [--record|--diagnose F] [--frames N] [--mutate NAME_MUTATION=N]
 --mutate builds the native host with one existing mutation switch, to confirm
 that check and diagnose locate a native fault; it never records or passes.
-Default solution: build/solutions/fun01.txt (external input, not committed).
+Scripts: build/solutions/*.txt (external input, not committed). Header `# level L rating R`
+names the selection; levels other than 0 are entered through F2 and their level code.
 """
 import copy
 import ctypes as ct
@@ -47,6 +49,7 @@ import gc
 import hashlib
 import json
 import re
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -56,7 +59,6 @@ from common import BUILD,write_json,sha
 from host_support import Host,Event,POLL,OBSERVE,ROOT,v,loop as g
 import host_journey as j
 
-DEFAULT=BUILD/'solutions'/'fun01.txt'
 LOGS=BUILD/'lockstep'
 SCHEDULE='game_loop-5x0179-v1'   # bump when the driver, tick schedule or state_hash changes
 SAVED,NEEDED=0x40,0x41
@@ -125,15 +127,55 @@ def parse(path):
     return dict(level=level,rating=rating,frames=frames,keys=keys)
 
 DRIVER_FIELDS=('screen','menu_count','sessions','results','typed','cheated','frame','raster_delivered',
-    'mouse','scan','last_scan','started','done')
+    'mouse','scan','last_scan','started','done','code','code_done')
+
+def level_code(memory,ds,selection):
+    """The code EncodeLevelCode (5042) would produce for this selection.
+
+    Inputs are the live DS template (4913), payload (491D) and completion
+    display byte (0040), so decoding (51A2) leaves the payload unchanged and
+    sets only selection 1F6B and group 1F6E. Bit layout: docs/level-code.md;
+    the same independent formula as main_menu.expected_code. A wrong code
+    fails decoding, which the session boundary check below reports."""
+    at=lambda off:memory[v.physical(ds,off)]
+    t=bytes(at(0x4913+i) for i in range(10));payload=at(0x491D);completion=at(0x40)
+    c=[t[0]|((selection&1)<<3)|((payload&1)<<1)|((completion&1)<<2),
+       t[1]|((selection&2)<<1)|((completion&2)>>1),
+       t[2]|(selection&4)|((payload&2)>>1)|((completion&4)>>1),
+       t[3]|((selection&8)>>3)|((completion&8)>>2),
+       t[4]|((selection&16)>>3)|((payload&4)>>2)|((completion&16)>>1),
+       t[5]|((selection&32)>>5)|((payload&8)>>2)|((completion&32)>>3),
+       t[6]|((selection&192)>>4)|((completion&64)>>6),
+       (t[7]+(selection&15))&255,(t[8]+(selection>>4))&255]
+    c.append((t[9]+(sum(c)&15))&255)
+    count=(8-(selection&7))%7
+    if count:c[:7]=c[7-count:7]+c[:7-count]
+    return bytes(c)
+
+class Platform(j.Platform):
+    """host_journey's reference platform plus graphics-controller read-back:
+    port 3CFh returns the register selected by 3CEh, as on the declared VGA."""
+    def input(self,port):
+        if port==0x3cf:
+            gi=self.a.device.gi;v.check(gi<9,f'GC read of reserved index {gi}');return self.a.device.gc[gi]
+        return super().input(port)
 
 class Access(j.Access):
-    """host_journey platform; menu -> F1 -> briefing -> one session -> result.
+    """host_journey platform; menu -> [F2, level code, Enter] -> F1 -> briefing
+    -> one session -> result. Selection 0 (Fun 1) skips the code entry.
 
     Also used without a reference, as the native-only script driver."""
     solution=None;frame_limit=None
     def __init__(self,*args):
-        super().__init__(*args);self.started=False;self.done=False
+        super().__init__(*args);self.platform=Platform(self);self.started=False;self.done=False;self.code=b'';self.code_done=False
+    def boundary(self,r):
+        super().boundary(r)
+        if r['ip']==0x4967:
+            self.code=level_code(self.memory,r['ds'],self.solution['level'])+b'\r'
+        if r['ip']==0xFB:
+            ds=r['ds'];selection=self.memory[v.physical(ds,0x1F6B)];group=self.memory[v.physical(ds,0x1F6E)]
+            v.check((selection,group)==(self.solution['level'],self.solution['rating']),
+                f'session started selection {selection} group {group}, script wants {self.solution["level"]}/{self.solution["rating"]}')
     def script(self,r,site):
         self.polls.append((site,r['flags']));v.check(len(self.polls)<200_000,'lockstep poll budget exhausted')
         scans=[];ticks=0;s=self.solution
@@ -144,7 +186,13 @@ class Access(j.Access):
         elif site==0x446D:self.mouse=(150,100,0);ticks=1
         elif site==0x4D23 and r['bx']==0:
             if self.last_scan is not None:scans.append(self.last_scan|0x80);self.last_scan=None
-            if self.screen=='menu' and not self.started:scans.append(0x3B);self.last_scan=0x3B;self.started=True  # F1
+            if self.screen=='menu' and not self.started:
+                if s['level'] and not self.code_done:scans.append(0x3C);self.last_scan=0x3C;self.code_done=True  # F2
+                else:scans.append(0x3B);self.last_scan=0x3B;self.started=True  # F1
+            elif self.screen=='code' and self.code:
+                char=self.code[0];self.code=self.code[1:]
+                scan=next(i for i,x in enumerate(g.session.keyboard.PINNED_CHARACTERS) if x==char and i>0)
+                scans.append(scan);self.last_scan=scan
         elif site==0x4660:self.mouse=(150,100,0);ticks=1
         elif site==0x4683:self.mouse=(150,100,1);ticks=1
         elif site in (0x04AA,0x04BA):ticks=1
@@ -161,6 +209,20 @@ class Access(j.Access):
         self.queue=[(9,scan,site) for scan in scans]+[(8,0,site)]*ticks
         return list(self.queue)
 
+class Provider(j.Provider):
+    """host_journey's DOS file provider serving every file unmodified.
+
+    game_loop.Provider zeroes the time limit whenever selection 1 is loaded (its
+    time-up fixture, which host_journey mirrors into the native host as an
+    overlay). A solution plays the real level, so neither side is patched."""
+    def file(self,function,seg,off,flags):
+        name=self.filename(seg,off).decode('ascii').lower();kind=self.kind(name.encode())
+        payload=g.asset(name)
+        if kind=='graphics':payload=payload[:g.resources.section_spans(payload)[1][1]]
+        self.payloads[kind]=payload
+        value,count,returned=g.resources.Provider.file(self,function,seg,off,flags)
+        return value,0x20 if function==0x43 else count,returned
+
 def state_hash(h,regs):
     d=hashlib.blake2b(digest_size=16);x=h.vga
     d.update(bytes(h.memory))
@@ -170,6 +232,8 @@ def state_hash(h,regs):
     d.update(b''.join(regs[n].to_bytes(2,'little') for n in v.REG_NAMES if n!='flags'))
     d.update(h.call('time').to_bytes(8,'little'))
     return d.hexdigest()
+
+def check_path(solution):return LOGS/'checks'/f'{Path(solution).stem}.json'
 
 def log_path(solution):
     key=sha((sha((ROOT/'assets/vgalemmi.exe').read_bytes())+sha(Path(solution).read_bytes())+SCHEDULE).encode())[:16]
@@ -223,7 +287,7 @@ def worker(mode,directory,solution,frame_limit,target,define=None):
     g.MAX_STEPS=4_000_000_000
     began=time.perf_counter()
     s=parse(solution);Access.solution=s;Access.frame_limit=frame_limit
-    v.check(s['level']==0 and s['rating']==0,'only selection 0 (Fun 1) is reached from the constructed menu')
+    v.check(s['level'] is not None and 0<=s['level']<120 and s['rating']==s['level']//30,'script header names no valid selection')
     before=provenance(solution);path=log_path(solution)
     expected=None
     if mode!='record':
@@ -239,7 +303,7 @@ def worker(mode,directory,solution,frame_limit,target,define=None):
     h.call('automatic_timer',0);h.call('set_limits',200_000,40_000_000_000,0)
     saved=g.Access,g.Provider,g.provider,g.menu.video_provider
     def video(a,incoming):a.platform.mode_set(incoming['ax']);return dict(incoming)
-    g.Access,g.Provider,g.provider,g.menu.video_provider=Access,j.Provider,j.provider,video
+    g.Access,g.Provider,g.provider,g.menu.video_provider=Access,Provider,j.provider,video
     hashes=[];errors=[];last=dict(t=time.perf_counter())
     run=dict(reference=None,a=None,exact_until=None)
     if mode=='record':
@@ -330,6 +394,8 @@ def worker(mode,directory,solution,frame_limit,target,define=None):
         v.check(before==provenance(solution),'lockstep inputs changed during the run')
         if mode=='record':
             v.require(h.call('irqs')==sum(n==8 for n,_,_ in a.deliveries),'IRQ08 delivery count differs')
+            if frame_limit is not None:
+                print(f'TRIAL record: {len(hashes)} frame hashes agreed; a --frames run writes no log',flush=True);return
             LOGS.mkdir(parents=True,exist_ok=True)
             write_json(path,dict(schedule=SCHEDULE,solution=Path(solution).name,solution_sha256=report['solution_sha256'],
                 frame_limit=frame_limit,saved=report['saved'],needed=report['needed'],
@@ -340,16 +406,73 @@ def worker(mode,directory,solution,frame_limit,target,define=None):
         v.require(len(hashes)==len(expected),f'native ended after {len(hashes)} frame hashes, the original after {len(expected)}')
         v.check(define is None,'a mutated host passed: the mutation is not observable on this script')
         report.update(accepted=True,input_hashes=before|{path.relative_to(ROOT).as_posix():sha(path.read_bytes())})
-        write_json(BUILD/'host-lockstep.json',report)
-        print(f'PASS host_lockstep: {len(hashes)} frame hashes match {path.name}, saved {report["saved"]} '
+        write_json(check_path(solution),report)
+        print(f'PASS host_lockstep {Path(solution).stem}: {len(hashes)} frame hashes match {path.name}, saved {report["saved"]} '
               f'needed {report["needed"]}, {report["seconds"]:.1f}s',flush=True)
     except BaseException as error:
         report.update(error=str(error),seconds=time.perf_counter()-began)
-        if mode=='check' and define is None:write_json(BUILD/'host-lockstep-failure.json',report)
+        if mode=='check' and define is None:write_json(check_path(solution),report)
         raise
     finally:
         g.Access,g.Provider,g.provider,g.menu.video_provider=saved
         h.close();del h;gc.collect()
+
+def run_one(mode,solution,frames=None,target=None,define=None,quiet=False):
+    """One bounded worker; returns its exit status (output to a log when quiet)."""
+    # Recording runs the exact reference at about 2 s per frame alone, ~3 s with 16 jobs.
+    # A level runs until its timer or its last lemming, not until the script's last
+    # input, so the bound covers the longest level seen (about 5300 frames).
+    timeout,memory=(1200+6*6000,1280) if mode=='record' else (600,768)
+    out=None
+    if quiet:
+        LOGS.mkdir(parents=True,exist_ok=True);out=open(LOGS/f'{Path(solution).stem}-{mode}.log','w')
+    try:
+        with temporary_build_directory(prefix='host-lockstep-',parent=BUILD) as directory:
+          try:
+            return run_bounded([sys.executable,__file__,'--worker',mode,directory,str(Path(solution).resolve()),
+                '-' if frames is None else str(frames),'-' if target is None else str(target),define or '-'],
+                cwd=ROOT,timeout=timeout,memory_mib=memory,check=not quiet,stdout=out,stderr=out).returncode
+          except subprocess.TimeoutExpired:
+            if not quiet:raise
+            print(f'timed out after {timeout}s',file=out,flush=True);return -2
+    finally:
+        if out:out.close()
+
+def run_all(mode,jobs):
+    """Every script in build/solutions: record the missing logs, or check every recorded one."""
+    from concurrent.futures import ThreadPoolExecutor
+    scripts=sorted((BUILD/'solutions').glob('*.txt'))
+    v.check(bool(scripts),'build/solutions holds no solution scripts')
+    unrecorded=[p.stem for p in scripts if not log_path(p).exists()]
+    if mode=='check':scripts=[p for p in scripts if log_path(p).exists()]
+    v.check(bool(scripts),'no solution has a recorded original run; run --record first')
+    todo=[p for p in scripts if not log_path(p).exists()] if mode=='record' else scripts
+    if mode=='record':todo.sort(key=lambda p:-len(parse(p)['frames']))  # longest first
+    began=time.perf_counter()
+    def one(p):
+        if mode=='check':check_path(p).unlink(missing_ok=True)
+        status=run_one(mode,p,quiet=True)
+        print(f'{"OK  " if status==0 else "FAIL"} {mode} {p.stem} ({time.perf_counter()-began:.0f}s)',flush=True)
+        return p,status
+    with ThreadPoolExecutor(jobs) as pool:results=list(pool.map(one,todo))
+    failed=[p.stem for p,status in results if status]
+    if mode=='record':
+        v.check(not failed,f'recording failed: {failed}; see build/lockstep/<name>-record.log');return
+    rows={p.stem:(json.loads(check_path(p).read_text()) if check_path(p).exists() else dict(accepted=False,error='no report'))
+          for p in scripts}
+    inputs=provenance(scripts[0])
+    for p in scripts:
+        inputs[p.relative_to(ROOT).as_posix()]=sha(p.read_bytes())
+        if log_path(p).exists():inputs[log_path(p).relative_to(ROOT).as_posix()]=sha(log_path(p).read_bytes())
+    accepted=all(r.get('accepted') is True for r in rows.values())
+    summary={k:dict(accepted=r.get('accepted'),hashes=r.get('hashes'),saved=r.get('saved'),needed=r.get('needed'),
+        error=r.get('error')) for k,r in rows.items()}
+    write_json(BUILD/'host-lockstep.json',dict(accepted=accepted,scope='whole-level-lockstep',schedule=SCHEDULE,
+        solutions=summary,unrecorded=unrecorded,seconds=time.perf_counter()-began,input_hashes=inputs))
+    bad={k:r.get('error') for k,r in rows.items() if r.get('accepted') is not True}
+    v.require(accepted,f'{len(bad)} of {len(rows)} solutions fail: '+'; '.join(f'{k}: {e}' for k,e in bad.items()))
+    print(f'PASS host_lockstep: {len(rows)} solutions, every frame hash matches its recorded original run'
+        +(f'; not recorded: {" ".join(unrecorded)}' if unrecorded else ''),flush=True)
 
 def main():
     args=sys.argv[1:]
@@ -357,17 +480,17 @@ def main():
         _,mode,directory,solution,frames,target,define=args
         worker(mode,directory,solution,None if frames=='-' else int(frames),None if target=='-' else int(target),
             None if define=='-' else define);return
-    frames=target=define=None;mode='check'
+    frames=target=define=None;mode='check';jobs=8
     if '--mutate' in args:i=args.index('--mutate');define=args[i+1];del args[i:i+2]
     if '--frames' in args:i=args.index('--frames');frames=int(args[i+1]);del args[i:i+2]
+    if '--jobs' in args:i=args.index('--jobs');jobs=int(args[i+1]);del args[i:i+2]
     if '--record' in args:args.remove('--record');mode='record'
     if '--diagnose' in args:i=args.index('--diagnose');mode='diagnose';target=int(args[i+1]);del args[i:i+2]
     v.check(mode!='diagnose' or target>=1,'--diagnose F needs F >= 1 (frame F-1 must have matched)')
-    solution=Path(args[0]) if args else DEFAULT
+    if not args:
+        v.check(mode in ('record','check') and frames is None and define is None,'batch mode takes no --frames/--mutate/--diagnose')
+        run_all(mode,jobs);return
+    solution=Path(args[0])
     v.check(solution.exists(),f'{solution}: solution script missing (external input, see module docstring)')
-    timeout,memory=(5340,1280) if mode=='record' else (600,768)
-    with temporary_build_directory(prefix='host-lockstep-',parent=BUILD) as directory:
-        run_bounded([sys.executable,__file__,'--worker',mode,directory,str(solution.resolve()),
-            '-' if frames is None else str(frames),'-' if target is None else str(target),define or '-'],
-            cwd=ROOT,timeout=timeout,memory_mib=memory,check=True)
+    run_one(mode,solution,frames,target,define)
 if __name__=='__main__':main()
